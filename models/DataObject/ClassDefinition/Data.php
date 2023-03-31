@@ -1486,6 +1486,27 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     * @param DataObject\ClassDefinition\Data $masterDefinition
+     */
+    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    {
+        $vars = get_object_vars($this);
+        $protectedFields = ['noteditable', 'invisible'];
+        foreach ($vars as $name => $value) {
+            if (!in_array($name, $protectedFields)) {
+                unset($this->$name);
+            }
+        }
+        $vars = get_object_vars($masterDefinition);
+        foreach ($vars as $name => $value) {
+            if (!in_array($name, $protectedFields)) {
+                $this->$name = $value;
+            }
+        }
+    }
+
+    /**
      * @param array|null $existingData
      * @param array $additionalData
      *

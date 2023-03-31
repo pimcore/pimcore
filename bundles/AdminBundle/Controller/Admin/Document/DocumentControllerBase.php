@@ -363,30 +363,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
-     *
-     * @Route("/change-master-document", name="changemasterdocument", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function changeMasterDocumentAction(Request $request): JsonResponse
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('Route %s is deprecated and will be removed in Pimcore 11. Use %s instead.', 'changemasterdocument', 'changemaindocument')
-        );
-
-        return $this->changeMainDocumentAction($request);
-    }
-
-    /**
      * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event): void

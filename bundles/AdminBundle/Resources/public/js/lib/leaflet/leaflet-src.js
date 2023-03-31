@@ -2067,7 +2067,7 @@ function _addPointerStart(obj, handler, id) {
 	var onDown = bind(function (e) {
 		if (e.pointerType !== 'mouse' && e.MSPOINTER_TYPE_MOUSE && e.pointerType !== e.MSPOINTER_TYPE_MOUSE) {
 			// In IE11, some touch events needs to fire for form controls, or
-			// the controls will stop working. We keep a allowlist of tag names that
+			// the controls will stop working. We keep a whitelist of tag names that
 			// need these events. For other target tags, we prevent default on the event.
 			if (TAG_WHITE_LIST.indexOf(e.target.tagName) < 0) {
 				preventDefault(e);
