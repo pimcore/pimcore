@@ -80,6 +80,7 @@ services:
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
+            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11'
 
     Pimcore\Bundle\CoreBundle\EventListener\UUIDListener: ~
 

@@ -35,7 +35,7 @@ services:
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
-            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11'
+            message: 'The "%alias_id%" service is deprecated and will be removed in Pimcore 11'
 
     # scoped container containing only the registered area bricks
     # will be configured in areabrick pass
