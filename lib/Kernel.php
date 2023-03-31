@@ -22,6 +22,7 @@ use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
@@ -36,23 +37,21 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
-
         registerBundles as microKernelRegisterBundles;
+        configureContainer as protected;
+        configureRoutes as protected;
     }
 
     private const CONFIG_LOCATION = 'config_location';
@@ -76,11 +75,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir(): string
     {
-        if (isset($_SERVER['APP_CACHE_DIR'])) {
-            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
-        }
-
-        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->environment;
+        return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
     /**
@@ -91,35 +86,6 @@ abstract class Kernel extends SymfonyKernel
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
-    }
-
-    protected function configureContainer(ContainerConfigurator $container): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $container->import($projectDir . '/config/{packages}/*.yaml');
-        $container->import($projectDir . '/config/{packages}/'.$this->environment.'/*.yaml');
-
-        if (is_file($projectDir . '/config/services.yaml')) {
-            $container->import($projectDir . '/config/services.yaml');
-            $container->import($projectDir . '/config/{services}_'.$this->environment.'.yaml');
-        } elseif (is_file($path = $projectDir . '/config/services.php')) {
-            (require $path)($container->withPath($path), $this);
-        }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir . '/config/{routes}/*.yaml');
-
-        if (is_file($projectDir . '/config/routes.yaml')) {
-            $routes->import($projectDir . '/config/routes.yaml');
-        } elseif (is_file($path = $projectDir . '/config/routes.php')) {
-            (require $path)($routes->withPath($path), $this);
-        }
     }
 
     /**
@@ -140,77 +106,22 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        $configArray = [
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
-                'defaultStorageDirectoryName' => 'image-thumbnails',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS',
-                'defaultStorageDirectoryName' => 'video-thumbnails',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS',
-                'defaultStorageDirectoryName' => 'custom-reports',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES',
-                'defaultStorageDirectoryName' => 'document-types',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT',
-                'defaultStorageDirectoryName' => 'web-to-print',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
-                'defaultStorageDirectoryName' => 'predefined-properties',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA',
-                'defaultStorageDirectoryName' => 'predefined-asset-metadata',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES',
-                'defaultStorageDirectoryName' => 'staticroutes',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES',
-                'defaultStorageDirectoryName' => 'perspectives',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
-                'defaultStorageDirectoryName' => 'custom-views',
-            ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS',
-                'defaultStorageDirectoryName' => 'custom-layouts',
-            ],
+        $configKeysArray = [
+            'image_thumbnails',
+            'video_thumbnails',
+            'document_types',
+            'predefined_properties',
+            'predefined_asset_metadata',
+            'perspectives',
+            'custom_views',
+            'object_custom_layouts',
         ];
 
-        $loader->load(function (ContainerBuilder $container) use ($loader, $configArray) {
-            $containerConfig = $container->getExtensionConfig('pimcore');
-            $containerConfig = array_merge(...$containerConfig);
+        $loader->load(function (ContainerBuilder $container) use ($loader, $configKeysArray) {
+            $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore');
 
-            $processor = new Processor();
-            // @phpstan-ignore-next-line
-            $configuration = $container->getExtension('pimcore')->getConfiguration($containerConfig, $container);
-            $containerConfig = $processor->processConfiguration($configuration, ['pimcore' => $containerConfig]);
-
-            $resolvingBag = $container->getParameterBag();
-            $containerConfig = $resolvingBag->resolveValue($containerConfig);
-
-            if (!array_key_exists(self::CONFIG_LOCATION, $containerConfig)) {
-                return;
-            }
-
-            foreach ($configArray as $config) {
-                $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
-                if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
-                    continue;
-                }
-                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
-
-                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+            foreach ($configKeysArray as $configKey) {
+                $configDir = rtrim($containerConfig[self::CONFIG_LOCATION][$configKey]['options']['directory'], '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
@@ -218,18 +129,6 @@ abstract class Kernel extends SymfonyKernel
                 }
             }
         });
-    }
-
-    private static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
-    {
-        if (isset($_SERVER[$storageDir])) {
-            trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
-
-            return $_SERVER[$storageDir];
-        }
-
-        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
     }
 
     /**

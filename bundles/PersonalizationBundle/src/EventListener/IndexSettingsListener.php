@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\EventListener;
 
-use Pimcore\Event\Admin\IndexActionSettingsEvent;
+use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent;
 
 class IndexSettingsListener
 {

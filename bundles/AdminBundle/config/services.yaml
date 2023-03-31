@@ -45,7 +45,9 @@ services:
             $config: '%pimcore.gdpr-data-extrator.assets%'
 
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers:
+        arguments:
+            $logsDir: '%kernel.logs_dir%'
 
 
     #
@@ -63,4 +65,9 @@ services:
     #
     # Twig Extensions
     #
-    Pimcore\Twig\Extension\AdminExtension: ~
+    Pimcore\Bundle\AdminBundle\Twig\Extension\AdminExtension: ~
+
+    #
+    # Workflows
+    #
+    Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService: ~

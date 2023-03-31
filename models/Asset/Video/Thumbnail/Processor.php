@@ -233,7 +233,11 @@ class Processor
                         continue;
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
-                    fclose($source);
+
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
+
                     unlink($converter->getDestinationFile());
 
                     if ($converter->getFormat() === 'mpd') {
@@ -245,7 +249,10 @@ class Processor
                             $storagePath = $parentPath.'/'.basename($steam);
                             $source = fopen($steam, 'rb');
                             Storage::get('thumbnail')->writeStream($storagePath, $source);
-                            fclose($source);
+
+                            if (is_resource($source)) {
+                                fclose($source);
+                            }
                         }
                     }
 

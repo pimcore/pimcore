@@ -36,9 +36,11 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('targeting')
-                    ->canBeDisabled()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                        ->end()
                         ->scalarNode('storage_id')
                             ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
                             ->defaultValue(CookieStorage::class)

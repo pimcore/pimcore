@@ -17,6 +17,7 @@ services:
     Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
         arguments:
             - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
         tags:
             - { name: messenger.message_handler }
 

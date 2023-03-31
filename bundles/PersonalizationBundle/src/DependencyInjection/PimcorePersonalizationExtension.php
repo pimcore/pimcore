@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\PersonalizationBundle\DependencyInjection;
 
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoaderInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -50,15 +51,14 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
         }
 
         $loader->load('targeting.yaml');
+        $loader->load('services.yaml');
 
         // set TargetingStorageInterface type hint to the configured service ID
         $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
 
-        if ($config['enabled']) {
-            // enable targeting by registering listeners
-            $loader->load('targeting/services.yaml');
-            $loader->load('targeting/listeners.yaml');
-        }
+        //register listeners
+        $loader->load('targeting/services.yaml');
+        $loader->load('targeting/listeners.yaml');
 
         $dataProviders = [];
         foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
@@ -89,5 +89,9 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
             ->setArgument('$actionHandlers', $actionHandlerLocator);
 
         $container->setParameter('pimcore_personalization.targeting.session.enabled', $config['session']['enabled'] ?? false);
+
+        $container
+            ->findDefinition(TargetingEnableService::class)
+            ->setArgument('$enabled', $config['enabled'] ?? false);
     }
 }
