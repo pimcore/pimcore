@@ -18,10 +18,10 @@ namespace Pimcore\Model\DataObject;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\ConfigElementInterface;
+use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
+use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
-use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
-use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;

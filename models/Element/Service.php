@@ -25,6 +25,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
 use Pimcore;
+use Pimcore\Bundle\AdminBundle\CustomView\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -982,7 +983,7 @@ class Service extends Model\AbstractModel
      */
     public static function getCustomViewById(string $id): ?array
     {
-        $customViews = \Pimcore\CustomView\Config::get();
+        $customViews = Config::get();
         if ($customViews) {
             foreach ($customViews as $customView) {
                 if ($customView['id'] == $id) {

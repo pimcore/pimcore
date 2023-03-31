@@ -69,3 +69,11 @@ services:
     #
 
     Pimcore\Twig\Extension\AdminExtension: ~
+    
+    Pimcore\Bundle\AdminBundle\Twig\Extension\AdminExtension: ~
+
+    #
+    # Workflows
+    #
+    
+    Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService: ~
