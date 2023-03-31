@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Security\Event;
 
-use Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent as PimcoreLogoutEvent;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent as PimcoreLogoutEvent;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;

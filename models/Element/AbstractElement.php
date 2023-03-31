@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;

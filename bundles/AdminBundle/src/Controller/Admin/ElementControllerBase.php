@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Event\AssetEvents;
-use Pimcore\Event\DataObjectEvents;
-use Pimcore\Event\DocumentEvents;
 use Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent;
 use Pimcore\Bundle\AdminBundle\Event\Model\DataObjectDeleteInfoEvent;
 use Pimcore\Bundle\AdminBundle\Event\Model\DocumentDeleteInfoEvent;
 use Pimcore\Bundle\AdminBundle\Event\Model\ElementDeleteInfoEventInterface;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;

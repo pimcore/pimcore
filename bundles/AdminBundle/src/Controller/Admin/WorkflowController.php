@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -24,7 +25,6 @@ use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Console;
-use Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\StatusInfo;

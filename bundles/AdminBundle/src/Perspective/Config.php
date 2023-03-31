@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Perspective;
 
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Model\User\Role;

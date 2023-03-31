@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\CustomReportsBundle\EventListener;
 
-use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
 class IndexSettingsListener
 {
