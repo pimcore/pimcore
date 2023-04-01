@@ -546,73 +546,102 @@ pimcore.document.tree = Class.create({
 
                 //paste
                 if (pimcore.cachedDocumentId && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.paste")) {
-                    pasteMenu.push({
-                        text: t("paste_recursive_as_childs"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "recursive")
-                    });
-                    pasteMenu.push({
-                        text: t("paste_recursive_updating_references"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references")
-                    });
-                    pasteMenu.push({
-                        text: t("paste_as_child"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "child")
-                    });
 
-                    pasteMenu.push({
-                        text: t("paste_as_language_variant"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "child")
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.recursiveAsChilds")) {
+                        pasteMenu.push({
+                            text: t("paste_recursive_as_childs"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "recursive")
+                        });
+                    }
 
-                    pasteMenu.push({
-                        text: t("paste_recursive_as_language_variant"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive")
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.recursiveUpdatingReferences")) {
+                        pasteMenu.push({
+                            text: t("paste_recursive_updating_references"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references")
+                        });
+                    }
 
-                    pasteMenu.push({
-                        text: t("paste_recursive_as_language_variant_updating_references"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references")
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.asChild")) {
+                        pasteMenu.push({
+                            text: t("paste_as_child"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "child")
+                        });
+                    }
 
-                    pasteInheritanceMenu.push({
-                        text: t("paste_recursive_as_childs"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "recursive", true)
-                    });
-                    pasteInheritanceMenu.push({
-                        text: t("paste_recursive_updating_references"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references", true)
-                    });
-                    pasteInheritanceMenu.push({
-                        text: t("paste_as_child"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteInfo.bind(this, tree, record, "child", true)
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.asLanguageVariant")) {
+                        pasteMenu.push({
+                            text: t("paste_as_language_variant"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "child")
+                        });
+                    }
 
-                    pasteInheritanceMenu.push({
-                        text: t("paste_as_language_variant"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "child", true)
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.recursiveAsLanguageVariant")) {
+                        pasteMenu.push({
+                            text: t("paste_recursive_as_language_variant"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive")
+                        });
+                    }
 
-                    pasteInheritanceMenu.push({
-                        text: t("paste_recursive_as_language_variant"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive", true)
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.recursiveAsLanguageVariantUpdatingReferences")) {
+                        pasteMenu.push({
+                            text: t("paste_recursive_as_language_variant_updating_references"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references")
+                        });
+                    }
 
-                    pasteInheritanceMenu.push({
-                        text: t("paste_recursive_as_language_variant_updating_references"),
-                        iconCls: "pimcore_icon_paste",
-                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references", true)
-                    });
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceRecursiveAsChilds")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_recursive_as_childs"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "recursive", true)
+                        });
+                    }
+
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceRecursiveUpdatingReferences")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_recursive_updating_references"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references", true)
+                        });
+                    }
+
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceAsChild")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_as_child"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteInfo.bind(this, tree, record, "child", true)
+                        });
+                    }
+
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceAsLanguageVariant")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_as_language_variant"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "child", true)
+                        });
+                    }
+
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceRecursiveAsLanguageVariant")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_recursive_as_language_variant"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive", true)
+                        });
+                    }
+
+                    if (perspectiveCfg.inTreeContextMenu("document.paste.inheritanceRecursiveAsLanguageVariantUpdatingReferences")) {
+                        pasteInheritanceMenu.push({
+                            text: t("paste_recursive_as_language_variant_updating_references"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references", true)
+                        });
+                    }
                 }
             }
 
@@ -633,7 +662,7 @@ pimcore.document.tree = Class.create({
 
             if (pimcore.cachedDocumentId && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.paste")) {
 
-                if (record.data.type != "folder") {
+                if (record.data.type != "folder" && perspectiveCfg.inTreeContextMenu("document.paste.contents")) {
                     pasteMenu.push({
                         text: t("paste_contents"),
                         iconCls: "pimcore_icon_paste",

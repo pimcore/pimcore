@@ -550,24 +550,32 @@ pimcore.object.tree = Class.create({
 
                     if (perspectiveCfg.inTreeContextMenu("object.paste")) {
                         if (pimcore.cachedObjectId && record.data.permissions.create) {
-                            pasteMenu.push({
-                                text: t("paste_recursive_as_childs"),
-                                iconCls: "pimcore_icon_paste",
-                                handler: this.pasteInfo.bind(this, tree, record, "recursive")
-                            });
-                            pasteMenu.push({
-                                text: t("paste_recursive_updating_references"),
-                                iconCls: "pimcore_icon_paste",
-                                handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references")
-                            });
-                            pasteMenu.push({
-                                text: t("paste_as_child"),
-                                iconCls: "pimcore_icon_paste",
-                                handler: this.pasteInfo.bind(this, tree, record, "child")
-                            });
 
+                            if (perspectiveCfg.inTreeContextMenu("object.paste.recursive")) {
+                                pasteMenu.push({
+                                    text: t("paste_recursive_as_childs"),
+                                    iconCls: "pimcore_icon_paste",
+                                    handler: this.pasteInfo.bind(this, tree, record, "recursive")
+                                });
+                            }
 
-                            if (record.data.type != "folder") {
+                            if (perspectiveCfg.inTreeContextMenu("object.paste.recursiveUpdateReferences")) {
+                                pasteMenu.push({
+                                    text: t("paste_recursive_updating_references"),
+                                    iconCls: "pimcore_icon_paste",
+                                    handler: this.pasteInfo.bind(this, tree, record, "recursive-update-references")
+                                });
+                            }
+
+                            if (perspectiveCfg.inTreeContextMenu("object.paste.asChild")) {
+                                pasteMenu.push({
+                                    text: t("paste_as_child"),
+                                    iconCls: "pimcore_icon_paste",
+                                    handler: this.pasteInfo.bind(this, tree, record, "child")
+                                });
+                            }
+
+                            if (record.data.type != "folder" && perspectiveCfg.inTreeContextMenu("object.paste.contents")) {
                                 pasteMenu.push({
                                     text: t("paste_contents"),
                                     iconCls: "pimcore_icon_paste",
