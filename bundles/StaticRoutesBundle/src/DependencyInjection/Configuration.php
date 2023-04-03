@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\StaticRoutesBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -54,6 +55,8 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['staticroutes']);
 
         return $treeBuilder;
     }

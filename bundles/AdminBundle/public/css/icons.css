@@ -251,6 +251,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
 }
 
+.pimcore_nav_icon_systemrequirements {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/factory.svg) center center no-repeat !important;
+}
+
 .pimcore_nav_icon_server_info {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/electronics.svg) center center no-repeat !important;
 }

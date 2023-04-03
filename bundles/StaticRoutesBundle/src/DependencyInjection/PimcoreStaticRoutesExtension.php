@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-final class PimcoreStaticRoutesExtension extends ConfigurableExtension
+final class PimcoreStaticRoutesExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
@@ -33,5 +35,22 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension
         $loader->load('services.yaml');
 
         $container->setParameter('pimcore_static_routes.definitions', $config['definitions']);
+        $container->setParameter('pimcore_static_routes.config_location', $config['config_location'] ?? []);
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_static_routes');
+        $configDir = $containerConfig['config_location']['staticroutes']['options']['directory'];
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
+        }
     }
 }

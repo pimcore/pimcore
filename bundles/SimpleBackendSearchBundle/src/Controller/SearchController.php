@@ -18,13 +18,14 @@ namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
 use Pimcore\Db\Helper;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -69,7 +70,7 @@ class SearchController extends AdminController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminSearchEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -270,7 +271,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::SEARCH_LIST_BEFORE_LIST_LOAD);
         /** @var Data\Listing $searcherList */
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
@@ -344,7 +345,7 @@ class SearchController extends AdminController
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::SEARCH_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result);
@@ -475,7 +476,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'query' => $query,
         ]);
-        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD);
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         $hits = $searcherList->load();
@@ -502,7 +503,7 @@ class SearchController extends AdminController
             'list' => $elements,
             'context' => $query,
         ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD);
         $elements = $afterListLoadEvent->getArgument('list');
 
         $result = ['data' => $elements, 'success' => true];

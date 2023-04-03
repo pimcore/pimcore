@@ -262,9 +262,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         linkParams.push("_dc=" + date.getTime());
 
                         // add target group parameter if available
-                        if(this["edit"] && this.edit["targetGroup"]) {
-                            if(this.edit.targetGroup && this.edit.targetGroup.getValue()) {
-                                linkParams.push("_ptg=" + this.edit.targetGroup.getValue());
+                        if(this["edit"] && this.edit.areaToolBar) {
+                            if(this.edit.areaToolBar.targetGroup && this.edit.areaToolBar.targetGroup.getValue()) {
+                                linkParams.push("_ptg=" + this.edit.areaToolBar.targetGroup.getValue());
                             }
                         }
 

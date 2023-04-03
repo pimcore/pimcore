@@ -32,7 +32,7 @@ pimcore.settings.translation.editor = Class.create({
         if (editorType === 'wysiwyg') {
             this.editableDivId = "translationeditor_" + uniqid();
 
-            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.value + '</div>';
+            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true"></div>';
             var pConf = {
                 html: html,
                 border: true,

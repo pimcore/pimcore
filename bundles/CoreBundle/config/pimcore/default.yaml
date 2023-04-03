@@ -91,6 +91,12 @@ doctrine:
 # Monolog Configuration
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
+    handlers:
+        usage:
+            type: stream
+            path:  "%kernel.logs_dir%/redirect.log"
+            level: debug
+            channels: ['redirect']
 
 # CMF routing
 cmf_routing:
@@ -218,21 +224,43 @@ pimcore:
     documents:
         type_definitions:
             map:
-                folder: \Pimcore\Model\Document\Folder
-                page: \Pimcore\Model\Document\Page
-                snippet: \Pimcore\Model\Document\Snippet
-                link: \Pimcore\Model\Document\Link
-                hardlink: \Pimcore\Model\Document\Hardlink
-                email: \Pimcore\Model\Document\Email
-                newsletter: \Pimcore\Model\Document\Newsletter
-
+                folder:
+                    class: \Pimcore\Model\Document\Folder
+                    translatable: false
+                    translatable_inheritance: true
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    valid_table: 'page'
+                    direct_route: true
+                snippet:
+                    class: \Pimcore\Model\Document\Snippet
+                    valid_table: 'snippet'
+                    children_supported: false
+                    direct_route: true
+                link:
+                    class: \Pimcore\Model\Document\Link
+                    translatable: false
+                    valid_table: 'link'
+                hardlink:
+                    class: \Pimcore\Model\Document\Hardlink
+                    translatable: false
+                    valid_table: 'hardlink'
+                email:
+                    class: \Pimcore\Model\Document\Email
+                    valid_table: 'email'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                newsletter:
+                    class: \Pimcore\Model\Document\Newsletter
+                    translatable: false
+                    valid_table: 'newsletter'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
-
-    routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:

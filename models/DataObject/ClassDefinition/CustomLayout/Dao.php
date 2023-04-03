@@ -35,11 +35,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
+        $storageConfig = $config['config_location']['object_custom_layouts'];
+
         parent::configure([
             'containerConfig' => $config['objects']['custom_layouts']['definitions'],
             'settingsStoreScope' => 'pimcore_object_custom_layout',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/custom-layouts',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS',
+            'storageConfig' => $storageConfig,
         ]);
     }
 
