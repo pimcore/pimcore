@@ -22,8 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pimcore\\Bundle\\WebToPrintBundle\\": "src/",
-            "Pimcore\\Model\\DataObject\\": "src/Pimcore/Model/DataObject"
+            "Pimcore\\Bundle\\WebToPrintBundle\\": "src/"
         }
     },
     "autoload-dev": {
