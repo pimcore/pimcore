@@ -1,5 +1,0 @@
-services:
-    _defaults:
-        public: true
-
-    pimcore_admin.security.token_storage_user_resolver: '@Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver'
