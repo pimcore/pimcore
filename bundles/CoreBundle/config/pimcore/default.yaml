@@ -10,7 +10,6 @@ framework:
     router:
         strict_requirements: ~
         utf8: true
-    form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
     web_link:
