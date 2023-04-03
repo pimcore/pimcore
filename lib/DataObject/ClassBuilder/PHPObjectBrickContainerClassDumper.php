@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Symfony\Component\Filesystem\Filesystem;
 
