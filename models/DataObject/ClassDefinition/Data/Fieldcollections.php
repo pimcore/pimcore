@@ -552,9 +552,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // TODO else part should not be needed at all as preGetData is always there
         // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-//        } else {
-//            $code .= "\t" . '$data = $this->' . $key . ";\n";
-//        }
+        //        } else {
+        //            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        //        }
 
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
