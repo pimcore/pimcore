@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 use Symfony\Component\Filesystem\Filesystem;
