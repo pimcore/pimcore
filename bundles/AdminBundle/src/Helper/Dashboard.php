@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Pimcore\Bundle\AdminBundle\Perspective\Config;
-use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
