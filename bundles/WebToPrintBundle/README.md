@@ -7,8 +7,8 @@ This bundle introduces 2 new document types:
 
 | Type           | Description                                                                                                                                                 | 
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [PrintPage](./doc/01_Print_Documents.md)      | Like pages, but specialized for print (PDF preview, rendering options, ...)                                                                                 | 
-| [PrintContainer](./doc/01_Print_Documents.md) | Organizing print pages in chapters and render them all together.                                                                                            | 
+| [PrintPage](./doc/01_Print_Documents.md#printpage)      | Like pages, but specialized for print (PDF preview, rendering options, ...)                                                                                 | 
+| [PrintContainer](./doc/01_Print_Documents.md#printcontainer) | Organizing print pages in chapters and render them all together.                                                                                            | 
 
 ## Available PDF Processors
 
