@@ -1121,9 +1121,13 @@ class Asset extends Element\AbstractElement
         return $checksum;
     }
 
+    /**
+     * @internal
+     */
     public function generateChecksum(): void
     {
         $this->setCustomSetting('checksum', Storage::get('asset')->checksum($this->getRealFullPath()));
+        $this->getDao()->updateCustomSettings();
     }
 
     /**

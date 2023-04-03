@@ -46,7 +46,13 @@ class GenerateChecksumCommand extends AbstractCommand
                 'only generate checksum for assets in this folder (ID)'
             )
             ->addOption(
-                'pathPattern',
+                'missing-only',
+                'm',
+                InputOption::VALUE_NONE,
+                'only generate checksum for assets which have no checksum yet'
+            )
+            ->addOption(
+                'path-pattern',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'only generate checksum for the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
@@ -59,6 +65,7 @@ class GenerateChecksumCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
+        $missingOnly = $input->getOption('missing-only');
 
         $conditions = [];
 
@@ -76,7 +83,7 @@ class GenerateChecksumCommand extends AbstractCommand
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        if ($regex = $input->getOption('pathPattern')) {
+        if ($regex = $input->getOption('path-pattern')) {
             $conditions[] = 'CONCAT(`path`, filename) REGEXP ?';
             $conditionVariables[] = $regex;
         }
@@ -89,11 +96,18 @@ class GenerateChecksumCommand extends AbstractCommand
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
-            /** @var Asset\Image[] $images */
             $assets = $list->load();
             foreach ($assets as $asset) {
-                $this->output->writeln(' generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                 try {
+                    if ($missingOnly && $asset->getCustomSetting('checksum')) {
+                        continue;
+                    }
+
+                    if ($asset->getType() === 'folder') {
+                        continue;
+                    }
+
+                    $this->output->writeln(' generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                     $asset->generateChecksum();
                     $asset->save(['versionNote' => 'checksum generation']);
                 } catch (\Exception $e) {
