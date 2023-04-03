@@ -1,6 +1,0 @@
-_pimcore_bundle_personalization_backend:
-    resource: "../../src/Controller/"
-    type: annotation
-    prefix: /admin/bundle/personalization
-    options:
-        expose: true
