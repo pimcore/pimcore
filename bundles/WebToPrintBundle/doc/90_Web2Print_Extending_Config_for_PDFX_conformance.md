@@ -112,3 +112,7 @@ class PDFConfigListener
 }
 
 ```
+
+## Gotenberg PDF Engines
+
+When using Gotenberg, please also take in consideration https://github.com/gotenberg/gotenberg-php#pdf-format
