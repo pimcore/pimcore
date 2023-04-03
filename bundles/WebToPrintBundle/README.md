@@ -32,6 +32,9 @@ You can also use the following command to clean up you database. Create a backup
  bin/console pimcore:document:cleanup printpage printcontainer
 ```
 
+### Best Practice
+
+Please see the [PDFX Conformance](./doc/90_Web2Print_Extending_Config_for_PDFX_conformance.md) page.
 
 ## Contributing and Development
 

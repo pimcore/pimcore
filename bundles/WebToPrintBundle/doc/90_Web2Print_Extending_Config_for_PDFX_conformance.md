@@ -1,9 +1,9 @@
-# PimcoreWebToPrintBundle - Extending PDF Creation Config for PDF/X Conformance
+# Extending PDF Creation Config for PDF/X Conformance
 
 Sometimes it is necessary to add additional configuration options to the PDF processing configuration in the Pimcore backend UI - 
 for example when creating PDF/X conform PDFs with PDF Reactor.
 
-![Config Options](../img/configs.jpg)
+![Config Options](./img/configs.jpg)
 
 But also for other use cases, it might be necessary to hook into the PDF creation process and modify the configuration before
 creating the file.  
@@ -11,11 +11,11 @@ creating the file.
 **Solution**
 
 To do so, Pimcore provides two events:
-- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L126):
+- [`PRINT_MODIFY_PROCESSING_OPTIONS`](../src/Event/DocumentEvents.php#L56):
   Event to modify the processing options displayed in the Pimcore backend UI. For example add additional options like `AppendLog` and `My Additional ...` 
   in the screenshot above. 
   
-- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L148)
+- [`PRINT_MODIFY_PROCESSING_CONFIG`](../src/Event/DocumentEvents.php#L73)
   Event to modify the configuration for the PDF processor when the PDF gets created. For example read values for additional
   options and apply these values to the configuration of the PDF processor accordingly or do some other stuff. 
   
