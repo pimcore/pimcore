@@ -25,7 +25,7 @@ services:
     # ApplicationLoggerProcessor prepares data for the DB handler. This basically
     # mimics functionality from the ApplicationLogger itself to be used from any
     # monolog handler.
-    Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor:
+    Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor: ~
 
     # IntrospectionProcessor adds data regarding called function/line. The skipClassesPartials makes sure
     # we skip the stack frame when called through ApplicationLogger.

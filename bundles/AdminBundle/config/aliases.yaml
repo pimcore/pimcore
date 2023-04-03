@@ -3,4 +3,3 @@ services:
         public: true
 
     pimcore_admin.security.token_storage_user_resolver: '@Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver'
-    pimcore_admin.security.user_loader: '@Pimcore\Bundle\AdminBundle\Security\User\UserLoader'
