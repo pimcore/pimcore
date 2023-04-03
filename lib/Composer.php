@@ -33,7 +33,7 @@ class Composer
     protected static array $options = [
         'bin-dir' => 'bin',
         'public-dir' => 'public',
-        'symfony-assets-install' => 'relative',
+        'symfony-assets-install' => 'copy',
         'symfony-cache-warmup' => false,
     ];
 
