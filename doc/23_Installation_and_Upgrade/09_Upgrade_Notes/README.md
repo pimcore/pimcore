@@ -302,7 +302,7 @@ pimcore:
                     only_printable_childrens: false
 ```
 - [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
-- [Core] The default behaviour of asset install is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change. 
+- [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.
   You can change it back by setting the env variable `SYMFONY_ASSETS_INSTALL` to `relative` or by adding the following to composer.json.
 
 ```json
