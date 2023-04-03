@@ -1,0 +1,44 @@
+{
+    "name": "pimcore/web-to-print-bundle",
+    "license": "GPL-3.0+",
+    "type": "pimcore-bundle",
+    "description": "Pimcore WebtoPrint Bundle",
+    "config": {
+        "sort-packages": true,
+        "preferred-install": {
+            "pimcore/pimcore": "source",
+            "*": "dist"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "pimcore/pimcore": "^11.0",
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.9",
+        "codeception/codeception": "^5.0.3",
+        "codeception/phpunit-wrapper": "^9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pimcore\\Bundle\\WebToPrintBundle\\": "src/",
+            "Pimcore\\Model\\DataObject\\": "src/Pimcore/Model/DataObject"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pimcore\\Bundle\\WebToPrintBundle\\Tests\\": "tests"
+        },
+        "files": [
+            "kernel/Kernel.php"
+        ]
+    },
+    "extra": {
+        "pimcore": {
+            "bundles": [
+                "Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle"
+            ]
+        }
+    }
+}
