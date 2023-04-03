@@ -406,10 +406,10 @@ pimcore.layout.toolbar = Class.create({
                             itemId: 'pimcore_menu_extras_email_logs',
                             handler: this.sentEmailsLog
                         }, {
-                            text: t("email_blacklist"),
+                            text: t("email_blocklist"),
                             iconCls: "pimcore_nav_icon_email",
-                            itemId: 'pimcore_menu_extras_email_blacklist',
-                            handler: this.emailBlacklist
+                            itemId: 'pimcore_menu_extras_email_blocklist',
+                            handler: this.emailBlocklist
                         }, {
                             text: t("send_test_email"),
                             iconCls: "pimcore_nav_icon_email",
@@ -1701,12 +1701,12 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    emailBlacklist: function () {
+    emailBlocklist: function () {
         try {
-            pimcore.globalmanager.get("email_blacklist").activate();
+            pimcore.globalmanager.get("email_blocklist").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
+            pimcore.globalmanager.add("email_blocklist", new pimcore.settings.email.blocklist());
         }
     },
 

@@ -245,11 +245,26 @@ class RgbaColor extends Data implements
     }
 
     /**
+     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->width = $mainDefinition->width;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->width = $masterDefinition->width;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

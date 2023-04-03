@@ -309,11 +309,26 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @param Model\DataObject\ClassDefinition\Data\Image $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->uploadPath = $mainDefinition->uploadPath;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->uploadPath = $masterDefinition->uploadPath;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

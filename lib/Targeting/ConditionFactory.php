@@ -37,7 +37,7 @@ class ConditionFactory implements ConditionFactoryInterface
     /**
      * @var string[]
      */
-    private $blacklistedKeys = ['type', 'operator', 'bracketLeft', 'bracketRight'];
+    private $blocklistedKeys = ['type', 'operator', 'bracketLeft', 'bracketRight'];
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -67,7 +67,7 @@ class ConditionFactory implements ConditionFactoryInterface
         }
 
         $typeConfig = array_filter($config, function ($v, $k) {
-            return !in_array($k, $this->blacklistedKeys);
+            return !in_array($k, $this->blocklistedKeys);
         }, ARRAY_FILTER_USE_BOTH);
 
         $event = new BuildConditionEvent($type, $this->conditions[$type], $typeConfig);

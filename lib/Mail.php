@@ -603,13 +603,13 @@ class Mail extends Email
     {
         foreach ($addresses as $addrKey => $address) {
             if ($address instanceof Address) {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($address->getAddress())) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($address->getAddress())) {
                     unset($addrKey);
                 }
             } else {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($addrKey)) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($addrKey)) {
                     unset($addresses[$addrKey]);
                 }
             }

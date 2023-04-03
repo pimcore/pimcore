@@ -557,12 +557,27 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->relationType = $mainDefinition->relationType;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->relationType = $masterDefinition->relationType;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

@@ -125,12 +125,12 @@ class RequestHelper
      */
     public function getMainRequest(): Request
     {
-        $masterRequest = $this->requestStack->getMainRequest();
-        if (null === $masterRequest) {
+        $mainRequest = $this->requestStack->getMainRequest();
+        if (null === $mainRequest) {
             throw new \LogicException('There is no main request available.');
         }
 
-        return $masterRequest;
+        return $mainRequest;
     }
 
     /**

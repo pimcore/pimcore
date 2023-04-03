@@ -289,13 +289,28 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition)
     {
-        $this->previewHeight = $masterDefinition->previewHeight;
-        $this->previewWidth = $masterDefinition->previewWidth;
-        $this->inputWidth = $masterDefinition->inputWidth;
+        $this->previewHeight = $mainDefinition->previewHeight;
+        $this->previewWidth = $mainDefinition->previewWidth;
+        $this->inputWidth = $mainDefinition->inputWidth;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
+     * @param DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

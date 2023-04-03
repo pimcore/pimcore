@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.6.0
+- [Naming] Deprecated master, blacklist and whitelist. Instead, use main, blocklist, allowlist
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
@@ -147,7 +148,7 @@ location / {
 - Removed `ocramius/package-versions` dependency. If you rely on it, please add it to your own `composer.json`.
 - [Permissions] Added an extra check about [system permission](https://pimcore.com/docs/pimcore/current/Development_Documentation/Administration_of_Pimcore/Users_and_Roles.html#page_System-Permissions) in element `isAllowed()` method, please make sure your custom implementations are not affected by this change. 
   Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls. 
-  The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
+  The only cases could be affected are those where the workspace are set but main permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
 - [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
 - [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for performance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
@@ -397,7 +398,7 @@ framework:
 - Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
 - Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
-- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
+- Removed `\Pimcore\Google\webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
 - Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
 - Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
 - Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.

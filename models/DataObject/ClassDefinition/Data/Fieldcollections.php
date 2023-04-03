@@ -662,13 +662,28 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\Fieldcollections $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->allowedTypes = $mainDefinition->allowedTypes;
+        $this->lazyLoading = $mainDefinition->lazyLoading;
+        $this->maxItems = $mainDefinition->maxItems;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->allowedTypes = $masterDefinition->allowedTypes;
-        $this->lazyLoading = $masterDefinition->lazyLoading;
-        $this->maxItems = $masterDefinition->maxItems;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

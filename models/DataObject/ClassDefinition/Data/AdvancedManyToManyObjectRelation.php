@@ -796,13 +796,28 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        if ($mainDefinition instanceof self) {
+            $this->allowedClassId = $mainDefinition->getAllowedClassId();
+            $this->visibleFields = $mainDefinition->getVisibleFields();
+            $this->columns = $mainDefinition->getColumns();
+        }
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
+     * {@inheritdoc}
+     */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        if ($masterDefinition instanceof self) {
-            $this->allowedClassId = $masterDefinition->getAllowedClassId();
-            $this->visibleFields = $masterDefinition->getVisibleFields();
-            $this->columns = $masterDefinition->getColumns();
-        }
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

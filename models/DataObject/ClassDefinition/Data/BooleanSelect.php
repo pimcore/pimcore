@@ -316,12 +316,27 @@ class BooleanSelect extends Data implements
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\BooleanSelect $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->options = $mainDefinition->options;
+        $this->width = $mainDefinition->width;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\BooleanSelect $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->options = $masterDefinition->options;
-        $this->width = $masterDefinition->width;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

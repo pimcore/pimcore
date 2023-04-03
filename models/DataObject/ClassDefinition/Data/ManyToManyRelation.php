@@ -726,18 +726,33 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->assetUploadPath = $mainDefinition->assetUploadPath;
+        $this->relationType = $mainDefinition->relationType;
+        $this->objectsAllowed = $mainDefinition->objectsAllowed;
+        $this->assetsAllowed = $mainDefinition->assetsAllowed;
+        $this->assetTypes = $mainDefinition->assetTypes;
+        $this->documentsAllowed = $mainDefinition->documentsAllowed;
+        $this->documentTypes = $mainDefinition->documentTypes;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->assetUploadPath = $masterDefinition->assetUploadPath;
-        $this->relationType = $masterDefinition->relationType;
-        $this->objectsAllowed = $masterDefinition->objectsAllowed;
-        $this->assetsAllowed = $masterDefinition->assetsAllowed;
-        $this->assetTypes = $masterDefinition->assetTypes;
-        $this->documentsAllowed = $masterDefinition->documentsAllowed;
-        $this->documentTypes = $masterDefinition->documentTypes;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

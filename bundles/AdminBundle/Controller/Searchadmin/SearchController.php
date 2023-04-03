@@ -409,7 +409,7 @@ class SearchController extends AdminController
             }
         }
 
-        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any main permissions set
         // by setting a `false` condition in the query makes sure that nothing would be displayed.
         if (!$allowedTypes) {
             $allowedTypes = ['false'];

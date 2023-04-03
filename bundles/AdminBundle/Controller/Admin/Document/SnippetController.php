@@ -75,8 +75,8 @@ class SnippetController extends DocumentControllerBase
             $snippet->getScheduledTasks()
         );
 
-        if ($snippet->getContentMasterDocument()) {
-            $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
+        if ($snippet->getContentMainDocument()) {
+            $data['contentMainDocumentPath'] = $snippet->getContentMainDocument()->getRealFullPath();
         }
 
         return $this->preSendDataActions($data, $snippet, $draftVersion);

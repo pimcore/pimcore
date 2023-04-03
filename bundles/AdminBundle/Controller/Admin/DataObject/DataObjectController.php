@@ -508,7 +508,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $currentLayoutId = null;
             }
 
-            //master layout has id 0 so we check for is_null()
+            //main layout has id 0 so we check for is_null()
             if ($currentLayoutId === null && !empty($validLayouts)) {
                 if (count($validLayouts) === 1) {
                     $firstLayout = reset($validLayouts);

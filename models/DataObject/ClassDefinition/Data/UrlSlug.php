@@ -433,11 +433,26 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
+     * @param Model\DataObject\ClassDefinition\Data\UrlSlug $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->action = $mainDefinition->action;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param Model\DataObject\ClassDefinition\Data\UrlSlug $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->action = $masterDefinition->action;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

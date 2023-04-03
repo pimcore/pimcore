@@ -32,7 +32,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * If no document was found on the active request (not set by router or by initiator of a sub-request), try to find and
  * set a fallback document:
  *
- *  - if request is a sub-request, try to read document from master request
+ *  - if request is a sub-request, try to read document from main request
  *  - if all fails, try to find the nearest document by path
  *
  * @internal
@@ -105,7 +105,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
 
         if ($event->isMainRequest()) {
             // no document found yet - try to find the nearest document by request path
-            // this is only done on the master request as a sub-request's pathInfo is _fragment when
+            // this is only done on the main request as a sub-request's pathInfo is _fragment when
             // rendered via actions helper
             $path = null;
             if ($this->siteResolver->isSiteRequest($request)) {
@@ -123,9 +123,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
             }
         } else {
             // if we're in a sub request and no explicit document is set - try to load document from
-            // parent and/or master request and set it on our sub-request
+            // parent and/or main request and set it on our sub-request
             $parentRequest = $this->requestStack->getParentRequest();
-            $masterRequest = $this->requestStack->getMainRequest();
+            $mainRequest = $this->requestStack->getMainRequest();
 
             $eligibleRequests = [];
 
@@ -133,8 +133,8 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 $eligibleRequests[] = $parentRequest;
             }
 
-            if ($masterRequest !== $parentRequest) {
-                $eligibleRequests[] = $masterRequest;
+            if ($mainRequest !== $parentRequest) {
+                $eligibleRequests[] = $mainRequest;
             }
 
             foreach ($eligibleRequests as $eligibleRequest) {

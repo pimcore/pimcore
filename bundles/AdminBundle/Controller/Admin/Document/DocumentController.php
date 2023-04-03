@@ -289,7 +289,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 }
 
                 if ($request->get('inheritanceSource')) {
-                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                    $createValues['contentMainDocumentId'] = $request->get('inheritanceSource');
                 }
 
                 switch ($request->get('type')) {
