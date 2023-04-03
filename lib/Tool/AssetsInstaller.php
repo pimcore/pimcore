@@ -149,7 +149,6 @@ class AssetsInstaller
             $defaults['relative'] = true;
         }
 
-
         $resolver->setDefaults($defaults);
 
         foreach (['symlink', 'relative', 'ansi', 'no-ansi'] as $option) {
