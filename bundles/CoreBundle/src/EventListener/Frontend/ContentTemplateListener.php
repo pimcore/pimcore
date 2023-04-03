@@ -84,7 +84,7 @@ class ContentTemplateListener implements EventSubscriberInterface
 
         if (class_exists('Symfony\\Component\\Form\\FormInterface')) {
             foreach ($parameters as $k => $v) {
-                if (!$v instanceof Symfony\Component\Form\FormInterface) {
+                if (!$v instanceof \Symfony\Component\Form\FormInterface) {
                     continue;
                 }
                 if ($v->isSubmitted() && !$v->isValid()) {
