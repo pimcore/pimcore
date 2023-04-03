@@ -23,7 +23,9 @@ use Doctrine\Migrations\AbstractMigration;
 final class Version20230322114936 extends AbstractMigration
 {
     private const CONTENT_MASTER_DOC_ID = 'contentMasterDocumentId';
+
     private const CONTENT_MAIN_DOC_ID = 'contentMainDocumentId';
+
     private const TABLES = ['documents_page', 'documents_snippet', 'documents_printpage'];
 
     public function getDescription(): string

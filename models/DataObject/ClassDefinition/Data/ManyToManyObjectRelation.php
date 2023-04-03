@@ -567,6 +567,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

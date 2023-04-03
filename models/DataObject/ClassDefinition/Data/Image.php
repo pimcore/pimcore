@@ -318,6 +318,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)

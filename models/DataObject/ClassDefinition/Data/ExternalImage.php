@@ -300,6 +300,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

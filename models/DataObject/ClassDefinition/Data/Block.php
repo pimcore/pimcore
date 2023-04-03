@@ -531,6 +531,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
+     *
      *@deprecated will be removed in Pimcore 11
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)

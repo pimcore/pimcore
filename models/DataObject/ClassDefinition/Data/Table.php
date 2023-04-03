@@ -626,6 +626,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

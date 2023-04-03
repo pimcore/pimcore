@@ -34,16 +34,17 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @var int[]
      */
     protected $whiteListIds = [];
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @var \stdClass[]
      */
     protected $whiteList = [];
-
 
     /**
      * @var string[]
@@ -183,6 +184,7 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @return int[]
      */
     public function getWhiteListIds()
@@ -198,6 +200,7 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param int[] $whiteListIds
      */
     public function setWhiteListIds($whiteListIds)
@@ -214,6 +217,7 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @return \stdClass[]
      */
     public function getWhiteList()
@@ -229,6 +233,7 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param \stdClass[] $whiteList
      */
     public function setWhiteList($whiteList)

@@ -217,6 +217,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\Checkbox $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

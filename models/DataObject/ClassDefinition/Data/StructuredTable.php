@@ -558,6 +558,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\StructuredTable $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

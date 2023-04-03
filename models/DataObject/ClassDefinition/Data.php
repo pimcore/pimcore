@@ -1452,6 +1452,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
@@ -1487,6 +1488,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
     public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

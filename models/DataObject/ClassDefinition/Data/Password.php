@@ -461,6 +461,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)

@@ -254,6 +254,7 @@ class RgbaColor extends Data implements
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)

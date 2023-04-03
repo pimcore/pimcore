@@ -357,6 +357,7 @@ class Input extends Data implements
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param Model\DataObject\ClassDefinition\Data\Input $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)

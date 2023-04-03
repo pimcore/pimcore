@@ -495,6 +495,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @return int|null
      */
     public function getContentMasterDocumentId()
@@ -522,6 +523,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @return Document\PageSnippet|null
      */
     public function getContentMasterDocument()
@@ -553,6 +555,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param Document\PageSnippet|null $document
      *
      * @return $this
