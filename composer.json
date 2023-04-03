@@ -60,7 +60,6 @@
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
     "friendsofsymfony/jsrouting-bundle": "^3.2.1",
-    "geoip2/geoip2": "^2.9",
     "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0.0",
     "lcobucci/jwt": "^4.0",
@@ -190,9 +189,7 @@
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
       "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
-      "Pimcore\\Bundle\\PersonalizationBundle\\": "bundles/PersonalizationBundle/src/",
-      "Pimcore\\Model\\DataObject\\": "bundles/PersonalizationBundle/src/Pimcore/Model/DataObject"
+      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

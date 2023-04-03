@@ -4,7 +4,8 @@ title: Core Framework
 
 # Pimcore Core Framework Documentation
 
-This documentation section provides all information you need to use the Core Framework of Pimcore. 
+> This documentation section provides all information you need to use the Core Framework of Pimcore. 
+> 
 > We've aimed this part of the documentation at a developer's audience.
 
 Pimcore provides a fully flexible and extendable platform for managing and exploiting data of any type. The Core Framework is the foundation of the whole platform and provides a lot of basic functionalities.
@@ -21,7 +22,7 @@ Pimcore provides the management of three types of elements that cover any kind o
 
 The Core Framework comes with several core features that can be fully adapted or extended with additional bundles (see the Pimcore Extensions section for existing extensions maintained by Pimcore).
 
-The Core Framework documentation is divided into three sections that aim to guide the readers through its first use of the platform:
+The Core Framework documentation is divided into three sections that aim to guide the reader through its first use of the platform:
 
 * See the [Getting Started](#getting-started) section for an overview of the Core Framework or information about the installation process and the MVC pattern integration within Pimcore.
 * See the [Element Types](#element-types) section for details about managed elements in Pimcore and associated actions.
