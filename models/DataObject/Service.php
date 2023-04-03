@@ -122,20 +122,14 @@ class Service extends Model\Element\Service
         return \array_merge(...$userObjects);
     }
 
-    /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
-     *
-     * @return AbstractObject|void
-     */
-    public function copyRecursive(AbstractObject $target, AbstractObject $source)
+    public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
     {
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
