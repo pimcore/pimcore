@@ -28,7 +28,6 @@ use Pimcore;
 use Pimcore\Bundle\AdminBundle\CustomView\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;

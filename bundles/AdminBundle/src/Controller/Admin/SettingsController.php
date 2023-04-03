@@ -24,7 +24,6 @@ use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;

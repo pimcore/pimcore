@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\File;
 use Pimcore\Image\Chromium;
 use Pimcore\Model;
 use Pimcore\Model\Document;

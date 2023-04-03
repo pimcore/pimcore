@@ -28,7 +28,6 @@ use Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite;
 use Pimcore\Bundle\AdminBundle\Model\GridConfigShare;
 use Pimcore\Config;
 use Pimcore\Db;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;

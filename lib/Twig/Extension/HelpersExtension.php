@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
-use Pimcore\File;
 use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
 use Symfony\Component\Mime\MimeTypes;

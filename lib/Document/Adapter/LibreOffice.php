@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;

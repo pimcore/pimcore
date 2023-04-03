@@ -18,7 +18,6 @@ namespace Pimcore\Image\Adapter;
 
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;

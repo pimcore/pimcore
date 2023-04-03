@@ -19,7 +19,6 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;

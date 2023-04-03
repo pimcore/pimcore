@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;

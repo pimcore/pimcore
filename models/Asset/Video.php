@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;

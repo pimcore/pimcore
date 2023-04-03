@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
