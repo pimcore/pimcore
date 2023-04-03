@@ -42,6 +42,10 @@ class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute(): void
     {
+        $isLowQualityPreviewEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        if (!$isLowQualityPreviewEnabled) {
+            return;
+        }
         if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Execute low quality image preview generation');

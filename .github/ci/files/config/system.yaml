@@ -35,6 +35,24 @@ pimcore:
         return:
             name: pimcore
             email: pimcore@example.com
+    config_location:
+        image_thumbnails:
+            target: 'settings-store'
+        video_thumbnails:
+            target: 'settings-store'
+        document_types:
+            target: 'settings-store'
+        predefined_properties:
+            target: 'settings-store'
+        predefined_asset_metadata:
+            target: 'settings-store'
+        perspectives:
+            target: 'settings-store'
+        custom_views:
+            target: 'settings-store'
+        object_custom_layouts:
+            target: 'settings-store'
+
 pimcore_admin:
     branding:
         login_screen_invert_colors: false

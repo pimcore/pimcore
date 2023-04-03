@@ -15,10 +15,6 @@ parameters:
     excludePaths:
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - 'bundles/EcommerceFrameworkBundle/*'
-        - 'bundles/PersonalizationBundle/src/Targeting/DataProvider/GeoIp.php'
-        - 'bundles/PersonalizationBundle/tests/Support/UnitTester.php'
-        - 'bundles/GoogleMarketingBundle/tests/*'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'

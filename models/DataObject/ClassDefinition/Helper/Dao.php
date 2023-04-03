@@ -111,13 +111,17 @@ trait Dao
     protected function removeUnusedColumns(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+            $dropColumns = [];
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
+                    $dropColumns[] = 'DROP COLUMN `' . $value . '`';
                 }
             }
-            $this->resetValidTableColumnsCache($table);
+            if ($dropColumns) {
+                $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+                $this->resetValidTableColumnsCache($table);
+            }
         }
     }
 
