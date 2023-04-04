@@ -15,23 +15,10 @@
     "require": {
         "pimcore/pimcore": "^11.0",
     },
-    "require-dev": {
-        "phpstan/phpstan": "^1.9",
-        "codeception/codeception": "^5.0.3",
-        "codeception/phpunit-wrapper": "^9"
-    },
     "autoload": {
         "psr-4": {
             "Pimcore\\Bundle\\WebToPrintBundle\\": "src/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Pimcore\\Bundle\\WebToPrintBundle\\Tests\\": "tests"
-        },
-        "files": [
-            "kernel/Kernel.php"
-        ]
     },
     "extra": {
         "pimcore": {
