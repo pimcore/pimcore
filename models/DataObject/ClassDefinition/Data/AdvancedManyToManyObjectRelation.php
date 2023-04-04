@@ -726,12 +726,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        if ($masterDefinition instanceof self) {
-            $this->allowedClassId = $masterDefinition->getAllowedClassId();
-            $this->visibleFields = $masterDefinition->getVisibleFields();
-            $this->columns = $masterDefinition->getColumns();
+        if ($mainDefinition instanceof self) {
+            $this->allowedClassId = $mainDefinition->getAllowedClassId();
+            $this->visibleFields = $mainDefinition->getVisibleFields();
+            $this->columns = $mainDefinition->getColumns();
         }
     }
 

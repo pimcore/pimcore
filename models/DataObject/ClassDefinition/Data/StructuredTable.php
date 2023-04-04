@@ -438,14 +438,14 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\StructuredTable $masterDefinition
+     * @param DataObject\ClassDefinition\Data\StructuredTable $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->labelWidth = $masterDefinition->labelWidth;
-        $this->labelFirstCell = $masterDefinition->labelFirstCell;
-        $this->cols = $masterDefinition->cols;
-        $this->rows = $masterDefinition->rows;
+        $this->labelWidth = $mainDefinition->labelWidth;
+        $this->labelFirstCell = $mainDefinition->labelFirstCell;
+        $this->cols = $mainDefinition->cols;
+        $this->rows = $mainDefinition->rows;
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

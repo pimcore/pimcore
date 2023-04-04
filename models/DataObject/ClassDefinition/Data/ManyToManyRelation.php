@@ -616,18 +616,18 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->assetUploadPath = $masterDefinition->assetUploadPath;
-        $this->relationType = $masterDefinition->relationType;
-        $this->objectsAllowed = $masterDefinition->objectsAllowed;
-        $this->assetsAllowed = $masterDefinition->assetsAllowed;
-        $this->assetTypes = $masterDefinition->assetTypes;
-        $this->documentsAllowed = $masterDefinition->documentsAllowed;
-        $this->documentTypes = $masterDefinition->documentTypes;
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->assetUploadPath = $mainDefinition->assetUploadPath;
+        $this->relationType = $mainDefinition->relationType;
+        $this->objectsAllowed = $mainDefinition->objectsAllowed;
+        $this->assetsAllowed = $mainDefinition->assetsAllowed;
+        $this->assetTypes = $mainDefinition->assetTypes;
+        $this->documentsAllowed = $mainDefinition->documentsAllowed;
+        $this->documentTypes = $mainDefinition->documentTypes;
     }
 
     /**
