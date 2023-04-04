@@ -22,23 +22,25 @@ Pimcore provides the management of three types of elements that cover any kind o
 
 The Core Framework comes with several core features that can be fully adapted or extended with additional bundles (see the Pimcore Extensions section for existing extensions maintained by Pimcore).
 
+## Documentation Overview
+
 The Core Framework documentation is divided into three sections that aim to guide the reader through its first use of the platform:
 
 * See the [Getting Started](#getting-started) section for an overview of the Core Framework or information about the installation process and the MVC pattern integration within Pimcore.
 * See the [Element Types](#element-types) section for details about managed elements in Pimcore and associated actions.
 * See the [Platform Topics](#platform-topics) section for documentation about all features implemented within Pimcore.
 
-## Getting Started
+### Getting Started
 * [Overview](./00_Overview/README.md) 
 * [Getting Started](./01_Getting_Started/README.md) 
 * [MVC](./02_MVC/README.md) 
 
-## Element Types
+### Element Types
 * [Documents - *Managing Web Pages*](./03_Documents/README.md) 
 * [Assets - *Media Library / Digital Asset Management*](./04_Assets/README.md) 
 * [Objects - *Custom Data Models / Entities, PIM / MDM*](./05_Objects/README.md) 
 
-## Platform Topics
+### Platform Topics
 * [Multilanguage & Localization](./06_Multi_Language_i18n/README.md) 
 * [Workflow Management](./07_Workflow_Management/README.md) 
 * [Tools & Features](./18_Tools_and_Features/README.md) 
