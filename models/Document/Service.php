@@ -206,9 +206,9 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId(), true);
+            $new->setContentMainDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -381,15 +381,15 @@ class Service extends Model\Element\Service
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
                 $editables = $document->getEditables();
                 $changedEditables = [];
-                $contentMaster = $document->getContentMasterDocument();
-                if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterEditables = $contentMaster->getEditables();
-                    foreach ($contentMasterEditables as $contentMasterEditable) {
-                        if ($contentMasterEditable instanceof IdRewriterInterface) {
-                            $editable = clone $contentMasterEditable;
+                $contentMain = $document->getContentMainDocument();
+                if ($contentMain instanceof Document\PageSnippet) {
+                    $contentMainEditables = $contentMain->getEditables();
+                    foreach ($contentMainEditables as $contentMainEditable) {
+                        if ($contentMainEditable instanceof IdRewriterInterface) {
+                            $editable = clone $contentMainEditable;
                             $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMainEditable)) {
                                 $changedEditables[] = $editable;
                             }
                         }

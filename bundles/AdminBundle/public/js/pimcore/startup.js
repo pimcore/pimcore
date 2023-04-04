@@ -371,11 +371,11 @@ Ext.onReady(function () {
         });
 
         pimcore.globalmanager.add("document_types_store", store);
-        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink"]);
+        pimcore.globalmanager.add("document_valid_types", pimcore.settings.document_valid_types);
     }
 
     //search element types
-    pimcore.globalmanager.add("document_search_types", ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"]);
+    pimcore.globalmanager.add("document_search_types", pimcore.settings.document_search_types);
     pimcore.globalmanager.add("asset_search_types", pimcore.settings.asset_search_types);
     pimcore.globalmanager.add("object_search_types", ["object", "folder", "variant"]);
 

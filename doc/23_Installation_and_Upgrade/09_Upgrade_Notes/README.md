@@ -300,8 +300,18 @@ pimcore:
                     translatable_inheritance: true
                     children_supported: true
                     only_printable_childrens: false
+                    predefined_document_types: true
 ```
 - [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
+- [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.
+  You can change it back by setting the env variable `SYMFONY_ASSETS_INSTALL` to `relative` or by adding the following to composer.json.
+
+```json
+"extra": {
+  "symfony-assets-install": "relative"
+}
+```
+
 
 ## 10.6.0
 

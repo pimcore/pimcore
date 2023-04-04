@@ -417,12 +417,12 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Multiselect $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->options = $masterDefinition->options;
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->options = $mainDefinition->options;
     }
 
     public function getOptionsProviderClass(): ?string

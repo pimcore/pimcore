@@ -423,10 +423,10 @@ class Menu extends AbstractRenderer
      * @param int|string $indent                          indentation string or
      *                                                     number of spaces
      *
-     * @return AbstractRenderer  fluent interface,
+     * @return $this  fluent interface,
      *                                                     returns self
      */
-    public function setInnerIndent(int|string $indent): AbstractRenderer
+    public function setInnerIndent(int|string $indent): static
     {
         $this->_innerIndent = $this->_getWhitespace($indent);
 

@@ -57,5 +57,6 @@ services:
     #
     # Workflows
     #
+
     Pimcore\Bundle\AdminBundle\EventListener\WorkflowManagementListener:
         public: true # can be disabled

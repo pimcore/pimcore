@@ -460,15 +460,15 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Table $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Table $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->cols = $masterDefinition->cols;
-        $this->colsFixed = $masterDefinition->colsFixed;
-        $this->rows = $masterDefinition->rows;
-        $this->rowsFixed = $masterDefinition->rowsFixed;
-        $this->data = $masterDefinition->data;
+        $this->cols = $mainDefinition->cols;
+        $this->colsFixed = $mainDefinition->colsFixed;
+        $this->rows = $mainDefinition->rows;
+        $this->rowsFixed = $mainDefinition->rowsFixed;
+        $this->data = $mainDefinition->data;
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
