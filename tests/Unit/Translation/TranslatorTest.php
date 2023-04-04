@@ -133,8 +133,8 @@ class TranslatorTest extends TestCase
         $this->assertEquals($this->translations['en']['simple_key'], $this->translator->trans('Text As Key'));
 
         //Returns Key value (no translation + no fallback)
-//        $this->translator->setLocale('fr');
-//        $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
+        //        $this->translator->setLocale('fr');
+        //        $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
     }
 
     public function testTranslateTextWithParams(): void

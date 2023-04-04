@@ -122,20 +122,14 @@ class Service extends Model\Element\Service
         return \array_merge(...$userObjects);
     }
 
-    /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
-     *
-     * @return AbstractObject|void
-     */
-    public function copyRecursive(AbstractObject $target, AbstractObject $source)
+    public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
     {
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
@@ -894,9 +888,9 @@ class Service extends Model\Element\Service
      * @param array $rewriteConfig
      * @param array $params
      *
-     * @return AbstractObject|Concrete
+     * @return AbstractObject
      */
-    public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject|Concrete
+    public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject
     {
         // rewriting elements only for snippets and pages
         if ($object instanceof Concrete) {

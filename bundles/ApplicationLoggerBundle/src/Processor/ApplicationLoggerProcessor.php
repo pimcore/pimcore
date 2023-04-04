@@ -145,5 +145,3 @@ class ApplicationLoggerProcessor
         return str_replace(PIMCORE_PROJECT_ROOT . '/', '', $filename);
     }
 }
-
-@class_alias(ApplicationLoggerProcessor::class, 'Pimcore\Log\Processor\ApplicationLoggerProcessor');
