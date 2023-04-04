@@ -38,7 +38,7 @@ final class Version20230202152342 extends AbstractMigration
         $settings = SettingsStore::get(ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE);
         $data = json_decode($settings->getData(), true);
 
-        $marketingScopes = ['analytics', 'webmaintools', 'tagmanager'];
+        $marketingScopes = ['analytics', 'webadmintoolss', 'tagmanager'];
         foreach ($marketingScopes as $scope) {
             if (isset($data[$scope]['sites']['default'])) {
                 $data[$scope]['sites'][0] = $data[$scope]['sites']['default'];
@@ -63,7 +63,7 @@ final class Version20230202152342 extends AbstractMigration
         $settings = SettingsStore::get(ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE);
         $data = json_decode($settings->getData(), true);
 
-        $marketingScopes = ['analytics', 'webmaintools', 'tagmanager'];
+        $marketingScopes = ['analytics', 'webadmintoolss', 'tagmanager'];
         foreach ($marketingScopes as $scope) {
             if (isset($data[$scope]['sites'][0])) {
                 $data[$scope]['sites']['default'] = $data[$scope]['sites'][0];
