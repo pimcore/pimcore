@@ -8,6 +8,10 @@ services:
     pimcore.templating.engine.twig:
         alias: twig
         public: true
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11'
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 

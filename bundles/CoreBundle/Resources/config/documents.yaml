@@ -30,7 +30,12 @@ services:
     # AREABRICKS
     #
 
-    pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+    pimcore.area.brick_manager:
+        alias: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" service is deprecated and will be removed in Pimcore 11'
 
     # scoped container containing only the registered area bricks
     # will be configured in areabrick pass
