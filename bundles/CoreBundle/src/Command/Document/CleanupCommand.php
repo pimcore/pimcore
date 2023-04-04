@@ -33,10 +33,9 @@ class CleanupCommand extends AbstractCommand
         'folder',
         'hardlink',
         'email',
-        'newsletter',
     ];
 
-    private const PROTECTED_DOCUMENT_TYPES = ['page', 'link', 'snippet', 'folder', 'hardlink', 'email', 'newsletter'];
+    private const PROTECTED_DOCUMENT_TYPES = ['page', 'link', 'snippet', 'folder', 'hardlink', 'email'];
 
     protected function configure(): void
     {

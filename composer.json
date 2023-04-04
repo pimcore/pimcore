@@ -189,7 +189,8 @@
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
       "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
+      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
+      "Pimcore\\Bundle\\NewsletterBundle\\": "bundles/NewsletterBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

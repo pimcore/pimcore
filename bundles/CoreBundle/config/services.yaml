@@ -86,22 +86,6 @@ services:
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
 
-    # Newsletter Adapter
-    pimcore.document.newsletter.factory.default:
-      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-      arguments:
-        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
-
-    pimcore.document.newsletter.factory.csv:
-      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-      arguments:
-        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
-
-    pimcore.newsletter.address_source_adapter.factories:
-        public: true
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
-
     # DataObject Consent Service
     Pimcore\DataObject\Consent\Service:
         public: true

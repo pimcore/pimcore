@@ -44,9 +44,9 @@ class Mail extends Email
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email|Model\Document\Newsletter|null
+     * @var Model\Document\Email|null
      */
-    private Model\Document\Newsletter|Model\Document\Email|null $document = null;
+    private Model\Document\Email|null $document = null;
 
     /**
      * Contains the email document Id
@@ -430,7 +430,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
+        if ($document instanceof Model\Document\Email) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
             if ($fromArray) {
@@ -757,7 +757,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
+        if ($document instanceof Model\Document\Email || $document === null) {
             $this->document = $document;
             $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
@@ -771,9 +771,9 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email|Model\Document\Newsletter|null
+     * @return Model\Document\Email|null
      */
-    public function getDocument(): Model\Document\Email|Model\Document\Newsletter|null
+    public function getDocument(): Model\Document\Email|null
     {
         return $this->document;
     }

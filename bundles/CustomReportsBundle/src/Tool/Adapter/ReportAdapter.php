@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
-use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
-use Pimcore\Document\Newsletter\SendingParamContainer;
+use Pimcore\Bundle\NewsletterBundle\Document\Newsletter\AddressSourceAdapterInterface;
+use Pimcore\Bundle\NewsletterBundle\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\DataObject\Listing;
 
 /**

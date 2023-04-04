@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.document.newsletters.addressSourceAdapters.report");
+pimcore.registerNS("pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters.report");
 /**
  * @private
  */
-pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
+pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters.report = Class.create({
 
     initialize: function(document, data) {
         this.document = document;
@@ -54,7 +54,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                             autoDestroy: true,
                             proxy: {
                                 type: 'ajax',
-                                url: Routing.generate('pimcore_admin_document_newsletter_getavailablereports', {task: 'list'}),
+                                url: Routing.generate('pimcore_bundle_newsletter_document_newsletter_getavailablereports', {task: 'list'}),
                                 reader: {
                                     type: 'json',
                                     rootProperty: 'data'
@@ -86,7 +86,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                             autoDestroy: true,
                             proxy: {
                                 type: 'ajax',
-                                url: Routing.generate('pimcore_admin_document_newsletter_getavailablereports', {task: 'fieldNames'}),
+                                url: Routing.generate('pimcore_bundle_newsletter_document_newsletter_getavailablereports', {task: 'fieldNames'}),
                                 reader: {
                                     type: 'json',
                                     rootProperty: 'data'

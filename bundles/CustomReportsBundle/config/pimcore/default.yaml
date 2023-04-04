@@ -1,7 +1,6 @@
-pimcore:
-    newsletter:
+pimcore_newsletter:
         source_adapters:
-            reportAdapter: pimcore.document.newsletter.factory.report
+            reportAdapter: pimcore_newsletter.document.newsletter.factory.report
 
 pimcore_admin:
     user:

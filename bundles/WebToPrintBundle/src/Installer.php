@@ -38,7 +38,6 @@ class Installer extends SettingsStoreAwareInstaller
         'folder',
         'hardlink',
         'email',
-        'newsletter',
     ];
 
     protected const BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES = [

@@ -28,7 +28,7 @@ services:
         public: true
         tags: [ 'container.service_locator' ]
 
-    pimcore.document.newsletter.factory.report:
+    pimcore_newsletter.document.newsletter.factory.report:
         class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\ReportAddressSourceAdapterFactory
         arguments:
             - '@pimcore.custom_report.adapter.factories'

@@ -270,6 +270,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 // check for a docType
                 $docType = Document\DocType::getById($request->get('docTypeId', ''));
+
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
@@ -330,16 +331,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         break;
                     default:
-                        $classname = '\\Pimcore\\Model\\Document\\' . ucfirst($request->get('type'));
-
-                        // this is the fallback for custom document types using prefixes
-                        // so we need to check if the class exists first
-                        if (!Tool::classExists($classname)) {
-                            $oldStyleClass = '\\Document_' . ucfirst($request->get('type'));
-                            if (Tool::classExists($oldStyleClass)) {
-                                $classname = $oldStyleClass;
-                            }
-                        }
+                        $classname = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));
 
                         if (Tool::classExists($classname)) {
                             $document = $classname::create($parentDocument->getId(), $createValues);

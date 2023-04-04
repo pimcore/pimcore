@@ -1,4 +1,3 @@
-
 SET NAMES utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
@@ -74,7 +73,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder','hardlink','email','newsletter') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
@@ -116,24 +115,6 @@ CREATE TABLE `documents_email` (
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_email_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `documents_newsletter`;
-CREATE TABLE `documents_newsletter` (
-  `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `controller` varchar(500) DEFAULT NULL,
-  `template` varchar(255) DEFAULT NULL,
-  `from` varchar(255) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
-  `trackingParameterSource` varchar(255) DEFAULT NULL,
-  `trackingParameterMedium` varchar(255) DEFAULT NULL,
-  `trackingParameterName` varchar(255) DEFAULT NULL,
-  `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
-  `sendingMode` varchar(20) DEFAULT NULL,
-  `plaintext` LONGTEXT NULL DEFAULT NULL,
-  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_documents_newsletter_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_hardlink`;
