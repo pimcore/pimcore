@@ -10,14 +10,4 @@ We use GitHub issues exclusively to track all bugs and features.
 * Please be patient as not all items will be tested immediately - remember, Pimcore is open source and free of charge.
 * Occasionally we'll close issues if they appear stale or are too vague - please don't take this personally!
   Please feel free to re-open issues we've closed if there's something we've missed and they still need to be addressed.
-
-## Contributing Pull Requests
-PR's are even better than issues.
-We gladly accept community pull requests.
-There are a few necessary steps before we can accept a pull request:
-
-* [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. main(e.g. 1.x) for features and improvements or latest maintenance branch for bug fixes (e.g. 1.0)
-* Code! Follow the coding standards defined [here](https://github.com/pimcore/web-to-print-bundle/blob/master/php_cs.dist).
-* [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our `master` branch.
-
+  
