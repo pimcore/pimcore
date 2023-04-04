@@ -101,16 +101,18 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->loadNames();
+
         foreach ($list as $brickName) {
-            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data' . ucfirst($brickName);
+            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickName);
 
             $classes[] = $className;
         }
 
-        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-        $files = glob($fieldCollectionFolder . '/*.php');
-        foreach ($files as $file) {
-            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . basename($file, '.php');
+        $list = new DataObject\Fieldcollection\Definition\Listing();
+        $list = $list->loadNames();
+
+        foreach ($list as $fcName) {
+            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fcName);
 
             $classes[] = $className;
         }

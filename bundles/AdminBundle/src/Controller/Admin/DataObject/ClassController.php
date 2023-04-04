@@ -794,10 +794,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($request->get('task') == 'add') {
                 // check for existing fieldcollection with same name with different lower/upper cases
                 $list = new DataObject\Fieldcollection\Definition\Listing();
-                $list = $list->load();
+                $list = $list->loadNames();
 
-                foreach ($list as $item) {
-                    if (strtolower($key) === strtolower($item->getKey())) {
+                foreach ($list as $fcName) {
+                    if (strtolower($key) === strtolower($fcName)) {
                         throw new \Exception('FieldCollection with the same name already exists (lower/upper cases may be different)');
                     }
                 }

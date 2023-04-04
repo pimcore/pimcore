@@ -115,9 +115,9 @@ final class Version20211018104331 extends AbstractMigration
         }
 
         $fieldCollectionList = new DataObject\Fieldcollection\Definition\Listing();
-        foreach ($fieldCollectionList->load() as $fieldCollectionDefinition) {
-            $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_'.$class->getId()] = 'o_id';
-            $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
+        foreach ($fieldCollectionList->loadNames() as $fieldCollectionName) {
+            $foreignKeys['object_collection_'.$fieldCollectionName.'_'.$class->getId()] = 'o_id';
+            $foreignKeys['object_collection_'.$fieldCollectionName.'_localized_'.$class->getId()] = 'ooo_id';
         }
 
         return $foreignKeys;
