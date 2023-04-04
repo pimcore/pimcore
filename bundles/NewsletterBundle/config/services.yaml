@@ -23,6 +23,12 @@ services:
             $bundle: "@=service('kernel').getBundle('PimcoreNewsletterBundle')"
 
     #
+    # TWIG TEMPLATING
+    #
+    Pimcore\Bundle\NewsletterBundle\Twig\Extension\DocumentHelperExtensions:
+        tags: [ 'twig.extension' ]
+
+    #
     # NEWSLETTER ADAPTERS
     #
     pimcore_newsletter.document.newsletter.factory.default:

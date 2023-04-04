@@ -297,7 +297,7 @@ class Newsletter
 
     /**
      * @param DataObject\Concrete $object
-     * @param Document $mailDocument
+     * @param Email $mailDocument
      * @param array $params
      *
      * @throws Exception
