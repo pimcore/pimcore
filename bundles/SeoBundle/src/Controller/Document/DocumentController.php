@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;

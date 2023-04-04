@@ -16,25 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
-use Pimcore\Workflow\Place;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @internal
@@ -45,9 +40,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
     public function __construct(
         private Manager $workflowManager,
-        private Place\StatusInfo $placeStatusInfo,
-        private RequestStack $requestStack,
-        private ActionsButtonService $actionsButtonService
     ) {
     }
 
@@ -64,10 +56,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
             AssetEvents::POST_DELETE => 'onElementPostDelete',
-
-            AdminEvents::OBJECT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
-            AdminEvents::ASSET_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
-            AdminEvents::DOCUMENT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
         ];
     }
 
@@ -112,98 +100,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
         foreach ($list->load() as $item) {
             $item->delete();
         }
-    }
-
-    /**
-     * Fired before information is sent back to the admin UI about an element
-     *
-     * @param GenericEvent $e
-     *
-     * @throws \Exception
-     */
-    public function onAdminElementGetPreSendData(GenericEvent $e): void
-    {
-        $element = self::extractElementFromEvent($e);
-        $data = $e->getArgument('data');
-
-        //create a new namespace for WorkflowManagement
-        //set some defaults
-        $data['workflowManagement'] = [
-            'hasWorkflowManagement' => false,
-        ];
-
-        foreach ($this->workflowManager->getAllWorkflows() as $workflowName) {
-            $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
-            $workflowConfig = $this->workflowManager->getWorkflowConfig($workflowName);
-
-            if (empty($workflow)) {
-                continue;
-            }
-
-            $data['workflowManagement']['hasWorkflowManagement'] = true;
-            $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
-
-            // Fix: places stored as empty string ("") considered uninitialized prior to Symfony 4.4.8
-            $this->workflowManager->ensureInitialPlace($workflowName, $element);
-
-            $allowedTransitions = $this->actionsButtonService->getAllowedTransitions($workflow, $element);
-            $globalActions = $this->actionsButtonService->getGlobalActions($workflow, $element);
-
-            $data['workflowManagement']['workflows'][] = [
-                'name' => $workflow->getName(),
-                'label' => $workflowConfig->getLabel(),
-                'allowedTransitions' => $allowedTransitions,
-                'globalActions' => $globalActions,
-            ];
-
-            $marking = $workflow->getMarking($element);
-
-            if (!count($marking->getPlaces())) {
-                continue;
-            }
-
-            $permissionsRespected = false;
-            foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
-                if (!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
-                    $data['userPermissions'] = array_merge(
-                        (array)$data['userPermissions'],
-                        $placeConfig->getUserPermissions($workflow, $element)
-                    );
-
-                    if ($element instanceof ConcreteObject) {
-                        $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
-                        $hasSelectedCustomLayout = $this->requestStack->getMainRequest(
-                        ) && $this->requestStack->getMainRequest()->query->has(
-                            'layoutId'
-                        ) && $this->requestStack->getMainRequest()->query->get('layoutId') !== '';
-
-                        if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
-                            //load the new layout into the object container
-                            $validLayouts = DataObject\Service::getValidLayouts($element);
-
-                            // check user permissions again
-                            if (isset($validLayouts[$workflowLayoutId])) {
-                                $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
-                                $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                                DataObject\Service::enrichLayoutDefinition(
-                                    $customLayoutDefinition,
-                                    $e->getArgument('object')
-                                );
-                                $data['layout'] = $customLayoutDefinition;
-                                $data['currentLayoutId'] = $workflowLayoutId;
-                            }
-                        }
-                    }
-                    $permissionsRespected = true;
-                }
-            }
-        }
-
-        if ($data['workflowManagement']['hasWorkflowManagement']) {
-            $data['workflowManagement']['statusInfo'] = $this->placeStatusInfo->getToolbarHtml($element);
-        }
-
-        $e->setArgument('data', $data);
     }
 
     private function enrichNotes(DataObject\AbstractObject $object, array $notes): array

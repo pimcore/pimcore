@@ -470,7 +470,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         unset($userData['twoFactorAuthentication']['secret']);
         $userData['hasImage'] = $user->hasImage();
 
-        $availablePerspectives = \Pimcore\Perspective\Config::getAvailablePerspectives(null);
+        $availablePerspectives = \Pimcore\Bundle\AdminBundle\Perspective\Config::getAvailablePerspectives(null);
 
         return $this->adminJson([
             'success' => true,
@@ -751,7 +751,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $availableUserPermissions = $availableUserPermissionsList->load();
         $availableUserPermissions = array_map($replaceFn, $availableUserPermissions);
 
-        $availablePerspectives = \Pimcore\Perspective\Config::getAvailablePerspectives(null);
+        $availablePerspectives = \Pimcore\Bundle\AdminBundle\Perspective\Config::getAvailablePerspectives(null);
 
         return $this->adminJson([
             'success' => true,

@@ -250,12 +250,12 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\BooleanSelect $masterDefinition
+     * @param DataObject\ClassDefinition\Data\BooleanSelect $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->options = $masterDefinition->options;
-        $this->width = $masterDefinition->width;
+        $this->options = $mainDefinition->options;
+        $this->width = $mainDefinition->width;
     }
 
     public function getYesLabel(): string

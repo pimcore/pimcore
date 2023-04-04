@@ -274,5 +274,3 @@ class LogController extends AdminController implements KernelControllerEventInte
         return $response;
     }
 }
-
-@class_alias(LogController::class, 'Pimcore\Bundle\AdminBundle\Controller\Admin\ApplicationLoggerDb');

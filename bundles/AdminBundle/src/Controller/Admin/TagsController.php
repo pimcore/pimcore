@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;

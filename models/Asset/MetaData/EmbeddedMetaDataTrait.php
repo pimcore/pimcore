@@ -313,7 +313,7 @@ trait EmbeddedMetaDataTrait
                     '2#153' => 'AudioDuration',
                     '2#154' => 'AudioOutcue',
                     '2#184' => 'JobID',
-                    '2#185' => 'MasterDocumentID',
+                    '2#185' => 'MainDocumentID',
                     '2#186' => 'ShortDocumentID',
                     '2#187' => 'UniqueDocumentID',
                     '2#188' => 'OwnerID',

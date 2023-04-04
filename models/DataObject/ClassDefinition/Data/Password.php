@@ -21,9 +21,11 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use CheckPasswordLengthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
@@ -348,13 +350,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->algorithm = $masterDefinition->algorithm;
-        $this->salt = $masterDefinition->salt;
-        $this->saltlocation = $masterDefinition->saltlocation;
+        $this->algorithm = $mainDefinition->algorithm;
+        $this->salt = $mainDefinition->salt;
+        $this->saltlocation = $mainDefinition->saltlocation;
     }
 
     public function getParameterTypeDeclaration(): ?string
@@ -386,6 +388,10 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
+        if (is_string($data) && $this->isPasswordTooLong($data)) {
+            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is too long');
+        }
+
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }

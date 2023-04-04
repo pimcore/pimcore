@@ -453,3 +453,5 @@ esi:remove
 
 Symfony has a built-in support for ESI. [Read Here](https://symfony.com/doc/current/http_cache/esi.html).
 Read more about [Varnish](https://www.varnish-cache.org/).
+
+> Note: ESI tags are not compatible with the [Static Page Generator](../../19_Development_Tools_and_Details/20_Static_Page_Generator.md).

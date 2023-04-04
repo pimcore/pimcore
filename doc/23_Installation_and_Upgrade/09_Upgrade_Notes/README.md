@@ -3,6 +3,8 @@
 ## 11.0.0
 
 - [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
+- [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+- [Storage config] Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 - [JS Libraries] Packaged some JS libraries with encore
 - [PHP Options] Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
 - [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
@@ -271,6 +273,8 @@ pimcore:
   - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore.
   - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
 - [Security] Enabled Content Security Policy by default.
+- [Admin] Removed deprecated Admin Event classes: `Pimcore\Event\Admin\*`, `Pimcore\Event\AdminEvents`, `Pimcore\Event\Model\*`.
+- [Events] Report Event `pimcore.admin.reports.save_settings` has been renamed to `pimcore.reports.save_settings`.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
@@ -296,7 +300,19 @@ pimcore:
                     translatable_inheritance: true
                     children_supported: true
                     only_printable_childrens: false
+                    predefined_document_types: true
 ```
+- [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
+- [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.
+  You can change it back by setting the env variable `SYMFONY_ASSETS_INSTALL` to `relative` or by adding the following to composer.json.
+
+```json
+"extra": {
+  "symfony-assets-install": "relative"
+}
+```
+
+
 ## 10.6.0
 
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
@@ -350,6 +366,7 @@ pimcore:
   - `Pimcore\Event\Model\DocumentDeleteInfoEvent`
   - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
   - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
+- [Extension Manager] Trait `StateHelperTrait` is deprecated and will be removed in Pimcore 11.
 
 ## 10.5.13
 

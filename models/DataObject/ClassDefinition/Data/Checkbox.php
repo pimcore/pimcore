@@ -168,11 +168,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Checkbox $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Checkbox $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->defaultValue = $masterDefinition->defaultValue;
+        $this->defaultValue = $mainDefinition->defaultValue;
     }
 
     /**
