@@ -60,10 +60,13 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if (this.isInCustomLayoutEditor()) {
+            return [];
+        }
 
-        var defaultValueData = [["empty", t("null")], [0, t("false")], [1, t("true")]];
+        const defaultValueData = [["empty", t("null")], [0, t("false")], [1, t("true")]];
 
-        var defaultField = new Ext.form.ComboBox({
+        const defaultField = new Ext.form.ComboBox({
             mode: 'local',
             autoSelect: true,
             forceSelection: true,
@@ -80,8 +83,7 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
             }),
             triggerAction: 'all',
             valueField: 'id',
-            displayField: 'label',
-            disabled: this.isInCustomLayoutEditor()
+            displayField: 'label'
         });
 
         return [

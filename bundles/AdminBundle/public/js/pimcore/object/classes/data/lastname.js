@@ -77,7 +77,7 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        var specificItems = [
+        const specificItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -91,7 +91,7 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
             }
         ];
 
-        if (!inEncryptedField) {
+        if (!inEncryptedField && !this.isInCustomLayoutEditor()) {
             specificItems.push(
                 {
                     xtype: "numberfield",

@@ -28,9 +28,12 @@ class PimcoreUsers implements DataProviderInterface
 {
     protected TokenStorageUserResolver $userResolver;
 
-    public function __construct(TokenStorageUserResolver $userResolver)
+    private string $logsDir;
+
+    public function __construct(TokenStorageUserResolver $userResolver, string $logsDir)
     {
         $this->userResolver = $userResolver;
+        $this->logsDir = $logsDir;
     }
 
     /**
@@ -152,10 +155,10 @@ class PimcoreUsers implements DataProviderInterface
 
     protected function getUsageLogDataForUser(User\AbstractUser $user): array
     {
-        $pattern = ' ' . $user->getId() . '|';
+        $pattern = ' [' . $user->getId() . ',';
         $matches = [];
 
-        $handle = @fopen(PIMCORE_LOG_DIRECTORY . '/usagelog.log', 'r');
+        $handle = @fopen($this->logsDir . '/usage.log', 'r');
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
@@ -166,7 +169,7 @@ class PimcoreUsers implements DataProviderInterface
             fclose($handle);
         }
 
-        $archiveFiles = glob(PIMCORE_LOG_DIRECTORY . '/usagelog-archive-*.log.gz');
+        $archiveFiles = glob($this->logsDir . '/usage-archive-*.log.gz');
         foreach ($archiveFiles as $archiveFile) {
             $handle = @gzopen($archiveFile, 'r');
             if ($handle) {

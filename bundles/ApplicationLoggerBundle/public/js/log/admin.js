@@ -180,7 +180,10 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     dataIndex: 'timestamp',
                     width: 150,
                     align: 'left',
-                    sortable: true
+                    sortable: true,
+                    renderer: function (d) {
+                        return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
+                    }
                 },{
                     text: t("log_pid"),
                     dataIndex: 'pid',
@@ -249,7 +252,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
 
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
-                        new pimcore.log.detailwindow(this.store.getAt(rowIndex).data);
+                        new pimcore.bundle.applicationlogger.log.detailwindow(this.store.getAt(rowIndex).data);
                     }.bind(this)
                 },
 
@@ -261,24 +264,28 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
             this.fromDate = new Ext.form.DateField({
                 name: 'from_date',
                 width: 130,
+                invalidText: 'Enter date as MM/DD/YYYY',
                 xtype: 'datefield'
             });
 
             this.fromTime = new Ext.form.TimeField({
                 name: 'from_time',
                 width: 100,
+                invalidText: 'Enter time as HH:MM AM/PM',
                 xtype: 'timefield'
             });
 
             this.toDate = new Ext.form.DateField({
                 name: 'to_date',
                 width: 130,
+                invalidText: 'Enter date as MM/DD/YYYY',
                 xtype: 'datefield'
             });
 
             this.toTime = new Ext.form.TimeField({
                 name: 'to_time',
                 width: 100,
+                invalidText: 'Enter time as HH:MM AM/PM',
                 xtype: 'timefield'
             });
 

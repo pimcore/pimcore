@@ -38,7 +38,8 @@ pimcore:
     documents:
         type_definitions:
             map:
-                book: \App\Model\Document\Book
+                book: 
+                    class: \App\Model\Document\Book
 ```
 
 ### Do not use to override a class

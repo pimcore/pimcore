@@ -22,7 +22,6 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -132,7 +131,17 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
-        $this->addWriteTargetNodes($rootNode);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
+            'image_thumbnails',
+            'video_thumbnails',
+            'document_types',
+            'predefined_properties',
+            'predefined_asset_metadata',
+            'perspectives',
+            'custom_views',
+            'object_custom_layouts',
+        ]);
+        $this->addChromiumNode($rootNode);
 
         return $treeBuilder;
     }
@@ -618,6 +627,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
+        $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
     }
 
     /**
@@ -825,10 +835,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('valid_tables')
-                    ->info('list of supported documents_* tables')
-                    ->scalarPrototype()->end()
-                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -869,7 +875,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        $this->addClassResolverNode($documentsNode, 'type_definitions');
+        $this->addDocumentDefinition($documentsNode, 'type_definitions');
     }
 
     /**
@@ -894,7 +900,10 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addClassResolverNode(ArrayNodeDefinition $node, string $name): void
+    /**
+     * Add implementation node config with array (map[class,matching], prefixes)
+     */
+    private function addImplementationNodeFromArrayDefinition(ArrayNodeDefinition $node, string $name): void
     {
         $node
             ->children()
@@ -902,12 +911,56 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('map')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
+                            ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('class')->end()
+                                ->arrayNode('matching')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+        ->end();
+    }
+
+    private function addDocumentDefinition(ArrayNodeDefinition $node, string $name): void
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('class')->end()
+                                ->booleanNode('translatable')
+                                    ->defaultTrue()
+                                ->end()
+                                ->scalarNode('valid_table')->defaultNull()->end()
+                                ->booleanNode('direct_route')
+                                    ->defaultFalse()
+                                ->end()
+                                ->booleanNode('translatable_inheritance')
+                                    ->defaultTrue()
+                                ->end()
+                                ->booleanNode('children_supported')
+                                    ->defaultTrue()
+                                ->end()
+                                ->booleanNode('only_printable_childrens')
+                                    ->defaultFalse()
+                                ->end()
+                                ->booleanNode('predefined_document_types')
+                                    ->defaultFalse()
+                                ->end()
+                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     private function addRoutingNode(ArrayNodeDefinition $rootNode): void
@@ -917,9 +970,6 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('direct_route_document_types')
-                            ->scalarPrototype()->end()
-                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -1886,58 +1936,33 @@ final class Configuration implements ConfigurationInterface
         ->end();
     }
 
-    private function addWriteTargetNodes(ArrayNodeDefinition $rootNode): void
+    private function addGotenbergNode(ArrayNodeDefinition $rootNode): void
     {
-        $storageNode = $rootNode
+        $rootNode
             ->children()
-            ->arrayNode('config_location')
-            ->addDefaultsIfNotSet()
-            ->children();
-
-        $this->addStorageNode($storageNode, 'image_thumbnails', '/var/config/image-thumbnails');
-        $this->addStorageNode($storageNode, 'custom_reports', '/var/config/custom_reports');
-        $this->addStorageNode($storageNode, 'video_thumbnails', '/var/config/video-thumbnails');
-        $this->addStorageNode($storageNode, 'document_types', '/var/config/document_types');
-        $this->addStorageNode($storageNode, 'web_to_print', '/var/config/web_to_print');
-        $this->addStorageNode($storageNode, 'predefined_properties', '/var/config/predefined_properties');
-        $this->addStorageNode($storageNode, 'predefined_asset_metadata', '/var/config/predefined_asset_metadata');
-        $this->addStorageNode($storageNode, 'staticroutes', '/var/config/staticroutes');
-        $this->addStorageNode($storageNode, 'perspectives', '/var/config/perspectives');
-        $this->addStorageNode($storageNode, 'custom_views', '/var/config/custom_views');
-        $this->addStorageNode($storageNode, 'data_hub', '/var/config/data_hub');
-        $this->addStorageNode($storageNode, 'object_custom_layouts', '/var/config/object_custom_layouts');
-    }
-
-    private function addStorageNode(NodeBuilder $node, string $name, string $folder): void
-    {
-        $node->
-            arrayNode($name)
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->enumNode('target')
-                        ->values(['symfony-config', 'settings-store'])
-                        ->defaultValue('symfony-config')
-                    ->end()
-                    ->arrayNode('options')
-                    ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-                        ->variablePrototype()
+                ->arrayNode('gotenberg')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->defaultValue('gotenberg:3000')
                         ->end()
                     ->end()
                 ->end()
             ->end();
     }
 
-    private function addGotenbergNode(ArrayNodeDefinition $rootNode): void
+    private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
-            ->arrayNode('gotenberg')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('gotenberg:3000')
+                ->arrayNode('chromium')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('uri')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
     }
 }

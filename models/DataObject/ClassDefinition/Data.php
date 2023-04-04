@@ -45,7 +45,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public array|string|null $permissions = null;
 
-    public string $fieldtype;
+    public string $fieldtype = '';
 
     public bool $relationType = false;
 

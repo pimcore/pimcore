@@ -359,9 +359,7 @@ pimcore.document.tree = Class.create({
         } else {
             var pasteMenu = [];
             var pasteInheritanceMenu = [];
-            var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
-                || record.data.type == "link" || record.data.type == "hardlink");
-
+            var childSupportedDocument = pimcore.helpers.documentTypeHasSpecificRole(record.data.type, "children_supported");
             if (childSupportedDocument && record.data.permissions.create) {
 
 
@@ -424,7 +422,7 @@ pimcore.document.tree = Class.create({
                     }
 
                     //don't add pages below print containers - makes no sense
-                    if (addDocuments && record.data.type != "printcontainer") {
+                    if (addDocuments && !pimcore.helpers.documentTypeHasSpecificRole(record.data.type, "only_printable_childrens")) {
                         menu.add(new Ext.menu.Item({
                             text: t('add_page'),
                             iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
@@ -443,7 +441,7 @@ pimcore.document.tree = Class.create({
                     }
 
                     //don't add emails, newsletters and links below print containers - makes no sense
-                    if (addDocuments && record.data.type != "printcontainer") {
+                    if (addDocuments && !pimcore.helpers.documentTypeHasSpecificRole(record.data.type, "only_printable_childrens")) {
                         if (addLink) {
                             menu.add(new Ext.menu.Item({
                                 text: t('add_link'),

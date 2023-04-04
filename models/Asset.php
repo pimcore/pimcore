@@ -71,6 +71,9 @@ class Asset extends Element\AbstractElement
      * @internal
      *
      * @var string[]
+     *
+     * @deprecated use getTypes() instead.
+     *
      */
     public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
@@ -164,7 +167,12 @@ class Asset extends Element\AbstractElement
 
     public static function getTypes(): array
     {
-        return self::$types;
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        if (isset($assetsConfig['type_definitions']['map']) && is_array($assetsConfig['type_definitions']['map'])) {
+            return array_keys($assetsConfig['type_definitions']['map']);
+        }
+
+        return [];
     }
 
     /**
@@ -242,7 +250,8 @@ class Asset extends Element\AbstractElement
 
             try {
                 $asset->getDao()->getById($id);
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
+
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
                 /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
@@ -257,7 +266,7 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 Cache::save($asset, $cacheKey);
-            } catch (NotFoundException $e) {
+            } catch (NotFoundException|UnsupportedException $e) {
                 return null;
             }
         } else {
@@ -280,7 +289,7 @@ class Asset extends Element\AbstractElement
     {
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
-        $class = Asset::class;
+        $type = 'unknown';
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
@@ -328,14 +337,15 @@ class Asset extends Element\AbstractElement
                 self::checkMaxPixels($mimeTypeGuessData, $data);
             }
 
-            $class = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
             if (array_key_exists('type', $data)) {
                 unset($data['type']);
             }
         }
 
+        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
         /** @var Asset $asset */
-        $asset = self::getModelFactory()->build($class);
+        $asset = self::getModelFactory()->build($className);
         $asset->setParentId($parentId);
         self::checkCreateData($data);
         $asset->setValues($data);
@@ -410,19 +420,10 @@ class Asset extends Element\AbstractElement
         }
 
         $type = null;
+        $assetTypes = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['type_definitions']['map'];
 
-        $mappings = [
-            'unknown' => ["/\.stp$/"],
-            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
-            'text' => ['/text\//', '/xml$/', '/\.json$/'],
-            'audio' => ['/audio/'],
-            'video' => ['/video/'],
-            'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
-            'archive' => ['/zip/', '/tar/'],
-        ];
-
-        foreach ($mappings as $assetType => $patterns) {
-            foreach ($patterns as $pattern) {
+        foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
+            foreach ($assetTypeConfiguration['matching'] as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
 
@@ -708,7 +709,8 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }

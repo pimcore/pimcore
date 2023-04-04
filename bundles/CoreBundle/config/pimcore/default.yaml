@@ -13,8 +13,6 @@ framework:
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    web_link:
-        enabled: true
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
@@ -54,6 +52,11 @@ framework:
         buses:
             messenger.bus.pimcore-core:
         reset_on_message: true
+    rate_limiter:
+        reset_password:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '5 minutes'
 
 # Twig Configuration
 twig:
@@ -86,6 +89,12 @@ doctrine:
 # Monolog Configuration
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
+    handlers:
+        usage:
+            type: stream
+            path:  "%kernel.logs_dir%/redirect.log"
+            level: debug
+            channels: ['redirect']
 
 # CMF routing
 cmf_routing:
@@ -116,6 +125,31 @@ pimcore:
                         object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
                         select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                image:
+                    class: \Pimcore\Model\Asset\Image
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                archive:
+                    class: \Pimcore\Model\Asset\Archive
+                    matching: ['/zip/', '/tar/']
+                audio:
+                    class: \Pimcore\Model\Asset\Audio
+                    matching: ['/audio/']
+                document:
+                    class: \Pimcore\Model\Asset\Document
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                folder:
+                    class: \Pimcore\Model\Asset\Folder
+                text:
+                   class: \Pimcore\Model\Asset\Text
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                video:
+                   class: \Pimcore\Model\Asset\Video
+                   matching: [ "/video/" ]
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
@@ -188,21 +222,47 @@ pimcore:
     documents:
         type_definitions:
             map:
-                folder: \Pimcore\Model\Document\Folder
-                page: \Pimcore\Model\Document\Page
-                snippet: \Pimcore\Model\Document\Snippet
-                link: \Pimcore\Model\Document\Link
-                hardlink: \Pimcore\Model\Document\Hardlink
-                email: \Pimcore\Model\Document\Email
-                newsletter: \Pimcore\Model\Document\Newsletter
-
+                folder:
+                    class: \Pimcore\Model\Document\Folder
+                    translatable: false
+                    translatable_inheritance: true
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    valid_table: 'page'
+                    direct_route: true
+                    predefined_document_types: true
+                snippet:
+                    class: \Pimcore\Model\Document\Snippet
+                    valid_table: 'snippet'
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+                link:
+                    class: \Pimcore\Model\Document\Link
+                    translatable: false
+                    valid_table: 'link'
+                hardlink:
+                    class: \Pimcore\Model\Document\Hardlink
+                    translatable: false
+                    valid_table: 'hardlink'
+                email:
+                    class: \Pimcore\Model\Document\Email
+                    valid_table: 'email'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+                newsletter:
+                    class: \Pimcore\Model\Document\Newsletter
+                    translatable: false
+                    valid_table: 'newsletter'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
-
-    routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:

@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -32,20 +31,15 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = \Pimcore::getContainer()->getParameter('pimcore_static_routes.config_location');
         $definitions = \Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
 
-        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-            $config,
-            self::CONFIG_KEY,
-            'PIMCORE_CONFIG_STORAGE_DIR_TARGET_STATICROUTES',
-            'PIMCORE_WRITE_TARGET_TARGET_STATICROUTES'
-        );
+        $storageConfig = $config[self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_staticroutes',
-            'storageDirectory' => $storageConfig,
+            'storageConfig' => $storageConfig,
         ]);
     }
 

@@ -502,6 +502,7 @@ CREATE TABLE `users` (
   `docTypes` text DEFAULT NULL,
   `classes` text DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
+  `provider` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,

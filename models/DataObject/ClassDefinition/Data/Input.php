@@ -226,7 +226,19 @@ class Input extends Data implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
-            if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
+            $throwException = false;
+            if (in_array('g', $this->getRegexFlags())) {
+                $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
+                if (!preg_match_all('#' . $this->getRegex() . '#' . $flags, $data)) {
+                    $throwException = true;
+                }
+            } else {
+                if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
+                    $throwException = true;
+                }
+            }
+
+            if ($throwException) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
             }
         }

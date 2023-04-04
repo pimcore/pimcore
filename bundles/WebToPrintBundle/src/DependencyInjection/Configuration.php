@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -60,8 +61,13 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('pdfreactorLicence')->end()
                 ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
                 ->booleanNode('pdfreactorEnableDebugMode')->end()
-                ->scalarNode('headlessChromeSettings')->end()
+                ->scalarNode('chromiumHostUrl')->end()
+                ->scalarNode('chromiumSettings')->end()
+                ->scalarNode('gotenbergHostUrl')->end()
+                ->scalarNode('gotenbergSettings')->end()
             ->end();
+
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['web_to_print']);
 
         return $treeBuilder;
     }

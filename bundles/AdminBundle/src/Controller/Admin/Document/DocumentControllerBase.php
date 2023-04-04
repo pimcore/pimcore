@@ -19,10 +19,10 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -157,6 +157,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         if ($request->get('settings')) {
             if ($document->isAllowed('settings')) {
                 $settings = $this->decodeJson($request->get('settings'));
+
+                if (array_key_exists('prettyUrl', $settings)) {
+                    $settings['prettyUrl'] = htmlspecialchars($settings['prettyUrl']);
+                }
+
                 $document->setValues($settings);
             }
         }

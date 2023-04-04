@@ -65,6 +65,10 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if(this.isInCustomLayoutEditor()) {
+            return [];
+        }
+
         var specificItems = [];
 
         var defaultValue = new Ext.form.Hidden({

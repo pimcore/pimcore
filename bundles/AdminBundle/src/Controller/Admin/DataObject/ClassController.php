@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -468,6 +468,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
             $values['name'] = $this->correctClassname($values['name']);
             $class->rename($values['name']);
+        }
+
+        if ($values['compositeIndices']) {
+            foreach ($values['compositeIndices'] as $index => $compositeIndex) {
+                if ($compositeIndex['index_key'] !== ($sanitizedKey = preg_replace('/[^a-za-z0-9_\-+]/', '', $compositeIndex['index_key']))) {
+                    $values['compositeIndices'][$index]['index_key'] = $sanitizedKey;
+                }
+            }
         }
 
         unset($values['creationDate']);

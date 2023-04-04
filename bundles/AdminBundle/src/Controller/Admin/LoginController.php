@@ -19,13 +19,13 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\Login\LoginRedirectEvent;
+use Pimcore\Bundle\AdminBundle\Event\Login\LostPasswordEvent;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
-use Pimcore\Event\Admin\Login\LoginRedirectEvent;
-use Pimcore\Event\Admin\Login\LostPasswordEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -114,6 +115,9 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         $params['csrfTokenRefreshInterval'] = ((int)$session_gc_maxlifetime - 60) * 1000;
 
+        if ($request->get('too_many_attempts')) {
+            $params['error'] = $request->get('too_many_attempts');
+        }
         if ($request->get('auth_failed')) {
             $params['error'] = 'error_auth_failed';
         }
@@ -185,31 +189,36 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher): Response
+    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher, RateLimiterFactory $resetPasswordLimiter): Response
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
 
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
             $user = User::getByName($username);
-
-            if ($user instanceof User) {
-                if (!$user->isActive()) {
-                    $error = 'user_inactive';
-                }
-
-                if (!$user->getEmail()) {
-                    $error = 'user_no_email_address';
-                }
-
-                if (!$user->getPassword()) {
-                    $error = 'user_no_password';
-                }
-            } else {
+            if (!$user instanceof User) {
                 $error = 'user_unknown';
             }
 
-            if (!$error && $user instanceof User) {
+            $limiter = $resetPasswordLimiter->create($request->getClientIp());
+
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $error = 'user_reset_password_too_many_attempts';
+            }
+
+            if (!$error) {
+                if (!$user->isActive()) {
+                    $error = 'user_inactive';
+                }
+                if (!$user->getEmail()) {
+                    $error = 'user_no_email_address';
+                }
+                if (!$user->getPassword()) {
+                    $error = 'user_no_password';
+                }
+            }
+
+            if (!$error) {
                 $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
@@ -245,6 +254,13 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
 
         $csrfProtection->regenerateCsrfToken($request->getSession());
+
+        if ($error) {
+            $params['reset_error'] = 'Please make sure you are entering a correct input.';
+            if ($error === 'user_reset_password_too_many_attempts') {
+                $params['reset_error'] = 'Too many attempts. Please retry later.';
+            }
+        }
 
         return $this->render('@PimcoreAdmin/admin/login/lost_password.html.twig', $params);
     }

@@ -77,8 +77,11 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
-            {
+            }
+        ]);
+
+        if(!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add({
                 fieldLabel: t("upload_path"),
                 name: "uploadPath",
                 fieldCls: "input_drop_target",
@@ -91,19 +94,19 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                         new Ext.dd.DropZone(el.getEl(), {
                             //reference: this,
                             ddGroup: "element",
-                            getTargetFromEvent: function(e) {
+                            getTargetFromEvent: function (e) {
                                 return this.getEl();
                             }.bind(el),
 
-                            onNodeOver : function(target, dd, e, data) {
+                            onNodeOver: function (target, dd, e, data) {
                                 if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
                                     return Ext.dd.DropZone.prototype.dropAllowed;
                                 }
                             },
 
-                            onNodeDrop : function (target, dd, e, data) {
+                            onNodeDrop: function (target, dd, e, data) {
 
-                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                                     return false;
                                 }
 
@@ -113,7 +116,7 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                                         this.setValue(data.path);
                                         return true;
                                     }
-                                }  catch (e) {
+                                } catch (e) {
                                     console.log(e);
                                 }
 
@@ -122,9 +125,8 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                         });
                     }
                 }
-            }
-        ]);
-
+            });
+        }
         return this.layout;
     },
 

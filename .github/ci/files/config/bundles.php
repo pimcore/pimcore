@@ -2,9 +2,6 @@
 declare(strict_types=1);
 
 return [
-    "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
-        "all" => TRUE
-    ],
     "Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle" => [
         "all" => TRUE
     ],
@@ -15,9 +12,6 @@ return [
         "all" => TRUE
     ],
     "Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle" => [
-        "all" => TRUE
-    ],
-    "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle" => [
         "all" => TRUE
     ],
     "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [

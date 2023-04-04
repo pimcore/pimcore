@@ -21,17 +21,17 @@ use League\Flysystem\UnableToReadFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Model\GridConfig;
+use Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite;
+use Pimcore\Bundle\AdminBundle\Model\GridConfigShare;
 use Pimcore\Config;
 use Pimcore\Db;
-use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\GridConfig;
-use Pimcore\Model\GridConfigFavourite;
-use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -327,7 +327,7 @@ class DataObjectHelperController extends AdminController
                     $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
-//                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
+                    //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
 
                     if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                         throw new \Exception('You are neither the owner of this config nor it is shared with you');

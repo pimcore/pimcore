@@ -848,7 +848,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      */
-    public function getHash(): string
+    public function getHash(array $params = []): string
     {
         return hash('xxh32', serialize([
             $this->getPreserveAnimation(),
@@ -856,6 +856,7 @@ final class Config extends Model\AbstractModel
             $this->isPreserveColor(),
             $this->isPreserveMetaData(),
             $this->getItems(),
+            $params,
         ]));
     }
 }

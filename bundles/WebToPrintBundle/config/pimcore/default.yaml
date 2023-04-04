@@ -6,8 +6,13 @@ pimcore:
     documents:
         type_definitions:
             map:
-                printpage: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage
-                printcontainer: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer
-
-    routing:
-        direct_route_document_types: ['printpage', 'printcontainer']
+                printpage:
+                    class: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+                printcontainer:
+                    class: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer
+                    only_printable_childrens: true
+                    direct_route: true
+                    predefined_document_types: true
