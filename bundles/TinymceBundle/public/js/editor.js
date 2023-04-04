@@ -11,6 +11,11 @@ pimcore.bundle.tinymce.editor = Class.create({
     maxChars: -1,
 
     initialize: function () {
+        if(!parent.pimcore.wysiwyg) {
+            parent.pimcore.wysiwyg = {};
+            parent.pimcore.wysiwyg.editors = [];
+        }
+        parent.pimcore.wysiwyg.editors.push('TinyMCE');
         document.addEventListener(parent.pimcore.events.initializeWysiwyg, this.initializeWysiwyg.bind(this));
         document.addEventListener(parent.pimcore.events.createWysiwyg, this.createWysiwyg.bind(this));
         document.addEventListener(parent.pimcore.events.onDropWysiwyg, this.onDropWysiwyg.bind(this));

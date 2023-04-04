@@ -101,6 +101,12 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
+        if (!parent.pimcore.wysiwyg.editors.length) {
+           this.textarea.oninput = (e) => {
+               this.setValue(e.target.innerHTML);
+           };
+        }
+
         return true;
     },
 

@@ -32,7 +32,7 @@ pimcore.settings.translation.editor = Class.create({
         if (editorType === 'wysiwyg') {
             this.editableDivId = "translationeditor_" + uniqid();
 
-            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true"></div>';
+            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.value + '</div>';
             var pConf = {
                 html: html,
                 border: true,
@@ -158,6 +158,12 @@ pimcore.settings.translation.editor = Class.create({
                 this.value = e.detail.data;
             }
         }.bind(this));
+
+        if (!parent.pimcore.wysiwyg.editors.length) {
+            Ext.get(this.editableDivId).dom.addEventListener("keyup", (e) => {
+                this.value = Ext.get(this.editableDivId).dom.innerText;
+            });
+        }
 
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
         this.ddWysiwyg = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {

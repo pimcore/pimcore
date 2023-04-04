@@ -179,6 +179,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             }
         }.bind(this));
 
+        if (!parent.pimcore.wysiwyg.editors.length) {
+            Ext.get(this.editableDivId).dom.addEventListener("keyup", (e) => {
+                this.setValue(Ext.get(this.editableDivId).dom.innerText);
+            });
+        }
+
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
         this.ddWysiwyg = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
             ddGroup: "element",
