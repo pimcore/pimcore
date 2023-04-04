@@ -109,7 +109,6 @@ class GenerateChecksumCommand extends AbstractCommand
 
                     $this->output->writeln(' generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                     $asset->generateChecksum();
-                    $asset->save(['versionNote' => 'checksum generation']);
                 } catch (\Exception $e) {
                     $this->output->writeln(' error generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                 }
