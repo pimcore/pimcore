@@ -29,4 +29,7 @@ return [
     "Pimcore\\Bundle\\TinymceBundle\\PimcoreTinymceBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle" => [
+        "all" => TRUE
+    ],
 ];
