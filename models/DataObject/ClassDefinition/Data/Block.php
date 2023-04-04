@@ -517,28 +517,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param Model\DataObject\ClassDefinition\Data\Block $mainDefinition
      */
-    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition)
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $this->disallowAddRemove = $mainDefinition->disallowAddRemove;
         $this->disallowReorder = $mainDefinition->disallowReorder;
         $this->collapsible = $mainDefinition->collapsible;
         $this->collapsed = $mainDefinition->collapsed;
-    }
-
-    /**
-     * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
-     *
-     *@deprecated will be removed in Pimcore 11
-     */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
-        );
-
-        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**
