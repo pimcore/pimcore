@@ -251,9 +251,9 @@ final class Config
      */
     protected static function getRuntimeElementTreeConfig(string $name): array
     {
-        $masterConfig = self::get();
+        $mainConfig = self::get();
 
-        $config = $masterConfig[$name] ?? [];
+        $config = $mainConfig[$name] ?? [];
 
         $tmpResult = $config['elementTree'] ?? [];
 
@@ -332,7 +332,7 @@ final class Config
     public static function getAvailablePerspectives(?User $user): array
     {
         $currentConfigName = null;
-        $masterConfig = self::get();
+        $mainConfig = self::get();
 
         if ($user instanceof User) {
             if ($user->isAdmin()) {
@@ -353,9 +353,9 @@ final class Config
                         $perspectives = $userOrRoleToCheck->getPerspectives();
                         if ($perspectives) {
                             foreach ($perspectives as $perspectiveName) {
-                                $masterDef = $masterConfig[$perspectiveName] ?? null;
-                                if ($masterDef) {
-                                    $config[$perspectiveName] = $masterDef;
+                                $mainDef = $mainConfig[$perspectiveName] ?? null;
+                                if ($mainDef) {
+                                    $config[$perspectiveName] = $mainDef;
                                 }
                             }
                         }
@@ -371,9 +371,9 @@ final class Config
                 $validPerspectiveNames = array_keys($config);
 
                 // sort the stuff
-                foreach ($masterConfig as $masterConfigName => $masterConfiguration) {
-                    if (in_array($masterConfigName, $validPerspectiveNames)) {
-                        $tmpConfig[$masterConfigName] = $masterConfiguration;
+                foreach ($mainConfig as $mainConfigName => $mainConfiguration) {
+                    if (in_array($mainConfigName, $validPerspectiveNames)) {
+                        $tmpConfig[$mainConfigName] = $mainConfiguration;
                     }
                 }
                 $config = $tmpConfig;

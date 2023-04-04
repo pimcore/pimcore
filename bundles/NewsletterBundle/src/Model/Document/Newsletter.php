@@ -81,7 +81,7 @@ class Newsletter extends Email
     /**
      * {@inheritdoc}
      */
-    protected bool $supportsContentMaster;
+    protected bool $supportsContentMain = false;
 
     /**
      * Contains the email subject
