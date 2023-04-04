@@ -1186,10 +1186,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($request->get('task') == 'add') {
                 // check for existing brick with same name with different lower/upper cases
                 $list = new DataObject\Objectbrick\Definition\Listing();
-                $list = $list->load();
+                $list = $list->loadNames();
 
-                foreach ($list as $item) {
-                    if (strtolower($key) === strtolower($item->getKey())) {
+                foreach ($list as $brickName) {
+                    if (strtolower($key) === strtolower($brickName)) {
                         throw new \Exception('Brick with the same name already exists (lower/upper cases may be different)');
                     }
                 }
@@ -1768,15 +1768,15 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         if ($this->getAdminUser()->isAllowed('objectbricks')) {
             $objectBricks = new DataObject\Objectbrick\Definition\Listing();
-            $objectBricks = $objectBricks->load();
+            $objectBricks = $objectBricks->loadNames();
 
-            foreach ($objectBricks as $objectBrick) {
+            foreach ($objectBricks as $brickName) {
                 $result[] = [
                     'icon' => 'objectbricks',
                     'checked' => true,
                     'type' => 'objectbrick',
-                    'name' => $objectBrick->getKey(),
-                    'displayName' => $objectBrick->getKey(),
+                    'name' => $brickName,
+                    'displayName' => $brickName,
                 ];
             }
         }
