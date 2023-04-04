@@ -2,6 +2,7 @@
 
 ## 11.0.0
 
+- [Naming] Renamed master, blacklist and whitelist to main, blocklist, allowlist
 - [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Storage config] Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
@@ -749,7 +750,7 @@ framework:
 - Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
 - Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
-- Removed `\Pimcore\Google\webadmintoolss`, use `\Pimcore\Config::getReportConfig()->get('webadmintoolss'')` instead.
+- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('google_search_console'')` instead.
 - Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
 - Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
 - Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.
