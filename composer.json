@@ -116,7 +116,6 @@
     "symfony/uid": "^6.2",
     "symfony/validator": "^6.2",
     "symfony/var-dumper": "^6.2",
-    "symfony/web-link": "^6.2",
     "symfony/web-profiler-bundle": "^6.2",
     "symfony/workflow": "^6.2",
     "symfony/yaml": "^6.2",
