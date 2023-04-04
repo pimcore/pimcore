@@ -1736,15 +1736,15 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         if ($this->getAdminUser()->isAllowed('fieldcollections')) {
             $fieldCollections = new DataObject\Fieldcollection\Definition\Listing();
-            $fieldCollections = $fieldCollections->load();
+            $fieldCollections = $fieldCollections->loadNames();
 
-            foreach ($fieldCollections as $fieldCollection) {
+            foreach ($fieldCollections as $fcName) {
                 $result[] = [
                     'icon' => 'fieldcollection',
                     'checked' => true,
                     'type' => 'fieldcollection',
-                    'name' => $fieldCollection->getKey(),
-                    'displayName' => $fieldCollection->getKey(),
+                    'name' => $fcName,
+                    'displayName' => $fcName,
                 ];
             }
         }
