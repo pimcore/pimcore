@@ -22,7 +22,6 @@ use Pimcore\Event\VersionEvents;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
