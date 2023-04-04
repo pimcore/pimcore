@@ -32,7 +32,7 @@ services:
     # IMPORT CONFIG CLEANUP
     #
 
-    Pimcore\Bundle\AdminBundle\EventListener\ImportConfigListener:
+    Pimcore\Bundle\AdminBundle\EventListener\ImportConfigListener: ~
 
     #
     # MISC
