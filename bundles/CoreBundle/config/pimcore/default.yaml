@@ -230,11 +230,13 @@ pimcore:
                     class: \Pimcore\Model\Document\Page
                     valid_table: 'page'
                     direct_route: true
+                    predefined_document_types: true
                 snippet:
                     class: \Pimcore\Model\Document\Snippet
                     valid_table: 'snippet'
                     children_supported: false
                     direct_route: true
+                    predefined_document_types: true
                 link:
                     class: \Pimcore\Model\Document\Link
                     translatable: false
@@ -249,6 +251,7 @@ pimcore:
                     translatable_inheritance: false
                     children_supported: false
                     direct_route: true
+                    predefined_document_types: true
                 newsletter:
                     class: \Pimcore\Model\Document\Newsletter
                     translatable: false
@@ -256,6 +259,7 @@ pimcore:
                     translatable_inheritance: false
                     children_supported: false
                     direct_route: true
+                    predefined_document_types: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
