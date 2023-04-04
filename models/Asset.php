@@ -686,6 +686,9 @@ class Asset extends Element\AbstractElement
                     $storage->move($tempFilePath, $path);
                 }
 
+                //generate & save checksum in custom settings
+                $this->generateChecksum();
+
                 // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
@@ -1106,6 +1109,25 @@ class Asset extends Element\AbstractElement
         }
 
         return $this->stream;
+    }
+
+    public function getChecksum(): string
+    {
+        if (!$checksum = $this->getCustomSetting('checksum')) {
+            $this->generateChecksum();
+            $checksum = $this->getCustomSetting('checksum');
+        }
+
+        return $checksum;
+    }
+
+    /**
+     * @internal
+     */
+    public function generateChecksum(): void
+    {
+        $this->setCustomSetting('checksum', Storage::get('asset')->checksum($this->getRealFullPath()));
+        $this->getDao()->updateCustomSettings();
     }
 
     /**
