@@ -168,20 +168,18 @@ class Mail extends Email
      *
      * @internal
      */
-    public function init(string $type = 'email'): void
+    public function init(string $type = 'email', ?array $config = null): void
     {
-        $config = Config::getSystemConfiguration($type);
-
-        if (!empty($config['sender']['email'])) {
-            if (empty($this->getFrom())) {
-                $this->from(new Address($config['sender']['email'], $config['sender']['name']));
-            }
+        if(empty($config)) {
+            $config = Config::getSystemConfiguration($type);
         }
 
-        if (!empty($config['return']['email'])) {
-            if (empty($this->getReplyTo())) {
-                $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
-            }
+        if (!empty($config['sender']['email']) && empty($this->getFrom())) {
+            $this->from(new Address($config['sender']['email'], $config['sender']['name']));
+        }
+
+        if (!empty($config['return']['email']) && empty($this->getReplyTo())) {
+            $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
         }
     }
 

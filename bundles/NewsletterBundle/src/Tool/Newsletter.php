@@ -79,10 +79,10 @@ class Newsletter
     ): Mail {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
-        $config = Config::getSystemConfiguration('newsletter');
+        $config = Pimcore::getContainer()->getParameter('pimcore_newsletter');
 
-        if ($config['use_specific'] ?? false) {
-            $mail->init('newsletter');
+        if ($config['use_specific']) {
+            $mail->init('newsletter', $config);
         }
 
         if ($hostUrl) {
@@ -171,7 +171,7 @@ class Newsletter
 
             $mailer = null;
             // check if newsletter specific mailer is needed
-            if ($config['use_specific'] ?? false) {
+            if ($config['use_specific']) {
                 $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 

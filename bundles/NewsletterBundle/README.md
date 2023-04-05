@@ -30,6 +30,19 @@ php bin/console pimcore:bundle:list
 #### Config options
 
 ```yaml
+#### SYMFONY MAILER TRANSPORTS
+framework:
+    mailer:
+        enabled: true
+        transports:
+            pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+        messenger:
+            routing:
+                'Pimcore\Bundle\NewsletterBundle\Messenger\SendNewsletterMessage': pimcore_core    
+
+```
+
+```yaml
 pimcore_newsletter:
     source_adapters:
         defaultAdapter: pimcore_newsletter.document.newsletter.factory.default

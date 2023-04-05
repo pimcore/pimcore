@@ -2,6 +2,13 @@ pimcore_newsletter:
     source_adapters:
         defaultAdapter: pimcore_newsletter.document.newsletter.factory.default
         csvList: pimcore_newsletter.document.newsletter.factory.csv
+#    use_specific: false # set true to use the following options for newsletter delivery
+#    sender:
+#        name: ''
+#        email: ''
+#    return:
+#        name: ''
+#        email: ''
 
 framework:
     mailer:

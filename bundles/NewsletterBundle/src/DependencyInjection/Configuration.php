@@ -55,6 +55,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('use_specific')
+                    ->defaultFalse()
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
