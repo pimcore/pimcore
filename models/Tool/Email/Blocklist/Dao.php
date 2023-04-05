@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsert($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blacklist'));
+        Helper::upsert($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blocklist'));
     }
 
     /**

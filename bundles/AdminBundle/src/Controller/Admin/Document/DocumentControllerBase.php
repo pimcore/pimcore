@@ -313,9 +313,9 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
-     * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
+     * This is used for pages and snippets to change the main document (which is not saved with the normal save button)
      *
-     * @Route("/change-master-document", name="changemasterdocument", methods={"PUT"})
+     * @Route("/change-main-document", name="changemaindocument", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -323,12 +323,12 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      *
      * @throws \Exception
      */
-    public function changeMasterDocumentAction(Request $request): JsonResponse
+    public function changeMainDocumentAction(Request $request): JsonResponse
     {
         $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setEditables([]);
-            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'), true);
+            $doc->setContentMainDocumentId($request->get('contentMainDocumentPath'), true);
             $doc->saveVersion();
         }
 

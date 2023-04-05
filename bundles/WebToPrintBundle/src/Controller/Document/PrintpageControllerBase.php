@@ -180,7 +180,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 }
 
                 if ($request->get('inheritanceSource')) {
-                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                    $createValues['contentMainDocumentId'] = $request->get('inheritanceSource');
                 }
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));
