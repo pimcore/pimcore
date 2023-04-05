@@ -1,21 +1,6 @@
 # Pimcore Newsletter Bundle
 This bundle provides a basic newsletter framework with the advantage to use all the data that is already stored in the system.
 
-## Document Types
-This bundle introduces a new document type:
-
-| Type                                             | Description                                   | 
-|--------------------------------------------------|-----------------------------------------------|
-| [Newsletter](./doc/05_Newsletter_Documents) | Like an email but specialized for newsletter |
-
-## Pimcore Twig Extensions
-This bundle also adds a new twig extension. For more information checkout the main documentation
-
-| Test                      | Description                                                                      |
-|---------------------------|----------------------------------------------------------------------------------|
-| `pimcore_document_newsletter`          | Checks if object is instanceof Newsletter                  |
-
-
 ### Installation
 #### Minimum Requirements
 * Pimcore >= 11
@@ -41,7 +26,26 @@ php bin/console pimcore:bundle:list
 +---------------------------------+---------+-----------+----+-----+-----+
 ```
 
-After installing the bundle and the required dependencies you need to configure the settings under *Settings >  Web-to-Print*.
+
+#### Config options
+
+```yaml
+pimcore_newsletter:
+    source_adapters:
+        defaultAdapter: pimcore_newsletter.document.newsletter.factory.default
+        csvList: pimcore_newsletter.document.newsletter.factory.csv
+    sender:
+        name: 'Han Solo'
+        email: 'han.solo@pimcore.com'
+    return:
+        name: 'Luke Skywalker'
+        email: 'luke.skywalker@pimcore.com'
+    debug:
+        email_addresses: 'han.solo@pimcore.com,luke.skywalker@pimcore.com'
+    use_specific: true
+    defaultUrlPrefix: 'https://my-host.com'    
+    
+```
 
 
 ### Uninstallation
@@ -52,9 +56,24 @@ You can also use the following command to clean up you database. Create a backup
  bin/console pimcore:document:cleanup newsletter
 ```
 
-### Best Practice
 
-- [Newsletter](./doc/19_Newsletter.md)
+## Best Practice and Example
+
+See [Newsletter](./doc/19_Newsletter.md) for a complete example and how to set up your newsletter.
+
+## Document Types
+This bundle introduces a new document type:
+
+| Type                                             | Description                                   | 
+|--------------------------------------------------|-----------------------------------------------|
+| [Newsletter](./doc/05_Newsletter_Documents) | Like an email but specialized for newsletter |
+
+## Pimcore Twig Extensions
+This bundle also adds a new twig extension. For more information checkout the main documentation
+
+| Test                      | Description                                                                      |
+|---------------------------|----------------------------------------------------------------------------------|
+| `pimcore_document_newsletter`          | Checks if object is instanceof Newsletter                  |
 
 ## Contributing and Development
 

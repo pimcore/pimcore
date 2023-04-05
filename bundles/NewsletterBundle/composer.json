@@ -2,7 +2,7 @@
   "name": "pimcore/newsletter-bundle",
   "license": "GPL-3.0+",
   "type": "pimcore-bundle",
-  "description": "Pimcore WebToPrint Bundle",
+  "description": "Pimcore Newsletter Bundle",
   "config": {
     "sort-packages": true,
     "preferred-install": {
@@ -17,7 +17,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Pimcore\\Bundle\\WebToPrintBundle\\": "src/"
+      "Pimcore\\Bundle\\NewsletterBundle\\": "src/"
     }
   },
   "extra": {
