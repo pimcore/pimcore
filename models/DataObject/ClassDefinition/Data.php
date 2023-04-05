@@ -1217,10 +1217,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         // implement in child classes
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data $mainDefinition
-     */
-    public function adoptMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    public function adoptMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $vars = get_object_vars($this);
         $protectedFields = ['noteditable', 'invisible'];
@@ -1230,23 +1227,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
         $vars = get_object_vars($mainDefinition);
-        foreach ($vars as $name => $value) {
-            if (!in_array($name, $protectedFields)) {
-                $this->$name = $value;
-            }
-        }
-    }
-
-    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
-    {
-        $vars = get_object_vars($this);
-        $protectedFields = ['noteditable', 'invisible'];
-        foreach ($vars as $name => $value) {
-            if (!in_array($name, $protectedFields)) {
-                unset($this->$name);
-            }
-        }
-        $vars = get_object_vars($masterDefinition);
         foreach ($vars as $name => $value) {
             if (!in_array($name, $protectedFields)) {
                 $this->$name = $value;
