@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter;
-use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;

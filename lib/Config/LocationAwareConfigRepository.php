@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Config;
 
 use Pimcore\Config;
-use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
@@ -160,7 +160,8 @@ class LocationAwareConfigRepository
 
         $this->searchAndReplaceMissingParameters($data);
 
-        File::put($yamlFilename, Yaml::dump($data, 50));
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($yamlFilename, Yaml::dump($data, 50));
 
         $this->invalidateConfigCache();
     }

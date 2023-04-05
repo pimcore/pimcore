@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Pimcore\Bundle\AdminBundle\Perspective\Config;
-use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -30,9 +30,11 @@ final class Dashboard
 
     protected ?array $dashboards = null;
 
-    public function __construct(User $user)
-    {
+    protected Filesystem $filesystem;
+
+    public function __construct(User $user) {
         $this->user = $user;
+        $this->filesystem = new Filesystem();
     }
 
     public function getUser(): User
@@ -53,7 +55,7 @@ final class Dashboard
     protected function loadFile(): ?array
     {
         if (!is_dir($this->getConfigDir())) {
-            File::mkdir($this->getConfigDir());
+            $this->filesystem->mkdir($this->getConfigDir(), 0775);
         }
 
         if (empty($this->dashboards)) {
@@ -125,14 +127,14 @@ final class Dashboard
         }
 
         $this->dashboards[$key] = $configuration;
-        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
+        $this->filesystem->dumpFile($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
     public function deleteDashboard(string $key): void
     {
         $this->loadFile();
         unset($this->dashboards[$key]);
-        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
+        $this->filesystem->dumpFile($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
     public function getDisabledPortlets(): array

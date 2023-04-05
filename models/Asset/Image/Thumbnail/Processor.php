@@ -105,7 +105,7 @@ class Processor
             ];
         }
 
-        $fileExt = File::getFileExtension($asset->getFilename());
+        $fileExt = pathinfo($asset->getFilename(), PATHINFO_EXTENSION);
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
@@ -146,7 +146,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
         $thumbDir = rtrim($asset->getRealPath(), '/').'/'.$asset->getId().'/image-thumb__'.$asset->getId().'__'.$config->getName();
-        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
+        $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '$/i', '', $asset->getFilename());
 
         // add custom suffix if available
         if ($config->getFilenameSuffix()) {
