@@ -174,13 +174,13 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
-                }
-
-                $config = $this->getParameter('pimcore_web_to_print');
-                if ($request->get('type') === 'printpage') {
-                    $createValues['controller'] = $config['default_controller_print_page'];
-                } elseif ($request->get('type') === 'printcontainer') {
-                    $createValues['controller'] = $config['default_controller_print_container'];
+                } else {
+                    $config = $this->getParameter('pimcore_web_to_print');
+                    if ($request->get('type') === 'printpage') {
+                        $createValues['controller'] = $config['default_controller_print_page'];
+                    } elseif ($request->get('type') === 'printcontainer') {
+                        $createValues['controller'] = $config['default_controller_print_container'];
+                    }
                 }
 
                 if ($request->get('inheritanceSource')) {
