@@ -164,7 +164,7 @@ class Processor
             $fileExtension = 'jpg';
         }
 
-        $filename .= '.' . $config->getHash() . '.'. $fileExtension;
+        $filename .= '.' . $config->getHash([$asset->getChecksum()]) . '.'. $fileExtension;
 
         $storagePath = $thumbDir . '/' . $filename;
         $storage = Storage::get('thumbnail');

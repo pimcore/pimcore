@@ -500,9 +500,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // TODO else part should not be needed at all as preGetData is always there
         // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-//        } else {
-//            $code .= "\t" . '$data = $this->' . $key . ";\n";
-//        }
+        //        } else {
+        //            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        //        }
 
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
@@ -602,13 +602,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Fieldcollections $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->allowedTypes = $masterDefinition->allowedTypes;
-        $this->lazyLoading = $masterDefinition->lazyLoading;
-        $this->maxItems = $masterDefinition->maxItems;
+        $this->allowedTypes = $mainDefinition->allowedTypes;
+        $this->lazyLoading = $mainDefinition->lazyLoading;
+        $this->maxItems = $mainDefinition->maxItems;
     }
 
     /**

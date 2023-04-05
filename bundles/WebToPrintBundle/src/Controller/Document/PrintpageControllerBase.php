@@ -80,8 +80,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             $page->getScheduledTasks()
         );
 
-        if ($page->getContentMasterDocument()) {
-            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        if ($page->getContentMainDocument()) {
+            $data['contentMainDocumentPath'] = $page->getContentMainDocument()->getRealFullPath();
         }
 
         return $this->preSendDataActions($data, $page, $draftVersion);
@@ -180,7 +180,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 }
 
                 if ($request->get('inheritanceSource')) {
-                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                    $createValues['contentMainDocumentId'] = $request->get('inheritanceSource');
                 }
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));

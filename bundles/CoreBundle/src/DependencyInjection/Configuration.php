@@ -952,6 +952,9 @@ final class Configuration implements ConfigurationInterface
                                 ->booleanNode('only_printable_childrens')
                                     ->defaultFalse()
                                 ->end()
+                                ->booleanNode('predefined_document_types')
+                                    ->defaultFalse()
+                                ->end()
                              ->end()
                         ->end()
                     ->end()
@@ -1914,7 +1917,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('sandbox_security_policy')
-                        ->info('Whitelist tags, filters & functions for evaluating twig
+                        ->info('Allowlist tags, filters & functions for evaluating twig
                         templates in a sandbox environment e.g. used by Mailer & Text layout component.')
                         ->children()
                             ->arrayNode('tags')

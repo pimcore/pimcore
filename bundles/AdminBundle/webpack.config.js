@@ -22,7 +22,7 @@ const standardConfigs = [
         bundleName: "pimcoreadmin",
         configName: "pimcoreAdminImageEditor"
     }
-]
+];
 
 standardConfigs.map((par) => {
 

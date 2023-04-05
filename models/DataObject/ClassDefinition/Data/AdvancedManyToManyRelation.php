@@ -783,12 +783,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        parent::synchronizeWithMasterDefinition($masterDefinition);
-        $this->columns = $masterDefinition->columns;
+        parent::synchronizeWithMainDefinition($mainDefinition);
+        $this->columns = $mainDefinition->columns;
     }
 
     public function resolveDependencies(mixed $data): array

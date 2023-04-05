@@ -91,7 +91,7 @@ class EditmodeListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         if (!$event->isMainRequest()) {
-            return; // only master requests inject editmode assets
+            return; // only main requests inject editmode assets
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
