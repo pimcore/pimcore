@@ -6,13 +6,13 @@ and template creation to document composing within Pimcore backend with areas, d
 
 Web to print flow implemented in Pimcore:
 
-![Web2Print Flow](../../img/printdocuments_flow.png)
+![Web2Print Flow](./img/printdocuments_flow.png)
 
 
 Once activated, print documents are integrated into the default documents tree. 
 But of course you can setup your custom views to have separate trees for web documents and print documents. 
-Just use our completely redesigned [custom views](../../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md) 
-and all [new perspectives features](../../18_Tools_and_Features/13_Perspectives.md).
+Just use our completely redesigned [custom views](https://github.com/pimcore/pimcore/blob/11.x/doc/05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md) 
+and all [new perspectives features](https://github.com/pimcore/pimcore/blob/11.x/doc/18_Tools_and_Features/13_Perspectives.md).
 
 For more detail-information on the settings see later.
 
@@ -23,7 +23,7 @@ For more detail-information on the settings see later.
 PrintPages are the documents that contain the actual content - with all the areas, editables, images, and so on. 
 They are based on the normal Pimcore documents and to content editing should be quite self explaining.
 
-![PrintPages - add new](../../img/printdocuments_printpages_menu.png)
+![PrintPages - add new](./img/printdocuments_printpages_menu.png)
 
 ### PrintContainer
 
@@ -34,7 +34,7 @@ pricelists, books, etc.
 Of course, PrintContainers can be nested. So, one can use a root container, that contains several chapter containers 
 that then contain the actual print pages.
 
-![PrintContainer - tree](../../img/printdocuments_printcontainers_tree.png)
+![PrintContainer - tree](./img/printdocuments_printcontainers_tree.png)
 
 Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
 Therefore, they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
@@ -47,7 +47,7 @@ When rendering, the print is first rendererd to HTML, then rendered as a Twig te
 third party renderer. Currently we support [pdfreactor](https://www.pdfreactor.com/), [Chromium](https://chromedevtools.github.io/devtools-protocol/) and [Gotenberg](https://gotenberg.dev/). 
 Please see their documentation for details concerning template possibilities.
 
-![Web2Print - Container editmode](../../img/printdocuments_editmode_preview.png)
+![Web2Print - Container editmode](./img/printdocuments_editmode_preview.png)
 
 Depending on the renderer, there might be settings possible for the rendering process. 
 The provided settings might be extended in future. 
