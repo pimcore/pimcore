@@ -536,7 +536,7 @@ class SettingsController extends AdminController
 
         $settingsYaml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yaml');
-       $filesystem->dumpFile($configFile, $settingsYaml);
+        $filesystem->dumpFile($configFile, $settingsYaml);
 
         // clear all caches
         $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);

@@ -63,6 +63,6 @@ class Service
         }
 
         $filesystem = new Filesystem();
-       $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
     }
 }

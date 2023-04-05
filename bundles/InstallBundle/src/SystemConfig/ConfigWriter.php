@@ -35,7 +35,8 @@ final class ConfigWriter
 
     protected Filesystem $filesystem;
 
-    public function __construct(array $defaultConfig = null) {
+    public function __construct(array $defaultConfig = null)
+    {
         if (null !== $defaultConfig) {
             $this->defaultConfig = $defaultConfig;
         }

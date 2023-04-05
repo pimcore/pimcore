@@ -32,7 +32,8 @@ final class Dashboard
 
     protected Filesystem $filesystem;
 
-    public function __construct(User $user) {
+    public function __construct(User $user)
+    {
         $this->user = $user;
         $this->filesystem = new Filesystem();
     }
