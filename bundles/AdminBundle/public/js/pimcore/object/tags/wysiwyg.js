@@ -128,14 +128,18 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
         this.getLayout();
         this.component.on("afterlayout", this.startWysiwygEditor.bind(this));
-        this.component.on("beforedestroy", function() {
-            const beforeDestroyWysiwyg = new CustomEvent(pimcore.events.beforeDestroyWysiwyg, {
-                detail: {
-                    context: "object",
-                },
-            });
-            document.dispatchEvent(beforeDestroyWysiwyg);
-        }.bind(this));
+
+        if(this.ddWysiwyg) {
+            this.component.on("beforedestroy", function () {
+                const beforeDestroyWysiwyg = new CustomEvent(pimcore.events.beforeDestroyWysiwyg, {
+                    detail: {
+                        context: "object",
+                    },
+                });
+                document.dispatchEvent(beforeDestroyWysiwyg);
+            }.bind(this));
+        }
+
         return this.component;
     },
 
@@ -143,6 +147,42 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         if(this.ddWysiwyg) {
             return;
+        }
+
+        const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
+            detail: {
+                config: this.fieldConfig,
+                context: "object"
+            },
+            cancelable: true
+        });
+        const initIsAllowed = document.dispatchEvent(initializeWysiwyg);
+        if(!initIsAllowed) {
+            return;
+        }
+
+        const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
+            detail: {
+                textarea: this.editableDivId,
+                context: "object",
+            },
+            cancelable: true
+        });
+        const createIsAllowed = document.dispatchEvent(createWysiwyg);
+        if(!createIsAllowed) {
+            return;
+        }
+
+        document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
+            if (this.editableDivId === e.detail.e.target.id) {
+                this.setValue(e.detail.data);
+            }
+        }.bind(this));
+
+        if (!parent.pimcore.wysiwyg.editors.length) {
+            Ext.get(this.editableDivId).dom.addEventListener("keyup", (e) => {
+                this.setValue(Ext.get(this.editableDivId).dom.innerText);
+            });
         }
 
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
@@ -161,26 +201,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
             onNodeDrop : this.onNodeDrop.bind(this)
         });
-
-        const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
-            detail: {
-                config: this.fieldConfig,
-                context: "object"
-            }
-        });
-        document.dispatchEvent(initializeWysiwyg);
-
-        const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
-            detail: {
-                textarea: this.editableDivId,
-                context: "object",
-            },
-        });
-        document.dispatchEvent(createWysiwyg);
-
-        document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
-            this.setValue(e.detail.data);
-        }.bind(this));
     },
 
     onNodeDrop: function (target, dd, e, data) {

@@ -135,7 +135,8 @@
     "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^6.0.0",
     "masterminds/html5" : "^2.7",
-    "league/flysystem-bundle" : "^3.0",
+    "league/flysystem-bundle": "^3.1",
+    "league/flysystem": "^3.12.0",
     "spatie/image-optimizer": "^1.6.2"
   },
   "conflict": {

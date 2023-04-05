@@ -320,7 +320,7 @@ server {
 
     # Feature Policy && Permissions Policy
     # Note that Feature Policy is to be replaced with Permissions Policy
-    # See W3C Document regarding setup: https://github.com/w3c/webappsec-permissions-policy/blob/master/permissions-policy-explainer.md
+    # See W3C Document regarding setup: https://github.com/w3c/webappsec-permissions-policy/blob/main/permissions-policy-explainer.md
     # 
     # Please check how to properly evaluate, define and include to your needs
     # Thanks to: https://fearby.com/article/set-up-feature-policy-referrer-policy-and-content-security-policy-headers-in-nginx/
