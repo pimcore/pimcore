@@ -81,11 +81,11 @@ pimcore.bundle.web2print.startup = Class.create({
 
 
 
-    addDocument : function (tree, record, type, template) {
+    addDocument : function (tree, record, type, docTypeId) {
         var textKeyTitle = t("add_" + type);
         var textKeyMessage = t("enter_the_name_of_the_new_item");
 
-        Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, template, button, value) {
+        Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, docTypeId, button, value) {
             if (button == "ok") {
                 if (value) {
                     // check for ident filename in current level
@@ -100,7 +100,7 @@ pimcore.bundle.web2print.startup = Class.create({
                     let params = {
                         key: pimcore.helpers.getValidFilename(value, "document"),
                         type: type,
-                        template: template,
+                        docTypeId: docTypeId,
                         sourceTree: tree,
                         elementType: "document",
                         index: record.childNodes.length,
@@ -111,7 +111,7 @@ pimcore.bundle.web2print.startup = Class.create({
                     pimcore.elementservice.addDocument(params);
                 }
             }
-        }.bind(this, tree, record, type, template));
+        }.bind(this, tree, record, type, docTypeId));
     },
 
     populatePredefinedDocumentTypes: function(documentMenu, tree, record) {

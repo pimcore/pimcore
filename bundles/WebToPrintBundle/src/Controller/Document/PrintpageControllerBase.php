@@ -171,6 +171,10 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
                 // check for a docType
                 $docType = Document\DocType::getById($request->get('docTypeId', ''));
+                if ($docType) {
+                    $createValues['template'] = $docType->getTemplate();
+                    $createValues['controller'] = $docType->getController();
+                }
 
                 $config = $this->getParameter('pimcore_web_to_print');
                 if ($request->get('type') === 'printpage') {
