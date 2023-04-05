@@ -144,7 +144,7 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
-                    store: ["page", "snippet", "email", "newsletter", "printpage", "printcontainer"]
+                    store: this.getPredefinedDocumentTypes()
                 })
             },
             {
@@ -327,5 +327,15 @@ pimcore.settings.document.doctypes = Class.create({
             name: t('new_document_type'),
             type: "page"
         });
+    },
+
+    getPredefinedDocumentTypes: function () {
+        let predefinedDocumentTypes = [];
+        for (const [key, value] of Object.entries(pimcore.settings.document_types_configuration)) {
+            if(value.predefined_document_types) {
+                predefinedDocumentTypes.push(key);
+            }
+        }
+        return predefinedDocumentTypes;
     }
 });

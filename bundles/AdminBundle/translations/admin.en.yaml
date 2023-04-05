@@ -4,7 +4,7 @@ too_many_children_for_recyclebin: 'This element contains too many children to be
 default: Default
 metadata: Metadata
 email_address: 'Email Address'
-email_blacklist: 'Email Blacklist'
+email_blocklist: 'Email Blocklist'
 OK: OK
 optional: optional
 search_replace_assignments_error: 'Please select items where to replace and a new target item.'
@@ -63,7 +63,7 @@ replace: Replace
 paste_inheritance: 'Paste (inheritance)'
 are_you_sure: 'Are you sure?'
 all_content_will_be_lost: 'All content will be lost'
-content_master_document: 'Content-Master Document'
+content_main_document: 'Content-Main Document'
 overwrite: Overwrite
 click_right_to_overwrite: 'Click right to overwrite'
 open_document_by_id: 'Open Document'
@@ -832,7 +832,7 @@ visible_to_users: 'Visible To Users'
 visible_to_roles: 'Visible To Roles'
 open_url: 'Open URL'
 document_language_overview: 'Document Language Overview'
-language_master: Master
+language_main: Main
 create_translation_inheritance: 'Create Translation (Inheritance)'
 create_translation: 'Create Translation'
 document_translation_parent_not_found: 'Parent document has no translation. Create a translation for the parent first.'

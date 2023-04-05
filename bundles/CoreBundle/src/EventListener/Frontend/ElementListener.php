@@ -153,7 +153,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // for version preview
         if ($request->get('pimcore_version')) {
-            // TODO there was a check with a registry flag here - check if the master request handling is sufficient
+            // TODO there was a check with a registry flag here - check if the main request handling is sufficient
             $version = Version::getById((int) $request->get('pimcore_version'));
             if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;

@@ -134,5 +134,3 @@ class LogArchiveTask implements TaskInterface
         } while ($archiveTableExists);
     }
 }
-
-@class_alias(LogArchiveTask::class, 'Pimcore\Maintenance\Tasks\LogArchiveTask');
