@@ -2,6 +2,7 @@
 
 ## 11.0.0
 
+- [Naming] Renamed master, blacklist and whitelist to main, blocklist, allowlist
 - [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Storage config] Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
@@ -27,7 +28,7 @@
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - Removed Plugin Broker BC layer for JS events
-- Cleanup Symfony packages from composer.json, see [#13097](https://github.com/pimcore/pimcore/pull/13097)
+- Cleanup unused Symfony packages from composer.json, eg. `form`, `web-link`, see also [#13097](https://github.com/pimcore/pimcore/pull/13097)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
 - [Ecommerce] Pricing Manager
   - Removed $session property
@@ -64,7 +65,7 @@
 - [Exception] Deprecated MissingDependencyException has been removed.
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
-- [Documents] Added a second boolean parameter `$validate` to the setContentMasterDocumentId() method. This will restrict the option to set pages as content master documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
+- [Documents] Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
 - [Config] Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
     Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
     Please make sure to set your preferred storage location **_before_** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md).
@@ -472,9 +473,9 @@ location / {
 - [Backend search] `key` and `index` columns have been added to the search index. Run `./bin/console pimcore:search-backend-reindex` to reindex.
 - [Cache] Pimcore use DoctrineDbalAdapter instead of PdoAdapter by default now.
 - Removed `ocramius/package-versions` dependency. If you rely on it, please add it to your own `composer.json`.
-- [Permissions] Added an extra check about [system permission](https://pimcore.com/docs/pimcore/current/Development_Documentation/Administration_of_Pimcore/Users_and_Roles.html#page_System-Permissions) in element `isAllowed()` method, please make sure your custom implementations are not affected by this change.
-    Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls.
-    The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
+- [Permissions] Added an extra check about [system permission](https://pimcore.com/docs/pimcore/current/Development_Documentation/Administration_of_Pimcore/Users_and_Roles.html#page_System-Permissions) in element `isAllowed()` method, please make sure your custom implementations are not affected by this change. 
+  Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls. 
+  The only cases could be affected are those where the workspace are set but main permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
 - [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
 - [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for performance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
@@ -749,7 +750,7 @@ framework:
 - Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
 - Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
-- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
+- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('google_search_console'')` instead.
 - Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
 - Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
 - Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.
@@ -785,7 +786,7 @@ framework:
 - Added methods `getArgument($key)`, `setArgument($key, $value)`, `getArguments()`, `setArguments(array $args = [])`, `hasArgument($key)` to `Pimcore\Model\Element\ElementInterface\ElementEventInterface`.
 - [Ecommerce] Changed name of interfaces from prefix `I` to suffix `Interface` .e.g. `Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable` => `Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface`
 - Removed `cache/tag-interop`dependency.
-- [Cache] `Pimcore\Cache` is directly based on Symfony/Cache. If you have custom cache pool configured under `pimcore.cache.pools` then change it to Symfony Config `framework.cache.pools`. [Read more](https://pimcore.com/docs/pimcore/master/Development_Documentation/Development_Tools_and_Details/Cache/index.html#page_Configuring-the-cache)
+- [Cache] `Pimcore\Cache` is directly based on Symfony/Cache. If you have custom cache pool configured under `pimcore.cache.pools` then change it to Symfony Config `framework.cache.pools`. [Read more](https://pimcore.com/docs/pimcore/main/Development_Documentation/Development_Tools_and_Details/Cache/index.html#page_Configuring-the-cache)
 - Methods `checkCsrfToken()`, `getCsrfToken()`, `regenerateCsrfToken()` methdos have been removed from `Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener`. Use `Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler` instead.
 - Bumped `phpunit/phpunit` & `codeception/phpunit-wrapper` to "^9"
 - Replaced `html2text/html2text` with `soundasleep/html2text`. Removed methods from `Pimcore\Mail`: `determineHtml2TextIsInstalled()`, `setHtml2TextOptions($options = [])`, `getHtml2TextBinaryEnabled()`, `enableHtml2textBinary()`, `getHtml2textInstalled()`.

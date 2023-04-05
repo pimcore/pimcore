@@ -1049,7 +1049,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    private static function synchronizeCustomLayoutFieldWithMaster(array $mainDefinition, ClassDefinition\Data|ClassDefinition\Layout|null &$layout): bool
+    private static function synchronizeCustomLayoutFieldWithMain(array $mainDefinition, ClassDefinition\Data|ClassDefinition\Layout|null &$layout): bool
     {
         if (is_null($layout)) {
             return true;
