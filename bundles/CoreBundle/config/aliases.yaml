@@ -6,7 +6,12 @@ services:
     Pimcore\Kernel: '@kernel'
 
     Symfony\Bridge\Twig\Extension\WebLinkExtension: '@twig.extension.weblink'
-    Doctrine\Common\Persistence\ConnectionRegistry: '@doctrine'
+    Doctrine\Common\Persistence\ConnectionRegistry:
+        alias: doctrine
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11'
     Doctrine\Persistence\ConnectionRegistry: '@doctrine'
     Symfony\Contracts\Translation\TranslatorInterface: '@Pimcore\Translation\Translator'
     Pimcore\Localization\LocaleService: '@Pimcore\Localization\LocaleServiceInterface'

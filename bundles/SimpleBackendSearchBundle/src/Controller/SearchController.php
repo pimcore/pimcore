@@ -115,8 +115,8 @@ class SearchController extends AdminController
                 $parts = explode('~', $f);
                 if (substr($f, 0, 1) == '~') {
                     //                    $type = $parts[1];
-//                    $field = $parts[2];
-//                    $keyid = $parts[3];
+                    //                    $field = $parts[2];
+                    //                    $keyid = $parts[3];
                     // key value, ignore for now
                 } elseif (count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
@@ -407,7 +407,7 @@ class SearchController extends AdminController
             }
         }
 
-        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any main permissions set
         // by setting a `false` condition in the query makes sure that nothing would be displayed.
         if (!$allowedTypes) {
             $allowedTypes = ['false'];

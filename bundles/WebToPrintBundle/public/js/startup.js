@@ -3,17 +3,8 @@ pimcore.registerNS("pimcore.bundle.web2print.startup");
 pimcore.bundle.web2print.startup = Class.create({
 
     initialize: function () {
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
         document.addEventListener(pimcore.events.prepareDocumentTreeContextMenu, this.onPrepareDocumentTreeContextMenu.bind(this));
-    },
-
-    pimcoreReady: function (e) {
-        // add printpage & printcontainer to valid document types
-        if (pimcore.globalmanager.exists("document_valid_types")) {
-            pimcore.globalmanager.get('document_valid_types').push('printpage');
-            pimcore.globalmanager.get('document_valid_types').push('printcontainer');
-        }
     },
 
     preMenuBuild: function (e) {

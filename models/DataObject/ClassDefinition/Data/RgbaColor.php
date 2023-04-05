@@ -191,11 +191,11 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->width = $masterDefinition->width;
+        $this->width = $mainDefinition->width;
     }
 
     public function isEmpty(mixed $data): bool

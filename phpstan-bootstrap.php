@@ -23,5 +23,3 @@ include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 if (!defined('PIMCORE_TEST')) {
     define('PIMCORE_TEST', true);
 }
-
-@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');
