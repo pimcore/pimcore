@@ -678,7 +678,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if (isset($mapping[$class->getId()])) {
                 $classMapping = $mapping[$class->getId()];
                 $resultList[] = [
-                    'type' => 'master',
+                    'type' => 'main',
                     'id' => $class->getId() . '_' . 0,
                     'name' => $class->getName(),
                 ];
