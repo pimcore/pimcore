@@ -109,7 +109,7 @@ custom layouts for the user.
 
 #### Dynamically control permissions on elements
 
-By using the event `Pimcore\Event\AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` it is possible to dynamically manipulate 
+By using the event `Pimcore\Bundle\AdminBundle\Event\AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` it is possible to dynamically manipulate 
 the permissions of a user on a specific element on request.
 
 Please note: When listing (tree view,search etc..), this event is fired afterwards on each element of the filtered result list,

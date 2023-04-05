@@ -25,14 +25,7 @@ function xmlToArray(string $file): array
     return $array;
 }
 
-/**
- * @param string $source
- * @param int|null $level
- * @param string|null $target
- *
- * @return bool|string
- */
-function gzcompressfile(string $source, int $level = null, string $target = null): bool|string
+function gzcompressfile(string $source, int $level = null, string $target = null): false|string
 {
     // this is a very memory efficient way of gzipping files
     if ($target) {
@@ -147,7 +140,7 @@ function in_arrayi(string $needle, array $haystack): bool
  *
  * @return false|int|string the key for needle if it is found in the array, false otherwise.
  */
-function array_searchi(string $needle, array $haystack): bool|int|string
+function array_searchi(string $needle, array $haystack): false|int|string
 {
     return array_search(strtolower($needle), array_map('strtolower', $haystack));
 }
@@ -173,7 +166,7 @@ function array_urlencode(array $args): string
 }
 
 /**
- * same as  array_urlencode but no urlencode()
+ * same as array_urlencode but no urlencode()
  */
 function array_toquerystring(array $args): string
 {

@@ -437,7 +437,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/blacklist", name="pimcore_admin_email_blacklist", methods={"POST"})
+     * @Route("/blocklist", name="pimcore_admin_email_blocklist", methods={"POST"})
      *
      * @param Request $request
      *
@@ -445,7 +445,7 @@ class EmailController extends AdminController
      *
      * @throws \Exception
      */
-    public function blacklistAction(Request $request): JsonResponse
+    public function blocklistAction(Request $request): JsonResponse
     {
         if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
@@ -467,12 +467,12 @@ class EmailController extends AdminController
             }
 
             if ($request->get('xaction') == 'destroy') {
-                $address = Tool\Email\Blacklist::getByAddress($data['address']);
+                $address = Tool\Email\Blocklist::getByAddress($data['address']);
                 $address->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
-                $address = Tool\Email\Blacklist::getByAddress($data['address']);
+                $address = Tool\Email\Blocklist::getByAddress($data['address']);
                 $address->setValues($data);
                 $address->save();
 
@@ -480,7 +480,7 @@ class EmailController extends AdminController
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
-                $address = new Tool\Email\Blacklist();
+                $address = new Tool\Email\Blocklist();
                 $address->setValues($data);
                 $address->save();
 
@@ -489,7 +489,7 @@ class EmailController extends AdminController
         } else {
             // get list of routes
 
-            $list = new Tool\Email\Blacklist\Listing();
+            $list = new Tool\Email\Blocklist\Listing();
 
             $list->setLimit((int) $request->get('limit', 50));
             $list->setOffset((int) $request->get('start', 0));

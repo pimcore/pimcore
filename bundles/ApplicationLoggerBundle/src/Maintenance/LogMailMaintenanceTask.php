@@ -94,5 +94,3 @@ class LogMailMaintenanceTask implements TaskInterface
         $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
     }
 }
-
-@class_alias(LogMailMaintenanceTask::class, 'Pimcore\Maintenance\Tasks\LogMailMaintenanceTask');

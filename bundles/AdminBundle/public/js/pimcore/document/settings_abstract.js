@@ -37,7 +37,7 @@ pimcore.document.settings_abstract = Class.create({
         }
     },
 
-    getContentMasterFields: function (collapsed) {
+    getContentMainFields: function (collapsed) {
 
         if(collapsed !== true) {
             collapsed = false;
@@ -45,7 +45,7 @@ pimcore.document.settings_abstract = Class.create({
 
         return {
             xtype:'fieldset',
-            title: t('content_master_document'),
+            title: t('content_main_document'),
             collapsible: true,
             collapsed: collapsed,
             autoHeight:true,
@@ -55,10 +55,10 @@ pimcore.document.settings_abstract = Class.create({
             items :[
                 {
                     fieldLabel: t("document"),
-                    name: "contentMasterDocumentPath",
-                    value: this.document.data.contentMasterDocumentPath,
+                    name: "contentMainDocumentPath",
+                    value: this.document.data.contentMainDocumentPath,
                     fieldCls: "input_drop_target",
-                    id: "contentMasterDocumentPath_" + this.document.id,
+                    id: "contentMainDocumentPath_" + this.document.id,
                     listeners: {
                         "render": function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -102,14 +102,14 @@ pimcore.document.settings_abstract = Class.create({
                             Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
-                                        Ext.getCmp("contentMasterDocumentPath_"
+                                        Ext.getCmp("contentMainDocumentPath_"
                                             + this.document.id).setValue("");
                                         Ext.Ajax.request({
-                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
+                                            url:Routing.generate('pimcore_admin_document_page_changemaindocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
-                                                contentMasterDocumentPath:""
+                                                contentMainDocumentPath:""
                                             },
                                             success:function () {
                                                 this.document.reload();
@@ -123,8 +123,8 @@ pimcore.document.settings_abstract = Class.create({
                         iconCls: "pimcore_icon_open",
                         autoWidth: true,
                         handler: function () {
-                            var masterPath = Ext.getCmp("contentMasterDocumentPath_" + this.document.id).getValue();
-                            pimcore.helpers.openDocumentByPath(masterPath);
+                            var mainPath = Ext.getCmp("contentMainDocumentPath_" + this.document.id).getValue();
+                            pimcore.helpers.openDocumentByPath(mainPath);
                         }.bind(this)
                     },{
                         text:t("apply"),
@@ -135,12 +135,12 @@ pimcore.document.settings_abstract = Class.create({
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
                                         Ext.Ajax.request({
-                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
+                                            url:Routing.generate('pimcore_admin_document_page_changemaindocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
-                                                contentMasterDocumentPath:Ext.getCmp(
-                                                    "contentMasterDocumentPath_" + this.document.id).getValue()
+                                                contentMainDocumentPath:Ext.getCmp(
+                                                    "contentMainDocumentPath_" + this.document.id).getValue()
                                             },
                                             success:function () {
                                                 this.document.resetChanges();

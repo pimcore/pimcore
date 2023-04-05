@@ -22,7 +22,6 @@ use Pimcore\Event\VersionEvents;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
@@ -290,9 +289,6 @@ final class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
-            // this makes it possible to restore data object versions from older Pimcore versions
-            @class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
-
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
             \Pimcore::collectGarbage();

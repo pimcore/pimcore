@@ -6,44 +6,14 @@ parameters:
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
-
-		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
-
-		-
-			message: "#^Call to function is_subclass_of\\(\\) with '\\\\\\\\App\\\\\\\\Kernel' and 'Pimcore\\\\\\\\Kernel' will always evaluate to true\\.$#"
-			count: 1
-			path: lib/Bootstrap.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
 
 		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SanityCheckHandler.php
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 2
+			path: lib/Mail.php
 
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
@@ -59,8 +29,37 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
-			path: models/DataObject/Listing/Dao.php
+			path: lib/Messenger/Handler/SanityCheckHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Renderlet.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Renderlet.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Snippet.php

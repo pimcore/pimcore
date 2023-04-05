@@ -410,5 +410,3 @@ class ApplicationLogger implements LoggerInterface
         return new FileObject($data);
     }
 }
-
-@class_alias(ApplicationLogger::class, 'Pimcore\Log\ApplicationLogger');

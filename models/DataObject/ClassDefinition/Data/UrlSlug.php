@@ -342,11 +342,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\UrlSlug $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\UrlSlug $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->action = $masterDefinition->action;
+        $this->action = $mainDefinition->action;
     }
 
     public function getDataForSearchIndex(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): string

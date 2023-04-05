@@ -460,12 +460,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->relationType = $masterDefinition->relationType;
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->relationType = $mainDefinition->relationType;
     }
 
     /**

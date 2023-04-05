@@ -267,11 +267,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Image $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->uploadPath = $masterDefinition->uploadPath;
+        $this->uploadPath = $mainDefinition->uploadPath;
     }
 
     /**

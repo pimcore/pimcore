@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -678,7 +678,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if (isset($mapping[$class->getId()])) {
                 $classMapping = $mapping[$class->getId()];
                 $resultList[] = [
-                    'type' => 'master',
+                    'type' => 'main',
                     'id' => $class->getId() . '_' . 0,
                     'name' => $class->getName(),
                 ];

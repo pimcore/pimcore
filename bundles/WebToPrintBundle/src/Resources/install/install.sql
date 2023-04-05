@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `documents_printpage` (
     `template` varchar(255) DEFAULT NULL,
     `lastGenerated` int(11) DEFAULT NULL,
     `lastGenerateMessage` text,
-    `contentMasterDocumentId` int(11) DEFAULT NULL,
+    `contentMainDocumentId` int(11) DEFAULT NULL,
     `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `fk_documents_printpage_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE

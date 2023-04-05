@@ -515,14 +515,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Block $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->disallowAddRemove = $masterDefinition->disallowAddRemove;
-        $this->disallowReorder = $masterDefinition->disallowReorder;
-        $this->collapsible = $masterDefinition->collapsible;
-        $this->collapsed = $masterDefinition->collapsed;
+        $this->disallowAddRemove = $mainDefinition->disallowAddRemove;
+        $this->disallowReorder = $mainDefinition->disallowReorder;
+        $this->collapsible = $mainDefinition->collapsible;
+        $this->collapsed = $mainDefinition->collapsed;
     }
 
     /**

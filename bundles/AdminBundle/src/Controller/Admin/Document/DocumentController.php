@@ -21,12 +21,12 @@ use Pimcore;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Image\Chromium;
 use Pimcore\Logger;
@@ -37,7 +37,6 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
-use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -286,7 +285,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 }
 
                 if ($request->get('inheritanceSource')) {
-                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                    $createValues['contentMainDocumentId'] = $request->get('inheritanceSource');
                 }
 
                 switch ($request->get('type')) {

@@ -34,7 +34,7 @@ namespace App\EventListener;
 
 class AdminStyleListener
 {
-    public function onResolveElementAdminStyle(\Pimcore\Event\Admin\ElementAdminStyleEvent $event): void
+    public function onResolveElementAdminStyle(\Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent $event): void
     {
         $element = $event->getElement();
         // decide which default styles you want to override
