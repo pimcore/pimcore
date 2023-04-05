@@ -312,7 +312,7 @@ pimcore:
   "symfony-assets-install": "relative"
 }
 ```
-
+- Removed the following methods from `Pimcore\File`: `mkdir`, `put`, `getFileExtension`, `setDefaultMode`, `getDefaultMode`, `setDefaultFlags` and `rename`. 
 
 ## 10.6.0
 
