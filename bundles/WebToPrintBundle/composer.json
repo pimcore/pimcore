@@ -13,7 +13,7 @@
     "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
-        "pimcore/pimcore": "^11.0",
+        "pimcore/pimcore": "^11.0"
     },
     "autoload": {
         "psr-4": {
