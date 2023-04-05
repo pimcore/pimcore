@@ -862,14 +862,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public function setKey(string $key): static
     {
-        $this->key = (string)$key;
+        $this->key = $key;
 
         return $this;
     }
 
     public function setIndex(int $index): static
     {
-        $this->index = (int) $index;
+        $this->index = $index;
 
         return $this;
     }
@@ -935,7 +935,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath): void
     {
-        self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
+        self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
     }
 
     /**

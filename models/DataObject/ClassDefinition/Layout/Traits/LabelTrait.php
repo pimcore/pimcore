@@ -39,7 +39,7 @@ trait LabelTrait
 
     public function setLabelWidth(int $labelWidth): static
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
 
         return $this;
     }

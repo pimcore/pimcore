@@ -22,9 +22,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20220419120333 extends AbstractMigration
 {
-    /**
-     * {@inheritDoc}
-     */
+
     public function getDescription(): string
     {
         return 'Add index to versions.stackTrace to accelerate maintenance task "VersionsCleanupStackTraceDbTask"';

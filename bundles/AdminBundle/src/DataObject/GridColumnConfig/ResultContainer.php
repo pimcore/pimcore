@@ -54,6 +54,6 @@ final class ResultContainer
 
     public function setIsEmpty(bool $isEmpty): void
     {
-        $this->isEmpty = (bool) $isEmpty;
+        $this->isEmpty = $isEmpty;
     }
 }

@@ -66,7 +66,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?GroupConfig
     {
-        $id = (int)$id;
+        $id = $id;
         $cacheKey = self::getCacheKey($id);
 
         try {
@@ -138,7 +138,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -233,7 +233,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -245,7 +245,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

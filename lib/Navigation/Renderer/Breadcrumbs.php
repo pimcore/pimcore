@@ -95,7 +95,7 @@ class Breadcrumbs extends AbstractRenderer
 
     public function setLinkLast(bool $linkLast): static
     {
-        $this->_linkLast = (bool) $linkLast;
+        $this->_linkLast = $linkLast;
 
         return $this;
     }

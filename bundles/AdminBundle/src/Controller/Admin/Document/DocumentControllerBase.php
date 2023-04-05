@@ -26,6 +26,7 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Version;
@@ -289,14 +290,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         return false;
     }
 
-    /**
-     * @template T of Model\Document\PageSnippet
-     *
-     * @param T $document
-     * @param null|Version $draftVersion
-     *
-     * @return T
-     */
     protected function getLatestVersion(Model\Document\PageSnippet $document, ?Version &$draftVersion = null): Model\Document\PageSnippet
     {
         $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());

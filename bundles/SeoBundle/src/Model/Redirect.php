@@ -146,7 +146,7 @@ final class Redirect extends AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -264,7 +264,7 @@ final class Redirect extends AbstractModel
 
     public function setRegex(?bool $regex): static
     {
-        $this->regex = $regex ? (bool) $regex : null;
+        $this->regex = $regex ? $regex : null;
 
         return $this;
     }
@@ -276,7 +276,7 @@ final class Redirect extends AbstractModel
 
     public function setActive(bool $active): static
     {
-        $this->active = (bool) $active;
+        $this->active = $active;
 
         return $this;
     }
@@ -284,7 +284,7 @@ final class Redirect extends AbstractModel
     public function setSourceSite(?int $sourceSite): static
     {
         if ($sourceSite) {
-            $this->sourceSite = (int) $sourceSite;
+            $this->sourceSite = $sourceSite;
         } else {
             $this->sourceSite = null;
         }
@@ -300,7 +300,7 @@ final class Redirect extends AbstractModel
     public function setTargetSite(?int $targetSite): static
     {
         if ($targetSite) {
-            $this->targetSite = (int) $targetSite;
+            $this->targetSite = $targetSite;
         } else {
             $this->targetSite = null;
         }
@@ -315,7 +315,7 @@ final class Redirect extends AbstractModel
 
     public function setPassThroughParameters(bool $passThroughParameters): static
     {
-        $this->passThroughParameters = (bool) $passThroughParameters;
+        $this->passThroughParameters = $passThroughParameters;
 
         return $this;
     }
@@ -327,7 +327,7 @@ final class Redirect extends AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -339,7 +339,7 @@ final class Redirect extends AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

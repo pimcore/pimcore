@@ -97,7 +97,7 @@ class GridConfig extends AbstractModel
 
     public function setId(int $id): void
     {
-        $this->id = (int) $id;
+        $this->id = $id;
     }
 
     public function getOwnerId(): ?int
@@ -187,7 +187,7 @@ class GridConfig extends AbstractModel
 
     public function setShareGlobally(bool $shareGlobally): void
     {
-        $this->shareGlobally = (bool) $shareGlobally;
+        $this->shareGlobally = $shareGlobally;
     }
 
     public function isSetAsFavourite(): bool
@@ -197,7 +197,7 @@ class GridConfig extends AbstractModel
 
     public function setSetAsFavourite(bool $setAsFavourite): void
     {
-        $this->setAsFavourite = (bool) $setAsFavourite;
+        $this->setAsFavourite = $setAsFavourite;
     }
 
     public function isSaveFilters(): bool

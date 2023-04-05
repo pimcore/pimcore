@@ -32,7 +32,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function configureOptions(): void
     {
-        $validLanguages = (array) Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
         $options = [];
 

@@ -137,6 +137,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         );
 
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
+            /**
+             * @param object $object
+             * @param string $property
+             *
+             * @return boolean
+             */
             public function matches($object, $property): bool
             {
                 return $object instanceof AbstractElement;
@@ -179,7 +185,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {
-        $this->needsRenewReferences = (bool) $needsRenewReferences;
+        $this->needsRenewReferences = $needsRenewReferences;
     }
 
     public function setLanguage(string $language): void

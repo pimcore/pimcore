@@ -854,7 +854,7 @@ class Document extends Element\AbstractElement
 
     public function setKey(string $key): static
     {
-        $this->key = (string)$key;
+        $this->key = $key;
 
         return $this;
     }
@@ -894,7 +894,7 @@ class Document extends Element\AbstractElement
      */
     public function setIndex(int $index): static
     {
-        $this->index = (int) $index;
+        $this->index = $index;
 
         return $this;
     }
@@ -925,7 +925,7 @@ class Document extends Element\AbstractElement
 
     public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
     public function setPublished(bool $published): static

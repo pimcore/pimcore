@@ -32,9 +32,6 @@ final class Version
         return self::MAJOR_VERSION;
     }
 
-    /**
-     * @return string
-     */
     public static function getVersion(): string
     {
         return InstalledVersions::getPrettyVersion(self::PACKAGE_NAME);

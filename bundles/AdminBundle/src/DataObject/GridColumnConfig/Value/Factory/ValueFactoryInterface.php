@@ -21,11 +21,5 @@ use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Value\ValueInterface;
 
 interface ValueFactoryInterface
 {
-    /**
-     * @param \stdClass $configElement
-     * @param mixed $context
-     *
-     * @return ValueInterface
-     */
     public function build(\stdClass $configElement, mixed $context = null): ValueInterface;
 }
