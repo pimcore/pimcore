@@ -12,7 +12,6 @@ services:
     Pimcore\Bundle\AdminBundle\Security\User\UserProvider:
         public: true
 
-
     # the password hasher factory builds a dedicated hasher per user
     # as we need the user instance to hash passwords.
     # we don't specifiy this as fully qualified class name as there can be multiple factories (one for each user type)
@@ -23,7 +22,6 @@ services:
 
     # Authenticators for handling admin login and session authentications
     Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator:
-        public: false
         calls:
             - [ setLogger, [ '@logger' ] ]
         tags:

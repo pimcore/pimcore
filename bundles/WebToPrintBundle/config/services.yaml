@@ -1,12 +1,12 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
     #
     # INSTALLER
     #
+
     Pimcore\Bundle\WebToPrintBundle\Installer:
         public: true
         arguments:
@@ -37,7 +37,6 @@ services:
     Pimcore\Bundle\WebToPrintBundle\EventListener\IndexSettingsListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
-
 
     Pimcore\Bundle\WebToPrintBundle\Messenger\Handler\GenerateWeb2PrintPdfHandler:
         arguments:

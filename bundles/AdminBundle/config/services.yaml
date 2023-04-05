@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # Notification Services
@@ -10,6 +9,7 @@ services:
 
     Pimcore\Model\Notification\Service\NotificationService:
         public: true
+
     Pimcore\Model\Notification\Service\UserService: ~
 
     #
@@ -53,21 +53,27 @@ services:
     #
     # Grid Helper Service
     #
+
     Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~
 
 
     #
     # Default Preview Generator
     #
+
     Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface:
         class: Pimcore\Bundle\AdminBundle\Service\PreviewGenerator
 
     #
     # Twig Extensions
     #
+
+    Pimcore\Twig\Extension\AdminExtension: ~
+    
     Pimcore\Bundle\AdminBundle\Twig\Extension\AdminExtension: ~
 
     #
     # Workflows
     #
+    
     Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService: ~

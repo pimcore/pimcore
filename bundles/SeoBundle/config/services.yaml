@@ -1,12 +1,12 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
     #
     # INSTALLER
     #
+
     Pimcore\Bundle\SeoBundle\Installer:
         public: true
         arguments:

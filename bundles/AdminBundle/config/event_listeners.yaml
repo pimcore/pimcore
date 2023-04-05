@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # SECURITY
@@ -58,5 +57,6 @@ services:
     #
     # Workflows
     #
+
     Pimcore\Bundle\AdminBundle\EventListener\WorkflowManagementListener:
         public: true # can be disabled
