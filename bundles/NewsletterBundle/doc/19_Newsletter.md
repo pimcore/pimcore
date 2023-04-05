@@ -1,10 +1,6 @@
 # Newsletter
 
 ## General
-
-Pimcore provides a basic newsletter bundle `pimcore/newsletter-bundle`. 
-Make sure to enable via the bundles.php and install the PimcoreNewsletterBundle.
-
 The main advantage is that you can send completely customized / personalized newsletters by using all the data stored 
 in the system (products, ...).
 The content of the e-mail is rendered individually for every recipient (the user object is available in the action and view), 
