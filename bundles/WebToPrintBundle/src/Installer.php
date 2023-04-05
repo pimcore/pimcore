@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const SETTINGS_STORE_SCOPE = 'pimcore_document_types';
-    protected const DOCTYPES = ['printpage, printcontainer'];
+    protected const DOCTYPES = ['printpage', 'printcontainer'];
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Web2Print Bundle';
 
     protected const USER_PERMISSIONS = [
