@@ -109,5 +109,4 @@ final class ConfigurationHelper
 
         return $resolvingBag->resolveValue($containerConfig);
     }
-
 }
