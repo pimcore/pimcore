@@ -183,18 +183,18 @@ final class Configuration implements ConfigurationInterface
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image-thumbnails',
-            'custom_reports' => '/var/config/custom_reports',
-            'video_thumbnails' => '/var/config/video-thumbnails',
-            'document_types' => '/var/config/document_types',
-            'web_to_print' => '/var/config/web_to_print',
-            'predefined_properties' => '/var/config/predefined_properties',
-            'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
-            'staticroutes' => '/var/config/staticroutes',
-            'perspectives' => '/var/config/perspectives',
-            'custom_views' => '/var/config/custom_views',
-            'data_hub' => '/var/config/data_hub',
-            'object_custom_layouts' => '/var/config/object_custom_layouts'
+            'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
+            'custom_reports' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_reports',
+            'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
+            'document_types' => PIMCORE_CONFIGURATION_DIRECTORY . '/document_types',
+            'web_to_print' => PIMCORE_CONFIGURATION_DIRECTORY . '/web_to_print',
+            'predefined_properties' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_properties',
+            'predefined_asset_metadata' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_asset_metadata',
+            'staticroutes' => PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
+            'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
+            'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
+            'data_hub' => PIMCORE_CONFIGURATION_DIRECTORY . '/data_hub',
+            'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts'
         ]);
 
         return $treeBuilder;
