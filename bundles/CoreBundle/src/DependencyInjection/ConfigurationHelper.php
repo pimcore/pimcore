@@ -31,12 +31,12 @@ final class ConfigurationHelper
     {
         $storageNode = $rootNode
             ->children()
-            ->arrayNode('config_location')
-            ->addDefaultsIfNotSet()
-            ->children();
+                ->arrayNode('config_location')
+                ->addDefaultsIfNotSet()
+                ->children();
 
-        foreach ($nodes as $node) {
-            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
+        foreach ($nodes as $node => $dir) {
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir);
         }
     }
 
@@ -46,16 +46,18 @@ final class ConfigurationHelper
         arrayNode($name)
             ->addDefaultsIfNotSet()
             ->children()
-            ->enumNode('target')
-            ->values(['symfony-config', 'settings-store'])
-            ->defaultValue('symfony-config')
-            ->end()
-            ->arrayNode('options')
-            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-            ->variablePrototype()
-            ->end()
-            ->end()
-            ->end()
+                ->arrayNode('write_target')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->enumNode('type')
+                        ->values(['symfony-config', 'settings-store', 'disabled'])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode('options')
+                        ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                        ->variablePrototype()
+                    ->end()
+                ->end()
             ->end();
     }
 
@@ -107,4 +109,5 @@ final class ConfigurationHelper
 
         return $resolvingBag->resolveValue($containerConfig);
     }
+
 }
