@@ -213,7 +213,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setId(?int $id): static
     {
-        $this->id = $id ? $id : null;
+        $this->id = $id;
 
         return $this;
     }

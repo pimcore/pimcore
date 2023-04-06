@@ -54,7 +54,6 @@ final class CollectionConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?CollectionConfig
     {
-        $id = $id;
         $cacheKey = self::getCacheKey($id);
 
         try {

@@ -71,7 +71,6 @@ final class KeyConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
-        $id = $id;
         $cacheKey = self::getCacheKey($id);
 
         try {

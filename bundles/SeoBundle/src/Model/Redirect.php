@@ -264,7 +264,7 @@ final class Redirect extends AbstractModel
 
     public function setRegex(?bool $regex): static
     {
-        $this->regex = $regex ? $regex : null;
+        $this->regex = $regex;
 
         return $this;
     }
