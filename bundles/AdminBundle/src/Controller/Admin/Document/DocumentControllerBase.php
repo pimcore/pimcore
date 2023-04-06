@@ -26,7 +26,6 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Version;
