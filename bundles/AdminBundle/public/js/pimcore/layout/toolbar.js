@@ -478,7 +478,7 @@ pimcore.layout.toolbar = Class.create({
                  });
              }
 
-             if (user.isAllowed("system_appearance_settings") && perspectiveCfg.inToolbar("settings.system")) {
+             if (user.isAllowed("system_appearance_settings") && perspectiveCfg.inToolbar("settings.appearance")) {
                  settingsItems.push({
                      text: t("appearance_and_branding"),
                      iconCls: "pimcore_nav_icon_frame",

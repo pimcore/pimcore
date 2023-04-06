@@ -13,7 +13,7 @@ pimcore.bundle.web2print.startup = Class.create({
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
 
-        //if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
+        if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
 
             menu.settings.items.push({
                 text: t("web2print_settings"),
@@ -22,7 +22,7 @@ pimcore.bundle.web2print.startup = Class.create({
                 itemId: 'pimcore_menu_settings_web2print_settings',
                 handler: this.web2printSettings
             });
-        //}
+        }
 
     },
 
