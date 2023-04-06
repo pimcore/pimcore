@@ -100,12 +100,6 @@ abstract class Kernel extends SymfonyKernel
 
         $this->microKernelRegisterContainerConfiguration($loader);
 
-        //load system configuration
-        $systemConfigFile = Config::locateConfigFile('system.yaml');
-        if (file_exists($systemConfigFile)) {
-            $loader->load($systemConfigFile);
-        }
-
         $configKeysArray = [
             'image_thumbnails',
             'video_thumbnails',

@@ -52,7 +52,6 @@ final class ConfigWriter
         // check for an initial configuration template
         // used eg. by the demo installer
         $configTemplatePaths = [
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.yaml',
             PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yaml',
             PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::SUBDIRECTORY . '/system_settings.yaml',
         ];
@@ -87,9 +86,6 @@ final class ConfigWriter
         $configFile = \Pimcore\Config::locateConfigFile(self::SUBDIRECTORY . '/system_settings.yaml');
         $settingsYml = Yaml::dump($settings, 5);
         $this->filesystem->dumpFile($configFile, $settingsYml);
-
-        $system = \Pimcore\Config::locateConfigFile('system.yaml');
-        $this->filesystem->dumpFile($system, Yaml::dump(''));
     }
 
     public function writeDbConfig(array $config = []): void

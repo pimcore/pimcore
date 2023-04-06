@@ -21,3 +21,9 @@ pimcore:
             target: 'settings-store'
         object_custom_layouts:
             target: 'settings-store'
+        system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true
+        admin_system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true

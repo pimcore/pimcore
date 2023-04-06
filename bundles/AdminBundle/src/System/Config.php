@@ -108,6 +108,20 @@ final class Config
 
     /**
      *
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
+     */
+    public function testSave(array $values): void
+    {
+        $repository = self::getRepository();
+
+        $repository->saveConfig(self::CONFIG_ID, $values, function ($data) {
+            return ['pimcore' => $data];
+        });
+
+    }
+
+    /**
+     *
      * @internal
      */
     public function getSystemSettingsConfig(): array
