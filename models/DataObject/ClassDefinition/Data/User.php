@@ -191,7 +191,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
 
     public function setUnique(bool $unique): void
     {
-        $this->unique = (bool) $unique;
+        $this->unique = $unique;
     }
 
     public function getFieldType(): string

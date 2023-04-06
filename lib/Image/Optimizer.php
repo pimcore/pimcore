@@ -30,7 +30,7 @@ class Optimizer implements ImageOptimizerInterface
 
     public function optimizeImage(string $path): void
     {
-        $extension = File::getFileExtension($path);
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
         $storage = Storage::get('thumbnail');
         $optimizedImages = [];
         $workingPath = File::getLocalTempFilePath($extension);

@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
@@ -149,7 +148,7 @@ class LibreOffice extends Ghostscript
 
             Logger::debug('LibreOffice Output was: ' . $out);
 
-            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($localAssetTmpPath) . '$/', '.pdf', basename($localAssetTmpPath));
+            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . pathinfo($localAssetTmpPath, PATHINFO_EXTENSION) . '$/', '.pdf', basename($localAssetTmpPath));
             if (file_exists($tmpName)) {
                 $storage->write($storagePath, file_get_contents($tmpName));
                 unlink($tmpName);

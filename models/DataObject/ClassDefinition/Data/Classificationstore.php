@@ -737,9 +737,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         ];
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $vars = get_object_vars($this);
@@ -764,7 +761,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setLabelWidth(int $labelWidth): void
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
     }
 
     public function getLabelWidth(): int
@@ -789,7 +786,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setLocalized(bool $localized): void
     {
-        $this->localized = (bool) $localized;
+        $this->localized = $localized;
     }
 
     public function getPermissionView(): ?array
@@ -1028,7 +1025,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setHideEmptyData(bool $hideEmptyData): static
     {
-        $this->hideEmptyData = (bool) $hideEmptyData;
+        $this->hideEmptyData = $hideEmptyData;
 
         return $this;
     }
@@ -1040,7 +1037,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setDisallowAddRemove(bool $disallowAddRemove): static
     {
-        $this->disallowAddRemove = (bool) $disallowAddRemove;
+        $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
     }

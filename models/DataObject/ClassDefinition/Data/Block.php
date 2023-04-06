@@ -265,7 +265,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
-        $params = (array)$params;
+
         $result = [];
         $idx = -1;
 
@@ -525,11 +525,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = $mainDefinition->collapsed;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
@@ -621,9 +616,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         ];
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $vars = get_object_vars($this);
@@ -697,7 +689,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setCollapsed(bool $collapsed): void
     {
-        $this->collapsed = (bool) $collapsed;
+        $this->collapsed = $collapsed;
     }
 
     public function isCollapsible(): bool
@@ -707,7 +699,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setCollapsible(bool $collapsible): void
     {
-        $this->collapsible = (bool) $collapsible;
+        $this->collapsible = $collapsible;
     }
 
     public function getStyleElement(): string
@@ -735,7 +727,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setLazyLoading(bool $lazyLoading): static
     {
-        $this->lazyLoading = (bool) $lazyLoading;
+        $this->lazyLoading = $lazyLoading;
 
         return $this;
     }
@@ -879,7 +871,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
-        $this->disallowAddRemove = (bool) $disallowAddRemove;
+        $this->disallowAddRemove = $disallowAddRemove;
     }
 
     public function isDisallowReorder(): bool
@@ -889,7 +881,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setDisallowReorder(bool $disallowReorder): void
     {
-        $this->disallowReorder = (bool) $disallowReorder;
+        $this->disallowReorder = $disallowReorder;
     }
 
     /**

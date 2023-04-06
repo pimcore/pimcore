@@ -47,9 +47,6 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
         ];
     }
 
-    /**
-     * @return Installer
-     */
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);

@@ -32,11 +32,6 @@ class StateTableMarkingStore implements MarkingStoreInterface
         $this->workflowName = $workflowName;
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return Marking
-     */
     public function getMarking(object $subject): Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
@@ -60,13 +55,6 @@ class StateTableMarkingStore implements MarkingStoreInterface
         return new Marking($places);
     }
 
-    /**
-     * @param object $subject
-     * @param Marking $marking
-     * @param array $context
-     *
-     * @return void
-     */
     public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);

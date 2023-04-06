@@ -27,10 +27,7 @@ abstract class AbstractDao implements DaoInterface
 
     const CACHEKEY = 'system_resource_columns_';
 
-    /**
-     * @var Connection
-     */
-    public $db;
+    public Connection $db;
 
     public function configure(): void
     {

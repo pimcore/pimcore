@@ -79,7 +79,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function admin()
+    public function admin(): void
     {
         $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
@@ -138,7 +138,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function frontend()
+    public function frontend(): void
     {
         $config = $this->getConfig();
 

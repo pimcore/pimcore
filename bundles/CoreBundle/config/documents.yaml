@@ -10,7 +10,6 @@ services:
     Pimcore\Document\Editable\Block\BlockStateStack:
         public: true
 
-
     Pimcore\Document\Editable\EditableHandler:
         public: true
         arguments:
@@ -22,27 +21,17 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
-
     Pimcore\Document\Editable\EditmodeEditableDefinitionCollector: ~
 
     #
     # AREABRICKS
     #
 
-    pimcore.area.brick_manager:
-        alias: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
-        deprecated:
-            package: 'pimcore/pimcore'
-            version: '10.6'
-            message: 'The "%alias_id%" service is deprecated and will be removed in Pimcore 11'
-
     # scoped container containing only the registered area bricks
     # will be configured in areabrick pass
     pimcore.document.areabrick.brick_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
-        public: false
         tags: ['container.service_locator']
-
 
     Pimcore\Extension\Document\Areabrick\AreabrickManager:
         arguments:

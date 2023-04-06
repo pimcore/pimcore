@@ -384,7 +384,7 @@ class Item extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -432,7 +432,7 @@ class Item extends Model\AbstractModel
 
     public function setAmount(int $amount): static
     {
-        $this->amount = (int) $amount;
+        $this->amount = $amount;
 
         return $this;
     }
@@ -444,7 +444,7 @@ class Item extends Model\AbstractModel
 
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }

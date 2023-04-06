@@ -361,34 +361,6 @@ function recursiveDelete(string $directory, bool $empty = true): bool
     return false;
 }
 
-function recursiveCopy(string $source, string $destination): bool
-{
-    if (is_dir($source)) {
-        if (!is_dir($destination)) {
-            \Pimcore\File::mkdir($destination);
-        }
-
-        foreach (
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST
-            ) as $item) {
-            if ($item->isDir()) {
-                \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            } else {
-                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            }
-        }
-    } elseif (is_file($source)) {
-        if (is_dir(dirname($destination))) {
-            \Pimcore\File::mkdir(dirname($destination));
-        }
-        copy($source, $destination);
-    }
-
-    return true;
-}
-
 function p_r(): void
 {
     $cloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();

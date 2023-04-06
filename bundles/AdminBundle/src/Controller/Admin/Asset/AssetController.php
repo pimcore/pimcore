@@ -44,6 +44,7 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -202,7 +203,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
-        $data['fileExtension'] = File::getFileExtension($asset->getFilename());
+        $data['fileExtension'] = pathinfo($asset->getFilename(), PATHINFO_EXTENSION);
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions($this->getAdminUser());
         $frontendPath = $asset->getFrontendFullPath();
@@ -441,7 +442,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $filename = $request->get('filename');
             $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/upload-base64' . uniqid() . '.tmp';
             $data = preg_replace('@^data:[^,]+;base64,@', '', $request->get('data'));
-            File::put($sourcePath, base64_decode($data));
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($sourcePath, base64_decode($data));
         } else {
             throw new \Exception('The filename of the asset is empty');
         }
@@ -612,8 +614,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $asset->setCustomSetting('thumbnails', null);
         $asset->setUserModification($this->getAdminUser()->getId());
 
-        $newFileExt = File::getFileExtension($newFilename);
-        $currentFileExt = File::getFileExtension($asset->getFilename());
+        $newFileExt = pathinfo($newFilename, PATHINFO_EXTENSION);
+        $currentFileExt = pathinfo($asset->getFilename(), PATHINFO_EXTENSION);
         if ($newFileExt != $currentFileExt) {
             $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSafeCopyName($newFilename, $asset->getParent());
@@ -1235,7 +1237,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $thumbnailFile = $thumbnailFile ?: $thumbnail->getLocalFile();
 
             $downloadFilename = preg_replace(
-                '/\.' . preg_quote(File::getFileExtension($image->getFilename())) . '$/i',
+                '/\.' . preg_quote(pathinfo($image->getFilename(), PATHINFO_EXTENSION)) . '$/i',
                 '.' . $thumbnail->getFileExtension(),
                 $image->getFilename()
             );
@@ -1844,7 +1846,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         foreach ($list as $asset) {
             $filenameDisplay = $asset->getFilename();
             if (strlen($filenameDisplay) > 32) {
-                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . pathinfo($filenameDisplay, PATHINFO_EXTENSION);
             }
 
             // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
@@ -2281,7 +2283,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function importZipFilesAction(Request $request): JsonResponse
+    public function importZipFilesAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $jobId = $request->get('jobId');
         $limit = (int)$request->get('limit');
@@ -2291,7 +2293,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/zip-import';
 
         if (!is_dir($tmpDir)) {
-            File::mkdir($tmpDir, 0777, true);
+            $filesystem->mkdir($tmpDir);
         }
 
         $zip = new \ZipArchive;

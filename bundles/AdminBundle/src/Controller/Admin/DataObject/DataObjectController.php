@@ -239,7 +239,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $tmpObject = [
             'id' => $child->getId(),
-            'idx' => (int)$child->getIndex(),
+            'idx' => $child->getIndex(),
             'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
             'sortOrder' => $child->getChildrenSortOrder(),
@@ -1753,8 +1753,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         DataObject::setDoNotRestoreKeyAndPath(true);
 
-        $id1 = (int)$from;
-        $id2 = (int)$to;
+        $id1 = $from;
+        $id2 = $to;
 
         $version1 = Model\Version::getById($id1);
         $object1 = $version1?->loadData();

@@ -10,14 +10,6 @@ just have to provide the correct settings (Tool -> PDFreactor / Chromium / Goten
 
 In your controller you just have to return the PDF instead of the HTML. 
 
-## Uninstalling PimcoreWebToPrintBundle
-Uninstalling the bundle does not clean up `printpages` or `printcontainers`. Before uninstalling make sure to remove or archive all dependent documents.
-You can also use the following command to clean up you database. Create a backup before executing the command. All data will be lost.
-
-```bash
- bin/console pimcore:document:cleanup printpage printcontainer
-```
-
 ## Simple example
 
 ```php

@@ -59,6 +59,11 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedFunctions = $functions;
     }
 
+    /**
+     * @param string[] $tags
+     * @param string[] $filters
+     * @param string[] $functions
+     */
     public function checkSecurity($tags, $filters, $functions): void
     {
         foreach ($tags as $tag) {
@@ -81,12 +86,20 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
     }
 
+    /**
+     * @param object $obj
+     * @param string $method
+     */
     public function checkMethodAllowed($obj, $method): void
     {
         //do not perform any checks
     }
 
-    public function checkPropertyAllowed($obj, $method): void
+    /**
+     * @param object $obj
+     * @param string $property
+     */
+    public function checkPropertyAllowed($obj, $property): void
     {
         //do not perform any checks
     }

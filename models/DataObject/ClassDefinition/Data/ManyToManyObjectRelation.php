@@ -186,7 +186,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
 
-        $gridFields = (array)$visibleFieldsArray;
+        $gridFields = $visibleFieldsArray;
 
         // add data
         if (is_array($data) && count($data) > 0) {
@@ -735,7 +735,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     public function setAllowToCreateNewObject(bool $allowToCreateNewObject): void
     {
-        $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
+        $this->allowToCreateNewObject = $allowToCreateNewObject;
     }
 
     public function isAllowedToClearRelation(): bool
@@ -753,7 +753,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function isOptimizedAdminLoading(): bool
     {
-        return (bool) $this->optimizedAdminLoading;
+        return $this->optimizedAdminLoading;
     }
 
     public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void

@@ -125,7 +125,7 @@ final class Editlock extends Model\AbstractModel
 
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
@@ -139,7 +139,7 @@ final class Editlock extends Model\AbstractModel
 
     public function setUserId(int $userId): static
     {
-        $this->userId = (int) $userId;
+        $this->userId = $userId;
 
         return $this;
     }
@@ -151,7 +151,7 @@ final class Editlock extends Model\AbstractModel
 
     public function setCtype(string $ctype): static
     {
-        $this->ctype = (string) $ctype;
+        $this->ctype = $ctype;
 
         return $this;
     }
@@ -163,7 +163,7 @@ final class Editlock extends Model\AbstractModel
 
     public function setSessionId(string $sessionId): static
     {
-        $this->sessionId = (string) $sessionId;
+        $this->sessionId = $sessionId;
 
         return $this;
     }
@@ -184,7 +184,7 @@ final class Editlock extends Model\AbstractModel
 
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }

@@ -55,7 +55,7 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
     public function prepend(ContainerBuilder $container): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_custom_reports');
-        $configDir = $containerConfig['config_location']['custom_reports']['options']['directory'];
+        $configDir = $containerConfig['config_location']['custom_reports']['write_target']['options']['directory'];
         $configLoader = new YamlFileLoader(
             $container,
             new FileLocator($configDir)

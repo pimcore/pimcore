@@ -57,9 +57,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
         parent::set($name, $value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function replace(array $attributes): void
     {
         $this->checkLock();

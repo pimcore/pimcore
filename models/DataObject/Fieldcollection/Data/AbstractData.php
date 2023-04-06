@@ -48,7 +48,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     public function setIndex(int $index): static
     {
-        $this->index = (int) $index;
+        $this->index = $index;
 
         return $this;
     }
@@ -148,9 +148,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $parentVars = parent::__sleep();

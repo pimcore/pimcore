@@ -672,7 +672,7 @@ abstract class Page extends Container
      */
     public function setActive(bool $active = true): static
     {
-        $this->_active = (bool) $active;
+        $this->_active = $active;
 
         return $this;
     }

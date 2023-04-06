@@ -58,11 +58,11 @@ trait TemporaryFileHelperTrait
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
-            $fileExtension = File::getFileExtension($stream);
+            $fileExtension = pathinfo($stream, PATHINFO_EXTENSION);
         } else {
             $src = $stream;
             $streamMeta = stream_get_meta_data($src);
-            $fileExtension = File::getFileExtension($streamMeta['uri']);
+            $fileExtension = pathinfo($streamMeta['uri'], PATHINFO_EXTENSION);
         }
 
         $tmpFilePath = File::getLocalTempFilePath($fileExtension, $keep);

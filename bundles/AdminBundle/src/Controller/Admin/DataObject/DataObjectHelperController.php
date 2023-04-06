@@ -28,7 +28,6 @@ use Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite;
 use Pimcore\Bundle\AdminBundle\Model\GridConfigShare;
 use Pimcore\Config;
 use Pimcore\Db;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -37,6 +36,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -1036,7 +1036,7 @@ class DataObjectHelperController extends AdminController
             $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
                 (int) $id,
                 $gridConfig->getClassId(),
-                (int) $objectId,
+                $objectId,
                 $gridConfig->getSearchType()
             );
 
@@ -1046,7 +1046,7 @@ class DataObjectHelperController extends AdminController
 
                 if ($favouriteGridConfig instanceof GridConfig) {
                     // Check if the grid config was shared globally if that is *not* the case we also not update
-                    if ((bool) $favouriteGridConfig->isShareGlobally() === false) {
+                    if ($favouriteGridConfig->isShareGlobally() === false) {
                         continue;
                     }
 
@@ -1181,7 +1181,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return JsonResponse
      */
-    public function importUploadAction(Request $request): JsonResponse
+    public function importUploadAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
         $data = Tool\Text::convertToUTF8($data);
@@ -1189,10 +1189,10 @@ class DataObjectHelperController extends AdminController
         $importId = $request->get('importId');
         $importId = str_replace('..', '', $importId);
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
-        File::put($importFile, $data);
+        $filesystem->dumpFile($importFile, $data);
 
         $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original';
-        File::put($importFileOriginal, $data);
+        $filesystem->dumpFile($importFileOriginal, $data);
 
         $response = $this->adminJson([
             'success' => true,

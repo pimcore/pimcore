@@ -52,6 +52,7 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -294,10 +295,11 @@ class Asset extends Element\AbstractElement
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
                 $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
-                    File::put($tmpFile, $data['data']);
+                    $filesystem = new Filesystem();
+                    $filesystem->dumpFile($tmpFile, $data['data']);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
@@ -420,7 +422,7 @@ class Asset extends Element\AbstractElement
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
             foreach ($assetTypeConfiguration['matching'] as $pattern) {
-                if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
+                if (preg_match($pattern, $mimeType . ' .' . pathinfo($filename, PATHINFO_EXTENSION))) {
                     $type = $assetType;
 
                     break;
@@ -1042,7 +1044,7 @@ class Asset extends Element\AbstractElement
 
     public function setFilename(string $filename): static
     {
-        $this->filename = (string)$filename;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -1054,7 +1056,7 @@ class Asset extends Element\AbstractElement
 
     public function setType(string $type): static
     {
-        $this->type = (string)$type;
+        $this->type = $type;
 
         return $this;
     }
@@ -1314,7 +1316,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = [];
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
-            foreach ((array)$metadata as $metaItem) {
+            foreach ($metadata as $metaItem) {
                 $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }

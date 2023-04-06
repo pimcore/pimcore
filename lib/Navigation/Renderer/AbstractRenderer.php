@@ -365,7 +365,7 @@ abstract class AbstractRenderer implements RendererInterface
         }
 
         $xhtml = '';
-        foreach ((array) $attribs as $key => $val) {
+        foreach ($attribs as $key => $val) {
             $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
             if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {

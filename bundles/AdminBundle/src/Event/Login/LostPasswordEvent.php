@@ -64,7 +64,7 @@ class LostPasswordEvent extends Event
      */
     public function setSendMail(bool $sendMail): static
     {
-        $this->sendMail = (bool)$sendMail;
+        $this->sendMail = $sendMail;
 
         return $this;
     }

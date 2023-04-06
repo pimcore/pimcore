@@ -25,16 +25,6 @@ class UnitConversionService
     {
     }
 
-    /**
-     * @template T of AbstractQuantityValue
-     *
-     * @param T $quantityValue
-     * @param Unit $toUnit
-     *
-     * @return T
-     *
-     * @throws \Exception
-     */
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue
     {
         $baseUnit = $toUnit->getBaseunit();

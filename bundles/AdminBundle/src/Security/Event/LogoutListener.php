@@ -60,9 +60,6 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
     ) {
     }
 
-    /**
-     * @param LogoutEvent $event
-     */
     public function onLogout(LogoutEvent $event): void
     {
         $request = $event->getRequest();

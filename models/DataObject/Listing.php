@@ -53,7 +53,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     {
         $this->setData(null);
 
-        $this->unpublished = (bool) $unpublished;
+        $this->unpublished = $unpublished;
 
         return $this;
     }

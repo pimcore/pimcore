@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -14,4 +13,5 @@ services:
     #
     # REDIRECTS Export
     #
+
     Pimcore\Bundle\SeoBundle\Redirect\Csv: ~

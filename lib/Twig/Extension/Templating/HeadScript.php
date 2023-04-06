@@ -424,7 +424,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      */
     public function setAllowArbitraryAttributes(bool $flag): static
     {
-        $this->_arbitraryAttributes = (bool) $flag;
+        $this->_arbitraryAttributes = $flag;
 
         return $this;
     }

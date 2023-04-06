@@ -233,7 +233,7 @@ class Menu extends AbstractRenderer
      */
     public function setRenderParentClass(bool $flag = true): static
     {
-        $this->_renderParentClass = (bool) $flag;
+        $this->_renderParentClass = $flag;
 
         return $this;
     }
@@ -259,7 +259,7 @@ class Menu extends AbstractRenderer
      */
     public function setOnlyActiveBranch(bool $flag = true): static
     {
-        $this->_onlyActiveBranch = (bool) $flag;
+        $this->_onlyActiveBranch = $flag;
 
         return $this;
     }
@@ -287,7 +287,7 @@ class Menu extends AbstractRenderer
      */
     public function setExpandSiblingNodesOfActiveBranch(bool $flag = true): static
     {
-        $this->_expandSiblingNodesOfActiveBranch = (bool) $flag;
+        $this->_expandSiblingNodesOfActiveBranch = $flag;
 
         return $this;
     }
@@ -318,7 +318,7 @@ class Menu extends AbstractRenderer
      */
     public function setRenderParents(bool $flag = true): static
     {
-        $this->_renderParents = (bool) $flag;
+        $this->_renderParents = $flag;
 
         return $this;
     }
@@ -394,7 +394,7 @@ class Menu extends AbstractRenderer
      */
     public function addPageClassToLi(bool $flag = true): static
     {
-        $this->_addPageClassToLi = (bool) $flag;
+        $this->_addPageClassToLi = $flag;
 
         return $this;
     }

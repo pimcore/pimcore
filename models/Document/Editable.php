@@ -271,7 +271,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function setDocumentId(int $id): static
     {
-        $this->documentId = (int) $id;
+        $this->documentId = $id;
 
         if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
             $this->document = null;
@@ -431,7 +431,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function setEditmode(bool $editmode): static
     {
-        $this->editmode = (bool) $editmode;
+        $this->editmode = $editmode;
 
         return $this;
     }

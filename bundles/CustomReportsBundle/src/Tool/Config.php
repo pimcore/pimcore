@@ -218,7 +218,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     public function setMenuShortcut(bool $menuShortcut): void
     {
-        $this->menuShortcut = (bool) $menuShortcut;
+        $this->menuShortcut = $menuShortcut;
     }
 
     public function getMenuShortcut(): bool

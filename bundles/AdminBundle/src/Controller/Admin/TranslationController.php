@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -27,6 +26,7 @@ use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -117,14 +117,14 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function uploadImportFileAction(Request $request): JsonResponse
+    public function uploadImportFileAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $tmpData = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         //store data for further usage
         $filename = uniqid('import_translations-');
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
-        File::put($importFile, $tmpData);
+        $filesystem->dumpFile($importFile, $tmpData);
 
         Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($importFile) {
             $session->set('translation_import_file', $importFile);

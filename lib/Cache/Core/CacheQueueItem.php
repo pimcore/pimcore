@@ -49,7 +49,7 @@ class CacheQueueItem
         $this->tags = $tags;
         $this->lifetime = $lifetime;
         $this->priority = (int)$priority;
-        $this->force = (bool)$force;
+        $this->force = $force;
     }
 
     public function getKey(): string
