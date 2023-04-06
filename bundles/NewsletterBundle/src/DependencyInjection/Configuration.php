@@ -68,8 +68,9 @@ class Configuration implements ConfigurationInterface
                         ->prototype('scalar')
                     ->end()
                 ->end()
-                ->scalarNode('defaultUrlPrefix')
-                ->defaultNull()
+                ->scalarNode('default_url_prefix')
+                    ->defaultNull()
+                ->end()
             ->end();
 
         return $treeBuilder;

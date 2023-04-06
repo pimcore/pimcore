@@ -1281,14 +1281,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/businessman.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_newsletterActive {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/invite.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_newsletterConfirmed {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_textarea {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
 }

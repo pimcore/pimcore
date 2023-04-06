@@ -12,6 +12,7 @@ pimcore.bundle.newsletter.startup = Class.create({
         var menu = e.detail.menu;
         var tree = e.detail.tree;
         var me = this;
+        var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter")
 
         if (tree.tree.getSelectionModel().getSelected().length > 1) {
             return;
@@ -21,10 +22,6 @@ pimcore.bundle.newsletter.startup = Class.create({
             newsletter: [],
         };
 
-        if (tree.tree.getSelectionModel().getSelected().length > 1) {
-            return;
-        }
-
         var childSupportedDocument = (document.data.type == "page" || document.data.type == "folder"
             || document.data.type == "link" || document.data.type == "hardlink"
             || document.data.type == "printcontainer" || document.data.type == "headlessdocument");
@@ -33,15 +30,16 @@ pimcore.bundle.newsletter.startup = Class.create({
         // do not add the newsletter under print containers
         if(childSupportedDocument && document.data.permissions.create && !pimcore.helpers.documentTypeHasSpecificRole(document.data.type, "only_printable_childrens")) {
             documentMenu = this.populatePredefinedDocumentTypes(documentMenu, tree, document);
-            // empty newsletter
-            documentMenu.newsletter.push({
-                text: "&gt; " + t("blank"),
-                iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                handler: me.addDocument.bind(tree, tree, document, "newsletter")
-            });
+            if (addBlankNewsletter) {
+                // empty newsletter
+                documentMenu.newsletter.push({
+                    text: "&gt; " + t("blank"),
+                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                    handler: me.addDocument.bind(tree, tree, document, "newsletter")
+                });
+            }
 
             // add after email, should be 5
-
             menu.insert(5, new Ext.menu.Item({
                 text: t('add_newsletter'),
                 iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",

@@ -8,7 +8,7 @@ and template creation to document composing within Pimcore backend with areas, d
 ## Additional Settings
 Newsletter documents provide following additional settings compared to default documents:
 
-![Newsletter settings](../../img/newsletter_settings.png)
+![Newsletter settings](./img/newsletter_settings.png)
 
   - Subject: Subject of the newsletter.
   - From: From-Address of the newsletter. As fallback, Pimcore system settings are used. 
@@ -21,7 +21,7 @@ Newsletter documents provide following additional settings compared to default d
 
 ## Newsletter Sending
 The Newsletter Sending Panel provides the functionality for sending the newsletter. 
-![Newsletter sending panel](../../img/newsletter_sending_panel.png)
+![Newsletter sending panel](./img/newsletter_sending_panel.png)
 
 ### Address Source Adapter
 The Address Source Adapter is responsible for extracting the email addresses the newsletter should be sent to. It has to 
@@ -46,10 +46,10 @@ settings of Pimcore. There you also can configure an external SMTP sending servi
 It is easily possible to implement custom address source adapter. Following files have to be created: 
 - JavaScript Class: This class defines the user interface in the sending panel. It has to be located in 
 the namespace `pimcore.document.newsletters.addressSourceAdapters`, named like the adapter (e.g. `pimcore.document.newsletters.addressSourceAdapters.myAdapter`)
- and implement the methods `initialize`, `getName`, `getLayout` and `getValues`. As sample see [csvList](https://github.com/pimcore/pimcore/blob/11.x/bundles/pimcoreadmin/js/pimcore/document/newsletters/addressSourceAdapters/csvList.js)
+ and implement the methods `initialize`, `getName`, `getLayout` and `getValues`. As sample see [csvList](../public/js/document/newsletters/addressSourceAdapters/csvList.js)
 - PHP Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing 
 the email addresses. It needs to implement the interface `AddressSourceAdapterInterface`. As sample see
- [csvList](https://github.com/pimcore/pimcore/blob/11.x/lib/Document/Newsletter/AddressSourceAdapter/CsvList.php).
+ [csvList](../src/Document/Newsletter/AddressSourceAdapter/CsvList.php).
 - Register your Adapter Source Factory as Service. If you are using a very simple Adapter Source, you can use the DefaultFactory
   ```yml
   app.document.newsletter.factory.myAdapter:

@@ -24,7 +24,7 @@ If your *mailing list* is stored in objects, you can find few special data compo
 
 The class definition below shows how to build a class used by the newsletter list.
  
-![Class definition for the newsletter](../img/newsletter_class_definition.png)
+![Class definition for the newsletter](./img/newsletter_class_definition.png)
 
 The purpose of the fields gender, *firstname*, *lastname* and *email* should be clear.
 *newsletterActive* and *newsletterConfirmed* are used to save the state of the user (also used by the frontend framework). 
@@ -49,7 +49,7 @@ You are able to configure the default URL prefix in order to make sure, that you
 
 ```yml
 pimcore_newsletter: 
-  defaultUrlPrefix: 'https://my-host.com'
+  default_url_prefix: 'https://my-host.com'
 ```
 
 ## Newsletter Frontend Framework
@@ -281,17 +281,17 @@ In this document the following Twig parameters are available:
 
 In the document editmode you can create the confirmation email by choosing **Add email -> Standard-Mail**:
 
-![Create email document](../img/newsletter_create_document_confirmation.png)
+![Create email document](./img/newsletter_create_document_confirmation.png)
 
 The editmode is of course quite similar to other document types:
 
-![Editing the email document](../img/newsletter_confirmation_document_editmode.png)
+![Editing the email document](./img/newsletter_confirmation_document_editmode.png)
 
 
 To define the confirmation URL in editmode. You have to add controller / action and token information.
 In the picture, you can see how you would add a token  to the URL. 
 
-![The email document - a variable placeholder](../img/newsletter_token_url.png)
+![The email document - a variable placeholder](./img/newsletter_token_url.png)
 
 
 ### Sending Newsletters
@@ -310,7 +310,7 @@ In this document the following Twig parameters are available:
 * `{{ object.someMethod }}`
 
 
-![Create newsletter document](../img/newsletter_create_newsletter_document.png)
+![Create newsletter document](./img/newsletter_create_newsletter_document.png)
 
 #### Get UserData in the Email Template
 
@@ -323,14 +323,14 @@ $lastname = $userObject->getLastname();
 
 In the example below, you can find out how to add the unsubscribe link and how to use firstname in the content.
 
-![Newsletter - mailing, using variables](../img/newsletter_mailing_example.png)
+![Newsletter - mailing, using variables](./img/newsletter_mailing_example.png)
 
 ### Send a Test Message
 
 In newsletter documents, there is additional tab in the top panel, it's called *Newsletter Sending Panel*.
 It's a good practise to check newsletter before it would be used with real emails. 
 
-![Send a test newsletter](../img/newsletter_test_sending.png)
+![Send a test newsletter](./img/newsletter_test_sending.png)
 
 ### Send the Newsletter
 
@@ -340,10 +340,10 @@ And the *Customer* class as the source.
 
 Choose the adapter:
 
-![Newsletter - objects list source adapter](../img/newsletter_objects_list_adapter.png)
+![Newsletter - objects list source adapter](./img/newsletter_objects_list_adapter.png)
 
 Choose the class:
 
-![Newsletter - objects list source adapter class](../img/newsletter_objects_list_adapter_class.png)
+![Newsletter - objects list source adapter class](./img/newsletter_objects_list_adapter_class.png)
 
 and at the end, just push the **Send Newsletter Now** button.

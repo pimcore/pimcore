@@ -37,7 +37,7 @@ class SendNewsletterHandler
     public function __invoke(SendNewsletterMessage $message): void
     {
         $sendingId = $message->getTmpStoreId();
-        $hostUrl = $this->pimcoreConfig['defaultUrlPrefix'] ?: $message->getHostUrl();
+        $hostUrl = $this->pimcoreConfig['default_url_prefix'] ?: $message->getHostUrl();
 
         $tmpStore = TmpStore::get($sendingId);
 

@@ -6,13 +6,23 @@ This bundle provides a basic newsletter framework with the advantage to use all 
 * Pimcore >= 11
 
 #### Install
+
 Install bundle via composer:
 ```bash 
 composer require pimcore/newsletter-bundle
 ```
-Enable bundle via console or extensions manager:
+
+Enable bundle in `config/bundles.php`:
+```php
+return [
+    ...
+    Pimcore\Bundle\NewsletterBundle\PimcoreNewsletterBundle::class => ['all' => true],
+    ...
+];
+```
+
+Install bundle via console:
 ```bash
-php bin/console pimcore:bundle:enable PimcoreNewsletterBundle
 php bin/console pimcore:bundle:install PimcoreNewsletterBundle
 ```
 
@@ -22,7 +32,7 @@ php bin/console pimcore:bundle:list
 +---------------------------------+---------+-----------+----+-----+-----+
 | Bundle                          | Enabled | Installed | I? | UI? | UP? |
 +---------------------------------+---------+-----------+----+-----+-----+
-| PimcoreNewsletterBundle  | ✔       | ✔        | ❌  | ✔  | ❌ |
+| PimcoreNewsletterBundle         | ✔      | ✔       | ❌  | ✔  | ❌   |
 +---------------------------------+---------+-----------+----+-----+-----+
 ```
 
@@ -56,7 +66,7 @@ pimcore_newsletter:
     debug:
         email_addresses: 'han.solo@pimcore.com,luke.skywalker@pimcore.com'
     use_specific: true
-    defaultUrlPrefix: 'https://my-host.com'    
+    default_url_prefix: 'https://my-host.com'    
     
 ```
 
@@ -77,9 +87,9 @@ See [Newsletter](./doc/19_Newsletter.md) for a complete example and how to set u
 ## Document Types
 This bundle introduces a new document type:
 
-| Type                                             | Description                                   | 
-|--------------------------------------------------|-----------------------------------------------|
-| [Newsletter](./doc/05_Newsletter_Documents) | Like an email but specialized for newsletter |
+| Type                                           | Description                                   | 
+|------------------------------------------------|-----------------------------------------------|
+| [Newsletter](./doc/05_Newsletter_Documents.md) | Like an email but specialized for newsletter |
 
 ## Pimcore Twig Extensions
 This bundle also adds a new twig extension. For more information checkout the main documentation
