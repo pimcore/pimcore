@@ -42,8 +42,9 @@ This feature is currently supported by the following configurations:
 - Perspectives
 - Custom views
 
+The data of configurations are loaded from the container and if there is no data pimcore try to load it from `settings-store`
 
-You can change the write target individually for each type by using environment variables.
+You can change the write target individually for each type by using symfony configuration.
 The following options are available: 
 - `symfony-config` 
   - write configs as Symfony Config as YAML files to the configured storage directory
@@ -61,53 +62,57 @@ Available options for write targets and directory for Symfony Config files are:
 pimcore:
     config_location:
         image_thumbnails:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/image-thumbnails'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/image-thumbnails'
         custom_reports:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/custom_reports'
+            write_target:
+	          type: 'settings-store'
         video_thumbnails:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/video-thumbnails'
+            write_target:
+	          type: 'disabled'
         document_types:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/document_types'
+            write_target:
+	          type: 'disabled'
         web_to_print:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/web_to_print'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/web_to_print'
         predefined_properties:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/predefined_properties'
+            write_target:
+	          type: 'settings-store'
         predefined_asset_metadata:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/predefined_asset_metadata'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/predefined_asset_metadata'
         staticroutes:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/staticroutes'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/staticroutes'
         perspectives:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/perspectives'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/perspectives'
         custom_views:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/custom_views'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/custom_views'
         data_hub:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/data_hub'
+            write_target:
+        	  type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/data_hub'
         object_custom_layouts:
-            target: 'symfony-config'
-            options:
-              directory: '/var/www/html/var/config/object_custom_layouts'
+            write_target:
+	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/object_custom_layouts'
 ```
 
 #### Production environment with `symfony-config`
@@ -120,7 +125,8 @@ You can do so by adding the following to your `symfony-config`. e.g.:
 pimcore:
     config_location:
         custom_reports:
-            target: 'settings-store'
+            write_target:
+	          type: 'settings-store'
 ```
 
 #### Revalidate existing configuration on production
