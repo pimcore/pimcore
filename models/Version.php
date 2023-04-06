@@ -358,28 +358,28 @@ final class Version extends AbstractModel
 
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
     public function setNote(string $note): static
     {
-        $this->note = (string) $note;
+        $this->note = $note;
 
         return $this;
     }
@@ -419,7 +419,7 @@ final class Version extends AbstractModel
 
     public function setSerialized(bool $serialized): static
     {
-        $this->serialized = (bool) $serialized;
+        $this->serialized = $serialized;
 
         return $this;
     }
@@ -431,7 +431,7 @@ final class Version extends AbstractModel
 
     public function setCtype(string $ctype): static
     {
-        $this->ctype = (string) $ctype;
+        $this->ctype = $ctype;
 
         return $this;
     }
@@ -460,7 +460,7 @@ final class Version extends AbstractModel
 
     public function setPublic(bool $public): static
     {
-        $this->public = (bool) $public;
+        $this->public = $public;
 
         return $this;
     }
@@ -472,7 +472,7 @@ final class Version extends AbstractModel
 
     public function setVersionCount(int $versionCount): void
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
     }
 
     public function getBinaryFileHash(): ?string
@@ -497,7 +497,7 @@ final class Version extends AbstractModel
 
     public function getGenerateStackTrace(): bool
     {
-        return (bool) $this->generateStackTrace;
+        return $this->generateStackTrace;
     }
 
     public function setGenerateStackTrace(bool $generateStackTrace): void

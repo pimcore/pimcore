@@ -242,7 +242,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
-        $this->useCurrentDate = (bool)$useCurrentDate;
+        $this->useCurrentDate = $useCurrentDate;
 
         return $this;
     }

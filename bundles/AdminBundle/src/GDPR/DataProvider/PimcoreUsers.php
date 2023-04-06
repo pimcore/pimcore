@@ -136,7 +136,7 @@ class PimcoreUsers implements DataProviderInterface
         $user = User::getById($id);
         $userData = [];
         if ($user) {
-            $userData = (array)$user->getObjectVars();
+            $userData = $user->getObjectVars();
             unset($userData['password']);
             $userData['versions'] = $this->getVersionDataForUser($user);
             $userData['usageLog'] = $this->getUsageLogDataForUser($user);

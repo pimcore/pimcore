@@ -1048,7 +1048,7 @@ class DataObjectHelperController extends AdminController
             $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
                 (int) $id,
                 $gridConfig->getClassId(),
-                (int) $objectId,
+                $objectId,
                 $gridConfig->getSearchType()
             );
 
@@ -1058,7 +1058,7 @@ class DataObjectHelperController extends AdminController
 
                 if ($favouriteGridConfig instanceof GridConfig) {
                     // Check if the grid config was shared globally if that is *not* the case we also not update
-                    if ((bool) $favouriteGridConfig->isShareGlobally() === false) {
+                    if ($favouriteGridConfig->isShareGlobally() === false) {
                         continue;
                     }
 

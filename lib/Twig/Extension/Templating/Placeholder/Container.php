@@ -166,7 +166,7 @@ class Container extends \ArrayObject
      */
     public function setPrefix(string $prefix): static
     {
-        $this->_prefix = (string) $prefix;
+        $this->_prefix = $prefix;
 
         return $this;
     }
@@ -190,7 +190,7 @@ class Container extends \ArrayObject
      */
     public function setPostfix(string $postfix): static
     {
-        $this->_postfix = (string) $postfix;
+        $this->_postfix = $postfix;
 
         return $this;
     }
@@ -216,7 +216,7 @@ class Container extends \ArrayObject
      */
     public function setSeparator(string $separator): static
     {
-        $this->_separator = (string) $separator;
+        $this->_separator = $separator;
 
         return $this;
     }

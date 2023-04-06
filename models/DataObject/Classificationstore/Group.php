@@ -82,7 +82,7 @@ final class Group
 
     protected function getKeyByKeyGroupRelation(KeyGroupRelation $keyGroupRelation): Key
     {
-        $keyConfig = $this->getKeyConfigById((int)$keyGroupRelation->getKeyId());
+        $keyConfig = $this->getKeyConfigById($keyGroupRelation->getKeyId());
 
         return new Key($this, $keyConfig);
     }

@@ -120,7 +120,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      */
     protected function _escape(string $string): string
     {
-        return htmlspecialchars((string) $string);
+        return htmlspecialchars($string);
     }
 
     /**

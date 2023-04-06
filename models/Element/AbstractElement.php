@@ -108,7 +108,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setPath(string $path): static
     {
-        $this->path = (string) $path;
+        $this->path = $path;
 
         return $this;
     }
@@ -135,7 +135,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function setUserModification(int $userModification): static
     {
         $this->markFieldDirty('userModification');
-        $this->userModification = (int) $userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }
@@ -147,7 +147,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -161,7 +161,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $this->markFieldDirty('modificationDate');
 
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -173,7 +173,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setUserOwner(int $userOwner): static
     {
-        $this->userOwner = (int) $userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
@@ -213,7 +213,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setId(?int $id): static
     {
-        $this->id = $id ? (int)$id : null;
+        $this->id = $id;
 
         return $this;
     }
@@ -539,9 +539,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return $this->getFullPath();
@@ -650,9 +647,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return ['dependencies', 'parent'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         if ($this->isInDumpState()) {

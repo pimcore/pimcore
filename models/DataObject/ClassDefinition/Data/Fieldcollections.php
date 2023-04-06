@@ -80,7 +80,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setLazyLoading(bool $lazyLoading): static
     {
-        $this->lazyLoading = (bool) $lazyLoading;
+        $this->lazyLoading = $lazyLoading;
 
         return $this;
     }
@@ -643,7 +643,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
-        $this->disallowAddRemove = (bool) $disallowAddRemove;
+        $this->disallowAddRemove = $disallowAddRemove;
     }
 
     public function getDisallowAddRemove(): bool
@@ -653,7 +653,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setDisallowReorder(bool $disallowReorder): void
     {
-        $this->disallowReorder = (bool) $disallowReorder;
+        $this->disallowReorder = $disallowReorder;
     }
 
     public function getDisallowReorder(): bool
@@ -678,7 +678,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setCollapsed(bool $collapsed): void
     {
-        $this->collapsed = (bool) $collapsed;
+        $this->collapsed = $collapsed;
     }
 
     public function isCollapsible(): bool
@@ -688,7 +688,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setCollapsible(bool $collapsible): void
     {
-        $this->collapsible = (bool) $collapsible;
+        $this->collapsible = $collapsible;
     }
 
     /**

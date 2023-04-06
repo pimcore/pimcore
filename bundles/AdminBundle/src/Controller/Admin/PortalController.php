@@ -196,7 +196,7 @@ class PortalController extends AdminController implements KernelControllerEventI
             $colCount++;
         }
 
-        array_splice($newConfig[$request->get('column')], $request->get('row'), 0, [$toMove]);
+        array_splice($newConfig[$request->get('column')], $request->request->getInt('row'), 0, [$toMove]);
 
         $config['positions'] = $newConfig;
         $this->saveConfiguration($request, $config);

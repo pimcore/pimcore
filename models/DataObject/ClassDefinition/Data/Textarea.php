@@ -63,7 +63,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
     public function isExcludeFromSearchIndex(): bool

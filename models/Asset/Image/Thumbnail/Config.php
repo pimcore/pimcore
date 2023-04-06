@@ -430,7 +430,7 @@ final class Config extends Model\AbstractModel
     public function setQuality(int $quality): static
     {
         if ($quality) {
-            $this->quality = (int) $quality;
+            $this->quality = $quality;
         }
 
         return $this;
