@@ -43,6 +43,7 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "ext-curl": "*",
+    "cbschuld/browser.php": "^1.9.6",
     "composer/ca-bundle": "^1.2",
     "composer-runtime-api": "^2.0",
     "defuse/php-encryption": "^2.2.0",
