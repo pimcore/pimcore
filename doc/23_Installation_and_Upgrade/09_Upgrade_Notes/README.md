@@ -317,7 +317,7 @@ pimcore:
 - [Appearance & Branding] Appearance & Branding settings are now separated from the System settings and stored in `config/admin_system_settings/admin_system_settings.yaml` by default. Please use `Pimcore\Bundle\AdminBundle\System\AdminConfig::get()` method to retrieve these settings.
   To save these settings into the settings store, please add following to your configuration:
 ```yaml
-pimcore:
+pimcore_admin:
     config_location:
         admin_system_settings:
             write_target:
