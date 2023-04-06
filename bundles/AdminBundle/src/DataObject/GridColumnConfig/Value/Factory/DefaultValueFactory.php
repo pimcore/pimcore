@@ -32,9 +32,6 @@ final class DefaultValueFactory implements ValueFactoryInterface
         $this->localeService = $localeService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(\stdClass $configElement, mixed $context = null): ValueInterface
     {
         return new $this->className($configElement, $context, $this->localeService);

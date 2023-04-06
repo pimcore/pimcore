@@ -106,6 +106,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
 
     public function setSorter(int $sorter): void
     {
-        $this->sorter = (int) $sorter;
+        $this->sorter = $sorter;
     }
 }

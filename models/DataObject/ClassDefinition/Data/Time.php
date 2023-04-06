@@ -199,7 +199,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
 
     public function setIncrement(int $increment): void
     {
-        $this->increment = (int) $increment;
+        $this->increment = $increment;
     }
 
     public function getFieldType(): string

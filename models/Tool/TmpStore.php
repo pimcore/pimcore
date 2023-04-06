@@ -85,14 +85,6 @@ final class TmpStore extends Model\AbstractModel
         return 86400 * 7;
     }
 
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string|null $tag
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
     public static function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         $instance = self::getInstance();

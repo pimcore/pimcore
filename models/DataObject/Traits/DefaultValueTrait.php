@@ -131,6 +131,6 @@ trait DefaultValueTrait
 
     public function setDefaultValueGenerator(string $defaultValueGenerator): void
     {
-        $this->defaultValueGenerator = (string)$defaultValueGenerator;
+        $this->defaultValueGenerator = $defaultValueGenerator;
     }
 }

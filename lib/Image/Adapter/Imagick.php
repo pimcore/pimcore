@@ -238,8 +238,8 @@ class Imagick extends Adapter
         }
 
         if ($quality && !$this->isPreserveColor()) {
-            $i->setCompressionQuality((int) $quality);
-            $i->setImageCompressionQuality((int) $quality);
+            $i->setCompressionQuality($quality);
+            $i->setImageCompressionQuality($quality);
         }
 
         if ($format == 'tiff') {
@@ -522,8 +522,6 @@ class Imagick extends Adapter
             }
         }
 
-        $width = (int)$width;
-        $height = (int)$height;
 
         if ($this->getWidth() !== $width || $this->getHeight() !== $height) {
             if ($this->checkPreserveAnimation()) {

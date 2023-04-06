@@ -584,7 +584,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         };
 
         // if changed the index change also all documents on the same level
-        $newIndex = (int)$newIndex;
+       
         $document->saveIndex($newIndex);
 
         $list = new Document\Listing();

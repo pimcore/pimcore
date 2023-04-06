@@ -25,10 +25,6 @@ abstract class AbstractValue implements ValueInterface
 
     protected mixed $context = null;
 
-    /**
-     * @param \stdClass $config
-     * @param mixed $context
-     */
     public function __construct(\stdClass $config, mixed $context = null)
     {
         $this->attribute = $config->attribute;

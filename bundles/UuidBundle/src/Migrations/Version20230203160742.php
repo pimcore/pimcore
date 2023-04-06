@@ -20,9 +20,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20230203160742 extends AbstractMigration
 {
-    /**
-     * {@inheritDoc}
-     */
+
     public function getDescription(): string
     {
         return 'Modify `itemId` column type in `uuids` db table';

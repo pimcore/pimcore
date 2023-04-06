@@ -40,7 +40,7 @@ class PdfReactor extends Processor
      */
     protected function getConfig(object $config): array
     {
-        $config = (object)$config;
+        $config = $config;
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig = [
             'document' => '',

@@ -22,9 +22,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20220214110000 extends AbstractMigration
 {
-    /**
-     * {@inheritDoc}
-     */
+
     public function getDescription(): string
     {
         return 'Add `storageType` column to `version` database table';

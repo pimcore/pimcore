@@ -248,7 +248,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
-        $this->useCurrentDate = (bool)$useCurrentDate;
+        $this->useCurrentDate = $useCurrentDate;
 
         return $this;
     }

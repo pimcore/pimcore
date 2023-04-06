@@ -28,12 +28,6 @@ class PreviewGenerator implements PreviewGeneratorInterface
 {
     protected Translator $translator;
 
-    /**
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function generatePreviewUrl(Concrete $object, array $params): string
     {
         $linkGenerator = $object->getClass()->getLinkGenerator();
@@ -87,11 +81,6 @@ class PreviewGenerator implements PreviewGeneratorInterface
         ]);
     }
 
-    /**
-     * @param Concrete $object
-     *
-     * @return array
-     */
     protected function getLocalePreviewConfig(Concrete $object): array
     {
         $user = Tool\Authentication::authenticateSession();
@@ -111,11 +100,6 @@ class PreviewGenerator implements PreviewGeneratorInterface
         ];
     }
 
-    /**
-     * @param Concrete $object
-     *
-     * @return array
-     */
     protected function getSitePreviewConfig(Concrete $object): array
     {
         $sites = new Site\Listing();

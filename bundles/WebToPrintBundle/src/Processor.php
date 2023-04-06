@@ -257,7 +257,7 @@ abstract class Processor
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
-            $template = $twig->createTemplate((string) $html);
+            $template = $twig->createTemplate($html);
 
             $html = $twig->render($template, $params);
         } catch (SecurityError $e) {

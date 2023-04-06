@@ -103,17 +103,11 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return $this->getColumnType();

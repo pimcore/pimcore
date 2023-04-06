@@ -82,7 +82,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function setDoDelete(bool $doDelete): static
     {
         $this->flushContainer();
-        $this->doDelete = (bool)$doDelete;
+        $this->doDelete = $doDelete;
 
         return $this;
     }
@@ -230,9 +230,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $parentVars = parent::__sleep();

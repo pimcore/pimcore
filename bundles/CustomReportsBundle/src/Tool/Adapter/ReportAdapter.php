@@ -36,7 +36,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
 
     protected int $elementsTotal = 0;
 
-    protected ?Listing $list = null;
+    protected ?array $list = null;
 
     public function __construct(string $emailFieldName, CustomReportAdapterInterface $reportAdapter)
     {
@@ -44,7 +44,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
         $this->reportAdapter = $reportAdapter;
     }
 
-    protected function getListing(): ?Listing
+    protected function getListing(): array
     {
         $result = $this->reportAdapter->getData(null, $this->emailFieldName, 'ASC', null, null);
 

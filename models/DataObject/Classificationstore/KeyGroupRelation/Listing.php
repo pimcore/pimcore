@@ -53,6 +53,6 @@ class Listing extends Model\Listing\AbstractListing
 
     public function setResolveGroupName(bool $resolveGroupName): void
     {
-        $this->resolveGroupName = (bool) $resolveGroupName;
+        $this->resolveGroupName = $resolveGroupName;
     }
 }

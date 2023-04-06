@@ -272,12 +272,12 @@ class Data extends AbstractModel
 
     public function isPublished(): bool
     {
-        return (bool) $this->getPublished();
+        return $this->getPublished();
     }
 
     public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
     /**

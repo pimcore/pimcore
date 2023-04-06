@@ -148,7 +148,7 @@ final class Note extends Model\AbstractModel
 
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
@@ -184,7 +184,7 @@ final class Note extends Model\AbstractModel
 
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
@@ -208,7 +208,7 @@ final class Note extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
