@@ -796,6 +796,7 @@ class Installer
             'seemode',
             'share_configurations',
             'system_settings',
+            'system_appearance_settings',
             'tags_configuration',
             'tags_assignment',
             'tags_search',

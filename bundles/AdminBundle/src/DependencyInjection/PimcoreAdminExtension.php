@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -76,6 +77,19 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
 
     public function prepend(ContainerBuilder $container): void
     {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_admin');
+        $configDir = $containerConfig['config_location']['admin_system_settings']['options']['directory'];
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
+        }
+
         $builds = [
             'pimcoreAdmin' => realpath(__DIR__ . '/../../public/build/admin'),
             'pimcoreAdminImageEditor' => realpath(__DIR__ . '/../../public/build/imageEditor'),

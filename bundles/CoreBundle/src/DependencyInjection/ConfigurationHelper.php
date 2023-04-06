@@ -42,20 +42,23 @@ final class ConfigurationHelper
 
     public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
     {
-        $node->
-        arrayNode($name)
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->enumNode('target')
-            ->values(['symfony-config', 'settings-store'])
-            ->defaultValue('symfony-config')
-            ->end()
-            ->arrayNode('options')
-            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-            ->variablePrototype()
-            ->end()
-            ->end()
-            ->end()
+        $node
+            ->arrayNode($name)
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('is_symfony_config_disabled')
+                            ->defaultFalse()
+                        ->end()
+                        ->enumNode('target')
+                            ->values(['symfony-config', 'settings-store'])
+                            ->defaultValue('symfony-config')
+                        ->end()
+                        ->arrayNode('options')
+                            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                            ->variablePrototype()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
     }
 

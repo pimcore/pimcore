@@ -2,3 +2,22 @@ imports:
     - { resource: services.yaml }
     - { resource: system.yaml }
     - { resource: 'local/' }
+
+pimcore:
+    config_location:
+        image_thumbnails:
+            target: 'settings-store'
+        video_thumbnails:
+            target: 'settings-store'
+        document_types:
+            target: 'settings-store'
+        predefined_properties:
+            target: 'settings-store'
+        predefined_asset_metadata:
+            target: 'settings-store'
+        perspectives:
+            target: 'settings-store'
+        custom_views:
+            target: 'settings-store'
+        object_custom_layouts:
+            target: 'settings-store'

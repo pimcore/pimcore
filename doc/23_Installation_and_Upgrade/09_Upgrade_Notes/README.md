@@ -302,7 +302,24 @@ pimcore:
                     only_printable_childrens: false
 ```
 - [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
-
+- [System Settings] System Settings are now implementing the LocationAwareConfigRepository. They are stored in `config/system_settings/system_settings.yaml` by default. Please move respective configuration from `system.yaml` accordingly. Please use `Pimcore\Bundle\AdminBundle\System\Config::get()` method to retrieve system settings.
+To save system settings into the settings store, please add following to your configuration:
+```yaml
+pimcore:
+    config_location:
+        system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true
+```
+- [Appearance & Branding] Appearance & Branding settings are now separated from the System settings and stored in `config/admin_system_settings/admin_system_settings.yaml` by default. Please use `Pimcore\Bundle\AdminBundle\System\AdminConfig::get()` method to retrieve these settings.
+  To save these settings into the settings store, please add following to your configuration:
+```yaml
+pimcore:
+    config_location:
+        admin_system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true
+```
 ## 10.6.0
 
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)

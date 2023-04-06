@@ -140,6 +140,8 @@ final class Configuration implements ConfigurationInterface
             'perspectives',
             'custom_views',
             'object_custom_layouts',
+            'system_settings',
+            'admin_system_settings'
         ]);
         $this->addChromiumNode($rootNode);
 

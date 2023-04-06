@@ -299,6 +299,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/settings.svg) center center no-repeat !important;
 }
 
+.pimcore_nav_icon_frame {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/frame.svg) center center no-repeat !important;
+}
+
 .pimcore_nav_icon_website_settings {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/candle_sticks.svg) center center no-repeat !important;
 }
@@ -652,6 +656,10 @@
 
 .pimcore_icon_system {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_appearance {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/frame.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_plugin, .pimcore_icon_bundle {
