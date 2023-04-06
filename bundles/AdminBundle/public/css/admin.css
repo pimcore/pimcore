@@ -1854,11 +1854,6 @@ span.warning {
     user-select: none;
 }
 
-.pimcore_asset_image_preview .image_feature {
-    position: absolute;
-    border: 1px solid red;
-}
-
 .pimcore_main_accordion .x-panel-body {
     padding: 0;
     background-color: #E0E1E2;
