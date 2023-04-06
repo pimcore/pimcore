@@ -689,7 +689,7 @@ abstract class PageSnippet extends Model\Document
         $this->staticGeneratorLifetime = $staticGeneratorLifetime;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $propertyMappings = [
             'contentMasterDocumentId' => 'contentMainDocumentId',

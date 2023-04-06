@@ -56,7 +56,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['staticroutes']);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['staticroutes' => '/var/config/staticroutes']);
 
         return $treeBuilder;
     }

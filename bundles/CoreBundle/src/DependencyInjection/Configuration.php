@@ -140,7 +140,7 @@ final class Configuration implements ConfigurationInterface
             'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
             'perspectives' => '/var/config/perspectives',
             'custom_views' => '/var/config/custom_views',
-            'object_custom_layouts' => '/var/config/object_custom_layouts'
+            'object_custom_layouts' => '/var/config/object_custom_layouts',
         ]);
 
         return $treeBuilder;
