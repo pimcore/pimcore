@@ -18,6 +18,7 @@ namespace Pimcore\Tool;
 
 use Pimcore\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -55,7 +56,7 @@ final class Console
      *
      * @throws \Exception
      */
-    public static function getExecutable(string $name, bool $throwException = false): string|false
+    public static function getExecutable(string $name, bool $throwException = false, bool $checkExternal = true): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -71,21 +72,11 @@ final class Console
             self::$customSetupMethod();
         }
 
-        // use DI to provide the ability to customize / overwrite paths
-        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
-            $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
+        // get executable from pimcore_executable_* param
+        if ($checkExternal && $externalExecutable = self::getExternalExecutable($name, $throwException)) {
+            self::$executableCache[$name] = $externalExecutable;
 
-            if ($value === false) {
-                if ($throwException) {
-                    throw new \Exception("'$name' executable was disabled manually in parameters.yml");
-                }
-
-                return false;
-            }
-
-            if ($value) {
-                return $value;
-            }
+            return $externalExecutable;
         }
 
         $paths = [];
@@ -139,22 +130,43 @@ final class Console
         return false;
     }
 
+    private static function getExternalExecutable(string $name, bool $throwException = false): string|false
+    {
+        $executable = false;
+
+        // use DI to provide the ability to customize / overwrite paths
+        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
+            $executable = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
+
+            if ($executable === false && $throwException) {
+                throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+            }
+        }
+
+        return $executable;
+    }
+
     /**
      * @throws \Exception
      */
     public static function getPhpCli(): string
     {
         try {
-            return self::getExecutable('php', true);
-        } catch (\Exception $e) {
+            $phpPath = self::getExternalExecutable('php', true);
+            if ($phpPath) {
+                return $phpPath;
+            }
+
             $phpFinder = new PhpExecutableFinder();
             $phpPath = $phpFinder->find(true);
             if (!$phpPath) {
-                throw $e;
+                throw new NotFoundException('No PHP executable found, get from getExecutable()');
             }
-
-            return $phpPath;
+        } catch (\Exception $e) {
+            $phpPath = self::getExecutable('php', true, false);
         }
+
+        return $phpPath;
     }
 
     public static function getTimeoutBinary(): string|false
