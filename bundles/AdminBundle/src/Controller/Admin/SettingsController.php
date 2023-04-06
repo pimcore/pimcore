@@ -386,7 +386,7 @@ class SettingsController extends AdminController
      * @Route("/get-system", name="pimcore_admin_settings_getsystem", methods={"GET"})
      *
      * @param Request $request
-     * @param Config $config
+     * @param SystemConfig $config
      *
      * @return JsonResponse
      */
