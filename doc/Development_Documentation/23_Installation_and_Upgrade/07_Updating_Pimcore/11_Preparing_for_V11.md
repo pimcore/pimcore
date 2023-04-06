@@ -98,5 +98,24 @@
           options:
             directory: '/var/www/html/var/config/custom_reports'
     ```
-  
+- [System Settings] Appearance & Branding settings will be separated from the System settings in Pimcore 11 and stored in `var/config/admin_system_settings/admin_system_settings.yaml` by default.
+  To save these settings into the settings store, you will need to add following to your configuration:
+```yaml
+pimcore:
+    config_location:
+        admin_system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true
+```
+
+System Settings will implement LocationAwareConfigRepository in Pimcore 11. All relevant settings from `system.yaml` will be stored in `var/config/system_settings/system_settings.yaml` by default.
+To save system settings into the settings store, you will need to add following to your configuration:
+```yaml
+pimcore:
+    config_location:
+        system_settings:
+            target: 'settings-store'
+            is_symfony_config_disabled: true
+```
+
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
