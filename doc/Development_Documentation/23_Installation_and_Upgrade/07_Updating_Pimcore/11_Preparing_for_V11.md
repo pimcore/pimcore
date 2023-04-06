@@ -100,10 +100,11 @@
 - [System Settings] Appearance & Branding settings will be separated from the System settings in Pimcore 11 and stored in `var/config/admin_system_settings/admin_system_settings.yaml` by default.
   To save these settings into the settings store, you will need to add following to your configuration:
 ```yaml
-pimcore:
+pimcore_admin:
     config_location:
         admin_system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true
 ```
 
@@ -113,7 +114,8 @@ To save system settings into the settings store, you will need to add following 
 pimcore:
     config_location:
         system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true
 ```
 
