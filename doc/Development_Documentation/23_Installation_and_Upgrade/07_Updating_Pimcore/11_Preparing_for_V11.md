@@ -81,22 +81,21 @@
 - [Config Environment] Replace deprecated setting write targets and storage directory in the .env file with symfony config
     ```bash
     PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=symfony-config
-    PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=symfony-config
+    PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
   
     PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
-    PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS=/var/www/html/var/config/custom-reports
     ```
     ```yaml
     pimcore:
       config_location:
         image_thumbnails:
-          target: 'symfony-config'
-          options:
-            directory: '/var/www/html/var/config/image-thumbnails'
+          write_target:
+            type: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/image-thumbnails'
         custom_reports:
-          target: 'symfony-config'
-          options:
-            directory: '/var/www/html/var/config/custom_reports'
+          write_target:
+            type: 'settings-store'
     ```
   
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
