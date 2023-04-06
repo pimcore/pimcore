@@ -246,7 +246,7 @@ abstract class Kernel extends SymfonyKernel
                 if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
                     continue;
                 }
-                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
+                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target']['options'];
 
                 $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
@@ -267,7 +267,7 @@ abstract class Kernel extends SymfonyKernel
             return $_SERVER[$storageDir];
         }
 
-        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
+        return $config[self::CONFIG_LOCATION][$configKey]['write_target']['options']['directory'];
     }
 
     /**
