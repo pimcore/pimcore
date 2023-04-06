@@ -57,7 +57,7 @@ class Blocklist extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): void
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
     }
 
     public function getCreationDate(): int
@@ -71,7 +71,7 @@ class Blocklist extends Model\AbstractModel
 
     public function setModificationDate(int $modificationDate): void
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
     }
 
     public function getModificationDate(): int

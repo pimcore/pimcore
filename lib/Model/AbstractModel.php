@@ -195,9 +195,6 @@ abstract class AbstractModel implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $blockedVars = ['dao', 'dirtyFields', 'activeDispatchingEvents'];

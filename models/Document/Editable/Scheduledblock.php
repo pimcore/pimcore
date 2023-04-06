@@ -196,7 +196,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
+    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = ''): void
     {
         $attributes = [
             'data-name' => $this->getName(),

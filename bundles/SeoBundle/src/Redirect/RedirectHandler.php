@@ -290,9 +290,9 @@ final class RedirectHandler implements LoggerAwareInterface
 
             if ($override) {
                 // if override is true the priority has to be 99 which means that overriding is ok
-                return (int)$redirect->getPriority() === 99;
+                return $redirect->getPriority() === 99;
             } else {
-                return (int)$redirect->getPriority() !== 99;
+                return $redirect->getPriority() !== 99;
             }
         });
     }

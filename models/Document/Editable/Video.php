@@ -219,9 +219,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-    /**
-     * @return mixed
-     */
     protected function getDataEditmode(): mixed
     {
         $data = $this->getData();
@@ -238,9 +235,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataForResource(): array
     {
         return [

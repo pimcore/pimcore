@@ -73,7 +73,7 @@ final class WebsiteSetting extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $setting = new self();
-                $setting->getDao()->getById((int)$id);
+                $setting->getDao()->getById($id);
                 \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
             } catch (NotFoundException $e) {
                 return null;
@@ -138,7 +138,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -163,7 +163,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -203,7 +203,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -218,7 +218,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setSiteId(int $siteId): static
     {
-        $this->siteId = (int) $siteId;
+        $this->siteId = $siteId;
 
         return $this;
     }

@@ -30,7 +30,7 @@ class Pimcore
 
     public static function inDebugMode(): bool
     {
-        return (bool) self::getKernel()->isDebug();
+        return self::getKernel()->isDebug();
     }
 
     public static function inDevMode(): bool

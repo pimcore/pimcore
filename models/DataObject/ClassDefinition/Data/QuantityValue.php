@@ -154,9 +154,6 @@ class QuantityValue extends AbstractQuantityValue
         return $this->decimalPrecision;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): array
     {
         if ($this->getInteger()) {
@@ -179,9 +176,6 @@ class QuantityValue extends AbstractQuantityValue
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): array
     {
         return $this->getColumnType();

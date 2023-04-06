@@ -26,9 +26,9 @@ use Pimcore\Model\DataObject\Listing;
  */
 class DefaultAdapter implements AddressSourceAdapterInterface
 {
-    protected string|null $class = null;
+    protected ?string $class = null;
 
-    protected  string|null $condition = null;
+    protected ?string $condition = null;
 
     protected int $elementsTotal;
 

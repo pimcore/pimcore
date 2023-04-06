@@ -107,7 +107,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function setRowsFixed(bool $rowsFixed): static
     {
-        $this->rowsFixed = (bool)$rowsFixed;
+        $this->rowsFixed = $rowsFixed;
 
         return $this;
     }
@@ -119,7 +119,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function setColsFixed(bool $colsFixed): static
     {
-        $this->colsFixed = (bool)$colsFixed;
+        $this->colsFixed = $colsFixed;
 
         return $this;
     }

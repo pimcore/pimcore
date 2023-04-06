@@ -1050,7 +1050,7 @@ class Asset extends Element\AbstractElement
 
     public function setFilename(string $filename): static
     {
-        $this->filename = (string)$filename;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -1062,7 +1062,7 @@ class Asset extends Element\AbstractElement
 
     public function setType(string $type): static
     {
-        $this->type = (string)$type;
+        $this->type = $type;
 
         return $this;
     }
@@ -1289,7 +1289,7 @@ class Asset extends Element\AbstractElement
      */
     public function setMimeType(string $mimetype): static
     {
-        $this->mimetype = (string)$mimetype;
+        $this->mimetype = $mimetype;
 
         return $this;
     }
@@ -1322,7 +1322,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = [];
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
-            foreach ((array)$metadata as $metaItem) {
+            foreach ($metadata as $metaItem) {
                 $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }

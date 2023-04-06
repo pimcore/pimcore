@@ -34,12 +34,6 @@ class LoginFailedEvent extends Event
         return $this->credentials;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $default
-     *
-     * @return mixed
-     */
     public function getCredential(string $name, mixed $default = null): mixed
     {
         if (isset($this->credentials[$name])) {
