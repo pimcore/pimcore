@@ -310,7 +310,8 @@ To save system settings into the settings store, please add following to your co
 pimcore:
     config_location:
         system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true
 ```
 - [Appearance & Branding] Appearance & Branding settings are now separated from the System settings and stored in `config/admin_system_settings/admin_system_settings.yaml` by default. Please use `Pimcore\Bundle\AdminBundle\System\AdminConfig::get()` method to retrieve these settings.
@@ -319,7 +320,8 @@ pimcore:
 pimcore:
     config_location:
         admin_system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true
 ```
 - [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.

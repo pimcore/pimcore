@@ -6,24 +6,34 @@ imports:
 pimcore:
     config_location:
         image_thumbnails:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         video_thumbnails:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         document_types:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         predefined_properties:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         predefined_asset_metadata:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         perspectives:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         custom_views:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         object_custom_layouts:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
         system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true
         admin_system_settings:
-            target: 'settings-store'
+            write_target:
+                type: 'settings-store'
             is_symfony_config_disabled: true

@@ -31,32 +31,34 @@ final class ConfigurationHelper
     {
         $storageNode = $rootNode
             ->children()
-            ->arrayNode('config_location')
-            ->addDefaultsIfNotSet()
-            ->children();
+                ->arrayNode('config_location')
+                ->addDefaultsIfNotSet()
+                ->children();
 
-        foreach ($nodes as $node) {
-            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
+        foreach ($nodes as $node => $dir) {
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir);
         }
     }
 
     public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
     {
-        $node
-            ->arrayNode($name)
+        $node->
+        arrayNode($name)
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('is_symfony_config_disabled')
+                    ->defaultFalse()
+                ->end()
+                ->arrayNode('write_target')
                 ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('is_symfony_config_disabled')
-                            ->defaultFalse()
-                        ->end()
-                        ->enumNode('target')
-                            ->values(['symfony-config', 'settings-store'])
-                            ->defaultValue('symfony-config')
-                        ->end()
-                        ->arrayNode('options')
-                            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-                            ->variablePrototype()
-                        ->end()
+                ->children()
+                    ->enumNode('type')
+                        ->values(['symfony-config', 'settings-store', 'disabled'])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode('options')
+                        ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                        ->variablePrototype()
                     ->end()
                 ->end()
             ->end();

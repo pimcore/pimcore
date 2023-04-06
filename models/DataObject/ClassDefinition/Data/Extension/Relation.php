@@ -70,10 +70,16 @@ trait Relation
             if ($classes = $this->getClasses()) {
                 foreach ($classes as $item) {
                     try {
-                        $types[] = $factory->getClassNameFor(sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes'])));
+                        $className = $factory->getClassNameFor(sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes'])));
                     } catch (UnsupportedException) {
                         continue;
                     }
+
+                    if (str_starts_with($className, '\\') === false) {
+                        $className = '\\' . $className;
+                    }
+
+                    $types[] = $className;
                 }
             } else {
                 $types[] = '\\' . AbstractObject::class;

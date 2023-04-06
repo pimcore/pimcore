@@ -41,7 +41,7 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension implement
     public function prepend(ContainerBuilder $container): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_static_routes');
-        $configDir = $containerConfig['config_location']['staticroutes']['options']['directory'];
+        $configDir = $containerConfig['config_location']['staticroutes']['write_target']['options']['directory'];
         $configLoader = new YamlFileLoader(
             $container,
             new FileLocator($configDir)
