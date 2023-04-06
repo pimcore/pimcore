@@ -77,7 +77,7 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
     public function prepend(ContainerBuilder $container): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_admin');
-        $configDir = $containerConfig['config_location']['admin_system_settings']['options']['directory'];
+        $configDir = $containerConfig['config_location']['admin_system_settings']['write_target']['options']['directory'];
         $configLoader = new YamlFileLoader(
             $container,
             new FileLocator($configDir)
