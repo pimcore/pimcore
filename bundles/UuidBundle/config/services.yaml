@@ -2,11 +2,11 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # INSTALLER
     #
+
     Pimcore\Bundle\UuidBundle\Installer:
         public: true
         arguments:
@@ -15,4 +15,5 @@ services:
     #
     # EVENT LISTENER
     #
+
     Pimcore\Bundle\UuidBundle\EventListener\UUIDListener: ~

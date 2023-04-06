@@ -18,10 +18,10 @@ namespace Pimcore\Image\Adapter;
 
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Imagick extends Adapter
 {
@@ -260,12 +260,14 @@ class Imagick extends Adapter
         $realTargetPath = null;
         if (!stream_is_local($path)) {
             $realTargetPath = $path;
-            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
+            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . pathinfo($path, PATHINFO_EXTENSION);
         }
 
+        $filesystem = new Filesystem();
         if (!stream_is_local($path)) {
             $i->setImageFormat($format);
-            $success = File::put($path, $i->getImageBlob());
+            $filesystem->dumpFile($path, $i->getImageBlob());
+            $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
                 $success = $i->writeImages('GIF:' . $path, true);
@@ -279,7 +281,7 @@ class Imagick extends Adapter
         }
 
         if ($realTargetPath) {
-            File::rename($path, $realTargetPath);
+            $filesystem->rename($path, $realTargetPath, true);
         }
 
         return $this;

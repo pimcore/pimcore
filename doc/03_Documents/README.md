@@ -11,9 +11,7 @@ Pimcore offers different types of documents and each of them offers functionalit
 | Link           | A simple web-link to be used in navigation.                                                                                                                |
 | Email          | A document like the page, but with special functionality for transactional emails.                                                                        |                                                         |
 | Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
-| Folder         | Just like the folders you know from your local filesystem.                                                                                                  | 
-| [PrintPage](./02_Document_Types/15_Print_Documents.md)     | Like pages, but specialized for print (PDF preview, rendering options, ...)                                                                                 | 
-| [PrintContainer](./02_Document_Types/15_Print_Documents.md) | Organizing print pages in chapters and render them all together.                                                                                            | 
+| Folder         | Just like the folders you know from your local filesystem.                                                                                                  |
 
 
 ## Document Configuration
@@ -84,6 +82,5 @@ bin/console pimcore:documents:cleanup <type1> <type2> <type3>
 - [Navigation](./03_Navigation.md)
 - [Inheritance](./11_Inheritance.md)
 - [Working with the PHP API](./09_Working_with_PHP_API.md) 
-- [Web-to-Print](./02_Document_Types/15_Print_Documents.md)
 - [Predefined Document Types](./07_Predefined_Document_Types.md)
 

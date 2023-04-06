@@ -20,11 +20,16 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const SETTINGS_STORE_SCOPE = 'pimcore_document_types';
+
+    protected const DOCTYPES = ['printpage', 'printcontainer'];
+
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Web2Print Bundle';
 
     protected const USER_PERMISSIONS = [
@@ -59,12 +64,13 @@ class Installer extends SettingsStoreAwareInstaller
         // Only remove permissions. Cleanup can be done by dev or command
         $output = new ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, true);
         $output->writeln([
-            "\n\n<comment>Uninstalling only removes permissions. To clean up all documents and dependencies</comment>",
+            "\n\n<comment>Uninstalling only removes permissions and doctypes. To clean up all documents and dependencies</comment>",
             '<comment>Please run <options=bold>bin/console pimcore:documents:cleanup printpage printcontainer</></comment>',
             '<comment>-------------------------------------------------------------------------------------</comment>',
         ]);
 
         $this->removeUserPermission();
+        $this->removePrintDocTypes();
         parent::uninstall();
     }
 
@@ -131,5 +137,18 @@ class Installer extends SettingsStoreAwareInstaller
         }
         $db = Db::get();
         $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => $type]);
+    }
+
+    private function removePrintDocTypes(): void
+    {
+        foreach(SettingsStore::getIdsByScope(self::SETTINGS_STORE_SCOPE) as $id) {
+            $printDocTypes = SettingsStore::get($id, self::SETTINGS_STORE_SCOPE);
+            if($printDocTypes) {
+                $data = json_decode($printDocTypes->getData(), true);
+                if(!empty($data) && in_array($data['type'], self::DOCTYPES)) {
+                    SettingsStore::delete($id, self::SETTINGS_STORE_SCOPE);
+                }
+            }
+        }
     }
 }

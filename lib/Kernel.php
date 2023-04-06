@@ -121,7 +121,7 @@ abstract class Kernel extends SymfonyKernel
             $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore');
 
             foreach ($configKeysArray as $configKey) {
-                $configDir = rtrim($containerConfig[self::CONFIG_LOCATION][$configKey]['options']['directory'], '/\\');
+                $configDir = rtrim($containerConfig[self::CONFIG_LOCATION][$configKey]['write_target']['options']['directory'], '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line

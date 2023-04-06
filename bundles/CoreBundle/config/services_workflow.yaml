@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     Pimcore\Workflow\Manager:
         public: true
@@ -13,7 +12,7 @@ services:
     Pimcore\Workflow\Notification\NotificationEmailService:
         public: true
 
-    Pimcore\Workflow\Notification\PimcoreNotificationService:
+    Pimcore\Workflow\Notification\PimcoreNotificationService: ~
 
     workflow.marking_store.state_table:
         class: Pimcore\Workflow\MarkingStore\StateTableMarkingStore

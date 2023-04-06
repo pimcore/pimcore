@@ -34,7 +34,7 @@ services:
     app.event_listener.my_event_listner:
         class: App\EventListener\MyEventListener
         arguments:
-            - '@pimcore_admin.security.user_loader'
+            - '@Pimcore\Bundle\AdminBundle\Security\User\UserLoader'
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.object.get.preSendData, method: checkPermissions }
 ```

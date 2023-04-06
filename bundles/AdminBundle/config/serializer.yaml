@@ -1,7 +1,6 @@
 services:
     _defaults:
         autowire: true
-        public: false
 
     #
     # SERIALIZER
@@ -23,8 +22,7 @@ services:
         alias: Pimcore\Admin\Serializer
         public: true
 
-    pimcore_admin.serializer.encoder.json:
-        class: Symfony\Component\Serializer\Encoder\JsonEncoder
+    Symfony\Component\Serializer\Encoder\JsonEncoder:
         tags:
             -  { name: pimcore_admin.serializer.encoder }
         deprecated:
@@ -32,8 +30,7 @@ services:
             version: '10.6'
             message: 'Using the service id "%service_id%" is deprecated. Please use Symfony\Component\Serializer\Encoder\JsonEncoder instead.'
 
-    pimcore_admin.serializer.normalizer.reference_loop:
-        class: Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer
+    Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer:
         tags:
             -  { name: pimcore_admin.serializer.normalizer }
         deprecated:

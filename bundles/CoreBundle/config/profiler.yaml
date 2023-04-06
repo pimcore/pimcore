@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # DEVELOPMENT/PROFILER
@@ -15,4 +14,3 @@ services:
                 template: '@PimcoreCore/Profiler/data_collector.html.twig'
                 id:       'pimcore'
                 priority: 500
-

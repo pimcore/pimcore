@@ -21,7 +21,6 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\TemplateResolver;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
@@ -83,14 +82,16 @@ class ContentTemplateListener implements EventSubscriberInterface
         $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute->vars);
         $status = 200;
 
-        foreach ($parameters as $k => $v) {
-            if (!$v instanceof FormInterface) {
-                continue;
+        if (interface_exists('Symfony\\Component\\Form\\FormInterface')) {
+            foreach ($parameters as $k => $v) {
+                if (!$v instanceof \Symfony\Component\Form\FormInterface) {
+                    continue;
+                }
+                if ($v->isSubmitted() && !$v->isValid()) {
+                    $status = 422;
+                }
+                $parameters[$k] = $v->createView();
             }
-            if ($v->isSubmitted() && !$v->isValid()) {
-                $status = 422;
-            }
-            $parameters[$k] = $v->createView();
         }
 
         $event->setResponse($attribute->stream

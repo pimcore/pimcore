@@ -28,7 +28,7 @@
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - Removed Plugin Broker BC layer for JS events
-- Cleanup Symfony packages from composer.json, see [#13097](https://github.com/pimcore/pimcore/pull/13097)
+- Cleanup unused Symfony packages from composer.json, eg. `form`, `web-link`, see also [#13097](https://github.com/pimcore/pimcore/pull/13097)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
 - [Ecommerce] Pricing Manager
   - Removed $session property
@@ -316,7 +316,7 @@ pimcore:
   "symfony-assets-install": "relative"
 }
 ```
-
+- Removed the following methods from `Pimcore\File`: `mkdir`, `put`, `getFileExtension`, `setDefaultMode`, `getDefaultMode`, `setDefaultFlags` and `rename`. 
 
 ## 10.6.0
 

@@ -19,7 +19,6 @@ services:
         class: Pimcore\Security\Hasher\PasswordHasherFactory
         decorates: security.password_hasher_factory
         arguments: ['@.inner', '@?']
-        public: false
 
     #
     # INFRASTRUCTURE
@@ -27,12 +26,10 @@ services:
 
     # creates needed pimcore directories
     Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
-        public: false
         tags:
             - { name: kernel.cache_warmer }
 
     Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
-        public: false
         tags:
             - { name: kernel.cache_warmer }
 

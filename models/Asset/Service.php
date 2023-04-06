@@ -19,7 +19,6 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -516,7 +515,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
+        $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['prefix']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
@@ -625,7 +624,7 @@ class Service extends Model\Element\Service
         $thumbnailStream = null;
 
         $storage = Storage::get('thumbnail');
-        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
+        $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         if ($config['type'] === 'image') {
             $thumbnailStream = $thumbnail->getStream();
@@ -633,7 +632,7 @@ class Service extends Model\Element\Service
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
             $pathReference = $thumbnail->getPathReference();
-            $actualFileExtension = File::getFileExtension($pathReference['src']);
+            $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']) {
                 // create a copy/symlink to the file with the original file extension

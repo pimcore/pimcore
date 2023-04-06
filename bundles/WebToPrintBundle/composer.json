@@ -1,0 +1,30 @@
+{
+    "name": "pimcore/web-to-print-bundle",
+    "license": "GPL-3.0+",
+    "type": "pimcore-bundle",
+    "description": "Pimcore WebToPrint Bundle",
+    "config": {
+        "sort-packages": true,
+        "preferred-install": {
+            "pimcore/pimcore": "source",
+            "*": "dist"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "pimcore/pimcore": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pimcore\\Bundle\\WebToPrintBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "pimcore": {
+            "bundles": [
+                "Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle"
+            ]
+        }
+    }
+}

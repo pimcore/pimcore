@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\WordExportBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
@@ -24,6 +23,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +45,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function wordExportAction(Request $request): JsonResponse
+    public function wordExportAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission(self::PERMISSION);
         ini_set('display_errors', 'off');
@@ -56,7 +56,7 @@ class TranslationController extends AdminController
         $source = $request->get('source');
 
         if (!is_file($exportFile)) {
-            File::put($exportFile, '');
+            $filesystem->dumpFile($exportFile, '');
         }
 
         foreach ($data as $el) {
