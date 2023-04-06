@@ -141,8 +141,7 @@ final class Configuration implements ConfigurationInterface
             'perspectives' => '/var/config/perspectives',
             'custom_views' => '/var/config/custom_views',
             'object_custom_layouts' => '/var/config/object_custom_layouts',
-            'system_settings' => '/var/config/system_settings',
-            'admin_system_settings' => '/var/config/admin_system_settings'
+            'system_settings' => '/var/config/system_settings'
         ]);
 
         return $treeBuilder;
