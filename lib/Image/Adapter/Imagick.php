@@ -522,7 +522,6 @@ class Imagick extends Adapter
             }
         }
 
-
         if ($this->getWidth() !== $width || $this->getHeight() !== $height) {
             if ($this->checkPreserveAnimation()) {
                 foreach ($this->resource as $i => $frame) {

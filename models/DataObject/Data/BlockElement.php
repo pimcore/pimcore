@@ -141,7 +141,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
              * @param object $object
              * @param string $property
              *
-             * @return boolean
+             * @return bool
              */
             public function matches($object, $property): bool
             {

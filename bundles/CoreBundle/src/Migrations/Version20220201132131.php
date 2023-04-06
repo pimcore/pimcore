@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Listing;
 
 final class Version20220201132131 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Updates class definition files';

@@ -265,7 +265,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
-      
+
         $result = [];
         $idx = -1;
 
