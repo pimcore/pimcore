@@ -122,20 +122,14 @@ class Service extends Model\Element\Service
         return \array_merge(...$userObjects);
     }
 
-    /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
-     *
-     * @return AbstractObject|void
-     */
-    public function copyRecursive(AbstractObject $target, AbstractObject $source)
+    public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
     {
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
@@ -894,9 +888,9 @@ class Service extends Model\Element\Service
      * @param array $rewriteConfig
      * @param array $params
      *
-     * @return AbstractObject|Concrete
+     * @return AbstractObject
      */
-    public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject|Concrete
+    public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject
     {
         // rewriting elements only for snippets and pages
         if ($object instanceof Concrete) {
@@ -934,25 +928,25 @@ class Service extends Model\Element\Service
         $user = AdminTool::getCurrentUser();
 
         $resultList = [];
-        $isMasterAllowed = $user->getAdmin();
+        $isMainAllowed = $user->getAdmin();
 
         $permissionSet = $object->getPermissions('layouts', $user);
         $layoutPermissions = self::getLayoutPermissions($object->getClassId(), $permissionSet);
         if (!$layoutPermissions || isset($layoutPermissions[0])) {
-            $isMasterAllowed = true;
+            $isMainAllowed = true;
         }
 
-        if ($isMasterAllowed) {
-            $master = new ClassDefinition\CustomLayout();
-            $master->setId('0');
-            $master->setName('Master');
-            $resultList[0] = $master;
+        if ($isMainAllowed) {
+            $main = new ClassDefinition\CustomLayout();
+            $main->setId('0');
+            $main->setName('Main');
+            $resultList[0] = $main;
         }
 
         if ($user->getAdmin()) {
             $superLayout = new ClassDefinition\CustomLayout();
             $superLayout->setId('-1');
-            $superLayout->setName('Master (Admin Mode)');
+            $superLayout->setName('Main (Admin Mode)');
             $resultList[-1] = $superLayout;
         }
 
@@ -1025,8 +1019,8 @@ class Service extends Model\Element\Service
      */
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
-        $masterLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($masterLayout));
+        $mainLayout = $object->getClass()->getLayoutDefinitions();
+        $superLayout = unserialize(serialize($mainLayout));
 
         self::createSuperLayout($superLayout);
 
@@ -1055,7 +1049,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    private static function synchronizeCustomLayoutFieldWithMaster(array $masterDefinition, ClassDefinition\Data|ClassDefinition\Layout|null &$layout): bool
+    private static function synchronizeCustomLayoutFieldWithMain(array $mainDefinition, ClassDefinition\Data|ClassDefinition\Layout|null &$layout): bool
     {
         if (is_null($layout)) {
             return true;
@@ -1063,14 +1057,14 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof ClassDefinition\Data) {
             $fieldname = $layout->name;
-            if (empty($masterDefinition[$fieldname])) {
+            if (empty($mainDefinition[$fieldname])) {
                 return false;
             }
 
-            if ($layout->getFieldtype() !== $masterDefinition[$fieldname]->getFieldType()) {
-                $layout->adoptMasterDefinition($masterDefinition[$fieldname]);
+            if ($layout->getFieldtype() !== $mainDefinition[$fieldname]->getFieldType()) {
+                $layout->adoptMainDefinition($mainDefinition[$fieldname]);
             } else {
-                $layout->synchronizeWithMasterDefinition($masterDefinition[$fieldname]);
+                $layout->synchronizeWithMainDefinition($mainDefinition[$fieldname]);
             }
         }
 
@@ -1080,7 +1074,7 @@ class Service extends Model\Element\Service
                 $count = count($children);
                 for ($i = $count - 1; $i >= 0; $i--) {
                     $child = $children[$i];
-                    if (!self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $child)) {
+                    if (!self::synchronizeCustomLayoutFieldWithMain($mainDefinition, $child)) {
                         unset($children[$i]);
                     }
                     $layout->setChildren($children);
@@ -1091,7 +1085,7 @@ class Service extends Model\Element\Service
         return true;
     }
 
-    /** Synchronizes a custom layout with its master layout
+    /** Synchronizes a custom layout with its main layout
      * @param ClassDefinition\CustomLayout $customLayout
      */
     public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
@@ -1099,15 +1093,15 @@ class Service extends Model\Element\Service
         $classId = $customLayout->getClassId();
         $class = ClassDefinition::getById($classId);
         if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
-            $masterDefinition = $class->getFieldDefinitions();
+            $mainDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
 
             foreach (['Localizedfields', 'Block'] as $dataType) {
                 $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(), '\Pimcore\Model\DataObject\ClassDefinition\Data\\' . $dataType, [], false);
-                $masterDefinition = array_merge($masterDefinition, $targetList);
+                $mainDefinition = array_merge($mainDefinition, $targetList);
             }
 
-            self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $customLayoutDefinition);
+            self::synchronizeCustomLayoutFieldWithMain($mainDefinition, $customLayoutDefinition);
             $customLayout->save();
         }
     }
@@ -1125,7 +1119,7 @@ class Service extends Model\Element\Service
         $object = DataObject::getById($objectId);
 
         $class = ClassDefinition::getById($classId);
-        $masterFieldDefinition = $class->getFieldDefinitions();
+        $mainFieldDefinition = $class->getFieldDefinitions();
 
         if (!$object) {
             return null;
@@ -1165,7 +1159,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        $mergedFieldDefinition = self::cloneDefinition($masterFieldDefinition);
+        $mergedFieldDefinition = self::cloneDefinition($mainFieldDefinition);
 
         if (count($layoutDefinitions)) {
             foreach ($mergedFieldDefinition as $def) {

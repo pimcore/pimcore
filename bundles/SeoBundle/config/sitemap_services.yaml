@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -16,15 +15,12 @@ services:
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor: ~
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor: ~
 
-
-
     #
     # DOCUMENTS
     #
     # Services valid for documents
 
     # Default filters for DocumentTreeGenerator
-
     Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\DocumentTypeFilter: ~
     Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\SiteRootFilter: ~
 

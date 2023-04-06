@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Pimcore\Model\Asset;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -61,6 +62,7 @@ class Service
             }
         }
 
-        \Pimcore\File::put(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
     }
 }

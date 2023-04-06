@@ -25,7 +25,6 @@ use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
@@ -573,7 +572,7 @@ class SettingsController extends AdminController
         }
 
         // PIMCORE-1854 - recreate .dummy file => should remain
-        File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+        $filesystem->dumpFile(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
         $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
     }

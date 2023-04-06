@@ -80,8 +80,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             $page->getScheduledTasks()
         );
 
-        if ($page->getContentMasterDocument()) {
-            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        if ($page->getContentMainDocument()) {
+            $data['contentMainDocumentPath'] = $page->getContentMainDocument()->getRealFullPath();
         }
 
         return $this->preSendDataActions($data, $page, $draftVersion);
@@ -171,16 +171,20 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
                 // check for a docType
                 $docType = Document\DocType::getById($request->get('docTypeId', ''));
-
-                $config = $this->getParameter('pimcore_web_to_print');
-                if ($request->get('type') === 'printpage') {
-                    $createValues['controller'] = $config['default_controller_print_page'];
-                } elseif ($request->get('type') === 'printcontainer') {
-                    $createValues['controller'] = $config['default_controller_print_container'];
+                if ($docType) {
+                    $createValues['template'] = $docType->getTemplate();
+                    $createValues['controller'] = $docType->getController();
+                } else {
+                    $config = $this->getParameter('pimcore_web_to_print');
+                    if ($request->get('type') === 'printpage') {
+                        $createValues['controller'] = $config['default_controller_print_page'];
+                    } elseif ($request->get('type') === 'printcontainer') {
+                        $createValues['controller'] = $config['default_controller_print_container'];
+                    }
                 }
 
                 if ($request->get('inheritanceSource')) {
-                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                    $createValues['contentMainDocumentId'] = $request->get('inheritanceSource');
                 }
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));

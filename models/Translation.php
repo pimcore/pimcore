@@ -23,10 +23,10 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -394,11 +394,12 @@ final class Translation extends AbstractModel
             $tmpData = Tool\Text::convertToUTF8($tmpData);
 
             //store data for further usage
+            $filesystem = new Filesystem();
             $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations';
-            File::put($importFile, $tmpData);
+            $filesystem->dumpFile($importFile, $tmpData);
 
             $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original';
-            File::put($importFileOriginal, $tmpData);
+            $filesystem->dumpFile($importFileOriginal, $tmpData);
 
             // determine csv type if not set
             if (empty($dialect)) {

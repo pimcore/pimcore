@@ -43,10 +43,10 @@ class GD extends Adapter
         $this->setHeight($height);
 
         if (!$this->sourceImageFormat) {
-            $this->sourceImageFormat = \Pimcore\File::getFileExtension($imagePath);
+            $this->sourceImageFormat = pathinfo($imagePath, PATHINFO_EXTENSION);
         }
 
-        if (in_array(\Pimcore\File::getFileExtension($imagePath), ['png', 'gif'])) {
+        if (in_array(pathinfo($imagePath, PATHINFO_EXTENSION), ['png', 'gif'])) {
             // in GD only gif and PNG can have an alphachannel
             $this->setIsAlphaPossible(true);
         }

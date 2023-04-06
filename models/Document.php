@@ -736,10 +736,10 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($mainRequest && ($masterDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
-                if ($masterDocument instanceof WrapperInterface) {
+            if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
+                if ($mainDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
-                    $hardlink = $masterDocument->getHardLinkSource();
+                    $hardlink = $mainDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
                     if ($hardlinkTarget) {
@@ -787,7 +787,7 @@ class Document extends Element\AbstractElement
         }
 
         if ($mainRequest) {
-            // caching should only be done when master request is available as it is done for performance reasons
+            // caching should only be done when main request is available as it is done for performance reasons
             // of the web frontend, without a request object there's no need to cache anything
             // for details also see https://github.com/pimcore/pimcore/issues/5707
             $this->fullPathCache = $link;

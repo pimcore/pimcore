@@ -463,12 +463,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\ManyToOneRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToOneRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->assetUploadPath = $masterDefinition->assetUploadPath;
-        $this->relationType = $masterDefinition->relationType;
+        $this->assetUploadPath = $mainDefinition->assetUploadPath;
+        $this->relationType = $mainDefinition->relationType;
     }
 
     /**

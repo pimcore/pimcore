@@ -141,7 +141,7 @@ class MiscController extends AdminController
     public function scriptProxyAction(Request $request): Response
     {
         if ($storageFile = $request->get('storageFile')) {
-            $fileExtension = \Pimcore\File::getFileExtension($storageFile);
+            $fileExtension = pathinfo($storageFile, PATHINFO_EXTENSION);
             $storage = Storage::get('admin');
             $scriptsContent = $storage->read($storageFile);
         } else {
@@ -158,12 +158,12 @@ class MiscController extends AdminController
             $scriptsContent = '';
             foreach ($scripts as $script) {
                 $filePath = $scriptPath . $script;
-                if (is_file($filePath) && is_readable($filePath) && in_array(\Pimcore\File::getFileExtension($script), $allowedFileTypes)) {
+                if (is_file($filePath) && is_readable($filePath) && in_array(pathinfo($script, PATHINFO_EXTENSION), $allowedFileTypes)) {
                     $scriptsContent .= file_get_contents($filePath);
                 }
             }
 
-            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
+            $fileExtension = pathinfo($scripts[0], PATHINFO_EXTENSION);
         }
 
         if (!empty($scriptsContent)) {

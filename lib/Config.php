@@ -93,7 +93,7 @@ final class Config implements ArrayAccess
             // check for environment configuration
             $env = self::getEnvironment();
             if ($env) {
-                $fileExt = File::getFileExtension($name);
+                $fileExt = pathinfo($name, PATHINFO_EXTENSION);
                 $pureName = str_replace('.' . $fileExt, '', $name);
                 foreach ($pathsToCheck as $path) {
                     $tmpFile = $path . '/' . $pureName . '_' . $env . '.' . $fileExt;
@@ -199,7 +199,7 @@ final class Config implements ArrayAccess
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontendRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
-                // we cannot use the document resolver service here, because we need the document on the master request
+                // we cannot use the document resolver service here, because we need the document on the main request
                 $originDocument = Pimcore::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);

@@ -73,12 +73,12 @@ abstract class PageSnippet extends Model\Document
      *
      * @var null|int
      */
-    protected ?int $contentMasterDocumentId = null;
+    protected ?int $contentMainDocumentId = null;
 
     /**
      * @internal
      */
-    protected bool $supportsContentMaster = true;
+    protected bool $supportsContentMain = true;
 
     /**
      * @internal
@@ -263,11 +263,11 @@ abstract class PageSnippet extends Model\Document
             $dependencies[] = $editable->resolveDependencies();
         }
 
-        if ($this->getContentMasterDocument() instanceof Document) {
-            $masterDocumentId = $this->getContentMasterDocument()->getId();
+        if ($this->getContentMainDocument() instanceof Document) {
+            $mainDocumentId = $this->getContentMainDocument()->getId();
             $dependencies[] = [
-                'document_' . $masterDocumentId => [
-                    'id' => $masterDocumentId,
+                'document_' . $mainDocumentId => [
+                    'id' => $mainDocumentId,
                     'type' => 'document',
                 ],
             ];
@@ -379,10 +379,10 @@ abstract class PageSnippet extends Model\Document
             return $this->inheritedEditables[$name];
         }
 
-        // check for content master document (inherit data)
-        if ($contentMasterDocument = $this->getContentMasterDocument()) {
-            if ($contentMasterDocument instanceof self) {
-                $inheritedEditable = $contentMasterDocument->getEditable($name);
+        // check for content main document (inherit data)
+        if ($contentMainDocument = $this->getContentMainDocument()) {
+            if ($contentMainDocument instanceof self) {
+                $inheritedEditable = $contentMainDocument->getEditable($name);
                 if ($inheritedEditable) {
                     $inheritedEditable = clone $inheritedEditable;
                     $inheritedEditable->setInherited(true);
@@ -397,66 +397,66 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param int|string|null $contentMasterDocumentId
+     * @param int|string|null $contentMainDocumentId
      * @param bool $validate
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setContentMasterDocumentId(int|string|null $contentMasterDocumentId, bool $validate = false): static
+    public function setContentMainDocumentId(int|string|null $contentMainDocumentId, bool $validate = false): static
     {
         // this is that the path is automatically converted to ID => when setting directly from admin UI
-        if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
-            if ($contentMasterDocument = Document\PageSnippet::getByPath($contentMasterDocumentId)) {
-                $contentMasterDocumentId = $contentMasterDocument->getId();
+        if (!is_numeric($contentMainDocumentId) && !empty($contentMainDocumentId)) {
+            if ($contentMainDocument = Document\PageSnippet::getByPath($contentMainDocumentId)) {
+                $contentMainDocumentId = $contentMainDocument->getId();
             } else {
-                // Content master document was deleted or don't exist
-                $contentMasterDocumentId = null;
+                // Content main document was deleted or don't exist
+                $contentMainDocumentId = null;
             }
         }
 
-        // Don't set the content master document if the document is already part of the master document chain
-        if ($contentMasterDocumentId) {
-            if ($currentContentMasterDocument = Document\PageSnippet::getById($contentMasterDocumentId)) {
+        // Don't set the content main document if the document is already part of the main document chain
+        if ($contentMainDocumentId) {
+            if ($currentContentMainDocument = Document\PageSnippet::getById($contentMainDocumentId)) {
                 $maxDepth = 20;
                 do {
-                    if ($currentContentMasterDocument->getId() === $this->getId()) {
-                        throw new \Exception('This document is already part of the master document chain, please choose a different one.');
+                    if ($currentContentMainDocument->getId() === $this->getId()) {
+                        throw new \Exception('This document is already part of the main document chain, please choose a different one.');
                     }
-                    $currentContentMasterDocument = $currentContentMasterDocument->getContentMasterDocument();
-                } while ($currentContentMasterDocument && $maxDepth-- > 0 && $validate);
+                    $currentContentMainDocument = $currentContentMainDocument->getContentMainDocument();
+                } while ($currentContentMainDocument && $maxDepth-- > 0 && $validate);
             } else {
-                // Content master document was deleted or don't exist
-                $contentMasterDocumentId = null;
+                // Content main document was deleted or don't exist
+                $contentMainDocumentId = null;
             }
         }
 
-        $this->contentMasterDocumentId = ($contentMasterDocumentId ? (int) $contentMasterDocumentId : null);
+        $this->contentMainDocumentId = ($contentMainDocumentId ? (int) $contentMainDocumentId : null);
 
         return $this;
     }
 
-    public function getContentMasterDocumentId(): ?int
+    public function getContentMainDocumentId(): ?int
     {
-        return $this->contentMasterDocumentId;
+        return $this->contentMainDocumentId;
     }
 
-    public function getContentMasterDocument(): ?PageSnippet
+    public function getContentMainDocument(): ?PageSnippet
     {
-        if ($masterDocumentId = $this->getContentMasterDocumentId()) {
-            return Document\PageSnippet::getById($masterDocumentId);
+        if ($mainDocumentId = $this->getContentMainDocumentId()) {
+            return Document\PageSnippet::getById($mainDocumentId);
         }
 
         return null;
     }
 
-    public function setContentMasterDocument(?PageSnippet $document): static
+    public function setContentMainDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
-            $this->setContentMasterDocumentId($document->getId(), true);
+            $this->setContentMainDocumentId($document->getId(), true);
         } else {
-            $this->setContentMasterDocumentId(null);
+            $this->setContentMainDocumentId(null);
         }
 
         return $this;
@@ -475,9 +475,9 @@ abstract class PageSnippet extends Model\Document
         if ($this->editables === null) {
             $documentEditables = $this->getDao()->getEditables();
 
-            if (self::getGetInheritedValues() && $this->supportsContentMaster() && $this->getContentMasterDocument()) {
-                $contentMasterEditables = $this->getContentMasterDocument()->getEditables();
-                $documentEditables = array_merge($contentMasterEditables, $documentEditables);
+            if (self::getGetInheritedValues() && $this->supportsContentMain() && $this->getContentMainDocument()) {
+                $contentMainEditables = $this->getContentMainDocument()->getEditables();
+                $documentEditables = array_merge($contentMainEditables, $documentEditables);
                 $this->inheritedEditables = $documentEditables;
             }
 
@@ -612,9 +612,9 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool
      */
-    public function supportsContentMaster(): bool
+    public function supportsContentMain(): bool
     {
-        return $this->supportsContentMaster;
+        return $this->supportsContentMain;
     }
 
     /**

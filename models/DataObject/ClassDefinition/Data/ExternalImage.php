@@ -246,13 +246,13 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->previewHeight = $masterDefinition->previewHeight;
-        $this->previewWidth = $masterDefinition->previewWidth;
-        $this->inputWidth = $masterDefinition->inputWidth;
+        $this->previewHeight = $mainDefinition->previewHeight;
+        $this->previewWidth = $mainDefinition->previewWidth;
+        $this->inputWidth = $mainDefinition->inputWidth;
     }
 
     /**

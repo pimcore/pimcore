@@ -28,7 +28,6 @@ use Pimcore;
 use Pimcore\Bundle\AdminBundle\CustomView\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -396,7 +395,7 @@ class Service extends Model\AbstractModel
         $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
-            if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
+            if ($type == 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
             } elseif (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
                 // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
@@ -747,10 +746,10 @@ class Service extends Model\AbstractModel
 
                 if ($originalElement) {
                     //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
-//                    if ($data instanceof Asset) {
-//                        /** @var Asset $originalElement */
-//                        $data->setFilename($originalElement->getFilename());
-//                    } else
+                    //                    if ($data instanceof Asset) {
+                    //                        /** @var Asset $originalElement */
+                    //                        $data->setFilename($originalElement->getFilename());
+                    //                    } else
                     if ($data instanceof Document) {
                         /** @var Document $originalElement */
                         $data->setKey($originalElement->getKey());

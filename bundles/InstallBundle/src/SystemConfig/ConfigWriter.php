@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 
-use Pimcore\File;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -34,11 +34,15 @@ final class ConfigWriter
         ],
     ];
 
+    protected Filesystem $filesystem;
+
     public function __construct(array $defaultConfig = null)
     {
         if (null !== $defaultConfig) {
             $this->defaultConfig = $defaultConfig;
         }
+
+        $this->filesystem = new Filesystem();
     }
 
     public function writeSystemConfig(): void
@@ -82,10 +86,10 @@ final class ConfigWriter
 
         $configFile = \Pimcore\Config::locateConfigFile(self::SUBDIRECTORY . '/system_settings.yaml');
         $settingsYml = Yaml::dump($settings, 5);
-        File::put($configFile, $settingsYml);
+        $this->filesystem->dumpFile($configFile, $settingsYml);
 
         $system = \Pimcore\Config::locateConfigFile('system.yaml');
-        File::put($system, null);
+        $this->filesystem->dumpFile($system, Yaml::dump(''));
     }
 
     public function writeDbConfig(array $config = []): void
@@ -93,7 +97,7 @@ final class ConfigWriter
         if (count($config)) {
             $content = Yaml::dump($config);
             $configFile = PIMCORE_PROJECT_ROOT .'/config/local/database.yaml';
-            File::put($configFile, $content);
+            $this->filesystem->dumpFile($configFile, $content);
         }
     }
 }

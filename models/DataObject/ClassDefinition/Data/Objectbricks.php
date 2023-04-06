@@ -784,12 +784,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Objectbricks $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Objectbricks $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->allowedTypes = $masterDefinition->allowedTypes;
-        $this->maxItems = $masterDefinition->maxItems;
+        $this->allowedTypes = $mainDefinition->allowedTypes;
+        $this->maxItems = $mainDefinition->maxItems;
     }
 
     /**

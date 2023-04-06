@@ -3,17 +3,8 @@ pimcore.registerNS("pimcore.bundle.web2print.startup");
 pimcore.bundle.web2print.startup = Class.create({
 
     initialize: function () {
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
         document.addEventListener(pimcore.events.prepareDocumentTreeContextMenu, this.onPrepareDocumentTreeContextMenu.bind(this));
-    },
-
-    pimcoreReady: function (e) {
-        // add printpage & printcontainer to valid document types
-        if (pimcore.globalmanager.exists("document_valid_types")) {
-            pimcore.globalmanager.get('document_valid_types').push('printpage');
-            pimcore.globalmanager.get('document_valid_types').push('printcontainer');
-        }
     },
 
     preMenuBuild: function (e) {
@@ -54,14 +45,16 @@ pimcore.bundle.web2print.startup = Class.create({
             return;
         }
 
+        var documentMenu = {
+            printPage: [],
+        };
+
         var childSupportedDocument = (document.data.type == "page" || document.data.type == "folder"
             || document.data.type == "link" || document.data.type == "hardlink"
             || document.data.type == "printcontainer" || document.data.type == "headlessdocument");
 
         if (childSupportedDocument && document.data.permissions.create) {
-            var documentMenu = {
-                printPage: [],
-            };
+            documentMenu = this.populatePredefinedDocumentTypes(documentMenu, tree, document);
 
             // empty print pages
             documentMenu.printPage.push({
@@ -88,11 +81,11 @@ pimcore.bundle.web2print.startup = Class.create({
 
 
 
-    addDocument : function (tree, record, type, template) {
+    addDocument : function (tree, record, type, docTypeId) {
         var textKeyTitle = t("add_" + type);
         var textKeyMessage = t("enter_the_name_of_the_new_item");
 
-        Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, template, button, value) {
+        Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, docTypeId, button, value) {
             if (button == "ok") {
                 if (value) {
                     // check for ident filename in current level
@@ -107,7 +100,7 @@ pimcore.bundle.web2print.startup = Class.create({
                     let params = {
                         key: pimcore.helpers.getValidFilename(value, "document"),
                         type: type,
-                        template: template,
+                        docTypeId: docTypeId,
                         sourceTree: tree,
                         elementType: "document",
                         index: record.childNodes.length,
@@ -118,7 +111,43 @@ pimcore.bundle.web2print.startup = Class.create({
                     pimcore.elementservice.addDocument(params);
                 }
             }
-        }.bind(this, tree, record, type, template));
+        }.bind(this, tree, record, type, docTypeId));
+    },
+
+    populatePredefinedDocumentTypes: function(documentMenu, tree, record) {
+        var me = this;
+        var document_types = pimcore.globalmanager.get("document_types_store");
+        document_types.sort([
+            {property: 'priority', direction: 'ASC'},
+            {property: 'translatedGroup', direction: 'ASC'},
+            {property: 'translatedName', direction: 'ASC'}
+        ]);
+        document_types.each(function (documentMenu, typeRecord) {
+            var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
+
+            if (typeRecord.get("type") === 'printcontainer') {
+                documentMenu['printPage'].push(
+                    {
+                        text: text,
+                        iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
+                        handler: me.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
+                    }
+                );
+            }
+
+            if (typeRecord.get("type") === 'printpage') {
+                documentMenu['printPage'].push(
+                    {
+                        text: text,
+                        iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
+                        handler: me.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
+                    }
+                );
+            }
+
+        }.bind(this, documentMenu), documentMenu);
+
+        return documentMenu;
     },
 });
 

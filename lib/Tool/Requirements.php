@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
@@ -32,6 +32,7 @@ final class Requirements
      */
     public static function checkFilesystem(): array
     {
+        $filesystem = new Filesystem();
         $checks = [];
 
         // filesystem checks
@@ -40,7 +41,7 @@ final class Requirements
 
             try {
                 if (!is_dir($varDir)) {
-                    File::mkdir($varDir);
+                    $filesystem->mkdir($varDir, 0775);
                 }
 
                 $files = self::rscandir($varDir);

@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -27,7 +26,6 @@ services:
     # TEMPLATING
 
     Pimcore\Bundle\GlossaryBundle\Tool\Processor:
-        public: false
         arguments:
             $blockedTags: '%pimcore_glossary.blocked_tags%'
 

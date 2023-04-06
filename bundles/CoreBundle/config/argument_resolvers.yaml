@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
         tags:
             - { name: controller.argument_value_resolver }
 
