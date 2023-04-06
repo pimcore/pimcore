@@ -57,5 +57,4 @@ final class ConfigurationHelper
                 ->end()
             ->end();
     }
-
 }

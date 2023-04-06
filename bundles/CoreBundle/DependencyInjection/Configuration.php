@@ -22,7 +22,6 @@ use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -194,7 +193,7 @@ final class Configuration implements ConfigurationInterface
             'perspectives' => '/var/config/perspectives',
             'custom_views' => '/var/config/custom_views',
             'data_hub' => '/var/config/data_hub',
-            'object_custom_layouts' => '/var/config/object_custom_layouts'
+            'object_custom_layouts' => '/var/config/object_custom_layouts',
         ]);
 
         return $treeBuilder;
