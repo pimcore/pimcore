@@ -459,17 +459,6 @@ final class Requirements
         ]);
 
         try {
-            $facedetectAvailable = \Pimcore\Tool\Console::getExecutable('facedetect');
-        } catch (\Exception $e) {
-            $facedetectAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'facedetect',
-            'state' => $facedetectAvailable ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
             $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
         } catch (\Exception $e) {
             $graphvizAvailable = false;
