@@ -9,7 +9,7 @@ pimcore.bundle.newsletter.startup = Class.create({
 
     onPrepareDocumentTreeContextMenu: function (e) {
         let user = pimcore.globalmanager.get("user");
-        if (!user.isAllowed("newsletter")) {
+        if (!user.isAllowed("newsletters")) {
             return;
         }
 
