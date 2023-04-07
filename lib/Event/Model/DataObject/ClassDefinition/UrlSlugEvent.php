@@ -32,17 +32,11 @@ class UrlSlugEvent extends Event
         $this->data = $data;
     }
 
-    /**
-     * @return ?UrlSlug
-     */
     public function getUrlSlug(): ?UrlSlug
     {
         return $this->urlSlug;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;

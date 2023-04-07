@@ -120,7 +120,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->storageConfig['target'];
+        $writeLocation = $this->storageConfig['write_target']['type'];
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -197,7 +197,7 @@ class LocationAwareConfigRepository
 
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->storageConfig['options']['directory'], '/\\');
+        $directory = rtrim($this->storageConfig['write_target']['options']['directory'], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }

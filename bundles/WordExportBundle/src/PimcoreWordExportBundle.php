@@ -41,9 +41,6 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBu
         ];
     }
 
-    /**
-     * @return Installer
-     */
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);

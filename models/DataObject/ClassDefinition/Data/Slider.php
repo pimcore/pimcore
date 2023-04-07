@@ -93,7 +93,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     public function setVertical(bool $vertical): static
     {
-        $this->vertical = (bool) $vertical;
+        $this->vertical = $vertical;
 
         return $this;
     }

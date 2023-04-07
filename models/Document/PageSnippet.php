@@ -76,6 +76,13 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
+     * @var null|int
+     */
+    protected $contentMasterDocumentId;
+
+    /**
+     * @internal
      */
     protected bool $supportsContentMain = true;
 
@@ -106,6 +113,11 @@ abstract class PageSnippet extends Model\Document
     protected array $inheritedEditables = [];
 
     private static bool $getInheritedValues = false;
+
+    public function __construct()
+    {
+        $this->contentMasterDocumentId = & $this->contentMainDocumentId;
+    }
 
     public static function setGetInheritedValues(bool $getInheritedValues): void
     {
@@ -522,9 +534,6 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -598,7 +607,7 @@ abstract class PageSnippet extends Model\Document
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
         if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = (bool) $missingRequiredEditable;
+            $missingRequiredEditable = $missingRequiredEditable;
         }
 
         $this->missingRequiredEditable = $missingRequiredEditable;
@@ -675,5 +684,21 @@ abstract class PageSnippet extends Model\Document
     public function setStaticGeneratorLifetime(?int $staticGeneratorLifetime): void
     {
         $this->staticGeneratorLifetime = $staticGeneratorLifetime;
+    }
+
+    public function __wakeup(): void
+    {
+        $propertyMappings = [
+            'contentMasterDocumentId' => 'contentMainDocumentId',
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }

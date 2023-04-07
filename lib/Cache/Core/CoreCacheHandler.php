@@ -214,7 +214,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function setHandleCli(bool $handleCli): static
     {
-        $this->handleCli = (bool)$handleCli;
+        $this->handleCli = $handleCli;
 
         return $this;
     }
@@ -238,14 +238,14 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function setForceImmediateWrite(bool $forceImmediateWrite): static
     {
-        $this->forceImmediateWrite = (bool)$forceImmediateWrite;
+        $this->forceImmediateWrite = $forceImmediateWrite;
 
         return $this;
     }
 
     public function setMaxWriteToCacheItems(int $maxWriteToCacheItems): static
     {
-        $this->maxWriteToCacheItems = (int)$maxWriteToCacheItems;
+        $this->maxWriteToCacheItems = $maxWriteToCacheItems;
 
         return $this;
     }

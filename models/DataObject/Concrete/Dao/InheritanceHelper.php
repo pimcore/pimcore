@@ -115,7 +115,7 @@ class InheritanceHelper
      */
     public static function setUseRuntimeCache(bool $value): void
     {
-        self::$useRuntimeCache = (bool) $value;
+        self::$useRuntimeCache = $value;
     }
 
     /**

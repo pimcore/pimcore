@@ -80,7 +80,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      */
     public function setUnpublished(bool $unpublished): static
     {
-        $this->unpublished = (bool) $unpublished;
+        $this->unpublished = $unpublished;
 
         return $this;
     }

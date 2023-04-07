@@ -54,9 +54,6 @@ class GeneratorContext implements GeneratorContextInterface
         return array_keys($this->parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(int|string $key, mixed $default = null): mixed
     {
         return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
