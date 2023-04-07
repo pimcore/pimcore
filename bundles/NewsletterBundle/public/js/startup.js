@@ -12,7 +12,8 @@ pimcore.bundle.newsletter.startup = Class.create({
         var menu = e.detail.menu;
         var tree = e.detail.tree;
         var me = this;
-        var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter")
+        var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
+        var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
         if (tree.tree.getSelectionModel().getSelected().length > 1) {
             return;
@@ -40,12 +41,14 @@ pimcore.bundle.newsletter.startup = Class.create({
             }
 
             // add after email, should be 5
-            menu.insert(5, new Ext.menu.Item({
-                text: t('add_newsletter'),
-                iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                menu: documentMenu.newsletter,
-                hideOnClick: false
-            }));
+            if (addNewsletter) {
+                menu.insert(5, new Ext.menu.Item({
+                    text: t('add_newsletter'),
+                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                    menu: documentMenu.newsletter,
+                    hideOnClick: false
+                }));
+            }
         }
     },
 
