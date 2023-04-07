@@ -1001,13 +1001,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     if (isset($imageData['focalPoint'])) {
                         $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
                         $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
-                        $asset->removeCustomSetting('disableFocalPointDetection');
                     }
                 } else {
                     // wipe all data
                     $asset->removeCustomSetting('focalPointX');
                     $asset->removeCustomSetting('focalPointY');
-                    $asset->setCustomSetting('disableFocalPointDetection', true);
                 }
             }
 
@@ -2730,57 +2728,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         return $this->adminJson(['success' => 'true', 'text' => $text]);
-    }
-
-    /**
-     * @Route("/detect-image-features", name="pimcore_admin_asset_detectimagefeatures", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function detectImageFeaturesAction(Request $request): JsonResponse
-    {
-        $asset = Asset\Image::getById((int)$request->get('id'));
-        if (!$asset instanceof Asset) {
-            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
-        }
-
-        if ($asset->isAllowed('publish')) {
-            $asset->detectFaces();
-            $asset->detectFocalPoint();
-            $asset->removeCustomSetting('disableImageFeatureAutoDetection');
-            $asset->save();
-
-            return $this->adminJson(['success' => true]);
-        }
-
-        throw $this->createAccessDeniedHttpException();
-    }
-
-    /**
-     * @Route("/delete-image-features", name="pimcore_admin_asset_deleteimagefeatures", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteImageFeaturesAction(Request $request): JsonResponse
-    {
-        $asset = Asset::getById((int)$request->get('id'));
-        if (!$asset instanceof Asset) {
-            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
-        }
-
-        if ($asset->isAllowed('publish')) {
-            $asset->removeCustomSetting('faceCoordinates');
-            $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
-            $asset->save();
-
-            return $this->adminJson(['success' => true]);
-        }
-
-        throw $this->createAccessDeniedHttpException();
     }
 
     public function onKernelControllerEvent(ControllerEvent $event): void

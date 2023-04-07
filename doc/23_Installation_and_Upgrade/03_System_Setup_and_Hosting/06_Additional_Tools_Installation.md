@@ -104,14 +104,6 @@ Install graphviz for [Workflow](../../07_Workflow_Management/README.md)
 apt-get install graphviz
 ```
 
-## Facedetect
-
-Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
-
-```bash
-apt-get install facedetect
-```
-
 
 # Check your installation (requires pimcore/system-info-bundle package)
 
