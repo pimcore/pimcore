@@ -8,22 +8,27 @@ pimcore.bundle.newsletter.startup = Class.create({
     },
 
     onPrepareDocumentTreeContextMenu: function (e) {
-        var document = e.detail.document;
-        var menu = e.detail.menu;
-        var tree = e.detail.tree;
-        var me = this;
-        var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
-        var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
+        let user = pimcore.globalmanager.get("user");
+        if (!user.isAllowed("newsletter")) {
+            return;
+        }
+
+        let document = e.detail.document;
+        let menu = e.detail.menu;
+        let tree = e.detail.tree;
+        let me = this;
+        let addNewsletter = tree.perspectiveCfg.inTreeContextMenu("document.addNewsletter");
+        let addBlankNewsletter = tree.perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
         if (tree.tree.getSelectionModel().getSelected().length > 1) {
             return;
         }
 
-        var documentMenu = {
+        let documentMenu = {
             newsletter: [],
         };
 
-        var childSupportedDocument = (document.data.type == "page" || document.data.type == "folder"
+        let childSupportedDocument = (document.data.type == "page" || document.data.type == "folder"
             || document.data.type == "link" || document.data.type == "hardlink"
             || document.data.type == "printcontainer" || document.data.type == "headlessdocument");
 
@@ -55,8 +60,8 @@ pimcore.bundle.newsletter.startup = Class.create({
 
 
     addDocument : function (tree, record, type, docTypeId) {
-        var textKeyTitle = t("add_" + type);
-        var textKeyMessage = t("enter_the_name_of_the_new_item");
+        let textKeyTitle = t("add_" + type);
+        let textKeyMessage = t("enter_the_name_of_the_new_item");
 
         Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, docTypeId, button, value) {
             if (button == "ok") {
@@ -88,15 +93,15 @@ pimcore.bundle.newsletter.startup = Class.create({
     },
 
     populatePredefinedDocumentTypes: function(documentMenu, tree, record) {
-        var me = this;
-        var document_types = pimcore.globalmanager.get("document_types_store");
+        let me = this;
+        let document_types = pimcore.globalmanager.get("document_types_store");
         document_types.sort([
             {property: 'priority', direction: 'ASC'},
             {property: 'translatedGroup', direction: 'ASC'},
             {property: 'translatedName', direction: 'ASC'}
         ]);
         document_types.each(function (documentMenu, typeRecord) {
-            var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
+            let text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
 
             if (typeRecord.get("type") === this.type) {
                 documentMenu['newsletter'].push(

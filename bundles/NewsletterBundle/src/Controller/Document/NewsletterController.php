@@ -54,6 +54,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $email = Newsletter::getById((int)$request->get('id'));
 
         if (!$email) {
@@ -99,6 +101,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $page = Newsletter::getById((int) $request->get('id'));
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
@@ -154,6 +158,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function checksqlAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $count = 0;
         $success = false;
 
@@ -186,6 +192,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getAvailableClassesAction(): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $classList = new Listing();
 
         $availableClasses = [];
@@ -217,6 +225,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getAvailableReportsAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $task = $request->get('task');
 
         if ($task === 'list') {
@@ -257,6 +267,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getSendStatusAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $document = Newsletter::getById((int) $request->get('id'));
         if (!$document) {
             throw $this->createNotFoundException('Newsletter not found');
@@ -278,6 +290,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function stopSendAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $document = Newsletter::getById((int) $request->get('id'));
         if (!$document) {
             throw $this->createNotFoundException('Newsletter not found');
@@ -301,6 +315,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $document = Newsletter::getById((int) $request->get('id'));
         if (!$document) {
             throw $this->createNotFoundException('Newsletter not found');
@@ -334,6 +350,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function calculateAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
         $serviceLocator = \Pimcore::getContainer()->get('pimcore_newsletter.address_source_adapter.factories');
@@ -365,6 +383,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendTestAction(Request $request): JsonResponse
     {
+        $this->checkPermission('newsletters');
+
         $document = Newsletter::getById((int) $request->get('id'));
         if (!$document) {
             throw $this->createNotFoundException('Newsletter not found');

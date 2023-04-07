@@ -42,11 +42,17 @@ class Installer extends SettingsStoreAwareInstaller
         'newsletter',
     ];
 
+    protected const USER_PERMISSION_CATEGORY = 'Pimcore Newsletter Bundle';
+    protected const USER_PERMISSIONS = [
+        'newsletters',
+    ];
+
     public function install(): void
     {
         $this->installDatabaseTable();
         $enums = array_unique(array_merge($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES));
         $this->modifyEnumTypes($enums);
+        $this->addUserPermission();
         parent::install();
     }
 
@@ -59,9 +65,39 @@ class Installer extends SettingsStoreAwareInstaller
             '<comment>Please run <options=bold>bin/console pimcore:documents:cleanup newsletter</></comment>',
             '<comment>-------------------------------------------------------------------------------------</comment>',
         ]);
+        $this->removeUserPermission();
         $this->removeNewsLetterDocTypes();
         parent::uninstall();
     }
+
+
+    private function addUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach (self::USER_PERMISSIONS as $permission) {
+            // check if the permission already exists
+            $permissionExists = $db->executeStatement('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', ['key' => $permission]);
+            if(!$permissionExists) {
+                $db->insert('users_permission_definitions', [
+                    $db->quoteIdentifier('key') => $permission,
+                    $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
+                ]);
+            }
+        }
+    }
+
+    private function removeUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach (self::USER_PERMISSIONS as $permission) {
+            $db->delete('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
+
     private function installDatabaseTable(): void
     {
         $sqlPath = __DIR__ . '/Resources/install/';
