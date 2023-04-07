@@ -36,6 +36,7 @@ class PimcoreNewsletterBundle extends AbstractPimcoreBundle implements PimcoreBu
             '/bundles/pimcorenewsletter/js/document/newsletters/plaintextPanel.js',
             '/bundles/pimcorenewsletter/js/document/newsletters/addressSourceAdapters/default.js',
             '/bundles/pimcorenewsletter/js/document/newsletters/addressSourceAdapters/csvList.js',
+            '/bundles/pimcorenewsletter/js/document/newsletters/addressSourceAdapters/report.js',
             '/bundles/pimcorenewsletter/js/object/classes/data/newsletterActive.js',
             '/bundles/pimcorenewsletter/js/object/classes/data/newsletterConfirmed.js',
             '/bundles/pimcorenewsletter/js/object/tags/newsletterActive.js',

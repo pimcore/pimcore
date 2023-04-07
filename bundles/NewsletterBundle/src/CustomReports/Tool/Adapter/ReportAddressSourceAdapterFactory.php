@@ -14,8 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
+namespace Pimcore\Bundle\NewsletterBundle\CustomReports\Tool\Adapter;
 
+use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\CustomReportAdapterFactoryInterface;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Bundle\NewsletterBundle\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Bundle\NewsletterBundle\Document\Newsletter\AddressSourceAdapterInterface;

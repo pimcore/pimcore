@@ -12,6 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters.report");
+
 /**
  * @private
  */
