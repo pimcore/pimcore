@@ -38,19 +38,19 @@ class RemoveCustomSettingCommand extends AbstractCommand
                 'id',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'only generate checksum for assets with this (IDs)'
+                'only remove custom-setting for assets with this (IDs)'
             )
             ->addOption(
                 'parent',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                'only generate checksum for assets in this folder (ID)'
+                'only remove custom-setting for assets in this folder (ID)'
             )
             ->addOption(
                 'path-pattern',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'only generate checksum for the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
+                'only remove custom-setting for the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
             );
     }
 
