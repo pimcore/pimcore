@@ -900,9 +900,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         ];
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $vars = get_object_vars($this);
@@ -961,7 +958,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function setLabelWidth(int $labelWidth): void
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
     }
 
     public function getLabelWidth(): int
@@ -996,7 +993,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function setProvideSplitView(bool $provideSplitView): void
     {
-        $this->provideSplitView = (bool) $provideSplitView;
+        $this->provideSplitView = $provideSplitView;
     }
 
     public function supportsDirtyDetection(): bool

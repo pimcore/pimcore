@@ -77,7 +77,7 @@ final class Translation extends AbstractModel
 
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {
-        return in_array($locale, (array)static::getValidLanguages($domain));
+        return in_array($locale, static::getValidLanguages($domain));
     }
 
     public function getKey(): ?string
@@ -126,7 +126,7 @@ final class Translation extends AbstractModel
 
     public function setCreationDate(int $date): static
     {
-        $this->creationDate = (int) $date;
+        $this->creationDate = $date;
 
         return $this;
     }
@@ -138,7 +138,7 @@ final class Translation extends AbstractModel
 
     public function setModificationDate(int $date): static
     {
-        $this->modificationDate = (int) $date;
+        $this->modificationDate = $date;
 
         return $this;
     }

@@ -61,7 +61,7 @@ class SiteRootFilter implements FilterInterface
             $sites = (new Site\Listing())->load();
 
             $this->siteRoots = array_map(function (Site $site) {
-                return (int)$site->getRootId();
+                return $site->getRootId();
             }, $sites);
         }
 

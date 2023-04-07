@@ -535,9 +535,6 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -611,7 +608,7 @@ abstract class PageSnippet extends Model\Document
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
         if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = (bool) $missingRequiredEditable;
+            $missingRequiredEditable = $missingRequiredEditable;
         }
 
         $this->missingRequiredEditable = $missingRequiredEditable;

@@ -335,7 +335,7 @@ final class User extends User\UserRole
      */
     public function setWelcomescreen(bool $welcomescreen): static
     {
-        $this->welcomescreen = (bool)$welcomescreen;
+        $this->welcomescreen = $welcomescreen;
 
         return $this;
     }
@@ -880,9 +880,6 @@ final class User extends User\UserRole
         return $bindings;
     }
 
-    /**
-     * @param string $keyBindings
-     */
     public function setKeyBindings(string $keyBindings): void
     {
         $this->keyBindings = $keyBindings;

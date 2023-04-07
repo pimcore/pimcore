@@ -114,7 +114,7 @@ trait QueryBuilderHelperTrait
             }
 
             if (!empty($parts)) {
-                $queryBuilder->orderBy((string) implode(', ', $parts), ' ');
+                $queryBuilder->orderBy(implode(', ', $parts), ' ');
             }
         }
     }

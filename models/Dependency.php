@@ -142,7 +142,7 @@ class Dependency extends AbstractModel
 
     public function setSourceId(int $sourceId): static
     {
-        $this->sourceId = (int) $sourceId;
+        $this->sourceId = $sourceId;
 
         return $this;
     }
