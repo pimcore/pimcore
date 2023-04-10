@@ -1780,7 +1780,6 @@ pimcore.helpers.editmode = {};
 
 pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
-
     var internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
         value: data.internalType,
@@ -1817,6 +1816,14 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         }
     });
 
+    var appendSlashOption = new Ext.form.Checkbox({
+        fieldLabel: t('append_slash'),
+        name: 'appendslash',
+        width: 300,
+        value: data["appendslash"],
+        hidden: data.hasOwnProperty("internalType") && data.internalType =='object'
+    })
+
 
     fieldPath.on("render", function (el) {
         // add drop zone
@@ -1844,6 +1851,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
                     fieldPath.setValue(data.path);
+                    appendSlashOption.setHidden(data.type == "object");
+                    data["appendslash"] = false;
                     return true;
                 }
                 return false;
@@ -1972,13 +1981,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 width: 300,
                                 value: data["attributes"]
                             },
-                            {
-                                fieldLabel: t('append_slash'),
-                                xtype: 'checkbox',
-                                name: 'appendslash',
-                                width: 300,
-                                value: data["appendslash"]
-                            }
+                            appendSlashOption
                         ]
                     }
                 ]
