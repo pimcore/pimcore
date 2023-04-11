@@ -313,6 +313,9 @@ pimcore:
 }
 ```
 - Removed the following methods from `Pimcore\File`: `mkdir`, `put`, `getFileExtension`, `setDefaultMode`, `getDefaultMode`, `setDefaultFlags` and `rename`. 
+- Removed deprecated method `Pimcore\Bundle\AdminBundle\Security\User::getUsername()`, use `getIdentifier()` instead.
+- Removed AdminSessionHandler and AdminSessionListener. The session is now handled by Symfony.
+- Methods `Pimcore\Navigation::setDefaultPageType` and `Pimcore\Navigation::getDefaultPageType` have been marked as internal.
 
 ## 10.6.0
 
