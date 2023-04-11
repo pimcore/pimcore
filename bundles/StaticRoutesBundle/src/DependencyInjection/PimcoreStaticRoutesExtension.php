@@ -41,6 +41,6 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension implement
 
     public function prepend(ContainerBuilder $container): void
     {
-        LocationAwareConfigRepository::loadSmyfonyConfigFiles($container, 'pimcore_static_routes', 'staticroutes');
+        LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_static_routes', 'staticroutes');
     }
 }
