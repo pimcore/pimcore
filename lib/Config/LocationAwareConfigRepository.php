@@ -54,6 +54,7 @@ class LocationAwareConfigRepository
 
     public function loadConfigByKey(string $key): array
     {
+        $data = null;
         $dataSource = null;
 
         $loadType= $this->storageConfig['read_target']['type'] ?? null;
