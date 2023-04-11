@@ -55,6 +55,6 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
 
     public function prepend(ContainerBuilder $container): void
     {
-        LocationAwareConfigRepository::loadSmyfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
+        LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
     }
 }
