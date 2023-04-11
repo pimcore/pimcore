@@ -18,8 +18,10 @@ namespace Pimcore\Bundle\NewsletterBundle;
 
 use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
 use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
+use Pimcore\Bundle\NewsletterBundle\DependencyInjection\Compiler\CustomReportsPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class PimcoreNewsletterBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
@@ -69,5 +71,10 @@ class PimcoreNewsletterBundle extends AbstractPimcoreBundle implements PimcoreBu
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new CustomReportsPass());
     }
 }

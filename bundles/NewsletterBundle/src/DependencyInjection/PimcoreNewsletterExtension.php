@@ -34,11 +34,6 @@ class PimcoreNewsletterExtension extends ConfigurableExtension
         $loader->load('services.yaml');
         $loader->load('message_handler.yaml');
 
-        //only register custom reports adapter, if the custom reports bundle is installed
-        if ($container->hasDefinition('pimcore.custom_report.adapter.factories')) {
-            $loader->load('custom_reports.yaml');
-        }
-
         $container->setParameter('pimcore_newsletter', $config);
 
         $this->configureAdapterFactories($container, $config['source_adapters'], 'pimcore_newsletter.address_source_adapter.factories');
