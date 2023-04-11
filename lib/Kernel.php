@@ -132,7 +132,7 @@ abstract class Kernel extends SymfonyKernel
                 }
 
                 $configDir = null;
-                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG) {
+                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf['options']['directory'] !== null) {
                     $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
                 }
 
