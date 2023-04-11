@@ -18,6 +18,8 @@ pimcore.registerNS("pimcore.bundle.newsletter.document.newsletters.addressSource
  */
 pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters.report = Class.create({
 
+    requiredNamespace: 'customreports',
+
     initialize: function(document, data) {
         this.document = document;
     },

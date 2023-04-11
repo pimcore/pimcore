@@ -81,6 +81,12 @@ pimcore.bundle.newsletter.document.newsletters.sendingPanel = Class.create({
             var sourceAdapterList = [];
             var adapterNames = Object.keys(pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters);
             for(var i = 0; i < adapterNames.length; i++) {
+                //skip adapters that require a namespace that is not available
+                let requiredNamespace = pimcore.bundle.newsletter.document.newsletters.addressSourceAdapters[adapterNames[i]].prototype.requiredNamespace;
+                if (requiredNamespace && typeof pimcore.bundle[requiredNamespace]['startup'] === 'undefined') {
+                    continue;
+                }
+
                 sourceAdapterList.push(
                     {
                         'key': adapterNames[i],
