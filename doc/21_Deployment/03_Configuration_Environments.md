@@ -55,7 +55,7 @@ The following options are available:
 #### Storage directory for symfony Config files
 
 The default storage directory for Symfony Config files is `/var/config/...`.
-If there is no read target set, the config of write target is used.
+If there is no read target (only web_to_print) set, the config of write target is used.
 
 Available options for write targets and directory & read targets and directory for Symfony Config files are: 
 ```yaml
@@ -69,8 +69,6 @@ pimcore:
         custom_reports:
             write_target:
 	          type: 'settings-store'
-	        read_target:
-              type: 'symfony-config'
         video_thumbnails:
             write_target:
 	          type: 'disabled'
@@ -99,8 +97,6 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/staticroutes'
-              read_target:
-                type: 'settings-store'
         perspectives:
             write_target:
 	          type: 'symfony-config'
