@@ -254,7 +254,7 @@ class LocationAwareConfigRepository
         }
     }
 
-    public static function loadSmyfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
+    public static function loadSymfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
 
