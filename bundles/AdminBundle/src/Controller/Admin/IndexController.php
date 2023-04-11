@@ -254,6 +254,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document_valid_types' => array_values(array_filter(Document::getTypes(), function ($type) {
                 return $type !== 'folder';
             })),
+            // email search compatible document types
+            'document_email_search_types' => $config['documents']['email_search'],
         ];
 
         $this

@@ -38,3 +38,8 @@ pimcore:
                     children_supported: false
                     direct_route: true
                     predefined_document_types: true
+
+pimcore_admin:
+    documents:
+        email_search:
+            - 'newsletter'
