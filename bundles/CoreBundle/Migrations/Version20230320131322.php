@@ -61,7 +61,7 @@ final class Version20230320131322 extends AbstractMigration
                                 $fieldSetter = 'set'.$relationItem['fieldname'];
                                 $objectBrick->$fieldSetter($objectBrick->$fieldGetter($relationItem['position']), $relationItem['position']);
                                 $objectBrick->markFieldDirty('localizedfields');
-                                $objectBrick->markFieldDirty('testRelation');
+                                $objectBrick->markFieldDirty($relationItem['fieldname']);
                                 if(!method_exists($objectBrick, 'getLocalizedfields')) {
                                     // this cannot happen, because we already checked that there are localized fields via $brickDefinition->getFieldDefinition('localizedfields') but PhpStan complains...
                                     continue;
@@ -69,7 +69,7 @@ final class Version20230320131322 extends AbstractMigration
                                 /** @var Localizedfield $localizedFields */
                                 $localizedFields = $objectBrick->getLocalizedfields();
                                 $localizedFields->markLanguageAsDirty($relationItem['position']);
-                                $localizedFields->markFieldDirty('testRelation');
+                                $localizedFields->markFieldDirty($relationItem['fieldname']);
 
                                 Db::get()->executeStatement('DELETE FROM object_relations_'.$classDefinition->getId().' WHERE src_id=? AND fieldname=? AND ownertype=\'localizedfield\' AND ownername LIKE \'/objectbrick~%\'', [$object->getId(), $relationItem['fieldname']]);
 
