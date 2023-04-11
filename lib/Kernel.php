@@ -123,17 +123,19 @@ abstract class Kernel extends SymfonyKernel
 
             foreach ($configKeysArray as $configKey) {
                 $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target'];
-                $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['read_target'];
-
-                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
-                    ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
-                ) {
-                    continue;
-                }
+                $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['read_target'] ?? null;
 
                 $configDir = null;
-                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf['options']['directory'] !== null) {
-                    $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
+                if($readTargetConf !== null) {
+                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                        ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+                    ) {
+                        continue;
+                    }
+
+                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf['options']['directory'] !== null) {
+                        $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
+                    }
                 }
 
                 if($configDir === null) {

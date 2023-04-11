@@ -258,16 +258,20 @@ class LocationAwareConfigRepository
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
 
-        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'];
+        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'] ?? null;
         $writeTargetConf = $containerConfig['config_location'][$configKey]['write_target'];
 
-        if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
-            ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
-        ) {
-            return;
+        $configDir = null;
+        if($readTargetConf !== null) {
+            if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+            ) {
+                return;
+            }
+
+            $configDir = $readTargetConf['options']['directory'];
         }
 
-        $configDir = $readTargetConf['options']['directory'];
         if ($configDir === null) {
             $configDir = $writeTargetConf['options']['directory'];
         }

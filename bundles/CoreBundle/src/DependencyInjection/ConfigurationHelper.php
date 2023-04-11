@@ -27,6 +27,8 @@ use Symfony\Component\Finder\Finder;
  */
 final class ConfigurationHelper
 {
+    private const READ_TARGET_NODES = ['web_to_print'];
+
     public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
     {
         $storageNode = $rootNode
@@ -42,8 +44,9 @@ final class ConfigurationHelper
 
     public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
     {
-        $node->
-        arrayNode($name)
+        if (in_array($name, self::READ_TARGET_NODES)) {
+            $node->
+            arrayNode($name)
             ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('write_target')
@@ -73,6 +76,24 @@ final class ConfigurationHelper
                     ->end()
                 ->end()
             ->end();
+        } else {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('write_target')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('type')
+                        ->values(['symfony-config', 'settings-store', 'disabled'])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode('options')
+                    ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                    ->variablePrototype()->end()
+                    ->end()
+                ->end();
+        }
     }
 
     public static function getSymfonyConfigFiles(string $configPath, array $params = []): array
