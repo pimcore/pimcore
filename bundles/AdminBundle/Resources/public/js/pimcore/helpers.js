@@ -1780,6 +1780,7 @@ pimcore.helpers.editmode = {};
 
 pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
+    console.log(callback);
     var internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
         value: data.internalType,
@@ -1821,7 +1822,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         name: 'appendslash',
         width: 300,
         value: data["appendslash"],
-        hidden: data.hasOwnProperty("internalType") && data.internalType =='object'
+        hidden: data.ownerType == 'object' || (data.hasOwnProperty("internalType") && data.internalType =='object')
     })
 
 
@@ -1851,7 +1852,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
                     fieldPath.setValue(data.path);
-                    appendSlashOption.setHidden(data.type == "object");
+                    appendSlashOption.setHidden(data.ownerType == 'object' | data.type == "object");
                     data["appendslash"] = false;
                     return true;
                 }

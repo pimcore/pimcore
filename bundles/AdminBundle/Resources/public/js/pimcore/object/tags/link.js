@@ -139,6 +139,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     },
 
     openEditor: function () {
+        this.data.ownerType = "object";
         this.window = pimcore.helpers.editmode.openLinkEditPanel(this.data, {
             empty: this.empty.bind(this),
             cancel: this.cancel.bind(this),
