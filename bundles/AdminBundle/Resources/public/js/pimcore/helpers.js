@@ -1780,7 +1780,6 @@ pimcore.helpers.editmode = {};
 
 pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
-    console.log(callback);
     var internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
         value: data.internalType,
