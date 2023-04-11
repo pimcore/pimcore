@@ -73,7 +73,7 @@ class PimcoreNewsletterBundle extends AbstractPimcoreBundle implements PimcoreBu
         return \dirname(__DIR__);
     }
 
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new CustomReportsPass());
     }
