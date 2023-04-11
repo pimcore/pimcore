@@ -26,6 +26,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
@@ -121,7 +122,23 @@ abstract class Kernel extends SymfonyKernel
             $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore');
 
             foreach ($configKeysArray as $configKey) {
-                $configDir = rtrim($containerConfig[self::CONFIG_LOCATION][$configKey]['write_target']['options']['directory'], '/\\');
+                $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target'];
+                $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['read_target'];
+
+                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                    ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+                ) {
+                    continue;
+                }
+
+                $configDir = null;
+                if($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG) {
+                    $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
+                }
+
+                if($configDir === null) {
+                    $configDir = rtrim($writeTargetConf['options']['directory'], '/\\');
+                }
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
