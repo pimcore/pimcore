@@ -511,14 +511,6 @@ final class Requirements
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
-        // Mysqli
-        $checks[] = new Check([
-            'name' => 'Mysqli',
-            'link' => 'http://www.php.net/mysqli',
-            'state' => class_exists('mysqli') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "Mysqli can be used instead of PDO MySQL, though it isn't a requirement.",
-        ]);
-
         // iconv
         $checks[] = new Check([
             'name' => 'iconv',
