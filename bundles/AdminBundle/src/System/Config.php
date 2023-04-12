@@ -108,7 +108,8 @@ final class Config
     {
         $repository = self::getRepository();
 
-        $repository->saveConfig(self::CONFIG_ID, $values, function ($data) {
+        unset($values['writeable']);
+        $repository->saveConfig(self::CONFIG_ID, $values, function ($key, $data) {
             return ['pimcore' => $data];
         });
 

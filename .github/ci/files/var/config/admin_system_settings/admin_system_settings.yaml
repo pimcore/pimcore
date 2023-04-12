@@ -1,6 +1,0 @@
-pimcore_admin:
-    branding:
-        login_screen_invert_colors: false
-        color_login_screen: ''
-        color_admin_interface: ''
-        login_screen_custom_image: ''
