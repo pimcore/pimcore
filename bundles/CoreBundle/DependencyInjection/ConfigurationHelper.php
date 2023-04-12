@@ -24,7 +24,6 @@ use Symfony\Component\Config\Definition\Builder\NodeBuilder;
  */
 final class ConfigurationHelper
 {
-
     public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): NodeBuilder
     {
         $storageNode = $rootNode
