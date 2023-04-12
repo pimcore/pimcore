@@ -28,7 +28,6 @@ pimcore.settings.appearance = Class.create({
             success: function (response) {
 
                 this.data = Ext.decode(response.responseText);
-                console.log(this.data);
                 this.getTabPanel();
 
             }.bind(this)
@@ -37,8 +36,8 @@ pimcore.settings.appearance = Class.create({
 
     getValue: function (key, ignoreCheck) {
 
-        var nk = key.split("\.");
-        var current = this.data.values;
+        const nk = key.split("\.");
+        let current = this.data.values;
 
         for (var i = 0; i < nk.length; i++) {
             if (typeof current[nk[i]] != "undefined") {
@@ -149,8 +148,8 @@ pimcore.settings.appearance = Class.create({
                                 handler: function () {
                                     pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_settings_uploadcustomlogo'), null,
                                         function () {
-                                            var cont = Ext.getCmp("pimcore_custom_branding_logo");
-                                            var date = new Date();
+                                            const cont = Ext.getCmp("pimcore_custom_branding_logo");
+                                            const date = new Date();
                                             cont.update('<img src="'+Routing.generate('pimcore_settings_display_custom_logo', {'_dc': date.getTime()})+'" />');
                                         }.bind(this));
                                 }.bind(this),
@@ -164,8 +163,8 @@ pimcore.settings.appearance = Class.create({
                                         url: Routing.generate('pimcore_admin_settings_deletecustomlogo'),
                                         method: "DELETE",
                                         success: function (response) {
-                                            var cont = Ext.getCmp("pimcore_custom_branding_logo");
-                                            var date = new Date();
+                                            const cont = Ext.getCmp("pimcore_custom_branding_logo");
+                                            const date = new Date();
                                             cont.update('<img src="' + Routing.generate('pimcore_settings_display_custom_logo', {'_dc': date.getTime()}) + '" />');
                                         }
                                     });
@@ -234,7 +233,7 @@ pimcore.settings.appearance = Class.create({
 
             this.panel.add(this.layout);
 
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            const tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
             tabPanel.setActiveItem(this.panel);
 
@@ -245,7 +244,7 @@ pimcore.settings.appearance = Class.create({
     },
 
     activate: function () {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        const tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.setActiveItem("pimcore_settings_system_appearance");
     },
 
@@ -253,7 +252,7 @@ pimcore.settings.appearance = Class.create({
 
         this.layout.mask();
 
-        var values = this.layout.getForm().getFieldValues();
+        const values = this.layout.getForm().getFieldValues();
 
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_appearance_set'),
@@ -266,7 +265,7 @@ pimcore.settings.appearance = Class.create({
                 this.layout.unmask();
 
                 try {
-                    var res = Ext.decode(response.responseText);
+                    const res = Ext.decode(response.responseText);
                     if (res.success) {
                         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 

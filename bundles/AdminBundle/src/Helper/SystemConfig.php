@@ -22,9 +22,7 @@ class SystemConfig
 {
     public static function get(LocationAwareConfigRepository $repository, string $key): array
     {
-        $config = self::getConfigDataByKey($repository, $key);
-
-        return $config;
+        return self::getConfigDataByKey($repository, $key);
     }
 
     public static function getConfigDataByKey(LocationAwareConfigRepository $repository, string $key): array

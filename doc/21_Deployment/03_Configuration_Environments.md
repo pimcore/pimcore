@@ -69,8 +69,6 @@ pimcore:
         custom_reports:
             write_target:
 	          type: 'settings-store'
-	        read_target:
-              type: 'symfony-config'
         video_thumbnails:
             write_target:
 	          type: 'disabled'
@@ -80,10 +78,6 @@ pimcore:
         web_to_print:
             write_target:
 	          type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/web_to_print'
-            read_target:
-              type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/web_to_print'
             read_target:
@@ -103,8 +97,6 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/staticroutes'
-              read_target:
-                type: 'settings-store'
         perspectives:
             write_target:
 	          type: 'symfony-config'
