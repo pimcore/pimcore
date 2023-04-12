@@ -10,6 +10,7 @@ cp -r .github/ci/files/templates/. templates
 cp -r .github/ci/files/bin/console bin/console
 cp -r .github/ci/files/src/. src
 cp -r .github/ci/files/public/. public
+cp -r .github/ci/files/var/. var
 cp .github/ci/files/.env ./
 
 if [ ${PIMCORE_STORAGE:-local} = "minio" ]; then
