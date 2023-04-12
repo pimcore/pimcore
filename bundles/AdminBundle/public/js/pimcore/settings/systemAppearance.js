@@ -39,7 +39,7 @@ pimcore.settings.appearance = Class.create({
         const nk = key.split("\.");
         let current = this.data.values;
 
-        for (var i = 0; i < nk.length; i++) {
+        for (let i = 0; i < nk.length; i++) {
             if (typeof current[nk[i]] != "undefined") {
                 current = current[nk[i]];
             } else {
