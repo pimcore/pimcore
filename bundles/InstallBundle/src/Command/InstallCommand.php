@@ -150,11 +150,6 @@ class InstallCommand extends Command
             ->setDescription($description)
             ->setHelp($help)
             ->addOption(
-                'ignore-existing-config',
-                null,
-                InputOption::VALUE_NONE,
-                'Do not abort if a <comment>system.yaml</comment> file already exists'
-            )->addOption(
                 'skip-database-config',
                 null,
                 InputOption::VALUE_NONE,

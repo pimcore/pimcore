@@ -315,6 +315,7 @@ pimcore:
                     predefined_document_types: true
 ```
 - [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
+- [System Settings] System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.
   You can change it back by setting the env variable `SYMFONY_ASSETS_INSTALL` to `relative` or by adding the following to composer.json.
 
