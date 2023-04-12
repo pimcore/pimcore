@@ -53,6 +53,7 @@
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
+    "doctrine/annotations": "^1.13.1",
     "symfony/doctrine-messenger": "^6.2",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
@@ -68,11 +69,9 @@
     "pear/net_url2": "^2.2",
     "presta/sitemap-bundle": "^3.3",
     "sabre/dav": "^4.1.2",
-    "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^3.0",
     "symfony/contracts": "^3.2",
     "symfony/monolog-bundle": "^3.8",
-    "symfony/asset": "^6.2",
     "symfony/cache": "^6.2",
     "symfony/config": "^6.2",
     "symfony/console": "^6.2",
@@ -126,7 +125,6 @@
     "matthiasmullie/minify": "^1.3",
     "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^6.0.0",
-    "masterminds/html5" : "^2.7",
     "league/flysystem-bundle": "^3.1",
     "league/flysystem": "^3.12.0",
     "spatie/image-optimizer": "^1.6.2"
@@ -180,7 +178,6 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/",
       "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
     },
     "classmap": [

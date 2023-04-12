@@ -43,20 +43,21 @@ This feature is currently supported by the following configurations:
 
 The data of configurations are loaded from the container and if there is no data pimcore try to load it from `settings-store`
 
-You can change the write target individually for each type by using symfony configuration.
+You can change the read/write target individually for each type by using symfony configuration.
 The following options are available: 
 - `symfony-config` 
   - write configs as Symfony Config as YAML files to the configured storage directory
 - `settings-store` 
   - write configs to the `SettingsStore`
-- `disabled` 
+- `disabled` (only write target) 
   - do not allow to edit/write configs at all
 
 #### Storage directory for symfony Config files
 
 The default storage directory for Symfony Config files is `/var/config/...`.
+If there is no read target (only web_to_print) set, the config of write target is used.
 
-Available options for write targets and directory for Symfony Config files are: 
+Available options for write targets and directory & read targets and directory for Symfony Config files are: 
 ```yaml
 pimcore:
     config_location:
@@ -77,6 +78,10 @@ pimcore:
         web_to_print:
             write_target:
 	          type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/web_to_print'
+            read_target:
+              type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/web_to_print'
         predefined_properties:

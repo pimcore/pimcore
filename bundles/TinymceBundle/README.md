@@ -96,7 +96,7 @@ to implement and register event listeners):
 namespace App\EventListener;
 
 use Pimcore\Event\BundleManager\PathsEvent;
-use Pimcore\Event\BundleManagerEvents;
+use Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EditmodeListener implements EventSubscriberInterface

@@ -459,17 +459,6 @@ final class Requirements
         ]);
 
         try {
-            $facedetectAvailable = \Pimcore\Tool\Console::getExecutable('facedetect');
-        } catch (\Exception $e) {
-            $facedetectAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'facedetect',
-            'state' => $facedetectAvailable ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
             $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
         } catch (\Exception $e) {
             $graphvizAvailable = false;
@@ -520,14 +509,6 @@ final class Requirements
             'name' => 'PDO MySQL',
             'link' => 'http://www.php.net/pdo_mysql',
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
-        ]);
-
-        // Mysqli
-        $checks[] = new Check([
-            'name' => 'Mysqli',
-            'link' => 'http://www.php.net/mysqli',
-            'state' => class_exists('mysqli') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "Mysqli can be used instead of PDO MySQL, though it isn't a requirement.",
         ]);
 
         // iconv

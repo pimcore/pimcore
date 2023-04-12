@@ -231,7 +231,7 @@ CSS;
         $replacePrefix = '';
 
         if (!$hostUrl && $document) {
-            // try to determine if the newsletter is within a site
+            // try to determine if the document is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
                 $hostUrl = \Pimcore\Tool::getRequestScheme() . '://' . $site->getMainDomain();

@@ -33,7 +33,6 @@ These tables are created during Pimcore install and are always the same.
 | documents_email | Extra config data |
 | documents_hardlink | Extra config data |
 | documents_link | Extra config data |
-| documents_newsletter | Extra config data |
 | documents_page | Extra config data |
 | documents_printpage | Extra config data |
 | documents_snippet | Extra config data |

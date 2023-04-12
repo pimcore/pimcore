@@ -11,7 +11,8 @@
   },
   "require": {
     "pimcore/pimcore": "^11.0",
-    "symfony/webpack-encore-bundle": "^1.7"
+    "symfony/webpack-encore-bundle": "^1.7",
+    "cbschuld/browser.php": "^1.9.6"
   },
   "require-dev": {
     "codeception/codeception": "^4.1.12 || ^5.0.3",

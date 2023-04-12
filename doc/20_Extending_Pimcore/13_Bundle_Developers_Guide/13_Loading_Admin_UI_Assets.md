@@ -17,7 +17,7 @@ In order to implement all four methods prescribed by the interface you can use t
 
 ## Event Based
 
-You can add additional paths to load by handling the events defined on [`BundleManagerEvents`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php).
+You can add additional paths to load by handling the events defined on [`BundleManagerEvents`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Event/BundleManagerEvents.php).
 For example, to load the JS file when loading the admin UI, implement an event listener like the following (please see
 [Events](../../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for details on how to implement and register event
 listeners): 
@@ -28,7 +28,7 @@ listeners):
 namespace App\EventListener;
 
 use Pimcore\Event\BundleManager\PathsEvent;
-use Pimcore\Event\BundleManagerEvents;
+use Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AdminAssetsListener implements EventSubscriberInterface

@@ -62,12 +62,10 @@ class Container implements \RecursiveIterator, \Countable
      */
     protected bool $_dirtyIndex = false;
 
-    // Internal methods:
-
     /**
      * Sorts the page index according to page order
      *
-     * @return void
+     * @internal
      */
     protected function _sort(): void
     {
@@ -91,12 +89,8 @@ class Container implements \RecursiveIterator, \Countable
         }
     }
 
-    // Public methods:
-
     /**
      * Notifies container that the order of pages are updated
-     *
-     * @return void
      */
     public function notifyOrderUpdated(): void
     {

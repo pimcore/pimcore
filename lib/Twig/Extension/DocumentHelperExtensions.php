@@ -41,9 +41,6 @@ class DocumentHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_document_hardlink', static function ($object) {
                 return $object instanceof Document\Hardlink;
             }),
-            new TwigTest('pimcore_document_newsletter', static function ($object) {
-                return $object instanceof Document\Newsletter;
-            }),
             new TwigTest('pimcore_document_page', static function ($object) {
                 return $object instanceof Document\Page;
             }),

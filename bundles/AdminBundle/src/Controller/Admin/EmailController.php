@@ -395,7 +395,7 @@ class EmailController extends AdminController
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 
-            if ($doc instanceof \Pimcore\Model\Document\Email || $doc instanceof \Pimcore\Model\Document\Newsletter) {
+            if ($doc instanceof \Pimcore\Model\Document\Email) {
                 $mail->setDocument($doc);
 
                 if ($request->get('mailParamaters')) {
