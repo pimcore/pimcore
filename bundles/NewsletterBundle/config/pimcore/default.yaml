@@ -1,0 +1,45 @@
+pimcore_newsletter:
+    source_adapters:
+        defaultAdapter: pimcore_newsletter.document.newsletter.factory.default
+        csvList: pimcore_newsletter.document.newsletter.factory.csv
+#    default_url_prefix: 'https://my-host.com' # default prefix for your static assets
+#    use_specific: false # set true to use the following options for newsletter delivery
+#    sender:
+#        name: ''
+#        email: ''
+#    return:
+#        name: ''
+#        email: ''
+
+framework:
+    mailer:
+        enabled: true
+        transports:
+            pimcore_newsletter: native://default
+    messenger:
+        routing:
+            'Pimcore\Bundle\NewsletterBundle\Messenger\SendNewsletterMessage': pimcore_core
+
+pimcore:
+    objects:
+        class_definitions:
+            data:
+                map:
+                    newsletterActive: \Pimcore\Bundle\NewsletterBundle\Model\DataObject\ClassDefinition\Data\NewsletterActive
+                    newsletterConfirmed: \Pimcore\Bundle\NewsletterBundle\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed
+    documents:
+        type_definitions:
+            map:
+                newsletter:
+                    class: Pimcore\Bundle\NewsletterBundle\Model\Document\Newsletter
+                    translatable: false
+                    valid_table: 'newsletter'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+
+pimcore_admin:
+    documents:
+        email_search:
+            - 'newsletter'

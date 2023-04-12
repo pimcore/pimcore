@@ -367,19 +367,16 @@ pimcore.document.tree = Class.create({
                 var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
                 var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
                 var addLink = perspectiveCfg.inTreeContextMenu("document.addLink");
-                var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
                 var addHardlink = perspectiveCfg.inTreeContextMenu("document.addHardlink");
                 var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
                 var addBlankEmail = perspectiveCfg.inTreeContextMenu("document.addBlankEmail");
                 var addBlankSnippet = perspectiveCfg.inTreeContextMenu("document.addBlankSnippet");
-                var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
                 if (addDocuments) {
                     var documentMenu = {
                         page: [],
                         snippet: [],
                         email: [],
-                        newsletter: [],
                         ref: this
                     };
 
@@ -412,15 +409,6 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addBlankNewsletter) {
-                        // empty newsletter
-                        documentMenu.newsletter.push({
-                            text: "&gt; " + t("blank"),
-                            iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "newsletter")
-                        });
-                    }
-
                     //don't add pages below print containers - makes no sense
                     if (addDocuments && !pimcore.helpers.documentTypeHasSpecificRole(record.data.type, "only_printable_childrens")) {
                         menu.add(new Ext.menu.Item({
@@ -440,7 +428,7 @@ pimcore.document.tree = Class.create({
                         }));
                     }
 
-                    //don't add emails, newsletters and links below print containers - makes no sense
+                    //don't add emails and links below print containers - makes no sense
                     if (addDocuments && !pimcore.helpers.documentTypeHasSpecificRole(record.data.type, "only_printable_childrens")) {
                         if (addLink) {
                             menu.add(new Ext.menu.Item({
@@ -455,15 +443,6 @@ pimcore.document.tree = Class.create({
                                 text: t('add_email'),
                                 iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                                 menu: documentMenu.email,
-                                hideOnClick: false
-                            }));
-                        }
-
-                        if (addNewsletter) {
-                            menu.add(new Ext.menu.Item({
-                                text: t('add_newsletter'),
-                                iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                                menu: documentMenu.newsletter,
                                 hideOnClick: false
                             }));
                         }
@@ -695,14 +674,6 @@ pimcore.document.tree = Class.create({
                         iconCls: "pimcore_icon_email",
                         handler: this.convert.bind(this, tree, record, "email"),
                         hidden: record.data.type == "email" || !addEmail
-                    });
-                }
-                if(addNewsletter) {
-                    conversionTargets.push({
-                        text: t("newsletter"),
-                        iconCls: "pimcore_icon_newsletter",
-                        handler: this.convert.bind(this, tree, record, "newsletter"),
-                        hidden: record.data.type == "newsletter" || !addNewsletter
                     });
                 }
                 if(addLink) {
@@ -985,7 +956,6 @@ pimcore.document.tree = Class.create({
             page: {},
             snippet: {},
             email: {},
-            newsletter: {},
         };
 
         document_types.sort([
@@ -995,6 +965,7 @@ pimcore.document.tree = Class.create({
         ]);
 
         document_types.each(function (documentMenu, typeRecord) {
+            menuOption = undefined;
             var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
             if (typeRecord.get("type") == "page") {
                 docTypeMenu = {
@@ -1018,18 +989,16 @@ pimcore.document.tree = Class.create({
                     handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                 };
                 menuOption = "email";
-            } else if (typeRecord.get("type") == "newsletter") {
-                docTypeMenu = {
-                    text: text,
-                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
-                };
-                menuOption = "newsletter";
+            }
+
+            if(menuOption === undefined) {
+                return;
             }
 
             // check if the class is within a group
-            if(typeRecord.get("group")) {
-                if(!groups[menuOption][typeRecord.get("group")]) {
+            if (typeRecord.get("group")) {
+
+                if (!groups[menuOption][typeRecord.get("group")]) {
                     groups[menuOption][typeRecord.get("group")] = {
                         text: Ext.util.Format.htmlEncode(typeRecord.get("translatedGroup")),
                         iconCls: "pimcore_icon_folder",
@@ -1040,7 +1009,6 @@ pimcore.document.tree = Class.create({
                     };
                     documentMenu[menuOption].push(groups[menuOption][typeRecord.get("group")]);
                 }
-
                 groups[menuOption][typeRecord.get("group")]["menu"]["items"].push(docTypeMenu);
             } else {
                 documentMenu[menuOption].push(docTypeMenu);
@@ -1580,8 +1548,8 @@ pimcore.document.tree = Class.create({
         try {
             var openTabs = pimcore.helpers.getOpenTab();
             for (var i = 0; i < openTabs.length; i++) {
-                if(openTabs[i].indexOf("document_") == 0 && (openTabs[i].indexOf("_page") || openTabs[i].indexOf("_snippet") || openTabs[i].indexOf("_email") || openTabs[i].indexOf("_newsletter"))) {
-                    var documentElement = pimcore.globalmanager.get(openTabs[i].replace(/_page|_snippet|_email|_newsletter/gi,''));
+                if(openTabs[i].indexOf("document_") == 0 && (openTabs[i].indexOf("_page") || openTabs[i].indexOf("_snippet") || openTabs[i].indexOf("_email"))) {
+                    var documentElement = pimcore.globalmanager.get(openTabs[i].replace(/_page|_snippet|_email/gi,''));
                     if(typeof documentElement.data != 'undefined' && documentElement.data.idPath.indexOf("/" + node.data.id) > 0) {
                         documentElement.resetPath();
                     }

@@ -1,0 +1,11 @@
+.pimcore_icon_newsletter {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_newsletterActive {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/invite.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_newsletterConfirmed {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg) center center no-repeat !important;
+}

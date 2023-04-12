@@ -9,10 +9,9 @@ Pimcore offers different types of documents and each of them offers functionalit
 | Page           | Represents a typical web-page, the path in the tree is equal to the address in the browser.                                                                 |
 | Snippet        | Makes it easier to extract often used contents into reusable containers. Can be embedded in pages or nested into other snippets.                            |
 | Link           | A simple web-link to be used in navigation.                                                                                                                |
-| Email          | A document like the page, but with special functionality for transactional emails.                                                                        |
-| [Newsletter](./02_Document_Types/05_Newsletter_Documents.md)     | Like email, but offering additional newsletter functionality.                                                                                             |
+| Email          | A document like the page, but with special functionality for transactional emails.                                                                        |                                                         |
 | Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
-| Folder         | Just like the folders you know from your local filesystem.                                                                                                  | 
+| Folder         | Just like the folders you know from your local filesystem.                                                                                                  |
 
 
 ## Document Configuration
@@ -70,7 +69,7 @@ Working with documents is described in detail in our [Create a First Project](..
 ## Cleanup Documents Types
 Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.
 Running the following command removes type specific tables and enum types from the documents table.
-The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder,hardlink ,email, newsletter`
+The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder,hardlink ,email`
 
 You can clean up multiple types at once.
 ```bash

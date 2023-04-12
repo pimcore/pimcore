@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  pimcore_newsletter.document.newsletter.factory.report:
+    class: Pimcore\Bundle\NewsletterBundle\CustomReports\Tool\Adapter\ReportAddressSourceAdapterFactory
+    arguments:
+      - '@pimcore.custom_report.adapter.factories'
+
+pimcore_newsletter:
+  source_adapters:
+    reportAdapter: pimcore_newsletter.document.newsletter.factory.report

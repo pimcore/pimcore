@@ -22,7 +22,10 @@ fill out the newly created configuration row accordingly.
 
 ![New document type](../img/documenttypes_new_row.png)
 
-The type can be either a page, snippet, email, newsletter, printcontainer or printpage.   
+The type can be either a `page`, `snippet`, `email`.  
+`printcontainer` or `printpage` are only available if the PimcoreWebToPrintBundle is enabled and installed.  
+`newsletter` is only available if the PimcoreNewsletterBundle is enabled and installed.
+
 After you have defined a type you can access it in the context menu or in the document settings:
 
 ##### Document Settings Preview
