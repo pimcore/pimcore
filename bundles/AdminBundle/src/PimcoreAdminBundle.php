@@ -28,9 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
-/**
- * @internal
- */
 class PimcoreAdminBundle extends Bundle implements DependentBundleInterface
 {
     /**
