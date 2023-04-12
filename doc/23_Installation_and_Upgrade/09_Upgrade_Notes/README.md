@@ -322,7 +322,6 @@ pimcore:
 - Removed deprecated property `Pimcore\Model\Asset::$types`, use `getTypes()` instead
 - Removed AdminSessionHandler and AdminSessionListener. The session is now handled by Symfony.
 - Methods `Pimcore\Navigation::setDefaultPageType`, `Pimcore\Navigation::getDefaultPageType`, `Pimcore\Navigation\Container::_sort() and `Pimcore\Navigation\Page::_normalizePropertyName()` have been marked as internal.
-- Added a migration to regenerate `classes`, `fieldCollections`, `objectBricks` and `custom layouts`. Make sure to run `bin/console doctrine:migration:exec 'Pimcore\Bundle\CoreBundle\Migrations\Version20230412105530'` when upgrading to Pimcore 11.
 
 ## 10.6.0
 
