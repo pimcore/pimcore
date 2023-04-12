@@ -23,7 +23,7 @@ services:
         tags: [ 'kernel.event_subscriber' ]
 ```
 
-And subscribe to `\Pimcore\Event\BundleManagerEvents::CSS_PATHS` event in order to load a custom CSS file (e.g.
+And subscribe to `\Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents::CSS_PATHS` event in order to load a custom CSS file (e.g.
 `/css/env.css`). 
 
 ```php
@@ -36,7 +36,7 @@ class AdminAssetsSubscriber implements \Symfony\Component\EventDispatcher\EventS
     public static function getSubscribedEvents(): array
     {
         return [
-            \Pimcore\Event\BundleManagerEvents::CSS_PATHS => 'onCssPaths',
+            \Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents::CSS_PATHS => 'onCssPaths',
         ];
     }
 
