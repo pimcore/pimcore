@@ -20,15 +20,9 @@ use Pimcore\Config\LocationAwareConfigRepository;
 
 class SystemConfig
 {
-    public static function get(LocationAwareConfigRepository $repository, string $key, array $defaultValues): array
+    public static function get(LocationAwareConfigRepository $repository, string $key): array
     {
         $config = self::getConfigDataByKey($repository, $key);
-        if (!$config) {
-            $response = $defaultValues;
-            $response['writeable'] = $repository->isWriteable();
-
-            return $response;
-        }
 
         return $config;
     }
@@ -40,7 +34,7 @@ class SystemConfig
 
         if (isset($configKey[0])) {
             $config = $configKey[0];
-            $config['writeable'] = $repository->isWriteable();
+            $config['writeable'] = $repository->isWriteable($key, $configKey[1]);
         }
 
         return $config;

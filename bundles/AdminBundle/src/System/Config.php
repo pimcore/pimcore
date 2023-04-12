@@ -43,8 +43,6 @@ final class Config
 
     private static ?SystemConfig $systemConfigService = null;
 
-    private static array $defaultValues = [];
-
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         LocaleServiceInterface $localeService
@@ -58,8 +56,7 @@ final class Config
     {
         if (!self::$locationAwareConfigRepository) {
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $config = [];
-            self::$defaultValues = [
+            $config[self::CONFIG_ID] = [
                 'general' => $containerConfig['general'],
                 'documents' => $containerConfig['documents'],
                 'objects' => $containerConfig['objects'],
@@ -68,9 +65,6 @@ final class Config
             ];
 
             $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
-            if (!$storageConfig['is_symfony_config_disabled']) {
-                $config[self::CONFIG_ID] = self::$defaultValues;
-            }
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -87,7 +81,7 @@ final class Config
         $repository = self::getRepository();
         $service = self::getSystemConfigService();
 
-        return $service::get($repository, self::CONFIG_ID, self::$defaultValues);
+        return $service::get($repository, self::CONFIG_ID);
     }
 
     public function save(array $values): void

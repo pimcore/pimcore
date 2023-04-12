@@ -33,21 +33,14 @@ final class AdminConfig
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    private static array $defaultValues = [];
-
     private static ?SystemConfig $systemConfigService = null;
 
     public static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore_admin.config');
-            self::$defaultValues = [self::DATA_KEY => $containerConfig[self::DATA_KEY]];
-            $config = [];
-
+            $config[self::CONFIG_ID][self::DATA_KEY] = $containerConfig[self::DATA_KEY];
             $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
-            if (!$storageConfig['is_symfony_config_disabled']) {
-                $config = [self::CONFIG_ID => self::$defaultValues];
-            }
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -64,7 +57,7 @@ final class AdminConfig
         $repository = self::getRepository();
         $service = self::getSystemConfigService();
 
-        return $service::get($repository, self::CONFIG_ID, self::$defaultValues);
+        return $service::get($repository, self::CONFIG_ID);
     }
 
     public function save(array $values): void
