@@ -22,7 +22,6 @@ use Pimcore;
 use Pimcore\Bundle\NewsletterBundle\Document\Newsletter\SendingParamContainer;
 use Pimcore\Bundle\NewsletterBundle\Event\DocumentEvents;
 use Pimcore\Bundle\NewsletterBundle\Model\Document\Newsletter as NewsletterDocument;
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Mail;

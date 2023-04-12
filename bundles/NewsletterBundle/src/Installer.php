@@ -27,6 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const SETTINGS_STORE_SCOPE = 'pimcore_document_types';
+
     protected const DOCTYPE = 'newsletter';
 
     protected const STANDARD_DOCUMENT_ENUM_TYPES = [
@@ -43,6 +44,7 @@ class Installer extends SettingsStoreAwareInstaller
     ];
 
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Newsletter Bundle';
+
     protected const USER_PERMISSIONS = [
         'newsletters',
     ];
@@ -69,7 +71,6 @@ class Installer extends SettingsStoreAwareInstaller
         $this->removeNewsLetterDocTypes();
         parent::uninstall();
     }
-
 
     private function addUserPermission(): void
     {

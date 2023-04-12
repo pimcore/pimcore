@@ -42,7 +42,7 @@ class PimcoreNewsletterBundle extends AbstractPimcoreBundle implements PimcoreBu
             '/bundles/pimcorenewsletter/js/object/classes/data/newsletterActive.js',
             '/bundles/pimcorenewsletter/js/object/classes/data/newsletterConfirmed.js',
             '/bundles/pimcorenewsletter/js/object/tags/newsletterActive.js',
-            '/bundles/pimcorenewsletter/js/object/tags/newsletterConfirmed.js'
+            '/bundles/pimcorenewsletter/js/object/tags/newsletterConfirmed.js',
         ];
     }
 

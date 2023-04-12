@@ -124,7 +124,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordHashers($container, $config);
 
-
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         $this->addContextRoutes($container, $config['context']);
@@ -262,8 +261,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
     }
-
-
 
     /**
      * Extract class definitions and prefixes if configuration has more than just a class definition

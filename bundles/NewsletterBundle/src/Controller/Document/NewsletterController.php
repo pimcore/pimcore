@@ -207,7 +207,6 @@ class NewsletterController extends DocumentControllerBase
                 }
             }
 
-
             if ($fieldCount >= 3) {
                 $availableClasses[] = ['name' => $class->getName()];
             }

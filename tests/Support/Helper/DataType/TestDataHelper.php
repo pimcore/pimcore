@@ -559,6 +559,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $this->assertObjectsEqual($expectedArray[$i], $value[$i]);
         }
     }
+
     public function assertCheckbox(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
@@ -1245,6 +1246,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $setter = 'set' . ucfirst($field);
         $object->$setter(($seed % 2) == true);
     }
+
     public function fillNumber(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);

@@ -42,5 +42,5 @@ class DocumentEvents
      *
      * @var string
      */
-public const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
+    public const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
 }
