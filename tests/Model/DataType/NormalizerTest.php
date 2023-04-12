@@ -498,26 +498,6 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testNewsletterActive(): void
-    {
-        $originalValue = true;
-        $fd = new DataObject\ClassDefinition\Data\NewsletterActive();
-        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
-        $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
-        $this->assertEquals($originalValue, $denormalizedValue);
-    }
-
-    public function testNewsletterConfirmed(): void
-    {
-        $originalValue = true;
-        $fd = new DataObject\ClassDefinition\Data\NewsletterConfirmed();
-        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
-        $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
-        $this->assertEquals($originalValue, $denormalizedValue);
-    }
-
     public function testNumeric(): void
     {
         $originalValue = 123.1;

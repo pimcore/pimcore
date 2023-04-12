@@ -1,0 +1,49 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\NewsletterBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\NewsletterBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreNewsletterBundle')"
+
+    #
+    # TWIG TEMPLATING
+    #
+    Pimcore\Bundle\NewsletterBundle\Twig\Extension\DocumentHelperExtensions:
+        tags: [ 'twig.extension' ]
+
+    #
+    # NEWSLETTER ADAPTERS
+    #
+    pimcore_newsletter.document.newsletter.factory.default:
+        class: Pimcore\Bundle\NewsletterBundle\Document\Newsletter\DefaultAddressSourceAdapterFactory
+        arguments:
+            - 'Pimcore\Bundle\NewsletterBundle\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+
+
+    pimcore_newsletter.document.newsletter.factory.csv:
+        class: Pimcore\Bundle\NewsletterBundle\Document\Newsletter\DefaultAddressSourceAdapterFactory
+        arguments:
+            - 'Pimcore\Bundle\NewsletterBundle\Document\Newsletter\AddressSourceAdapter\CsvList'
+
+
+    pimcore_newsletter.address_source_adapter.factories:
+        public: true
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']

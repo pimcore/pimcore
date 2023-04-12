@@ -108,8 +108,6 @@ redirects_import_updated: Updated
 redirects_import_errored: Errored
 redirects_import_errors: Errors
 redirects_import_error_line: Line
-newsletter_active: Newsletter Active
-newsletter_confirmed: Newsletter Confirmed
 gender: Gender
 use_original_tiff: Use original TIFF (only PRINT)
 use_original_tiff_description: Use original TIFF when source format is a TIFF image -> do not modify it.

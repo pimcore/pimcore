@@ -145,7 +145,8 @@ pimcore_admin:
                 action: clearDataCache
                 ctrl: false
                 alt: true
-
+    documents:
+        email_search: ['email']
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:
     web_profiler:

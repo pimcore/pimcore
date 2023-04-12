@@ -1554,7 +1554,7 @@ pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, document
                 }, {
                     type: ["document"],
                     subtype: {
-                        document: ["email", "newsletter"]
+                        document: pimcore.settings.document_email_search_types
                     }
                 });
             }

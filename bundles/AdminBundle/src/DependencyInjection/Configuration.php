@@ -256,6 +256,17 @@ final class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->append($this->buildEventsNode());
 
+        $documentsNode
+            ->children()
+                ->arrayNode('email_search')
+                    ->info('List of searchable email documents.')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
+
+
+
         return $documentsNode;
     }
 

@@ -1,0 +1,7 @@
+services:
+    Pimcore\Bundle\NewsletterBundle\Messenger\Handler\SendNewsletterHandler:
+        arguments:
+            - '%pimcore_newsletter%'
+            - '@pimcore_newsletter.address_source_adapter.factories'
+        tags:
+            - { name: messenger.message_handler }

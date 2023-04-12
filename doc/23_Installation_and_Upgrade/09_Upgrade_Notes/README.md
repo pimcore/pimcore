@@ -152,7 +152,7 @@
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`. Please pay attention to the new namespaces for the classes from this bundle.
     - [Web2Print] has been moved to `pimcore/web-to-print-bundle` package.
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
-      - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
+      - Print related Events have been moved into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
       - Targeting is now using the opt-in approach and will not be enabled by default. Add following config to enable it:
@@ -164,6 +164,10 @@
       Also, a user can use cookie `pimcore_targeting_enabled=1` to enable targeting.
     - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
       - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
+    - [Newsletter] has been moved to `pimcore/newsletter-bundle` package.
+      - Config `pimcore:newsletter` has been removed, please use `pimcore_newsletter` in the PimcoreNewsletterBundle instead.
+      - Newsletter related Events have been moved into PimcoreNewsletterBundle. Please check and adapt the Events' namespaces.
+      - Service ids changed from `pimcore.newsletter` to `pimcore_newsletter` e.g. `pimcore_newsletter.document.newsletter.factory.default`
     - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session]
