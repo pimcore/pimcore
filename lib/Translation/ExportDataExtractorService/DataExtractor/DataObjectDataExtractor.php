@@ -147,7 +147,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             foreach ($definitions as $definition) {
                 if (!$this->isFieldExportable($object->getClassName(), $definition, $exportAttributes)) {
                     if ($definition->getFieldtype() === Attribute::TYPE_BLOCK) {
-                        $this->addBlocksInLocalizedfields($fd, $definition, $object, $result, $exportAttributes);
+                        $this->addBlocksInLocalizedfields($definition, $object, $result);
                     }
 
                     continue;
