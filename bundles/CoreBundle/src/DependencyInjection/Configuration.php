@@ -131,7 +131,7 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
+        $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => '/var/config/image-thumbnails',
             'video_thumbnails' => '/var/config/video-thumbnails',
             'document_types' => '/var/config/document_types',
@@ -141,6 +141,8 @@ final class Configuration implements ConfigurationInterface
             'custom_views' => '/var/config/custom_views',
             'object_custom_layouts' => '/var/config/object_custom_layouts',
         ]);
+
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
 
         return $treeBuilder;
     }
