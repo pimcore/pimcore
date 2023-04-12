@@ -1098,14 +1098,10 @@ abstract class Page extends Container
         );
     }
 
-    // Internal methods:
-
     /**
      * Normalizes a property name
      *
-     * @param string $property  property name to normalize
-     *
-     * @return string            normalized property name
+     * @internal
      */
     protected static function _normalizePropertyName(string $property): string
     {
@@ -1129,8 +1125,6 @@ abstract class Page extends Container
     {
         return self::$_defaultPageType;
     }
-
-    // Abstract methods:
 
     /**
      * Returns href for this page
