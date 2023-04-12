@@ -217,6 +217,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
+            this.component.up('panel').body.dom.onscroll = function () {
+                CKEDITOR.document.getWindow().fire('scroll');
+            }
+
             // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
                 var urlField = e.data.getElement().findOne("input");

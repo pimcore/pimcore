@@ -107,6 +107,10 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
+            this.component.up('panel').body.dom.onscroll = function () {
+                CKEDITOR.document.getWindow().fire('scroll');
+            }
+
             this.ckeditor.on('change', this.checkValue.bind(this, true));
 
                 // disable URL field in image dialog
