@@ -46,8 +46,7 @@ final class Config
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         LocaleServiceInterface $localeService
-    )
-    {
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->localeService = $localeService;
     }
@@ -61,7 +60,7 @@ final class Config
                 'documents' => $containerConfig['documents'],
                 'objects' => $containerConfig['objects'],
                 'assets' => $containerConfig['assets'],
-                'email' => $containerConfig['email']
+                'email' => $containerConfig['email'],
             ];
 
             $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
@@ -214,7 +213,7 @@ final class Config
                 'hide_edit_image' => $values['assets.hide_edit_image'],
                 'disable_tree_preview' => $values['assets.disable_tree_preview'],
             ],
-            'email' => []
+            'email' => [],
         ];
 
         if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
@@ -232,7 +231,6 @@ final class Config
 
         return $settings;
     }
-
 
     /**
      * @throws \Exception

@@ -22,7 +22,6 @@ use Pimcore\Bundle\AdminBundle\System\Config as SystemConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Helper\StopMessengerWorkersTrait;
@@ -47,7 +46,6 @@ use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
@@ -376,7 +374,7 @@ class SettingsController extends AdminController
         $config = $config->getAdminSystemSettingsConfig();
 
         $response = [
-            'values' => $config
+            'values' => $config,
         ];
 
         return $this->adminJson($response);

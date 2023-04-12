@@ -30,6 +30,7 @@ class LocalizedFieldTest extends ModelTestCase
     protected array $originalConfig;
 
     protected Config $config;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -43,6 +44,7 @@ class LocalizedFieldTest extends ModelTestCase
         }
 
     }
+
     public function tearDown(): void
     {
         if (Version::getMajorVersion() >= 11) {

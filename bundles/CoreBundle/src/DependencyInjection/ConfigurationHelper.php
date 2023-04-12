@@ -76,7 +76,7 @@ final class ConfigurationHelper
                 ->end()
                 ->end()
                 ->end();
-} else {
+        } else {
             $node->
             arrayNode($name)
                 ->addDefaultsIfNotSet()

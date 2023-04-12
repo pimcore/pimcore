@@ -26,6 +26,7 @@ use Symfony\Component\Yaml\Yaml;
 final class ConfigWriter
 {
     private const SUBDIRECTORY = 'system_settings';
+
     private array $defaultConfig = [
         'pimcore' => [
             'general' => [
