@@ -21,7 +21,6 @@ use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
-use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
@@ -279,8 +278,7 @@ abstract class Kernel extends SymfonyKernel
 
         // pimcore bundles
         $collection->addBundles([
-            new PimcoreCoreBundle(),
-            new PimcoreAdminBundle(),
+            new PimcoreCoreBundle()
         ], 60);
 
         // load development bundles only in matching environments

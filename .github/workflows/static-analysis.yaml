@@ -26,6 +26,7 @@ env:
     APP_ENV: test
     PIMCORE_TEST: 1
     PIMCORE_STORAGE: 'local'
+    COMPOSER_ROOT_VERSION: "11.x-dev"
 
 permissions:
   contents: read
