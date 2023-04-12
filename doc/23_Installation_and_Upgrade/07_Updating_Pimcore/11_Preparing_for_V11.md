@@ -105,3 +105,8 @@
   
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
 - [Config] `pimcore.assets.image.focal_point_detection` was removed
+- [Composer] Please make sure to add the `pimcore/compatibility-bridge-v10` to your composer.json file:
+    ```bash
+    composer require --no-update pimcore/compatibility-bridge-v10
+    ```
+    This package provides backward compatibility layer for some Pimcore 10 classes.
