@@ -81,7 +81,6 @@ class MailTest extends TestCase
 
     /**
      * Test: Initializes the mailer with the settings form Settings -> System -> Email Settings
-     * @group mail
      */
     public function testMailInit(): void
     {
