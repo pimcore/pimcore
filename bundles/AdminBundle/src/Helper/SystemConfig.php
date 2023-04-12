@@ -32,7 +32,7 @@ class SystemConfig
 
         if (isset($configKey[0])) {
             $config = $configKey[0];
-            $config['writeable'] = $repository->isWriteable($key, $configKey[1]);
+            $config['writeable'] = $repository->isWriteable();
         }
 
         return $config;
