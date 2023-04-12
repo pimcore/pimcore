@@ -68,18 +68,6 @@ class Asset extends Element\AbstractElement
     use TemporaryFileHelperTrait;
 
     /**
-     * all possible types of assets
-     *
-     * @internal
-     *
-     * @var string[]
-     *
-     * @deprecated use getTypes() instead.
-     *
-     */
-    public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
-
-    /**
      * @internal
      *
      * @var string

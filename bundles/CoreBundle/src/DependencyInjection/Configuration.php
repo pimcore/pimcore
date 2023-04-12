@@ -122,7 +122,6 @@ final class Configuration implements ConfigurationInterface
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
-        $this->addNewsletterNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -132,7 +131,7 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
+        $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => '/var/config/image-thumbnails',
             'video_thumbnails' => '/var/config/video-thumbnails',
             'document_types' => '/var/config/document_types',
@@ -143,6 +142,8 @@ final class Configuration implements ConfigurationInterface
             'object_custom_layouts' => '/var/config/object_custom_layouts',
             'system_settings' => '/var/config/system_settings'
         ]);
+
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
 
         return $treeBuilder;
     }
@@ -846,14 +847,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('newsletter')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('defaultUrlPrefix')
-                            ->defaultNull()
-                        ->end()
-                    ->end()
-                ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
@@ -1180,56 +1173,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('usespecific')
                             ->defaultFalse()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    /**
-     * Adds configuration tree for newsletter source adapters
-     */
-    private function addNewsletterNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('newsletter')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('sender')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('return')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
-                            ->end()
-                        ->end()
-                        ->scalarNode('method')
-                            ->defaultNull()
-                        ->end()
-                        ->arrayNode('debug')
-                            ->children()
-                                ->scalarNode('email_addresses')
-                                    ->defaultValue('')
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->booleanNode('use_specific')
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                        ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
                         ->end()
                     ->end()
                 ->end()

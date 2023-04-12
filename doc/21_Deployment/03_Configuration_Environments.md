@@ -86,6 +86,10 @@ pimcore:
               type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/web_to_print'
+            read_target:
+              type: 'symfony-config'
+              options:
+                directory: '/var/www/html/var/config/web_to_print'
         predefined_properties:
             write_target:
 	          type: 'settings-store'

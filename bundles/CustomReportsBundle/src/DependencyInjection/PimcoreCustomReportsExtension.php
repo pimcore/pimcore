@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\DependencyInjection;
 
-use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -55,6 +55,6 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
 
     public function prepend(ContainerBuilder $container): void
     {
-        LocationAwareConfigRepository::loadSmyfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
+        LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
     }
 }

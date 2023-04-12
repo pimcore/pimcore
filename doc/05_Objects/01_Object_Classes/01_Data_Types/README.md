@@ -99,18 +99,23 @@ The entire list of data types is indicated below:
 
 ### CRM Datatypes
 
-| Name                       | Description                                                                    |
-|----------------------------|--------------------------------------------------------------------------------|
-| firstname                  | typed input field for firstname                                                |
-| lastname                   | typed input field for lastname                                                 |
-| email                      | typed input field for email including validation                               |
-| gender                     | typed and prefilled select for gender                                          |
-| newsletteractive           | typed checkbox if newsletter is active                                         |
-| newsletterconfirmed        | typed checkbox if newsletter is confirmed                                      |
-| persona                    | typed selectbox for personas defined within Pimcore                            |
-| personas                   | typed selectbox with multiselect for personas defined within Pimcore           |
-| [consent](./20_Consent.md) | store consent of user for something, e.g. consent for direct marketing mailing |
+| Name                      | Description                                                                           |
+|---------------------------|---------------------------------------------------------------------------------------|
+| firstname                 | typed input field for firstname                                                       |
+| lastname                  | typed input field for lastname                                                        |
+| email                     | typed input field for email including validation                                      |
+| gender                    | typed and prefilled select for gender                                                 |
+| persona                   | typed selectbox for personas defined within Pimcore                                   |
+| personas                  | typed selectbox with multiselect for personas defined within Pimcore                  |
+| [consent](./20_Consent.md) | store consent of user for something, e.g. consent for direct marketing mailing        |
 
+
+The following datatypes are only available if the PimcoreNewsletterBundle is enabled and installed:
+
+| Name                      | Description                                                                           |
+|---------------------------|---------------------------------------------------------------------------------------|
+| newsletteractive          | typed checkbox if newsletter is active                                                |
+| newsletterconfirmed       | typed checkbox if newsletter is confirmed                                             |
 
 
 ### General Aspects

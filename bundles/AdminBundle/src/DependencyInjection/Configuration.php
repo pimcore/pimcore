@@ -137,6 +137,8 @@ final class Configuration implements ConfigurationInterface
         $this->addAdminNode($rootNode);
         ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['admin_system_settings' => '/var/config/admin_system_settings']);
 
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['admin_system_settings' => '/var/config/admin_system_settings'], ['read_target']);
+
         return $treeBuilder;
     }
 
@@ -257,6 +259,15 @@ final class Configuration implements ConfigurationInterface
         $documentsNode
             ->addDefaultsIfNotSet()
             ->append($this->buildEventsNode());
+
+        $documentsNode
+            ->children()
+                ->arrayNode('email_search')
+                    ->info('List of searchable email documents.')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
 
         return $documentsNode;
     }

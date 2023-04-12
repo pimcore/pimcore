@@ -171,7 +171,6 @@ pimcore:
                             addSnippet: true
                             addLink: true
                             addEmail: true
-                            addNewsletter: true
                             addHardlink: true
                             addFolder: true
                             paste: true

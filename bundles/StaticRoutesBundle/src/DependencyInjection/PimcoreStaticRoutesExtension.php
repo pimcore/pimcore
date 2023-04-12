@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\DependencyInjection;
 
-use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -41,6 +41,6 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension implement
 
     public function prepend(ContainerBuilder $container): void
     {
-        LocationAwareConfigRepository::loadSmyfonyConfigFiles($container, 'pimcore_static_routes', 'staticroutes');
+        LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_static_routes', 'staticroutes');
     }
 }

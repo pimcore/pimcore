@@ -54,9 +54,10 @@ class LocationAwareConfigRepository
 
     public function loadConfigByKey(string $key): array
     {
+        $data = null;
         $dataSource = null;
 
-        $loadType= $this->storageConfig['read_target']['type'];
+        $loadType= $this->storageConfig['read_target']['type'] ?? null;
         if($loadType === null) {
             // try to load from container config
             $data = $this->getDataFromContainerConfig($key, $dataSource);
@@ -140,6 +141,21 @@ class LocationAwareConfigRepository
         }
 
         return $writeLocation;
+    }
+
+    public function getReadTargets(): array
+    {
+        if (!isset($this->storageConfig['read_target'])) {
+            return [];
+        }
+
+        $readLocation = $this->storageConfig['read_target']['type'];
+
+        if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
+            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
+        }
+
+        return $readLocation ? [$readLocation] : [];
     }
 
     /**
@@ -254,20 +270,24 @@ class LocationAwareConfigRepository
         }
     }
 
-    public static function loadSmyfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
+    public static function loadSymfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
 
-        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'];
+        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'] ?? null;
         $writeTargetConf = $containerConfig['config_location'][$configKey]['write_target'];
 
-        if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
-            ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
-        ) {
-            return;
+        $configDir = null;
+        if($readTargetConf !== null) {
+            if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+            ) {
+                return;
+            }
+
+            $configDir = $readTargetConf['options']['directory'];
         }
 
-        $configDir = $readTargetConf['options']['directory'];
         if ($configDir === null) {
             $configDir = $writeTargetConf['options']['directory'];
         }
