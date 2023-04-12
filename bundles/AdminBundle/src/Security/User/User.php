@@ -41,14 +41,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @deprecated use getUserIdentifier() instead.
-     */
-    public function getUsername(): ?string
-    {
-        return $this->getUserIdentifier();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getUserIdentifier(): string
