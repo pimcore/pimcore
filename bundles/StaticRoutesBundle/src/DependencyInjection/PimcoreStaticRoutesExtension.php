@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\StaticRoutesBundle\DependencyInjection;
 
 use Pimcore\Config\LocationAwareConfigRepository;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
