@@ -17,7 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cache;
 
+use Pimcore\Bundle\AdminBundle\System\Config;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Version;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
@@ -78,11 +81,17 @@ class MailTest extends TestCase
 
     /**
      * Test: Initializes the mailer with the settings form Settings -> System -> Email Settings
+     * @group mail
      */
     public function testMailInit(): void
     {
-        $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
-
+        if (Version::getMajorVersion() >= 11) {
+            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+            $config = $pimcoreModule->grabService(Config::class);
+            $emailConfig = $config->get()['email'];
+        } else {
+            $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
+        }
         $mail = new \Pimcore\Mail();
 
         $this->assertEquals($emailConfig['sender']['email'], $mail->getFrom()[0]->getAddress(), 'From recipient not initialized from system settings');
