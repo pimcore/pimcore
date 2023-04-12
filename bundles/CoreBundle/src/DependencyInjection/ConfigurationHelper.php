@@ -27,9 +27,7 @@ use Symfony\Component\Finder\Finder;
  */
 final class ConfigurationHelper
 {
-    private const READ_TARGET_NODES = ['web_to_print'];
-
-    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
+    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): void
     {
         $storageNode = $rootNode
             ->children()
@@ -38,13 +36,13 @@ final class ConfigurationHelper
                 ->children();
 
         foreach ($nodes as $node => $dir) {
-            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir);
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir, $additionalNodes);
         }
     }
 
-    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
+    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
     {
-        if (in_array($name, self::READ_TARGET_NODES)) {
+        if (in_array('read_target', $additionalNodes)) {
             $node->
             arrayNode($name)
             ->addDefaultsIfNotSet()

@@ -143,6 +143,21 @@ class LocationAwareConfigRepository
         return $writeLocation;
     }
 
+    public function getReadTargets(): array
+    {
+        if (!isset($this->storageConfig['read_target'])) {
+            return [];
+        }
+
+        $readLocation = $this->storageConfig['read_target']['type'];
+
+        if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
+            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
+        }
+
+        return $readLocation ? [$readLocation] : [];
+    }
+
     /**
      * @param string $key
      * @param mixed $data
