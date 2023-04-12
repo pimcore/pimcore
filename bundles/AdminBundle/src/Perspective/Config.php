@@ -39,7 +39,6 @@ final class Config
         if (!self::$locationAwareConfigRepository) {
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
-
             $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(

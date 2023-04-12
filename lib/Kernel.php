@@ -101,12 +101,6 @@ abstract class Kernel extends SymfonyKernel
 
         $this->microKernelRegisterContainerConfiguration($loader);
 
-        //load system configuration
-        $systemConfigFile = Config::locateConfigFile('system.yaml');
-        if (file_exists($systemConfigFile)) {
-            $loader->load($systemConfigFile);
-        }
-
         $configKeysArray = [
             'image_thumbnails',
             'video_thumbnails',
@@ -116,6 +110,7 @@ abstract class Kernel extends SymfonyKernel
             'perspectives',
             'custom_views',
             'object_custom_layouts',
+            'system_settings',
         ];
 
         $loader->load(function (ContainerBuilder $container) use ($loader, $configKeysArray) {

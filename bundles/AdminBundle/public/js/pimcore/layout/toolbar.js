@@ -477,6 +477,15 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.systemSettings
                  });
              }
+
+             if (user.isAllowed("system_appearance_settings") && perspectiveCfg.inToolbar("settings.appearance")) {
+                 settingsItems.push({
+                     text: t("appearance_and_branding"),
+                     iconCls: "pimcore_nav_icon_frame",
+                     itemId: 'pimcore_menu_settings_system_appearance',
+                     handler: this.systemAppearanceSettings
+                 });
+             }
  
              if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
                  settingsItems.push({
@@ -1130,9 +1139,7 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("notes", new pimcore.element.notes());
          }
      },
- 
 
- 
      systemSettings: function () {
  
          try {
@@ -1140,6 +1147,15 @@ pimcore.layout.toolbar = Class.create({
          }
          catch (e) {
              pimcore.globalmanager.add("settings_system", new pimcore.settings.system());
+         }
+     },
+
+     systemAppearanceSettings: function () {
+         try {
+             pimcore.globalmanager.get("settings_system_appearance").activate();
+         }
+         catch (e) {
+             pimcore.globalmanager.add("settings_system_appearance", new pimcore.settings.appearance());
          }
      },
  

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -75,6 +76,8 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
 
     public function prepend(ContainerBuilder $container): void
     {
+        LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_admin', 'admin_system_settings');
+
         $builds = [
             'pimcoreAdmin' => realpath(__DIR__ . '/../../public/build/admin'),
             'pimcoreAdminImageEditor' => realpath(__DIR__ . '/../../public/build/imageEditor'),

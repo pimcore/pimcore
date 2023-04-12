@@ -17,7 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\System\AdminConfig;
+use Pimcore\Bundle\AdminBundle\System\Config as SystemConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
@@ -365,24 +366,42 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-system", name="pimcore_admin_settings_getsystem", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Config $config
+     * @Route("/get-admin-system", name="pimcore_appearance_admin_settings_get", methods={"GET"})
      *
      * @return JsonResponse
      */
-    public function getSystemAction(Request $request, Config $config): JsonResponse
+    public function getAppearanceSystemAction(AdminConfig $config): JsonResponse
+    {
+        $this->checkPermission('system_appearance_settings');
+        $config = $config->getAdminSystemSettingsConfig();
+
+        $response = [
+            'values' => $config
+        ];
+
+        return $this->adminJson($response);
+    }
+
+    /**
+     * @Route("/get-system", name="pimcore_admin_settings_getsystem", methods={"GET"})
+     *
+     * @param Request $request
+     * @param SystemConfig $config
+     *
+     * @return JsonResponse
+     */
+    public function getSystemAction(Request $request, SystemConfig $config): JsonResponse
     {
         $this->checkPermission('system_settings');
+        $config = $config->getSystemSettingsConfig();
 
         $valueArray = [
             'general' => $config['general'],
             'documents' => $config['documents'],
             'assets' => $config['assets'],
             'objects' => $config['objects'],
-            'branding' => $config['branding'],
             'email' => $config['email'],
+            'writeable' => $config['writeable'],
         ];
 
         $locales = Tool::getSupportedLocales();
@@ -419,124 +438,24 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/set-system", name="pimcore_admin_settings_setsystem", methods={"PUT"})
+     * @Route("/set-appearance", name="pimcore_admin_settings_appearance_set", methods={"PUT"})
      *
      *
      */
-    public function setSystemAction(
-        LocaleServiceInterface $localeService,
+    public function setAppearanceSystemAction(
         Request $request,
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CoreCacheHandler $cache,
         Filesystem $filesystem,
-        CacheClearer $symfonyCacheClearer
+        CacheClearer $symfonyCacheClearer,
+        AdminConfig $config
     ): JsonResponse {
-        $this->checkPermission('system_settings');
+        $this->checkPermission('system_appearance_settings');
 
         $values = $this->decodeJson($request->get('data'));
-        $existingValues = [];
 
-        try {
-            $file = Config::locateConfigFile('system.yaml');
-            $existingValues = Config::getConfigInstance($file);
-        } catch (\Exception $e) {
-            // nothing to do
-        }
-
-        // localized error pages
-        $localizedErrorPages = [];
-
-        // fallback languages
-        $fallbackLanguages = [];
-        $languages = explode(',', $values['general.validLanguages']);
-        $filteredLanguages = [];
-
-        foreach ($languages as $language) {
-            if (isset($values['general.fallbackLanguages.' . $language])) {
-                $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
-            }
-
-            // localized error pages
-            if (isset($values['documents.error_pages.localized.' . $language])) {
-                $localizedErrorPages[$language] = $values['documents.error_pages.localized.' . $language];
-            }
-
-            if ($localeService->isLocale($language)) {
-                $filteredLanguages[] = $language;
-            }
-        }
-
-        // check if there's a fallback language endless loop
-        foreach ($fallbackLanguages as $sourceLang => $targetLang) {
-            $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
-        }
-
-        $settings['pimcore'] = [
-            'general' => [
-                'domain' => $values['general.domain'],
-                'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
-                'language' => $values['general.language'],
-                'valid_languages' => $filteredLanguages,
-                'fallback_languages' => $fallbackLanguages,
-                'default_language' => $values['general.defaultLanguage'],
-                'debug_admin_translations' => $values['general.debug_admin_translations'],
-            ],
-            'documents' => [
-                'versions' => [
-                    'days' => $values['documents.versions.days'] ?? null,
-                    'steps' => $values['documents.versions.steps'] ?? null,
-                ],
-                'error_pages' => [
-                    'default' => $values['documents.error_pages.default'],
-                    'localized' => $localizedErrorPages,
-                ],
-            ],
-            'objects' => [
-                'versions' => [
-                    'days' => $values['objects.versions.days'] ?? null,
-                    'steps' => $values['objects.versions.steps'] ?? null,
-                ],
-            ],
-            'assets' => [
-                'versions' => [
-                    'days' => $values['assets.versions.days'] ?? null,
-                    'steps' => $values['assets.versions.steps'] ?? null,
-                ],
-                'hide_edit_image' => $values['assets.hide_edit_image'],
-                'disable_tree_preview' => $values['assets.disable_tree_preview'],
-            ],
-        ];
-
-        //branding
-        $settings['pimcore_admin'] = [
-            'branding' =>
-                [
-                    'login_screen_invert_colors' => $values['branding.login_screen_invert_colors'],
-                    'color_login_screen' => $values['branding.color_login_screen'],
-                    'color_admin_interface' => $values['branding.color_admin_interface'],
-                    'color_admin_interface_background' => $values['branding.color_admin_interface_background'],
-                    'login_screen_custom_image' => str_replace('%', '%%', $values['branding.login_screen_custom_image']),
-                ],
-        ];
-
-        if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
-            $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
-        }
-
-        if ($existingValues) {
-            $saveSettingsEvent = new GenericEvent(null, [
-                'settings' => $settings,
-                'existingValues' => $existingValues,
-                'values' => $values,
-            ]);
-            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
-            $settings = $saveSettingsEvent->getArgument('settings');
-        }
-
-        $settingsYaml = Yaml::dump($settings, 5);
-        $configFile = Config::locateConfigFile('system.yaml');
-        $filesystem->dumpFile($configFile, $settingsYaml);
+        $config->save($values);
 
         // clear all caches
         $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
@@ -555,30 +474,39 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param string $source
-     * @param array $definitions
-     * @param array $fallbacks
+     * @Route("/set-system", name="pimcore_admin_settings_setsystem", methods={"PUT"})
      *
-     * @throws \Exception
+     *
      */
-    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
-    {
-        if (isset($definitions[$source])) {
-            $targets = explode(',', $definitions[$source]);
-            foreach ($targets as $l) {
-                $target = trim($l);
-                if ($target) {
-                    if (in_array($target, $fallbacks)) {
-                        throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
-                    }
-                    $fallbacks[] = $target;
+    public function setSystemAction(
+        Request $request,
+        KernelInterface $kernel,
+        EventDispatcherInterface $eventDispatcher,
+        CoreCacheHandler $cache,
+        Filesystem $filesystem,
+        CacheClearer $symfonyCacheClearer,
+        SystemConfig $config
+    ): JsonResponse {
+        $this->checkPermission('system_settings');
 
-                    $this->checkFallbackLanguageLoop($target, $definitions, $fallbacks);
-                }
-            }
-        } else {
-            throw new \Exception("Language `$source` doesn't exist");
-        }
+        $values = $this->decodeJson($request->get('data'));
+
+        $config->save($values);
+
+        // clear all caches
+        $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
+        $this->stopMessengerWorkers();
+
+        $eventDispatcher->addListener(KernelEvents::TERMINATE, function (TerminateEvent $event) use (
+            $cache, $eventDispatcher, $filesystem
+        ) {
+            // we need to clear the cache with a delay, because the cache is used by messenger:stop-workers
+            // to send the stop signal to all worker processes
+            sleep(2);
+            $this->clearPimcoreCache($cache, $eventDispatcher, $filesystem);
+        });
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**
