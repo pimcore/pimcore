@@ -316,7 +316,7 @@ pimcore:
 - Removed deprecated method `Pimcore\Bundle\AdminBundle\Security\User::getUsername()`, use `getIdentifier()` instead.
 - Removed deprecated property `Pimcore\Model\Asset::$types`, use `getTypes()` instead
 - Removed AdminSessionHandler and AdminSessionListener. The session is now handled by Symfony.
-- Methods `Pimcore\Navigation::setDefaultPageType` and `Pimcore\Navigation::getDefaultPageType` have been marked as internal.
+- Methods `Pimcore\Navigation::setDefaultPageType`, `Pimcore\Navigation::getDefaultPageType`, `Pimcore\Navigation\Container::_sort() and `Pimcore\Navigation\Page::_normalizePropertyName()` have been marked as internal.
 
 ## 10.6.0
 
