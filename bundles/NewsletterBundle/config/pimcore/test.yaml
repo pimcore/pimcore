@@ -1,4 +1,0 @@
-framework:
-    mailer:
-        transports:
-            pimcore_newsletter: 'null://null'

@@ -178,7 +178,6 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\NewsletterBundle\\": "bundles/NewsletterBundle/src/",
       "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
     },
     "classmap": [
