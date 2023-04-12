@@ -121,14 +121,6 @@ class AssetUpdateTasksHandler
 
         $customSettings = $image->getCustomSettings();
 
-        if (!isset($customSettings['disableImageFeatureAutoDetection'])) {
-            $image->detectFaces();
-        }
-
-        if (!isset($customSettings['disableFocalPointDetection'])) {
-            $image->detectFocalPoint();
-        }
-
         try {
             $image->handleEmbeddedMetaData(true);
         } catch (\Exception $e) {

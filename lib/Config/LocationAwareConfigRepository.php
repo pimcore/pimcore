@@ -16,9 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Config;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
@@ -52,12 +56,21 @@ class LocationAwareConfigRepository
     {
         $dataSource = null;
 
-        // try to load from container config
-        $data = $this->getDataFromContainerConfig($key, $dataSource);
+        $loadType= $this->storageConfig['read_target']['type'];
+        if($loadType === null) {
+            // try to load from container config
+            $data = $this->getDataFromContainerConfig($key, $dataSource);
 
-        // try to load from SettingsStore
-        if (!$data) {
-            $data = $this->getDataFromSettingsStore($key, $dataSource);
+            // try to load from SettingsStore
+            if (!$data) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
+        } else {
+            if($loadType === self::LOCATION_SYMFONY_CONFIG) {
+                $data = $this->getDataFromContainerConfig($key, $dataSource);
+            } elseif ($loadType === self::LOCATION_SETTINGS_STORE) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
         }
 
         return [
@@ -238,6 +251,36 @@ class LocationAwareConfigRepository
         $systemConfigFile = Config::locateConfigFile('system.yaml');
         if ($systemConfigFile) {
             touch($systemConfigFile);
+        }
+    }
+
+    public static function loadSmyfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
+    {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
+
+        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'];
+        $writeTargetConf = $containerConfig['config_location'][$configKey]['write_target'];
+
+        if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+            ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+        ) {
+            return;
+        }
+
+        $configDir = $readTargetConf['options']['directory'];
+        if ($configDir === null) {
+            $configDir = $writeTargetConf['options']['directory'];
+        }
+
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
         }
     }
 }

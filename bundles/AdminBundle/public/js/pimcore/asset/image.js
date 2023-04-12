@@ -138,13 +138,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getDisplayPanel: function () {
 
         if (!this.displayPanel) {
-            let detectImageFeaturesHidden = false;
-            if(this.isAllowed('publish')) {
-                if(this.data['customSettings'] && this.data['customSettings']['disableImageFeatureAutoDetection'] === true) {
-                    detectImageFeaturesHidden = true;
-                }
-            }
-
             var details = [{
                 title: t("tools"),
                 bodyStyle: "padding: 10px;",
@@ -157,41 +150,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     handler: function () {
                         this.addFocalPoint();
                     }.bind(this)
-                }, {
-                    xtype: "button",
-                    id: 'toggle_image_features_' + this.id,
-                    text: t("toggle_image_features_visibility"),
-                    iconCls: "pimcore_icon_image_features",
-                    width: "100%",
-                    textAlign: "left",
-                    hidden: (this.data['customSettings'] && this.data['customSettings']['faceCoordinates']) ? false : true,
-                    style: "margin-top: 5px",
-                    handler: function () {
-                        var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
-                        features.forEach(function (feature) {
-                            Ext.get(feature).toggle();
-                        });
-                    }.bind(this)
-                }, {
-                    xtype: "button",
-                    id: 'set_image_features_' + this.id,
-                    text: t("detect_image_features"),
-                    iconCls: "pimcore_icon_image_region",
-                    width: "100%",
-                    textAlign: "left",
-                    hidden: detectImageFeaturesHidden,
-                    style: "margin-top: 5px",
-                    handler: this.detectImageFeatures.bind(this)
-                }, {
-                    xtype: "button",
-                    id: 'remove_image_features_' + this.id,
-                    text: t("remove_image_features"),
-                    iconCls: "pimcore_icon_image_region pimcore_icon_overlay_delete",
-                    width: "100%",
-                    textAlign: "left",
-                    hidden: !(this.data['customSettings'] && this.data['customSettings']['faceCoordinates']),
-                    style: "margin-top: 5px",
-                    handler: this.deleteImageFeatures.bind(this)
                 }, {
                     xtype: "container",
                     html: "<hr>"
@@ -441,50 +399,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             if (this.data['customSettings']['focalPointX']) {
                 this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
             }
-
-            if (this.data['customSettings']['faceCoordinates']) {
-                this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                    this.addImageFeature(coord);
-                }.bind(this));
-            }
         }
-    },
-
-    detectImageFeatures: function () {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_asset_detectimagefeatures'),
-            params: {
-                id: this.id,
-            },
-            success: function (response) {
-                this.reload();
-            }.bind(this)
-        });
-    },
-
-    deleteImageFeatures: function () {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_asset_deleteimagefeatures'),
-            params: {
-                id: this.id,
-            },
-            success: function (response) {
-                this.reload();
-            }.bind(this)
-        });
-    },
-
-    addImageFeature: function (coords) {
-        if(empty(coords)) {
-            return;
-        }
-
-        var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
-        var imageFeature = area.insertHtml('afterBegin', '<div class="image_feature"></div>', true);
-        imageFeature.setTop(coords['y'] + "%");
-        imageFeature.setLeft(coords['x'] + "%");
-        imageFeature.setWidth(coords['width'] + "%");
-        imageFeature.setHeight(coords['height'] + "%");
     },
 
     addFocalPoint: function (positionX, positionY) {

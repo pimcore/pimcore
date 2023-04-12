@@ -104,3 +104,4 @@
     ```
   
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
+- [Config] `pimcore.assets.image.focal_point_detection` was removed
