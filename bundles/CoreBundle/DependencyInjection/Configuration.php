@@ -181,7 +181,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
+        $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => '/var/config/image-thumbnails',
             'custom_reports' => '/var/config/custom_reports',
             'video_thumbnails' => '/var/config/video-thumbnails',
@@ -193,8 +193,10 @@ final class Configuration implements ConfigurationInterface
             'perspectives' => '/var/config/perspectives',
             'custom_views' => '/var/config/custom_views',
             'data_hub' => '/var/config/data_hub',
-            'object_custom_layouts' => '/var/config/object_custom_layouts',
+            'object_custom_layouts' => '/var/config/object_custom_layouts'
         ]);
+
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
 
         return $treeBuilder;
     }

@@ -105,7 +105,8 @@ pimcore_admin:
         admin_system_settings:
             write_target:
                 type: 'settings-store'
-            is_symfony_config_disabled: true
+            read_target:
+                type: 'settings-store'
 ```
 
 System Settings will implement LocationAwareConfigRepository in Pimcore 11. All relevant settings from `system.yaml` will be stored in `var/config/system_settings/system_settings.yaml` by default.
@@ -116,7 +117,8 @@ pimcore:
         system_settings:
             write_target:
                 type: 'settings-store'
-            is_symfony_config_disabled: true
+            read_target:
+                type: 'settings-store'
 ```
 
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
