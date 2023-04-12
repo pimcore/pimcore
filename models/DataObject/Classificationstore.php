@@ -511,7 +511,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     {
         $fieldsArray = $mergeFunction($this, []);
         $object = $this->getObject();
-        while ($object && ($parent = Service::hasInheritableParentObject($object)) !== null) {
+        while (!is_null($object) && ($parent = Service::hasInheritableParentObject($object)) !== null) {
             $fieldDefintions = $parent->getClass()->getFieldDefinitions();
             foreach ($fieldDefintions as $key => $fd) {
                 if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore) {
