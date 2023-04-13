@@ -673,7 +673,7 @@ class PimcoreBundleManager
         foreach ($this->getActiveBundles() as $bundle) {
             $paths = $bundle->$getter();
 
-            if (!empty($paths) && !$bundle instanceof Pimcore) {
+            if (!empty($paths) && !$bundle instanceof PimcoreBundleAdminClassicInterface) {
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.6',
