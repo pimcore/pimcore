@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\Controller\UserAwareController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class AdminController extends UserAwareController implements AdminControllerInterface
 {
