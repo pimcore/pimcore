@@ -37,59 +37,12 @@ abstract class AbstractDefinitionHelper extends Module
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
-                $systemSettings = '
-                    {
-                        "general": {
-                            "domain": "pimcore-test.dev",
-                        "redirect_to_maindomain": false,
-                        "language": "en",
-                        "valid_languages": [
-                                "en",
-                                "de",
-                                "fr"
-                            ],
-                        "fallback_languages": {
-                                "en": "",
-                            "de": ""
-                        },
-                        "default_language": "",
-                        "debug_admin_translations": false
-                    },
-                    "documents": {
-                            "versions": {
-                                "days": null,
-                            "steps": 10
-                        },
-                        "error_pages": {
-                                "default": "/error"
-                        }
-                    },
-                    "objects": {
-                            "versions": {
-                                "days": null,
-                            "steps": 10
-                        }
-                    },
-                    "assets": {
-                            "versions": {
-                                "days": null,
-                            "steps": 10
-                        },
-                        "hide_edit_image": false,
-                        "disable_tree_preview": false
-                    },
-                    "email": {
-                            "sender": {
-                                "name": "pimcore",
-                            "email": "pimcore@example.com"
-                        },
-                        "return": {
-                                "name": "pimcore",
-                            "email": "pimcore@example.com"
-                        }
-                    }
-                }';
-                SettingsStore::set('system_settings', $systemSettings, 'string', 'pimcore_system_settings');
+                $path = TestHelper::resolveFilePath('system_settings.json');
+                if (!file_exists($path)) {
+                    throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
+                }
+                $data = file_get_contents($path);
+                SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
                 $this->initializeDefinitions();
             } else {
                 $this->debug(sprintf(

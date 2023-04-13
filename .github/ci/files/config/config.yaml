@@ -4,6 +4,13 @@ imports:
     - { resource: 'local/' }
 
 pimcore:
+    email:
+        sender:
+            name: pimcore
+            email: pimcore@example.com
+        return:
+            name: pimcore
+            email: pimcore@example.com
     config_location:
         image_thumbnails:
             write_target:
