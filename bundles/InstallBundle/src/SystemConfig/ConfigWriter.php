@@ -25,24 +25,10 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class ConfigWriter
 {
-    private const SUBDIRECTORY = 'system_settings';
-
-    private array $defaultConfig = [
-        'pimcore' => [
-            'general' => [
-                'language' => 'en',
-            ],
-        ],
-    ];
-
     protected Filesystem $filesystem;
 
-    public function __construct(array $defaultConfig = null)
+    public function __construct()
     {
-        if (null !== $defaultConfig) {
-            $this->defaultConfig = $defaultConfig;
-        }
-
         $this->filesystem = new Filesystem();
     }
 
