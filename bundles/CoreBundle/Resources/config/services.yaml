@@ -264,3 +264,6 @@ services:
 
     Pimcore\Security\User\UserLoader: ~
 
+    # user-checker checking pimcore users for validity
+    Pimcore\Security\User\UserChecker: ~
+

@@ -81,6 +81,25 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    # user-checker checking pimcore users for validity
-    Pimcore\Security\User\UserChecker: ~
 
+    ## Deprecated Services, Remove In Pimcore 11
+    Pimcore\Bundle\AdminBundle\Security\User\UserProvider:
+        alias: Pimcore\Security\User\UserProvider
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserProvider instead.'
+
+    Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
+        alias: Pimcore\Security\User\TokenStorageUserResolver
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\TokenStorageUserResolver instead.'
+
+    Pimcore\Bundle\AdminBundle\Security\User\UserChecker:
+        alias: Pimcore\Security\User\UserChecker
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserChecker instead.'
