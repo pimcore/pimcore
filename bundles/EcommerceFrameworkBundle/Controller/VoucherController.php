@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ExportableTokenManagerInterface;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Controller\KernelControllerEventInterface;

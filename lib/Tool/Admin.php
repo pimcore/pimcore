@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;

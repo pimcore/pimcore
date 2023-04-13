@@ -257,3 +257,10 @@ services:
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
 
+    Pimcore\Security\User\TokenStorageUserResolver:
+        public: true
+        arguments:
+            - '@security.token_storage'
+
+    Pimcore\Security\User\UserLoader: ~
+

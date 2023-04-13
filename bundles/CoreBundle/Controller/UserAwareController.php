@@ -13,15 +13,15 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller;
+namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
-use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
+use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Logger;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AdminController extends Controller implements AdminControllerInterface
+abstract class UserAwareController extends Controller
 {
     /**
      * @var TokenStorageUserResolver
@@ -298,24 +298,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
         }
 
         return $serializer->decode($json, 'json', $context);
-    }
-
-    /**
-     * Returns a JsonResponse that uses the admin serializer
-     *
-     * @param mixed $data    The response data
-     * @param int $status    The status code to use for the Response
-     * @param array $headers Array of extra headers to add
-     * @param array $context Context to pass to serializer when using serializer component
-     * @param bool $useAdminSerializer
-     *
-     * @return JsonResponse
-     */
-    protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
-    {
-        $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
-
-        return new JsonResponse($json, $status, $headers, true);
     }
 
     /**

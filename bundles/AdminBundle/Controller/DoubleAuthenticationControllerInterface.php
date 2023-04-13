@@ -19,6 +19,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller;
  * Controllers implementing this interface will be double-checked for admin authentication.
  *
  * @see AdminAuthenticationDoubleCheckListener
+ *
+ * @deprecated and will be removed in Pimcore 11
  */
 interface DoubleAuthenticationControllerInterface
 {

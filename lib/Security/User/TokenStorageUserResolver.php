@@ -13,9 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Security\User;
+namespace Pimcore\Security\User;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
+use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Model\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -52,7 +52,7 @@ class TokenStorageUserResolver
     /**
      * Taken and adapted from framework base controller.
      *
-     * The proxy is the wrapping Pimcore\Bundle\AdminBundle\Security\User\User object implementing UserInterface.
+     * The proxy is the wrapping Pimcore\Security\User\User object implementing UserInterface.
      *
      * @return UserProxy|null
      */

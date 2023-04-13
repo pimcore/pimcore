@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Security\User;
+namespace Pimcore\Security\User;
 
-use Pimcore\Bundle\AdminBundle\Security\User\Exception\InvalidUserException;
+use Pimcore\Security\User\Exception\InvalidUserException;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\Security\Core\User\InMemoryUserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;

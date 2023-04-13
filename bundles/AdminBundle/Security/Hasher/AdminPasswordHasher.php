@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Hasher;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Security\User\User;
 use Pimcore\Security\Hasher\AbstractUserAwarePasswordHasher;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;

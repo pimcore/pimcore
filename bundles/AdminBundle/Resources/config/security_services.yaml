@@ -7,9 +7,9 @@ services:
     # SECURITY
     #
 
-    # standard user provider returning admin users wrapped in a Pimcore\Bundle\AdminBundle\Security\User\User proxy object.
+    # standard user provider returning admin users wrapped in a Pimcore\Security\User\User proxy object.
     # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
-    Pimcore\Bundle\AdminBundle\Security\User\UserProvider: ~
+    Pimcore\Security\User\UserProvider: ~
 
     # the password encoder factory builds a dedicated encoder per user
     # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
@@ -64,13 +64,6 @@ services:
 
     Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
 
-    Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
-        public: true
-        arguments:
-            - '@security.token_storage'
-
-    Pimcore\Bundle\AdminBundle\Security\User\UserLoader: ~
-
     Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler:
         public: true
         arguments:
@@ -88,6 +81,6 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    # user checker checking admin users for validity
-    Pimcore\Bundle\AdminBundle\Security\User\UserChecker: ~
+    # user-checker checking pimcore users for validity
+    Pimcore\Security\User\UserChecker: ~
 

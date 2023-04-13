@@ -34,6 +34,15 @@ services:
         tags: ['controller.service_arguments']
 
     #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\AdminBundle\Command\:
+        resource: '../../Command'
+        tags: [ 'console.command' ]
+
+    #
     # TRANSLATIONS
     #
 

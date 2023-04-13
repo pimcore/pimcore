@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Security\User;
+namespace Pimcore\Security\User;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\User as UserModel;
@@ -80,7 +80,7 @@ class UserLoader
      */
     protected function loadUser()
     {
-        // authenticated admin user inside admin firewall and set on token storage
+        // authenticated pimcore user inside admin firewall and set on token storage
         if ($user = $this->userResolver->getUser()) {
             return $user;
         }

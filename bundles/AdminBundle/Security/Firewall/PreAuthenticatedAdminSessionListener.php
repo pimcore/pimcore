@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Security\Firewall;
 
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\PreAuthenticatedAdminToken;
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;

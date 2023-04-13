@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Bundle\AdminBundle\Command;
 
 use MatthiasMullie\Minify\JS;
 use Pimcore\Console\AbstractCommand;

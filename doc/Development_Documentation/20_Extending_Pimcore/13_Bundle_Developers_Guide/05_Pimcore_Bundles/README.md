@@ -61,7 +61,7 @@ to fulfill the following requirements:
 If you add a new bundle to `src/YourBundleName/YourBundleName.php` and it implements the interface, it should be automatically
 shown in the extension manager.
 
-> If the bundle needs to load any kind of assets like (CSS or JS) it also has to implement the `PimcoreBundleAdminSupportInterface`.
+> If the bundle needs to load any kind of assets like (CSS or JS) it also has to implement the `PimcoreBundleAdminClassicInterface`.
 
 ### Composer bundles
 

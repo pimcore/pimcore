@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Document;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;

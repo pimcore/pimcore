@@ -3,7 +3,7 @@ security:
 
     providers:
         pimcore_admin:
-            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+            id: Pimcore\Security\User\UserProvider
 
     firewalls:
         dev:

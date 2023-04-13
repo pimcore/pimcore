@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;

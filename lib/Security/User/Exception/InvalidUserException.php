@@ -13,27 +13,10 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Support;
+namespace Pimcore\Security\User\Exception;
 
-trait BundleAdminSupportTrait
+use Symfony\Component\Security\Core\Exception\AccountStatusException;
+
+class InvalidUserException extends AccountStatusException
 {
-    public function getJsPaths(): array
-    {
-        return [];
-    }
-
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    public function getEditmodeJsPaths(): array
-    {
-        return [];
-    }
-
-    public function getEditmodeCssPaths(): array
-    {
-        return [];
-    }
 }

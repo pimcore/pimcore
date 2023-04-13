@@ -16,6 +16,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
 /**
+ * @deprecated and will be removed in Pimcore 11
+ *
  * Tagging interface defining controller as admin controller.
  */
 interface AdminControllerInterface extends DoubleAuthenticationControllerInterface
