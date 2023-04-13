@@ -1,7 +1,14 @@
 # Upgrade Notes
 
 ## 11.0.0
-
+- [AdminBundle] Admin Bundle has been moved to `pimcore/admin-ui-classic-bundle` package. Please require in your project composer.json file and register the bundle in Kernel:
+    ```php
+    public function registerBundlesToCollection(BundleCollection $collection): void
+    {
+        // pimcore bundles
+        $collection->addBundle(new \Pimcore\Bundle\AdminBundle\PimcoreAdminBundle\PimcoreAdminBundle(), 60);
+    }
+    ```
 - [Naming] Renamed master, blacklist and whitelist to main, blocklist, allowlist
 - [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
@@ -308,6 +315,7 @@ pimcore:
                     predefined_document_types: true
 ```
 - [Console] Removed the deprecated trait `ConsoleCommandPluginTrait`.
+- [System Settings] System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Core] The default behaviour of asset install and `Composer::installAssets` is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change.
   You can change it back by setting the env variable `SYMFONY_ASSETS_INSTALL` to `relative` or by adding the following to composer.json.
 

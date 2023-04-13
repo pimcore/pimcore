@@ -687,11 +687,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        $config = \Pimcore\Config::getSystemConfiguration('general');
-        $languages = [];
-        if (isset($config['valid_languages'])) {
-            $languages = $config['valid_languages'];
-        }
+        $languages = Tool::getValidLanguages();
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];

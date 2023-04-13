@@ -171,7 +171,7 @@ class Mail extends Email
     public function init(string $type = 'email', ?array $config = null): void
     {
         if(empty($config)) {
-            $config = Config::getSystemConfiguration($type);
+            $config = \Pimcore\Bundle\AdminBundle\System\Config::get()['email'];
         }
 
         if (!empty($config['sender']['email']) && empty($this->getFrom())) {

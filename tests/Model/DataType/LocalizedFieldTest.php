@@ -16,17 +16,43 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Config;
+use Pimcore\Bundle\AdminBundle\System\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Version;
 
 class LocalizedFieldTest extends ModelTestCase
 {
+    protected array $originalConfig;
+
+    protected Config $config;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        if (Version::getMajorVersion() >= 11) {
+            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+            $this->config = $pimcoreModule->grabService(Config::class);
+            $this->originalConfig = $this->config->get();
+        } else {
+            $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
+        }
+
+    }
+
     public function tearDown(): void
     {
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($this->originalConfig);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        }
+
         Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
     }
 
@@ -97,9 +123,14 @@ class LocalizedFieldTest extends ModelTestCase
 
     public function testLocalizedFieldFallback(): void
     {
-        $configuration = Config::getSystemConfiguration();
+        $configuration = $this->originalConfig;
         $configuration['general']['fallback_languages']['de'] = 'en';
-        Config::setSystemConfiguration($configuration);
+
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($configuration);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($configuration);
+        }
 
         $object = TestHelper::createEmptyObject();
 
