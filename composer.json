@@ -139,7 +139,7 @@
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "1.10.12",
+    "phpstan/phpstan": "1.10.13",
     "phpstan/phpstan-symfony": "^1.2.25",
     "phpunit/phpunit": "^9.3",
     "gotenberg/gotenberg-php": "^1.1",
