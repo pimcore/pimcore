@@ -115,7 +115,7 @@ abstract class AdminController extends UserAwareController implements AdminContr
      *
      * @return JsonResponse
      *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::encodeJson() instead.
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::jsonResponse() instead.
      */
     protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
     {

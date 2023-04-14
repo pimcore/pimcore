@@ -447,7 +447,7 @@ class ElementController extends AdminController
                 $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
 
-            $element->setUserModification($this->getPimcoreUser()->getId());
+            $element->setUserModification($this->getAdminUser()->getId());
             $element->save();
 
             $success = true;
@@ -640,7 +640,7 @@ class ElementController extends AdminController
                     $list->setCondition('cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ', [
                         $element->getId(),
                         Element\Service::getElementType($element),
-                        $this->getPimcoreUser()->getId(),
+                        $this->getAdminUser()->getId(),
                     ])
                         ->setOrderKey('date')
                         ->setOrder('ASC');
