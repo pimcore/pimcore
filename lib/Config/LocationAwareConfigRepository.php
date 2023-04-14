@@ -36,6 +36,18 @@ class LocationAwareConfigRepository
 
     public const LOCATION_DISABLED = 'disabled';
 
+    public const READ_TARGET = 'read_target';
+
+    public const WRITE_TARGET = 'write_target';
+
+    public const CONFIG_LOCATION = 'config_location';
+
+    public const TYPE = 'type';
+
+    public const OPTIONS = 'options';
+
+    public const DIRECTORY = 'directory';
+
     protected array $containerConfig = [];
 
     protected ?string $settingsStoreScope = null;
@@ -57,7 +69,8 @@ class LocationAwareConfigRepository
         $data = null;
         $dataSource = null;
 
-        $loadType= $this->storageConfig['read_target']['type'] ?? null;
+
+        $loadType = $this->getReadTargets()[0] ?? null;
         if($loadType === null) {
             // try to load from container config
             $data = $this->getDataFromContainerConfig($key, $dataSource);
@@ -134,7 +147,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->storageConfig['write_target']['type'];
+        $writeLocation = $this->storageConfig[self::WRITE_TARGET][self::TYPE];
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -145,11 +158,11 @@ class LocationAwareConfigRepository
 
     public function getReadTargets(): array
     {
-        if (!isset($this->storageConfig['read_target'])) {
+        if (!isset($this->storageConfig[self::READ_TARGET])) {
             return [];
         }
 
-        $readLocation = $this->storageConfig['read_target']['type'];
+        $readLocation = $this->storageConfig[self::READ_TARGET][self::TYPE];
 
         if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
@@ -226,7 +239,7 @@ class LocationAwareConfigRepository
 
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->storageConfig['write_target']['options']['directory'], '/\\');
+        $directory = rtrim($this->storageConfig[self::WRITE_TARGET][self::OPTIONS][self::DIRECTORY], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -274,22 +287,22 @@ class LocationAwareConfigRepository
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
 
-        $readTargetConf = $containerConfig['config_location'][$configKey]['read_target'] ?? null;
-        $writeTargetConf = $containerConfig['config_location'][$configKey]['write_target'];
+        $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::READ_TARGET] ?? null;
+        $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::WRITE_TARGET];
 
         $configDir = null;
         if($readTargetConf !== null) {
-            if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
-                ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+            if ($readTargetConf[self::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                ($readTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
             ) {
                 return;
             }
 
-            $configDir = $readTargetConf['options']['directory'];
+            $configDir = $readTargetConf[self::OPTIONS][self::DIRECTORY];
         }
 
         if ($configDir === null) {
-            $configDir = $writeTargetConf['options']['directory'];
+            $configDir = $writeTargetConf[self::OPTIONS][self::DIRECTORY];
         }
 
         $configLoader = new YamlFileLoader(
