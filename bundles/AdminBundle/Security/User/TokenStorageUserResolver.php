@@ -17,26 +17,12 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 
 use Pimcore\Model\User;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\TokenStorageUserResolver instead.
  */
-class TokenStorageUserResolver
+class TokenStorageUserResolver extends \Pimcore\Security\User\TokenStorageUserResolver
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     */
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
-
     /**
      * @return User|null
      */

@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class UserAwareController extends Controller
 {
     /**
-     * @var TokenStorageUserResolver
+     * @var TokenStorageUserResolver|TokenStorageUserResolver
      */
     protected $tokenResolver;
 

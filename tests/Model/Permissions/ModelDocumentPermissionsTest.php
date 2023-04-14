@@ -462,6 +462,9 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
+            'getPimcoreUser' => function () use ($user) {
+                return $user;
+            },
             'adminJson' => function ($data) {
                 return $data;
             },
