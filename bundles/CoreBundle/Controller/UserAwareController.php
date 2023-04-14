@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -74,73 +74,9 @@ abstract class UserAwareController extends Controller
         $services['translator'] = TranslatorInterface::class;
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
         $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
-        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
+        $services['pimcore.serializer'] = '?Pimcore\\Serializer\\Serializer';
 
         return $services;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function needsSessionDoubleAuthenticationCheck()
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function needsStorageDoubleAuthenticationCheck()
-    {
-        return true;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return TranslatorInterface
-     */
-    public function getTranslator()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->translator instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->translator;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return PimcoreBundleManager
-     */
-    public function getBundleManager()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->bundleManager instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->bundleManager;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return TokenStorageUserResolver
-     */
-    public function getTokenResolver()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->tokenResolver instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->tokenResolver;
     }
 
     /**
@@ -150,7 +86,7 @@ abstract class UserAwareController extends Controller
      *
      * @return UserProxy|User|null
      */
-    protected function getAdminUser($proxyUser = false)
+    protected function getPimcoreUser($proxyUser = false)
     {
         if ($proxyUser) {
             return $this->tokenResolver->getUserProxy();
@@ -168,11 +104,11 @@ abstract class UserAwareController extends Controller
      */
     protected function checkPermission($permission)
     {
-        if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
+        if (!$this->getPimcoreUser() || !$this->getPimcoreUser()->isAllowed($permission)) {
             Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
-                    'user' => $this->getAdminUser()?->getName(),
+                    'user' => $this->getPimcoreUser()?->getName(),
                     'permission' => $permission,
                 ]
             );
@@ -203,18 +139,18 @@ abstract class UserAwareController extends Controller
         $allowed = false;
         $permission = null;
         foreach ($permissions as $permission) {
-            if ($this->getAdminUser()->isAllowed($permission)) {
+            if ($this->getPimcoreUser()->isAllowed($permission)) {
                 $allowed = true;
 
                 break;
             }
         }
 
-        if (!$this->getAdminUser() || !$allowed) {
+        if (!$this->getPimcoreUser() || !$allowed) {
             Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
-                    'user' => $this->getAdminUser()->getName(),
+                    'user' => $this->getPimcoreUser()->getName(),
                     'permission' => $permission,
                 ]
             );
@@ -245,24 +181,41 @@ abstract class UserAwareController extends Controller
     }
 
     /**
+     * Returns a JsonResponse that uses the admin serializer
+     *
+     * @param mixed $data    The response data
+     * @param int $status    The status code to use for the Response
+     * @param array $headers Array of extra headers to add
+     * @param array $context Context to pass to serializer when using serializer component
+     * @param bool $usePimcoreSerializer
+     *
+     * @return JsonResponse
+     *
+     */
+    protected function jsonResponse($data, $status = 200, $headers = [], $context = [], bool $usePimcoreSerializer = true)
+    {
+        $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $usePimcoreSerializer);
+
+        return new JsonResponse($json, $status, $headers, true);
+    }
+
+    /**
      * Encodes data into JSON string
      *
      * @param mixed $data    The data to be encoded
      * @param array $context Context to pass to serializer when using serializer component
      * @param int $options   Options passed to json_encode
-     * @param bool $useAdminSerializer
-     *
-     * @TODO check if $useAdminSerializer still required?
+     * @param bool $usePimcoreSerializer
      *
      * @return string
      */
-    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $useAdminSerializer = true)
+    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
     {
         /** @var SerializerInterface $serializer */
         $serializer = null;
 
-        if ($useAdminSerializer) {
-            $serializer = $this->container->get('pimcore_admin.serializer');
+        if ($usePimcoreSerializer) {
+            $serializer = $this->container->get('pimcore.serializer');
         } else {
             $serializer = $this->container->get('serializer');
         }
@@ -278,17 +231,17 @@ abstract class UserAwareController extends Controller
      * @param mixed $json       The data to be decoded
      * @param bool $associative Whether to decode into associative array or object
      * @param array $context    Context to pass to serializer when using serializer component
-     * @param bool $useAdminSerializer
+     * @param bool $usePimcoreSerializer
      *
      * @return mixed
      */
-    protected function decodeJson($json, $associative = true, array $context = [], bool $useAdminSerializer = true)
+    protected function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
     {
         /** @var SerializerInterface|DecoderInterface $serializer */
         $serializer = null;
 
-        if ($useAdminSerializer) {
-            $serializer = $this->container->get('pimcore_admin.serializer');
+        if ($usePimcoreSerializer) {
+            $serializer = $this->container->get('pimcore.serializer');
         } else {
             $serializer = $this->container->get('serializer');
         }

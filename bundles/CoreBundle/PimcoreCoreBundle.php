@@ -28,6 +28,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
@@ -86,5 +87,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new PasswordFactoryDecoratorPass());
         $container->addCompilerPass(new MessageBusPublicPass());
+        $container->addCompilerPass(new SerializerPass());
     }
 }
