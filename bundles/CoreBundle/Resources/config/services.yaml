@@ -256,6 +256,13 @@ services:
         alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+    #
+    # SECURITY
+    #
+
+    # standard user provider returning admin users wrapped in a Pimcore\Bundle\AdminBundle\Security\User\User proxy object.
+    # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
+    Pimcore\Security\User\UserProvider: ~
 
     Pimcore\Security\User\TokenStorageUserResolver:
         public: true
