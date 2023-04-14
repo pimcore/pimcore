@@ -15,11 +15,14 @@
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Bundle\CoreBundle\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Security\User\TokenStorageUserResolver;
+use Pimcore\Model\User;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -27,6 +30,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AdminController extends UserAwareController implements AdminControllerInterface
 {
+    /**
+     * @var TokenStorageUserResolver
+     */
+    protected $tokenResolver;
+
     /**
      * @return string[]
      */
@@ -37,6 +45,13 @@ abstract class AdminController extends UserAwareController implements AdminContr
         $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
+    }
+
+
+    #[Required]
+    public function setTokenStorageUserResolver(TokenStorageUserResolver $tokenResolver): void
+    {
+        $this->tokenResolver = $tokenResolver;
     }
 
 
@@ -102,6 +117,24 @@ abstract class AdminController extends UserAwareController implements AdminContr
         );
 
         return $this->tokenResolver;
+    }
+
+    /**
+     * Get user from user proxy object which is registered on security component
+     *
+     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
+     *
+     * @return UserProxy|User|null
+     *
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::getPimcoreUser() instead.
+     */
+    protected function getAdminUser($proxyUser = false)
+    {
+        if ($proxyUser) {
+            return $this->tokenResolver->getUserProxy();
+        }
+
+        return $this->tokenResolver->getUser();
     }
 
     /**
@@ -180,19 +213,5 @@ abstract class AdminController extends UserAwareController implements AdminContr
         }
 
         return $serializer->decode($json, 'json', $context);
-    }
-
-    /**
-     * Get user from user proxy object which is registered on security component
-     *
-     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
-     *
-     * @return UserProxy|User|null
-     *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::getPimcoreUser() instead.
-     */
-    protected function getAdminUser($proxyUser = false)
-    {
-        return $this->getPimcoreUser($proxyUser);
     }
 }

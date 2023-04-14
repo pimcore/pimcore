@@ -7,9 +7,13 @@ services:
     # SECURITY
     #
 
-    # standard user provider returning admin users wrapped in a Pimcore\Security\User\User proxy object.
+    # standard user provider returning admin users wrapped in a Pimcore\Bundle\AdminBundle\Security\User\User proxy object.
     # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
-    Pimcore\Security\User\UserProvider: ~
+    Pimcore\Bundle\AdminBundle\Security\User\UserProvider:
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\TokenStorageUserResolver instead.'
 
     # the password encoder factory builds a dedicated encoder per user
     # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
@@ -64,6 +68,22 @@ services:
 
     Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
 
+    Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
+        public: true
+        arguments:
+            - '@security.token_storage'
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\TokenStorageUserResolver instead.'
+
+    Pimcore\Bundle\AdminBundle\Security\User\UserLoader:
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserLoader instead.'
+
+
     Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler:
         public: true
         arguments:
@@ -81,25 +101,8 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-
-    ## Deprecated Services, Remove In Pimcore 11
-    Pimcore\Bundle\AdminBundle\Security\User\UserProvider:
-        alias: Pimcore\Security\User\UserProvider
-        deprecated:
-            package: 'pimcore/pimcore'
-            version: '10.6'
-            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserProvider instead.'
-
-    Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
-        alias: Pimcore\Security\User\TokenStorageUserResolver
-        deprecated:
-            package: 'pimcore/pimcore'
-            version: '10.6'
-            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\TokenStorageUserResolver instead.'
-
     Pimcore\Bundle\AdminBundle\Security\User\UserChecker:
-        alias: Pimcore\Security\User\UserChecker
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
-            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserChecker instead.'
+            message: 'The "%service_id%" alias is deprecated and will be removed in Pimcore 11. Use Pimcore\Security\User\UserChecker instead.'
