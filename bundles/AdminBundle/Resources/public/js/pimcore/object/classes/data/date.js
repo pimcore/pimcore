@@ -72,7 +72,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             disabled: datax.useCurrentDate,
             listeners: {
                 change: function (defaultDateField, newValue, oldValue) {
-                    if(typeof this.getValue() !== 'object') {
+                    if(typeof this.getValue() != 'object') {
                         this.setValue(null);
                     }
                 }
