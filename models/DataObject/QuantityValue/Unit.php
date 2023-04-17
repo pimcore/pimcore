@@ -209,7 +209,7 @@ class Unit extends Model\AbstractModel
      */
     public function setAbbreviation($abbreviation)
     {
-        $this->abbreviation = $abbreviation;
+        $this->abbreviation = htmlspecialchars($abbreviation);
 
         return $this;
     }
@@ -276,7 +276,7 @@ class Unit extends Model\AbstractModel
      */
     public function setGroup($group)
     {
-        $this->group = $group;
+        $this->group = htmlspecialchars($group);
 
         return $this;
     }
@@ -316,7 +316,7 @@ class Unit extends Model\AbstractModel
      */
     public function setLongname($longname)
     {
-        $this->longname = $longname;
+        $this->longname = htmlspecialchars($longname);
 
         return $this;
     }
@@ -344,7 +344,7 @@ class Unit extends Model\AbstractModel
      */
     public function setReference($reference)
     {
-        $this->reference = $reference;
+        $this->reference = htmlspecialchars($reference);
 
         return $this;
     }
@@ -384,7 +384,7 @@ class Unit extends Model\AbstractModel
      */
     public function setConverter($converter)
     {
-        $this->converter = (string)$converter;
+        $this->converter = htmlspecialchars((string)$converter);
 
         return $this;
     }
