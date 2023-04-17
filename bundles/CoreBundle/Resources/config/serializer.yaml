@@ -15,7 +15,6 @@ services:
     #
 
     Pimcore\Serializer\Serializer:
-        class: Symfony\Component\Serializer\Serializer
         public: true
         arguments: ['@?', '@?']
 
@@ -24,9 +23,9 @@ services:
     pimcore.serializer.encoder.json:
         class: Symfony\Component\Serializer\Encoder\JsonEncoder
         tags:
-            -  { name: pimcore_admin.serializer.encoder }
+            -  { name: pimcore.serializer.encoder }
 
     pimcore.serializer.normalizer.reference_loop:
-        class: Pimcore\Bundle\CoreBundle\Serializer\Normalizer\ReferenceLoopNormalizer
+        class: Pimcore\Serializer\Normalizer\ReferenceLoopNormalizer
         tags:
-            -  { name: pimcore_admin.serializer.normalizer }
+            -  { name: pimcore.serializer.normalizer }

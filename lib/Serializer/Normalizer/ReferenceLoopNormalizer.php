@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Serializer\Normalizer;
+namespace Pimcore\Serializer\Normalizer;
 
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;

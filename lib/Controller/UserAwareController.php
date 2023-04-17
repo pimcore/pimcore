@@ -16,14 +16,12 @@
 namespace Pimcore\Controller;
 
 use Pimcore\Security\User\User as UserProxy;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Service\Attribute\Required;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class UserAwareController extends Controller
 {
@@ -44,10 +42,7 @@ abstract class UserAwareController extends Controller
     public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
-        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
-        $services['pimcore.serializer'] = '?Pimcore\\Serializer\\Serializer';
 
         return $services;
     }

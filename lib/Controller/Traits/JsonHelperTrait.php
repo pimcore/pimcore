@@ -16,6 +16,7 @@
 namespace Pimcore\Controller\Traits;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,6 +28,30 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 trait JsonHelperTrait
 {
+    protected SerializerInterface $serializer;
+
+    protected PimcoreSerializer $pimcoreSerializer;
+
+    /**
+     * @required
+     *
+     * @param PimcoreSerializer $pimcoreSerializer
+     */
+    public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
+    {
+        $this->pimcoreSerializer = $pimcoreSerializer;
+    }
+
+    /**
+     * @required
+     *
+     * @param SerializerInterface $serializer
+     */
+    public function setSerializer(SerializerInterface $serializer): void
+    {
+        $this->serializer = $serializer;
+    }
+
     /**
      * Returns a JsonResponse that uses the admin serializer
      *
@@ -62,9 +87,9 @@ trait JsonHelperTrait
         $serializer = null;
 
         if ($usePimcoreSerializer) {
-            $serializer = $this->container->get('pimcore.serializer');
+            $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->container->get('serializer');
+            $serializer = $this->serializer;
         }
 
         return $serializer->serialize($data, 'json', array_merge([
@@ -88,9 +113,9 @@ trait JsonHelperTrait
         $serializer = null;
 
         if ($usePimcoreSerializer) {
-            $serializer = $this->container->get('pimcore.serializer');
+            $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->container->get('serializer');
+            $serializer = $this->serializer;
         }
 
         if ($associative) {
