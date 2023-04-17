@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Carbon\Carbon;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
@@ -115,36 +116,35 @@ class LogArchiveTask implements TaskInterface
             $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
-        do {
-            $applicationLogArchiveTable = 'application_logs_archive_' . $deleteArchiveLogDate->format('m_Y');
-            $archiveTableExists = $db->fetchOne('SELECT 1
+        $archiveTables = $db->fetchFirstColumn('SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = ?
-                AND table_name = ?',
-                [
-                    $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
-                    $applicationLogArchiveTable,
-                ]);
+                AND table_name LIKE ?',
+            [
+                $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
+                ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%'
+            ]
+        );
+        foreach($archiveTables as $archiveTable) {
+            if(preg_match('/^'.ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_(\d{2})_(\d{4})$/', $archiveTable, $matches)) {
+                $deleteArchiveLogDate = Carbon::createFromFormat('m/Y', $matches[1].'/'.$matches[2]);
+                if($deleteArchiveLogDate->add(new DateInterval('P'.($this->config['applicationlog']['delete_archive_threshold'] ?? 6).'M')) < new DateTimeImmutable()) {
+                    $db->executeStatement('DROP TABLE IF EXISTS `'.($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()).'`.'.$archiveTable);
 
-            if ($archiveTableExists) {
-                $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
+                    $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                $folderName = $deleteArchiveLogDate->format('Y/m');
-
-                // TODO: change fileExists to directoryExists once bumped flysystem to 3.*
-                if ($storage->fileExists($folderName)) {
-                    $storage->deleteDirectory($folderName);
-                } else {
-                    // Fallback, if is not found and deleted in the flysystem, tries to delete from local
-                    $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY . DIRECTORY_SEPARATOR . $folderName);
-                    if (str_starts_with(realpath($folderRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
-                        @unlink($folderRealPath);
+                    // TODO: change fileExists to directoryExists once bumped flysystem to 3.*
+                    if ($storage->fileExists($folderName)) {
+                        $storage->deleteDirectory($folderName);
+                    } else {
+                        // Fallback, if is not found and deleted in the flysystem, tries to delete from local
+                        $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY.DIRECTORY_SEPARATOR.$folderName);
+                        if (str_starts_with(realpath($folderRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
+                            @unlink($folderRealPath);
+                        }
                     }
                 }
             }
-
-            $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
-        } while ($archiveTableExists);
+        }
     }
 }
