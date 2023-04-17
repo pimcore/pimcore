@@ -54,6 +54,13 @@
   - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
   - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
 - [Extension Manager] Trait `StateHelperTrait` is deprecated and will be removed in Pimcore 11.
+- [Configuration] Deprecated `hide_edit_image` & `disable_tree_preview` configs, they will be moved to `pimcore_admin` in Pimcore 11
+    ```yaml
+    pimcore_admin:
+        assets:
+            hide_edit_image: false
+            disable_tree_preview: true
+    ```
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
