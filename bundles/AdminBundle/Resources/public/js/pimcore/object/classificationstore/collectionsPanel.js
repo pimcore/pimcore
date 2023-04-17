@@ -410,8 +410,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
     },
 
     addFieldComplete: function (button, value, object) {
-
-        value = value.trim();
+        value = pimcore.helpers.getStringWithoutSpecialChars(value).trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_dataobject_classificationstore_createcollection'),
