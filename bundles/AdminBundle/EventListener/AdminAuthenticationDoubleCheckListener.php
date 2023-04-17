@@ -34,6 +34,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * not accessible on configuration errors. Unauthenticated routes are not double-checked (e.g. login).
  *
  * @internal
+ *
+ * @deprecated and will be removed in Pimcore 11.
  */
 class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 {

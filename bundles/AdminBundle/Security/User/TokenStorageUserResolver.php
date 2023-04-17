@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\User;
 
-use Pimcore\Model\User;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 
 /**
@@ -23,18 +22,6 @@ use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
  */
 class TokenStorageUserResolver extends \Pimcore\Security\User\TokenStorageUserResolver
 {
-    /**
-     * @return User|null
-     */
-    public function getUser()
-    {
-        if ($proxy = $this->getUserProxy()) {
-            return $proxy->getUser();
-        }
-
-        return null;
-    }
-
     /**
      * Taken and adapted from framework base controller.
      *

@@ -16,24 +16,54 @@ namespace Pimcore\Bundle\AdminBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
-use Pimcore\Bundle\CoreBundle\Controller\UserAwareController;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\User;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController instead.
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\UserAwareController instead.
  */
 abstract class AdminController extends UserAwareController implements AdminControllerInterface
 {
+    use JsonHelperTrait;
+
     /**
      * @var TokenStorageUserResolver
      */
     protected $tokenResolver;
+
+    /**
+     * @deprecated and will be removed in Pimcore 11.
+     *
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @deprecated and will be removed in Pimcore 11.
+     *
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
+
+    #[Required]
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+    #[Required]
+    public function setBundleManager(PimcoreBundleManager $bundleManager): void
+    {
+        $this->bundleManager = $bundleManager;
+    }
 
     /**
      * @return string[]
@@ -126,7 +156,7 @@ abstract class AdminController extends UserAwareController implements AdminContr
      *
      * @return UserProxy|User|null
      *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::getPimcoreUser() instead.
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\UserAwareController::getPimcoreUser() instead.
      */
     protected function getAdminUser($proxyUser = false)
     {
@@ -148,7 +178,7 @@ abstract class AdminController extends UserAwareController implements AdminContr
      *
      * @return JsonResponse
      *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::jsonResponse() instead.
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::jsonResponse() instead.
      */
     protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
     {
@@ -165,7 +195,7 @@ abstract class AdminController extends UserAwareController implements AdminContr
      * @param int $options   Options passed to json_encode
      * @param bool $useAdminSerializer
      *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::encodeJson() instead.
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::encodeJson() instead.
      *
      * @return string
      */
@@ -193,7 +223,7 @@ abstract class AdminController extends UserAwareController implements AdminContr
      * @param array $context    Context to pass to serializer when using serializer component
      * @param bool $useAdminSerializer
      *
-     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\CoreBundle\Controller\UserAwareController::decodeJson() instead.
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::decodeJson() instead.
      *
      * @return mixed
      */
@@ -213,5 +243,25 @@ abstract class AdminController extends UserAwareController implements AdminContr
         }
 
         return $serializer->decode($json, 'json', $context);
+    }
+
+
+    /**
+     * Translates the given message.
+     *
+     * @param string $id The message id (may also be an object that can be cast to string)
+     * @param array $parameters An array of parameters for the message
+     * @param string|null $domain The domain for the message or null to use the default
+     * @param string|null $locale The locale or null to use the default
+     *
+     * @return string The translated string
+     *
+     * @throws InvalidArgumentException If the locale contains invalid characters
+     *
+     * @deprecated and will be removed in Pimcore 11. Use DI injection of translator instead.
+     */
+    public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
+    {
+        return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 }
