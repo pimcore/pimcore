@@ -15,9 +15,9 @@ declare(strict_types=1);
  */
 
 use Pimcore\Cache;
-use Pimcore\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -30,7 +30,7 @@ class Pimcore
 
     public static function inDebugMode(): bool
     {
-        return (bool) self::getKernel()->isDebug();
+        return self::getKernel()->isDebug();
     }
 
     public static function inDevMode(): bool
@@ -270,7 +270,8 @@ class Pimcore
             }
 
             if (!file_exists($requestLogFile)) {
-                File::put($requestLogFile, '');
+                $filesystem = new Filesystem();
+                $filesystem->dumpFile($requestLogFile, '');
             }
 
             $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);

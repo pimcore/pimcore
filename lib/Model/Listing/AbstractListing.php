@@ -113,7 +113,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        $this->offset = (int)$offset;
+        $this->offset = $offset;
 
         return $this;
     }
@@ -178,10 +178,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $condition
-     * @param mixed $value
-     * @param string $concatenator
-     *
      * @return $this
      */
     public function addConditionParam(string $condition, mixed $value = null, string $concatenator = 'AND'): static

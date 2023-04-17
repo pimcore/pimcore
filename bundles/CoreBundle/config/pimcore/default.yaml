@@ -10,11 +10,8 @@ framework:
     router:
         strict_requirements: ~
         utf8: true
-    form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    web_link:
-        enabled: true
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
@@ -30,7 +27,6 @@ framework:
         enabled: true
         transports:
             main: native://default
-            pimcore_newsletter: native://default
     messenger:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
@@ -39,7 +35,6 @@ framework:
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
-            'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
@@ -189,7 +184,6 @@ pimcore:
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
-                    newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
@@ -232,11 +226,13 @@ pimcore:
                     class: \Pimcore\Model\Document\Page
                     valid_table: 'page'
                     direct_route: true
+                    predefined_document_types: true
                 snippet:
                     class: \Pimcore\Model\Document\Snippet
                     valid_table: 'snippet'
                     children_supported: false
                     direct_route: true
+                    predefined_document_types: true
                 link:
                     class: \Pimcore\Model\Document\Link
                     translatable: false
@@ -251,21 +247,10 @@ pimcore:
                     translatable_inheritance: false
                     children_supported: false
                     direct_route: true
-                newsletter:
-                    class: \Pimcore\Model\Document\Newsletter
-                    translatable: false
-                    valid_table: 'newsletter'
-                    translatable_inheritance: false
-                    children_supported: false
-                    direct_route: true
+                    predefined_document_types: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-
-    newsletter:
-        source_adapters:
-            defaultAdapter: pimcore.document.newsletter.factory.default
-            csvList: pimcore.document.newsletter.factory.csv
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

@@ -27,7 +27,7 @@ use Symfony\Component\Finder\Finder;
  */
 final class ConfigurationHelper
 {
-    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
+    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): NodeBuilder
     {
         $storageNode = $rootNode
             ->children()
@@ -35,28 +35,65 @@ final class ConfigurationHelper
             ->addDefaultsIfNotSet()
             ->children();
 
-        foreach ($nodes as $node) {
-            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
+        foreach ($nodes as $node => $dir) {
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir, $additionalNodes);
         }
+
+        return $storageNode;
     }
 
-    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
+    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
     {
-        $node->
-        arrayNode($name)
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->enumNode('target')
-            ->values(['symfony-config', 'settings-store'])
-            ->defaultValue('symfony-config')
-            ->end()
-            ->arrayNode('options')
-            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-            ->variablePrototype()
-            ->end()
-            ->end()
-            ->end()
-            ->end();
+        if (in_array('read_target', $additionalNodes)) {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->arrayNode('write_target')
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->enumNode('type')
+                ->values(['symfony-config', 'settings-store', 'disabled'])
+                ->defaultValue('symfony-config')
+                ->end()
+                ->arrayNode('options')
+                ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                ->variablePrototype()->end()
+                ->end()
+                ->end()
+                ->end()
+                ->arrayNode('read_target')
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->enumNode('type')
+                ->values(['symfony-config', 'settings-store'])
+                ->defaultValue(null)
+                ->end()
+                ->arrayNode('options')
+                ->defaultValue(['directory' => null])
+                ->variablePrototype()->end()
+                ->end()
+                ->end()
+                ->end()
+                ->end();
+        } else {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('write_target')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('type')
+                        ->values(['symfony-config', 'settings-store', 'disabled'])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode('options')
+                    ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                    ->variablePrototype()->end()
+                    ->end()
+                ->end();
+        }
     }
 
     public static function getSymfonyConfigFiles(string $configPath, array $params = []): array

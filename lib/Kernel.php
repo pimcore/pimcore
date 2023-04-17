@@ -21,11 +21,11 @@ use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
-use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
@@ -100,12 +100,6 @@ abstract class Kernel extends SymfonyKernel
 
         $this->microKernelRegisterContainerConfiguration($loader);
 
-        //load system configuration
-        $systemConfigFile = Config::locateConfigFile('system.yaml');
-        if (file_exists($systemConfigFile)) {
-            $loader->load($systemConfigFile);
-        }
-
         $configKeysArray = [
             'image_thumbnails',
             'video_thumbnails',
@@ -115,13 +109,32 @@ abstract class Kernel extends SymfonyKernel
             'perspectives',
             'custom_views',
             'object_custom_layouts',
+            'system_settings',
         ];
 
         $loader->load(function (ContainerBuilder $container) use ($loader, $configKeysArray) {
             $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore');
 
             foreach ($configKeysArray as $configKey) {
-                $configDir = rtrim($containerConfig[self::CONFIG_LOCATION][$configKey]['options']['directory'], '/\\');
+                $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target'];
+                $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['read_target'] ?? null;
+
+                $configDir = null;
+                if($readTargetConf !== null) {
+                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                        ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+                    ) {
+                        continue;
+                    }
+
+                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf['options']['directory'] !== null) {
+                        $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
+                    }
+                }
+
+                if($configDir === null) {
+                    $configDir = rtrim($writeTargetConf['options']['directory'], '/\\');
+                }
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
@@ -266,7 +279,6 @@ abstract class Kernel extends SymfonyKernel
         // pimcore bundles
         $collection->addBundles([
             new PimcoreCoreBundle(),
-            new PimcoreAdminBundle(),
         ], 60);
 
         // load development bundles only in matching environments

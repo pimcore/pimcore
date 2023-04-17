@@ -186,7 +186,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
 
-        $gridFields = (array)$visibleFieldsArray;
+        $gridFields = $visibleFieldsArray;
 
         // add data
         if (is_array($data) && count($data) > 0) {
@@ -460,12 +460,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->relationType = $masterDefinition->relationType;
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->relationType = $mainDefinition->relationType;
     }
 
     /**
@@ -730,7 +730,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     public function setAllowToCreateNewObject(bool $allowToCreateNewObject): void
     {
-        $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
+        $this->allowToCreateNewObject = $allowToCreateNewObject;
     }
 
     public function isAllowedToClearRelation(): bool
@@ -748,7 +748,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function isOptimizedAdminLoading(): bool
     {
-        return (bool) $this->optimizedAdminLoading;
+        return $this->optimizedAdminLoading;
     }
 
     public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void

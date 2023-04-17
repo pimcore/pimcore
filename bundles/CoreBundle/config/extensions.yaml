@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # PIMCORE BUNDLES
@@ -22,6 +21,7 @@ services:
     #
 
     Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
+
     Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
 
     Pimcore\HttpKernel\WebPathResolver: ~

@@ -122,7 +122,6 @@ final class Configuration implements ConfigurationInterface
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
-        $this->addNewsletterNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -131,17 +130,20 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails',
-            'video_thumbnails',
-            'document_types',
-            'predefined_properties',
-            'predefined_asset_metadata',
-            'perspectives',
-            'custom_views',
-            'object_custom_layouts',
-        ]);
         $this->addChromiumNode($rootNode);
+        $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
+            'image_thumbnails' => '/var/config/image-thumbnails',
+            'video_thumbnails' => '/var/config/video-thumbnails',
+            'document_types' => '/var/config/document_types',
+            'predefined_properties' => '/var/config/predefined_properties',
+            'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
+            'perspectives' => '/var/config/perspectives',
+            'custom_views' => '/var/config/custom_views',
+            'object_custom_layouts' => '/var/config/object_custom_layouts',
+            'system_settings' => '/var/config/system_settings',
+        ]);
+
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
 
         return $treeBuilder;
     }
@@ -208,7 +210,7 @@ final class Configuration implements ConfigurationInterface
                     ->ifString()
                         ->then(fn ($v) => explode(',', $v))
                     ->end()
-                    ->defaultValue(['en'])
+                    ->defaultValue(['en', 'de', 'fr'])
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
@@ -373,10 +375,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->arrayNode('low_quality_image_preview')
                                 ->info('Allow a LQIP SVG image to be generated alongside any other thumbnails.')
-                                ->addDefaultsIfNotSet()
-                                ->canBeDisabled()
-                            ->end()
-                            ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
                             ->end()
@@ -849,14 +847,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('newsletter')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('defaultUrlPrefix')
-                            ->defaultNull()
-                        ->end()
-                    ->end()
-                ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
@@ -950,6 +940,9 @@ final class Configuration implements ConfigurationInterface
                                     ->defaultTrue()
                                 ->end()
                                 ->booleanNode('only_printable_childrens')
+                                    ->defaultFalse()
+                                ->end()
+                                ->booleanNode('predefined_document_types')
                                     ->defaultFalse()
                                 ->end()
                              ->end()
@@ -1180,56 +1173,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('usespecific')
                             ->defaultFalse()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    /**
-     * Adds configuration tree for newsletter source adapters
-     */
-    private function addNewsletterNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('newsletter')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('sender')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('return')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
-                            ->end()
-                        ->end()
-                        ->scalarNode('method')
-                            ->defaultNull()
-                        ->end()
-                        ->arrayNode('debug')
-                            ->children()
-                                ->scalarNode('email_addresses')
-                                    ->defaultValue('')
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->booleanNode('use_specific')
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                        ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -1914,7 +1857,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('sandbox_security_policy')
-                        ->info('Whitelist tags, filters & functions for evaluating twig
+                        ->info('Allowlist tags, filters & functions for evaluating twig
                         templates in a sandbox environment e.g. used by Mailer & Text layout component.')
                         ->children()
                             ->arrayNode('tags')

@@ -108,7 +108,6 @@ On Debian based systems, you can use the following command to install all requir
 - optipng
 - jpegoptim
 - exiftool
-- [facedetect](https://github.com/wavexx/facedetect) 
 - [Graphviz](https://www.graphviz.org/)
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 

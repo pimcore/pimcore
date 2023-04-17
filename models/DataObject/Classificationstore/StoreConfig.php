@@ -48,7 +48,7 @@ final class StoreConfig extends Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getById((int)$id);
+            $config->getDao()->getById($id);
 
             return $config;
         } catch (Model\Exception\NotFoundException $e) {

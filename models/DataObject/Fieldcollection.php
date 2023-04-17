@@ -150,9 +150,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return count($this->getItems()) < 1;
     }
 
-    /**
-     * @param TItem $item
-     */
     public function add(Fieldcollection\Data\AbstractData $item): void
     {
         $this->items[] = $item;

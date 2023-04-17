@@ -213,9 +213,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->getDataFromObjectParam($object, $params) ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';

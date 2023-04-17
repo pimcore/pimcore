@@ -231,7 +231,7 @@ CSS;
         $replacePrefix = '';
 
         if (!$hostUrl && $document) {
-            // try to determine if the newsletter is within a site
+            // try to determine if the document is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
                 $hostUrl = \Pimcore\Tool::getRequestScheme() . '://' . $site->getMainDomain();
@@ -272,7 +272,7 @@ CSS;
         }
 
         preg_match_all("@srcset\s*=[\"'](.*?)[\"']@is", $string, $matches);
-        foreach ((array)$matches[1] as $i => $value) {
+        foreach ($matches[1] as $i => $value) {
             $parts = explode(',', $value);
             foreach ($parts as $key => $v) {
                 $v = trim($v);

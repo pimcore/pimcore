@@ -23,6 +23,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
+use Pimcore\Bundle\AdminBundle\System\Config as SystemConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -52,6 +53,7 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -64,18 +66,6 @@ class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
-
-    /**
-     * all possible types of assets
-     *
-     * @internal
-     *
-     * @var string[]
-     *
-     * @deprecated use getTypes() instead.
-     *
-     */
-    public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
     /**
      * @internal
@@ -294,10 +284,11 @@ class Asset extends Element\AbstractElement
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
                 $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
-                    File::put($tmpFile, $data['data']);
+                    $filesystem = new Filesystem();
+                    $filesystem->dumpFile($tmpFile, $data['data']);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
@@ -424,7 +415,7 @@ class Asset extends Element\AbstractElement
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
             foreach ($assetTypeConfiguration['matching'] as $pattern) {
-                if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
+                if (preg_match($pattern, $mimeType . ' .' . pathinfo($filename, PATHINFO_EXTENSION))) {
                     $type = $assetType;
 
                     break;
@@ -686,6 +677,9 @@ class Asset extends Element\AbstractElement
                     $storage->move($tempFilePath, $path);
                 }
 
+                //generate & save checksum in custom settings
+                $this->generateChecksum();
+
                 // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
@@ -812,7 +806,7 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = Config::getSystemConfiguration('assets');
+            $assetsConfig = SystemConfig::get()['assets'];
             if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
@@ -1045,7 +1039,7 @@ class Asset extends Element\AbstractElement
 
     public function setFilename(string $filename): static
     {
-        $this->filename = (string)$filename;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -1057,7 +1051,7 @@ class Asset extends Element\AbstractElement
 
     public function setType(string $type): static
     {
-        $this->type = (string)$type;
+        $this->type = $type;
 
         return $this;
     }
@@ -1106,6 +1100,25 @@ class Asset extends Element\AbstractElement
         }
 
         return $this->stream;
+    }
+
+    public function getChecksum(): string
+    {
+        if (!$checksum = $this->getCustomSetting('checksum')) {
+            $this->generateChecksum();
+            $checksum = $this->getCustomSetting('checksum');
+        }
+
+        return $checksum;
+    }
+
+    /**
+     * @internal
+     */
+    public function generateChecksum(): void
+    {
+        $this->setCustomSetting('checksum', Storage::get('asset')->checksum($this->getRealFullPath()));
+        $this->getDao()->updateCustomSettings();
     }
 
     /**
@@ -1265,7 +1278,7 @@ class Asset extends Element\AbstractElement
      */
     public function setMimeType(string $mimetype): static
     {
-        $this->mimetype = (string)$mimetype;
+        $this->mimetype = $mimetype;
 
         return $this;
     }
@@ -1298,7 +1311,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = [];
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
-            foreach ((array)$metadata as $metaItem) {
+            foreach ($metadata as $metaItem) {
                 $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }

@@ -93,7 +93,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     public function setVertical(bool $vertical): static
     {
-        $this->vertical = (bool) $vertical;
+        $this->vertical = $vertical;
 
         return $this;
     }
@@ -252,15 +252,15 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Slider $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Slider $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->minValue = $masterDefinition->minValue;
-        $this->maxValue = $masterDefinition->maxValue;
-        $this->vertical = $masterDefinition->vertical;
-        $this->increment = $masterDefinition->increment;
-        $this->decimalPrecision = $masterDefinition->decimalPrecision;
+        $this->minValue = $mainDefinition->minValue;
+        $this->maxValue = $mainDefinition->maxValue;
+        $this->vertical = $mainDefinition->vertical;
+        $this->increment = $mainDefinition->increment;
+        $this->decimalPrecision = $mainDefinition->decimalPrecision;
     }
 
     /**

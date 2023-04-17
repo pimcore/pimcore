@@ -68,12 +68,20 @@ trait Relation
         // add objects
         if ($this->getObjectsAllowed()) {
             if ($classes = $this->getClasses()) {
+                $classMap = $factory->getClassMap();
                 foreach ($classes as $item) {
-                    try {
-                        $types[] = $factory->getClassNameFor(sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes'])));
-                    } catch (UnsupportedException) {
-                        continue;
+                    /**
+                     * Don´t use the factory method getClassNameFor here, because it will actually load the requested class and this could
+                     * lead to problems during classes-rebuild command.
+                     */
+                    $className = sprintf('Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
+                    $className = $classMap[$className] ?? $className;
+
+                    if (str_starts_with($className, '\\') === false) {
+                        $className = '\\' . $className;
                     }
+
+                    $types[] = $className;
                 }
             } else {
                 $types[] = '\\' . AbstractObject::class;

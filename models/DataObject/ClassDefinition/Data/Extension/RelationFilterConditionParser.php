@@ -41,7 +41,7 @@ trait RelationFilterConditionParser
         if ($operator === '=') {
             return '`' . $name . '` = ' . "'" . $value . "'";
         }
-        $values = explode(',', (string)$value);
+        $values = explode(',', $value);
         if (is_array($values)) {
             $fieldConditions = array_map(function ($value) use ($name) {
                 return '`' . $name . "` LIKE '%," . $value . ",%' ";

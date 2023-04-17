@@ -191,7 +191,7 @@ class Input extends Data implements
 
     public function setUnique(bool $unique): void
     {
-        $this->unique = (bool) $unique;
+        $this->unique = $unique;
     }
 
     public function getShowCharCount(): bool
@@ -201,20 +201,14 @@ class Input extends Data implements
 
     public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return $this->getColumnType();
@@ -247,11 +241,11 @@ class Input extends Data implements
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\Input $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Input $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->columnLength = $masterDefinition->columnLength;
+        $this->columnLength = $mainDefinition->columnLength;
     }
 
     /**
@@ -274,7 +268,7 @@ class Input extends Data implements
 
     public function setDefaultValue(string $defaultValue): static
     {
-        if ((string)$defaultValue !== '') {
+        if ($defaultValue !== '') {
             $this->defaultValue = $defaultValue;
         }
 

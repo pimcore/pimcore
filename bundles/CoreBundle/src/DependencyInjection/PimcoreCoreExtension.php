@@ -72,7 +72,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
 
-        //twig security policy whitelist config
+        //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
@@ -123,7 +123,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordHashers($container, $config);
-        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -261,21 +260,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         if (count($securityConfigs) > 1) {
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
-    }
-
-    /**
-     * Configure Adapter Factories
-     */
-    private function configureAdapterFactories(ContainerBuilder $container, array $factories, string $serviceLocatorId): void
-    {
-        $serviceLocator = $container->getDefinition($serviceLocatorId);
-        $arguments = [];
-
-        foreach ($factories as $key => $serviceId) {
-            $arguments[$key] = new Reference($serviceId);
-        }
-
-        $serviceLocator->setArgument(0, $arguments);
     }
 
     /**

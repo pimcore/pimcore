@@ -125,11 +125,6 @@ trait Wrapper
         return $result;
     }
 
-    /**
-     * @param bool $includingUnpublished
-     *
-     * @return Listing
-     */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());

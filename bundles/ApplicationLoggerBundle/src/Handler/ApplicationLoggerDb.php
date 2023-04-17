@@ -30,7 +30,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     private Connection $db;
 
-    public function __construct(Connection $db, int|string|Level $level = Level::Debug, $bubble = true)
+    public function __construct(Connection $db, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);
@@ -92,5 +92,3 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         return $priorities;
     }
 }
-
-@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');

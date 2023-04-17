@@ -190,7 +190,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setMandatory(bool $mandatory): static
     {
-        $this->mandatory = (bool)$mandatory;
+        $this->mandatory = $mandatory;
 
         return $this;
     }
@@ -225,7 +225,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setNoteditable(bool $noteditable): static
     {
-        $this->noteditable = (bool)$noteditable;
+        $this->noteditable = $noteditable;
 
         return $this;
     }
@@ -261,7 +261,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setLocked(bool $locked): static
     {
-        $this->locked = (bool)$locked;
+        $this->locked = $locked;
 
         return $this;
     }
@@ -1212,12 +1212,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $data;
     }
 
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         // implement in child classes
     }
 
-    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function adoptMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $vars = get_object_vars($this);
         $protectedFields = ['noteditable', 'invisible'];
@@ -1226,7 +1226,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 unset($this->$name);
             }
         }
-        $vars = get_object_vars($masterDefinition);
+        $vars = get_object_vars($mainDefinition);
         foreach ($vars as $name => $value) {
             if (!in_array($name, $protectedFields)) {
                 $this->$name = $value;

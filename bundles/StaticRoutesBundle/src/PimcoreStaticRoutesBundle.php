@@ -41,9 +41,6 @@ class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle implements Pimcore
         ];
     }
 
-    /**
-     * @return Installer
-     */
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);

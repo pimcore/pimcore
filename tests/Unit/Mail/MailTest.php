@@ -82,7 +82,6 @@ class MailTest extends TestCase
     public function testMailInit(): void
     {
         $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
-
         $mail = new \Pimcore\Mail();
 
         $this->assertEquals($emailConfig['sender']['email'], $mail->getFrom()[0]->getAddress(), 'From recipient not initialized from system settings');

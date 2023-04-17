@@ -575,7 +575,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
     /**
      * @param DataObject\AbstractObject $element
      * @param User $user
-     * @param array|null $expectedChildren When null,the master permission is disabled
+     * @param array|null $expectedChildren When null,the main permission is disabled
      *
      * @throws \ReflectionException
      */
@@ -596,7 +596,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             );
         } catch (\Exception $e) {
             if (is_null($expectedChildren)) {
-                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert master object permission');
+                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert main object permission');
 
                 return;
             }

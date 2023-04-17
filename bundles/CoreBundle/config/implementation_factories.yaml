@@ -30,6 +30,7 @@ services:
 
     # model factory
     Pimcore\Model\FactoryInterface: '@Pimcore\Model\Factory'
+
     Pimcore\Model\Factory:
         calls:
             - [addLoader, ['@Pimcore\Model\Factory\FallbackBuilder']]
@@ -41,5 +42,4 @@ services:
         public: true
 
     # fallback model builder for pimcore model factory
-    Pimcore\Model\Factory\FallbackBuilder:
-        public: false
+    Pimcore\Model\Factory\FallbackBuilder: ~
