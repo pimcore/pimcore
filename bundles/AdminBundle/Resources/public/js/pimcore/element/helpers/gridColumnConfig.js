@@ -24,7 +24,12 @@ pimcore.element.helpers.gridColumnConfig = {
             fieldLabel: t('name'),
             length: 50,
             allowBlank: false,
-            value: this.settings.gridConfigName ? this.settings.gridConfigName : defaultName
+            value: this.settings.gridConfigName ? this.settings.gridConfigName : defaultName,
+            listeners: {
+                change: function (textField, newValue, oldValue) {
+                    this.setValue(pimcore.helpers.getStringWithoutControlChars(newValue));
+                }
+            }
         });
 
         var descriptionField = new Ext.form.TextArea({
@@ -126,9 +131,9 @@ pimcore.element.helpers.gridColumnConfig = {
         for (var i = 0; i < list.length; i++) {
             var disabled = false;
             var config = list[i];
-            var text = config["name"];
+            let text = pimcore.helpers.getStringWithoutControlChars(config["name"]);
             if (config.id == this.settings.gridConfigId) {
-                text = this.settings.gridConfigName;
+                text = pimcore.helpers.getStringWithoutControlChars(this.settings.gridConfigName);
                 if (!onlyConfigs) {
                     text = "<b>" + text + "</b>";
                     disabled = true;

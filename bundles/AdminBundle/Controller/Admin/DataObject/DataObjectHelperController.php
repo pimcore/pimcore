@@ -32,6 +32,7 @@ use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\User;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Pimcore\Version;
@@ -943,8 +944,8 @@ class DataObjectHelperController extends AdminController
                 }
 
                 if ($metadata) {
-                    $gridConfig->setName($metadata['gridConfigName']);
-                    $gridConfig->setDescription($metadata['gridConfigDescription']);
+                    $gridConfig->setName(SecurityHelper::getStringWithoutControlChars($metadata['gridConfigName']));
+                    $gridConfig->setDescription(SecurityHelper::getStringWithoutControlChars($metadata['gridConfigDescription']));
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                     $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
                 }
@@ -960,8 +961,8 @@ class DataObjectHelperController extends AdminController
 
                 $settings = $this->getShareSettings($gridConfig->getId());
                 $settings['gridConfigId'] = (int)$gridConfig->getId();
-                $settings['gridConfigName'] = $gridConfig->getName();
-                $settings['gridConfigDescription'] = $gridConfig->getDescription();
+                $settings['gridConfigName'] = SecurityHelper::getStringWithoutControlChars($gridConfig->getName());
+                $settings['gridConfigDescription'] = SecurityHelper::getStringWithoutControlChars($gridConfig->getDescription());
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
                 $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
                 $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin();
