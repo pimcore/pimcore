@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -36,7 +37,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @internal
@@ -57,26 +58,26 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $activeGroups = [];
+    protected array $activeGroups = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $groupCollectionMapping = [];
+    protected array $groupCollectionMapping = [];
 
     /**
-     * @param array $items
+     * @param array|null $items
      */
-    public function __construct($items = null)
+    public function __construct(array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -87,18 +88,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param array $item
      */
-    public function addItem($item)
+    public function addItem(array $item)
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
     }
 
     /**
-     * @param  array $items
+     * @param array $items
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
         $this->markFieldDirty('_self');
@@ -107,10 +108,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
+     * @param bool $withInheritance
      * @return array
      */
-    public function getItems()
+    public function getItems(bool $withInheritance = false): array
     {
+        if(!$withInheritance) {
+            return $this->items;
+        }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
@@ -119,7 +124,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      */
-    public function setObject(Concrete $object)
+    public function setObject(Concrete $object): static
     {
         if ($this->object) {
             if ($this->object->getId() != $object->getId()) {
@@ -144,7 +149,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      */
-    public function setClass(?ClassDefinition $class)
+    public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
 
@@ -168,10 +173,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return string
      */
-    public function getLanguage($language = null)
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
-            return (string) $language;
+            return $language;
         }
 
         return 'default';
@@ -185,16 +190,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
+    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, ?string $language = null): static
     {
         if (!$groupId) {
-            throw new \Exception('groupId not valid');
+            throw new Exception('groupId not valid');
         }
 
         if (!$keyId) {
-            throw new \Exception('keyId not valid');
+            throw new Exception('keyId not valid');
         }
 
         $language = $this->getLanguage($language);
@@ -263,7 +268,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @param int $groupId
      */
-    public function removeGroupData($groupId)
+    public function removeGroupData(int $groupId)
     {
         unset($this->items[$groupId]);
     }
@@ -271,7 +276,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /** Returns an array of
      * @return array
      */
-    public function getGroupIdsWithData()
+    public function getGroupIdsWithData(): array
     {
         return array_keys($this->items);
     }
@@ -279,7 +284,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return string
      */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
@@ -287,20 +292,24 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param string $fieldname
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname)
     {
         $this->fieldname = $fieldname;
     }
 
     /**
+     * @param bool $withInheritance
      * @return array
      */
-    public function getActiveGroups()
+    public function getActiveGroups(bool $withInheritance = false): array
     {
+        if(!$withInheritance) {
+            return $this->activeGroups;
+        }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $classificationStore->activeGroups + $fieldsArray);
     }
 
-    private function sanitizeActiveGroups($activeGroups)
+    private function sanitizeActiveGroups($activeGroups): array
     {
         $newList = [];
 
@@ -318,7 +327,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param array $activeGroups
      */
-    public function setActiveGroups($activeGroups)
+    public function setActiveGroups(array $activeGroups)
     {
         $activeGroups = $this->sanitizeActiveGroups($activeGroups);
         $diff1 = array_diff(array_keys($activeGroups), array_keys($this->activeGroups));
@@ -337,7 +346,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return mixed
      */
-    private function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
+    private function getFallbackValue(int $groupId, int $keyId, string $language, ClassDefinition\Data $fielddefinition): mixed
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
@@ -371,7 +380,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = 'default', $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {
@@ -457,16 +466,20 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return bool
      */
-    public static function doGetFallbackValues()
+    public static function doGetFallbackValues(): bool
     {
         return true;
     }
 
     /**
+     * @param bool $withInheritance
      * @return array
      */
-    public function getGroupCollectionMappings(): array
+    public function getGroupCollectionMappings(bool $withInheritance = false): array
     {
+        if(!$withInheritance) {
+            return $this->groupCollectionMapping;
+        }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
@@ -482,7 +495,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @param int|null $groupId
      * @param int|null $collectionId
      */
-    public function setGroupCollectionMapping($groupId = null, $collectionId = null): void
+    public function setGroupCollectionMapping(?int $groupId = null, ?int $collectionId = null): void
     {
         if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
@@ -494,7 +507,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return int|null
      */
-    public function getGroupCollectionMapping($groupId)
+    public function getGroupCollectionMapping(int $groupId): ?int
     {
         return $this->getGroupCollectionMappings()[$groupId] ?? null;
     }
@@ -502,9 +515,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return Model\DataObject\Classificationstore\Group[]
      */
-    public function getGroups(): array
+    public function getGroups(bool $withInheritance = false): array
     {
-        return Classificationstore::getActiveGroupsWithConfig($this);
+        return Classificationstore::getActiveGroupsWithConfig($this,$withInheritance);
     }
 
     private function getAllDataFromField(callable $mergeFunction): array
@@ -524,10 +537,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $fieldsArray;
     }
 
-    private static function getActiveGroupsWithConfig(Classificationstore $classificationStore): array
+    private static function getActiveGroupsWithConfig(Classificationstore $classificationStore,bool $withInheritance): array
     {
         $groups = [];
-        $activeGroups = $classificationStore->getActiveGroups();
+        $activeGroups = $classificationStore->getActiveGroups($withInheritance);
         foreach (array_keys($activeGroups) as $groupId) {
             $groupConfig = $classificationStore->getGroupConfigById($groupId);
             $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
