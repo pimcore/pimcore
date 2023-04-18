@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -26,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class AdminController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class ElementController extends AdminController
+class ElementController extends AdminAbstractController
 {
     /**
      * @Route("/element/lock-element", name="pimcore_admin_element_lockelement", methods={"PUT"})
@@ -138,7 +138,7 @@ class ElementController extends AdminController
     /**
      * @param string $parameterName
      *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     protected function processNoteTypesFromParameters(string $parameterName)
     {
@@ -391,7 +391,7 @@ class ElementController extends AdminController
      *
      * @param Request $request
      *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getReplaceAssignmentsBatchJobsAction(Request $request)
     {

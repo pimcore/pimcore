@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\Notification\Service\NotificationServiceFilterParser;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class NotificationController extends AdminController
+class NotificationController extends AdminAbstractController
 {
     /**
      * @Route("/recipients", name="pimcore_admin_notification_recipients", methods={"GET"})

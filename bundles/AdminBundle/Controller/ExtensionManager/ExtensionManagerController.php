@@ -16,8 +16,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
 use ForceUTF8\Encoding;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -41,7 +41,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+class ExtensionManagerController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @var AreabrickManagerInterface

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-class OpcacheController extends AdminController implements KernelControllerEventInterface
+class OpcacheController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")

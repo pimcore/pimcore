@@ -18,8 +18,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
@@ -47,7 +48,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-class IndexController extends AdminController implements KernelResponseEventInterface
+class IndexController extends AdminAbstractController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -55,11 +56,17 @@ class IndexController extends AdminController implements KernelResponseEventInte
     private $eventDispatcher;
 
     /**
+     * @var PimcoreBundleManager
+     */
+    private $bundleManager;
+
+    /**
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, PimcoreBundleManager $bundleManager)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->bundleManager = $bundleManager;
     }
 
     /**

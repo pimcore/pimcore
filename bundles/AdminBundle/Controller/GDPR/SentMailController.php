@@ -15,7 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Tool\Email\Log;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class SentMailController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

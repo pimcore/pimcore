@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
+class ClassificationstoreController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @Route("/delete-collection", name="deletecollection", methods={"DELETE"})
