@@ -30,7 +30,11 @@ services:
     pimcore_admin.security.password_hasher_factory:
         class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
         arguments:
-            - Pimcore\Bundle\AdminBundle\Security\Hasher\AdminPasswordHasher
+            - Pimcore\Security\Hasher\PimcoreUserPasswordHasher
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
+            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 11.'
 
     # Authenticators for handling admin login and session authentications
     Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator:

@@ -18,12 +18,13 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
  * @internal
  */
-final class PimcoreAdminExtension extends Extension
+final class PimcoreAdminExtension extends Extension implements PrependExtensionInterface
 {
     const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
 
@@ -66,5 +67,26 @@ final class PimcoreAdminExtension extends Extension
         $container->setParameter('pimcore_admin.custom_admin_route_name', $config['custom_admin_route_name']);
 
         $container->setParameter('pimcore_admin.config', $config);
+    }
+
+    /**
+     * Allows us to prepend/modify configurations of different extensions
+     *
+     * {@inheritdoc}
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        $securityConfigs = $container->getExtensionConfig('security');
+
+        $loader = new YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config')
+        );
+
+        foreach ($securityConfigs as $config) {
+            if ($config['enable_authenticator_manager'] ?? false) {
+                $loader->load('authenticator_security.yaml');
+            }
+        }
     }
 }
