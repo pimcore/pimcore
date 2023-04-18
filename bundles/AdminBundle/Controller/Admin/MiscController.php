@@ -137,7 +137,8 @@ class MiscController extends AdminController
             $allowedFileTypes = ['js', 'css'];
             $scripts = explode(',', $request->get('scripts'));
 
-            if ($request->get('scriptPath')) {
+            $scriptPath = $request->get('scriptPath');
+            if ($scriptPath) {
                 $scriptPath = realpath(PIMCORE_WEB_ROOT . $request->get('scriptPath'));
                 if($scriptPath && !str_starts_with($scriptPath, PIMCORE_WEB_ROOT)) {
                     throw $this->createNotFoundException('Scripts not found! Please do not navigate out of the web root directory!');
