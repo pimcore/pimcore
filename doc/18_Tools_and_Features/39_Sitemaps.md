@@ -1,8 +1,11 @@
 # Sitemaps
-To use this feature please enable the `PimcoreSeoBundle` in your bundles.php file and install it accordingly.
-```console
-bin/console  pimcore:bundle:install PimcoreSeoBundle
-```
+:::caution
+
+To use this feature, please enable the `PimcoreSeoBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreSeoBundle`
+
+:::
 
 Pimcore includes the [`presta/sitemap-bundle`](https://github.com/prestaconcept/PrestaSitemapBundle) which adds a simple,
 yet powerful API to generate XML sitemaps. Have a look at the bundle documentation on details how the bundle works and how
