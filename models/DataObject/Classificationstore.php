@@ -297,7 +297,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getActiveGroups()
     {
-        return $this->activeGroups;
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $classificationStore->activeGroups + $fieldsArray);
     }
 
     private function sanitizeActiveGroups($activeGroups)
@@ -504,7 +504,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroups(): array
     {
-        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => array_merge(Classificationstore::getActiveGroupsWithConfig($classificationStore), $fieldsArray));
+        return Classificationstore::getActiveGroupsWithConfig($this);
     }
 
     private function getAllDataFromField(callable $mergeFunction): array
@@ -512,16 +512,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $fieldsArray = $mergeFunction($this, []);
         $object = $this->getObject();
         while (($parent = Service::hasInheritableParentObject($object)) !== null) {
-            $fieldDefintions = $parent->getClass()->getFieldDefinitions();
-            foreach ($fieldDefintions as $key => $fd) {
-                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore) {
+            $fieldDefinitions = $parent->getClass()->getFieldDefinitions();
+            foreach ($fieldDefinitions as $key => $fd) {
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $key == $this->getFieldname()) {
                     $getter = 'get' . ucfirst($key);
                     $fieldsArray = $mergeFunction($parent->$getter(), $fieldsArray);
                 }
             }
             $object = $parent;
         }
-
         return $fieldsArray;
     }
 
