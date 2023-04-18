@@ -151,4 +151,5 @@ services:
     #
     # System Settings Services
     #
-    Pimcore\SystemSettingsConfig: ~
+    Pimcore\SystemSettingsConfig:
+        public: true
