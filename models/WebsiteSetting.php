@@ -183,7 +183,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = htmlspecialchars($name);
 
         return $this;
     }
@@ -228,7 +228,7 @@ final class WebsiteSetting extends AbstractModel
             $data = $data->getId();
         }
 
-        $this->data = $data;
+        $this->data = htmlspecialchars($data);
 
         return $this;
     }
