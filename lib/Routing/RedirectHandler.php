@@ -144,7 +144,6 @@ final class RedirectHandler implements LoggerAwareInterface
         $matchPart = $partResolver->getRequestUriPart($redirect->getType());
         $matches = [];
 
-        $doesMatch = false;
         if ($redirect->isRegex()) {
             $doesMatch = (bool)@preg_match($redirect->getSource(), $matchPart, $matches);
         } else {
@@ -158,7 +157,7 @@ final class RedirectHandler implements LoggerAwareInterface
 
         // check for a site
         if ($redirect->getSourceSite() || $sourceSite) {
-            if (!$sourceSite || $sourceSite->getId() !== $redirect->getSourceSite()) {
+            if (!$sourceSite || ($redirect->getSourceSite() && $sourceSite->getId() !== $redirect->getSourceSite())) {
                 return null;
             }
         }

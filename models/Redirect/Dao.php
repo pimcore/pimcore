@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
             ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
         if ($siteId) {
-            $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
+            $sql .= ' AND (sourceSite IS NULL OR sourceSite = ' . $this->db->quote($siteId).')';
         } else {
             $sql .= ' AND sourceSite IS NULL';
         }
