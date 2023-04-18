@@ -22,7 +22,7 @@ Settings for documents like version steps, default values and URL settings.
 Version steps for objects. 
 
 ## Assets 
-Settings for assets like version steps, default color profiles for thumbnail processing and display settings.
+Settings for assets like version steps.
 
 ## Access system config in PHP Controller
  You can access the system configuration like in the following example:
