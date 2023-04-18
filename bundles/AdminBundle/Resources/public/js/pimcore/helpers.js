@@ -3279,6 +3279,6 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
     return true;
 };
 
-pimcore.helpers.getStringWithoutSpecialChars = function (text) {
-    return text.replace(/[^a-zA-Z0-9_\-+ ]/g, '');
+pimcore.helpers.getStringWithoutControlChars = function (text) {
+    return text.replace(/[<>"'`!?/\\%$(){};,:|=]/gi, '');
 };
