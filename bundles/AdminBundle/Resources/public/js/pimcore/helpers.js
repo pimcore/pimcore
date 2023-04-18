@@ -22,6 +22,16 @@ pimcore.helpers.sanitizeUrlSlug = function (slug) {
     return slug.replace(/[^a-z0-9-_+/]/gi, '');
 };
 
+pimcore.helpers.htmlEncodeTextField = function (textField) {
+    if(textField.getValue()) {
+        textField.suspendEvent('change');
+        textField.setValue(
+            Ext.util.Format.htmlEncode(textField.getValue())
+        );
+        textField.resumeEvent('change');
+    }
+};
+
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
