@@ -108,8 +108,8 @@ pimcore.settings.properties.predefined = Class.create({
 
 
         var propertiesColumns = [
-            {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({listeners: {'change': this.htmlEncodeTextField}})},
-            {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({listeners: {'change': this.htmlEncodeTextField}}),
+            {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
+            {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({listeners: {'change': pimcore.helpers.htmlEncodeTextField}}),
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     if(empty(value)) {
                         return "";
@@ -117,7 +117,7 @@ pimcore.settings.properties.predefined = Class.create({
                     return nl2br(Ext.util.Format.htmlEncode(value));
                }
             },
-            {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({listeners: {'change': this.htmlEncodeTextField}})},
+            {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text: t("type"), flex: 50, sortable: true, dataIndex: 'type',
                 editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
@@ -125,8 +125,8 @@ pimcore.settings.properties.predefined = Class.create({
                     store: ["text","document","asset","object","bool","select"]
 
             })},
-            {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({listeners: {'change': this.htmlEncodeTextField}})},
-            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({listeners: {'change': this.htmlEncodeTextField}})},
+            {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
+            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
                 editor: new Ext.ux.form.MultiSelect({
                     store: new Ext.data.ArrayStore({
@@ -279,13 +279,5 @@ pimcore.settings.properties.predefined = Class.create({
             ctype: "document",
             type: "text"
         });
-    },
-
-    htmlEncodeTextField: function (textField) {
-        if(textField.getValue()) {
-            textField.setValue(
-                Ext.util.Format.htmlEncode(textField.getValue())
-            );
-        }
     }
 });
