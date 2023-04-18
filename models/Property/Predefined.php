@@ -177,7 +177,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setKey($key)
     {
-        $this->key = $key;
+        $this->key = htmlspecialchars($key);
 
         return $this;
     }
@@ -189,7 +189,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = htmlspecialchars($name);
 
         return $this;
     }
@@ -213,7 +213,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setData($data)
     {
-        $this->data = $data;
+        $this->data = htmlspecialchars($data);
 
         return $this;
     }
@@ -253,7 +253,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setConfig($config)
     {
-        $this->config = $config;
+        $this->config = htmlspecialchars($config);
 
         return $this;
     }
@@ -305,7 +305,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = htmlspecialchars($description);
 
         return $this;
     }
