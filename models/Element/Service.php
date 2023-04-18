@@ -982,7 +982,7 @@ class Service extends Model\AbstractModel
      */
     public static function getCustomViewById(string $id): ?array
     {
-        $customViews = SystemSettingsConfig::get();
+        $customViews = Config::get();
         if ($customViews) {
             foreach ($customViews as $customView) {
                 if ($customView['id'] == $id) {

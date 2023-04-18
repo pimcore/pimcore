@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -30,7 +30,7 @@ class LocalizedFieldTest extends ModelTestCase
 {
     protected array $originalConfig;
 
-    protected Config $config;
+    protected SystemSettingsConfig $config;
 
     public function setUp(): void
     {
@@ -40,7 +40,7 @@ class LocalizedFieldTest extends ModelTestCase
 
         if (Version::getMajorVersion() >= 11) {
             $pimcoreModule = $this->getModule('\\'.Pimcore::class);
-            $this->config = $pimcoreModule->grabService(Config::class);
+            $this->config = $pimcoreModule->grabService(SystemSettingsConfig::class);
             $this->originalConfig = $this->config->get();
         } else {
             $this->originalConfig = \Pimcore\Config::getSystemConfiguration();

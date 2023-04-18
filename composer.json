@@ -126,7 +126,8 @@
     "knplabs/knp-paginator-bundle": "^6.0.0",
     "league/flysystem-bundle": "^3.1",
     "league/flysystem": "^3.12.0",
-    "spatie/image-optimizer": "^1.6.2"
+    "spatie/image-optimizer": "^1.6.2",
+    "pimcore/admin-ui-classic-bundle": "@dev"
   },
   "conflict": {
     "symfony/symfony": "*",
