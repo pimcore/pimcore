@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -108,12 +107,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param bool $withInheritance
      * @return array
      */
-    public function getItems($withInheritance = false)
+    public function getItems()
     {
-        if(!$withInheritance) {
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
             return $this->items;
         }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
@@ -298,12 +297,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param bool $withInheritance
      * @return array
      */
-    public function getActiveGroups($withInheritance = false)
+    public function getActiveGroups()
     {
-        if(!$withInheritance) {
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
             return $this->activeGroups;
         }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $classificationStore->activeGroups + $fieldsArray);
@@ -472,12 +471,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param bool $withInheritance
      * @return array
      */
-    public function getGroupCollectionMappings($withInheritance = false): array
+    public function getGroupCollectionMappings(): array
     {
-        if(!$withInheritance) {
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
@@ -515,9 +514,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return Model\DataObject\Classificationstore\Group[]
      */
-    public function getGroups($withInheritance = false): array
+    public function getGroups(): array
     {
-        return Classificationstore::getActiveGroupsWithConfig($this,$withInheritance);
+        return Classificationstore::getActiveGroupsWithConfig($this);
     }
 
     private function getAllDataFromField(callable $mergeFunction): array
@@ -537,10 +536,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $fieldsArray;
     }
 
-    private static function getActiveGroupsWithConfig(Classificationstore $classificationStore,$withInheritance): array
+    private static function getActiveGroupsWithConfig(Classificationstore $classificationStore): array
     {
         $groups = [];
-        $activeGroups = $classificationStore->getActiveGroups($withInheritance);
+        $activeGroups = $classificationStore->getActiveGroups();
         foreach (array_keys($activeGroups) as $groupId) {
             $groupConfig = $classificationStore->getGroupConfigById($groupId);
             $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
