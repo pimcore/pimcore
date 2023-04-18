@@ -292,7 +292,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern($pattern)
     {
-        $this->pattern = $pattern;
+        $this->pattern = htmlspecialchars($pattern);
 
         return $this;
     }
@@ -304,7 +304,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController($controller)
     {
-        $this->controller = $controller;
+        $this->controller = htmlspecialchars($controller);
 
         return $this;
     }
@@ -316,7 +316,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables($variables)
     {
-        $this->variables = $variables;
+        $this->variables = htmlspecialchars($variables);
 
         return $this;
     }
@@ -328,7 +328,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults($defaults)
     {
-        $this->defaults = $defaults;
+        $this->defaults = htmlspecialchars($defaults);
 
         return $this;
     }
@@ -360,7 +360,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = htmlspecialchars($name);
 
         return $this;
     }
@@ -380,7 +380,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse($reverse)
     {
-        $this->reverse = $reverse;
+        $this->reverse = htmlspecialchars($reverse);
 
         return $this;
     }
@@ -612,6 +612,7 @@ final class Staticroute extends AbstractModel
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             $methods = array_map('trim', $methods);
+            $methods = array_map('htmlspecialchars', $methods);
         }
 
         $this->methods = $methods;
