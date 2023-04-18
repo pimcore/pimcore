@@ -566,12 +566,6 @@ final class Configuration implements ConfigurationInterface
                         ->info('Absolute path to default ICC CMYK profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
-                    ->booleanNode('hide_edit_image')
-                        ->defaultFalse()
-                    ->end()
-                    ->booleanNode('disable_tree_preview')
-                        ->defaultTrue()
-                    ->end()
                 ->end();
 
         $assetsNode

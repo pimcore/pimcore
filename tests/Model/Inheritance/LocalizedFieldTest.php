@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Bundle\AdminBundle\System\Config;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;

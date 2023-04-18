@@ -148,3 +148,7 @@ services:
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
 
+    #
+    # System Settings Services
+    #
+    Pimcore\SystemSettingsConfig: ~

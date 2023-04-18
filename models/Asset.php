@@ -23,7 +23,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
-use Pimcore\Bundle\AdminBundle\System\Config as SystemConfig;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -806,7 +806,7 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = SystemConfig::get()['assets'];
+            $assetsConfig = SystemSettingsConfig::get()['assets'];
             if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
