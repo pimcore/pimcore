@@ -138,7 +138,10 @@ class MiscController extends AdminController
             $scripts = explode(',', $request->get('scripts'));
 
             if ($request->get('scriptPath')) {
-                $scriptPath = PIMCORE_WEB_ROOT . $request->get('scriptPath');
+                $scriptPath = realpath(PIMCORE_WEB_ROOT . $request->get('scriptPath'));
+                if($scriptPath && !str_starts_with($scriptPath, PIMCORE_WEB_ROOT)) {
+                    throw $this->createNotFoundException('Scripts not found! Please do not navigate out of the web root directory!');
+                }
             } else {
                 $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/';
             }
