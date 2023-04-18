@@ -30,13 +30,9 @@ final class Console
     protected static array $executableCache = [];
 
     /**
-     * @deprecated since v.6.9.
-     *
-     * @static
-     *
      * @return string "windows" or "unix"
      */
-    public static function getSystemEnvironment(): string
+    private static function getSystemEnvironment(): string
     {
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
@@ -271,7 +267,7 @@ final class Console
      *
      * @static
      */
-    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
+    private static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -321,7 +317,7 @@ final class Console
      *
      * @static
      */
-    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    private static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';
