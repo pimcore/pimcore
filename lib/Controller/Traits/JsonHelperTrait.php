@@ -18,7 +18,6 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -83,9 +82,6 @@ trait JsonHelperTrait
      */
     public function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
     {
-        /** @var Serializer $serializer */
-        $serializer = null;
-
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
@@ -109,9 +105,6 @@ trait JsonHelperTrait
      */
     public function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
     {
-        /** @var Serializer $serializer */
-        $serializer = null;
-
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
@@ -122,6 +115,7 @@ trait JsonHelperTrait
             $context['json_decode_associative'] = true;
         }
 
+        // @phpstan-ignore-next-line
         return $serializer->decode($json, 'json', $context);
     }
 }
