@@ -18,9 +18,9 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
-use Pimcore\Security\User\UserProvider;
 use Pimcore\Logger;
 use Pimcore\Model\User;
+use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
