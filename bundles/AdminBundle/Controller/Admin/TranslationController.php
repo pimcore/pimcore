@@ -50,8 +50,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TranslationController extends AdminController
 {
 
-    protected $placeHolderName = 'placeHolder:';
-
     /**
      * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})
      *
@@ -187,10 +185,8 @@ class TranslationController extends AdminController
         $list->setOrderKey($tableName . '.key', false);
 
         $conditions = $this->getGridFilterCondition($request, $tableName, false, $admin);
-        if (!empty($condition)) {
-            foreach($conditions as $condition) {
-                $list->addConditionParam($condition['condition'], [$condition['field'] => $condition['value']]);
-            }
+        if (!empty($conditions)) {
+            $list->setCondition($conditions['condition'], $conditions['params']);
         }
 
         $filters = $this->getGridFilterCondition($request, $tableName, true, $admin);
@@ -472,10 +468,8 @@ class TranslationController extends AdminController
                 $joins = array_merge($joins, $filters['joins']);
             }
 
-            if (!empty($condition)) {
-                foreach($conditions as $condition) {
-                    $list->addConditionParam($condition['condition'], [$condition['field'] => $condition['value']]);
-                }
+            if (!empty($conditions)) {
+                $list->setCondition($conditions['condition'], $conditions['params']);
             }
 
             $this->extendTranslationQuery($joins, $list, $tableName, $filters);
@@ -587,6 +581,7 @@ class TranslationController extends AdminController
      */
     protected function getGridFilterCondition(Request $request, $tableName, $languageMode = false, $admin = false)
     {
+        $placeHolderCount = 0;
         $joins = [];
         $conditions = [];
         $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
@@ -600,12 +595,12 @@ class TranslationController extends AdminController
             $operatorField = 'operator';
 
             $filters = $this->decodeJson($filterJson);
-            $placeHolderCount = 0;
+
             foreach ($filters as $filter) {
+                $placeHolderName = 'placeHolder';
                 $operator = '=';
                 $field = null;
                 $value = null;
-
 
                 $fieldname = $filter[$propertyField];
                 if (in_array(ltrim($fieldname, '_'), $validLanguages)) {
@@ -651,12 +646,12 @@ class TranslationController extends AdminController
                             'language' => $fieldname,
                         ];
                     } else {
-                        $placeHolderName = $this->placeHolderName . $placeHolderCount;
+                        $placeHolderName = $placeHolderName . $placeHolderCount;
                         $placeHolderCount++;
                         $conditionFilters[] = [
-                            'condition' => $field . ' ' . $operator . ' ' . $placeHolderName,
+                            'condition' => $field . ' ' . $operator . ' :' . $placeHolderName,
                             'field' => $placeHolderName,
-                            'value' => $db->quote($value)
+                            'value' => $value
                         ];
                     }
                 }
@@ -664,12 +659,10 @@ class TranslationController extends AdminController
         }
 
         if ($request->get('searchString')) {
-            $filterTerm = $db->quote('%' . mb_strtolower($request->get('searchString')) . '%');
-
             $conditionFilters[] = [
-                'condition' => '(lower(' . $tableName . '.key) LIKE :filterTerm OR lower(' . $tableName . '.text) LIKE :filterTerm',
+                'condition' => '(lower(' . $tableName . '.key) LIKE :filterTerm OR lower(' . $tableName . '.text) LIKE :filterTerm)',
                 'field' => 'filterTerm',
-                'value' => $filterTerm
+                'value' => '%' . mb_strtolower($request->get('searchString')) . '%'
             ];
 
         }
@@ -683,6 +676,19 @@ class TranslationController extends AdminController
             return $result;
         }
 
+        if(!empty($conditionFilters)) {
+            $conditions = [];
+            $params = [];
+            foreach($conditionFilters as $conditionFilter) {
+                $conditions[] = $conditionFilter['condition'];
+                $params[$conditionFilter['field']] = $conditionFilter['value'];
+            }
+
+            $conditionFilters = [
+                'condition' => implode(' AND ', $conditions),
+                'params' => $params
+            ];
+        }
         return $conditionFilters;
     }
 
