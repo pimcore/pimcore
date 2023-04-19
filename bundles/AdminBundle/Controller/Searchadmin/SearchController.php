@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -111,6 +112,8 @@ class SearchController extends AdminController
         $bricks = [];
         if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
+            //remove sql comments
+            $fields = str_replace('--', '', $fields);
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
@@ -310,7 +313,11 @@ class SearchController extends AdminController
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
-        $hits = $searcherList->load();
+        try {
+            $hits = $searcherList->load();
+        } catch (SyntaxErrorException $syntaxErrorException) {
+            throw new \InvalidArgumentException('Check your arguments.');
+        }
 
         $elements = [];
         foreach ($hits as $hit) {
