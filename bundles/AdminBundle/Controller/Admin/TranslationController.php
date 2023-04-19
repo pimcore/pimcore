@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
@@ -196,7 +197,12 @@ class TranslationController extends AdminController
         }
 
         $this->extendTranslationQuery($joins, $list, $tableName, $filters);
-        $list->load();
+
+        try {
+            $list->load();
+        } catch (SyntaxErrorException $syntaxErrorException) {
+            throw new \InvalidArgumentException('Check your arguments.');
+        }
 
         $translations = [];
         $translationObjects = $list->getTranslations();
@@ -474,7 +480,11 @@ class TranslationController extends AdminController
 
             $this->extendTranslationQuery($joins, $list, $tableName, $filters);
 
-            $list->load();
+            try {
+                $list->load();
+            } catch (SyntaxErrorException $syntaxErrorException) {
+                throw new \InvalidArgumentException('Check your arguments.');
+            }
 
             $translations = [];
             $searchString = $request->get('searchString');
@@ -606,6 +616,7 @@ class TranslationController extends AdminController
                 if (in_array(ltrim($fieldname, '_'), $validLanguages)) {
                     $fieldname = ltrim($fieldname, '_');
                 }
+                $fieldname = str_replace('--', '', $fieldname);
 
                 if (!$languageMode && in_array($fieldname, $validLanguages)
                     || $languageMode && !in_array($fieldname, $validLanguages)) {
