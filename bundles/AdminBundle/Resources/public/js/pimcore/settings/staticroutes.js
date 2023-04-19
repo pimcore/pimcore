@@ -189,9 +189,15 @@ pimcore.settings.staticroutes = Class.create({
                             return;
                         }
 
-                        pimcore.helpers.deleteConfirm(t('staticroute'), data.data.name, function () {
-                            grid.getStore().removeAt(rowIndex);
-                        }.bind(this));
+                        const decodedName = Ext.util.Format.htmlDecode(data.data.name);
+
+                        pimcore.helpers.deleteConfirm(
+                            t('staticroute'),
+                            Ext.util.Format.htmlEncode(decodedName),
+                            function () {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this)
+                        );
                     }.bind(this)
                 }]
             }
