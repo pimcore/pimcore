@@ -30,7 +30,7 @@ abstract class AdminAbstractController extends UserAwareController
     /**
      * Returns a JsonResponse that uses the admin serializer
      */
-    public function adminJson(mixed $data, int $status = 200, array $headers = [], array $context = [], bool $useAdminSerializer = true): JsonResponse
+    protected function adminJson(mixed $data, int $status = 200, array $headers = [], array $context = [], bool $useAdminSerializer = true): JsonResponse
     {
         return $this->jsonResponse($data, $status, $headers, $context, $useAdminSerializer);
     }
@@ -38,7 +38,7 @@ abstract class AdminAbstractController extends UserAwareController
     /**
      * Get user from user proxy object which is registered on security component
      */
-    public function getAdminUser(bool $proxyUser = false): UserProxy|User|null
+    protected function getAdminUser(bool $proxyUser = false): UserProxy|User|null
     {
         return $this->getPimcoreUser($proxyUser);
     }

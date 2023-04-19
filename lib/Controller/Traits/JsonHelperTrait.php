@@ -18,7 +18,7 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -83,7 +83,7 @@ trait JsonHelperTrait
      */
     public function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
     {
-        /** @var SerializerInterface $serializer */
+        /** @var Serializer $serializer */
         $serializer = null;
 
         if ($usePimcoreSerializer) {
@@ -109,7 +109,7 @@ trait JsonHelperTrait
      */
     public function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
     {
-        /** @var SerializerInterface|DecoderInterface $serializer */
+        /** @var Serializer $serializer */
         $serializer = null;
 
         if ($usePimcoreSerializer) {
