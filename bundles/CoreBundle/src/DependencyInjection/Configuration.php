@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -143,7 +144,7 @@ final class Configuration implements ConfigurationInterface
             'system_settings' => '/var/config/system_settings',
         ]);
 
-        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', [LocationAwareConfigRepository::READ_TARGET]);
 
         return $treeBuilder;
     }
