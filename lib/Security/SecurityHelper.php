@@ -20,8 +20,12 @@ namespace Pimcore\Security;
  */
 class SecurityHelper
 {
-    public static function getStringWithoutControlChars(string $text): string
+    public static function convertHtmlSpecialChars(?string $text): ?string
     {
-        return preg_replace('[\\\\<>"\'`!?/%$(){};,:|=]', '', $text);
+        if(is_string($text)) {
+            return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        }
+
+        return null;
     }
 }

@@ -2109,10 +2109,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    OR
+                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                )';
             }
 
             $condition = implode(' AND ', $conditionFilters);
@@ -2177,23 +2177,30 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $db = \Pimcore\Db::get();
                 $conditionFilters = [];
-
                 $selectedIds = $request->get('selectedIds', []);
 
                 if (!empty($selectedIds)) {
                     $selectedIds = explode(',', $selectedIds);
+
+                    $quotedSelectedIds = [];
+                    foreach ($selectedIds as $selectedId) {
+                        if ($selectedId) {
+                            $quotedSelectedIds[] = $db->quote($selectedId);
+                        }
+                    }
+
                     //add a condition if id numbers are specified
-                    $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
+                    $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
                 }
                 $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote(Helper::escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
                     $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                        (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                        OR
+                        (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    )';
                 }
 
                 $condition = implode(' AND ', $conditionFilters);
@@ -2456,7 +2463,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if (!$assetFolder) {
             throw $this->createNotFoundException('Parent asset not found');
         }
-        $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
+
+        $serverPath = realpath(PIMCORE_PROJECT_ROOT . $request->get('serverPath'));
+        if(!str_starts_with($serverPath, rtrim(str_replace('../', '', PIMCORE_PROJECT_ROOT), './'))) {
+            throw $this->createAccessDeniedException('Please do not navigate out of the web root directory!');
+        }
+
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
