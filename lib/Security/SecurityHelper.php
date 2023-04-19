@@ -17,7 +17,7 @@ namespace Pimcore\Security;
 
 class SecurityHelper
 {
-    public static function htmlSpecialChars(?string $text): ?string
+    public static function convertHtmlSpecialChars(?string $text): ?string
     {
         if(is_string($text)){
             return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
