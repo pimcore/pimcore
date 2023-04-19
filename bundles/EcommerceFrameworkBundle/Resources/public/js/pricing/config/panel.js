@@ -299,7 +299,6 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
         pimcore.helpers.deleteConfirm(
             t('bundle_ecommerce_pricing_rule'),
             Ext.util.Format.htmlEncode(decodedName),
-            record.data.text,
             function () {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_ecommerceframework_pricing_delete'),
