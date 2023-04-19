@@ -612,8 +612,9 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map('trim', $methods);
-            $methods = array_map('htmlspecialchars', $methods);
+            foreach($methods as $key => $method) {
+                $methods[$key] = SecurityHelper::htmlSpecialChars(trim($method));
+            }
         }
 
         $this->methods = $methods;
