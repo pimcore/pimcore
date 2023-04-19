@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -292,7 +293,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern($pattern)
     {
-        $this->pattern = htmlspecialchars($pattern);
+        $this->pattern = SecurityHelper::htmlSpecialChars($pattern);
 
         return $this;
     }
@@ -304,7 +305,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController($controller)
     {
-        $this->controller = htmlspecialchars($controller);
+        $this->controller = SecurityHelper::htmlSpecialChars($controller);
 
         return $this;
     }
@@ -316,7 +317,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables($variables)
     {
-        $this->variables = htmlspecialchars($variables);
+        $this->variables = SecurityHelper::htmlspecialchars($variables);
 
         return $this;
     }
@@ -328,7 +329,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults($defaults)
     {
-        $this->defaults = htmlspecialchars($defaults);
+        $this->defaults = SecurityHelper::htmlspecialchars($defaults);
 
         return $this;
     }
@@ -360,7 +361,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = htmlspecialchars($name);
+        $this->name = SecurityHelper::htmlspecialchars($name);
 
         return $this;
     }
@@ -380,7 +381,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse($reverse)
     {
-        $this->reverse = htmlspecialchars($reverse);
+        $this->reverse = SecurityHelper::htmlspecialchars($reverse);
 
         return $this;
     }

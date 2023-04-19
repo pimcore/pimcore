@@ -128,7 +128,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createGroupAction(Request $request): JsonResponse
     {
-        $name = SecurityHelper::getStringWithoutControlChars($request->get('name'));
+        $name = SecurityHelper::htmlSpecialChars($request->get('name'));
         $storeId = $request->get('storeId');
         $config = Classificationstore\GroupConfig::getByName($name, $storeId);
 
@@ -155,7 +155,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createStoreAction(Request $request): JsonResponse
     {
-        $name = SecurityHelper::getStringWithoutControlChars($request->get('name'));
+        $name = SecurityHelper::htmlSpecialChars($request->get('name'));
 
         $config = Classificationstore\StoreConfig::getByName($name);
 
@@ -181,7 +181,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createCollectionAction(Request $request): JsonResponse
     {
-        $name = SecurityHelper::getStringWithoutControlChars($request->get('name'));
+        $name = SecurityHelper::htmlSpecialChars($request->get('name'));
         $storeId = $request->get('storeId');
         $config = Classificationstore\CollectionConfig::getByName($name, $storeId);
 
