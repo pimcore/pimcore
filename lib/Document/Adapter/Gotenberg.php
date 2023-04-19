@@ -29,7 +29,7 @@ use Pimcore\Tool\Storage;
  */
 class Gotenberg extends Ghostscript
 {
-    protected static $validPing = false;
+    protected static bool $validPing = false;
     
     public function isAvailable(): bool
     {
@@ -74,9 +74,8 @@ class Gotenberg extends Ghostscript
 
         try {
             GotenbergAPI::send($request);
-            if (!self::$validPing) {
-                self::$validPing = true;
-            }
+            self::$validPing = true;
+            
             return true;
         } catch (GotenbergApiErroed $e) {
             return false;
