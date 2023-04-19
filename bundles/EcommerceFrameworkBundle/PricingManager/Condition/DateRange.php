@@ -92,8 +92,8 @@ class DateRange implements DateRangeInterface
     {
         return json_encode([
             'type' => 'DateRange',
-            'starting' => $this->getStarting()->format('d.m.Y'),
-            'ending' => $this->getEnding()->format('d.m.Y'),
+            'starting' => $this->getStarting()?->format('d.m.Y'),
+            'ending' => $this->getEnding()?->format('d.m.Y'),
         ]);
     }
 
@@ -107,13 +107,17 @@ class DateRange implements DateRangeInterface
         $json = json_decode($string);
 
         $starting = \DateTime::createFromFormat('d.m.Y', $json->starting, new DateTimeZone('UTC'));
-        $starting->setTime(0, 0, 0);
-
+        if($starting instanceof \DateTime) {
+            $starting->setTime(0, 0, 0);
+            $this->setStarting($starting);
+        }
         $ending = \DateTime::createFromFormat('d.m.Y', $json->ending, new DateTimeZone('UTC'));
-        $ending->setTime(23, 59, 59);
 
-        $this->setStarting($starting);
-        $this->setEnding($ending);
+        if($ending instanceof \DateTime) {
+            $ending->setTime(23, 59, 59);
+            $this->setEnding($ending);
+        }
+
 
         return $this;
     }
