@@ -19,7 +19,6 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -29,7 +28,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 trait JsonHelperTrait
 {
-    protected Serializer $serializer;
+    protected SerializerInterface $serializer;
 
     protected PimcoreSerializer $pimcoreSerializer;
 
@@ -46,9 +45,9 @@ trait JsonHelperTrait
     /**
      * @required
      *
-     * @param Serializer $serializer
+     * @param SerializerInterface $serializer
      */
-    public function setSerializer(Serializer $serializer): void
+    public function setSerializer(SerializerInterface $serializer): void
     {
         $this->serializer = $serializer;
     }
