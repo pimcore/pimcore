@@ -806,7 +806,7 @@ class ElementController extends AdminAbstractController
 
         if (in_array($type, $allowedTypes, true)) {
             $list = new Model\Property\Predefined\Listing();
-            $list->setFilter(function (Model\Property\Predefined $predefined) use ($type, $query) {
+            $list->setFilter(function (Model\Property\Predefined $predefined) use ($type, $query, $translator) {
                 if (!str_contains($predefined->getCtype(), $type)) {
                     return false;
                 }
