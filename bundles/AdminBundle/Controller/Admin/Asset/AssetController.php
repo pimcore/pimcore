@@ -2463,7 +2463,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if (!$assetFolder) {
             throw $this->createNotFoundException('Parent asset not found');
         }
-        $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
+
+        $serverPath = realpath(PIMCORE_PROJECT_ROOT . $request->get('serverPath'));
+        if(!str_starts_with($serverPath, rtrim(str_replace('../', '', PIMCORE_PROJECT_ROOT), './'))) {
+            throw $this->createAccessDeniedException('Please do not navigate out of the web root directory!');
+        }
+
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
