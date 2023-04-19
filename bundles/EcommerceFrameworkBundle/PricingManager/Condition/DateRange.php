@@ -118,7 +118,6 @@ class DateRange implements DateRangeInterface
             $this->setEnding($ending);
         }
 
-
         return $this;
     }
 }
