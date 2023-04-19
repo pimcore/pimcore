@@ -18,12 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\Notification\Service\NotificationServiceFilterParser;
 use Pimcore\Model\Notification\Service\UserService;
 use Pimcore\Model\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;

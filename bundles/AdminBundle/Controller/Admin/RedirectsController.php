@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
@@ -27,6 +26,7 @@ use Pimcore\Model\Site;
 use Pimcore\Routing\Redirect\Csv;
 use Pimcore\Routing\RedirectHandler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;

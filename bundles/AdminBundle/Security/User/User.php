@@ -24,7 +24,6 @@ trigger_deprecation(
     [User::class, PimcoreUser::class]
 );
 
-
 /**
  * @deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\User instead.
  */

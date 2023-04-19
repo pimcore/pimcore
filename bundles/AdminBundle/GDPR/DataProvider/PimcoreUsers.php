@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Db;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 
 /**
  * @internal

@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Encoder;
 
-use Pimcore\Security\User\User;
 use Pimcore\Security\Encoder\AbstractUserAwarePasswordEncoder;
+use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 

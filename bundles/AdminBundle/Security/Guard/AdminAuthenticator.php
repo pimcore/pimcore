@@ -17,13 +17,13 @@ namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
-use Pimcore\Security\User\User;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
+use Pimcore\Security\User\User;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;

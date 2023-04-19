@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\DataObject;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;

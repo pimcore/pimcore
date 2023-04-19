@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -28,6 +27,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
+use Pimcore\Security\User\UserLoader;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

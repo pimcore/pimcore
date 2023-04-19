@@ -17,10 +17,10 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\Controller\DoubleAuthenticationControllerInterface;
 use Pimcore\Bundle\AdminBundle\EventListener\Traits\ControllerTypeTrait;
-use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestMatcherFactory;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;

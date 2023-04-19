@@ -15,8 +15,8 @@
 
 namespace Pimcore\Http\Request\Resolver;
 
-use Pimcore\Security\User\UserLoader;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;

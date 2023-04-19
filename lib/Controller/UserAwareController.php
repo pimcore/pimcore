@@ -15,10 +15,10 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\User as UserProxy;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Service\Attribute\Required;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -14,10 +15,10 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
-use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\User;
+use Pimcore\Security\User\User as UserProxy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**

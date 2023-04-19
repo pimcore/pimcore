@@ -17,12 +17,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Logger;
@@ -30,6 +29,7 @@ use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -45,7 +45,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ExtensionManagerController extends AdminAbstractController implements KernelControllerEventInterface
 {
-
     public function __construct(
         protected AreabrickManagerInterface $areabrickManager,
         protected PimcoreBundleManager $bundleManager,

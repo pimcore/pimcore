@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -14,13 +15,13 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\User;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -77,13 +78,11 @@ abstract class AdminController extends UserAwareController implements AdminContr
         return $services;
     }
 
-
     #[Required]
     public function setTokenStorageUserResolver(TokenStorageUserResolver $tokenResolver): void
     {
         $this->tokenResolver = $tokenResolver;
     }
-
 
     /**
      * {@inheritdoc}
@@ -244,7 +243,6 @@ abstract class AdminController extends UserAwareController implements AdminContr
 
         return $serializer->decode($json, 'json', $context);
     }
-
 
     /**
      * Translates the given message.

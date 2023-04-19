@@ -15,8 +15,8 @@
 
 namespace Pimcore\Security\User;
 
-use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Model\User;
+use Pimcore\Security\User\User as UserProxy;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**

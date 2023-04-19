@@ -17,12 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Document;
 
-use Pimcore\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Security\User\UserLoader;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 
 class DocumentTargetingConfigurator
