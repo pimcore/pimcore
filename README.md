@@ -91,7 +91,7 @@ cd ./my-project
 
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Getting_Started/Installation.html)
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
 Copyright: [Pimcore](https://www.pimcore.org) GmbH
