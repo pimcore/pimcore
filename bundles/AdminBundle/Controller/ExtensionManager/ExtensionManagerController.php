@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -47,7 +48,7 @@ class ExtensionManagerController extends AdminAbstractController implements Kern
 
     public function __construct(
         protected AreabrickManagerInterface $areabrickManager,
-        protected PimcoreBundleInterface $bundleManager,
+        protected PimcoreBundleManager $bundleManager,
         protected TranslatorInterface $translator
     ) {
     }
