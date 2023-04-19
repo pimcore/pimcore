@@ -18,7 +18,7 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
-use Pimcore\Bundle\AdminBundle\Security\User\UserProvider;
+use Pimcore\Security\User\UserProvider;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +55,7 @@ class Authentication
             $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
             $user = $token->getUser();
 
-            if ($user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User && self::isValidUser($user->getUser())) {
+            if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
                 return $user->getUser();
             }
         }

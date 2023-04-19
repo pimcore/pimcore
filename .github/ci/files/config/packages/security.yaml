@@ -3,7 +3,7 @@ security:
 
     providers:
         pimcore_admin:
-            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+            id: Pimcore\Security\User\UserProvider
 
     firewalls:
         dev:
@@ -19,7 +19,7 @@ security:
         # Pimcore admin form login // DO NOT CHANGE!
         pimcore_admin:
             pattern: ^/admin(/.*)?$
-            user_checker: Pimcore\Bundle\AdminBundle\Security\User\UserChecker
+            user_checker: Pimcore\Security\User\UserChecker
             provider: pimcore_admin
             login_throttling:
                 max_attempts: 3

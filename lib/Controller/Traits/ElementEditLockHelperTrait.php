@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Traits;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @internal
