@@ -25,8 +25,9 @@ pimcore.helpers.sanitizeUrlSlug = function (slug) {
 pimcore.helpers.htmlEncodeTextField = function (textField) {
     if(textField.getValue()) {
         textField.suspendEvent('change');
+        const decodedValue = Ext.util.Format.htmlDecode(textField.getValue());
         textField.setValue(
-            Ext.util.Format.htmlEncode(textField.getValue())
+            Ext.util.Format.htmlEncode(decodedValue)
         );
         textField.resumeEvent('change');
     }
