@@ -144,7 +144,7 @@ class MiscController extends AdminController
                     throw $this->createNotFoundException('Directory not found!');
                 }
 
-                if(!str_starts_with($scriptPath, rtrim(str_replace('../', '', PIMCORE_PROJECT_ROOT), './'))) {
+                if(!str_starts_with($scriptPath, rtrim(str_replace('../', '', PIMCORE_WEB_ROOT), './'))) {
                     throw $this->createAccessDeniedException('Scripts not found! Please do not navigate out of the web root directory!');
                 }
 
