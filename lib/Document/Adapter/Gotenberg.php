@@ -60,7 +60,7 @@ class Gotenberg extends Ghostscript
      */
     public static function checkGotenberg(): bool
     {
-        if (!class_exists(GotenbergAPI::class, false)) {
+        if (!class_exists(GotenbergAPI::class, true)) {
             return false;
         }
         $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url'])
