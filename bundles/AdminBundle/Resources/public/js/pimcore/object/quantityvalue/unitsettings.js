@@ -105,9 +105,9 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
         var typesColumns = [
             {flex: 1, dataIndex: 'id', text: t("id"), filter: 'string'},
-            {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({listeners: {change: this.sanitizeTextColumn}}), filter: 'string'},
-            {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({listeners: {change: this.sanitizeTextColumn}}), filter: 'string'},
-            {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({listeners: {change: this.sanitizeTextColumn}}), filter: 'string', hidden: true},
+            {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({listeners: {change: pimcore.helpers.htmlEncodeTextField}}), filter: 'string'},
+            {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({listeners: {change: pimcore.helpers.htmlEncodeTextField}}), filter: 'string'},
+            {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({listeners: {change: pimcore.helpers.htmlEncodeTextField}}), filter: 'string', hidden: true},
             {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: baseUnitEditor, renderer: function(value){
                 if(!value) {
                     return '('+t('empty')+')';
@@ -121,8 +121,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             }},
             {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric'},
             {flex: 1, dataIndex: 'conversionOffset', text: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric'},
-            {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({listeners: {change: this.sanitizeTextColumn}}), hidden: true, filter: 'string'},
-            {flex: 1, dataIndex: 'converter', text: t("converter_service"), editor: new Ext.form.TextField({listeners: {change: this.sanitizeTextColumn}}), filter: 'string'}
+            {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({listeners: {change: pimcore.helpers.htmlEncodeTextField}}), hidden: true, filter: 'string'},
+            {flex: 1, dataIndex: 'converter', text: t("converter_service"), editor: new Ext.form.TextField({listeners: {change: pimcore.helpers.htmlEncodeTextField}}), filter: 'string'}
         ];
 
         typesColumns.push({
@@ -279,12 +279,5 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         }
         var rec = selections.getAt(0);
         this.grid.store.remove(rec);
-    },
-
-    sanitizeTextColumn: function (textField) {
-        if(textField.getValue()){
-            const sanitizedValue = textField.getValue().replace(/[<>"'!?/\\&%$();]/gi, '');
-            textField.setValue(sanitizedValue);
-        }
     }
 });
