@@ -50,7 +50,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TranslationController extends AdminController
 {
-
     /**
      * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})
      *
