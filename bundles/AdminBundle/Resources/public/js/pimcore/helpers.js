@@ -3289,3 +3289,7 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
 
     return true;
 };
+
+pimcore.helpers.getStringWithoutControlChars = function (text) {
+    return text.replace(/[<>"'`!?/\\%$(){};,:|=]/gi, '');
+};
