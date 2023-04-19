@@ -24,6 +24,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ModelAssetPermissionsTest extends ModelTestCase
@@ -473,7 +474,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
                 return $user;
             },
             'adminJson' => function ($data) {
-                return $data;
+                return new JsonResponse($data);
             },
             'getThumbnailUrl' => function ($asset) {
                 return '';
@@ -500,6 +501,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         );
 
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
@@ -662,6 +664,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         );
 
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }
