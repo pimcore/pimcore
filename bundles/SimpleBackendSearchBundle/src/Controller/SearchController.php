@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
@@ -25,6 +24,8 @@ use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -41,9 +42,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class SearchController extends AdminAbstractController
+class SearchController extends UserAwareController
 {
     use AdminStyleTrait;
+    use JsonHelperTrait;
 
     /**
      * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
@@ -360,7 +362,7 @@ class SearchController extends AdminAbstractController
      */
     protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
     {
-        $user = $this->getAdminUser();
+        $user = $this->getPimcoreUser();
         $db = \Pimcore\Db::get();
 
         $allowedTypes = [];

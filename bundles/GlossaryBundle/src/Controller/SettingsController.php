@@ -16,9 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GlossaryBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,8 +30,10 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class SettingsController extends AdminController
+class SettingsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
      *

@@ -19,10 +19,11 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
-use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,11 +36,13 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-class LogController extends AdminAbstractController implements KernelControllerEventInterface
+class LogController extends UserAwareController implements KernelControllerEventInterface
 {
+    use JsonHelperTrait;
+
     public function onKernelControllerEvent(ControllerEvent $event): void
     {
-        if (!$this->getAdminUser()->isAllowed('application_logging')) {
+        if (!$this->getPimcoreUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
     }
@@ -149,7 +152,7 @@ class LogController extends AdminAbstractController implements KernelControllerE
             $logEntries[] = $logEntry;
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'p_totalCount' => $total,
             'p_results' => $logEntries,
         ]);
@@ -191,7 +194,7 @@ class LogController extends AdminAbstractController implements KernelControllerE
             $priorities[] = ['key' => $key, 'value' => $p];
         }
 
-        return $this->adminJson(['priorities' => $priorities]);
+        return $this->jsonResponse(['priorities' => $priorities]);
     }
 
     /**
@@ -210,7 +213,7 @@ class LogController extends AdminAbstractController implements KernelControllerE
             $components[] = ['key' => $p, 'value' => $p];
         }
 
-        return $this->adminJson(['components' => $components]);
+        return $this->jsonResponse(['components' => $components]);
     }
 
     /**

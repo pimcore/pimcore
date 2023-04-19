@@ -16,8 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -33,8 +34,10 @@ use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
  *
  * @internal
  */
-class CustomReportController extends AdminController
+class CustomReportController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
      *
@@ -47,7 +50,7 @@ class CustomReportController extends AdminController
         $this->checkPermission('reports_config');
         $reports = Tool\Config::getReportsList();
 
-        return $this->adminJson($reports);
+        return $this->jsonResponse($reports);
     }
 
     /**
@@ -60,9 +63,9 @@ class CustomReportController extends AdminController
     public function portletReportListAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-        $reports = Tool\Config::getReportsList($this->getAdminUser());
+        $reports = Tool\Config::getReportsList($this->getPimcoreUser());
 
-        return $this->adminJson(['data' => $reports]);
+        return $this->jsonResponse(['data' => $reports]);
     }
 
     /**
@@ -92,7 +95,7 @@ class CustomReportController extends AdminController
             $success = true;
         }
 
-        return $this->adminJson(['success' => $success, 'id' => $report->getName()]);
+        return $this->jsonResponse(['success' => $success, 'id' => $report->getName()]);
     }
 
     /**
@@ -116,7 +119,7 @@ class CustomReportController extends AdminController
 
         $report->delete();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -155,7 +158,7 @@ class CustomReportController extends AdminController
 
         $report->save();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -176,7 +179,7 @@ class CustomReportController extends AdminController
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
-        return $this->adminJson($data);
+        return $this->jsonResponse($data);
     }
 
     /**
@@ -213,7 +216,7 @@ class CustomReportController extends AdminController
 
         $report->save();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -267,7 +270,7 @@ class CustomReportController extends AdminController
             $errorMessage = $e->getMessage();
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => $success,
             'columns' => $result,
             'errorMessage' => $errorMessage,
@@ -288,7 +291,7 @@ class CustomReportController extends AdminController
         $reports = [];
 
         $list = new Tool\Config\Listing();
-        $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
+        $items = $list->getDao()->loadForGivenUser($this->getPimcoreUser());
 
         foreach ($items as $report) {
             $reports[] = [
@@ -302,7 +305,7 @@ class CustomReportController extends AdminController
             ];
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'reports' => $reports,
         ]);
@@ -343,7 +346,7 @@ class CustomReportController extends AdminController
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total'],
@@ -374,7 +377,7 @@ class CustomReportController extends AdminController
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters ?? [], $field ?? '', $drillDownFilters ?? []);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
         ]);
@@ -406,7 +409,7 @@ class CustomReportController extends AdminController
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total'],

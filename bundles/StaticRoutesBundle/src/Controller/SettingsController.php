@@ -16,15 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingsController extends AdminController
+class SettingsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
      *

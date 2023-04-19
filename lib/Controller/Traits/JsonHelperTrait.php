@@ -15,9 +15,9 @@
 
 namespace Pimcore\Controller\Traits;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**

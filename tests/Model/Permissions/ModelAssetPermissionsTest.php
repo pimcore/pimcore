@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Property;
