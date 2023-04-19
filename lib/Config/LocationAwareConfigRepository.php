@@ -69,7 +69,6 @@ class LocationAwareConfigRepository
         $data = null;
         $dataSource = null;
 
-
         $loadType = $this->getReadTargets()[0] ?? null;
         if($loadType === null) {
             // try to load from container config
