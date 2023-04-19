@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Tool\Targeting;
@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class TargetingController extends AdminController implements KernelControllerEventInterface
+class TargetingController extends AdminAbstractController implements KernelControllerEventInterface
 {
     // RULES
 

@@ -17,44 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Security\User;
 
-use Pimcore\Bundle\AdminBundle\Security\User\Exception\InvalidUserException;
-use Pimcore\Tool\Authentication;
-use Symfony\Component\Security\Core\User\InMemoryUserChecker;
-use Symfony\Component\Security\Core\User\UserInterface;
-
 /**
- * We're calling the valid user check in pre and post auth as it is cheap and
- * we're also dealing with pre authenticated tokens.
+ * @deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\UserChecker instead.
  */
-class UserChecker extends InMemoryUserChecker
+class UserChecker extends \Pimcore\Security\User\UserChecker
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function checkPreAuth(UserInterface $user)
-    {
-        $this->checkValidUser($user);
-
-        parent::checkPreAuth($user);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function checkPostAuth(UserInterface $user)
-    {
-        $this->checkValidUser($user);
-
-        parent::checkPostAuth($user);
-    }
-
-    private function checkValidUser(UserInterface $user)
-    {
-        if (!($user instanceof User && Authentication::isValidUser($user->getUser()))) {
-            $ex = new InvalidUserException('User is no valid Pimcore admin user');
-            $ex->setUser($user);
-
-            throw $ex;
-        }
-    }
 }

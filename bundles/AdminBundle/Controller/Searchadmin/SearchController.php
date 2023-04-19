@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
@@ -38,7 +38,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class SearchController extends AdminController
+class SearchController extends AdminAbstractController
 {
     use AdminStyleTrait;
 

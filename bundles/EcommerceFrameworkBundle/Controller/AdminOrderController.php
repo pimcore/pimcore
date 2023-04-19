@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use GuzzleHttp\ClientInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -30,6 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Pr
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject;
@@ -44,6 +44,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdminOrderController
@@ -53,7 +54,7 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  * @Route("/admin-order")
  *
  */
-class AdminOrderController extends AdminController implements KernelControllerEventInterface
+class AdminOrderController extends UserAwareController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface
@@ -61,6 +62,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     protected $orderManager;
 
     protected $paymentManager;
+
+    public function __construct(protected TranslatorInterface $translator)
+    {
+    }
 
     /**
      * {@inheritdoc}

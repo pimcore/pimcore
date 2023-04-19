@@ -17,9 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
@@ -51,7 +49,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class AssetHelperController extends AdminController
+class AssetHelperController extends AdminAbstractController
 {
     /**
      * @param int $userId

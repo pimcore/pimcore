@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Translation;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Security\User\UserLoader;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

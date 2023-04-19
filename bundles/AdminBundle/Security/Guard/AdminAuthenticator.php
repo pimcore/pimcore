@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Security\User\User;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;

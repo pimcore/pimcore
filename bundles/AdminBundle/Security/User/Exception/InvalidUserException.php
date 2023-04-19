@@ -15,8 +15,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\User\Exception;
 
-use Symfony\Component\Security\Core\Exception\AccountStatusException;
-
-class InvalidUserException extends AccountStatusException
+/**
+ * @deprecated and will be removed in Pimcore 11. Use \Pimcore\Security\User\Exception\InvalidUserException instead.
+ */
+class InvalidUserException extends \Pimcore\Security\User\Exception\InvalidUserException
 {
 }

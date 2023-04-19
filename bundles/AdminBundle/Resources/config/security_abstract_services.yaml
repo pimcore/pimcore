@@ -14,7 +14,7 @@ services:
         abstract: true
         arguments:
             - '' # user provider will be set by factory
-            - '@Pimcore\Bundle\AdminBundle\Security\User\UserChecker'
+            - '@Pimcore\Security\User\UserChecker'
             - '' # provider key will be set by factory
 
     pimcore.security.authentication.listener.admin_pre_auth:

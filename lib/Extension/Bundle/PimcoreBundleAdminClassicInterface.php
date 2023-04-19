@@ -13,11 +13,11 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Support;
+namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Routing\RouteReferenceInterface;
 
-interface PimcoreBundleAdminSupportInterface
+interface PimcoreBundleAdminClassicInterface
 {
     /**
      * Get javascripts to include in admin interface

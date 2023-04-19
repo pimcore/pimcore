@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;

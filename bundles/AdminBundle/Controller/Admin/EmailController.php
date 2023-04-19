@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Mail;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class EmailController extends AdminController
+class EmailController extends AdminAbstractController
 {
     /**
      * @Route("/email-logs", name="pimcore_admin_email_emaillogs", methods={"GET", "POST"})

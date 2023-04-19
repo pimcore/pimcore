@@ -17,40 +17,40 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\Notification\Service\NotificationServiceFilterParser;
 use Pimcore\Model\Notification\Service\UserService;
 use Pimcore\Model\User;
-use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/notification")
  *
  * @internal
  */
-class NotificationController extends AdminController
+class NotificationController extends AdminAbstractController
 {
     /**
      * @Route("/recipients", name="pimcore_admin_notification_recipients", methods={"GET"})
      *
      * @param UserService $service
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      *
      * @return JsonResponse
      */
-    public function recipientsAction(UserService $service, Translator $translator): JsonResponse
+    public function recipientsAction(UserService $service, TranslatorInterface $translator): JsonResponse
     {
         $this->checkPermission('notifications_send');
 
         $data = [];
 
         foreach ($service->findAll($this->getAdminUser()) as $recipient) {
-            $group = $translator->trans('group');
+            $group = $translator->trans('group', [], 'admin');
             $prefix = $recipient->getType() == 'role' ? $group . ' - ' : '';
 
             $data[] = [

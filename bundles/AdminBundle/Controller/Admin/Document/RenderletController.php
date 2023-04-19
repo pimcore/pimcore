@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-class RenderletController extends AdminController
+class RenderletController extends AdminAbstractController
 {
     /**
      * Handles editmode preview for renderlets

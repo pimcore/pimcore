@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -37,14 +37,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/workflow")
  *
  * @internal
  */
-class WorkflowController extends AdminController implements KernelControllerEventInterface
+class WorkflowController extends AdminAbstractController implements KernelControllerEventInterface
 {
+    public function __construct(protected TranslatorInterface $translator)
+    {
+    }
+
     /**
      * @var Document|Asset|ConcreteObject|null $element
      */
@@ -356,11 +361,11 @@ class WorkflowController extends AdminController implements KernelControllerEven
         $dot = Console::getExecutable('dot');
 
         if (!$php) {
-            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['php']));
+            throw new \InvalidArgumentException($this->translator->trans('workflow_cmd_not_found', ['php'], 'admin'));
         }
 
         if (!$dot) {
-            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
+            throw new \InvalidArgumentException($this->translator->trans('workflow_cmd_not_found', ['dot'], 'admin'));
         }
 
         $cmd = $php . ' ' . PIMCORE_PROJECT_ROOT . '/bin/console pimcore:workflow:dump ${WNAME} ${WPLACES} | ${DOT} -Tsvg';

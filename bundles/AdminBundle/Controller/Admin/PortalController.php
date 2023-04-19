@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @internal
  */
-class PortalController extends AdminController implements KernelControllerEventInterface
+class PortalController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @var \Pimcore\Helper\Dashboard

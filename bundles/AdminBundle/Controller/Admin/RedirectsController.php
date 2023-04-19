@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
@@ -38,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class RedirectsController extends AdminController
+class RedirectsController extends AdminAbstractController
 {
     /**
      * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})

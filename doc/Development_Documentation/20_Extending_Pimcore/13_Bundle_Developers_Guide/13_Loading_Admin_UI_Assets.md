@@ -5,7 +5,7 @@ If you need to load assets (JS, CSS) in the Admin or Editmode UI, you have 2 opt
 
 ## Pimcore Bundles
 
-Just add the [`PimcoreBundleAdminSupportInterface`](https://github.com/pimcore/pimcore/blob/10.6/bundles/AdminBundle/src/Support/PimcoreBundleAdminSupportInterface.php) to your bundle class.
+Just add the [`PimcoreBundleAdminClassicInterface`](https://github.com/pimcore/pimcore/blob/10.6/lib/extensions/Bundle/PimcoreBundleAdminClassicInterface.php) to your bundle class.
 The interface prescribes the following methods: 
 - `getJsPaths`
 - `getCssPaths`
@@ -13,7 +13,7 @@ The interface prescribes the following methods:
 - `getEditmodeCssPaths`
 
 
-In order to implement all four methods prescribed by the interface you can use the [`BundleAdminSupportTrait`](https://github.com/pimcore/pimcore/blob/10.6/bundles/AdminBundle/src/Support/BundleAdminSupportTrait.php).
+In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicSupportTrait`](https://github.com/pimcore/pimcore/blob/10.6/lib/extensions/Bundle/BundleAdminClassicSupportTrait.php).
 
 ## Event Based
 

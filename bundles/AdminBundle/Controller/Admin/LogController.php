@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-class LogController extends AdminController implements KernelControllerEventInterface
+class LogController extends AdminAbstractController implements KernelControllerEventInterface
 {
     /**
      * @param ControllerEvent $event

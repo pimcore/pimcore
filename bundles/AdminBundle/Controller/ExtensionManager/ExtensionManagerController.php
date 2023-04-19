@@ -16,8 +16,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
 use ForceUTF8\Encoding;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -35,23 +36,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @deprecated will be removed in Pimcore 11
  *
  * @internal
  */
-class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+class ExtensionManagerController extends AdminAbstractController implements KernelControllerEventInterface
 {
-    /**
-     * @var AreabrickManagerInterface
-     */
-    private $areabrickManager;
 
     public function __construct(
-        AreabrickManagerInterface $areabrickManager
+        protected AreabrickManagerInterface $areabrickManager,
+        protected PimcoreBundleManager $bundleManager,
+        protected TranslatorInterface $translator
     ) {
-        $this->areabrickManager = $areabrickManager;
     }
 
     /**
@@ -462,8 +461,8 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return [
             'id' => $brick->getId(),
             'type' => 'areabrick',
-            'name' => $this->trans($brick->getName()),
-            'description' => $this->trans($brick->getDescription()),
+            'name' => $this->translator->trans($brick->getName(), [], 'admin'),
+            'description' => $this->translator->trans($brick->getDescription(), [], 'admin'),
             'installable' => false,
             'uninstallable' => false,
             'installed' => true,

@@ -13,10 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Security\Hasher;
+namespace Pimcore\Security\Hasher;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User;
-use Pimcore\Security\Hasher\AbstractUserAwarePasswordHasher;
+use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -29,7 +28,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
  *
  * @internal
  */
-class AdminPasswordHasher extends AbstractUserAwarePasswordHasher
+class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
 {
     use CheckPasswordLengthTrait;
 

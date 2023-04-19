@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pimcore
  *
@@ -15,34 +14,41 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
-use Pimcore\Controller\Controller;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Logger;
 use Pimcore\Model\User;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AdminController extends Controller implements AdminControllerInterface
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\UserAwareController instead.
+ */
+abstract class AdminController extends UserAwareController implements AdminControllerInterface
 {
+    use JsonHelperTrait;
+
     /**
      * @var TokenStorageUserResolver
      */
     protected $tokenResolver;
 
     /**
+     * @deprecated and will be removed in Pimcore 11.
+     *
      * @var TranslatorInterface
      */
     protected $translator;
 
     /**
+     * @deprecated and will be removed in Pimcore 11.
+     *
      * @var PimcoreBundleManager
      */
     protected $bundleManager;
@@ -59,25 +65,25 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $this->bundleManager = $bundleManager;
     }
 
-    #[Required]
-    public function setTokenResolver(TokenStorageUserResolver $tokenResolver): void
-    {
-        $this->tokenResolver = $tokenResolver;
-    }
-
     /**
      * @return string[]
      */
-    public static function getSubscribedServices()// : array
+    public static function getSubscribedServices()
     {
         $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
-        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
-        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
+
         $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
     }
+
+
+    #[Required]
+    public function setTokenStorageUserResolver(TokenStorageUserResolver $tokenResolver): void
+    {
+        $this->tokenResolver = $tokenResolver;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -149,6 +155,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
      *
      * @return UserProxy|User|null
+     *
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\UserAwareController::getPimcoreUser() instead.
      */
     protected function getAdminUser($proxyUser = false)
     {
@@ -160,88 +168,23 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * Check user permission
+     * Returns a JsonResponse that uses the admin serializer
      *
-     * @param string $permission
+     * @param mixed $data    The response data
+     * @param int $status    The status code to use for the Response
+     * @param array $headers Array of extra headers to add
+     * @param array $context Context to pass to serializer when using serializer component
+     * @param bool $useAdminSerializer
      *
-     * @throws AccessDeniedHttpException
-     */
-    protected function checkPermission($permission)
-    {
-        if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
-            Logger::error(
-                'User {user} attempted to access {permission}, but has no permission to do so',
-                [
-                    'user' => $this->getAdminUser()?->getName(),
-                    'permission' => $permission,
-                ]
-            );
-
-            throw $this->createAccessDeniedHttpException();
-        }
-    }
-
-    /**
-     * @param string $message
-     * @param \Throwable|null $previous
-     * @param int $code
-     * @param array $headers
+     * @return JsonResponse
      *
-     * @return AccessDeniedHttpException
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::jsonResponse() instead.
      */
-    protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
+    protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
     {
-        // $headers parameter not supported by Symfony 3.4
-        return new AccessDeniedHttpException($message, $previous, $code, $headers);
-    }
+        $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
 
-    /**
-     * @param string[] $permissions
-     */
-    protected function checkPermissionsHasOneOf(array $permissions)
-    {
-        $allowed = false;
-        $permission = null;
-        foreach ($permissions as $permission) {
-            if ($this->getAdminUser()->isAllowed($permission)) {
-                $allowed = true;
-
-                break;
-            }
-        }
-
-        if (!$this->getAdminUser() || !$allowed) {
-            Logger::error(
-                'User {user} attempted to access {permission}, but has no permission to do so',
-                [
-                    'user' => $this->getAdminUser()->getName(),
-                    'permission' => $permission,
-                ]
-            );
-
-            throw new AccessDeniedHttpException('Attempt to access ' . $permission . ', but has no permission to do so.');
-        }
-    }
-
-    /**
-     * Check permission against all controller actions. Can optionally exclude a list of actions.
-     *
-     * @param ControllerEvent $event
-     * @param string $permission
-     * @param array $unrestrictedActions
-     */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
-    {
-        $actionName = null;
-        $controller = $event->getController();
-
-        if (is_array($controller) && count($controller) === 2 && is_string($controller[1])) {
-            $actionName = $controller[1];
-        }
-
-        if (null === $actionName || !in_array($actionName, $unrestrictedActions)) {
-            $this->checkPermission($permission);
-        }
+        return new JsonResponse($json, $status, $headers, true);
     }
 
     /**
@@ -252,7 +195,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param int $options   Options passed to json_encode
      * @param bool $useAdminSerializer
      *
-     * @TODO check if $useAdminSerializer still required?
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::encodeJson() instead.
      *
      * @return string
      */
@@ -280,6 +223,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param array $context    Context to pass to serializer when using serializer component
      * @param bool $useAdminSerializer
      *
+     * @deprecated and will be removed in Pimcore 11. Use Pimcore\Controller\Traits\JsonHelperTrait::decodeJson() instead.
+     *
      * @return mixed
      */
     protected function decodeJson($json, $associative = true, array $context = [], bool $useAdminSerializer = true)
@@ -300,23 +245,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return $serializer->decode($json, 'json', $context);
     }
 
-    /**
-     * Returns a JsonResponse that uses the admin serializer
-     *
-     * @param mixed $data    The response data
-     * @param int $status    The status code to use for the Response
-     * @param array $headers Array of extra headers to add
-     * @param array $context Context to pass to serializer when using serializer component
-     * @param bool $useAdminSerializer
-     *
-     * @return JsonResponse
-     */
-    protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
-    {
-        $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
-
-        return new JsonResponse($json, $status, $headers, true);
-    }
 
     /**
      * Translates the given message.
@@ -329,6 +257,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @return string The translated string
      *
      * @throws InvalidArgumentException If the locale contains invalid characters
+     *
+     * @deprecated and will be removed in Pimcore 11. Use DI injection of translator instead.
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {

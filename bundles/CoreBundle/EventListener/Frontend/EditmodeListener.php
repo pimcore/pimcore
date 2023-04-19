@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;

@@ -13,9 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Support;
+namespace Pimcore\Extension\Bundle;
 
-trait BundleAdminSupportTrait
+trait BundleAdminClassicTrait
 {
     public function getJsPaths(): array
     {

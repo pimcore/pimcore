@@ -14,7 +14,8 @@
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
-    use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+
+    use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
     use Pimcore\Controller\KernelControllerEventInterface;
     use Pimcore\Tool\Session;
     use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     /**
      * @internal
      */
-    class AdminerController extends AdminController implements KernelControllerEventInterface
+    class AdminerController extends AdminAbstractController implements KernelControllerEventInterface
     {
         /**
          * @var string

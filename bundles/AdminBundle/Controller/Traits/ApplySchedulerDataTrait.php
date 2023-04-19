@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ trait ApplySchedulerDataTrait
      */
     protected function applySchedulerDataToElement(Request $request, ElementInterface $element)
     {
-        /** @var AdminController $this */
+        /** @var AdminAbstractController $this */
 
         // scheduled tasks
         if ($request->get('scheduler')) {

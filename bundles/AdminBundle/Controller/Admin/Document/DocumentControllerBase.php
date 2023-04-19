@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -37,7 +37,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
+abstract class DocumentControllerBase extends AdminAbstractController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
