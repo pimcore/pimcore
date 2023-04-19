@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  *
@@ -792,10 +793,11 @@ class ElementController extends AdminAbstractController
      * @Route("/element/get-predefined-properties", name="pimcore_admin_element_getpredefinedproperties", methods={"GET"})
      *
      * @param Request $request
+     * @param TranslatorInterface $translator
      *
      * @return JsonResponse
      */
-    public function getPredefinedPropertiesAction(Request $request)
+    public function getPredefinedPropertiesAction(Request $request, TranslatorInterface $translator)
     {
         $properties = [];
         $type = $request->get('elementType');
@@ -808,7 +810,7 @@ class ElementController extends AdminAbstractController
                 if (!str_contains($predefined->getCtype(), $type)) {
                     return false;
                 }
-                if ($query && stripos($this->trans($predefined->getName()), $query) === false) {
+                if ($query && stripos($translator->trans($predefined->getName(), [], 'admin'), $query) === false) {
                     return false;
                 }
 

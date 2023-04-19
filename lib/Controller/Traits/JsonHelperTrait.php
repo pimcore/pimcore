@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -28,7 +29,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 trait JsonHelperTrait
 {
-    protected SerializerInterface $serializer;
+    protected Serializer $serializer;
 
     protected PimcoreSerializer $pimcoreSerializer;
 
@@ -45,9 +46,9 @@ trait JsonHelperTrait
     /**
      * @required
      *
-     * @param SerializerInterface $serializer
+     * @param Serializer $serializer
      */
-    public function setSerializer(SerializerInterface $serializer): void
+    public function setSerializer(Serializer $serializer): void
     {
         $this->serializer = $serializer;
     }
@@ -64,7 +65,7 @@ trait JsonHelperTrait
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      *
      */
-    protected function jsonResponse($data, $status = 200, $headers = [], $context = [], bool $usePimcoreSerializer = true)
+    public function jsonResponse($data, $status = 200, $headers = [], $context = [], bool $usePimcoreSerializer = true)
     {
         $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $usePimcoreSerializer);
 
@@ -81,7 +82,7 @@ trait JsonHelperTrait
      *
      * @return string
      */
-    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
+    public function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
     {
         /** @var SerializerInterface $serializer */
         $serializer = null;
@@ -107,7 +108,7 @@ trait JsonHelperTrait
      *
      * @return mixed
      */
-    protected function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
+    public function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
     {
         /** @var SerializerInterface|DecoderInterface $serializer */
         $serializer = null;

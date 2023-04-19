@@ -35,6 +35,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @deprecated will be removed in Pimcore 11
@@ -43,15 +44,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ExtensionManagerController extends AdminAbstractController implements KernelControllerEventInterface
 {
-    /**
-     * @var AreabrickManagerInterface
-     */
-    private $areabrickManager;
 
     public function __construct(
-        AreabrickManagerInterface $areabrickManager
+        protected AreabrickManagerInterface $areabrickManager,
+        protected PimcoreBundleInterface $bundleManager,
+        protected TranslatorInterface $translator
     ) {
-        $this->areabrickManager = $areabrickManager;
     }
 
     /**
@@ -462,8 +460,8 @@ class ExtensionManagerController extends AdminAbstractController implements Kern
         return [
             'id' => $brick->getId(),
             'type' => 'areabrick',
-            'name' => $this->trans($brick->getName()),
-            'description' => $this->trans($brick->getDescription()),
+            'name' => $this->translator->trans($brick->getName(), [], 'admin'),
+            'description' => $this->translator->trans($brick->getDescription(), [], 'admin'),
             'installable' => false,
             'uninstallable' => false,
             'installed' => true,

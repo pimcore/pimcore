@@ -1136,17 +1136,18 @@ class SettingsController extends AdminAbstractController
      * @Route("/thumbnail-adapter-check", name="pimcore_admin_settings_thumbnailadaptercheck", methods={"GET"})
      *
      * @param Request $request
+     * @param TranslatorInterface $translator
      *
      * @return Response
      */
-    public function thumbnailAdapterCheckAction(Request $request)
+    public function thumbnailAdapterCheckAction(Request $request, TranslatorInterface $translator)
     {
         $content = '';
 
         $instance = \Pimcore\Image::getInstance();
         if ($instance instanceof \Pimcore\Image\Adapter\GD) {
             $content = '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-                $this->trans('important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality') .
+                $translator->trans('important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality', [], 'admin') .
                 '</span>';
         }
 
@@ -1367,16 +1368,17 @@ class SettingsController extends AdminAbstractController
      * @Route("/video-thumbnail-adapter-check", name="pimcore_admin_settings_videothumbnailadaptercheck", methods={"GET"})
      *
      * @param Request $request
+     * @param TranslatorInterface $translator
      *
      * @return Response
      */
-    public function videoThumbnailAdapterCheckAction(Request $request)
+    public function videoThumbnailAdapterCheckAction(Request $request, TranslatorInterface $translator)
     {
         $content = '';
 
         if (!\Pimcore\Video::isAvailable()) {
             $content = '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-                $this->trans('php_cli_binary_and_or_ffmpeg_binary_setting_is_missing') .
+                $translator->trans('php_cli_binary_and_or_ffmpeg_binary_setting_is_missing', [], 'admin') .
                 '</span>';
         }
 

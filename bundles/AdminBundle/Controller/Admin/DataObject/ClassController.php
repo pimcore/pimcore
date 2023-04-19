@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/class", name="pimcore_admin_dataobject_class_")
@@ -2043,10 +2044,11 @@ class ClassController extends AdminAbstractController implements KernelControlle
      * @Route("/video-supported-types", name="videosupportedTypestypes")
      *
      * @param Request $request
+     * @param TranslatorInterface $translator
      *
      * @return Response
      */
-    public function videoAllowedTypesAction(Request $request)
+    public function videoAllowedTypesAction(Request $request, TranslatorInterface $translator)
     {
         $videoDef = new DataObject\ClassDefinition\Data\Video();
         $res = [];
@@ -2054,7 +2056,7 @@ class ClassController extends AdminAbstractController implements KernelControlle
         foreach ($videoDef->getSupportedTypes() as $type) {
             $res[] = [
                 'key' => $type,
-                'value' => $this->trans($type),
+                'value' => $translator->trans($type, [], 'admin'),
             ];
         }
 
