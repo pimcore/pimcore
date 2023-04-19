@@ -26,9 +26,7 @@ pimcore.element.helpers.gridColumnConfig = {
             allowBlank: false,
             value: this.settings.gridConfigName ? this.settings.gridConfigName : defaultName,
             listeners: {
-                change: function (textField, newValue, oldValue) {
-                    this.setValue(pimcore.helpers.getStringWithoutControlChars(newValue));
-                }
+                change: pimcore.helpers.htmlEncodeTextField
             }
         });
 
@@ -131,9 +129,9 @@ pimcore.element.helpers.gridColumnConfig = {
         for (var i = 0; i < list.length; i++) {
             var disabled = false;
             var config = list[i];
-            let text = pimcore.helpers.getStringWithoutControlChars(config["name"]);
+            let text = `<span>${Ext.util.Format.htmlEncode(config["name"])}</span>`;
             if (config.id == this.settings.gridConfigId) {
-                text = pimcore.helpers.getStringWithoutControlChars(this.settings.gridConfigName);
+                text = Ext.util.Format.htmlEncode(this.settings.gridConfigName);
                 if (!onlyConfigs) {
                     text = "<b>" + text + "</b>";
                     disabled = true;

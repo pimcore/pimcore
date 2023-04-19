@@ -346,14 +346,14 @@ class DataObjectHelperController extends AdminController
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
                 $gridConfig = json_decode($gridConfig, true);
-                $gridConfigName = $savedGridConfig->getName();
+                $gridConfigName = SecurityHelper::convertHtmlSpecialChars($savedGridConfig->getName());
                 $owner = $savedGridConfig->getOwnerId();
                 $ownerObject = User::getById($owner);
                 if ($ownerObject instanceof User) {
                     $owner = $ownerObject->getName();
                 }
                 $modificationDate = $savedGridConfig->getModificationDate();
-                $gridConfigDescription = $savedGridConfig->getDescription();
+                $gridConfigDescription = SecurityHelper::convertHtmlSpecialChars($savedGridConfig->getDescription());
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
                 $setAsFavourite = $savedGridConfig->isSetAsFavourite();
             }
@@ -532,8 +532,8 @@ class DataObjectHelperController extends AdminController
         $sharedConfigs = $class ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName ?? null;
-        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['gridConfigName'] = SecurityHelper::convertHtmlSpecialChars($gridConfigName ?? null);
+        $settings['gridConfigDescription'] = SecurityHelper::convertHtmlSpecialChars($gridConfigDescription ?? null);
         $settings['owner'] = $owner ?? null;
         $settings['modificationDate'] = $modificationDate ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
@@ -944,8 +944,8 @@ class DataObjectHelperController extends AdminController
                 }
 
                 if ($metadata) {
-                    $gridConfig->setName(SecurityHelper::getStringWithoutControlChars($metadata['gridConfigName']));
-                    $gridConfig->setDescription(SecurityHelper::getStringWithoutControlChars($metadata['gridConfigDescription']));
+                    $gridConfig->setName(SecurityHelper::convertHtmlSpecialChars($metadata['gridConfigName']));
+                    $gridConfig->setDescription(SecurityHelper::convertHtmlSpecialChars($metadata['gridConfigDescription']));
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                     $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
                 }
@@ -961,8 +961,8 @@ class DataObjectHelperController extends AdminController
 
                 $settings = $this->getShareSettings($gridConfig->getId());
                 $settings['gridConfigId'] = (int)$gridConfig->getId();
-                $settings['gridConfigName'] = SecurityHelper::getStringWithoutControlChars($gridConfig->getName());
-                $settings['gridConfigDescription'] = SecurityHelper::getStringWithoutControlChars($gridConfig->getDescription());
+                $settings['gridConfigName'] = SecurityHelper::convertHtmlSpecialChars($gridConfig->getName());
+                $settings['gridConfigDescription'] = SecurityHelper::convertHtmlSpecialChars($gridConfig->getDescription());
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
                 $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
                 $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin();
