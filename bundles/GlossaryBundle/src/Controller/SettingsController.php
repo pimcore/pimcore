@@ -54,7 +54,7 @@ class SettingsController extends UserAwareController
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
-                return $this->adminJson(['success' => true, 'data' => []]);
+                return $this->jsonResponse(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') === 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -79,7 +79,7 @@ class SettingsController extends UserAwareController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary, 'success' => true]);
+                return $this->jsonResponse(['data' => $glossary, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -105,7 +105,7 @@ class SettingsController extends UserAwareController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of glossaries
@@ -139,9 +139,9 @@ class SettingsController extends UserAwareController
                 $glossaries[] = $glossary->getObjectVars();
             }
 
-            return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->jsonResponse(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(['success' => false]);
+        return $this->jsonResponse(['success' => false]);
     }
 }

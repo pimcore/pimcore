@@ -37,6 +37,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TranslationController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     private const PERMISSION = 'word_export';
 
     /**

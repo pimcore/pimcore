@@ -58,7 +58,7 @@ class RedirectsController extends UserAwareController
 
         if ($request->get('data')) {
             if ($request->get('xaction') === 'destroy') {
-                $data = $this->encodeJson($request->get('data'));
+                $data = $this->decodeJson($request->get('data'));
 
                 $id = $data['id'] ?? null;
                 if ($id) {

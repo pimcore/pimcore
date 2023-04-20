@@ -350,7 +350,7 @@ class SearchController extends UserAwareController
         $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::SEARCH_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
     }
 
     /**
@@ -510,7 +510,7 @@ class SearchController extends UserAwareController
 
         $result = ['data' => $elements, 'success' => true];
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
     }
 
     /**
@@ -564,7 +564,7 @@ class SearchController extends UserAwareController
             }
         }
 
-        return $this->adminJson($data);
+        return $this->jsonResponse($data);
     }
 
     protected function shortenPath(string $path): string

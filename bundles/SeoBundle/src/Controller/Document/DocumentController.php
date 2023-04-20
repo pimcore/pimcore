@@ -15,9 +15,10 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -32,9 +33,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class DocumentController extends ElementControllerBase
+class DocumentController extends UserAwareController
 {
     use DocumentTreeConfigTrait;
+    use JsonHelperTrait;
 
     private const DOCUMENT_ROOT_ID = 1;
 
@@ -57,7 +59,7 @@ class DocumentController extends ElementControllerBase
 
             $nodeConfig = $this->getSeoNodeConfig($root);
 
-            return $this->adminJson($nodeConfig);
+            return $this->jsonResponse($nodeConfig);
         }
 
         throw $this->createAccessDeniedHttpException();
@@ -132,7 +134,7 @@ class DocumentController extends ElementControllerBase
         $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->adminJson($result['data']);
+        return $this->jsonResponse($result['data']);
     }
 
     private function getSeoNodeConfig(Document $document): array

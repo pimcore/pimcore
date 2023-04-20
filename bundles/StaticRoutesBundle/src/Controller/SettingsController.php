@@ -59,7 +59,7 @@ class SettingsController extends UserAwareController
                 }
                 $route->delete();
 
-                return $this->adminJson(['success' => true, 'data' => []]);
+                return $this->jsonResponse(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 // save routes
                 $route = Staticroute::getById($data['id']);
@@ -71,7 +71,7 @@ class SettingsController extends UserAwareController
 
                 $route->save();
 
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $route->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 if (!(new Staticroute())->isWriteable()) {
                     throw new ConfigWriteException();
@@ -87,7 +87,7 @@ class SettingsController extends UserAwareController
                 $responseData = $route->getObjectVars();
                 $responseData['writeable'] = $route->isWriteable();
 
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
+                return $this->jsonResponse(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -119,9 +119,9 @@ class SettingsController extends UserAwareController
                 $routes[] = $route;
             }
 
-            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->jsonResponse(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(['success' => false]);
+        return $this->jsonResponse(['success' => false]);
     }
 }
