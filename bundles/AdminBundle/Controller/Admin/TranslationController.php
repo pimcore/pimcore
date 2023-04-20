@@ -650,7 +650,7 @@ class TranslationController extends AdminController
                 }
 
                 if ($field && $value) {
-                    $condition = $field . ' ' . $operator . ' ' . $db->quote($value);
+                    $condition = $db->quoteIdentifier($field) . ' ' . $operator . ' ' . $db->quote($value);
 
                     if ($languageMode) {
                         $conditions[$fieldname] = $condition;
