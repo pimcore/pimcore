@@ -594,7 +594,7 @@ pimcore.asset.tree = Class.create({
                             });
                         }
 
-                        if (perspectiveCfg.inTreeContextMenu("asset.add.importFromServer")) {
+                        if (perspectiveCfg.inTreeContextMenu("asset.add.importFromServer") && pimcore.currentuser.admin) {
                             menuItems.push({
                                 text: t("import_from_server"),
                                 handler: this.importFromServer.bind(this, tree, record),
