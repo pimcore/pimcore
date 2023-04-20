@@ -47,8 +47,7 @@ at AWS S3), you have multiple ways to do so:
 * Define an environment variable named after the constant. When defining a constant, Pimcore will look if an env variable
   with the same name is defined and use that instead of the default value.
 * Define an environment variable in a `/.env` file which will be automatically loaded through the [Symfony DotEnv](https://github.com/symfony/dotenv)
-  component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
-
+  component if it exists. Environment variables defined here will have the same effect as "real" environment variables. See the [Environment-Specific Configurations](../21_Deployment/03_Configuration_Environments.md) section for more details.
 
 The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
 [`constants.example.php`](https://github.com/pimcore/skeleton/blob/11.x/config/pimcore/constants.example.php).
