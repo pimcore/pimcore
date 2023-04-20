@@ -17,4 +17,4 @@ if [ ${PIMCORE_STORAGE:-local} = "minio" ]; then
     composer require -n --no-update league/flysystem-aws-s3-v3
 fi
 
-composer require -n --no-update pimcore/admin-ui-classic-bundle:"@dev"
+composer require -n --no-update pimcore/admin-ui-classic-bundle:"dev-decouple_from_core as 1.0.0"
