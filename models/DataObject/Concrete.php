@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Bundle\AdminBundle\System\Config;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -276,7 +276,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            $objectsConfig = Config::get()['objects'];
+            $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])

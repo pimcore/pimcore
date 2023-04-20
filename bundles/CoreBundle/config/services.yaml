@@ -165,3 +165,8 @@ services:
     # user-checker checking pimcore users for validity
     Pimcore\Security\User\UserChecker: ~
 
+    #
+    # System Settings Services
+    #
+    Pimcore\SystemSettingsConfig:
+        public: true

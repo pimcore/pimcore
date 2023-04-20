@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Pimcore\Bundle\AdminBundle\System\Config;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
@@ -311,7 +311,7 @@ final class Translation extends AbstractModel
             }
 
             if (!in_array($language, Tool\Admin::getLanguages())) {
-                $config = Config::get()['general'];
+                $config = SystemSettingsConfig::get()['general'];
                 $language = $config['language'] ?? null;
             }
         }
