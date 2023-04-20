@@ -445,7 +445,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
-        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['nodes'] as $node) {
@@ -609,7 +608,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             new GridHelperService()
         );
 
-        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {

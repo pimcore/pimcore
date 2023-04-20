@@ -52,7 +52,7 @@ class UserProvider implements UserProviderInterface
         return new User($pimcoreUser);
     }
 
-    public function supportsClass($class): bool
+    public function supportsClass(string $class): bool
     {
         return $class === User::class;
     }
