@@ -32,6 +32,7 @@ use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\User;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Pimcore\Version;
@@ -355,6 +356,13 @@ class DataObjectHelperController extends AdminController
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
                 $setAsFavourite = $savedGridConfig->isSetAsFavourite();
+
+                foreach($gridConfig['columns'] as &$column) {
+                    if (array_key_exists('isOperator', $column) && $column['isOperator']) {
+                        $colAttributes = &$column['fieldConfig']['attributes'];
+                        SecurityHelper::convertHtmlSpecialCharsArrayKeys($colAttributes, ['label', 'attribute', 'param1']);
+                    }
+                }
             }
         }
 

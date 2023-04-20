@@ -25,4 +25,13 @@ class SecurityHelper
 
         return null;
     }
+
+    public static function convertHtmlSpecialCharsArrayKeys(array &$array, array $keys): void
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $array[$key] = self::convertHtmlSpecialChars($array[$key]);
+            }
+        }
+    }
 }
