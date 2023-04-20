@@ -1,8 +1,14 @@
 # Custom Reports
+:::caution
+
+To use this feature, please enable the `PimcoreCustomReportsBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreCustomReportsBundle`
+
+:::
 
 Custom Reports is a report engine directly integrated into Pimcore. With Custom Reports it is possible to create tabular
 or chart reports (or both) with further filtering and export functionality.
-To use this feature please enable `PimcoreCustomReportsBundle` in your `bundles.php` file.
 
 ![Custom Reports](../img/custom-reports.png)
 

@@ -1,4 +1,11 @@
 # Glossary
+:::caution
+
+To use this feature, please enable the `PimcoreGlossaryBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreGlossaryBundle`
+
+:::
 
 ## General
 
@@ -8,12 +15,6 @@ In a special editor you can define your terms which are replaced automatically w
 But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations.
 
 ## How it Works
-
-Make sure the bundle is enabled via ```config/bundles.php``` and installed.
-
-```console
-bin/console  pimcore:bundle:install PimcoreGlossaryBundle
-```
 
 <div class="inline-imgs">
 
