@@ -2459,6 +2459,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function importServerFilesAction(Request $request)
     {
+        if(!Tool\Admin::getCurrentUser()->isAdmin()) {
+            throw $this->createAccessDeniedException('Permission denied. You don\'t have the rights to import files from the server!');
+        }
+
         $assetFolder = Asset::getById((int) $request->get('parentId'));
         if (!$assetFolder) {
             throw $this->createNotFoundException('Parent asset not found');
