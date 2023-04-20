@@ -20,12 +20,5 @@ use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 
 interface QuantityValueConverterInterface
 {
-    /**
-     * @template T of AbstractQuantityValue
-     *
-     * @param T $quantityValue
-     *
-     * @return T
-     */
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue;
 }

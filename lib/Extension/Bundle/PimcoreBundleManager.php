@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -490,30 +489,19 @@ class PimcoreBundleManager
 
         $result = [];
         foreach ($this->getActiveBundles() as $bundle) {
-            $paths = $bundle->$getter();
+            if ($bundle instanceof PimcoreBundleAdminSupportInterface) {
+                $paths = $bundle->$getter();
 
-            if (!empty($paths) && !$bundle instanceof PimcoreBundleAdminSupportInterface) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6',
-                    sprintf(
-                        'Calling %s::%s without implementing the %s is deprecated and won\'t be possible in Pimcore 11.',
-                        get_class($bundle),
-                        $getter,
-                        PimcoreBundleAdminSupportInterface::class
-                    )
-                );
-            }
-
-            foreach ($paths as $path) {
-                if ($path instanceof RouteReferenceInterface) {
-                    $result[] = $this->router->generate(
-                        $path->getRoute(),
-                        $path->getParameters(),
-                        $path->getType()
-                    );
-                } else {
-                    $result[] = $path;
+                foreach ($paths as $path) {
+                    if ($path instanceof RouteReferenceInterface) {
+                        $result[] = $this->router->generate(
+                            $path->getRoute(),
+                            $path->getParameters(),
+                            $path->getType()
+                        );
+                    } else {
+                        $result[] = $path;
+                    }
                 }
             }
         }

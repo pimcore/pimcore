@@ -108,7 +108,6 @@ On Debian based systems, you can use the following command to install all requir
 - optipng
 - jpegoptim
 - exiftool
-- [facedetect](https://github.com/wavexx/facedetect) 
 - [Graphviz](https://www.graphviz.org/)
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
@@ -122,3 +121,15 @@ Pimcore supports always the latest 2 versions of all 4 major desktop browsers at
 - Apple Safari
 
 *Note:* Microsoft Internet Explorer 11 won`t be supported from Pimcore 6.0.0 or higher. More details **[here](https://github.com/pimcore/pimcore/issues/2989)**.
+
+### System Requirements Check
+
+A tool that gives you an overview of required and optional system requirements for running Pimcore Application.
+
+You can check via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
+
+Or via following CLI command:
+
+```bash
+bin/console pimcore:system:requirements:check
+```

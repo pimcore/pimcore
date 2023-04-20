@@ -783,12 +783,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
+     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        parent::synchronizeWithMasterDefinition($masterDefinition);
-        $this->columns = $masterDefinition->columns;
+        parent::synchronizeWithMainDefinition($mainDefinition);
+        $this->columns = $mainDefinition->columns;
     }
 
     public function resolveDependencies(mixed $data): array
@@ -983,7 +983,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
-        $this->optimizedAdminLoading = (bool) $optimizedAdminLoading;
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
     public function getAllowMultipleAssignments(): bool
@@ -1005,7 +1005,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
-        $this->enableBatchEdit = (bool) $enableBatchEdit;
+        $this->enableBatchEdit = $enableBatchEdit;
     }
 
     public function getPhpdocInputType(): ?string

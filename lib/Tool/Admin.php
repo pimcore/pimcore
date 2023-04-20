@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -29,23 +29,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Admin
 {
-    /**
-     * Finds the translation file for a given language
-     *
-     * @static
-     *
-     * @param string $language
-     *
-     * @return string
-     */
-    public static function getLanguageFile(string $language): string
-    {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
-        $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
-
-        return $languageFile;
-    }
-
     /**
      * finds installed languages
      *
@@ -253,14 +236,6 @@ class Admin
         return \Pimcore::getContainer()
             ->get(TokenStorageUserResolver::class)
             ->getUser();
-    }
-
-    /**
-     * @return true if in EXT JS5 mode
-     */
-    public static function isExtJS6(): bool
-    {
-        return true;
     }
 
     public static function reorderWebsiteLanguages(User $user, array|string $languages, bool $returnLanguageArray = false): array|string

@@ -32,7 +32,24 @@ apt-get install libreoffice libreoffice-script-provider-python libreoffice-math 
 ```
 
 ### Chromium (Chrome Headless)
+
+It's possible to directly install and use the Chromium binary locally or in Docker Container and access to it via WebSocket connection 
+
+#### Locally
 Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
+
+#### Docker
+Add a new service as 
+```dockerfile
+    chrome:
+        image: browserless/chrome
+        ports:
+            - "3000:3000"
+```
+and set accordingly
+- config `pimcore.chromium.uri` value , eg. `ws://chrome:3000/` 
+- web2print settings hostUrl as the Docker web server service eg. `http://nginx:80` 
+
 
 ### Gotenberg
 
@@ -85,14 +102,6 @@ Install graphviz for [Workflow](../../07_Workflow_Management/README.md)
 
 ```bash
 apt-get install graphviz
-```
-
-## Facedetect
-
-Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
-
-```bash
-apt-get install facedetect
 ```
 
 

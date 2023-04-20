@@ -26,6 +26,7 @@ env:
     APP_ENV: test
     PIMCORE_TEST: 1
     PIMCORE_STORAGE: 'local'
+    COMPOSER_ROOT_VERSION: "11.x-dev"
 
 permissions:
   contents: read
@@ -57,9 +58,6 @@ jobs:
             - name: "Setup Pimcore environment"
               run: |
                   .github/ci/scripts/setup-pimcore-environment.sh
-
-            - name: "Copy models"
-              run: "cp -rv .github/ci/files/var ."
 
             - name: "Set Symfony version constraint in composer.json"
               env:

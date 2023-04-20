@@ -1,3 +1,0 @@
-{% if call is defined and call is not empty %}
-    dataLayer.push( {{ call|json_encode|raw }});
-{% endif %}

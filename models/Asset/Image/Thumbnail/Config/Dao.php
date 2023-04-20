@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -32,17 +31,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-            $config,
-            self::CONFIG_KEY,
-            'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
-            'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'
-        );
+        $storageConfig = $config['config_location'][self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
-            'storageDirectory' => $storageConfig,
+            'storageConfig' => $storageConfig,
         ]);
     }
 

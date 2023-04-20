@@ -15,9 +15,9 @@ declare(strict_types=1);
  */
 
 use Pimcore\Cache;
-use Pimcore\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -28,11 +28,9 @@ class Pimcore
 
     private static ?KernelInterface $kernel = null;
 
-    private static \Composer\Autoload\ClassLoader $autoloader;
-
     public static function inDebugMode(): bool
     {
-        return (bool) self::getKernel()->isDebug();
+        return self::getKernel()->isDebug();
     }
 
     public static function inDevMode(): bool
@@ -169,26 +167,6 @@ class Pimcore
     }
 
     /**
-     * @return \Composer\Autoload\ClassLoader
-     *
-     * @internal
-     */
-    public static function getAutoloader(): \Composer\Autoload\ClassLoader
-    {
-        return self::$autoloader;
-    }
-
-    /**
-     * @param \Composer\Autoload\ClassLoader $autoloader
-     *
-     * @internal
-     */
-    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader): void
-    {
-        self::$autoloader = $autoloader;
-    }
-
-    /**
      * Forces a garbage collection.
      *
      * @static
@@ -292,7 +270,8 @@ class Pimcore
             }
 
             if (!file_exists($requestLogFile)) {
-                File::put($requestLogFile, '');
+                $filesystem = new Filesystem();
+                $filesystem->dumpFile($requestLogFile, '');
             }
 
             $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);

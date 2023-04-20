@@ -22,7 +22,6 @@ use Pimcore\Event\VersionEvents;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
@@ -290,9 +289,6 @@ final class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
-            // this makes it possible to restore data object versions from older Pimcore versions
-            @class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
-
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
             \Pimcore::collectGarbage();
@@ -362,28 +358,28 @@ final class Version extends AbstractModel
 
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
     public function setNote(string $note): static
     {
-        $this->note = (string) $note;
+        $this->note = $note;
 
         return $this;
     }
@@ -423,7 +419,7 @@ final class Version extends AbstractModel
 
     public function setSerialized(bool $serialized): static
     {
-        $this->serialized = (bool) $serialized;
+        $this->serialized = $serialized;
 
         return $this;
     }
@@ -435,7 +431,7 @@ final class Version extends AbstractModel
 
     public function setCtype(string $ctype): static
     {
-        $this->ctype = (string) $ctype;
+        $this->ctype = $ctype;
 
         return $this;
     }
@@ -464,7 +460,7 @@ final class Version extends AbstractModel
 
     public function setPublic(bool $public): static
     {
-        $this->public = (bool) $public;
+        $this->public = $public;
 
         return $this;
     }
@@ -476,7 +472,7 @@ final class Version extends AbstractModel
 
     public function setVersionCount(int $versionCount): void
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
     }
 
     public function getBinaryFileHash(): ?string
@@ -501,7 +497,7 @@ final class Version extends AbstractModel
 
     public function getGenerateStackTrace(): bool
     {
-        return (bool) $this->generateStackTrace;
+        return $this->generateStackTrace;
     }
 
     public function setGenerateStackTrace(bool $generateStackTrace): void

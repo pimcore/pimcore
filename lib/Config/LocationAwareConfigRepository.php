@@ -16,10 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Config;
-use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
@@ -32,55 +36,54 @@ class LocationAwareConfigRepository
 
     public const LOCATION_DISABLED = 'disabled';
 
+    public const READ_TARGET = 'read_target';
+
+    public const WRITE_TARGET = 'write_target';
+
+    public const CONFIG_LOCATION = 'config_location';
+
+    public const TYPE = 'type';
+
+    public const OPTIONS = 'options';
+
+    public const DIRECTORY = 'directory';
+
     protected array $containerConfig = [];
 
     protected ?string $settingsStoreScope = null;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    protected ?string $storageDirectory = null;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    protected ?string $writeTargetEnvVariableName = null;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
     protected ?array $storageConfig = null;
 
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
-        string|array|null $storageDirectory,
-        ?string $writeTargetEnvVariableName = null,
-        ?string $defaultWriteLocation = null
+        array $storageConfig,
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
-        $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
-        $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
-        if (is_string($storageDirectory)) {
-            $this->storageDirectory = rtrim($storageDirectory, '/\\');
-        } elseif (is_array($storageDirectory)) {
-            $this->storageConfig = $storageDirectory;
-        }
+        $this->storageConfig = $storageConfig;
     }
 
     public function loadConfigByKey(string $key): array
     {
+        $data = null;
         $dataSource = null;
 
-        // try to load from container config
-        $data = $this->getDataFromContainerConfig($key, $dataSource);
+        $loadType = $this->getReadTargets()[0] ?? null;
+        if($loadType === null) {
+            // try to load from container config
+            $data = $this->getDataFromContainerConfig($key, $dataSource);
 
-        // try to load from SettingsStore
-        if (!$data) {
-            $data = $this->getDataFromSettingsStore($key, $dataSource);
+            // try to load from SettingsStore
+            if (!$data) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
+        } else {
+            if($loadType === self::LOCATION_SYMFONY_CONFIG) {
+                $data = $this->getDataFromContainerConfig($key, $dataSource);
+            } elseif ($loadType === self::LOCATION_SETTINGS_STORE) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
         }
 
         return [
@@ -129,6 +132,8 @@ class LocationAwareConfigRepository
             return false;
         } elseif ($dataSource === self::LOCATION_SYMFONY_CONFIG && !file_exists($this->getVarConfigFile($key))) {
             return false;
+        } elseif ($dataSource && $dataSource !== $writeTarget) {
+            return false;
         }
 
         return true;
@@ -141,18 +146,28 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        //TODO remove in Pimcore 11
-        $writeLocation = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
-
-        if ($writeLocation === null) {
-            $writeLocation = $this->storageConfig['target'] ?? $this->defaultWriteLocation;
-        }
+        $writeLocation = $this->storageConfig[self::WRITE_TARGET][self::TYPE];
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
         }
 
         return $writeLocation;
+    }
+
+    public function getReadTargets(): array
+    {
+        if (!isset($this->storageConfig[self::READ_TARGET])) {
+            return [];
+        }
+
+        $readLocation = $this->storageConfig[self::READ_TARGET][self::TYPE];
+
+        if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
+            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
+        }
+
+        return $readLocation ? [$readLocation] : [];
     }
 
     /**
@@ -186,7 +201,8 @@ class LocationAwareConfigRepository
 
         $this->searchAndReplaceMissingParameters($data);
 
-        File::put($yamlFilename, Yaml::dump($data, 50));
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($yamlFilename, Yaml::dump($data, 50));
 
         $this->invalidateConfigCache();
     }
@@ -222,7 +238,7 @@ class LocationAwareConfigRepository
 
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->storageDirectory ?? $this->storageConfig['options']['directory'], '/\\');
+        $directory = rtrim($this->storageConfig[self::WRITE_TARGET][self::OPTIONS][self::DIRECTORY], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -266,38 +282,37 @@ class LocationAwareConfigRepository
         }
     }
 
-    /**
-     * @TODO to be removed in Pimcore 11
-     *
-     * @internal
-     *
-     * @param array $containerConfig
-     * @param string $configId
-     *
-     * @return array
-     */
-    public static function getStorageConfigurationCompatibilityLayer(
-        array $containerConfig,
-        string $configId,
-        string $storagePathEnvVarName,
-        string $writeTargetEnvVarName,
-    ): array {
-        $storageConfig = $containerConfig['config_location'][$configId];
+    public static function loadSymfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
+    {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
 
-        if (isset($_SERVER[$writeTargetEnvVarName])) {
-            trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting write targets (%s) using environment variables is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTargetEnvVarName));
+        $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::READ_TARGET] ?? null;
+        $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::WRITE_TARGET];
 
-            $storageConfig['target'] = $_SERVER[$writeTargetEnvVarName];
+        $configDir = null;
+        if($readTargetConf !== null) {
+            if ($readTargetConf[self::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                ($readTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+            ) {
+                return;
+            }
+
+            $configDir = $readTargetConf[self::OPTIONS][self::DIRECTORY];
         }
 
-        if (isset($_SERVER[$storagePathEnvVarName])) {
-            trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting storage directory (%s) in the environment variables file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storagePathEnvVarName));
-
-            $storageConfig['options']['directory'] = $_SERVER[$storagePathEnvVarName];
+        if ($configDir === null) {
+            $configDir = $writeTargetConf[self::OPTIONS][self::DIRECTORY];
         }
 
-        return $storageConfig;
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
+        }
     }
 }

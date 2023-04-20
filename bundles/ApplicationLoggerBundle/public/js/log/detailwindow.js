@@ -60,7 +60,7 @@ pimcore.bundle.applicationlogger.log.detailwindow = Class.create({
 			fieldLabel: t('log_timestamp'),
 			name: "timestamp",
             readOnly: true,
-			value: this.data.timestamp,
+			value: Ext.Date.format(new Date(this.data.timestamp * 1000), "Y-m-d H:i:s"),
 			width: 540
 		});
 		items.push({

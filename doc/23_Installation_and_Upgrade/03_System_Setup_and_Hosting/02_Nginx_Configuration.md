@@ -123,7 +123,7 @@ server {
     }
 
     # Assets
-    # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
+    # Still use a allowlist approach to prevent each and every missing asset to go through the PHP Engine.
     # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
     # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
     location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
@@ -320,7 +320,7 @@ server {
 
     # Feature Policy && Permissions Policy
     # Note that Feature Policy is to be replaced with Permissions Policy
-    # See W3C Document regarding setup: https://github.com/w3c/webappsec-permissions-policy/blob/master/permissions-policy-explainer.md
+    # See W3C Document regarding setup: https://github.com/w3c/webappsec-permissions-policy/blob/main/permissions-policy-explainer.md
     # 
     # Please check how to properly evaluate, define and include to your needs
     # Thanks to: https://fearby.com/article/set-up-feature-policy-referrer-policy-and-content-security-policy-headers-in-nginx/
@@ -409,7 +409,7 @@ server {
     }
 
     # Assets
-    # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
+    # Still use a allowlist approach to prevent each and every missing asset to go through the PHP Engine.
     # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
     # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
     location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {

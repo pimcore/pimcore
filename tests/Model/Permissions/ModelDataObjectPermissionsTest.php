@@ -27,6 +27,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -564,6 +565,9 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
+            'getPimcoreUser' => function () use ($user) {
+                return $user;
+            },
             'adminJson' => function ($data) {
                 return new JsonResponse($data);
             },
@@ -575,7 +579,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
     /**
      * @param DataObject\AbstractObject $element
      * @param User $user
-     * @param array|null $expectedChildren When null,the master permission is disabled
+     * @param array|null $expectedChildren When null,the main permission is disabled
      *
      * @throws \ReflectionException
      */
@@ -596,7 +600,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             );
         } catch (\Exception $e) {
             if (is_null($expectedChildren)) {
-                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert master object permission');
+                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert main object permission');
 
                 return;
             }
@@ -907,6 +911,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }
@@ -1062,6 +1067,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpathList'];
         }

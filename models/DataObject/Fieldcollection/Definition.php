@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -35,6 +36,14 @@ class Definition extends Model\AbstractModel
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
     use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+
+    /**
+     * @var array
+     */
+    protected const FORBIDDEN_NAMES = [
+        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
+        'object', 'interface', 'default',
+    ];
 
     /**
      * {@inheritdoc}
@@ -125,7 +134,7 @@ class Definition extends Model\AbstractModel
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
@@ -197,7 +206,8 @@ class Definition extends Model\AbstractModel
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($definitionFile, $data);
         }
 
         \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
@@ -281,5 +291,10 @@ class Definition extends Model\AbstractModel
         $cd .= ' */';
 
         return $cd;
+    }
+
+    public function isForbiddenName(): bool
+    {
+        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
     }
 }

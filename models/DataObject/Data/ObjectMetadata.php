@@ -200,9 +200,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         }
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $finalVars = [];

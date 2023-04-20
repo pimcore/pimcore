@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -275,7 +276,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
+            $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
@@ -447,7 +448,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     public function isPublished(): bool
     {
-        return (bool) $this->getPublished();
+        return $this->getPublished();
     }
 
     /**

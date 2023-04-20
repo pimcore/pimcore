@@ -33,7 +33,7 @@ class Composer
     protected static array $options = [
         'bin-dir' => 'bin',
         'public-dir' => 'public',
-        'symfony-assets-install' => 'relative',
+        'symfony-assets-install' => 'copy',
         'symfony-cache-warmup' => false,
     ];
 
@@ -168,7 +168,7 @@ class Composer
             $arguments = $phpFinder->findArguments();
         }
 
-        if (!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
+        if(!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
             $paths = explode(PATH_SEPARATOR, $_SERVER['COMPOSER_ORIGINAL_INIS']);
             $ini = array_shift($paths);
         } else {
@@ -189,11 +189,11 @@ class Composer
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
-        if (!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
+        if(!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
             $options['symfony-assets-install'] = $_SERVER['SYMFONY_ASSETS_INSTALL'];
         }
 
-        if (!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
+        if(!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
             $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'];
         }
 

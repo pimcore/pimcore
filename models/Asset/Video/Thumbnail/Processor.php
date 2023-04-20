@@ -114,7 +114,7 @@ class Processor
 
         foreach ($formats as $format) {
             $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
-            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
+            $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
@@ -233,7 +233,11 @@ class Processor
                         continue;
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
-                    fclose($source);
+
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
+
                     unlink($converter->getDestinationFile());
 
                     if ($converter->getFormat() === 'mpd') {
@@ -245,11 +249,10 @@ class Processor
                             $storagePath = $parentPath.'/'.basename($steam);
                             $source = fopen($steam, 'rb');
                             Storage::get('thumbnail')->writeStream($storagePath, $source);
-                            fclose($source);
-                            unlink($steam);
 
-                            // set proper permissions
-                            @chmod($storagePath, File::getDefaultMode());
+                            if (is_resource($source)) {
+                                fclose($source);
+                            }
                         }
                     }
 

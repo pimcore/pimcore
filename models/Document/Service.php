@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\File;
 use Pimcore\Image\Chromium;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -32,6 +31,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -206,9 +206,9 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId(), true);
+            $new->setContentMainDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -381,15 +381,15 @@ class Service extends Model\Element\Service
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
                 $editables = $document->getEditables();
                 $changedEditables = [];
-                $contentMaster = $document->getContentMasterDocument();
-                if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterEditables = $contentMaster->getEditables();
-                    foreach ($contentMasterEditables as $contentMasterEditable) {
-                        if ($contentMasterEditable instanceof IdRewriterInterface) {
-                            $editable = clone $contentMasterEditable;
+                $contentMain = $document->getContentMainDocument();
+                if ($contentMain instanceof Document\PageSnippet) {
+                    $contentMainEditables = $contentMain->getEditables();
+                    foreach ($contentMainEditables as $contentMainEditable) {
+                        if ($contentMainEditable instanceof IdRewriterInterface) {
+                            $editable = clone $contentMainEditable;
                             $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMainEditable)) {
                                 $changedEditables[] = $editable;
                             }
                         }
@@ -584,6 +584,7 @@ class Service extends Model\Element\Service
      */
     public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
     {
+        $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
         if (!$doc) {
             return false;
@@ -599,7 +600,7 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        File::mkdir(dirname($file));
+        $filesystem->mkdir(dirname($file), 0775);
 
         if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();

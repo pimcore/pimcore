@@ -72,7 +72,7 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
 
         //create thumbnail
-        $thumbConfig->getPath(false);
+        $thumbConfig->getPath(['deferredAllowed' => false]);
 
         //recheck if thumbnail exists
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
@@ -85,6 +85,10 @@ class AssetThumbnailCacheTest extends TestCase
         //check if cache is cleared
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
+
+        //fetch config again as the asset checksum changed
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+        $pathReference = $thumbConfig->getPathReference(true);
 
         //load asset via public service controller
         $controller = new PublicServicesController();

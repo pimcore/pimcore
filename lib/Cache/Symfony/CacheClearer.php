@@ -29,7 +29,7 @@ class CacheClearer
 {
     private int $processTimeout;
 
-    private \Closure $runCallback;
+    private ?\Closure $runCallback = null;
 
     public function __construct(array $options = [])
     {

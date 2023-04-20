@@ -27,6 +27,7 @@ use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -105,6 +106,20 @@ class Document extends Element\AbstractElement
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
         return  array_keys($documentsConfig['type_definitions']['map']);
+    }
+
+    public static function getTypesConfiguration(): array
+    {
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+
+        // remove unused class value
+        return array_map(function ($item) {
+            if (key_exists('class', $item)) {
+                unset($item['class']);
+            }
+
+            return $item;
+        }, $documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -721,10 +736,10 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($mainRequest && ($masterDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
-                if ($masterDocument instanceof WrapperInterface) {
+            if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
+                if ($mainDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
-                    $hardlink = $masterDocument->getHardLinkSource();
+                    $hardlink = $mainDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
                     if ($hardlinkTarget) {
@@ -741,7 +756,7 @@ class Document extends Element\AbstractElement
             }
 
             if (!$link) {
-                $config = \Pimcore\Config::getSystemConfiguration('general');
+                $config = SystemSettingsConfig::get()['general'];
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
                 if ($request) {
@@ -772,7 +787,7 @@ class Document extends Element\AbstractElement
         }
 
         if ($mainRequest) {
-            // caching should only be done when master request is available as it is done for performance reasons
+            // caching should only be done when main request is available as it is done for performance reasons
             // of the web frontend, without a request object there's no need to cache anything
             // for details also see https://github.com/pimcore/pimcore/issues/5707
             $this->fullPathCache = $link;
@@ -840,7 +855,7 @@ class Document extends Element\AbstractElement
 
     public function setKey(string $key): static
     {
-        $this->key = (string)$key;
+        $this->key = $key;
 
         return $this;
     }
@@ -880,7 +895,7 @@ class Document extends Element\AbstractElement
      */
     public function setIndex(int $index): static
     {
-        $this->index = (int) $index;
+        $this->index = $index;
 
         return $this;
     }
@@ -911,7 +926,7 @@ class Document extends Element\AbstractElement
 
     public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
     public function setPublished(bool $published): static

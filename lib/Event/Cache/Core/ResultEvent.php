@@ -34,6 +34,6 @@ class ResultEvent extends Event
 
     public function setResult(bool $result): void
     {
-        $this->result = (bool)$result;
+        $this->result = $result;
     }
 }

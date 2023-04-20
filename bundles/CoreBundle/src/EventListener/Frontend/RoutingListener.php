@@ -23,7 +23,9 @@ use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +41,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+    use LoggerAwareTrait;
 
     public function __construct(
         protected RequestHelper $requestHelper,
@@ -181,9 +184,8 @@ class RoutingListener implements EventSubscriberInterface
 
             $url = $request->getScheme() . '://' . $hostRedirect . $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
-            // TODO use symfony logger service
             // log all redirects to the redirect log
-            \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . ' -> ' . $url);
+            $this->logger->info(Tool::getAnonymizedClientIp(), ['Host-Redirect Source: ' . $request->getRequestUri() . ' -> ' . $url]);
 
             $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }
@@ -193,7 +195,8 @@ class RoutingListener implements EventSubscriberInterface
     {
         $hostRedirect = null;
 
-        $gc = $this->config['general'];
+        $systemConfig = SystemSettingsConfig::get();
+        $gc = $systemConfig['general'];
         if (isset($gc['redirect_to_maindomain']) && $gc['redirect_to_maindomain'] === true && isset($gc['domain']) && $gc['domain'] !== $request->getHost()) {
             $hostRedirect = $gc['domain'];
         }

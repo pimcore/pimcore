@@ -72,7 +72,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
 
-        //twig security policy whitelist config
+        //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
@@ -116,6 +116,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('marshaller.yaml');
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
+        $loader->load('serializer.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -123,7 +124,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordHashers($container, $config);
-        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -197,7 +197,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function configureClassResolvers(ContainerBuilder $container, array $config): void
     {
-        $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
+        $container->setParameter('pimcore.documents.classes.map', $this->flattenConfigurationForClassResolver($config['documents']['type_definitions']));
+        $container->setParameter('pimcore.assets.classes.map', $this->flattenConfigurationForClassResolver($config['assets']['type_definitions']));
     }
 
     private function configureRouting(ContainerBuilder $container, array $config): void
@@ -263,17 +264,20 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Configure Adapter Factories
+     * Extract class definitions and prefixes if configuration has more than just a class definition
      */
-    private function configureAdapterFactories(ContainerBuilder $container, array $factories, string $serviceLocatorId): void
+    private function flattenConfigurationForClassResolver(array $configuration): array
     {
-        $serviceLocator = $container->getDefinition($serviceLocatorId);
-        $arguments = [];
+        $newConfiguration = [];
 
-        foreach ($factories as $key => $serviceId) {
-            $arguments[$key] = new Reference($serviceId);
+        if (isset($configuration['map'])) {
+            foreach ($configuration['map'] as $type => $config) {
+                if (isset($config['class'])) {
+                    $newConfiguration[$type] = $config['class'];
+                }
+            }
         }
 
-        $serviceLocator->setArgument(0, $arguments);
+        return $newConfiguration;
     }
 }

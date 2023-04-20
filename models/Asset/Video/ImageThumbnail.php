@@ -63,10 +63,15 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    public function getPath(bool $deferredAllowed = true): string
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -79,8 +84,6 @@ final class ImageThumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     *
      * @throws \Exception
      *
      * @internal

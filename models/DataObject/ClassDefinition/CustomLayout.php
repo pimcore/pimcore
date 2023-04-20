@@ -241,8 +241,15 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException
+     */
     public function delete(): void
     {
+        if (!$this->isWriteable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
         // empty object cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
@@ -329,28 +336,28 @@ class CustomLayout extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
     public function setUserOwner(int $userOwner): static
     {
-        $this->userOwner = (int) $userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
 
     public function setUserModification(int $userModification): static
     {
-        $this->userModification = (int) $userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }

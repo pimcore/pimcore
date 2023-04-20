@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 
 /**
@@ -29,20 +28,15 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.config_location');
         $definitions = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
 
-        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-            $config,
-            self::CONFIG_KEY,
-            'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS',
-            'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS'
-        );
+        $storageConfig = $config[self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_custom_reports',
-            'storageDirectory' => $storageConfig,
+            'storageConfig' => $storageConfig,
             'legacyConfigFile' => 'custom-reports.php',
         ]);
     }

@@ -16,9 +16,22 @@ declare(strict_types=1);
 
 namespace App;
 
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel as BaseKernel;
 
 class Kernel extends BaseKernel
 {
+    /**
+     * Adds bundles to register to the bundle collection. The collection is able
+     * to handle priorities and environment specific bundles.
+     *
+     * @param BundleCollection $collection
+     */
+    public function registerBundlesToCollection(BundleCollection $collection): void
+    {
+        // pimcore bundles
+        $collection->addBundle(new PimcoreAdminBundle(), 60);
+    }
 
 }

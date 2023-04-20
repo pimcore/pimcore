@@ -33,14 +33,13 @@ These tables are created during Pimcore install and are always the same.
 | documents_email | Extra config data |
 | documents_hardlink | Extra config data |
 | documents_link | Extra config data |
-| documents_newsletter | Extra config data |
 | documents_page | Extra config data |
 | documents_printpage | Extra config data |
 | documents_snippet | Extra config data |
 | documents_translations | Relation between same documents for different languages |
 | edit_lock | Tracks which user opened which resource in the backend |
 | element_workflow_state | Keeps track of workflow state for all elements |
-| email_blacklist | Blacklist for eMail-addresses
+| email_blocklist | Blocklist for eMail-addresses
 | email_log | Log for sent emails |
 | glossary | Words to auto-link in texts. See [Glossary](../18_Tools_and_Features/21_Glossary.md) |
 | http_error_log | HTTP error log |

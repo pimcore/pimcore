@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
@@ -26,7 +27,7 @@ use Psr\Log\LoggerInterface;
  */
 class AssetUpdateTasksHandler
 {
-    public function __construct(protected LoggerInterface $logger)
+    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper)
     {
     }
 
@@ -47,6 +48,8 @@ class AssetUpdateTasksHandler
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
+
+        $this->longRunningHelper->deleteTemporaryFiles();
     }
 
     private function saveAsset(Asset $asset): void
@@ -63,6 +66,9 @@ class AssetUpdateTasksHandler
         if (!$pageCount || $pageCount === 'failed') {
             $asset->processPageCount();
             $this->saveAsset($asset);
+            if ($asset->getCustomSetting('document_page_count') === 'failed') {
+                throw new \RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+            }
         }
 
         $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
@@ -114,14 +120,6 @@ class AssetUpdateTasksHandler
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
 
         $customSettings = $image->getCustomSettings();
-
-        if (!isset($customSettings['disableImageFeatureAutoDetection'])) {
-            $image->detectFaces();
-        }
-
-        if (!isset($customSettings['disableFocalPointDetection'])) {
-            $image->detectFocalPoint();
-        }
 
         try {
             $image->handleEmbeddedMetaData(true);

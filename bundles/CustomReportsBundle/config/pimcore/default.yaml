@@ -1,8 +1,3 @@
-pimcore:
-    newsletter:
-        source_adapters:
-            reportAdapter: pimcore.document.newsletter.factory.report
-
 pimcore_admin:
     user:
         default_key_bindings:

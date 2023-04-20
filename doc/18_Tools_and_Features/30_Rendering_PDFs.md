@@ -6,17 +6,9 @@ You can use the PimcoreWebToPrintBundle functionality to accomplish this.
 Please make sure that you have set up and installed the PimcoreWebToPrintBundle correctly ("Settings" -> "Web2Print Settings").
 
 You need to enable and install the PimcoreWebToPrintBundle via the bundles.php, and then you 
-just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
+just have to provide the correct settings (Tool -> PDFreactor / Chromium / Gotenberg) and the corresponding settings.
 
 In your controller you just have to return the PDF instead of the HTML. 
-
-## Uninstalling PimcoreWebToPrintBundle
-Uninstalling the bundle does not clean up `printpages` or `printcontainers`. Before uninstalling make sure to remove or archive all dependent documents.
-You can also use the following command to clean up you database. Create a backup before executing the command. All data will be lost.
-
-```bash
- bin/console pimcore:document:cleanup printpage printcontainer
-```
 
 ## Simple example
 
@@ -66,20 +58,7 @@ class BlogController extends FrontendController
 
         $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
         //add custom settings if necessary
-        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
-            $params['adapterConfig'] = [
-                'landscape' => false,
-                'printBackground' => true,
-                'format' => 'A4',
-                'margin' => [
-                    'top' => '16 mm',
-                    'bottom' => '30 mm',
-                    'right' => '8 mm',
-                    'left' => '8 mm',
-                ],
-                'displayHeaderFooter' => false,
-            ];
-        } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
             $params['adapterConfig'] = [
                 'author' => 'Max Mustermann',
@@ -89,6 +68,12 @@ class BlogController extends FrontendController
                 'appendLog' => true,
                 'enableDebugMode' => true
             ];
+        } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg) {
+            $params = Config::getWeb2PrintConfig();
+            $params = json_decode($params['gotenbergSettings'], true) ?: [];
+        } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Chromium) {
+            $params = Config::getWeb2PrintConfig();
+            $params = json_decode($params['chromiumSettings'], true) ?: [];
         }
 
         return new Response(

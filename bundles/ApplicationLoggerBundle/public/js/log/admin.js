@@ -180,7 +180,10 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     dataIndex: 'timestamp',
                     width: 150,
                     align: 'left',
-                    sortable: true
+                    sortable: true,
+                    renderer: function (d) {
+                        return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
+                    }
                 },{
                     text: t("log_pid"),
                     dataIndex: 'pid',
@@ -249,7 +252,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
 
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
-                        new pimcore.log.detailwindow(this.store.getAt(rowIndex).data);
+                        new pimcore.bundle.applicationlogger.log.detailwindow(this.store.getAt(rowIndex).data);
                     }.bind(this)
                 },
 

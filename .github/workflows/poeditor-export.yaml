@@ -7,7 +7,7 @@ on:
         branches:
             - "[0-9]+.x"
         paths:
-            - 'bundles/CoreBundle/Resources/translations/admin*.en.yaml'
+            - 'bundles/CoreBundle/Resources/translations/admin.en.yaml'
             - 'bundles/GlossaryBundle/translations/admin.en.yaml'
             - 'bundles/SeoBundle/translations/admin.en.yaml'
 

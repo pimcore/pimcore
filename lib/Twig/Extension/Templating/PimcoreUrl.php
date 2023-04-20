@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\LinkGeneratorAwareInterface;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
@@ -90,13 +89,16 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $name = $this->getCurrentRoute();
         }
 
+        /** @var Concrete | null $object */
         $object = $parameters['object'] ?? null;
         $linkGenerator = null;
 
-        if ($object instanceof LinkGeneratorAwareInterface) { //e.g. Mockup
-            $linkGenerator = $object->getLinkGenerator();
-        } elseif ($object instanceof Concrete) {
-            $linkGenerator = $object->getClass()->getLinkGenerator();
+        if ($object) {
+            if (method_exists($object, 'getClass') && method_exists($object->getClass(), 'getLinkGenerator')) {
+                $linkGenerator = $object->getClass()->getLinkGenerator();
+            } elseif (method_exists($object, 'getLinkGenerator')) { // useful for ecommerce LinkGeneratorAwareInterface
+                $linkGenerator = $object->getLinkGenerator();
+            }
         }
 
         if ($linkGenerator) {
@@ -121,7 +123,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
     }
 
     /**
-     * Tries to get the current route name from current or master request
+     * Tries to get the current route name from current or main request
      *
      * @return string|null
      */

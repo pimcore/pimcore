@@ -143,7 +143,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getLanguage(string $language = null): string
     {
         if ($language) {
-            return (string) $language;
+            return $language;
         }
 
         return 'default';

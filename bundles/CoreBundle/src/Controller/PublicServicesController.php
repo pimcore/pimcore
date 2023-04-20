@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -38,7 +37,7 @@ class PublicServicesController extends Controller
         $thumbnailStream = null;
 
         $filename = $request->get('filename');
-        $requestedFileExtension = strtolower(File::getFileExtension($filename));
+        $requestedFileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         $config = [
             'prefix' => $request->get('prefix', ''),

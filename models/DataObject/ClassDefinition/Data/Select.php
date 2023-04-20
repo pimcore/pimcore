@@ -103,17 +103,11 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return $this->getColumnType();
@@ -295,15 +289,15 @@ class Select extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Select $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Select $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->options = $masterDefinition->options;
-        $this->columnLength = $masterDefinition->columnLength;
-        $this->defaultValue = $masterDefinition->defaultValue;
-        $this->optionsProviderClass = $masterDefinition->optionsProviderClass;
-        $this->optionsProviderData = $masterDefinition->optionsProviderData;
+        $this->options = $mainDefinition->options;
+        $this->columnLength = $mainDefinition->columnLength;
+        $this->defaultValue = $mainDefinition->defaultValue;
+        $this->optionsProviderClass = $mainDefinition->optionsProviderClass;
+        $this->optionsProviderData = $mainDefinition->optionsProviderData;
     }
 
     public function getDefaultValue(): ?string

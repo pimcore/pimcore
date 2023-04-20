@@ -19,12 +19,12 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
 use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
+use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Model\Element;
@@ -33,6 +33,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -514,7 +515,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
+        $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['prefix']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
@@ -577,6 +578,19 @@ class Service extends Model\Element\Service
 
                 return $asset->getImageThumbnail($thumbnailConfig, $page);
             } elseif ($asset instanceof Asset\Image) {
+                // Throw exception if the requested thumbnail format is disabled from the config
+                $thumbnailFormats = ThumbnailConfig::getAutoFormats();
+                if (!in_array($config['file_extension'], ['jpg', 'jpeg'])) {
+                    if (empty($thumbnailFormats)) {
+                        throw new NotFoundHttpException('Requested thumbnail format is disabled');
+                    }
+                    foreach ($thumbnailFormats as $autoFormat => $autoFormatConfig) {
+                        if ($config['file_extension'] == $autoFormat && !$autoFormatConfig['enabled']) {
+                            throw new NotFoundHttpException('Requested thumbnail format is disabled');
+                        }
+                    }
+                }
+
                 //check if high res image is called
 
                 preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
@@ -610,7 +624,7 @@ class Service extends Model\Element\Service
         $thumbnailStream = null;
 
         $storage = Storage::get('thumbnail');
-        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
+        $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         if ($config['type'] === 'image') {
             $thumbnailStream = $thumbnail->getStream();
@@ -618,7 +632,7 @@ class Service extends Model\Element\Service
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
             $pathReference = $thumbnail->getPathReference();
-            $actualFileExtension = File::getFileExtension($pathReference['src']);
+            $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']) {
                 // create a copy/symlink to the file with the original file extension

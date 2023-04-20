@@ -222,11 +222,7 @@ final class RedirectHandler implements LoggerAwareInterface
         $response = new RedirectResponse($url, $statusCode);
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
-        // log all redirects to the redirect log
-        \Pimcore\Log\Simple::log(
-            'redirect',
-            Tool::getAnonymizedClientIp() . " \t Custom-Redirect ID: " . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url
-        );
+        $this->logger->info(Tool::getAnonymizedClientIp(), ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
 
         return $response;
     }
@@ -294,9 +290,9 @@ final class RedirectHandler implements LoggerAwareInterface
 
             if ($override) {
                 // if override is true the priority has to be 99 which means that overriding is ok
-                return (int)$redirect->getPriority() === 99;
+                return $redirect->getPriority() === 99;
             } else {
-                return (int)$redirect->getPriority() !== 99;
+                return $redirect->getPriority() !== 99;
             }
         });
     }

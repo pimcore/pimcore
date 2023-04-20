@@ -44,9 +44,9 @@ class Mail extends Email
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email|Model\Document\Newsletter|null
+     * @var Model\Document\Email|null
      */
-    private Model\Document\Newsletter|Model\Document\Email|null $document = null;
+    private Model\Document\Email|null $document = null;
 
     /**
      * Contains the email document Id
@@ -168,20 +168,18 @@ class Mail extends Email
      *
      * @internal
      */
-    public function init(string $type = 'email'): void
+    public function init(string $type = 'email', ?array $config = null): void
     {
-        $config = Config::getSystemConfiguration($type);
-
-        if (!empty($config['sender']['email'])) {
-            if (empty($this->getFrom())) {
-                $this->from(new Address($config['sender']['email'], $config['sender']['name']));
-            }
+        if(empty($config)) {
+            $config = Config::getSystemConfiguration($type);
         }
 
-        if (!empty($config['return']['email'])) {
-            if (empty($this->getReplyTo())) {
-                $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
-            }
+        if (!empty($config['sender']['email']) && empty($this->getFrom())) {
+            $this->from(new Address($config['sender']['email'], $config['sender']['name']));
+        }
+
+        if (!empty($config['return']['email']) && empty($this->getReplyTo())) {
+            $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
         }
     }
 
@@ -430,7 +428,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
+        if ($document instanceof Model\Document\Email) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
             if ($fromArray) {
@@ -578,13 +576,13 @@ class Mail extends Email
     {
         foreach ($addresses as $addrKey => $address) {
             if ($address instanceof Address) {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($address->getAddress())) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($address->getAddress())) {
                     unset($addrKey);
                 }
             } else {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($addrKey)) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($addrKey)) {
                     unset($addresses[$addrKey]);
                 }
             }
@@ -757,7 +755,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
+        if ($document instanceof Model\Document\Email || $document === null) {
             $this->document = $document;
             $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
@@ -771,9 +769,9 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email|Model\Document\Newsletter|null
+     * @return Model\Document\Email|null
      */
-    public function getDocument(): Model\Document\Email|Model\Document\Newsletter|null
+    public function getDocument(): Model\Document\Email|null
     {
         return $this->document;
     }

@@ -207,12 +207,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     public function setUnique(bool $unique): void
     {
-        $this->unique = (bool) $unique;
+        $this->unique = $unique;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): string
     {
         if ($this->getInteger()) {
@@ -226,9 +223,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return 'double';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return $this->getColumnType();
