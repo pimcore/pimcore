@@ -588,6 +588,7 @@ class TranslationController extends AdminController
      * @param string $tableName
      * @param bool $languageMode
      * @param bool $admin
+     *
      * @return array
      */
     protected function getGridFilterCondition(Request $request, $tableName, $languageMode = false, $admin = false)
@@ -662,7 +663,7 @@ class TranslationController extends AdminController
                         $conditionFilters[] = [
                             'condition' => $field . ' ' . $operator . ' :' . $placeHolderName,
                             'field' => $placeHolderName,
-                            'value' => $value
+                            'value' => $value,
                         ];
                     }
                 }
@@ -673,7 +674,7 @@ class TranslationController extends AdminController
             $conditionFilters[] = [
                 'condition' => '(lower(' . $tableName . '.key) LIKE :filterTerm OR lower(' . $tableName . '.text) LIKE :filterTerm)',
                 'field' => 'filterTerm',
-                'value' => '%' . mb_strtolower($request->get('searchString')) . '%'
+                'value' => '%' . mb_strtolower($request->get('searchString')) . '%',
             ];
         }
 
@@ -694,9 +695,10 @@ class TranslationController extends AdminController
 
             $conditionFilters = [
                 'condition' => implode(' AND ', $conditions),
-                'params' => $params
+                'params' => $params,
             ];
         }
+
         return $conditionFilters;
     }
 
