@@ -61,6 +61,16 @@
             hide_edit_image: false
             disable_tree_preview: true
     ```
+- [Admin] `AdminController` & `AdminControllerInterface` has been deprecated and will be removed in Pimcore 11. Please use `Use Pimcore\Controller\UserAwareController` instead, with following method calls:
+  - call `getPimcoreUser()` instead of `getAdminUser()`
+  - call `JsonHelperTrait::jsonResponse()` instead of `adminjson()`
+  - [Security] Deprecated Security User classes in favor of Pimcore core classes:
+    - `Pimcore\Bundle\AdminBundle\Security\User` => `Pimcore\Security\User`
+    - `Pimcore\Bundle\AdminBundle\Security\User\UserChecker` => `Pimcore\Security\User\UserChecker`
+    - `Pimcore\Bundle\AdminBundle\Security\User\UserProvider` => `Pimcore\Security\User\UserProvider`
+    - `Pimcore\Bundle\AdminBundle\Security\User\UserLoader` => `Pimcore\Security\User\UserLoader`
+    - `Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver` => `Pimcore\Security\User\TokenStorageUserResolver`
+  - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
