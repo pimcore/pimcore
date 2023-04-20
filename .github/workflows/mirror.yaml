@@ -11,7 +11,7 @@ permissions:
 
 jobs:
     to_github:
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-latest
         if: ${{ github.repository == 'pimcore/pimcore' }}
         steps:
             - uses: actions/checkout@v1

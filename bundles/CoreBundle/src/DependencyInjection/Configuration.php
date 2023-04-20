@@ -567,22 +567,6 @@ final class Configuration implements ConfigurationInterface
                         ->info('Absolute path to default ICC CMYK profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
-                    ->booleanNode('hide_edit_image')
-                        ->defaultFalse()
-                        ->setDeprecated(
-                            'pimcore/pimcore',
-                            '10.6',
-                            'The "%node%" option is deprecated and will be moved to "pimcore_admin" node in Pimcore 11. Please see upgrade notes for details.'
-                        )
-                    ->end()
-                    ->booleanNode('disable_tree_preview')
-                        ->defaultTrue()
-                        ->setDeprecated(
-                            'pimcore/pimcore',
-                            '10.6',
-                            'The "%node%" option is deprecated and will be moved to "pimcore_admin" node in Pimcore 11. Please see upgrade notes for details.'
-                        )
-                    ->end()
                 ->end();
 
         $assetsNode
