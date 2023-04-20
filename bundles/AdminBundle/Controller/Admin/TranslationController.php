@@ -50,6 +50,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TranslationController extends AdminController
 {
+    protected const PLACEHOLDER_NAME = 'placeHolder';
+
     /**
      * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})
      *
@@ -606,7 +608,6 @@ class TranslationController extends AdminController
             $filters = $this->decodeJson($filterJson);
 
             foreach ($filters as $filter) {
-                $placeHolderName = 'placeHolder';
                 $operator = '=';
                 $field = null;
                 $value = null;
@@ -656,7 +657,7 @@ class TranslationController extends AdminController
                             'language' => $fieldname,
                         ];
                     } else {
-                        $placeHolderName = $placeHolderName . $placeHolderCount;
+                        $placeHolderName = self::PLACEHOLDER_NAME . $placeHolderCount;
                         $placeHolderCount++;
                         $conditionFilters[] = [
                             'condition' => $field . ' ' . $operator . ' :' . $placeHolderName,
@@ -674,16 +675,13 @@ class TranslationController extends AdminController
                 'field' => 'filterTerm',
                 'value' => '%' . mb_strtolower($request->get('searchString')) . '%'
             ];
-
         }
 
         if ($languageMode) {
-            $result = [
+            return [
                 'joins' => $joins,
                 'conditions' => $conditions,
             ];
-
-            return $result;
         }
 
         if(!empty($conditionFilters)) {
