@@ -29,6 +29,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -114,7 +115,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $params['csrfTokenRefreshInterval'] = ((int)$session_gc_maxlifetime - 60) * 1000;
 
         if ($request->get('too_many_attempts')) {
-            $params['error'] = $request->get('too_many_attempts');
+            $params['error'] = SecurityHelper::convertHtmlSpecialChars($request->get('too_many_attempts'));
         }
         if ($request->get('auth_failed')) {
             $params['error'] = 'error_auth_failed';
