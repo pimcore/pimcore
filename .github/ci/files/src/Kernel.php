@@ -31,7 +31,7 @@ class Kernel extends BaseKernel
     public function registerBundlesToCollection(BundleCollection $collection): void
     {
         // pimcore bundles
-        $collection->addBundle(new PimcoreAdminBundle(), 60);
+        //$collection->addBundle(new PimcoreAdminBundle(), 60);
     }
 
 }
