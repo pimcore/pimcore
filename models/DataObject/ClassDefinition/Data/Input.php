@@ -225,9 +225,15 @@ class Input extends Data implements
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
-            if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
-                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
+        if(is_string($data)) {
+            if ($this->getRegex() && $data !== '') {
+                if (!preg_match('#'.$this->getRegex().'#'.implode('', $this->getRegexFlags()), $data)) {
+                    throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] doesn't match input validation '".$this->getRegex()."'");
+                }
+            }
+
+            if ($this->getColumnLength() && mb_substr($data) > $this->getColumnLength()) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] is longer than ".$this->getColumnLength()." characters");
             }
         }
 
