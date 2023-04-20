@@ -49,7 +49,7 @@ Pimcore provides the ability to automatically create Redirects when renaming and
 The redirect status codes list can be extended by adding custom codes in config.yaml:
 
 ```yaml
-pimcore:
+pimcore_seo:
     redirects:
         status_codes:
             308: Permanent Redirect
