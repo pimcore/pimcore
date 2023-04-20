@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
@@ -63,16 +62,19 @@ class LogController extends UserAwareController implements KernelControllerEvent
             ->setFirstResult($request->get('start', 0))
             ->setMaxResults($request->get('limit', 50));
 
-        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
-            $request->request->all(),
-            $request->query->all()
-        ));
+        $qb->orderBy('id', 'DESC');
 
-        if ($sortingSettings['orderKey']) {
-            $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
-        } else {
-            $qb->orderBy('id', 'DESC');
+        if (class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge(
+                $request->request->all(),
+                $request->query->all()
+            ));
+
+            if ($sortingSettings['orderKey']) {
+                $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
+            }
         }
+
 
         $priority = $request->get('priority');
         if ($priority !== '-1' && ($priority == '0' || $priority)) {

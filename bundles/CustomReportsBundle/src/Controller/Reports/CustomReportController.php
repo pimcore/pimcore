@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -321,6 +322,10 @@ class CustomReportController extends UserAwareController
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
+
+        if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
 
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 40);

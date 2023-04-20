@@ -1,3 +1,0 @@
-scheb_two_factor:
-  security_tokens:
-    - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken
