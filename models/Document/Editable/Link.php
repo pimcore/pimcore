@@ -364,7 +364,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getRel()
     {
-        return $this->data['rel'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['rel']) ?? '';
     }
 
     /**
