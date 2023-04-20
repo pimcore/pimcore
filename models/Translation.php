@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Filesystem\Filesystem;

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Bundle\AdminBundle\Tool as AdminTool;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;

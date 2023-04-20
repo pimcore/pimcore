@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -26,6 +25,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
