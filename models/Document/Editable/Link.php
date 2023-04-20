@@ -176,6 +176,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $attribs = array_unique($attribs);
 
             if (array_key_exists('attributes', $this->data) && !empty($this->data['attributes'])) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6',
+                    'Using the "attributes" field in the link editable is deprecated. The field will be removed in Pimcore 11.0.'
+                );
+
                 $attribs[] = $this->data['attributes'];
             }
 
@@ -301,6 +307,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
         // sanitize attributes
         if (isset($this->data['attributes'])) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.6',
+                'Using the "attributes" field in the link editable is deprecated. The field will be removed in Pimcore 11.0.'
+            );
+
             $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
         }
 
@@ -393,6 +405,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     /**
      * @return mixed
+     *
+     * @deprecated This method is deprecated and will be removed in Pimcore 11.
      */
     public function getAttributes()
     {

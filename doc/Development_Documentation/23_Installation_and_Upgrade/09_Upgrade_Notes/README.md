@@ -61,6 +61,7 @@
             hide_edit_image: false
             disable_tree_preview: true
     ```
+- [Link Editable] The "attributes" field in the "advanced" tab is deprecated. The field will be removed in Pimcore 11 due to security reasons.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
