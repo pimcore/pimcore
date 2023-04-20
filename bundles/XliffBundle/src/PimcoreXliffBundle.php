@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\XliffBundle;
 
 use Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler\TranslationServicesPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\BundleAdminClassicTrait;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

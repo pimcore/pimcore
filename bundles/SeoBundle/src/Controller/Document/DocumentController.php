@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\SeoBundle\Controller\Traits\DocumentTreeConfigWrapperTrait;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Document;
@@ -35,8 +35,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class DocumentController extends UserAwareController
 {
-    use DocumentTreeConfigTrait;
     use JsonHelperTrait;
+    use DocumentTreeConfigWrapperTrait; //@phpstan-ignore-line
 
     private const DOCUMENT_ROOT_ID = 1;
 

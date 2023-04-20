@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Extension\Bundle;
+namespace Pimcore\Extension\Bundle\Traits;
 
 trait BundleAdminClassicTrait
 {

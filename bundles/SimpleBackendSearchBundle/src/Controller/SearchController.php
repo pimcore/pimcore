@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -31,6 +30,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\AdminStyle;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +45,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SearchController extends UserAwareController
 {
-    use AdminStyleTrait;
     use JsonHelperTrait;
 
     /**
@@ -585,5 +585,33 @@ class SearchController extends UserAwareController
         }
 
         return $shortPath;
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param int|null $context
+     * @param array $data
+     *
+     * @throws \Exception
+     */
+    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
+    {
+        $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        $adminStyle = $event->getAdminStyle();
+
+        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
+        if (!$data['iconCls']) {
+            $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        } else {
+            $data['icon'] = null;
+        }
+        if ($adminStyle->getElementCssClass() !== false) {
+            if (!isset($data['cls'])) {
+                $data['cls'] = '';
+            }
+            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
+        }
+        $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
     }
 }
