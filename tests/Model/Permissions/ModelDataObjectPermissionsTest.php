@@ -27,6 +27,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -564,6 +565,9 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
+            'getPimcoreUser' => function () use ($user) {
+                return $user;
+            },
             'adminJson' => function ($data) {
                 return new JsonResponse($data);
             },
@@ -907,6 +911,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }
@@ -1062,6 +1067,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpathList'];
         }

@@ -28,6 +28,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -81,6 +82,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new MessageBusPublicPass());
         $container->addCompilerPass(new HtmlSanitizerPass());
+        $container->addCompilerPass(new SerializerPass());
     }
 
     public function getPath(): string

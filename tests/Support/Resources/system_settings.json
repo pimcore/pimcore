@@ -34,8 +34,6 @@
     "versions": {
       "days": null,
       "steps": 10
-    },
-    "hide_edit_image": false,
-    "disable_tree_preview": false
+    }
   }
 }

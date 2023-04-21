@@ -17,9 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents;
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Event\BundleManager\PathsEvent;
+use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
