@@ -28,6 +28,8 @@ use Pimcore\Event\TestEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\SettingsStore;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
@@ -89,6 +91,9 @@ class Pimcore extends Module\Symfony
 
         // connect and initialize DB
         $this->setupDbConnection();
+
+        // initialize system settings
+        $this->initializeSystemSettings();
 
         // disable cache
         Cache::disable();
@@ -215,6 +220,23 @@ class Pimcore extends Module\Symfony
     }
 
     /**
+     * @throws \Exception
+     */
+    protected function initializeSystemSettings(): void
+    {
+        if (SettingsStore::get('system_settings')) {
+            return;
+        }
+
+        $path = TestHelper::resolveFilePath('system_settings.json');
+        if (!file_exists($path)) {
+            throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
+        }
+        $data = file_get_contents($path);
+        SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
+    }
+
+    /**
      * Drop and re-create the DB
      *
      */
@@ -285,6 +307,13 @@ class Pimcore extends Module\Symfony
         parent::_before($test);
 
         $this->groups = $test->getMetadata()->getGroups();
+
+        $path = TestHelper::resolveFilePath('system_settings.json');
+        if (!file_exists($path)) {
+            throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
+        }
+        $data = file_get_contents($path);
+        SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
 
         // default pimcore state is non-admin
         $this->unsetAdminMode();
