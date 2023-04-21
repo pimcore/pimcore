@@ -285,12 +285,15 @@ class SearchController extends UserAwareController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
-        if (in_array('document', $types)) {
+        if (in_array('document', $types) && class_exists(AdminEvents::class)) {
             // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
