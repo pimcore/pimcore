@@ -1,0 +1,19 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_elements:
+                    p: ['class', 'style']
+                    strong: 'class'
+                    em: 'class'
+                    h1: 'class'
+                    a: ['class', 'href', 'target', 'title', 'rel']
+                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height']
+                    colgroup: 'class'
+                    col: ['class', 'style']
+                    tbody: 'class'
+                    tr: 'class'
+                    td: 'class'
+                    ul: ['class', 'style']
+                    li: ['class', 'style']
+                    ol: ['class', 'style']
