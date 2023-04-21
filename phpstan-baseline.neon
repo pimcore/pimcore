@@ -114,22 +114,6 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Mail.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SanityCheckHandler.php
-
-		-
-			message: "#^Call to static method getLanguageFlagFile\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Tool\\.$#"
-			count: 1
-			path: lib/Tool.php
-
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
