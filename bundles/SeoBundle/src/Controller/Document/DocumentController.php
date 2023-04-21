@@ -37,7 +37,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DocumentController extends UserAwareController
 {
     use JsonHelperTrait;
-    use DocumentTreeConfigWrapperTrait; //@phpstan-ignore-line
+    use DocumentTreeConfigWrapperTrait;
 
     private const DOCUMENT_ROOT_ID = 1;
 

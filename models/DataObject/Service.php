@@ -518,7 +518,6 @@ class Service extends Model\Element\Service
 
             // TODO refactor how the service is accessed into something non-static and inject the service there
             $service = \Pimcore::getContainer()->get(GridColumnConfigService::class);
-            //@phpstan-ignore-next-line
             if (!$service) {
                 throw new AdminClassicBundleNotFoundException('Admin Bundle not found. Please install the package pimcore/admin-ui-classic-bundle.');
             }
