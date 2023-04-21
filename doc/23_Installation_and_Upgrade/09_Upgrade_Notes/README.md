@@ -331,7 +331,7 @@ pimcore:
 - Removed AdminSessionHandler and AdminSessionListener. The session is now handled by Symfony.
 - Methods `Pimcore\Navigation::setDefaultPageType`, `Pimcore\Navigation::getDefaultPageType`, `Pimcore\Navigation\Container::_sort() and `Pimcore\Navigation\Page::_normalizePropertyName()` have been marked as internal.
 - [Configuration] Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
-- [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor. If you want to change the configuration, please update the `pimcore_admin.wysiwyg.sanitizer` config.
+- [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor.
 
 ## 10.6.0
 
