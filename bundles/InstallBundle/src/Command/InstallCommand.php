@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\InstallBundle\Command;
 
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Installer;
-use Pimcore\Config;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
