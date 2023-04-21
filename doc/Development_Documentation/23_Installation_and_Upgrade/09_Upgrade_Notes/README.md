@@ -1,7 +1,11 @@
 # Upgrade Notes
 
+## 10.5.21
+- [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
+
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
+
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
