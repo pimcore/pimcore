@@ -83,22 +83,25 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 fieldLabel: t('label'),
                 length: 255,
                 width: 200,
-                value: this.node.data.configAttributes.label
+                value: this.node.data.configAttributes.label,
+                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
             });
 
             this.attributeField = new Ext.form.TextField({
                 fieldLabel: t('attribute'),
                 length: 255,
                 width: 200,
-                value: this.node.data.configAttributes.attribute
+                value: this.node.data.configAttributes.attribute,
+                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
             });
 
             this.param1Field = new Ext.form.TextField({
                 fieldLabel: t('parameter'),
                 length: 255,
                 width: 200,
-                value: this.node.data.configAttributes.param1
-            });
+                value: this.node.data.configAttributes.param1,
+                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
+        });
 
             this.returnLastResultField = new Ext.form.Checkbox({
                 fieldLabel: t('return_last_result'),
@@ -183,7 +186,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 if (configAttributes.param1) {
                     attr += " " + configAttributes.param1;
                 }
-                nodeLabel += '<span class="pimcore_gridnode_hint"> (' + attr + ')</span>';
+                nodeLabel += '<span class="pimcore_gridnode_hint"> (' + Ext.util.Format.htmlEncode(attr) + ')</span>';
             }
 
             return nodeLabel;
