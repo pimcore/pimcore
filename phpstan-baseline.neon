@@ -21,22 +21,7 @@ parameters:
 			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
 
 		-
-			message: "#^Access to constant ASSET_LIST_BEFORE_LIST_LOAD on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
 			message: "#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
-			count: 2
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: "#^Access to constant DOCUMENT_LIST_BEFORE_LIST_LOAD on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: "#^Access to constant OBJECT_LIST_BEFORE_LIST_LOAD on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
