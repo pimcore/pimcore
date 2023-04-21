@@ -151,10 +151,8 @@ final class Config implements ArrayAccess
     public static function getSystemConfiguration(string $offset = null): ?array
     {
         if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
-            $config = $container->getParameter('pimcore.config');
-            $adminConfig = $container->getParameter('pimcore_admin.config');
 
-            static::$systemConfig = array_merge_recursive($config, $adminConfig);
+            static::$systemConfig = $container->getParameter('pimcore.config');
         }
 
         if (null !== $offset) {
