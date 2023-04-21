@@ -98,7 +98,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             text = this.data.path;
         }
         if (this.data.path || this.data.anchor || this.data.parameters) {
-            let fullpath = this.data.path + (this.data.parameters ? '?' + this.data.parameters : '') + (this.data.anchor ? '#' + this.data.anchor : '');
+            let fullpath = this.data.path + (this.data.parameters ? '?' + Ext.util.Format.htmlEncode(this.data.parameters) : '') + (this.data.anchor ? '#' + Ext.util.Format.htmlEncode(this.data.anchor) : '');
             let displayHtml = Ext.util.Format.htmlEncode(text);
             
             if (this.config.textPrefix !== undefined) {

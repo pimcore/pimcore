@@ -706,7 +706,12 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                 format: 'd.m.Y',
                 altFormats: 'U',
                 value: data.starting,
-                width: 400
+                width: 400,
+                onChange: function (value) {
+                    if (Ext.String.hasHtmlCharacters(value)) {
+                        this.setValue(null);
+                    }
+                },
             },{
                 xtype:'datefield',
                 fieldLabel: t("to"),
@@ -714,7 +719,12 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                 format: 'd.m.Y',
                 altFormats: 'U',
                 value: data.ending,
-                width: 400
+                width: 400,
+                onChange: function (value) {
+                    if (Ext.String.hasHtmlCharacters(value)) {
+                        this.setValue(null);
+                    }
+                },
             }],
             listeners: {
 
