@@ -27,3 +27,29 @@ document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
 
 Please use the events from `event.js` to bind your Editor on the field and to configure it.
 For more details please take a look at the `TinymceBundle`. 
+
+## Extending symfony HTML sanitizer configuration
+
+Wysiwyg editables are using symfony HTML sanitizer in order to clean the HTML content from unwanted tags and parameters. Default configuration is defined like this:
+```
+framework:
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_elements:
+                    p: ['class', 'style']
+                    strong: 'class'
+                    em: 'class'
+                    h1: 'class'
+                    a: ['class', 'href', 'target', 'title', 'rel']
+                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height']
+                    colgroup: 'class'
+                    col: ['class', 'style']
+                    tbody: 'class'
+                    tr: 'class'
+                    td: 'class'
+                    ul: ['class', 'style']
+                    li: ['class', 'style']
+                    ol: ['class', 'style']
+```
+If you want to adapt this configuration please have a look at the [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html).
