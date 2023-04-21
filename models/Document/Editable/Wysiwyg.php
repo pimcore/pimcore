@@ -38,7 +38,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public static function getWysiwygSanitizer(): HtmlSanitizer
     {
         if (!isset(self::$pimcoreWysiwygSanitizer)) {
-            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get('html_sanitizer.sanitizer.pimcore.wysiwyg_sanitizer');
+            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
         }
 
         return self::$pimcoreWysiwygSanitizer;
@@ -94,7 +94,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromResource(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize($data);
+        $this->text = $helper->sanitize(html_entity_decode($data));
 
         return $this;
     }
@@ -105,7 +105,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromEditmode(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize($data);
+        $this->text = $helper->sanitize(html_entity_decode($data));
 
         return $this;
     }

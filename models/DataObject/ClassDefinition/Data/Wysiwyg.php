@@ -54,7 +54,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public static function getWysiwygSanitizer(): HtmlSanitizer
     {
         if (!isset(self::$pimcoreWysiwygSanitizer)) {
-            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get('html_sanitizer.sanitizer.pimcore.wysiwyg_sanitizer');
+            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
         }
 
         return self::$pimcoreWysiwygSanitizer;
@@ -118,8 +118,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $helper = self::getWysiwygSanitizer();
-
-        return Text::wysiwygText($helper->sanitize($data));
+        if (is_string($data)) {
+            $data = $helper->sanitize(html_entity_decode($data));
+        }
+        return Text::wysiwygText($data);
     }
 
     /**
@@ -181,9 +183,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return null;
         }
 
-        $helper = self::getWysiwygSanitizer();
-
-        return $helper->sanitize($data);
+        return $data;
     }
 
     public function resolveDependencies(mixed $data): array

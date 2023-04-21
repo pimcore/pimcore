@@ -52,4 +52,4 @@ framework:
                     li: ['class', 'style']
                     ol: ['class', 'style']
 ```
-If you want to adapt this configuration please have a look at the [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html).
+If you want to adapt this configuration please have a look at the [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html). Add your custom configuration to you project, e.g. to `config/packages/html_sanitizer.yaml`
