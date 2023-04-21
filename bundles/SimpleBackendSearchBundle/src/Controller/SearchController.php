@@ -245,8 +245,9 @@ class SearchController extends UserAwareController
         $searcherList->setOrderKey($queryCondition, false);
         $searcherList->setOrder('DESC');
 
-        $sortingSettings = QueryParams::extractSortingSettings($allParams);
-        if ($sortingSettings['orderKey']) {
+        $sortingSettings = $this->extractSortingSettings($allParams);
+
+        if ($sortingSettings['orderKey'] ?? false) {
             // Order by key column instead of filename
             $orderKeyQuote = true;
             if ($sortingSettings['orderKey'] === 'filename') {
@@ -265,7 +266,8 @@ class SearchController extends UserAwareController
             }
             $searcherList->setOrderKey($sort, $orderKeyQuote);
         }
-        if ($sortingSettings['order']) {
+
+        if ($sortingSettings['order'] ?? false) {
             $searcherList->setOrder($sortingSettings['order']);
         }
 
@@ -305,9 +307,12 @@ class SearchController extends UserAwareController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
         $hits = $searcherList->load();
@@ -351,6 +356,11 @@ class SearchController extends UserAwareController
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->jsonResponse($result);
+    }
+
+    protected function extractSortingSettings(array $params): array
+    {
+        return QueryParams::extractSortingSettings($params);
     }
 
     /**
@@ -495,7 +505,9 @@ class SearchController extends UserAwareController
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                 ];
 
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                if (class_exists(ElementAdminStyleEvent::class)) {
+                    $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                }
 
                 $elements[] = $data;
             }

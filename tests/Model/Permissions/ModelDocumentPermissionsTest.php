@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -415,15 +415,15 @@ class ModelDocumentPermissionsTest extends ModelTestCase
     protected function buildController(string $classname, User $user): mixed
     {
         $DocumentController = Stub::construct($classname, [], [
-            'getAdminUser' => function () use ($user) {
-                return $user;
-            },
             'getPimcoreUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function ($data) {
+            'jsonResponse' => function ($data) {
                 return new JsonResponse($data);
             },
+            'extractSortingSettings' => function ($params) {
+                return $params;
+            }
         ]);
 
         return $DocumentController;
@@ -443,7 +443,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $responseData = $controller->findAction(
             $request,
             new EventDispatcher(),
-            new GridHelperService()
+            $this->getMockBuilder('\Pimcore\Bundle\AdminBundle\Helper\GridHelperService')->getMock() //this is not used in the test
         );
 
         $responsePaths = [];

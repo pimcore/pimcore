@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Property;
@@ -422,18 +421,18 @@ class ModelAssetPermissionsTest extends ModelTestCase
     protected function buildController(string $classname, User $user): mixed
     {
         $AssetController = Stub::construct($classname, [], [
-            'getAdminUser' => function () use ($user) {
-                return $user;
-            },
             'getPimcoreUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function ($data) {
+            'jsonResponse' => function ($data) {
                 return new JsonResponse($data);
             },
             'getThumbnailUrl' => function ($asset) {
                 return '';
             },
+            'extractSortingSettings' => function ($params) {
+                return $params;
+            }
         ]);
 
         return $AssetController;
@@ -453,7 +452,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $responseData = $controller->findAction(
             $request,
             new EventDispatcher(),
-            new GridHelperService()
+            $this->getMockBuilder('\Pimcore\Bundle\AdminBundle\Helper\GridHelperService')->getMock() //this is not used in the test
         );
 
         $responsePaths = [];
