@@ -101,11 +101,6 @@ parameters:
 			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DependencyInjection\\\\PimcoreSimpleBackendSearchExtension\\:\\:prepend\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/DependencyInjection/PimcoreSimpleBackendSearchExtension.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
