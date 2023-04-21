@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-final class PimcoreStaticRoutesExtension extends ConfigurableExtension
+final class PimcoreStaticRoutesExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
