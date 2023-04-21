@@ -334,6 +334,7 @@ pimcore:
 
 ## 10.6.0
 
+- [Naming] Deprecated master, blacklist and whitelist. Instead, use main, blocklist, allowlist
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
@@ -386,6 +387,13 @@ pimcore:
   - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
   - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
 - [Extension Manager] Trait `StateHelperTrait` is deprecated and will be removed in Pimcore 11.
+- [Configuration] Deprecated `hide_edit_image` & `disable_tree_preview` configs, they will be moved to `pimcore_admin` in Pimcore 11
+    ```yaml
+    pimcore_admin:
+        assets:
+            hide_edit_image: false
+            disable_tree_preview: true
+    ```
 
 ## 10.5.13
 
