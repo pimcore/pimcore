@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\StaticRoutesBundle\Model;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Security\SecurityHelper;
 use Pimcore\Model\Site;
+use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
