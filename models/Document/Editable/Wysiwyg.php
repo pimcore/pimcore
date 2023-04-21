@@ -37,11 +37,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public static function getWysiwygSanitizer(): HtmlSanitizer
     {
-        if (!isset(self::$pimcoreWysiwygSanitizer)) {
-            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
-        }
-
-        return self::$pimcoreWysiwygSanitizer;
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
     /**

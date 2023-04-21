@@ -53,11 +53,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     public static function getWysiwygSanitizer(): HtmlSanitizer
     {
-        if (!isset(self::$pimcoreWysiwygSanitizer)) {
-            self::$pimcoreWysiwygSanitizer = \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
-        }
-
-        return self::$pimcoreWysiwygSanitizer;
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
     public function setToolbarConfig(string $toolbarConfig): void
@@ -117,9 +113,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        $helper = self::getWysiwygSanitizer();
         if (is_string($data)) {
-            $data = $helper->sanitize(html_entity_decode($data));
+            $data = self::getWysiwygSanitizer()->sanitize(html_entity_decode($data));
         }
         return Text::wysiwygText($data);
     }
