@@ -137,19 +137,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'ping',
                 'type',
                 'referrerpolicy',
-                'xml:lang',
-                'onblur',
-                'onclick',
-                'ondblclick',
-                'onfocus',
-                'onmousedown',
-                'onmousemove',
-                'onmouseout',
-                'onmouseover',
-                'onmouseup',
-                'onkeydown',
-                'onkeypress',
-                'onkeyup',
+                'xml:lang'
             ];
             $defaultAttributes = [];
 
@@ -299,6 +287,10 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
+        if($editmode) {
+            unset($this->data['attributes']);
+        }
+
         // sanitize attributes
         if (isset($this->data['attributes'])) {
             $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
@@ -407,6 +399,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
             $this->data = [];
+        }
+
+        //sanitize fields
+        $fieldsToExclude = ['path'];
+        foreach($this->data as $key => $value) {
+            if(!in_array($key, $fieldsToExclude)) {
+                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes($value);
+            }
         }
 
         return $this;
