@@ -36,7 +36,7 @@ final class PimcoreGlossaryExtension extends ConfigurableExtension implements Pr
         $container->setParameter('pimcore_glossary.blocked_tags', $config['blocked_tags']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         if ($container->hasExtension('pimcore_admin')) {
             $loader = new YamlFileLoader(

@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\SeoBundle\Controller\Traits\DocumentTreeConfigWrapperTrait;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -79,6 +80,12 @@ class DocumentController extends UserAwareController
         EventDispatcherInterface $eventDispatcher,
         DocumentRouteHandler $documentRouteHandler
     ): JsonResponse {
+        $this->checkPermission('seo_document_editor');
+
+        if (!class_exists(AdminEvents::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
+
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
@@ -87,8 +94,6 @@ class DocumentController extends UserAwareController
         $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
-
-        $this->checkPermission('seo_document_editor');
 
         // make sure document routes are also built for unpublished documents
         $documentRouteHandler->setForceHandleUnpublishedDocuments(true);

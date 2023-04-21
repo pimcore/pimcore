@@ -23,6 +23,7 @@ use Pimcore\Bundle\SeoBundle\Redirect\Csv;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -132,6 +133,10 @@ class RedirectsController extends UserAwareController
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
+            if (!class_exists(QueryParams::class)) {
+                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+            }
+
             // get list of routes
 
             $list = new Redirect\Listing();

@@ -20,6 +20,7 @@ use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,8 +44,10 @@ class SettingsController extends UserAwareController
      */
     public function glossaryAction(Request $request): JsonResponse
     {
+        // check glossary permissions
+        $this->checkPermission('glossary');
+
         if ($request->get('data')) {
-            $this->checkPermission('glossary');
 
             Cache::clearTag('glossary');
 
@@ -108,7 +111,9 @@ class SettingsController extends UserAwareController
                 return $this->jsonResponse(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
-            // get list of glossaries
+            if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+            }
 
             $list = new Glossary\Listing();
             $list->setLimit((int) $request->get('limit', 50));
