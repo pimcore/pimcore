@@ -12,3 +12,14 @@ pimcore_admin:
                 ctrl: true
                 alt: true
 
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # Event Listeners
+    #
+    Pimcore\Bundle\CustomReportsBundle\EventListener\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }

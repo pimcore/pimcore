@@ -13,9 +13,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Bundle\CustomReportsBundle\EventListener\IndexSettingsListener:
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
 
     pimcore.custom_report.adapter.factory.sql:
         class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
