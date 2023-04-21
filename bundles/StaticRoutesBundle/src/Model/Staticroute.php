@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\StaticRoutesBundle\Model;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -241,7 +242,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern(string $pattern): static
     {
-        $this->pattern = $pattern;
+        $this->pattern = SecurityHelper::convertHtmlSpecialChars($pattern);
 
         return $this;
     }
@@ -251,7 +252,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController(?string $controller): static
     {
-        $this->controller = $controller;
+        $this->controller = SecurityHelper::convertHtmlSpecialChars($controller);
 
         return $this;
     }
@@ -261,7 +262,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables(string $variables): static
     {
-        $this->variables = $variables;
+        $this->variables = SecurityHelper::convertHtmlSpecialChars($variables);
 
         return $this;
     }
@@ -271,7 +272,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults(string $defaults): static
     {
-        $this->defaults = $defaults;
+        $this->defaults = SecurityHelper::convertHtmlSpecialChars($defaults);
 
         return $this;
     }
@@ -296,7 +297,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = $name;
+        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
 
         return $this;
     }
@@ -311,7 +312,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse(string $reverse): static
     {
-        $this->reverse = $reverse;
+        $this->reverse = SecurityHelper::convertHtmlSpecialChars($reverse);
 
         return $this;
     }
@@ -539,7 +540,9 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map('trim', $methods);
+            foreach($methods as $key => $method) {
+                $methods[$key] = SecurityHelper::convertHtmlSpecialChars(trim($method));
+            }
         }
 
         $this->methods = $methods;
