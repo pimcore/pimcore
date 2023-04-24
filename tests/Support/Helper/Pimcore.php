@@ -308,13 +308,6 @@ class Pimcore extends Module\Symfony
 
         $this->groups = $test->getMetadata()->getGroups();
 
-        $path = TestHelper::resolveFilePath('system_settings.json');
-        if (!file_exists($path)) {
-            throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
-        }
-        $data = file_get_contents($path);
-        SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
-
         // default pimcore state is non-admin
         $this->unsetAdminMode();
     }

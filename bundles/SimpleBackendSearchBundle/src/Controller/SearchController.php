@@ -26,6 +26,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -361,8 +362,15 @@ class SearchController extends UserAwareController
         return $this->jsonResponse($result);
     }
 
+    /**
+     * @throws AdminClassicBundleNotFoundException
+     */
     protected function extractSortingSettings(array $params): array
     {
+        if (!class_exists(QueryParams::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
+
         return QueryParams::extractSortingSettings($params);
     }
 

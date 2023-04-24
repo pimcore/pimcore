@@ -175,11 +175,6 @@ parameters:
 			path: models/Document/Editable/Snippet.php
 
 		-
-			message: "#^Call to static method get\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\CustomView\\\\Config\\.$#"
-			count: 1
-			path: models/Element/Service.php
-
-		-
 			message: "#^Call to static method get\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
 			count: 1
 			path: models/User.php
