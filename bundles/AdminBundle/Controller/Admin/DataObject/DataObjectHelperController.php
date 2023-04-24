@@ -532,8 +532,8 @@ class DataObjectHelperController extends AdminController
         $sharedConfigs = $class ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = SecurityHelper::convertHtmlSpecialChars($gridConfigName ?? null);
-        $settings['gridConfigDescription'] = SecurityHelper::convertHtmlSpecialChars($gridConfigDescription ?? null);
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
         $settings['owner'] = $owner ?? null;
         $settings['modificationDate'] = $modificationDate ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
