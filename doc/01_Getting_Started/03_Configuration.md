@@ -104,3 +104,22 @@ use \Symfony\Component\HttpFoundation\Request;
 
 Request::setTrustedProxies(['192.0.0.1', '10.0.0.0/8'], Request::HEADER_X_FORWARDED_ALL);
 ```
+
+
+## How to inject the .yml param to class variable
+
+In you services.yml add your service, e.g.:
+
+    SomeBundle\Service\SomeSender:
+        arguments:
+            $emails: '%email.debug.email_addresses%'
+            
+
+Then in your class you can access this param in **2 approaches**:
+
+    public function __construct(string $emails, private ParameterBagInterface $params)
+    {
+        $emailsArray =  $this->params->get('email.debug.email_addresses');
+        var_dump($emails, $emailsArray);
+    }
+
