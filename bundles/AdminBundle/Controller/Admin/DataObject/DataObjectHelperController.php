@@ -1524,7 +1524,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-jobs", name="getbatchjobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="getbatchjobs", methods={"POST"})
      *
      * @param Request $request
      *
