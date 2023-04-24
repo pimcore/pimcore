@@ -37,4 +37,13 @@ class SecurityHelper
             }
         }
     }
+
+    public static function sanitizeHtmlAttributes(?string $text): ?string
+    {
+        if(is_string($text)) {
+            return preg_replace('/[\/"\'\\\]/', '', $text);
+        }
+
+        return null;
+    }
 }

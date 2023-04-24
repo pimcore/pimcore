@@ -2,6 +2,7 @@
 
 ## 10.5.21
 - [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
+- [Editable] Removed all `on*` attributes from the `$allowedAttributes` list due to security reasons. These attributes are not allowed anymore in the "attributes" field.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
