@@ -204,7 +204,7 @@ final class AreabrickPass implements CompilerPassInterface
     protected function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
         $sourcePath = is_dir($metadata['path'].'/src') ? $metadata['path'].'/src' : $metadata['path'];
-        $directory = $sourcePath.'/Document/Areabrick';
+        $directory = $sourcePath.DIRECTORY_SEPARATOR.'Document'.DIRECTORY_SEPARATOR.'Areabrick';
 
         // update cache when directory is added/removed
         $container->addResource(new FileExistenceResource($directory));
