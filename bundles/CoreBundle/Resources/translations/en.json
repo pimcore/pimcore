@@ -162,7 +162,7 @@
     "activate": "Activate",
     "image_is_too_small": "Image is too small, please choose a bigger one.",
     "name_is_not_allowed": "Name is not allowed",
-    "import_from_server": "Import from Server",
+    "import_from_server": "Import from Server (deprecated)",
     "upload_files": "Upload Files",
     "upload_zip": "Upload ZIP Archive",
     "document_root": "Document Root",
