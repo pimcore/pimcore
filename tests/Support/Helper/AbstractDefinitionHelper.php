@@ -37,12 +37,6 @@ abstract class AbstractDefinitionHelper extends Module
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
-                $path = TestHelper::resolveFilePath('system_settings.json');
-                if (!file_exists($path)) {
-                    throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
-                }
-                $data = file_get_contents($path);
-                SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
                 $this->initializeDefinitions();
             } else {
                 $this->debug(sprintf(

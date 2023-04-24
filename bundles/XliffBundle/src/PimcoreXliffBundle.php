@@ -16,16 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler\TranslationServicesPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
-    use BundleAdminSupportTrait;
+    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function getJsPaths(): array

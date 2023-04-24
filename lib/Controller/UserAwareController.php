@@ -25,10 +25,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class UserAwareController extends Controller
 {
-    /**
-     * @var TokenStorageUserResolver|TokenStorageUserResolver
-     */
-    protected $tokenResolver;
+    protected TokenStorageUserResolver $tokenResolver;
 
     #[Required]
     public function setTokenResolver(TokenStorageUserResolver $tokenResolver): void
@@ -37,24 +34,9 @@ abstract class UserAwareController extends Controller
     }
 
     /**
-     * @return string[]
-     */
-    public static function getSubscribedServices(): array
-    {
-        $services = parent::getSubscribedServices();
-        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
-
-        return $services;
-    }
-
-    /**
      * Get user from user proxy object which is registered on security component
-     *
-     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
-     *
-     * @return UserProxy|User|null
      */
-    protected function getPimcoreUser($proxyUser = false)
+    protected function getPimcoreUser(bool $proxyUser = false): UserProxy|User|null
     {
         if ($proxyUser) {
             return $this->tokenResolver->getUserProxy();
@@ -66,11 +48,9 @@ abstract class UserAwareController extends Controller
     /**
      * Check user permission
      *
-     * @param string $permission
-     *
      * @throws AccessDeniedHttpException
      */
-    protected function checkPermission($permission)
+    protected function checkPermission(string $permission): void
     {
         if (!$this->getPimcoreUser() || !$this->getPimcoreUser()->isAllowed($permission)) {
             Logger::error(
@@ -85,15 +65,12 @@ abstract class UserAwareController extends Controller
         }
     }
 
-    /**
-     * @param string $message
-     * @param \Throwable|null $previous
-     * @param int $code
-     * @param array $headers
-     *
-     * @return AccessDeniedHttpException
-     */
-    protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
+    protected function createAccessDeniedHttpException(
+        string $message = 'Access Denied.',
+        \Throwable $previous = null,
+        int $code = 0,
+        array $headers = []
+    ): AccessDeniedHttpException
     {
         // $headers parameter not supported by Symfony 3.4
         return new AccessDeniedHttpException($message, $previous, $code, $headers);
@@ -102,7 +79,7 @@ abstract class UserAwareController extends Controller
     /**
      * @param string[] $permissions
      */
-    protected function checkPermissionsHasOneOf(array $permissions)
+    protected function checkPermissionsHasOneOf(array $permissions): void
     {
         $allowed = false;
         $permission = null;
@@ -129,12 +106,8 @@ abstract class UserAwareController extends Controller
 
     /**
      * Check permission against all controller actions. Can optionally exclude a list of actions.
-     *
-     * @param ControllerEvent $event
-     * @param string $permission
-     * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = []): void
     {
         $actionName = null;
         $controller = $event->getController();

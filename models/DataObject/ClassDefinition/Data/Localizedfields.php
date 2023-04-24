@@ -336,7 +336,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
+        // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
         return 'LOCALIZED FIELDS';
     }
 

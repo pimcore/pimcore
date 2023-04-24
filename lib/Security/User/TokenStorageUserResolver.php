@@ -43,7 +43,7 @@ class TokenStorageUserResolver
     /**
      * Taken and adapted from framework base controller.
      *
-     * The proxy is the wrapping Pimcore\Bundle\AdminBundle\Security\User\User object implementing UserInterface.
+     * The proxy is the wrapping Pimcore\Security\User\User object implementing UserInterface.
      *
      * @return UserProxy|null
      */

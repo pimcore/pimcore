@@ -16,14 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WordExportBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
-    use BundleAdminSupportTrait;
+    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function getCssPaths(): array

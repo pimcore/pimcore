@@ -41,10 +41,3 @@ pimcore:
                 type: 'settings-store'
             read_target:
                 type: 'settings-store'
-pimcore_admin:
-    config_location:
-        admin_system_settings:
-            write_target:
-                type: 'settings-store'
-            read_target:
-                type: 'settings-store'
