@@ -1429,7 +1429,7 @@ class DataObjectHelperController extends AdminController
             } else {
                 fwrite($temp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
             }
-            if ($i < $lineCount - 1) {
+            if ($i <= $lineCount - 1) {
                 fwrite($temp, "\r\n");
             }
         }
