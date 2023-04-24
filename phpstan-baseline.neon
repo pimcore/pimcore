@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Anonymous function with return type void returns \\*NEVER\\* but should not return anything\\.$#"
+			count: 1
+			path: bundles/CoreBundle/src/Command/Bundle/ListCommand.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 2
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
@@ -51,36 +56,6 @@ parameters:
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:\\$config\\.$#"
-			count: 2
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:prepareQueryString\\(\\)\\.$#"
-			count: 3
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
-
-		-
-			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:\\$config\\.$#"
-			count: 2
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:prepareQueryString\\(\\)\\.$#"
-			count: 3
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
-
-		-
-			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
@@ -101,14 +76,15 @@ parameters:
 			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
+			message: "#^Call to function is_subclass_of\\(\\) with '\\\\\\\\App\\\\\\\\Kernel' and 'Pimcore\\\\\\\\Kernel' will always evaluate to true\\.$#"
+			count: 1
+			path: lib/Bootstrap.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
 
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: lib/Mail.php
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
@@ -123,6 +99,11 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
+			count: 1
+			path: models/DataObject/Listing/Dao.php
 
 		-
 			message: "#^Call to method expandLocales\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
