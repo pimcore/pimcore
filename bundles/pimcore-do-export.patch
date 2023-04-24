@@ -1,0 +1,13 @@
+diff --git a/bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php b/bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
+index db28959f4d..cb50a48061 100644
+--- a/bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
++++ b/bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
+@@ -1429,7 +1429,7 @@ class DataObjectHelperController extends AdminController
+             } else {
+                 fwrite($temp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+             }
+-            if ($i < $lineCount - 1) {
++            if ($i <= $lineCount - 1) {
+                 fwrite($temp, "\r\n");
+             }
+         }
