@@ -1,0 +1,23 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # SECURITY
+    #
+
+    # the password hasher factory builds a dedicated hasher per user
+    # as we need the user instance to hash passwords.
+    # we don't specifiy this as fully qualified class name as there can be multiple factories (one for each user type)
+    pimcore.security.user_password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+        arguments:
+            - Pimcore\Security\Hasher\PimcoreUserPasswordHasher
+
+# Pimcore
+pimcore:
+    security:
+        factory_type: password_hasher
+        password_hasher_factories:
+            Pimcore\Security\User\User: pimcore.security.user_password_hasher_factory

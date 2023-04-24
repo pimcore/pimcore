@@ -567,8 +567,6 @@ class Installer
         if (!$this->skipDatabaseConfig) {
             $writer->writeDbConfig($config);
         }
-
-        $writer->writeSystemConfig();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel): void

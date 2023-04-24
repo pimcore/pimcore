@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\Bundle\AdminBundle\System\Config;
-use Pimcore\Bundle\AdminBundle\Tool as AdminTool;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element;
@@ -91,7 +89,7 @@ final class Tool
     public static function getValidLanguages(): array
     {
         if (empty(self::$validLanguages)) {
-            $config = Config::get()['general'];
+            $config = SystemSettingsConfig::get()['general'];
             if (empty($config['valid_languages'])) {
                 return [];
             }
@@ -109,21 +107,6 @@ final class Tool
     }
 
     /**
-     * @param string $language
-     * @param bool $absolutePath
-     *
-     * @return string
-     *
-     * @internal
-     *
-     * @TODO for bundles to be supported on Pimcore 10 & 11
-     */
-    public static function getLanguageFlagFile(string $language, bool $absolutePath = true): string
-    {
-        return AdminTool::getLanguageFlagFile($language, $absolutePath);
-    }
-
-    /**
      * @return string[]
      *
      * @internal
@@ -132,7 +115,7 @@ final class Tool
     {
         $languages = [];
 
-        $config = Config::get()['general'];
+        $config = SystemSettingsConfig::get()['general'];
         if (!empty($config['fallback_languages'][$language])) {
             $fallbackLanguages = explode(',', $config['fallback_languages'][$language]);
             foreach ($fallbackLanguages as $l) {
@@ -154,7 +137,7 @@ final class Tool
      */
     public static function getDefaultLanguage(): ?string
     {
-        $config = Config::get()['general'];
+        $config = SystemSettingsConfig::get()['general'];
         $defaultLanguage = $config['default_language'] ?? null;
         $languages = self::getValidLanguages();
 
@@ -328,7 +311,7 @@ final class Tool
         $request = self::resolveRequest($request);
 
         if (null === $request || !$request->getHost()) {
-            $config = Config::get()['general'];
+            $config = SystemSettingsConfig::get()['general'];
             $domain = $config['domain'];
 
             return $domain ?: null;
@@ -379,7 +362,7 @@ final class Tool
 
         // get it from System settings
         if (!$hostname || $hostname === 'localhost') {
-            $systemConfig = Config::get()['general'];
+            $systemConfig = SystemSettingsConfig::get()['general'];
             $hostname = $systemConfig['domain'] ?? null;
 
             if (!$hostname) {

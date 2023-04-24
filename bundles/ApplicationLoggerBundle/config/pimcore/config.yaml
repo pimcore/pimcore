@@ -1,6 +1,3 @@
-imports:
-    - { resource: default.yaml }
-
 flysystem:
     storages:
         pimcore.application_log.storage:

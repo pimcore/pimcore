@@ -25,68 +25,11 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class ConfigWriter
 {
-    private const SUBDIRECTORY = 'system_settings';
-
-    private array $defaultConfig = [
-        'pimcore' => [
-            'general' => [
-                'language' => 'en',
-            ],
-        ],
-    ];
-
     protected Filesystem $filesystem;
 
-    public function __construct(array $defaultConfig = null)
+    public function __construct()
     {
-        if (null !== $defaultConfig) {
-            $this->defaultConfig = $defaultConfig;
-        }
-
         $this->filesystem = new Filesystem();
-    }
-
-    public function writeSystemConfig(): void
-    {
-        $settings = null;
-
-        // check for an initial configuration template
-        // used eg. by the demo installer
-        $configTemplatePaths = [
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yaml',
-            PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::SUBDIRECTORY . '/system_settings.yaml',
-        ];
-
-        foreach ($configTemplatePaths as $configTemplatePath) {
-            if (!file_exists($configTemplatePath)) {
-                continue;
-            }
-
-            try {
-                $configTemplateArray = Yaml::parseFile($configTemplatePath);
-
-                if (!is_array($configTemplateArray)) {
-                    continue;
-                }
-
-                if (isset($configTemplateArray['pimcore']['general'])) { // check if the template contains a valid configuration
-                    $settings = $configTemplateArray;
-
-                    break;
-                }
-            } catch (\Exception $e) {
-            }
-        }
-
-        // set default configuration if no template is present
-        if (!$settings) {
-            // write configuration file
-            $settings = $this->defaultConfig;
-        }
-
-        $configFile = \Pimcore\Config::locateConfigFile(self::SUBDIRECTORY . '/system_settings.yaml');
-        $settingsYml = Yaml::dump($settings, 5);
-        $this->filesystem->dumpFile($configFile, $settingsYml);
     }
 
     public function writeDbConfig(array $config = []): void

@@ -39,7 +39,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
@@ -475,9 +474,13 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
 
-        /** @var ContentSecurityPolicyHandler $cspHandler */
-        $cspHandler = \Pimcore::getContainer()->get(ContentSecurityPolicyHandler::class);
-        $attrString .= $cspHandler->getNonceHtmlAttribute();
+        $container = \Pimcore::getContainer();
+        //@phpstan-ignore-next-line
+        if ($container->has('pimcore.admin.security.content_security_policy')) {
+            $cspHandler = $container->get('pimcore.admin.security.content_security_policy');
+            $attrString .= $cspHandler->getNonceHtmlAttribute();
+        }
+
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
         $html = '<script' . $attrString . '>';

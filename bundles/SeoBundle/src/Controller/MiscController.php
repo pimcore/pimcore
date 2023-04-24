@@ -15,7 +15,8 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,8 +24,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MiscController extends AdminController
+class MiscController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/http-error-log", name="pimcore_bundle_seo_misc_httperrorlog", methods={"POST"})
      *
@@ -71,7 +74,7 @@ class MiscController extends AdminController
         $logs = $db->fetchAllAssociative('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
         $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'items' => $logs,
             'total' => $total,
             'success' => true,
@@ -120,7 +123,7 @@ class MiscController extends AdminController
         $db = Db::get();
         $db->executeQuery('TRUNCATE TABLE http_error_log');
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
         ]);
     }

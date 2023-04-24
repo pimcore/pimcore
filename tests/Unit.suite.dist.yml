@@ -1,5 +1,8 @@
 actor: UnitTester
 modules:
     enabled:
-        - \Pimcore\Tests\Support\Helper\Pimcore
+        - \Pimcore\Tests\Support\Helper\Pimcore:
+              connect_db: true
         - \Pimcore\Tests\Support\Helper\Unit
+        - \Pimcore\Tests\Support\Helper\ClassManager
+        - \Pimcore\Tests\Support\Helper\Model

@@ -52,7 +52,7 @@
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
-    "doctrine/annotations": "^1.13.1",
+    "doctrine/annotations": "^1.13.1 || ^2.0",
     "symfony/doctrine-messenger": "^6.2",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",

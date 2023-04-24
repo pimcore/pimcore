@@ -16,15 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingsController extends AdminController
+class SettingsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
      *
@@ -56,7 +59,7 @@ class SettingsController extends AdminController
                 }
                 $route->delete();
 
-                return $this->adminJson(['success' => true, 'data' => []]);
+                return $this->jsonResponse(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 // save routes
                 $route = Staticroute::getById($data['id']);
@@ -68,7 +71,7 @@ class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $route->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 if (!(new Staticroute())->isWriteable()) {
                     throw new ConfigWriteException();
@@ -84,7 +87,7 @@ class SettingsController extends AdminController
                 $responseData = $route->getObjectVars();
                 $responseData['writeable'] = $route->isWriteable();
 
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
+                return $this->jsonResponse(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -114,9 +117,9 @@ class SettingsController extends AdminController
                 $routes[] = $route;
             }
 
-            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->jsonResponse(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(['success' => false]);
+        return $this->jsonResponse(['success' => false]);
     }
 }

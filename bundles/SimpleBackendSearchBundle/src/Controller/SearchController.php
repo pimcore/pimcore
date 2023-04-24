@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -25,11 +23,16 @@ use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\AdminStyle;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,9 +44,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class SearchController extends AdminController
+class SearchController extends UserAwareController
 {
-    use AdminStyleTrait;
+    use JsonHelperTrait;
 
     /**
      * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
@@ -241,8 +244,9 @@ class SearchController extends AdminController
         $searcherList->setOrderKey($queryCondition, false);
         $searcherList->setOrder('DESC');
 
-        $sortingSettings = QueryParams::extractSortingSettings($allParams);
-        if ($sortingSettings['orderKey']) {
+        $sortingSettings = $this->extractSortingSettings($allParams);
+
+        if ($sortingSettings['orderKey'] ?? false) {
             // Order by key column instead of filename
             $orderKeyQuote = true;
             if ($sortingSettings['orderKey'] === 'filename') {
@@ -261,7 +265,8 @@ class SearchController extends AdminController
             }
             $searcherList->setOrderKey($sort, $orderKeyQuote);
         }
-        if ($sortingSettings['order']) {
+
+        if ($sortingSettings['order'] ?? false) {
             $searcherList->setOrder($sortingSettings['order']);
         }
 
@@ -279,12 +284,15 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
-        if (in_array('document', $types)) {
+        if (in_array('document', $types) && class_exists(AdminEvents::class)) {
             // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
@@ -301,9 +309,12 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
         $hits = $searcherList->load();
@@ -346,7 +357,19 @@ class SearchController extends AdminController
         $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::SEARCH_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * @throws AdminClassicBundleNotFoundException
+     */
+    protected function extractSortingSettings(array $params): array
+    {
+        if (!class_exists(QueryParams::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
+
+        return QueryParams::extractSortingSettings($params);
     }
 
     /**
@@ -358,7 +381,7 @@ class SearchController extends AdminController
      */
     protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
     {
-        $user = $this->getAdminUser();
+        $user = $this->getPimcoreUser();
         $db = \Pimcore\Db::get();
 
         $allowedTypes = [];
@@ -491,7 +514,9 @@ class SearchController extends AdminController
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                 ];
 
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                if (class_exists(ElementAdminStyleEvent::class)) {
+                    $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                }
 
                 $elements[] = $data;
             }
@@ -506,7 +531,7 @@ class SearchController extends AdminController
 
         $result = ['data' => $elements, 'success' => true];
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
     }
 
     /**
@@ -560,7 +585,7 @@ class SearchController extends AdminController
             }
         }
 
-        return $this->adminJson($data);
+        return $this->jsonResponse($data);
     }
 
     protected function shortenPath(string $path): string
@@ -581,5 +606,33 @@ class SearchController extends AdminController
         }
 
         return $shortPath;
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param int|null $context
+     * @param array $data
+     *
+     * @throws \Exception
+     */
+    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
+    {
+        $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        $adminStyle = $event->getAdminStyle();
+
+        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
+        if (!$data['iconCls']) {
+            $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        } else {
+            $data['icon'] = null;
+        }
+        if ($adminStyle->getElementCssClass() !== false) {
+            if (!isset($data['cls'])) {
+                $data['cls'] = '';
+            }
+            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
+        }
+        $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
     }
 }

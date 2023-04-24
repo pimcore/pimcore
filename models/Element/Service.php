@@ -971,27 +971,6 @@ class Service extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return array|null
-     *
-     * @internal
-     */
-    public static function getCustomViewById(string $id): ?array
-    {
-        $customViews = Config::get();
-        if ($customViews) {
-            foreach ($customViews as $customView) {
-                if ($customView['id'] == $id) {
-                    return $customView;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public static function getValidKey(string $key, string $type): string
     {
         $event = new GenericEvent(null, [

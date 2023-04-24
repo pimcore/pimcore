@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -143,7 +144,7 @@ final class Configuration implements ConfigurationInterface
             'system_settings' => '/var/config/system_settings',
         ]);
 
-        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', ['read_target']);
+        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', [LocationAwareConfigRepository::READ_TARGET]);
 
         return $treeBuilder;
     }
@@ -210,7 +211,7 @@ final class Configuration implements ConfigurationInterface
                     ->ifString()
                         ->then(fn ($v) => explode(',', $v))
                     ->end()
-                    ->defaultValue(['en'])
+                    ->defaultValue(['en', 'de', 'fr'])
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
@@ -565,12 +566,6 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('icc_cmyk_profile')
                         ->info('Absolute path to default ICC CMYK profile (if no embedded profile is given)')
                         ->defaultNull()
-                    ->end()
-                    ->booleanNode('hide_edit_image')
-                        ->defaultFalse()
-                    ->end()
-                    ->booleanNode('disable_tree_preview')
-                        ->defaultTrue()
                     ->end()
                 ->end();
 

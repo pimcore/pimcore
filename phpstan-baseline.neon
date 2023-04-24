@@ -6,6 +6,81 @@ parameters:
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
+			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			count: 1
+			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
+
+		-
+			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\CustomReportsBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			count: 1
+			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SeoBundle\\\\Controller\\\\Document\\\\DocumentController\\:\\:getTreeNodeConfig\\(\\)\\.$#"
+			count: 1
+			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
+
+		-
+			message: "#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Access to constant RESOLVE_ELEMENT_ADMIN_STYLE on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Call to method getAdminStyle\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Call to method getFilterCondition\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			count: 2
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Instantiated class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent not found\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Parameter \\$gridHelperService of method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\Controller\\\\SearchController\\:\\:findAction\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:\\$config\\.$#"
+			count: 2
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:prepareQueryString\\(\\)\\.$#"
+			count: 3
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+
+		-
+			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:\\$config\\.$#"
+			count: 2
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:prepareQueryString\\(\\)\\.$#"
+			count: 3
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
+		-
+			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
+		-
 			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
@@ -16,9 +91,14 @@ parameters:
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^Call to function is_subclass_of\\(\\) with '\\\\\\\\App\\\\\\\\Kernel' and 'Pimcore\\\\\\\\Kernel' will always evaluate to true\\.$#"
+			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
 			count: 1
-			path: lib/Bootstrap.php
+			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
+
+		-
+			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\StaticRoutesBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			count: 1
+			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -26,15 +106,9 @@ parameters:
 			path: lib/Image/Adapter/Imagick.php
 
 		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SanityCheckHandler.php
-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 2
+			path: lib/Mail.php
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
@@ -51,9 +125,34 @@ parameters:
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
+			message: "#^Call to method expandLocales\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
 			count: 1
-			path: models/DataObject/Listing/Dao.php
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to method getLabeledValue\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to method getRenderer\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 2
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to method getValidLanguages\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\Service not found\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:getConfigForHelperDefinition\\(\\) has invalid return type Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 2
+			path: models/DataObject/Service.php
 
 		-
 			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface not found\\.$#"
@@ -69,3 +168,13 @@ parameters:
 			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
 			count: 1
 			path: models/Document/Editable/Snippet.php
+
+		-
+			message: "#^Call to static method get\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
+			count: 1
+			path: models/User.php
+
+		-
+			message: "#^Call to static method getAvailablePerspectives\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
+			count: 1
+			path: models/User.php

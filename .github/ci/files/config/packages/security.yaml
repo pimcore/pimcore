@@ -3,7 +3,7 @@ security:
 
     providers:
         pimcore_admin:
-            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+            id: Pimcore\Security\User\UserProvider
 
     firewalls:
         dev:
@@ -11,39 +11,10 @@ security:
             security: false
 
         # Pimcore WebDAV HTTP basic // DO NOT CHANGE!
-        pimcore_admin_webdav:
-            pattern: ^/admin/asset/webdav
+        pimcore_webdav:
+            pattern: ^/asset/webdav
             provider: pimcore_admin
             http_basic: ~
-
-        # Pimcore admin form login // DO NOT CHANGE!
-        pimcore_admin:
-            pattern: ^/admin(/.*)?$
-            user_checker: Pimcore\Bundle\AdminBundle\Security\User\UserChecker
-            provider: pimcore_admin
-            login_throttling:
-                max_attempts: 3
-                interval: '5 minutes'
-            logout:
-                path: pimcore_admin_logout
-                target: pimcore_admin_login
-            form_login:
-                default_target_path: pimcore_admin_index
-                always_use_default_target_path: true
-                login_path: pimcore_admin_login
-                check_path: pimcore_admin_login_check
-                username_parameter: username
-                password_parameter: password
-            custom_authenticators:
-                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
-            two_factor:
-                auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
-                check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check
-                default_target_path: /admin            # Where to redirect by default after successful authentication
-                always_use_default_target_path: false  # If it should always redirect to default_target_path
-                auth_code_parameter_name: _auth_code   # Name of the parameter for the two-factor authentication code
-                trusted_parameter_name: _trusted       # Name of the parameter for the trusted device option
-                multi_factor: false                    # If ALL active two-factor methods need to be fulfilled (multi-factor authentication)
 
     access_control:
         # Pimcore admin ACl  // DO NOT CHANGE!
