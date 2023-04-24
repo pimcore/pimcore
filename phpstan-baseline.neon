@@ -41,11 +41,6 @@ parameters:
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
 			message: "#^Instantiated class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent not found\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
