@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\InstallBundle\Command;
 
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Installer;
-use Pimcore\Config;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -186,12 +185,6 @@ class InstallCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        // no installer if Pimcore is already installed
-        $configFile = Config::locateConfigFile('system.yaml');
-        if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
-            throw new \RuntimeException(sprintf('The system.yaml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
-        }
-
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
         }

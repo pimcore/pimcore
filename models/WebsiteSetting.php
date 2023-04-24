@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
@@ -148,7 +149,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = $name;
+        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
 
         return $this;
     }
@@ -183,7 +184,7 @@ final class WebsiteSetting extends AbstractModel
             $data = $data->getId();
         }
 
-        $this->data = $data;
+        $this->data = SecurityHelper::convertHtmlSpecialChars($data);
 
         return $this;
     }
