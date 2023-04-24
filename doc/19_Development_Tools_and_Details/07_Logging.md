@@ -50,24 +50,17 @@ pimcore:
 Sometimes it's necessary to debug redirects, for example when a redirect ends in an infinite loop. 
 In this log you can see every request where a redirect takes action. 
 
+##### Example
+```
+2021-04-26T14:03:20+0200 : 10.242.2.255          Custom-Redirect ID: 1, Source: /asdsad/redirectsource/asd -> /en/Events
+```
+
 :::info
 
 Redirects are logged into a `redirect` monolog log channel at info level. By default, Pimcore logs that channel into `var/log/redirect.log`.
 Of course, the corresponding monolog handler configuration can be adapted as needed.
 
 :::
-
-##### Example
-```
-2021-04-26T14:03:20+0200 : 10.242.2.255          Custom-Redirect ID: 1, Source: /asdsad/redirectsource/asd -> /en/Events
-```
-
-Redirects are logged into monolog log channel redirect at info level. Pimcore default configuration is to configured to log that channel into var/log/redirect.log.
-Of course, corresponding monolog handler configuration can be adapter as per needed.
-
-For reference:
-- See also [Bug][SeoBundle] Redirect logging should log into channel redirect pimcore#14939
-- [Link](pimcore/pimcore@f9d76dc#diff-34d259c58a9001df91ca2ccc5f41ab960a307d1566cffceb88262d679cfc6c70R97)
 
 ## Writing your own log files
 To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
