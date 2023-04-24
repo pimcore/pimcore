@@ -15,6 +15,9 @@
 
 namespace Pimcore\Security;
 
+/**
+ * @internal
+ */
 class SecurityHelper
 {
     public static function convertHtmlSpecialChars(?string $text): ?string
