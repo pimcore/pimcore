@@ -137,7 +137,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'ping',
                 'type',
                 'referrerpolicy',
-                'xml:lang'
+                'xml:lang',
             ];
             $defaultAttributes = [];
 
