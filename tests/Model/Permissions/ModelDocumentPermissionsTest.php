@@ -21,7 +21,6 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
-use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -423,7 +422,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             },
             'extractSortingSettings' => function ($params) {
                 return $params;
-            }
+            },
         ]);
 
         return $DocumentController;

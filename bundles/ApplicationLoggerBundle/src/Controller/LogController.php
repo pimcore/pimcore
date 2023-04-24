@@ -75,7 +75,6 @@ class LogController extends UserAwareController implements KernelControllerEvent
             }
         }
 
-
         $priority = $request->get('priority');
         if ($priority !== '-1' && ($priority == '0' || $priority)) {
             $levels = [];

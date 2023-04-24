@@ -567,7 +567,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             },
             'extractSortingSettings' => function ($params) {
                 return $params;
-            }
+            },
         ]);
 
         return $dataObjectController;

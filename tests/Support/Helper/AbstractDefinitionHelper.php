@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Module;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module

@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Traits;
 
-
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Model\Element\ElementInterface;
 

@@ -70,8 +70,7 @@ abstract class UserAwareController extends Controller
         \Throwable $previous = null,
         int $code = 0,
         array $headers = []
-    ): AccessDeniedHttpException
-    {
+    ): AccessDeniedHttpException {
         // $headers parameter not supported by Symfony 3.4
         return new AccessDeniedHttpException($message, $previous, $code, $headers);
     }

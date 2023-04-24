@@ -432,7 +432,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
             },
             'extractSortingSettings' => function ($params) {
                 return $params;
-            }
+            },
         ]);
 
         return $AssetController;

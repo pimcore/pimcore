@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
