@@ -58,20 +58,22 @@ framework:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
                 allow_elements:
-                    p: [ 'class', 'style' ]
+                    span : [ 'class', 'style', 'id' ]
+                    div : [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
                     strong: 'class'
                     em: 'class'
-                    h1: 'class'
-                    a: ['class', 'href', 'target', 'title', 'rel']
-                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height']
+                    h1: ['class', 'id']
+                    a: ['class', 'id', 'href', 'target', 'title', 'rel']
+                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id']
                     colgroup: 'class'
-                    col: ['class', 'style']
-                    tbody: 'class'
-                    tr: 'class'
-                    td: 'class'
-                    ul: ['class', 'style']
-                    li: ['class', 'style']
-                    ol: ['class', 'style']
+                    col: ['class', 'style', 'id']
+                    tbody: ['class', 'id']
+                    tr: ['class', 'id']
+                    td: ['class', 'id']
+                    ul: ['class', 'style', 'id']
+                    li: ['class', 'style', 'id']
+                    ol: ['class', 'style', 'id']
 
 # Twig Configuration
 twig:
