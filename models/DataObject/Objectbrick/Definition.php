@@ -20,6 +20,10 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
+use Pimcore\Event\DataObjectClassDefinitionEvents;
+use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
+use Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent;
+use Pimcore\Event\ObjectbrickDefinitionEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -161,6 +165,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->checkTablenames();
         $this->checkContainerRestrictions();
 
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_UPDATE);
+        }
+
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
@@ -198,6 +210,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
                 $fd->postSave($this);
             }
+        }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_UPDATE);
         }
     }
 
@@ -488,6 +506,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function delete(): void
     {
+        $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
@@ -533,6 +552,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 }
             }
         }
+
+        $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_DELETE);
     }
 
     /**
