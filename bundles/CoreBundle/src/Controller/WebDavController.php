@@ -32,7 +32,7 @@ class WebDavController extends Controller
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
+            $server->setBaseUri($this->generateUrl('pimcore_webdav', ['path' => '/']));
 
             // lock plugin
             /** @var \PDO $pdo */

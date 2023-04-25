@@ -41,7 +41,7 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
             throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
         }
 
-        return Authentication::getPasswordHash($this->getUser()->getUsername(), $plainPassword);
+        return Authentication::getPasswordHash($this->getUser()->getUserIdentifier(), $plainPassword);
     }
 
     /**

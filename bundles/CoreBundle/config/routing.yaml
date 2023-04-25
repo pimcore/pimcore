@@ -32,8 +32,8 @@ _pimcore_bundle_auto:
     resource: .
     type: pimcore_bundle
 
-pimcore_admin_webdav:
-    path: /admin/asset/webdav{path}
+pimcore_webdav:
+    path: /asset/webdav{path}
     defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\WebDavController::webdavAction }
     requirements:
         path: '.*'

@@ -153,7 +153,8 @@ services:
 
     # standard user provider returning admin users wrapped in a Pimcore\Security\User\User proxy object.
     # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
-    Pimcore\Security\User\UserProvider: ~
+    Pimcore\Security\User\UserProvider:
+        public: true
 
     Pimcore\Security\User\TokenStorageUserResolver:
         public: true
@@ -170,3 +171,13 @@ services:
     #
     Pimcore\SystemSettingsConfig:
         public: true
+
+
+    #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+
+    Pimcore\Model\Notification\Service\UserService: ~
