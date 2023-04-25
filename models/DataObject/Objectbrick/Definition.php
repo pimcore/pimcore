@@ -24,6 +24,7 @@ use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent;
 use Pimcore\Event\ObjectbrickDefinitionEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -43,6 +44,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     use Model\DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     public array $classDefinitions = [];
 
