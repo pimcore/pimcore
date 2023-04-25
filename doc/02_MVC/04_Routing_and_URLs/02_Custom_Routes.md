@@ -1,4 +1,11 @@
 # URLs Based on Custom (Static) Routes 
+:::caution
+
+To use this feature, please enable the `PimcoreStaticRoutesBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreStaticRoutesBundle`
+
+:::
 
 ## Introduction
 Static routes are necessary for functionalities where you don't have an underlying document or where you have the need
@@ -13,7 +20,7 @@ Custom Routes come fourth in the route processing priority.
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
 still use [Symfony's routing capabilities](https://symfony.com/doc/current/routing.html) (eg. #[Route] attribute,
  `routing.yaml`, ...) in parallel to Pimcore Custom Routes.
- 
+
 ## Configuring Custom Routes
 
 Custom Routes are configured in the Pimcore backend interface as follows. 

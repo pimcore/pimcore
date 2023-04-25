@@ -1,10 +1,15 @@
 # Application logger
+:::caution
+
+To use this feature, please enable the `PimcoreApplicationLoggerBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreApplicationLoggerBundle`
+
+:::
 
 ## General
 
-The application logger bundle is a tool, which developers can use to log 
-certain events and errors within a Pimcore powered application.
-To use this feature please enable `PimcoreApplicationLoggerBundle` in your `bundles.php` file.
+The application logger bundle is a tool which developers can use to log certain events and errors within a Pimcore powered application.
 
 <div class="inline-imgs">
 

@@ -876,7 +876,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = 'sometext<br>' . $seed;
+        $expected = 'sometext<br />' . $seed;
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
@@ -1408,6 +1408,6 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillTextarea(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter('sometext<br>' . $seed);
+        $object->$setter('sometext<br />' . $seed);
     }
 }

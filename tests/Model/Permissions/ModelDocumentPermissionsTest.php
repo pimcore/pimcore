@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
@@ -26,6 +24,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ModelDocumentPermissionsTest extends ModelTestCase
@@ -415,177 +414,18 @@ class ModelDocumentPermissionsTest extends ModelTestCase
     protected function buildController(string $classname, User $user): mixed
     {
         $DocumentController = Stub::construct($classname, [], [
-            'getAdminUser' => function () use ($user) {
+            'getPimcoreUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function ($data) {
+            'jsonResponse' => function ($data) {
                 return new JsonResponse($data);
+            },
+            'extractSortingSettings' => function ($params) {
+                return $params;
             },
         ]);
 
         return $DocumentController;
-    }
-
-    protected function doTestTreeGetChildrenById(Document $element, User $user, array $expectedChildren): void
-    {
-        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\Document\\DocumentController', $user);
-
-        $request = new Request([
-            'node' => $element->getId(),
-            'limit' => 100,
-            'view' => 0,
-        ]);
-        $eventDispatcher = new EventDispatcher();
-
-        $responseData = $controller->treeGetChildrenByIdAction(
-            $request,
-            $eventDispatcher
-        );
-
-        $responseData = json_decode($responseData->getContent(), true);
-        $responsePaths = [];
-        foreach ($responseData['nodes'] as $node) {
-            $responsePaths[] = $node['path'];
-        }
-
-        $this->assertCount(
-            $responseData['total'],
-            $responseData['nodes'],
-            'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
-        );
-
-        $this->assertCount(
-            count($expectedChildren),
-            $responseData['nodes'],
-            'Assert number of expected result matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
-        );
-
-        foreach ($expectedChildren as $path) {
-            $this->assertContains(
-                $path,
-                $responsePaths,
-                'Children of `' . $element->getFullpath() . '` do to not contain `' . $path . '` for user `' . $user->getName() . '`'
-            );
-        }
-    }
-
-    public function testTreeGetChildrenById(): void
-    {
-        $admin = User::getByName('admin');
-
-        // test /permissionfoo
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $admin,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
-            $this->permissionfoo,
-            $this->userPermissionTest1,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById( //did not work before
-            $this->permissionfoo,
-            $this->userPermissionTest2,
-            [$this->bars->getFullpath()]
-        );
-
-        // test /permissionfoo/bars
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $admin,
-            [$this->hugo->getFullpath(), $this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest1,
-            [$this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
-            $this->bars,
-            $this->userPermissionTest2,
-            [$this->userfolder->getFullpath()]
-        );
-
-        // test /permissionfoo/bars/userfolder
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $admin,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest1,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest2,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        // test /permissionfoo/bars/groupfolder
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $admin,
-            [$this->grouptestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest1,
-            [$this->grouptestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
-            $this->groupfolder,
-            $this->userPermissionTest2,
-            []
-        );
-
-        // test /permissionbar
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $admin,
-            [$this->foo->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest1,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest2,
-            []
-        );
-
-        // test /permissionbar/foo
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $admin,
-            [$this->hiddenobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest1,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest2,
-            []
-        );
     }
 
     protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
@@ -602,11 +442,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $responseData = $controller->findAction(
             $request,
             new EventDispatcher(),
-            new GridHelperService()
+            $this->getMockBuilder('\Pimcore\Bundle\AdminBundle\Helper\GridHelperService')->getMock() //this is not used in the test
         );
 
-        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }

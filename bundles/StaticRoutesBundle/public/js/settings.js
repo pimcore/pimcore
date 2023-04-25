@@ -99,11 +99,11 @@ pimcore.bundle.staticroutes.settings = Class.create({
 
         var typesColumns = [
             {text:t("name"), flex:50, sortable:true, dataIndex:'name',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text:t("pattern"), flex:100, sortable:true, dataIndex:'pattern',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text:t("reverse"), flex:100, sortable:true, dataIndex:'reverse',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text:t("controller"), flex:200, sortable:false, dataIndex:'controller',
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({
@@ -130,14 +130,17 @@ pimcore.bundle.staticroutes.settings = Class.create({
                     valueField:'name',
                     listConfig: {
                         maxWidth: 400
+                    },
+                    listeners: {
+                        'change': pimcore.helpers.htmlEncodeTextField
                     }
                 })},
             {text:t("variables"), flex:50, sortable:false, dataIndex:'variables',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text:t("defaults"), flex:50, sortable:false, dataIndex:'defaults',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
             {text:t("site_ids"), flex:100, sortable:true, dataIndex:"siteId",
-                editor:new Ext.form.TextField({}),
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}}),
                 tooltip: t("site_ids_tooltip")
             },
             {text:t("priority"), flex:50, sortable:true, dataIndex:'priority', editor:new Ext.form.ComboBox({
@@ -146,7 +149,7 @@ pimcore.bundle.staticroutes.settings = Class.create({
                 triggerAction:"all"
             })},
             {text:t("methods"), flex:50, sortable:false, dataIndex:'methods',
-                editor:new Ext.form.TextField({}),
+                editor:new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}}),
             },
             {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
@@ -189,9 +192,15 @@ pimcore.bundle.staticroutes.settings = Class.create({
                             return;
                         }
 
-                        pimcore.helpers.deleteConfirm(t('staticroute'), data.data.name, function () {
-                            grid.getStore().removeAt(rowIndex);
-                        }.bind(this));
+                        const decodedName = Ext.util.Format.htmlDecode(data.data.name);
+
+                        pimcore.helpers.deleteConfirm(
+                            t('staticroute'),
+                            Ext.util.Format.htmlEncode(decodedName),
+                            function () {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this)
+                        );
                     }.bind(this)
                 }]
             }

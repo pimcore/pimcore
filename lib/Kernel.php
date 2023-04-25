@@ -54,8 +54,6 @@ abstract class Kernel extends SymfonyKernel
         configureRoutes as protected;
     }
 
-    private const CONFIG_LOCATION = 'config_location';
-
     private BundleCollection $bundleCollection;
 
     /**
@@ -116,24 +114,24 @@ abstract class Kernel extends SymfonyKernel
             $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore');
 
             foreach ($configKeysArray as $configKey) {
-                $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target'];
-                $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey]['read_target'] ?? null;
+                $writeTargetConf = $containerConfig[LocationAwareConfigRepository::CONFIG_LOCATION][$configKey][LocationAwareConfigRepository::WRITE_TARGET];
+                $readTargetConf = $containerConfig[LocationAwareConfigRepository::CONFIG_LOCATION][$configKey][LocationAwareConfigRepository::READ_TARGET] ?? null;
 
                 $configDir = null;
                 if($readTargetConf !== null) {
-                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
-                        ($readTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf['type'] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+                    if ($readTargetConf[LocationAwareConfigRepository::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                        ($readTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
                     ) {
                         continue;
                     }
 
-                    if ($readTargetConf['type'] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf['options']['directory'] !== null) {
-                        $configDir = rtrim($readTargetConf['options']['directory'], '/\\');
+                    if ($readTargetConf[LocationAwareConfigRepository::TYPE] === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $readTargetConf[LocationAwareConfigRepository::OPTIONS][LocationAwareConfigRepository::DIRECTORY] !== null) {
+                        $configDir = rtrim($readTargetConf[LocationAwareConfigRepository::OPTIONS][LocationAwareConfigRepository::DIRECTORY], '/\\');
                     }
                 }
 
                 if($configDir === null) {
-                    $configDir = rtrim($writeTargetConf['options']['directory'], '/\\');
+                    $configDir = rtrim($writeTargetConf[LocationAwareConfigRepository::OPTIONS][LocationAwareConfigRepository::DIRECTORY], '/\\');
                 }
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {

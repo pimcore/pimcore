@@ -1,4 +1,11 @@
 # Robots.txt
+:::caution
+
+To use this feature, please enable the `PimcoreSeoBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreSeoBundle`
+
+:::
 
 Robots.txt files can be generated on a per-site basis.
 

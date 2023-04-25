@@ -4,7 +4,7 @@
 
 If you think that you have found a security issue, 
 don’t use the bug tracker and don’t publish it publicly. 
-Instead, all security issues must be reported via 📫 to [security-issue@pimcore.com](mailto:security-issue@pimcore.com).
+Instead, all security issues must be reported via a private vulnerability report.
 Additionally, we also check issues reported via [huntr.dev](https://huntr.dev/repos/pimcore/pimcore/).
 
 

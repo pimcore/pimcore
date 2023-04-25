@@ -25,6 +25,8 @@ use Pimcore\Model\Element;
 
 class Text
 {
+    public const PIMCORE_WYSIWYG_SANITIZER_ID = 'html_sanitizer.sanitizer.pimcore.wysiwyg_sanitizer';
+
     public static function removeLineBreaks(string $text = ''): string
     {
         $text = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $text);
