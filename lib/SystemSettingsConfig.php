@@ -37,8 +37,6 @@ class SystemSettingsConfig
 
     private EventDispatcherInterface $eventDispatcher;
 
-    private static ?SystemConfig $systemConfigService = null;
-
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         LocaleServiceInterface $localeService
