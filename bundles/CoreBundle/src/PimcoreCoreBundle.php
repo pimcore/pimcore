@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheFallbackPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\HtmlSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessageBusPublicPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
@@ -80,6 +81,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new MessageBusPublicPass());
+        $container->addCompilerPass(new HtmlSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
     }
 

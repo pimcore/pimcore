@@ -19,18 +19,26 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
 class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
+    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
+
     /**
      * Contains the text
      *
      * @internal
      */
     protected ?string $text = null;
+
+    public static function getWysiwygSanitizer(): HtmlSanitizer
+    {
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+    }
 
     /**
      * {@inheritdoc}
@@ -81,7 +89,8 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     public function setDataFromResource(mixed $data): static
     {
-        $this->text = $data;
+        $helper = self::getWysiwygSanitizer();
+        $this->text = $helper->sanitize(html_entity_decode($data));
 
         return $this;
     }
@@ -91,7 +100,8 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     public function setDataFromEditmode(mixed $data): static
     {
-        $this->text = $data;
+        $helper = self::getWysiwygSanitizer();
+        $this->text = $helper->sanitize(html_entity_decode($data));
 
         return $this;
     }

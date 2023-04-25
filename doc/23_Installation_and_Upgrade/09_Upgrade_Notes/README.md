@@ -333,6 +333,7 @@ pimcore:
 - [Configuration] Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
 - [WebDAV] WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
 - [Events] `AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` has been renamed to `Pimcore\Event\ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED`.
+- [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor.
 
 ## 10.6.0
 
