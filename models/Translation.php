@@ -27,6 +27,7 @@ use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -64,6 +65,17 @@ final class Translation extends AbstractModel
      * ID of the user who make the latest changes
      */
     protected ?int $userModification = null;
+
+    protected ?HtmlSanitizerInterface $pimcoreTranslationSanitizer;
+
+    public function getTranslationSanitizer(): HtmlSanitizerInterface
+    {
+        if(!$this->pimcoreTranslationSanitizer){
+            $this->pimcoreTranslationSanitizer = \Pimcore::getContainer()->get(Tool\Text::PIMCORE_TRANSLATION_SANITIZER_ID);
+        }
+
+        return $this->pimcoreTranslationSanitizer;
+    }
 
     public function getType(): string
     {
