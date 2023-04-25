@@ -23,14 +23,14 @@ body:
     - type: input
       attributes:
           label: Pimcore version
-          validations:
-              required: true
-    - type: markdown
+      validations:
+          required: true
+    - type: textarea
       attributes:
           label: Steps to reproduce
       validations:
           required: true
-    - type: markdown
+    - type: textarea
       attributes:
           label: Expected / actual behavior
       validations:
