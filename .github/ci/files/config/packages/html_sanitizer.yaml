@@ -1,0 +1,6 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_elements:
+                    br: ''
