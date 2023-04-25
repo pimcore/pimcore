@@ -13,27 +13,16 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Extension\Bundle;
+namespace Pimcore\Security;
 
-trait BundleAdminClassicTrait
+class SecurityHelper
 {
-    public function getJsPaths(): array
+    public static function convertHtmlSpecialChars(?string $text): ?string
     {
-        return [];
-    }
+        if(is_string($text)) {
+            return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        }
 
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    public function getEditmodeJsPaths(): array
-    {
-        return [];
-    }
-
-    public function getEditmodeCssPaths(): array
-    {
-        return [];
+        return null;
     }
 }

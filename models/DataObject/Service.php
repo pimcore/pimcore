@@ -25,6 +25,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -487,7 +488,7 @@ class Service extends Model\Element\Service
     public static function expandGridColumnForExport(array $helperDefinitions, string $key): ?array
     {
         $config = self::getConfigForHelperDefinition($helperDefinitions, $key);
-        if ($config instanceof AbstractOperator && $config->expandLocales()) {
+        if (class_exists(AbstractOperator::class) && $config instanceof AbstractOperator && $config->expandLocales()) {
             return $config->getValidLanguages();
         }
 
@@ -517,6 +518,9 @@ class Service extends Model\Element\Service
 
             // TODO refactor how the service is accessed into something non-static and inject the service there
             $service = \Pimcore::getContainer()->get(GridColumnConfigService::class);
+            if (!$service) {
+                throw new AdminClassicBundleNotFoundException('Admin Bundle not found. Please install the package pimcore/admin-ui-classic-bundle.');
+            }
             $config = $service->buildOutputDataConfig([$attributes], $context);
 
             if (!$config) {
