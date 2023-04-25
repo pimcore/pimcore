@@ -70,11 +70,7 @@ final class Translation extends AbstractModel
 
     public function getTranslationSanitizer(): HtmlSanitizerInterface
     {
-        if(!$this->pimcoreTranslationSanitizer){
-            $this->pimcoreTranslationSanitizer = \Pimcore::getContainer()->get(Tool\Text::PIMCORE_TRANSLATION_SANITIZER_ID);
-        }
-
-        return $this->pimcoreTranslationSanitizer;
+        return $this->pimcoreTranslationSanitizer ??= \Pimcore::getContainer()->get(Tool\Text::PIMCORE_TRANSLATION_SANITIZER_ID);
     }
 
     public function getType(): string
