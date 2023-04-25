@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\Translation;
 use Pimcore\Model\Translation\Listing;
 use Pimcore\Model\User;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -127,7 +128,7 @@ class ClassificationstoreController extends AdminAbstractController implements K
      */
     public function createGroupAction(Request $request): JsonResponse
     {
-        $name = $request->get('name');
+        $name = SecurityHelper::convertHtmlSpecialChars($request->get('name'));
         $storeId = $request->get('storeId');
         $config = Classificationstore\GroupConfig::getByName($name, $storeId);
 
@@ -154,7 +155,7 @@ class ClassificationstoreController extends AdminAbstractController implements K
      */
     public function createStoreAction(Request $request): JsonResponse
     {
-        $name = $request->get('name');
+        $name = SecurityHelper::convertHtmlSpecialChars($request->get('name'));
 
         $config = Classificationstore\StoreConfig::getByName($name);
 
@@ -180,7 +181,7 @@ class ClassificationstoreController extends AdminAbstractController implements K
      */
     public function createCollectionAction(Request $request): JsonResponse
     {
-        $name = $request->get('name');
+        $name = SecurityHelper::convertHtmlSpecialChars($request->get('name'));
         $storeId = $request->get('storeId');
         $config = Classificationstore\CollectionConfig::getByName($name, $storeId);
 
