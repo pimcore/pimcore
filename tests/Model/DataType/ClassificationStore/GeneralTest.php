@@ -661,7 +661,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('wysiwyg', $store->getId());
 
-        $originalValue = 'line1<br>line2';
+        $originalValue = 'line1<br />line2';
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
