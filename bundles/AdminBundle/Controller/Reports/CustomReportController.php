@@ -526,7 +526,8 @@ class CustomReportController extends ReportsControllerBase
     /**
      * @throws \Exception
      */
-    public function isValidConfigName(string $configName) {
+    public function isValidConfigName(string $configName)
+    {
         if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
             throw new \Exception('The customer report name is invalid');
         }
