@@ -66,7 +66,7 @@ final class Translation extends AbstractModel
      */
     protected ?int $userModification = null;
 
-    protected ?HtmlSanitizerInterface $pimcoreTranslationSanitizer;
+    protected ?HtmlSanitizerInterface $pimcoreTranslationSanitizer = null;
 
     public function getTranslationSanitizer(): HtmlSanitizerInterface
     {

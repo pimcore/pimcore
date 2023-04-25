@@ -102,10 +102,10 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $data = [
-                        'key' => $this->db->quote($this->model->getKey()),
-                        'type' => $this->db->quote($this->model->getType()),
-                        'language' => $this->db->quote($language),
-                        'text' => $this->db->quote($sanitizer->sanitize($text)),
+                        'key' => $this->model->getKey(),
+                        'type' => $this->model->getType(),
+                        'language' => $language,
+                        'text' => $sanitizer->sanitize($text),
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                         'userOwner' => $this->model->getUserOwner(),
