@@ -20,8 +20,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
-use Pimcore\Event\DataObjectClassDefinitionEvents;
-use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent;
 use Pimcore\Event\ObjectbrickDefinitionEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
