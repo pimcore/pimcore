@@ -85,7 +85,7 @@ The following table gives an overview of all available tests:
 | `pimcore_document_page_snippet`        | Checks if object is instanceof Document\PageSnippet                 |
 | `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
-The following tests are only available if the [PimcoreWebToPrintBundle](https://github.com/pimcore/web-to-print-bundle) is enabled and installed:
+The following tests are only available if the [PimcoreWebToPrintBundle](https://pimcore.com/docs/platform/Web_To_Print/) is enabled and installed:
 
 | Test                      | Description                                                                      |
 |---------------------------|----------------------------------------------------------------------------------|
@@ -93,7 +93,7 @@ The following tests are only available if the [PimcoreWebToPrintBundle](https://
 | `pimcore_document_print_container`     | Checks if object is instanceof Printcontainer              |
 | `pimcore_document_print_page`          | Checks if object is instanceof Printpage                   |
 
-The following tests are only available if the [PimcoreNewsletterBundle](https://github.com/pimcore/newsletter-bundle) is enabled and installed:
+The following tests are only available if the [PimcoreNewsletterBundle](https://pimcore.com/docs/platform/Newsletter/) is enabled and installed:
 
 | Test                      | Description                                                                      |
 |---------------------------|----------------------------------------------------------------------------------|
