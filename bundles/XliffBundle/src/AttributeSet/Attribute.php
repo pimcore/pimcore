@@ -32,6 +32,8 @@ class Attribute
 
     const TYPE_BLOCK_IN_LOCALIZED_FIELD = 'blockinlocalizedfield';
 
+    const TYPE_BLOCK_IN_LOCALIZED_FIELD_COLLECTION = 'blockinlocalizedfieldcollection';
+
     const TYPE_FIELD_COLLECTION_LOCALIZED_FIELD = 'localizedfieldcollection';
 
     const TYPE_ELEMENT_KEY = 'key';
