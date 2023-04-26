@@ -15,12 +15,13 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Model\Document;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\StaticPageGenerator;
-use Pimcore\Model\Document;
+use Pimcore\Twig\Extension\Templating\HeadMeta;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -28,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GenerateStaticPagesCommand extends AbstractCommand
 {
-    public function __construct(protected StaticPageGenerator $staticPageGenerator)
+    public function __construct(protected StaticPageGenerator $staticPageGenerator, protected HeadMeta $headMeta)
     {
         parent::__construct();
     }
@@ -81,6 +82,12 @@ class GenerateStaticPagesCommand extends AbstractCommand
                 $page = Document\Page::getById($id);
                 if ($page->getStaticGeneratorEnabled()) {
                     $progressBar->setMessage(sprintf('Generate for document "%s"', $page->getFullPath()));
+
+                    if (is_array($page->getMetaData())) {
+                        foreach ($page->getMetaData() as $meta) {
+                            $this->headMeta->addRaw($meta);
+                        }
+                    }
 
                     $this->staticPageGenerator->generate($page, ['is_cli' => true]);
                 } else {
