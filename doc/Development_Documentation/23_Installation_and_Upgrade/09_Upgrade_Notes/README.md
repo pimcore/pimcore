@@ -62,6 +62,7 @@
             hide_edit_image: false
             disable_tree_preview: true
     ```
+- [Link Editable] The "attributes" field in the "advanced" tab is deprecated. The field will be removed in Pimcore 11 due to security reasons.
 - [Admin] `AdminController` & `AdminControllerInterface` has been deprecated and will be removed in Pimcore 11. Please use `Use Pimcore\Controller\UserAwareController` instead, with following method calls:
   - call `getPimcoreUser()` instead of `getAdminUser()`
   - call `JsonHelperTrait::jsonResponse()` instead of `adminjson()`
@@ -75,6 +76,7 @@
 
 ## 10.5.21
 - [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
+
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
