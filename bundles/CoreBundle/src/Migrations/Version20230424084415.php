@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -15,14 +28,14 @@ class Version20230424084415 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('documents_editables')){
+        if($schema->hasTable('documents_editables')) {
             $db = Db::get();
             $primaryKey = $schema->getTable('documents_editables')->getPrimaryKey()->getColumns();
             $editables = $db->fetchAllAssociative('SELECT * FROM documents_editables WHERE type = ?', ['link']);
 
             foreach ($editables as $editable) {
                 $unserialized = unserialize($editable['data']);
-                if(array_key_exists('attributes', $unserialized)){
+                if(array_key_exists('attributes', $unserialized)) {
                     unset($unserialized['attributes']);
 
                     $editable['data'] = serialize($unserialized);
