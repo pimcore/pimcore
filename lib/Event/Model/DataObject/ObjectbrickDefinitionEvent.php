@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model\DataObject;
 
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Symfony\Contracts\EventDispatcher\Event;
 
