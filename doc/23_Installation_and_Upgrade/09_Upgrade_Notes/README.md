@@ -334,6 +334,7 @@ pimcore:
 - [WebDAV] WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
 - [Events] `AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` has been renamed to `Pimcore\Event\ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED`.
 - [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor.
+- [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
 - [Translations] Added Symfony's html sanitizer to `\Pimcore\Model\Translation\Dao::save` method.
 - [Editable] Removed the `attributes` field from the link editable.
 
