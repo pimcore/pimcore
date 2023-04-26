@@ -82,6 +82,8 @@ class CustomReportController extends UserAwareController
 
         $success = false;
 
+        $this->isValidConfigName($request->get('name'));
+
         $report = Tool\Config::getByName($request->get('name'));
 
         if (!$report) {
@@ -135,6 +137,7 @@ class CustomReportController extends UserAwareController
         $this->checkPermission('reports_config');
 
         $newName = $request->get('newName');
+        $this->isValidConfigName($newName);
         $report = Tool\Config::getByName($newName);
         if ($report) {
             throw new \Exception('report already exists');
@@ -193,7 +196,7 @@ class CustomReportController extends UserAwareController
     public function updateAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
-
+        $this->isValidConfigName($request->get('name'));
         $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
@@ -528,5 +531,15 @@ class CustomReportController extends UserAwareController
         }
 
         throw new FileNotFoundException("File \"$exportFile\" not found!");
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function isValidConfigName(string $configName)
+    {
+        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+            throw new \Exception('The customer report name is invalid');
+        }
     }
 }
