@@ -398,6 +398,21 @@ pimcore:
             hide_edit_image: false
             disable_tree_preview: true
     ```
+- [Link Editable] The "attributes" field in the "advanced" tab is deprecated. The field will be removed in Pimcore 11 due to security reasons.
+- [Admin] `AdminController` & `AdminControllerInterface` has been deprecated and will be removed in Pimcore 11. Please use `Use Pimcore\Controller\UserAwareController` instead, with following method calls:
+    - call `getPimcoreUser()` instead of `getAdminUser()`
+    - call `JsonHelperTrait::jsonResponse()` instead of `adminjson()`
+      - [Security] Deprecated Security User classes in favor of Pimcore core classes:
+          - `Pimcore\Bundle\AdminBundle\Security\User` => `Pimcore\Security\User`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserChecker` => `Pimcore\Security\User\UserChecker`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserProvider` => `Pimcore\Security\User\UserProvider`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserLoader` => `Pimcore\Security\User\UserLoader`
+          - `Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver` => `Pimcore\Security\User\TokenStorageUserResolver`
+      - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead. 
+
+## 10.5.21
+- [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
+- [Editable] Removed all `on*` attributes from the `$allowedAttributes` list due to security reasons. These attributes are not allowed anymore in the "attributes" field.
 
 ## 10.5.13
 
