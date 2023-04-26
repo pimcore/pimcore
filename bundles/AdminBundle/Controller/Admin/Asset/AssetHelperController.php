@@ -31,6 +31,7 @@ use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Pimcore\Version;
@@ -961,9 +962,10 @@ class AssetHelperController extends AdminAbstractController
             if (!in_array($uniqueKey, $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $uniqueKey;
                 $item->expand();
+                $name = SecurityHelper::convertHtmlSpecialChars($item->getName());
                 $metadataItems[] = [
-                    'title' => $item->getName(),
-                    'name' => $item->getName(),
+                    'title' => $name,
+                    'name' => $name,
                     'subtype' => $item->getTargetSubtype(),
                     'datatype' => 'data',
                     'fieldtype' => $item->getType(),

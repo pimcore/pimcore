@@ -40,7 +40,7 @@ Following steps are necessary to do so:
     pimcore:
         objects:
             class_definitions:
-                Layout:
+                layout:
                     map:
                       myLayoutType: \App\Model\DataObject\ClassDefinition\Layout\MyLayoutType
     ```
