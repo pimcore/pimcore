@@ -22,30 +22,30 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ObjectbrickDefinitionEvent extends Event
 {
-    protected Definition $classDefinition;
+    protected Definition $objectbrickDefinition;
 
     /**
-     * @param Definition $classDefinition
+     * @param Definition $objectbrickDefinition
      */
-    public function __construct(Definition $classDefinition)
+    public function __construct(Definition $objectbrickDefinition)
     {
-        $this->classDefinition = $classDefinition;
+        $this->objectbrickDefinition = $objectbrickDefinition;
     }
 
     /**
      * @return Definition
      */
-    public function getClassDefinition(): Definition
+    public function getObjectbrickDefinition(): Definition
     {
-        return $this->classDefinition;
+        return $this->objectbrickDefinition;
     }
 
     /**
-     * @param Definition $classDefinition
+     * @param Definition $objectbrickDefinition
      */
-    public function setClassDefinition(Definition $classDefinition): void
+    public function setObjectbrickDefinition(Definition $objectbrickDefinition): void
     {
-        $this->classDefinition = $classDefinition;
+        $this->objectbrickDefinition = $objectbrickDefinition;
     }
 
 
