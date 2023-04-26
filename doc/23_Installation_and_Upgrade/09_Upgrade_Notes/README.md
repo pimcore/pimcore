@@ -292,8 +292,8 @@ pimcore:
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 - Removed methods `Pimcore\Tool\Admin::isExtJS6()`, `\Pimcore\Tool\Admin::getLanguageFile()`, `\Pimcore\Tool::exitWithError()`.
 - [DataObjects|Assets|Documents] Datetime values for scheduled tasks, application logger and notifications are now displayed in the local timezone.  
-- Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes.
-    Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
+- Moved implementation of `PimcoreBundleAdminClassicInterface` from `AbstractPimcoreBundle` to bundle classes.
+    Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminClassicTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
 - [Events] Moved `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` to `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents`.
 - [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
@@ -330,9 +330,17 @@ pimcore:
 - Removed deprecated property `Pimcore\Model\Asset::$types`, use `getTypes()` instead
 - Removed AdminSessionHandler and AdminSessionListener. The session is now handled by Symfony.
 - Methods `Pimcore\Navigation::setDefaultPageType`, `Pimcore\Navigation::getDefaultPageType`, `Pimcore\Navigation\Container::_sort() and `Pimcore\Navigation\Page::_normalizePropertyName()` have been marked as internal.
+- [Configuration] Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
+- [WebDAV] WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
+- [Events] `AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` has been renamed to `Pimcore\Event\ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED`.
+- [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor.
+- [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
+- [Translations] Added Symfony's html sanitizer to `\Pimcore\Model\Translation\Dao::save` method.
+- [Editable] Removed the `attributes` field from the link editable.
 
 ## 10.6.0
 
+- [Naming] Deprecated master, blacklist and whitelist. Instead, use main, blocklist, allowlist
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
@@ -370,11 +378,11 @@ pimcore:
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
 - [Thumbnails] Deprecated the usage of `$thumbnail->getPath(false)` by passing boolean parameters, use `$thumbnail->getPath(["deferredAllowed" => false]);` and pass an array instead. Added the possibility to get the frontend path by adding `frontend => true` into the array, useful in console commands.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
-- [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
+- [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminClassicInterface`.
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 - [Events] The `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` are deprecated and wont't work in Pimcore 11. Please use `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents` in Pimcore 11.  
-- Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminSupportInterface` and the `BundleAdminSupportTrait` instead.
+- Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminClassicInterface` and the `BundleAdminClassicTrait` instead.
 - [Events] Deprecated Admin Event classes (below), please use these classes from AdminBundle instead.
   - `Pimcore\Event\AdminEvents`
   - `Pimcore\Event\Admin\AdminStyleEvent`
@@ -385,6 +393,28 @@ pimcore:
   - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
   - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
 - [Extension Manager] Trait `StateHelperTrait` is deprecated and will be removed in Pimcore 11.
+- [Configuration] Deprecated `hide_edit_image` & `disable_tree_preview` configs, they will be moved to `pimcore_admin` in Pimcore 11
+    ```yaml
+    pimcore_admin:
+        assets:
+            hide_edit_image: false
+            disable_tree_preview: true
+    ```
+- [Link Editable] The "attributes" field in the "advanced" tab is deprecated. The field will be removed in Pimcore 11 due to security reasons.
+- [Admin] `AdminController` & `AdminControllerInterface` has been deprecated and will be removed in Pimcore 11. Please use `Use Pimcore\Controller\UserAwareController` instead, with following method calls:
+    - call `getPimcoreUser()` instead of `getAdminUser()`
+    - call `JsonHelperTrait::jsonResponse()` instead of `adminjson()`
+      - [Security] Deprecated Security User classes in favor of Pimcore core classes:
+          - `Pimcore\Bundle\AdminBundle\Security\User` => `Pimcore\Security\User`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserChecker` => `Pimcore\Security\User\UserChecker`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserProvider` => `Pimcore\Security\User\UserProvider`
+          - `Pimcore\Bundle\AdminBundle\Security\User\UserLoader` => `Pimcore\Security\User\UserLoader`
+          - `Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver` => `Pimcore\Security\User\TokenStorageUserResolver`
+      - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead. 
+
+## 10.5.21
+- [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
+- [Editable] Removed all `on*` attributes from the `$allowedAttributes` list due to security reasons. These attributes are not allowed anymore in the "attributes" field.
 
 ## 10.5.13
 

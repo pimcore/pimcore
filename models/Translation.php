@@ -17,16 +17,17 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Pimcore\Bundle\AdminBundle\System\Config;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -64,6 +65,13 @@ final class Translation extends AbstractModel
      * ID of the user who make the latest changes
      */
     protected ?int $userModification = null;
+
+    protected ?HtmlSanitizerInterface $pimcoreTranslationSanitizer = null;
+
+    public function getTranslationSanitizer(): HtmlSanitizerInterface
+    {
+        return $this->pimcoreTranslationSanitizer ??= \Pimcore::getContainer()->get(Tool\Text::PIMCORE_TRANSLATION_SANITIZER_ID);
+    }
 
     public function getType(): string
     {
@@ -311,7 +319,7 @@ final class Translation extends AbstractModel
             }
 
             if (!in_array($language, Tool\Admin::getLanguages())) {
-                $config = Config::get()['general'];
+                $config = SystemSettingsConfig::get()['general'];
                 $language = $config['language'] ?? null;
             }
         }

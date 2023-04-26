@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
-use Pimcore\Bundle\AdminBundle\System\Config;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
@@ -28,6 +27,7 @@ use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -756,7 +756,7 @@ class Document extends Element\AbstractElement
             }
 
             if (!$link) {
-                $config = Config::get()['general'];
+                $config = SystemSettingsConfig::get()['general'];
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
                 if ($request) {

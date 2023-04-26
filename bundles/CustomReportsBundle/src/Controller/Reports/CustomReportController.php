@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -33,8 +35,10 @@ use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
  *
  * @internal
  */
-class CustomReportController extends AdminController
+class CustomReportController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
      *
@@ -47,7 +51,7 @@ class CustomReportController extends AdminController
         $this->checkPermission('reports_config');
         $reports = Tool\Config::getReportsList();
 
-        return $this->adminJson($reports);
+        return $this->jsonResponse($reports);
     }
 
     /**
@@ -60,9 +64,9 @@ class CustomReportController extends AdminController
     public function portletReportListAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-        $reports = Tool\Config::getReportsList($this->getAdminUser());
+        $reports = Tool\Config::getReportsList($this->getPimcoreUser());
 
-        return $this->adminJson(['data' => $reports]);
+        return $this->jsonResponse(['data' => $reports]);
     }
 
     /**
@@ -78,6 +82,8 @@ class CustomReportController extends AdminController
 
         $success = false;
 
+        $this->isValidConfigName($request->get('name'));
+
         $report = Tool\Config::getByName($request->get('name'));
 
         if (!$report) {
@@ -92,7 +98,7 @@ class CustomReportController extends AdminController
             $success = true;
         }
 
-        return $this->adminJson(['success' => $success, 'id' => $report->getName()]);
+        return $this->jsonResponse(['success' => $success, 'id' => $report->getName()]);
     }
 
     /**
@@ -116,7 +122,7 @@ class CustomReportController extends AdminController
 
         $report->delete();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -131,6 +137,7 @@ class CustomReportController extends AdminController
         $this->checkPermission('reports_config');
 
         $newName = $request->get('newName');
+        $this->isValidConfigName($newName);
         $report = Tool\Config::getByName($newName);
         if ($report) {
             throw new \Exception('report already exists');
@@ -155,7 +162,7 @@ class CustomReportController extends AdminController
 
         $report->save();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -176,7 +183,7 @@ class CustomReportController extends AdminController
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
-        return $this->adminJson($data);
+        return $this->jsonResponse($data);
     }
 
     /**
@@ -189,7 +196,7 @@ class CustomReportController extends AdminController
     public function updateAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
-
+        $this->isValidConfigName($request->get('name'));
         $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
@@ -213,7 +220,7 @@ class CustomReportController extends AdminController
 
         $report->save();
 
-        return $this->adminJson(['success' => true]);
+        return $this->jsonResponse(['success' => true]);
     }
 
     /**
@@ -267,7 +274,7 @@ class CustomReportController extends AdminController
             $errorMessage = $e->getMessage();
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => $success,
             'columns' => $result,
             'errorMessage' => $errorMessage,
@@ -288,7 +295,7 @@ class CustomReportController extends AdminController
         $reports = [];
 
         $list = new Tool\Config\Listing();
-        $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
+        $items = $list->getDao()->loadForGivenUser($this->getPimcoreUser());
 
         foreach ($items as $report) {
             $reports[] = [
@@ -302,7 +309,7 @@ class CustomReportController extends AdminController
             ];
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'reports' => $reports,
         ]);
@@ -318,6 +325,10 @@ class CustomReportController extends AdminController
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
+
+        if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
 
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 40);
@@ -343,7 +354,7 @@ class CustomReportController extends AdminController
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total'],
@@ -374,7 +385,7 @@ class CustomReportController extends AdminController
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters ?? [], $field ?? '', $drillDownFilters ?? []);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
         ]);
@@ -406,7 +417,7 @@ class CustomReportController extends AdminController
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total'],
@@ -520,5 +531,15 @@ class CustomReportController extends AdminController
         }
 
         throw new FileNotFoundException("File \"$exportFile\" not found!");
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function isValidConfigName(string $configName): void
+    {
+        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+            throw new \Exception('The customer report name is invalid');
+        }
     }
 }

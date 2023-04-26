@@ -22,6 +22,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
@@ -30,6 +31,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
+
+    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
 
     /**
      * @internal
@@ -47,6 +50,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string|int
      */
     public string|int $maxCharacters = 0;
+
+    private static function getWysiwygSanitizer(): HtmlSanitizer
+    {
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+    }
 
     public function setToolbarConfig(string $toolbarConfig): void
     {
@@ -105,6 +113,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if (is_string($data)) {
+            $data = self::getWysiwygSanitizer()->sanitize(html_entity_decode($data));
+        }
+
         return Text::wysiwygText($data);
     }
 

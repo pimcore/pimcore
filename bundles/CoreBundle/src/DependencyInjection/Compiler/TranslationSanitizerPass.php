@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,17 +15,18 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Helper;
+namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
+
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @internal
  */
-final class ImageChart
+final class TranslationSanitizerPass implements CompilerPassInterface
 {
-    public static string $serviceUrl = 'https://chart.googleapis.com/chart';
-
-    public static function lineSmall(array $data, string $parameters = ''): string
+    public function process(ContainerBuilder $container): void
     {
-        return self::$serviceUrl . '?cht=lc&chs=150x40&chd=t:' . implode(',', $data) . '&chds=' . min($data) . ',' . max($data) . '&' . $parameters;
+        $container->getDefinition('html_sanitizer.sanitizer.pimcore.translation_sanitizer')->setPublic(true);
     }
 }
