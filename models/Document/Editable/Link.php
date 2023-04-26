@@ -350,8 +350,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         //sanitize fields
         $fieldsToExclude = ['path'];
         foreach($this->data as $key => $value) {
-            if(!in_array($key, $fieldsToExclude) && is_string($value)) {
-                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes($value);
+            if(!in_array($key, $fieldsToExclude)) {
+                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes((string) $value);
             }
         }
 
