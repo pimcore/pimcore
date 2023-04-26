@@ -182,10 +182,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $attribs = array_unique($attribs);
 
-            if (array_key_exists('attributes', $this->data) && !empty($this->data['attributes'])) {
-                $attribs[] = $this->data['attributes'];
-            }
-
             return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
         }
 
@@ -296,11 +292,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
-        // sanitize attributes
-        if (isset($this->data['attributes'])) {
-            $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
-        }
-
         // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
         // https://github.com/pimcore/pimcore/issues/7394
         if (isset($this->data['type'])) {
@@ -356,11 +347,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
-    }
-
-    public function getAttributes(): mixed
-    {
-        return $this->data['attributes'] ?? '';
     }
 
     /**

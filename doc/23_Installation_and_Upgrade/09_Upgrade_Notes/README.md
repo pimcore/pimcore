@@ -335,6 +335,7 @@ pimcore:
 - [Events] `AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` has been renamed to `Pimcore\Event\ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED`.
 - [Wysiwyg] Implemented Symfony HTML sanitizer for WYSIWYG editor.
 - [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
+- [Editable] Removed the `attributes` field from the link editable.
 
 ## 10.6.0
 
