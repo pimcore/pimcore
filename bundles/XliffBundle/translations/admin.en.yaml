@@ -19,4 +19,3 @@ xliff_import_notice: >-
     application. Please aware that the import will overwrite the elements which
     were selected by the import (read also export).
 xliff_import_export: Xliff Import/Export
-
