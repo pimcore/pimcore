@@ -18,3 +18,5 @@ xliff_import_notice: >-
     then translated by a localization service provider (LSP) or by a CAT
     application. Please aware that the import will overwrite the elements which
     were selected by the import (read also export).
+xliff_import_export: Xliff Import/Export
+
