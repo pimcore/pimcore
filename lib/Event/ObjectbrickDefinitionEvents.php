@@ -19,42 +19,42 @@ namespace Pimcore\Event;
 final class ObjectbrickDefinitionEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
     const PRE_ADD = 'pimcore.objectbrick.preAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
     const POST_ADD = 'pimcore.objectbrick.postAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
     const PRE_UPDATE = 'pimcore.objectbrick.preUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
     const POST_UPDATE = 'pimcore.objectbrick.postUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
     const PRE_DELETE = 'pimcore.objectbrick.preDelete';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")
+     * @Event("Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      *
      * @var string
      */
