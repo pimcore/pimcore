@@ -30,6 +30,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTa
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -82,6 +83,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new MessageBusPublicPass());
         $container->addCompilerPass(new HtmlSanitizerPass());
+        $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
     }
 

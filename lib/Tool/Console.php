@@ -30,13 +30,9 @@ final class Console
     protected static array $executableCache = [];
 
     /**
-     * @deprecated since v.6.9.
-     *
-     * @static
-     *
      * @return string "windows" or "unix"
      */
-    public static function getSystemEnvironment(): string
+    private static function getSystemEnvironment(): string
     {
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
@@ -52,7 +48,7 @@ final class Console
     }
 
     /**
-     * @return ($throwException is true ? string : string|false)
+     * @return string|false ($throwException is true ? string : string|false)
      *
      * @throws \Exception
      */
@@ -169,6 +165,9 @@ final class Console
         return $phpPath;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
@@ -221,12 +220,6 @@ final class Console
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
     public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
@@ -238,16 +231,6 @@ final class Console
         return self::execInBackground($commandLine, $outputFile);
     }
 
-    /**
-     * @param string $cmd
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
-     *
-     * @static
-     */
     public static function execInBackground(string $cmd, string $outputFile = null): int
     {
         // windows systems
@@ -260,18 +243,7 @@ final class Console
         }
     }
 
-    /**
-     * @param string $cmd
-     * @param ?string $outputFile
-     * @param bool $useNohup
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
+    private static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -311,17 +283,7 @@ final class Console
         return (int)$pid;
     }
 
-    /**
-     * @param string $cmd
-     * @param string $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long-running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    private static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';
