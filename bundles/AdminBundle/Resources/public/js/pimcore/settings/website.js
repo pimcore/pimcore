@@ -19,12 +19,10 @@ pimcore.settings.website = Class.create({
         this.getTabPanel();
     },
 
-
     activate:function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.setActiveItem("pimcore_website_settings");
     },
-
 
     getTabPanel:function () {
 
@@ -114,7 +112,11 @@ pimcore.settings.website = Class.create({
                 flex: 100,
                 editable: true,
                 sortable: true,
-                editor: new Ext.form.TextField({})
+                editor: new Ext.form.TextField({
+                    listeners: {
+                        'change': pimcore.helpers.htmlEncodeTextField
+                    }
+                })
             },
             {
                 text: t('language'),
@@ -133,7 +135,11 @@ pimcore.settings.website = Class.create({
                 dataIndex: 'data',
                 flex: 300,
                 editable: true,
-                editor: new Ext.form.TextField({}),
+                editor: new Ext.form.TextField({
+                    listeners: {
+                        'change': pimcore.helpers.htmlEncodeTextField
+                    }
+                }),
                 renderer: this.getCellRenderer.bind(this),
             },
             {text: t("site"), flex: 100, sortable:true, dataIndex: "siteId",
@@ -503,7 +509,6 @@ pimcore.settings.website = Class.create({
         this.add(customKey.getValue(), customType.getValue(), false, false, false, true);
         this.customKeyField.setValue(null);
     },
-
 
     add: function (key, type, value, config, inherited, inheritable) {
 

@@ -6,7 +6,7 @@ The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
-You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+You can pass nearly every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
 such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
 | Name     | Type     | Description                                                             |
@@ -16,6 +16,8 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 | `textSuffix` | string  | Add an icon or something else after Text    |
 | `noText` | boolean  | If you need only the `<a>` tag without text (or only with an textSuffix/TextPrefix)    |
 | `required` | boolean/string  | (default: false) set to true to make link and text required for publish, set to "linkonly" to make only the link required for publish    |
+
+> For security reasons we created an [allow list](https://github.com/pimcore/pimcore/blob/9bf18aca55e5303661c68835c950412a428cf616/models/Document/Editable/Link.php#L115-L141) to filter harmfull html attributes. For example all `on*` attributes will be filtered out!
 
 ## Methods
 

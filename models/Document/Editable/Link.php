@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -137,18 +138,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'type',
                 'referrerpolicy',
                 'xml:lang',
-                'onblur',
-                'onclick',
-                'ondblclick',
-                'onfocus',
-                'onmousedown',
-                'onmousemove',
-                'onmouseout',
-                'onmouseover',
-                'onmouseup',
-                'onkeydown',
-                'onkeypress',
-                'onkeyup',
             ];
             $defaultAttributes = [];
 
@@ -166,9 +155,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                         strpos($key, 'aria-') === 0 ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->config[$key] .'"';
+                        $attribs[] = $key.'="'. SecurityHelper::sanitizeHtmlAttributes($this->data[$key]) .' '. SecurityHelper::sanitizeHtmlAttributes($this->config[$key]) .'"';
                     } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.$value.'"';
+                        $attribs[] = $key.'="'.SecurityHelper::sanitizeHtmlAttributes($value).'"';
                     }
                 }
             }
@@ -242,8 +231,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $anchor = $this->getAnchor();
-            $anchor = str_replace('"', urlencode('"'), $anchor);
+            $anchor = str_replace('"', urlencode('"'), $this->getAnchor());
             $url .= '#' . str_replace('#', '', $anchor);
         }
 
@@ -299,6 +287,10 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
+        if($editmode) {
+            unset($this->data['attributes']);
+        }
+
         // sanitize attributes
         if (isset($this->data['attributes'])) {
             $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
@@ -340,7 +332,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getParameters()
     {
-        return $this->data['parameters'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['parameters']) ?? '';
     }
 
     /**
@@ -348,7 +340,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getAnchor()
     {
-        return $this->data['anchor'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['anchor']) ?? '';
     }
 
     /**
@@ -364,7 +356,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getRel()
     {
-        return $this->data['rel'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['rel']) ?? '';
     }
 
     /**
@@ -372,7 +364,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getTabindex()
     {
-        return $this->data['tabindex'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['tabindex']) ?? '';
     }
 
     /**
@@ -380,7 +372,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getAccesskey()
     {
-        return $this->data['accesskey'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['accesskey']) ?? '';
     }
 
     /**
@@ -388,7 +380,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getClass()
     {
-        return $this->data['class'] ?? '';
+        return SecurityHelper::sanitizeHtmlAttributes($this->data['class']) ?? '';
     }
 
     /**
@@ -407,6 +399,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
             $this->data = [];
+        }
+
+        //sanitize fields
+        $fieldsToExclude = ['path'];
+        foreach($this->data as $key => $value) {
+            if(!in_array($key, $fieldsToExclude)) {
+                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes($value);
+            }
         }
 
         return $this;

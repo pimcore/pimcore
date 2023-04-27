@@ -76,6 +76,8 @@ class CustomReportController extends ReportsControllerBase
 
         $success = false;
 
+        $this->isValidConfigName($request->get('name'));
+
         $report = CustomReport\Config::getByName($request->get('name'));
 
         if (!$report) {
@@ -129,6 +131,7 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $newName = $request->get('newName');
+        $this->isValidConfigName($newName);
         $report = CustomReport\Config::getByName($newName);
         if ($report) {
             throw new \Exception('report already exists');
@@ -187,7 +190,7 @@ class CustomReportController extends ReportsControllerBase
     public function updateAction(Request $request)
     {
         $this->checkPermission('reports_config');
-
+        $this->isValidConfigName($request->get('name'));
         $report = CustomReport\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
@@ -518,5 +521,15 @@ class CustomReportController extends ReportsControllerBase
         }
 
         throw new FileNotFoundException("File \"$exportFile\" not found!");
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function isValidConfigName(string $configName)
+    {
+        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+            throw new \Exception('The customer report name is invalid');
+        }
     }
 }
