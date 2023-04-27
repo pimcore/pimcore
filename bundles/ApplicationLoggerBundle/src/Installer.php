@@ -20,7 +20,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
 {
-    protected const USER_PERMISSIONS_CATEGORY = 'Application Logger Bundle';
+    protected const USER_PERMISSIONS_CATEGORY = 'Pimcore Application Logger Bundle';
 
     protected const USER_PERMISSIONS = [
         'application_logging',
