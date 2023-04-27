@@ -27,6 +27,8 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupBrickTablesTask implements TaskInterface
 {
+    const PIMCORE_OBJECTBRICK_CLASS_DIRECTORY = PIMCORE_CLASS_DIRECTORY . '/DataObject/Objectbrick/Data';
+
     private LoggerInterface $logger;
     private $mapLowerToCamelCase = [];
 
@@ -34,8 +36,7 @@ class CleanupBrickTablesTask implements TaskInterface
     {
         $this->logger = $logger;
         
-        $obPath = PIMCORE_CLASS_DIRECTORY . '/DataObject/Objectbrick/Data';
-        $files = array_diff(scandir($obPath), array('..', '.'));
+        $files = array_diff(scandir(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY), array('..', '.'));
         foreach ($files as $file) {
             $classname = str_replace('.php','',$file);
             $class = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . $classname;
