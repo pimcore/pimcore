@@ -24,6 +24,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Security\SecurityHelper;
 
 /**
  * @method Dao getDao()
@@ -204,7 +205,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function setName($name, $locale = null)
     {
-        $this->name = $name;
+        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
 
         return $this;
     }
