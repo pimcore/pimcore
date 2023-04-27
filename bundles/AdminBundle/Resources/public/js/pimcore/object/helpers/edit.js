@@ -403,7 +403,10 @@ pimcore.object.helpers.edit = {
                             try {
                                 var el = this.getEl();
                                 if(!el.hasCls("object_field")) {
-                                    el = el.parent(".object_field");
+                                    var parentEl = el.parent(".object_field");
+                                    if(parentEl !== null && parentEl !== undefined){
+                                        el = parentEl;
+                                    }
                                 }
                             } catch (e4) {
                                 console.log(e4);
