@@ -31,4 +31,27 @@ if($asset instanceof Asset\Document) {
 ```
 
 > This feature requires Ghostscript and at least Gotenberg or LibreOffice be installed on the server.
+> To install it on Linux:
+> sudo apt-get install ghostscript
+> sudo apt-get install libreoffice
+> 
+> To install it on Mac:
+> brew install ghostscript
+> brew install --cask libreoffice
+
+
+##### To build the function generating thumbnail for List of assets:
+It is recommended to use named thumbnails for caching sake:
+
+```php
+   $list = new Asset\Listing();
+   $assets = $list->getAssets();
+   foreach ($assets as $asset) {
+      echo match (true) {
+         $asset instanceof Asset\Image => $asset->getThumbnail('myThumbnail')?->getPath(),
+         $asset instanceof Asset\Document => $asset->getImageThumbnail('myThumbnail')?->getPath(),
+         default => '',
+      };
+   }
+
 
