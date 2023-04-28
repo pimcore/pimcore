@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,6 +45,7 @@ class Dao extends Model\Element\Dao
                 WHERE documents.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('document with id ' . $id . ' not found');

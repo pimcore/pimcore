@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,6 +53,7 @@ class Dao extends Model\Element\Dao
                 WHERE assets.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['hasMetaData'] = (bool)$data['hasMetaData'];
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
