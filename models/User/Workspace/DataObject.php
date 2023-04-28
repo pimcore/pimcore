@@ -53,6 +53,9 @@ class DataObject extends AbstractWorkspace
      */
     protected ?string $layouts = null;
 
+    /**
+     * @return $this
+     */
     public function setSave(bool $save): static
     {
         $this->save = $save;
@@ -65,6 +68,9 @@ class DataObject extends AbstractWorkspace
         return $this->save;
     }
 
+    /**
+     * @return $this
+     */
     public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;

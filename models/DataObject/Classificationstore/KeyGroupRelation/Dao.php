@@ -52,6 +52,8 @@ class Dao extends AbstractDao
         );
 
         if (!empty($data['keyId'])) {
+            $data['enabled'] = (bool)$data['enabled'];
+            $data['mandatory'] = (bool)$data['mandatory'];
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException(sprintf(

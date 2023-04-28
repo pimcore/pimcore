@@ -44,6 +44,7 @@ class Dao extends Model\Document\Dao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Hardlink with the ID ' . $this->model->getId() . " doesn't exists");

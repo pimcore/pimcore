@@ -45,6 +45,7 @@ class Dao extends Model\Element\Dao
                 WHERE objects.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
@@ -204,15 +205,11 @@ class Dao extends Model\Element\Dao
      */
     public function getCurrentFullPath(): ?string
     {
-        $path = null;
-
-        try {
-            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()]);
-        } catch (\Exception $e) {
-            Logger::error('could not get current object path from DB');
+        if ($path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()])) {
+            return $path;
         }
 
-        return $path;
+        return null;
     }
 
     public function getVersionCountForUpdate(): int

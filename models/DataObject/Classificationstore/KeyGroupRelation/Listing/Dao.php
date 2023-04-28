@@ -49,6 +49,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($data as $dataItem) {
             $entry = new DataObject\Classificationstore\KeyGroupRelation();
             $resource = $entry->getDao();
+            $dataItem['enabled'] = (bool)$dataItem['enabled'];
+            $dataItem['mandatory'] = (bool)$dataItem['mandatory'];
             $resource->assignVariablesToModel($dataItem);
 
             $configData[] = $entry;

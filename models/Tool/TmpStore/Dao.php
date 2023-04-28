@@ -64,6 +64,7 @@ class Dao extends Model\Dao\AbstractDao
                 $item['data'] = unserialize($item['data']);
             }
 
+            $item['serialized'] = (bool)$item['serialized'];
             $this->assignVariablesToModel($item);
 
             return true;

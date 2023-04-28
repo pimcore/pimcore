@@ -16,18 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Document extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = null;
-        if ($value) {
+        $element = $value;
+        if (is_string($value)) {
             $element = Service::getElementByPath('document', $value);
         }
-        if ($element) {
+        if ($element instanceof \Pimcore\Model\Document) {
             return $element->getId();
         }
 
@@ -65,10 +64,10 @@ class Document extends Data
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
         $element = null;
-        if ($data) {
+        if (is_string($data)) {
             $element = Service::getElementByPath('document', $data);
         }
-        if ($element) {
+        if ($element instanceof \Pimcore\Model\Document) {
             return $element->getId();
         }
 
@@ -77,7 +76,7 @@ class Document extends Data
 
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Document) {
             return $data->getId();
         }
 
@@ -89,7 +88,7 @@ class Document extends Data
         if (is_numeric($data)) {
             $data = Service::getElementById('document', $data);
         }
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Document) {
             return $data->getRealFullPath();
         } else {
             return '';
@@ -131,7 +130,7 @@ class Document extends Data
     {
         $data = \Pimcore\Model\Document::getByPath($data);
 
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Document) {
             return $data->getId();
         }
 

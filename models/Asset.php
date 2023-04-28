@@ -1038,6 +1038,9 @@ class Asset extends Element\AbstractElement
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setFilename(string $filename): static
     {
         $this->filename = $filename;
@@ -1070,6 +1073,9 @@ class Asset extends Element\AbstractElement
         return '';
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $handle = tmpfile();
@@ -1165,6 +1171,9 @@ class Asset extends Element\AbstractElement
         return $this->dataChanged;
     }
 
+    /**
+     * @return $this
+     */
     public function setDataChanged(bool $changed = true): static
     {
         $this->dataChanged = $changed;
@@ -1222,6 +1231,9 @@ class Asset extends Element\AbstractElement
         return self::getLocalFileFromStream($this->getStream());
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSetting(string $key, mixed $value): static
     {
         $this->customSettings[$key] = $value;
@@ -1250,6 +1262,9 @@ class Asset extends Element\AbstractElement
         return $this->customSettings;
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
@@ -1326,6 +1341,9 @@ class Asset extends Element\AbstractElement
         return $this->hasMetaData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHasMetaData(bool $hasMetaData): static
     {
         $this->hasMetaData = $hasMetaData;
@@ -1382,6 +1400,9 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeMetadata(string $name, ?string $language = null): static
     {
         if ($name) {
@@ -1405,7 +1426,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1467,7 +1488,7 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();

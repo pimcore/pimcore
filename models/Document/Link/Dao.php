@@ -44,6 +44,7 @@ class Dao extends Model\Document\Dao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->model->getHref();
         } else {

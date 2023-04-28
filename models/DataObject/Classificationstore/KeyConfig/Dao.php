@@ -43,6 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['enabled'] = (bool)$data['enabled'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
@@ -68,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative($stmt);
 
         if (!empty($data['id'])) {
+            $data['enabled'] = (bool)$data['enabled'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Classification store key config with name "%s" does not exist.', $name));
