@@ -309,7 +309,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function getNameByIdIgnoreCase(string $id): ?string
     {
-        if (!empty($id)) {
+        if ($id !== '') {
             if ($name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)])) {
                 return $name;
             }
