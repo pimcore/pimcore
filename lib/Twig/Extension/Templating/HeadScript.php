@@ -483,9 +483,10 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         }
 
         $container = \Pimcore::getContainer();
+
         //@phpstan-ignore-next-line
-        if ($container->has('pimcore.admin.security.content_security_policy')) {
-            $cspHandler = $container->get('pimcore.admin.security.content_security_policy');
+        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+            $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
             $attrString .= $cspHandler->getNonceHtmlAttribute();
         }
 
