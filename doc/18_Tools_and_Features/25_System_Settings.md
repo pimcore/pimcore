@@ -1,8 +1,19 @@
 # System Settings
 
 In the system settings (*Settings* > *System Settings*) system-wide settings for Pimcore can be made. Changes should 
-be made with care and only by developers. 
-These settings are saved in `var/config/system_settings/system_settings.yaml` or in the settings store based on your configuration.
+be made with care and only by developers.
+
+System Settings will implement LocationAwareConfigRepository in Pimcore 11. All relevant settings from `system.yaml` will be stored in `var/config/system_settings/system_settings.yaml` by default.
+To save system settings into the settings store, you will need to add following to your configuration:
+```yaml
+pimcore:
+    config_location:
+        system_settings:
+            write_target:
+                type: 'settings-store'
+            read_target:
+                type: 'settings-store'
+```
 
 ## Localization & Internationalization (i18n/l10n) 
 These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
