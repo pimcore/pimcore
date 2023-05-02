@@ -125,6 +125,8 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
+     * @internal
+     *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
     public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface

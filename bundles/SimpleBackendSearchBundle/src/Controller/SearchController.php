@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -113,6 +114,8 @@ class SearchController extends UserAwareController
         $bricks = [];
         if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
+            //remove sql comments
+            $fields = str_replace('--', '', $fields);
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
@@ -317,7 +320,11 @@ class SearchController extends UserAwareController
             }
         }
 
-        $hits = $searcherList->load();
+        try {
+            $hits = $searcherList->load();
+        } catch (SyntaxErrorException $syntaxErrorException) {
+            throw new \InvalidArgumentException('Check your arguments.');
+        }
 
         $elements = [];
         foreach ($hits as $hit) {

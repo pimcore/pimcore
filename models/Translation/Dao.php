@@ -83,6 +83,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->createOrUpdateTable();
 
         $this->updateModificationInfos();
+        $sanitizer = $this->model->getTranslationSanitizer();
 
         $editableLanguages = [];
         if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
@@ -103,7 +104,7 @@ class Dao extends Model\Dao\AbstractDao
                     'key' => $this->model->getKey(),
                     'type' => $this->model->getType(),
                     'language' => $language,
-                    'text' => $text,
+                    'text' => $sanitizer->sanitize($text),
                     'modificationDate' => $this->model->getModificationDate(),
                     'creationDate' => $this->model->getCreationDate(),
                     'userOwner' => $this->model->getUserOwner(),

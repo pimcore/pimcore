@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,25 +15,18 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Helper;
+namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Config\LocationAwareConfigRepository;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @internal
  */
-class SystemConfig
+final class HtmlSanitizerPass implements CompilerPassInterface
 {
-    public static function getConfigDataByKey(LocationAwareConfigRepository $repository, string $key): array
+    public function process(ContainerBuilder $container): void
     {
-        $config = [];
-        $configKey = $repository->loadConfigByKey(($key));
-
-        if (isset($configKey[0])) {
-            $config = $configKey[0];
-            $config['writeable'] = $repository->isWriteable();
-        }
-
-        return $config;
+        $container->getDefinition('html_sanitizer.sanitizer.pimcore.wysiwyg_sanitizer')->setPublic(true);
     }
 }
