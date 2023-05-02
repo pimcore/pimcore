@@ -596,7 +596,7 @@ pimcore.asset.tree = Class.create({
 
                         if (perspectiveCfg.inTreeContextMenu("asset.add.importFromServer") && pimcore.currentuser.admin) {
                             menuItems.push({
-                                text: t("import_from_server"),
+                                text: t("import_from_server") + '<sup class="deprecation" title="' + t("deprecated") + '">*</sup>',
                                 handler: this.importFromServer.bind(this, tree, record),
                                 iconCls: "pimcore_icon_import_server"
                             });
@@ -1250,7 +1250,7 @@ pimcore.asset.tree = Class.create({
                                 });
 
                                 this.downloadProgressWin = new Ext.Window({
-                                    title: t("import_from_server") + '<sup class="deprecation" title="' + t("deprecated") + '">*</sup>',
+                                    title: t("import_from_server"),
                                     layout:'fit',
                                     width:200,
                                     bodyStyle: "padding: 10px;",
