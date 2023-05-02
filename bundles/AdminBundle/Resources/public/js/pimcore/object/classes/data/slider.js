@@ -64,7 +64,7 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -87,7 +87,14 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
             {
                 xtype: "numberfield",
                 fieldLabel: t("min_value"),
@@ -123,8 +130,7 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
                 name: "vertical",
                 checked: datax.vertical
             }
-        ];
-
+        ]);
     },
 
     applySpecialData: function(source) {

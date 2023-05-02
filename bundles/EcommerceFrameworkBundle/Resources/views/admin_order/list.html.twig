@@ -81,11 +81,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set totalSum = 0 %}
-
         {% for item in paginator.items %}
-            {% set totalSum = totalSum + item['TotalPrice'] %}
-
         <tr>
             <td>
                 {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item['OrderId']}|merge(urlParams)) %}
@@ -102,19 +98,10 @@
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
             <td>{{ item['Items'] }}</td>
-            </td>
-            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
+            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], item['Currency']) }}</td>
         </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="3"></td>
-            <td class="text-right">
-                <strong>{{ defaultCurrency.toCurrency(totalSum) }}</strong>
-            </td>
-        </tr>
-        </tfoot>
     </table>
 
     {% if paginator.getPaginationData().pageCount > 1 %}

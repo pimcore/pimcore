@@ -177,6 +177,7 @@ pimcore.settings.videothumbnail.item = Class.create({
     },
 
     addMediaPanel: function (name, items, closable, activate) {
+        name = name.replace(/[^a-zA-Z0-9_\-+]/g,'');
 
         if (this.medias[name]) {
             return;

@@ -148,7 +148,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var keyId = data.data.keyId;
                         var groupId = data.data.groupId;
 
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_relation'), data.data.keyName), function(btn) {
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_relation'), Ext.util.Format.htmlEncode(data.data.keyName)), function(btn) {
                             if (btn == 'yes') {
                                 Ext.Ajax.request({
                                     url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
@@ -319,7 +319,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), data.data.name), function(btn) {
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), Ext.util.Format.htmlEncode(data.data.name)), function(btn) {
                             if (btn == 'yes') {
 
                                 //necessary for aborting all pending proxy requests
@@ -419,8 +419,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
     },
 
     addFieldComplete: function (button, value, object) {
-
-        value = value.trim();
+        value = Ext.util.Format.htmlEncode(value).trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_dataobject_classificationstore_creategroup'),

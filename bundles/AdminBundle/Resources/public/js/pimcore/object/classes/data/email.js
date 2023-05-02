@@ -71,7 +71,7 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
 
-        var specificItems = [
+        const specificItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -85,9 +85,8 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
             }
         ];
 
-        if (!inEncryptedField) {
-
-            var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        if (!inEncryptedField && !this.isInCustomLayoutEditor()) {
+            const nameField = this.layout.getComponent("standardSettings").getComponent("name");
             if (nameField) {
                 nameField.disable();
             }

@@ -138,7 +138,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 sortable: true
             },
             {text: t("name"), width: 200, sortable: true, dataIndex: 'name',
-                getEditor: function() { return new Ext.form.TextField({}); }
+                getEditor: function() { return new Ext.form.TextField({ listeners: {'change': pimcore.helpers.htmlEncodeTextField } }); }
             },
             {text: t("group"), width: 200, sortable: true, dataIndex: 'group',
                 getEditor: function() { return new Ext.form.TextField({}); }
@@ -215,7 +215,9 @@ pimcore.settings.metadata.predefined = Class.create({
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('predefined_metadata'), data.data.name, function () {
+                        pimcore.helpers.deleteConfirm(t('predefined_metadata'),
+                            Ext.util.Format.htmlEncode(data.data.name),
+                            function () {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)

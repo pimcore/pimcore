@@ -142,7 +142,7 @@ class ApplicationLogger implements LoggerInterface
      */
     public function log($level, $message, array $context = [])// : void
     {
-        if (!isset($context['component']) || is_null($context['component'])) {
+        if (!isset($context['component'])) {
             $context['component'] = $this->component;
         }
 

@@ -14,6 +14,25 @@
 /*global localStorage */
 pimcore.registerNS("pimcore.helpers.x");
 
+pimcore.helpers.sanitizeEmail = function (email) {
+    return email.replace(/[^a-zA-Z0-9_\-@.+]/g,'');
+};
+
+pimcore.helpers.sanitizeUrlSlug = function (slug) {
+    return slug.replace(/[^a-z0-9-_+/]/gi, '');
+};
+
+pimcore.helpers.htmlEncodeTextField = function (textField) {
+    if(textField.getValue()) {
+        textField.suspendEvent('change');
+        const decodedValue = Ext.util.Format.htmlDecode(textField.getValue());
+        textField.setValue(
+            Ext.util.Format.htmlEncode(decodedValue)
+        );
+        textField.resumeEvent('change');
+    }
+};
+
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
@@ -1024,7 +1043,12 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure, descri
             iconCls: 'pimcore_icon_upload'
         },
         listeners: {
-            change: function () {
+            change: function (fileUploadField) {
+                if(fileUploadField.fileInputEl.dom.files[0].size > pimcore.settings["upload_max_filesize"]) {
+                    pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + fileUploadField.fileInputEl.dom.files[0].name, "error");
+                    return;
+                }
+
                 uploadForm.getForm().submit({
                     url: url,
                     params: {
@@ -1072,7 +1096,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var content = styleContainer.dom.innerHTML;
     var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
-    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: 100% 100% !important; }\n");
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: contain !important; }\n");
     styleContainer.dom.innerHTML = content;
 
     return classname;
@@ -3249,4 +3273,19 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
                 }
             }
         }.bind(this))
+};
+
+pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
+    const disabledLayoutTypes = ['accordion', 'text', 'iframe', 'button']
+    if (newParent.data.editor) {
+        if (disabledLayoutTypes.includes(newParent.data.editor.type)) {
+            return false;
+        }
+    }
+
+    if (newParent.data.root) {
+        return false;
+    }
+
+    return true;
 };

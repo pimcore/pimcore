@@ -16,6 +16,7 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
+use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 
 abstract class AbstractOperator implements OperatorInterface
@@ -41,7 +42,7 @@ abstract class AbstractOperator implements OperatorInterface
      */
     public function __construct(\stdClass $config, array $context = [])
     {
-        $this->label = $config->label;
+        $this->label = SecurityHelper::convertHtmlSpecialChars($config->label);
         $this->childs = $config->childs;
         $this->context = $context;
     }
@@ -91,7 +92,7 @@ abstract class AbstractOperator implements OperatorInterface
      */
     public function setLabel($label)
     {
-        $this->label = $label;
+        $this->label = SecurityHelper::convertHtmlSpecialChars($label);
     }
 
     /**

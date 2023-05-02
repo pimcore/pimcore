@@ -95,39 +95,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Save document and all child documents
-     *
-     * @param Document $document
-     * @param int $collectGarbageAfterIteration
-     * @param int $saved
-     *
-     * @throws \Exception
-     */
-    private static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
-    {
-        if ($document instanceof Document) {
-            $document->save();
-            $saved++;
-            if ($saved % $collectGarbageAfterIteration === 0) {
-                \Pimcore::collectGarbage();
-            }
-        }
-
-        foreach ($document->getChildren() as $child) {
-            if (!$child->hasChildren()) {
-                $child->save();
-                $saved++;
-                if ($saved % $collectGarbageAfterIteration === 0) {
-                    \Pimcore::collectGarbage();
-                }
-            }
-            if ($child->hasChildren()) {
-                self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
-            }
-        }
-    }
-
-    /**
      * @param  Document $target
      * @param  Document $source
      *
@@ -650,10 +617,10 @@ class Service extends Model\Element\Service
      */
     public static function generatePagePreview($id, $request = null, $hostUrl = null)
     {
-        $success = false;
-
-        /** @var Page $doc */
-        $doc = Document::getById($id);
+        $doc = Document\Page::getById($id);
+        if (!$doc) {
+            return false;
+        }
         if (!$hostUrl) {
             $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
             if (empty($hostUrl)) {
@@ -684,10 +651,10 @@ class Service extends Model\Element\Service
 
                 unlink($tmpFile);
 
-                $success = true;
+                return true;
             }
         }
 
-        return $success;
+        return false;
     }
 }

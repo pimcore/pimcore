@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -292,7 +293,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern($pattern)
     {
-        $this->pattern = $pattern;
+        $this->pattern = SecurityHelper::convertHtmlSpecialChars($pattern);
 
         return $this;
     }
@@ -304,7 +305,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController($controller)
     {
-        $this->controller = $controller;
+        $this->controller = SecurityHelper::convertHtmlSpecialChars($controller);
 
         return $this;
     }
@@ -316,7 +317,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables($variables)
     {
-        $this->variables = $variables;
+        $this->variables = SecurityHelper::convertHtmlSpecialChars($variables);
 
         return $this;
     }
@@ -328,7 +329,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults($defaults)
     {
-        $this->defaults = $defaults;
+        $this->defaults = SecurityHelper::convertHtmlSpecialChars($defaults);
 
         return $this;
     }
@@ -360,7 +361,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
 
         return $this;
     }
@@ -380,7 +381,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse($reverse)
     {
-        $this->reverse = $reverse;
+        $this->reverse = SecurityHelper::convertHtmlSpecialChars($reverse);
 
         return $this;
     }
@@ -434,10 +435,6 @@ final class Staticroute extends AbstractModel
      */
     public function getSiteId()
     {
-        if ($this->siteId && !is_array($this->siteId)) {
-            $this->siteId = explode(',', $this->siteId);
-        }
-
         return $this->siteId;
     }
 
@@ -603,10 +600,6 @@ final class Staticroute extends AbstractModel
      */
     public function getMethods()
     {
-        if ($this->methods && is_string($this->methods)) {
-            $this->methods = explode(',', $this->methods);
-        }
-
         return $this->methods;
     }
 
@@ -619,7 +612,9 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map('trim', $methods);
+            foreach($methods as $key => $method) {
+                $methods[$key] = SecurityHelper::convertHtmlSpecialChars(trim($method));
+            }
         }
 
         $this->methods = $methods;

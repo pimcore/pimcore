@@ -51,25 +51,28 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
 
     getLayout: function ($super) {
         $super();
-        
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
-                xtype: "numberfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems,
-                minValue: 0
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("border"),
-                name: "border",
-                checked: this.datax.border,
-            }
-        ]);
 
-        if(this.inCustomLayoutEditor) {
+        this.specificPanel.removeAll();
+
+        if(!this.inCustomLayoutEditor) {
+            this.specificPanel.add({
+                    xtype: "numberfield",
+                    fieldLabel: t("maximum_items"),
+                    name: "maxItems",
+                    value: this.datax.maxItems,
+                    minValue: 0
+            });
+        }
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            fieldLabel: t("border"),
+            name: "border",
+            checked: this.datax.border,
+        });
+
+
+        if (this.inCustomLayoutEditor) {
             this.specificPanel.add(new Ext.ux.form.MultiSelect({
                 fieldLabel: t("allowed_bricks"),
                 name: "allowedTypes",

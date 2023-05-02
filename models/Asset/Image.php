@@ -194,7 +194,6 @@ class Image extends Model\Asset
             $imagick->writeImage($tmpFile);
             $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
-            unlink($tmpFile);
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>

@@ -62,6 +62,10 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if(this.isInCustomLayoutEditor()) {
+            return [];
+        }
+
         var specificItems = [];
 
         var defaultValue = new Ext.form.Hidden({
@@ -172,20 +176,18 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
     },
 
     setDefaultValue:function (defaultValue, datefield, timefield) {
-
-        if (datefield.getValue()) {
+        if(datefield.getValue() && typeof datefield.getValue() === 'object') {
             var dateString = Ext.Date.format(datefield.getValue(), "Y-m-d");
 
             if (timefield.getValue()) {
                 dateString += " " + Ext.Date.format(timefield.getValue(), "H:i");
-            }
-            else {
+            } else {
                 dateString += " 00:00";
             }
 
-            defaultValue.setValue((Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
-
+            defaultValue.setValue((Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime()) / 1000);
         } else {
+            datefield.setValue(null);
             defaultValue.setValue(null);
         }
     },

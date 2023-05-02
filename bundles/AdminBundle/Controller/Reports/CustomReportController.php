@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 
 /**
  * @Route("/custom-report")
@@ -74,6 +75,8 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $success = false;
+
+        $this->isValidConfigName($request->get('name'));
 
         $report = CustomReport\Config::getByName($request->get('name'));
 
@@ -128,6 +131,7 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $newName = $request->get('newName');
+        $this->isValidConfigName($newName);
         $report = CustomReport\Config::getByName($newName);
         if ($report) {
             throw new \Exception('report already exists');
@@ -186,7 +190,7 @@ class CustomReportController extends ReportsControllerBase
     public function updateAction(Request $request)
     {
         $this->checkPermission('reports_config');
-
+        $this->isValidConfigName($request->get('name'));
         $report = CustomReport\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
@@ -410,6 +414,16 @@ class CustomReportController extends ReportsControllerBase
         ]);
     }
 
+    protected function getTemporaryFileFromFileName(string $exportFileName): string
+    {
+        $exportFileName = basename($exportFileName);
+        if (!str_ends_with($exportFileName, '.csv')) {
+            throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
+        }
+
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
+    }
+
     /**
      * @Route("/create-csv", name="pimcore_admin_reports_customreport_createcsv", methods={"GET"})
      *
@@ -459,7 +473,7 @@ class CustomReportController extends ReportsControllerBase
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
         }
 
         $fp = fopen($exportFile, 'a');
@@ -497,7 +511,7 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
         if ($exportFile = $request->get('exportFile')) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . basename($exportFile);
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
@@ -507,5 +521,15 @@ class CustomReportController extends ReportsControllerBase
         }
 
         throw new FileNotFoundException("File \"$exportFile\" not found!");
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function isValidConfigName(string $configName)
+    {
+        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+            throw new \Exception('The customer report name is invalid');
+        }
     }
 }

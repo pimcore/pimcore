@@ -29,11 +29,23 @@ final class Version20220425082914 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `objects` DROP INDEX `type`, ADD INDEX `type_path_classId` (o_type, o_path, o_classId)');
+        if ($schema->getTable('objects')->hasIndex('type')) {
+            $this->addSql('ALTER TABLE `objects` DROP INDEX `type`');
+        }
+
+        if (!$schema->getTable('objects')->hasIndex('type_path_classId')) {
+            $this->addSql('ALTER TABLE `objects` ADD INDEX `type_path_classId` (o_type, o_path, o_classId)');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `objects` DROP INDEX `type_path_classId`, ADD INDEX `type` (o_type)');
+        if (!$schema->getTable('objects')->hasIndex('type')) {
+            $this->addSql('ALTER TABLE `objects` ADD INDEX `type` (o_type)');
+        }
+
+        if ($schema->getTable('objects')->hasIndex('type_path_classId')) {
+            $this->addSql('ALTER TABLE `objects` DROP INDEX `type_path_classId`');
+        }
     }
 }

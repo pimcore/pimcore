@@ -21,12 +21,14 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -795,6 +797,15 @@ class UserController extends AdminController implements KernelControllerEventInt
 
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
+        }
+
+        //Check if uploaded file is an image
+        $avatarFile = $request->files->get('Filedata');
+
+        $assetType = Asset::getTypeFromMimeMapping($avatarFile->getMimeType(), $avatarFile);
+
+        if (!$avatarFile instanceof UploadedFile || $assetType !== 'image') {
+            throw new \Exception('Unsupported file format.');
         }
 
         $userObj->setImage($_FILES['Filedata']['tmp_name']);

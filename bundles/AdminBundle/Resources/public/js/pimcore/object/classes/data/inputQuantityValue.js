@@ -58,42 +58,47 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("default_value"),
-                name: "defaultValue",
-                value: this.datax.defaultValue
-            },{
-                xtype: 'combobox',
-                name: 'defaultUnit',
-                triggerAction: "all",
-                editable: true,
-                typeAhead: true,
-                selectOnFocus: true,
-                forceSelection: true,
-                fieldLabel: t('default_unit'),
-                store: this.store,
-                value: this.datax.defaultUnit,
-                displayField: 'abbreviation',
-                valueField: 'id',
-                width: 275
-            },
-            {
-                xtype: 'multiselect',
-                queryDelay: 0,
-                triggerAction: 'all',
-                resizable: false,
-                width: 600,
-                fieldLabel: t("valid_quantityValue_units"),
-                typeAhead: true,
-                name: 'validUnits',
-                value: this.datax.validUnits,
-                store: this.store,
-                displayField: 'abbreviation',
-                valueField: 'id'
             }
         ]);
+
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("default_value"),
+                    name: "defaultValue",
+                    value: this.datax.defaultValue
+                },{
+                    xtype: 'combobox',
+                    name: 'defaultUnit',
+                    triggerAction: "all",
+                    editable: true,
+                    typeAhead: true,
+                    selectOnFocus: true,
+                    forceSelection: true,
+                    fieldLabel: t('default_unit'),
+                    store: this.store,
+                    value: this.datax.defaultUnit,
+                    displayField: 'abbreviation',
+                    valueField: 'id',
+                    width: 275
+                },
+                {
+                    xtype: 'multiselect',
+                    queryDelay: 0,
+                    triggerAction: 'all',
+                    resizable: false,
+                    width: 600,
+                    fieldLabel: t("valid_quantityValue_units"),
+                    typeAhead: true,
+                    name: 'validUnits',
+                    value: this.datax.validUnits,
+                    store: this.store,
+                    displayField: 'abbreviation',
+                    valueField: 'id'
+                }
+            ]);
+        }
 
         return this.layout;
     },

@@ -571,8 +571,14 @@ final class ClassDefinition extends Model\AbstractModel
         return $cd;
     }
 
+    /**
+     * @throws Exception\DefinitionWriteException
+     */
     public function delete()
     {
+        if (!$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
         // delete all objects using this class
@@ -1492,6 +1498,9 @@ final class ClassDefinition extends Model\AbstractModel
 
         foreach ($customLayouts as $customLayout) {
             $layoutDefinition = $customLayout->getLayoutDefinitions();
+            if ($layoutDefinition === null) {
+                continue;
+            }
             $this->deleteDeletedDataComponentsInLayoutDefinition($layoutDefinition);
             $customLayout->setLayoutDefinitions($layoutDefinition);
             $customLayout->save();

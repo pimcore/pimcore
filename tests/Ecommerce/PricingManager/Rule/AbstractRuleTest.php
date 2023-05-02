@@ -370,9 +370,9 @@ class AbstractRuleTest extends EcommerceTestCase
                 $rule->setCondition($condition);
             }
 
-//            if($ruleDefinition['condition']) {
-//                $rule->setValue("condition", $ruleDefinition['condition']);
-//            }
+            //            if($ruleDefinition['condition']) {
+            //                $rule->setValue("condition", $ruleDefinition['condition']);
+            //            }
 
             $rules[] = $rule;
         }

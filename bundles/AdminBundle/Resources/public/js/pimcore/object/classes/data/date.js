@@ -60,12 +60,23 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if(this.isInCustomLayoutEditor()) {
+            return [];
+        }
+
         var defaultDateConfig = {
             fieldLabel: t("default_value"),
             name: "defaultValue",
             cls: "object_field",
             width: 300,
-            disabled: datax.useCurrentDate
+            disabled: datax.useCurrentDate,
+            listeners: {
+                change: function (defaultDateField, newValue, oldValue) {
+                    if(typeof this.getValue() != 'object') {
+                        this.setValue(null);
+                    }
+                }
+            }
         };
 
         if (datax.defaultValue) {

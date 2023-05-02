@@ -73,6 +73,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private array $metaData = [];
 
+    private array $classFieldDefinitions = [];
+
     /**
      * @Route("/tree-get-childs-by-id", name="treegetchildsbyid", methods={"GET"})
      *
@@ -513,7 +515,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($currentLayoutId === null && count($validLayouts) > 0) {
-                $currentLayoutId = $validLayouts[0]->getId();
+                $currentLayoutId = reset($validLayouts)->getId();
             }
 
             if (!empty($validLayouts)) {
@@ -522,6 +524,25 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 foreach ($validLayouts as $validLayout) {
                     $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
+
+                usort($objectData['validLayouts'], static function ($layoutData1, $layoutData2) {
+                    if ($layoutData2['id'] === '-1') {
+                        return 1;
+                    }
+
+                    if ($layoutData1['id'] === '-1') {
+                        return -1;
+                    }
+
+                    if ($layoutData2['id'] === '0') {
+                        return 1;
+                    }
+                    if ($layoutData1['id'] === '0') {
+                        return -1;
+                    }
+
+                    return strcasecmp($layoutData1['name'], $layoutData2['name']);
+                });
 
                 $user = Tool\Admin::getCurrentUser();
 
@@ -548,10 +569,45 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
+            $layoutArray = json_decode($this->encodeJson($data['layout']), true);
+            $this->classFieldDefinitions = json_decode($this->encodeJson($object->getClass()->getFieldDefinitions()), true);
+            $this->injectValuesForCustomLayout($layoutArray);
+            $data['layout'] = $layoutArray;
+
             return $this->adminJson($data);
         }
 
         throw $this->createAccessDeniedHttpException();
+    }
+
+    private function injectValuesForCustomLayout(array &$layout): void
+    {
+        foreach ($layout['children'] as &$child) {
+            if ($child['datatype'] === 'layout') {
+                $this->injectValuesForCustomLayout($child);
+            } else {
+                foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
+                    if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
+                        $child[$key] = $value;
+                    }
+                }
+            }
+        }
+
+        //TODO remove in Pimcore 11
+        if (isset($layout['childs'])) {
+            foreach ($layout['childs'] as &$child) {
+                if ($child['datatype'] === 'layout') {
+                    $this->injectValuesForCustomLayout($child);
+                } else {
+                    foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
+                        if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
+                            $child[$key] = $value;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1402,7 +1458,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             ]);
         } elseif ($request->get('task') == 'session') {
             //TODO https://github.com/pimcore/pimcore/issues/9536
-            DataObject\Service::saveElementToSession($object, '', false);
+            DataObject\Service::saveElementToSession($object, '', true);
 
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {

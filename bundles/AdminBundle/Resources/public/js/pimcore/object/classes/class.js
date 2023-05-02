@@ -227,7 +227,8 @@ pimcore.object.classes.klass = Class.create({
 
         var listeners = {
             "itemclick" : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this)
         };
         return listeners;
     },
@@ -501,6 +502,10 @@ pimcore.object.classes.klass = Class.create({
         }
 
         return null;
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     cloneNode:  function(tree, node) {
@@ -1080,7 +1085,14 @@ pimcore.object.classes.klass = Class.create({
             fieldLabel: t("key"),
             labelWidth: 100,
             width: 250,
-            value: data.index_key
+            value: data.index_key,
+            validator: function (value) {
+                if(value !== value.replace(/[^a-za-z0-9_\-+]/g,'')){
+                    this.setvalue(value.replace(/[^a-za-z0-9_\-+]/g,''));
+                }
+
+                return true;
+            }
         };
 
         //fixes data to match store model
@@ -1360,9 +1372,6 @@ pimcore.object.classes.klass = Class.create({
         }
     },
 
-
-
-
     removeChild: function (tree, record) {
         if (this.id != 0) {
             if (this.currentNode == record.data.editor) {
@@ -1382,7 +1391,7 @@ pimcore.object.classes.klass = Class.create({
         if (node.data.editor) {
             if (typeof node.data.editor.getData == "function") {
                 data = node.data.editor.getData();
-
+                data.invalidFieldError = null;
                 data.name = trim(data.name);
 
                 // field specific validation
@@ -1425,6 +1434,10 @@ pimcore.object.classes.klass = Class.create({
                     }
 
                     var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
+
+                    if (data.invalidFieldError) {
+                        invalidFieldsText = invalidFieldsText + " (" + data.invalidFieldError + ")";
+                    }
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")

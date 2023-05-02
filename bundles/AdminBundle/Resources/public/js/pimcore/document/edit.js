@@ -234,7 +234,7 @@ pimcore.document.edit = Class.create({
                             }.bind(this)
                         );
                     } else {
-                        this.reload(true);
+                        this.reload();
                         this.updateTargetGroupText(this.targetGroup.getValue());
                     }
                 }.bind(this)

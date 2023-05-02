@@ -223,7 +223,7 @@ class SettingsController extends AdminController
             if ($filter = $request->get('filter')) {
                 $list->setFilter(function (Metadata\Predefined $predefined) use ($filter) {
                     foreach ($predefined->getObjectVars() as $value) {
-                        if (stripos($value, $filter) !== false) {
+                        if (stripos((string)$value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -343,7 +343,7 @@ class SettingsController extends AdminController
                             $cellValues = is_array($value) ? $value : [$value];
 
                             foreach ($cellValues as $cellValue) {
-                                if (stripos($cellValue, $filter) !== false) {
+                                if (stripos((string)$cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
@@ -404,14 +404,12 @@ class SettingsController extends AdminController
         $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['valid_language'])) {
-            foreach ($valueArray['general']['valid_language'] as $existingValue) {
-                if (!in_array($existingValue, $validLanguages)) {
-                    $languageOptions[] = [
-                        'language' => $existingValue,
-                        'display' => $existingValue,
-                    ];
-                }
+        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+            if (!in_array($existingValue, $validLanguages)) {
+                $languageOptions[] = [
+                    'language' => $existingValue,
+                    'display' => $existingValue,
+                ];
             }
         }
 
@@ -1554,7 +1552,7 @@ class SettingsController extends AdminController
                 $type = $item['type'];
                 unset($item['type']);
 
-                $pipe->addItem($type, $item, $mediaName);
+                $pipe->addItem($type, $item, htmlspecialchars($mediaName));
             }
         }
 

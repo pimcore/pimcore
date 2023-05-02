@@ -159,7 +159,7 @@ pimcore.report.custom.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + " (a-zA-Z-_)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + ".<br>" + t("naming_requirements_3chars") + " (a-zA-Z0-9_-)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -206,7 +206,8 @@ pimcore.report.custom.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), record.data.text), function (btn) {
+        const decodedName = Ext.util.Format.htmlDecode(record.data.text);
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), Ext.util.Format.htmlEncode(decodedName)), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_reports_customreport_delete'),

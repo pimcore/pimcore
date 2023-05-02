@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -77,9 +78,9 @@ class SearchController extends AdminController
 
         $query = $this->filterQueryParam($allParams['query'] ?? '');
 
-        $types = explode(',', $allParams['type'] ?? '');
-        $subtypes = explode(',', $allParams['subtype'] ?? '');
-        $classnames = explode(',', $allParams['class'] ?? '');
+        $types = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['type'] ?? ''));
+        $subtypes = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['subtype'] ?? ''));
+        $classnames = explode(',', preg_replace('/[^a-z0-9_,]/i', '', $allParams['class'] ?? ''));
 
         $offset = (int)$allParams['start'];
         $limit = (int)$allParams['limit'];
@@ -111,13 +112,15 @@ class SearchController extends AdminController
         $bricks = [];
         if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
+            //remove sql comments
+            $fields = str_replace('--', '', $fields);
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
                 if (substr($f, 0, 1) == '~') {
                     //                    $type = $parts[1];
-//                    $field = $parts[2];
-//                    $keyid = $parts[3];
+                    //                    $field = $parts[2];
+                    //                    $keyid = $parts[3];
                     // key value, ignore for now
                 } elseif (count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
@@ -310,7 +313,11 @@ class SearchController extends AdminController
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
-        $hits = $searcherList->load();
+        try {
+            $hits = $searcherList->load();
+        } catch (SyntaxErrorException $syntaxErrorException) {
+            throw new \InvalidArgumentException('Check your arguments.');
+        }
 
         $elements = [];
         foreach ($hits as $hit) {

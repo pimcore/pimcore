@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
@@ -445,6 +446,12 @@ class Service extends Model\AbstractModel
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Service::getSaveCopyName() method is deprecated, use Service::getSafeCopyName() instead.'
+        );
+
         return self::getSafeCopyName($sourceKey, $target);
     }
 
@@ -856,10 +863,10 @@ class Service extends Model\AbstractModel
 
                 if ($originalElement) {
                     //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
-//                    if ($data instanceof Asset) {
-//                        /** @var Asset $originalElement */
-//                        $data->setFilename($originalElement->getFilename());
-//                    } else
+                    //                    if ($data instanceof Asset) {
+                    //                        /** @var Asset $originalElement */
+                    //                        $data->setFilename($originalElement->getFilename());
+                    //                    } else
                     if ($data instanceof Document) {
                         /** @var Document $originalElement */
                         $data->setKey($originalElement->getKey());
@@ -875,6 +882,12 @@ class Service extends Model\AbstractModel
             if ($data instanceof Model\AbstractModel) {
                 $properties = $data->getObjectVars();
                 foreach ($properties as $name => $value) {
+                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                    //specific version of the object and must not be reloaded with DB version of object
+                    if (($data instanceof ObjectAwareFieldInterface || $data instanceof DataObject\Localizedfield) && $name === 'object') {
+                        continue;
+                    }
+
                     $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
                 }
             } else {
@@ -1508,6 +1521,8 @@ class Service extends Model\AbstractModel
      */
     public static function saveElementToSession($element, $postfix = '', $clone = true)
     {
+        self::loadAllFields($element);
+
         if ($clone) {
             $context = [
                 'source' => __METHOD__,
@@ -1530,6 +1545,7 @@ class Service extends Model\AbstractModel
                 );
             }
 
+            $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Model\Element\ElementDumpStateInterface::class, Model\Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
             $element = $copier->copy($element);
         }
 
@@ -1537,7 +1553,6 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        self::loadAllFields($element);
         $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 

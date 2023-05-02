@@ -133,6 +133,11 @@ final class User extends User\UserRole
     protected $twoFactorAuthentication;
 
     /**
+     * OIDC Provider from pimcore/openid-connect
+     */
+    protected ?string $provider = null;
+
+    /**
      * @return string|null
      */
     public function getPassword()
@@ -570,7 +575,6 @@ final class User extends User\UserRole
                 $image->save($targetFile, 'png');
 
                 $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
-                unlink($targetFile);
             }
 
             return $storage->readStream($this->getThumbnailImageStoragePath());
@@ -584,7 +588,7 @@ final class User extends User\UserRole
      */
     public function getContentLanguages()
     {
-        if (strlen($this->contentLanguages)) {
+        if (is_string($this->contentLanguages) && strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
 
@@ -1063,6 +1067,16 @@ final class User extends User\UserRole
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+    }
+
+    public function getProvider(): ?string
+    {
+        return $this->provider;
+    }
+
+    public function setProvider(?string $provider): void
+    {
+        $this->provider = $provider;
     }
 
     public function hasImage()

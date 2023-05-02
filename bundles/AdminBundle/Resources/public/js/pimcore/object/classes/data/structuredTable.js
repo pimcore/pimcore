@@ -57,6 +57,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         $super();
 
         this.specificPanel.removeAll();
+
         this.specificPanel.add([
             {
                 xtype: "textfield",
@@ -85,16 +86,21 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 fieldLabel: t("label_width"),
                 name: "labelWidth",
                 value: this.datax.labelWidth
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("label_first_cell"),
-                name: "labelFirstCell",
-                value: this.datax.labelFirstCell
-            },
-            this.getGrid("rows", this.datax.rows, false),
-            this.getGrid("cols", this.datax.cols, true)
+            }
         ]);
+
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("label_first_cell"),
+                    name: "labelFirstCell",
+                    value: this.datax.labelFirstCell
+                },
+                this.getGrid("rows", this.datax.rows, false),
+                this.getGrid("cols", this.datax.cols, true)
+            ]);
+        }
 
         return this.layout;
     },
@@ -279,8 +285,8 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
     },
 
     getData: function () {
-        if(this.grids) {
-            var rows = [];
+        if(this.grids && this.stores.rows && this.stores.cols) {
+            let rows = [];
             this.stores.rows.each(function(rec) {
                 delete rec.data.id;
                 rows.push(rec.data);
@@ -288,7 +294,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
             });
             this.datax.rows = rows;
 
-            var cols = [];
+            let cols = [];
             this.stores.cols.each(function(rec) {
                 delete rec.data.id;
                 cols.push(rec.data);

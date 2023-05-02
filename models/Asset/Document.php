@@ -52,7 +52,6 @@ class Document extends Model\Asset
      */
     public function processPageCount($path = null)
     {
-        $pageCount = null;
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
@@ -100,8 +99,6 @@ class Document extends Model\Asset
         if (!$this->getCustomSetting('document_page_count')) {
             Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
             $this->addToUpdateTaskQueue();
-
-            return new Document\ImageThumbnail(null);
         }
 
         return new Document\ImageThumbnail($this, $thumbnailName, $page, $deferred);
