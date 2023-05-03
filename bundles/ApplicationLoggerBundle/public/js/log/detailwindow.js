@@ -115,7 +115,7 @@ pimcore.bundle.applicationlogger.log.detailwindow = Class.create({
             if (fileObjectText.length > 60) {
                 fileObjectText = fileObjectText.substr(0, 60) + "...";
             }
-            var url = Routing.generate('pimcore_admin_bundle_log_showfileobject', {filePath: this.data.fileobject});
+            var url = Routing.generate('pimcore_admin_bundle_applicationlogger_log_showfileobject', {filePath: this.data.fileobject});
 
             var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url, fileObjectText);
             items.push({
