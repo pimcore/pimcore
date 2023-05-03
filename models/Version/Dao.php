@@ -40,6 +40,9 @@ class Dao extends Model\Dao\AbstractDao
             throw new NotFoundException('version with id ' . $id . ' not found');
         }
 
+        $data['public'] = (bool)$data['public'];
+        $data['serialized'] = (bool)$data['serialized'];
+        $data['autoSave'] = (bool)$data['autoSave'];
         $this->assignVariablesToModel($data);
     }
 
