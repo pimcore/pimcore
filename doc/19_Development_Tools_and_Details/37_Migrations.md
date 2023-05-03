@@ -42,9 +42,7 @@ doctrine_migrations:
 ```
 
 # Run all available migrations after `composer update`
-Pimcore does only run Pimcore core migrations after `composer update` automatically. 
-If you'd like to run all available migrations including bundles and your app-specific 
-migrations, just include the following part in your `composer.json`. 
+If you'd like to run all available migrations after `composer update` including bundles and your app-specific migrations, just include the following part in your `composer.json`. 
 
 ```json
 "post-update-cmd": [

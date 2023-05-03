@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\Bundle\AdminBundle\Tool as AdminTool;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element;
@@ -105,21 +104,6 @@ final class Tool
         }
 
         return self::$validLanguages;
-    }
-
-    /**
-     * @param string $language
-     * @param bool $absolutePath
-     *
-     * @return string
-     *
-     * @internal
-     *
-     * @TODO for bundles to be supported on Pimcore 10 & 11
-     */
-    public static function getLanguageFlagFile(string $language, bool $absolutePath = true): string
-    {
-        return AdminTool::getLanguageFlagFile($language, $absolutePath);
     }
 
     /**

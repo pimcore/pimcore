@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Controller\SearchController;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Asset;
@@ -29,7 +27,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ModelDataObjectPermissionsTest extends ModelTestCase
 {
@@ -562,331 +559,18 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
     protected function buildController(string $classname, User $user): mixed
     {
         $dataObjectController = Stub::construct($classname, [], [
-            'getAdminUser' => function () use ($user) {
-                return $user;
-            },
             'getPimcoreUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function ($data) {
+            'jsonResponse' => function ($data) {
                 return new JsonResponse($data);
+            },
+            'extractSortingSettings' => function ($params) {
+                return $params;
             },
         ]);
 
         return $dataObjectController;
-    }
-
-    /**
-     * @param DataObject\AbstractObject $element
-     * @param User $user
-     * @param array|null $expectedChildren When null,the main permission is disabled
-     *
-     * @throws \ReflectionException
-     */
-    protected function doTestTreeGetChildrenById(DataObject\AbstractObject $element, User $user, ?array $expectedChildren): void
-    {
-        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\DataObject\\DataObjectController', $user);
-
-        $request = new Request([
-            'node' => $element->getId(),
-        ]);
-        $eventDispatcher = new EventDispatcher();
-
-        try {
-            TestHelper::callMethod($controller, 'checkPermission', ['objects']);
-            $responseData = $controller->treeGetChildrenByIdAction(
-                $request,
-                $eventDispatcher
-            );
-        } catch (\Exception $e) {
-            if (is_null($expectedChildren)) {
-                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert main object permission');
-
-                return;
-            }
-        }
-
-        $responsePaths = [];
-        $responseData = json_decode($responseData->getContent(), true);
-        foreach ($responseData['nodes'] as $node) {
-            $responsePaths[] = $node['path'];
-        }
-
-        $this->assertCount(
-            $responseData['total'],
-            $responseData['nodes'],
-            'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
-        );
-
-        $this->assertCount(
-            count($expectedChildren),
-            $responseData['nodes'],
-            'Assert number of expected result matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
-        );
-
-        foreach ($expectedChildren as $path) {
-            $this->assertContains(
-                $path,
-                $responsePaths,
-                'Children of `' . $element->getFullpath() . '` do to not contain `' . $path . '` for user `' . $user->getName() . '`'
-            );
-        }
-    }
-
-    public function testTreeGetChildrenById(): void
-    {
-        $admin = User::getByName('admin');
-
-        // test /permissionfoo
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $admin,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $this->userPermissionTest1,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $this->userPermissionTest2,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $this->userPermissionTest3,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $this->userPermissionTest4,
-            [$this->bars->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionfoo,
-            $this->userPermissionTest5,
-            [$this->bars->getFullpath()]
-        );
-
-        // test /permissionfoo/bars
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $admin,
-            [$this->hugo->getFullpath(), $this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest1,
-            [$this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest2,
-            [$this->userfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest3,
-            [$this->userfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest4,
-            [$this->groupfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest5,
-            [$this->userfolder->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->bars,
-            $this->userPermissionTest6,
-            null
-        );
-
-        // test /permissionfoo/bars/userfolder
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $admin,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest1,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest2,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest3,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest4,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest5,
-            [$this->usertestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->userfolder,
-            $this->userPermissionTest6,
-            null
-        );
-
-        // test /permissionfoo/bars/groupfolder
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $admin,
-            [$this->grouptestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest1,
-            [$this->grouptestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest2,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest3,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest4,
-            [$this->grouptestobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest5,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->groupfolder,
-            $this->userPermissionTest6,
-            null
-        );
-
-        // test /permissionbar
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $admin,
-            [$this->foo->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest1,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest2,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest3,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest4,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest5,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->permissionbar,
-            $this->userPermissionTest6,
-            null
-        );
-        // test /permissionbar/foo
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $admin,
-            [$this->hiddenobject->getFullpath()]
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest1,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest2,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest3,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest4,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest5,
-            []
-        );
-
-        $this->doTestTreeGetChildrenById(
-            $this->foo,
-            $this->userPermissionTest6,
-            null
-        );
     }
 
     protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
@@ -906,10 +590,9 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $responseData = $controller->findAction(
             $request,
             new EventDispatcher(),
-            new GridHelperService()
+            $this->getMockBuilder('\Pimcore\Bundle\AdminBundle\Helper\GridHelperService')->getMock() //this is not used in the test
         );
 
-        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {
@@ -1065,7 +748,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             new EventDispatcher(),
         );
 
-        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['data'] as $node) {

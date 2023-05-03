@@ -15,12 +15,33 @@
 
 namespace Pimcore\Security;
 
+/**
+ * @internal
+ */
 class SecurityHelper
 {
     public static function convertHtmlSpecialChars(?string $text): ?string
     {
         if(is_string($text)) {
             return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        }
+
+        return null;
+    }
+
+    public static function convertHtmlSpecialCharsArrayKeys(array &$array, array $keys): void
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $array[$key] = self::convertHtmlSpecialChars($array[$key]);
+            }
+        }
+    }
+
+    public static function sanitizeHtmlAttributes(?string $text): ?string
+    {
+        if(is_string($text)) {
+            return preg_replace('/[\/"\'\\\]/', '', $text);
         }
 
         return null;

@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DataObjectController extends AdminController
+class DataObjectController extends UserAwareController
 {
     /**
      * @Route("/relation-objects-list", name="pimcore_bundle_search_dataobject_relation_objects_list", methods={"GET"})

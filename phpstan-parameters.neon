@@ -9,6 +9,11 @@ parameters:
     bootstrapFiles:
         - phpstan-bootstrap.php
 
+    excludePaths:
+            - bundles/SeoBundle/src/Controller/Traits/DocumentTreeConfigWrapperTrait.php
+            - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+            - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
     symfony:
         container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
 

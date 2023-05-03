@@ -16,12 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface;
 use Pimcore\Bundle\XliffBundle\ExportService\ExportServiceInterface;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Bundle\XliffBundle\ImporterService\ImporterServiceInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItemCollection;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -34,8 +35,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/translation")
  *
  */
-class XliffTranslationController extends AdminController
+class XliffTranslationController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})
      *
@@ -64,7 +67,7 @@ class XliffTranslationController extends AdminController
 
         $exportService->exportTranslationItems($translationItems, $source, [$target], $id);
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
         ]);
     }
@@ -121,7 +124,7 @@ class XliffTranslationController extends AdminController
             ]];
         }
 
-        $response = $this->adminJson([
+        $response = $this->jsonResponse([
             'success' => true,
             'jobs' => $jobs,
             'id' => $id,
@@ -161,13 +164,13 @@ class XliffTranslationController extends AdminController
         } catch (\Exception $e) {
             Logger::err($e->getMessage());
 
-            return $this->adminJson([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
             ]);
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
         ]);
     }

@@ -1,12 +1,3 @@
-pimcore_admin:
-    user:
-        default_key_bindings:
-            quick_search:
-                key: 'F'
-                action: quickSearch
-                ctrl: true
-                shift: true
-
 framework:
     messenger:
         transports:

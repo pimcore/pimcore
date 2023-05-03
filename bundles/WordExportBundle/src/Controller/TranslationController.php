@@ -15,7 +15,8 @@
 
 namespace Pimcore\Bundle\WordExportBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
@@ -34,8 +35,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/translation")
  *
  */
-class TranslationController extends AdminController
+class TranslationController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     private const PERMISSION = 'word_export';
 
     /**
@@ -241,11 +244,9 @@ class TranslationController extends AdminController
             }
         }
 
-        return $this->adminJson(
-            [
-                'success' => true,
-            ]
-        );
+        return new JsonResponse([
+            'success' => true,
+        ]);
     }
 
     /**

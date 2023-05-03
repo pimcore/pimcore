@@ -120,36 +120,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         return $name;
     }
 
-    /**
-     * @param string $name
-     * @param string $classId
-     *
-     * @return string|null
-     *
-     * @deprecated
-     */
-    public function getIdByNameAndClassId(string $name, string $classId): ?string
-    {
-        $id = null;
-
-        $list = new Listing();
-        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
-        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name, $classId) {
-            $return = false;
-            if ($item->getName() == $name && $item->getClassId() == $classId) {
-                $return = true;
-            }
-
-            return $return;
-        }));
-
-        if (count($definitions) && $definitions[0] instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-            $id = $definitions[0]->getId();
-        }
-
-        return $id;
-    }
-
     public function getNewId(): UuidV4
     {
         $newId = Uid::v4();

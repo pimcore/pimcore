@@ -465,7 +465,7 @@ final class User extends User\UserRole
      */
     public function getContentLanguages(): array
     {
-        if (strlen($this->contentLanguages)) {
+        if (is_string($this->contentLanguages) && strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
 

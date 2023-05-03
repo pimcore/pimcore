@@ -691,7 +691,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testWysiwyg(): void
     {
-        $originalValue = uniqid() . '<br>' . uniqid();
+        $originalValue = uniqid() . '<br />' . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Wysiwyg();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);

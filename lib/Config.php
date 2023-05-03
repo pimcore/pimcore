@@ -21,9 +21,11 @@ use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
+use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Yaml\Yaml;
 
 final class Config implements ArrayAccess
@@ -152,7 +154,16 @@ final class Config implements ArrayAccess
     {
         if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
 
-            static::$systemConfig = $container->getParameter('pimcore.config');
+            $settings = $container->getParameter('pimcore.config');
+
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+            ]);
+            $eventDispatcher = $container->get('event_dispatcher');
+            $eventDispatcher->dispatch($saveSettingsEvent, SystemEvents::GET_SYSTEM_CONFIGURATION);
+            $settings = $saveSettingsEvent->getArgument('settings');
+
+            static::$systemConfig = $settings;
         }
 
         if (null !== $offset) {

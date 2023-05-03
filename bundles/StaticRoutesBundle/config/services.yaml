@@ -32,11 +32,3 @@ services:
         tags:
             - { name: router, priority: 100 }
             - { name: monolog.logger, channel: routing }
-
-    #
-    # Event Listeners
-    #
-
-    Pimcore\Bundle\StaticRoutesBundle\EventListener\IndexSettingsListener:
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }

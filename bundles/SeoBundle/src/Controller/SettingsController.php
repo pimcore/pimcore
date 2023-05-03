@@ -16,15 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\SeoBundle\Config;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingsController extends AdminController
+class SettingsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/robots-txt", name="pimcore_bundle_seo_settings_robotstxtget", methods={"GET"})
      *
@@ -36,7 +39,7 @@ class SettingsController extends AdminController
 
         $config = Config::getRobotsConfig();
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $config,
             'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
@@ -63,7 +66,7 @@ class SettingsController extends AdminController
             SettingsStore::set('robots.txt-' . $siteId, $robotsContent, SettingsStore::TYPE_STRING, 'robots.txt');
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
         ]);
     }
