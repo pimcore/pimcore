@@ -23,24 +23,26 @@ pimcore.bundle.customreports.startup = Class.create({
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
-            menu.marketing.items.push({
-                text: t("reports"),
-                priority: 5,
-                iconCls: "pimcore_nav_icon_reports",
-                itemId: 'pimcore_menu_marketing_reports',
-                handler: this.showReports.bind(this, null)
-            });
-        }
+        if(menu.marketing) {
+            if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
+                menu.marketing.items.push({
+                    text: t("reports"),
+                    priority: 5,
+                    iconCls: "pimcore_nav_icon_reports",
+                    itemId: 'pimcore_menu_marketing_reports',
+                    handler: this.showReports.bind(this, null)
+                });
+            }
 
-        if (user.isAllowed("reports_config") && perspectiveCfg.inToolbar("settings.customReports")) {
-            menu.marketing.items.push({
-                text: t("custom_reports"),
-                priority: 6,
-                iconCls: "pimcore_nav_icon_reports",
-                itemId: 'pimcore_menu_marketing_custom_reports',
-                handler: this.showCustomReports
-            });
+            if (user.isAllowed("reports_config") && perspectiveCfg.inToolbar("settings.customReports")) {
+                menu.marketing.items.push({
+                    text: t("custom_reports"),
+                    priority: 6,
+                    iconCls: "pimcore_nav_icon_reports",
+                    itemId: 'pimcore_menu_marketing_custom_reports',
+                    handler: this.showCustomReports
+                });
+            }
         }
     },
 
