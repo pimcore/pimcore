@@ -140,8 +140,6 @@ demo:
                                 upload: true
                                 uploadCompatibility: true
                                 uploadZip: true
-                                importFromServer: true
-                                uploadFromUrl: true
                         addFolder: true
                         rename: true
                         copy: true
