@@ -221,6 +221,7 @@
     ```
 
 - [Asset] Removed the deprecated `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
+- [Asset] Removed the deprecated `Import from Server` and `Import from URL` options.
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
     instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
     Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
