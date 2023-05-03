@@ -337,12 +337,7 @@ pimcore:
 - [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
 - [Translations] Added Symfony's html sanitizer to `\Pimcore\Model\Translation\Dao::save` method.
 - [Editable] Removed the `attributes` field from the link editable.
-- [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. If you'd like to run all available migrations including bundles and your app-specific migrations, just include the following part in your `composer.json`.
-```json
-"post-update-cmd": [
-    "./bin/console doctrine:migrations:migrate"
-]
-```
+- [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`. 
 
 ## 10.6.0
 
