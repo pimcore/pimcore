@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 10.6.0
-- [Assets] Deprecated `Import from Server`. It will be removed in Pimcore 11.
+- [Assets] Deprecated `Import from Server` and `Import from URL` Admin UI options for adding assets. They will be removed in Pimcore 11.
 - [Naming] Deprecated master, blacklist and whitelist. Instead, use main, blocklist, allowlist
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.

@@ -596,7 +596,7 @@ pimcore.asset.tree = Class.create({
 
                         if (perspectiveCfg.inTreeContextMenu("asset.add.importFromServer") && pimcore.currentuser.admin) {
                             menuItems.push({
-                                text: t("import_from_server"),
+                                text: t("import_from_server") + '<sup class="deprecation" title="' + t("deprecated") + '">*</sup>',
                                 handler: this.importFromServer.bind(this, tree, record),
                                 iconCls: "pimcore_icon_import_server"
                             });
@@ -604,7 +604,7 @@ pimcore.asset.tree = Class.create({
 
                         if (perspectiveCfg.inTreeContextMenu("asset.add.uploadFromUrl")) {
                             menuItems.push({
-                                text: t("import_from_url"),
+                                text: t("import_from_url") + '<sup class="deprecation" title="' + t("deprecated") + '">*</sup>',
                                 handler: this.importFromUrl.bind(this, tree, record),
                                 iconCls: "pimcore_icon_world pimcore_icon_overlay_add"
                             });
