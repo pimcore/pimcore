@@ -55,6 +55,10 @@ class AbstractUser extends Model\AbstractModel
      */
     public static function getById($id)
     {
+        if (!is_numeric($id) || $id < 1) {
+            return null;
+        }
+
         $cacheKey = 'user_' . $id;
 
         try {
