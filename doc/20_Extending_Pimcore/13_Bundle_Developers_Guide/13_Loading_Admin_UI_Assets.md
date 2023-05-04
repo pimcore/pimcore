@@ -15,6 +15,40 @@ The interface prescribes the following methods:
 
 In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/lib/extensions/Bundle/BundleAdminClassicSupportTrait.php).
 
+As Pimcore uses [Encore](https://symfony.com/doc/current/frontend/encore/simple-example.html) to build its assets, it also provides an [`EncoreHelper-Class`](https://github.com/pimcore/pimcore/blob/131b0e917f9e7b929cb189e74f9404b73551938c/lib/Helper/EncoreHelper.php) to include built files to your bundle. You can use `EncoreHelper::getBuildPathsFromEntryPoints` to get all paths from the assets and load them with the aforementioned methods.
+
+The following example illustrates this for loading the built webcore-files:
+```php
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Pimcore\Helper\EncoreHelper;
+
+class EncoreBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+{
+use BundleAdminClassicTrait;
+use PackageVersionTrait;
+
+public function getCssPaths(): array
+{
+return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json', 'css');
+}
+
+public function getJsPaths(): array
+{
+return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json');
+}
+
+public function getPath(): string
+{
+return \dirname(__DIR__);
+}
+
+...
+}
+```
+
 ## Event Based
 
 You can add additional paths to load by handling the events defined on [`BundleManagerEvents`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php).
@@ -48,5 +82,3 @@ class AdminAssetsListener implements EventSubscriberInterface
     }
 }
 ```
-
- 
