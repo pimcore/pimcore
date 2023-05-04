@@ -639,7 +639,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 }
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $tenantConfig->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
