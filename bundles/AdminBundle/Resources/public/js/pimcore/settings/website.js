@@ -135,11 +135,7 @@ pimcore.settings.website = Class.create({
                 dataIndex: 'data',
                 flex: 300,
                 editable: true,
-                editor: new Ext.form.TextField({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                }),
+                editor: new Ext.form.TextField(),
                 renderer: this.getCellRenderer.bind(this),
             },
             {

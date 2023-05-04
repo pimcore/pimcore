@@ -214,7 +214,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setData($data)
     {
-        $this->data = SecurityHelper::convertHtmlSpecialChars($data);
+        $this->data = $data;
 
         return $this;
     }
