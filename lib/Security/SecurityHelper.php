@@ -38,12 +38,12 @@ class SecurityHelper
         }
     }
 
-    public static function sanitizeHtmlAttributes(?string $text): ?string
+    public static function sanitizeHtmlAttributes(mixed $text): mixed
     {
         if(is_string($text)) {
             return preg_replace('/[\/"\'\\\]/', '', $text);
+        } else {
+            return $text;
         }
-
-        return null;
     }
 }
