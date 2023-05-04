@@ -27,25 +27,25 @@ use Pimcore\Helper\EncoreHelper;
 
 class EncoreBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
-use BundleAdminClassicTrait;
-use PackageVersionTrait;
+    use BundleAdminClassicTrait;
+    use PackageVersionTrait;
 
-public function getCssPaths(): array
-{
-return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json', 'css');
-}
+    public function getCssPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json', 'css');
+    }
 
-public function getJsPaths(): array
-{
-return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json');
-}
+    public function getJsPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json');
+    }
 
-public function getPath(): string
-{
-return \dirname(__DIR__);
-}
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 
-...
+    // ...
 }
 ```
 
