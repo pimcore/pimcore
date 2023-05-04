@@ -16,9 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-/**
- * @internal
- */
 final class EncoreHelper
 {
     public static function getBuildPathsFromEntrypoints(string $entrypointsFile, string $type = 'js'): array
