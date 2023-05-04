@@ -116,7 +116,8 @@ pimcore.settings.website = Class.create({
                     listeners: {
                         'change': pimcore.helpers.htmlEncodeTextField
                     }
-                })
+                }),
+                renderer: Ext.util.Format.htmlEncode
             },
             {
                 text: t('language'),
@@ -142,7 +143,11 @@ pimcore.settings.website = Class.create({
                 }),
                 renderer: this.getCellRenderer.bind(this),
             },
-            {text: t("site"), flex: 100, sortable:true, dataIndex: "siteId",
+            {
+                text: t("site"),
+                flex: 100,
+                sortable:true,
+                dataIndex: "siteId",
                 editor: new Ext.form.ComboBox({
                     store: pimcore.globalmanager.get("sites"),
                     valueField: "id",

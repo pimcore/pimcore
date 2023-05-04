@@ -184,7 +184,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -229,7 +229,7 @@ final class WebsiteSetting extends AbstractModel
             $data = $data->getId();
         }
 
-        $this->data = SecurityHelper::convertHtmlSpecialChars($data);
+        $this->data = $data;
 
         return $this;
     }
