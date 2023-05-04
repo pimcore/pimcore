@@ -591,6 +591,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if (!$class) {
             return $this;
         }
+        
+        if (!isset($context['purpose'])) {
+            $context['purpose'] = 'layout';
+        }
 
         $this->visibleFieldDefinitions = [];
 
