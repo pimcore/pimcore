@@ -175,14 +175,14 @@ final class Redirect extends AbstractModel
         $this->type = $type;
     }
 
-    public function setSource(string $source): static
+    public function setSource(?string $source): static
     {
         $this->source = $source;
 
         return $this;
     }
 
-    public function setTarget(string $target): static
+    public function setTarget(?string $target): static
     {
         $this->target = $target;
 
