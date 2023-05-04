@@ -116,8 +116,7 @@ pimcore.settings.website = Class.create({
                     listeners: {
                         'change': pimcore.helpers.htmlEncodeTextField
                     }
-                }),
-                renderer: Ext.util.Format.htmlEncode
+                })
             },
             {
                 text: t('language'),
@@ -209,7 +208,7 @@ pimcore.settings.website = Class.create({
                 icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler:function (grid, rowIndex) {
                     let data = grid.getStore().getAt(rowIndex);
-                    pimcore.helpers.deleteConfirm(t('website_settings'), data.data.name, function () {
+                    pimcore.helpers.deleteConfirm(t('website_settings'), Ext.util.Format.htmlEncode(data.data.name), function () {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this));
                 }.bind(this)
