@@ -113,7 +113,7 @@
 
 #### [Extracted Core Functionality] :
 
-- Functionality that was moved into its own bundle inside pimcore/pimcore repository and needs to be enabled during Pimcore install or in `config/bundles.php` (while upgrading from Pimcore 10, migrations will activate them automatically):  
+- Functionality that was moved into its own bundle inside pimcore/pimcore repository and needs to be enabled during Pimcore install or in `config/bundles.php`:  
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`. Please pay attention to the new namespaces for the classes from this bundle.
     - [CustomReports] have been moved into PimcoreCustomReportsBundle
         - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
@@ -142,7 +142,7 @@
 
 
 
-- Functionality that was moved into its own bundle and own repository and needs to installed via composer as well as activated in `config/bundles.php` (while upgrading from Pimcore 10, migrations will activate them automatically, but adding them to composer.json still needs to be done manually): 
+- Functionality that was moved into its own bundle and own repository and needs to installed via composer as well as activated in `config/bundles.php`: 
     - [AdminBundle] Admin Bundle has been moved to `pimcore/admin-ui-classic-bundle` package. 
 	    - Please require in your project composer.json file and register the bundle in Kernel:
         ```php
