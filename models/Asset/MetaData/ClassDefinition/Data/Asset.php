@@ -63,7 +63,7 @@ class Asset extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = null;
+        $element = $data;
         if (is_string($data)) {
             $element = Service::getElementByPath('asset', $data);
         }
