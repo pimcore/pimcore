@@ -1,20 +1,12 @@
 # Preparing Pimcore for Version 11
 
-## Preparatory Work
+## Upgrade to Pimcore 10.6
 - Upgrade to version 10.6.x, if you are using a lower version.
-- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
-    ```
-    security:
-        enable_authenticator_manager: true
-    ```
-    Points to consider when moving to new Authenticator:
-  - New authentication system works with password hasher factory instead of encoder factory.
-  - BruteforceProtectionHandler will be replaced with Login Throttling.
-  - Custom Guard Authenticator will be replaced with Http\Authenticator.
+
+## Code Changes
 - [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
   The return types will be added to Pimcore classes, so you `must` add return types to your classes extending Pimcore.
   You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
-
 
 - [Javascript] Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
     ```javascript
@@ -83,6 +75,17 @@
 
 - [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
 
+## Configuration Adaptions
+- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
+    ```
+    security:
+        enable_authenticator_manager: true
+    ```
+    Points to consider when moving to new Authenticator:
+  - New authentication system works with password hasher factory instead of encoder factory.
+  - BruteforceProtectionHandler will be replaced with Login Throttling.
+  - Custom Guard Authenticator will be replaced with Http\Authenticator.
+  
 - [Config Environment] Replace deprecated setting write targets and storage directory in the .env file with symfony config
     ```bash
     PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=symfony-config
@@ -101,30 +104,34 @@
         custom_reports:
           write_target:
             type: 'settings-store'
+        
+        # other available write targets are the following
+        # video_thumbnails:
+        # document_types:
+        # web_to_print:
+        # predefined_properties:
+        # staticroutes:
+        # perspectives:
+        # custom_views:
+        # object_custom_layouts:
     ```
-- [System Settings] Appearance & Branding settings will be separated from the System settings in Pimcore 11 and stored in `var/config/admin_system_settings/admin_system_settings.yaml` by default.
-  To save these settings into the settings store, you will need to add following to your configuration:
-```yaml
-pimcore_admin:
-    config_location:
-        admin_system_settings:
-            write_target:
-                type: 'settings-store'
-            read_target:
-                type: 'settings-store'
-```
+    
+    You might also adapt write from other extensions, like Datahub. 
+    
+    
+## Migrations
+Make sure that migrations are executed.
+It highly depends on your deployment process how to handle migrations.
+You can call `bin/console doctrine:migrations:migrate` at any given time manually or in your deployment pipeline.
 
-System Settings will implement LocationAwareConfigRepository in Pimcore 11. All relevant settings from `system.yaml` will be stored in `var/config/system_settings/system_settings.yaml` by default.
-To save system settings into the settings store, you will need to add following to your configuration:
-```yaml
-pimcore:
-    config_location:
-        system_settings:
-            write_target:
-                type: 'settings-store'
-            read_target:
-                type: 'settings-store'
-```
+If you are sure you can run all available migrations including bundles and your app-specific migrations after `composer update`, just include the following part in your `composer.json`.
+```json
+"post-update-cmd": [
+    "./bin/console doctrine:migrations:migrate"
+]
+```        
+
+## Additional Things to consider
 
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
 - [Config] `pimcore.assets.image.focal_point_detection` was removed
@@ -133,3 +140,5 @@ pimcore:
     composer require --no-update pimcore/compatibility-bridge-v10
     ```
     This package provides backward compatibility layer for some Pimcore 10 classes.
+    
+
