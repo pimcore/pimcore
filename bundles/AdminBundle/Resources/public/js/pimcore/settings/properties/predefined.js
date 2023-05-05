@@ -170,11 +170,7 @@ pimcore.settings.properties.predefined = Class.create({
                 flex: 50,
                 sortable: false,
                 dataIndex: 'config',
-                editor: new Ext.form.TextField({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                })
+                editor: new Ext.form.TextField()
             },
             {
                 text: t("content_type"),
