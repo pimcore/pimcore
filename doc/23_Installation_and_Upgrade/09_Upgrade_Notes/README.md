@@ -20,17 +20,21 @@
 -  `AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` has been renamed to `Pimcore\Event\ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED`.
 
 
+#### [Installer] :
+
+-  Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
+
+
 #### [Logging] :
 
 -  Change logging from the redirects of the `SeoBundle` to the channel `routing`
 -  Removed constant `PIMCORE_PHP_ERROR_LOG`
 -  Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly, eg. log records are now `LogRecord` Objects instead of array.
 
+#### [Miscellaneous] :
 
-#### [Installer] :
-
--  Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
-
+- Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract.
+- Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
 
 #### [Further Removed API Features] :
 
@@ -58,13 +62,6 @@
 -  Bumped minimum requirement of `presta\sitemap-bundle` to `^3.3`, dropped support for `v2` and removed related BC Layer.
 -  Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`.
 
-
-#### [Miscellaneous] :
-
-- Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract.
-- Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
-
-
 -----------------
 ## Admin UI
 #### [General] :
@@ -72,20 +69,6 @@
 -  Removed `adminer` as built-in database management tool.
 -  Removed deprecated Admin Event classes: `Pimcore\Event\Admin\*`, `Pimcore\Event\AdminEvents`, `Pimcore\Event\Model\*`.
 -  Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/platform/Pimcore/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI#adding-custom-main-navigation-items)
-
-
-#### [JS] :
-
-- Packaged some JS libraries with encore
-- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
-- Removed Plugin Broker BC layer for JS events
-
-
-#### [Security] :
-
--  Enabled Content Security Policy by default.
--  Implemented Symfony HTML sanitizer for WYSIWYG editors.
-
 
 #### [Authentication] :
 
@@ -100,6 +83,16 @@
 -  Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 -  Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 
+#### [JS] :
+
+- Packaged some JS libraries with encore
+- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
+- Removed Plugin Broker BC layer for JS events
+
+#### [Security] :
+
+-  Enabled Content Security Policy by default.
+-  Implemented Symfony HTML sanitizer for WYSIWYG editors.
 
 
 -----------------
@@ -222,23 +215,14 @@ pimcore:
             - de
 ```
 
-
-
 #### [CoreBundle] :
 
 -  Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
-
 
 #### [Environment] :
 
 - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
 - Removed `PIMCORE_SKIP_DOTENV_FILE` environment var support. You still can use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables.
-
-
-#### [Migrations] :
-
--  Pimcore does not run core migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
-
 
 #### [Gotenberg] :
 
@@ -246,12 +230,13 @@ pimcore:
 - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
 - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
 
-
-
 #### [Maintenance] :
 
 -  Removed `--async` & `--force` option from `pimcore:maintenance` command. Please make sure to setup to `messenger:consume pimcore_maintenance` independent
 
+#### [Migrations] :
+
+-  Pimcore does not run core migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
 
 #### [Naming] :
 
@@ -445,6 +430,9 @@ pimcore_seo:
                     predefined_document_types: true
 ```
 
+#### [Areabricks] :
+
+-  The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 
 #### [Controllers] :
 
@@ -453,11 +441,6 @@ pimcore_seo:
     - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
     - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
-
-
-#### [Areabricks] :
-
--  The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 
 
 #### [Chromium] :
