@@ -50,7 +50,7 @@
 
 #### [PhpArrayTable] : 
 
-- : Removed PhpArrayTable class
+- Removed PhpArrayTable class
 
 
 #### [Request] : 
@@ -119,8 +119,8 @@
 
 #### [Glossary] : 
 
-  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
-  - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` instead.
+  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` twig filter.
+  - Config `pimcore:glossary` has been removed, please use `pimcore_glossary:` instead.
     - Make sure to enable the PimcoreGlossaryBundle manually in the `config\bundles.php`
 
 
@@ -218,7 +218,7 @@ pimcore:
 
 #### [Environment] : 
 
--  - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
+- Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
 
 
 #### [Flysystem] : 
@@ -339,7 +339,7 @@ pimcore:
 -  Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 -  Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
 -  Changed method signature on `Pimcore\Model\Element\ElementInterface::save()`, this changes the `::save()` method on all classes (e.g. DataObjects and Pages) implementing the interface, including those inheriting from `Concrete`/`AbstractObject`, see [#13207](https://github.com/pimcore/pimcore/issues/13207)
-- : Removed deprecated `getTotalCount()` method
+- Removed deprecated `getTotalCount()` method
 -  Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
 
 
@@ -368,7 +368,7 @@ pimcore:
 -  Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 -  Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
 -  Removed loading assets via fixed namespace only. Custom Asset Types can be configured.
--  Thumbnails: improved method signature for `$thumbnail->getPath()`. you may now pass options as array `$thumbnail->getPath(["deferredAllowed" => true, "frontend" => false]);`
+-  Thumbnails: improved method signature for `$thumbnail->getPath()`. You may now pass options as array `$thumbnail->getPath(["deferredAllowed" => true, "frontend" => false]);`
 
 
 #### [Image Optimizer] : 
@@ -389,7 +389,7 @@ pimcore:
 -  Removed deprecated preview url in class editor.
 -  Removed sql filter functionality for data object grid
 -  Loading non-Concrete objects with the Concrete class is no longer possible
-- : Removed setter functions for calculated values, since they weren´t used anyway.
+- Removed setter functions for calculated values, since they weren´t used anyway.
 -  Removed `o_` prefix for data object properties and database columns.
 -  Due to the removal of the `o_` prefix the property names `classTitle`, `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
 -  Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
@@ -422,7 +422,7 @@ pimcore:
 #### [Relations] : 
 
 -  Add possibility to inline download asset from relations
-- : Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
+- Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 
 
 #### [UrlSlug] : 
