@@ -1,8 +1,6 @@
 # Upgrade Notes - Pimcore 11.0.0
 
 ## API
------------------
-
 #### [General] :
 
 -  **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. Double check your classes which are extending from Pimcore classes and adapt if necessary. 
@@ -67,9 +65,8 @@
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
 
 
-
-## Admin UI
 -----------------
+## Admin UI
 #### [General] :
 
 -  Removed `adminer` as built-in database management tool.
@@ -105,9 +102,8 @@
 
 
 
-
-## Bundles
 -----------------
+## Bundles
 #### [Bundles General] :
 
 - Removed support for loading bundles through `extensions.php`.
@@ -277,9 +273,8 @@ pimcore:
 - `EcommerceFrameworkBundle\SessionEnvironment` not loading from or storing into session in cli mode anymore.
 - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 
-
-## Ecommerce
 -----------------
+## Ecommerce
 #### [Ecommerce General] :
 
 - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
@@ -303,9 +298,8 @@ pimcore:
 
 -  Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 
-
-## Elements
 -----------------
+## Elements
 
 #### [All] :
 
@@ -497,9 +491,8 @@ pimcore_seo:
 
 -  Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 
-
-## Infrastructure
 -----------------
+## Infrastructure
 #### [PHP Options] :
 
 -  Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
@@ -510,9 +503,8 @@ pimcore_seo:
 -  The minimum supported PHP version is now 8.1 and added support for 8.2
 
 
-
-## Tools
 -----------------
+## Tools
 #### [Application Logger] :
 
 -  Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
