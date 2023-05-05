@@ -254,7 +254,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setConfig($config)
     {
-        $this->config = SecurityHelper::convertHtmlSpecialChars($config);
+        $this->config = $config;
 
         return $this;
     }
