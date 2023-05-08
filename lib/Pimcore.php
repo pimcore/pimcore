@@ -248,45 +248,4 @@ class Pimcore
 
         return false;
     }
-
-    /**
-     * @internal
-     *
-     * @throws Exception
-     */
-    public static function initLogger(): void
-    {
-        // special request log -> if parameter pimcore_log is set
-        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {
-            $requestLogName = date('Y-m-d_H-i-s');
-            if (!empty($_REQUEST['pimcore_log'])) {
-                // slashed are not allowed, replace them with hyphens
-                $requestLogName = str_replace('/', '-', $_REQUEST['pimcore_log']);
-            }
-
-            $requestLogFile = resolvePath(PIMCORE_LOG_DIRECTORY . '/request-' . $requestLogName . '.log');
-            if (strpos($requestLogFile, PIMCORE_LOG_DIRECTORY) !== 0) {
-                throw new \Exception('Not allowed');
-            }
-
-            if (!file_exists($requestLogFile)) {
-                $filesystem = new Filesystem();
-                $filesystem->dumpFile($requestLogFile, '');
-            }
-
-            $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
-
-            /** @var \Symfony\Component\DependencyInjection\Container $container */
-            $container = self::getContainer();
-            foreach ($container->getServiceIds() as $id) {
-                if (strpos($id, 'monolog.logger.') === 0) {
-                    $logger = self::getContainer()->get($id);
-                    if ($logger->getName() != 'event') {
-                        // replace all handlers
-                        $logger->setHandlers([$requestDebugHandler]);
-                    }
-                }
-            }
-        }
-    }
 }
