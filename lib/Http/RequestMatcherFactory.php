@@ -17,6 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\HostRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * @internal
@@ -29,11 +35,45 @@ class RequestMatcherFactory
      *
      * @param array $entries
      *
-     * @return ChainRequestMatcher
+     * @return RequestMatcherInterface[]
      */
-    public function buildRequestMatchers(array $entries): ChainRequestMatcher
+    public function buildRequestMatchers(array $entries): array
     {
+        $matchers = [];
+        foreach ($entries as $entry) {
+            $matchers[] = $this->buildRequestMatcher($entry);
+        }
 
-        return new ChainRequestMatcher($entries);
+        return $matchers;
+    }
+
+    /**
+     * Builds a request matcher from a route configuration
+     *
+     * @param array $entry
+     *
+     * @return array
+     */
+    public function buildRequestMatcher(array $entry): array
+    {
+        $matchers = [];
+
+        if (isset($entry['path']) && $entry['path']) {
+            $matchers[] = new PathRequestMatcher($entry['path']);
+        }
+
+        if (isset($entry['host']) && $entry['host']) {
+            $matchers[] = new HostRequestMatcher($entry['host']);
+        }
+
+        if (isset($entry['methods']) && $entry['methods']) {
+            $matchers[] = new MethodRequestMatcher($entry['methods']);
+        }
+
+        if (isset($entry['route']) && $entry['route']) {
+            $matchers[] = new AttributesRequestMatcher(['_route' => $entry['route']]);
+        }
+
+        return $matchers;
     }
 }
