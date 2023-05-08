@@ -72,8 +72,22 @@
 
 - [Symfony]
   - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
-
+    ```bash
+    composer require --no-update symfony/dotenv
+    ```
 - [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
+
+## Migrations
+Make sure that migrations are executed.
+It highly depends on your deployment process how to handle migrations.
+You can call `bin/console doctrine:migrations:migrate` at any given time manually or in your deployment pipeline.
+
+If you are sure you can run all available migrations including bundles and your app-specific migrations after `composer update`, just include the following part in your `composer.json`.
+```json
+"post-update-cmd": [
+    "./bin/console doctrine:migrations:migrate"
+]
+```
 
 ## Configuration Adaptions
 - [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
@@ -93,6 +107,7 @@
   
     PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
     ```
+  For example see the Demo Configuration [here](https://github.com/pimcore/demo/blob/7add4ddd30be82687ba5c4bbef8048e794e58923/config/config.yaml#L28)
     ```yaml
     pimcore:
       config_location:
@@ -117,19 +132,6 @@
     ```
     
     You might also adapt write from other extensions, like Datahub. 
-    
-    
-## Migrations
-Make sure that migrations are executed.
-It highly depends on your deployment process how to handle migrations.
-You can call `bin/console doctrine:migrations:migrate` at any given time manually or in your deployment pipeline.
-
-If you are sure you can run all available migrations including bundles and your app-specific migrations after `composer update`, just include the following part in your `composer.json`.
-```json
-"post-update-cmd": [
-    "./bin/console doctrine:migrations:migrate"
-]
-```        
 
 ## Additional Things to consider
 
