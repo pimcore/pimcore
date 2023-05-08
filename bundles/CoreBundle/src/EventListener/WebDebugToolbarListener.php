@@ -21,6 +21,7 @@ use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -33,9 +34,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
     /**
-     * @var RequestMatcherInterface[]
+     * @var ?ChainRequestMatcher
      */
-    protected ?array $excludeMatchers = null;
+    protected ?ChainRequestMatcher $excludeMatchers = null;
 
     public function __construct(
         protected RequestHelper $requestHelper,
@@ -78,9 +79,9 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     }
 
     /**
-     * @return RequestMatcherInterface[]
+     * @return ChainRequestMatcher
      */
-    protected function getExcludeMatchers(): array
+    protected function getExcludeMatchers(): ChainRequestMatcher
     {
         if (null === $this->excludeMatchers) {
             $this->excludeMatchers = $this->requestMatcherFactory->buildRequestMatchers($this->excludeRoutes);
