@@ -16,13 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
-use Symfony\Component\HttpFoundation\ChainRequestMatcher;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\HostRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * @internal
