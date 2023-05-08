@@ -221,6 +221,7 @@
     ```
 
 - [Asset] Removed the deprecated `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
+- [Asset] Removed the deprecated `Import from Server` and `Import from URL` options.
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
     instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
     Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
@@ -337,6 +338,7 @@ pimcore:
 - [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
 - [Translations] Added Symfony's html sanitizer to `\Pimcore\Model\Translation\Dao::save` method.
 - [Editable] Removed the `attributes` field from the link editable.
+- [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`. 
 
 ## 10.6.0
 
@@ -411,6 +413,7 @@ pimcore:
           - `Pimcore\Bundle\AdminBundle\Security\User\UserLoader` => `Pimcore\Security\User\UserLoader`
           - `Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver` => `Pimcore\Security\User\TokenStorageUserResolver`
       - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead. 
+- [Admin] The method `Pimcore\Bundle\AdminBundle\Controller\Admin\MiscController::scriptProxyAction()` has been marked as internal.
 
 ## 10.5.21
 - [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
