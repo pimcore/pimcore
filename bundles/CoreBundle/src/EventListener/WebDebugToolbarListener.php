@@ -81,7 +81,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     }
 
     /**
-     * @return RequestMatcherInterface[]
+     * @return array
      */
     protected function getExcludeMatchers(): array
     {

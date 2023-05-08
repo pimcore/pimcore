@@ -77,7 +77,7 @@ class PimcoreContextGuesser
     /**
      * Get request matchers to query admin pimcore context from
      *
-     * @return RequestMatcherInterface[][]
+     * @return array
      */
     private function getMatchers(): array
     {

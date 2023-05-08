@@ -35,7 +35,7 @@ class RequestMatcherFactory
      *
      * @param array $entries
      *
-     * @return RequestMatcherInterface[]
+     * @return array
      */
     public function buildRequestMatchers(array $entries): array
     {
@@ -56,6 +56,7 @@ class RequestMatcherFactory
      */
     public function buildRequestMatcher(array $entry): array
     {
+        // TODO add support for IPs, attributes and schemes if necessary
         $matchers = [];
 
         if (isset($entry['path']) && $entry['path']) {
