@@ -25,7 +25,7 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
     },
 
     getTypeName: function () {
-        return t("button");
+        return t("button") + '<sup class="deprecation" title="' + t("deprecated") + '">*</sup>';
     },
 
     getIconClass: function () {

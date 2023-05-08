@@ -17,6 +17,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated will be removed in Pimcore 11
+ */
 class Button extends Model\DataObject\ClassDefinition\Layout
 {
     /**
