@@ -101,7 +101,6 @@ class CodeInjectorTest extends TestCase
         $reflector = new \ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('presetSelectors');
-        $property->setAccessible(true);
 
         $data = [];
         foreach ($property->getValue() as $value) {
@@ -116,7 +115,6 @@ class CodeInjectorTest extends TestCase
         $reflector = new \ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('validPositions');
-        $property->setAccessible(true);
 
         $data = [];
         foreach ($property->getValue() as $value) {
