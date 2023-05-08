@@ -103,11 +103,6 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/custom_views'
-        data_hub:
-            write_target:
-        	  type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/data_hub'
         object_custom_layouts:
             write_target:
 	          type: 'symfony-config'

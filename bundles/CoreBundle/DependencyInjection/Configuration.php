@@ -192,7 +192,6 @@ final class Configuration implements ConfigurationInterface
             'staticroutes' => '/var/config/staticroutes',
             'perspectives' => '/var/config/perspectives',
             'custom_views' => '/var/config/custom_views',
-            'data_hub' => '/var/config/data_hub',
             'object_custom_layouts' => '/var/config/object_custom_layouts',
         ]);
 
