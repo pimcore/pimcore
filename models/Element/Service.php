@@ -1150,9 +1150,8 @@ class Service extends Model\AbstractModel
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
-                    $reflectionProperty->setAccessible(true);
                     $myValue = $reflectionProperty->getValue($object);
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     return false;
                 }
 
