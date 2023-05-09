@@ -130,7 +130,7 @@ If you are sure you can run all available migrations after `composer update`, in
         # object_custom_layouts:
     ```
     
-    You might also adapt write from other extensions, like Datahub. 
+    You might also adapt the `config_location` from other extensions, like Datahub.
 
 ## Additional Things to Consider
 
