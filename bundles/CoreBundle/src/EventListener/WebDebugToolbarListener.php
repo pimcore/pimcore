@@ -33,9 +33,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestMatcherInterface[]
-     */
     protected ?array $excludeMatchers = null;
 
     public function __construct(

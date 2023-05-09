@@ -28,9 +28,6 @@ class PimcoreContextGuesser
 {
     private array $routes = [];
 
-    /**
-     * @var RequestMatcherInterface[][]
-     */
     private ?array $matchers = null;
 
     private RequestMatcherFactory $requestMatcherFactory;
