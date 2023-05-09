@@ -4,6 +4,16 @@ In the appearance & branding settings (*Settings* > *Appearance & Branding*) sys
 be made with care and only by developers.
 These settings are saved in `var/config/admin_system_settings/admin_system_settings.yaml` or in the settings store based on your configuration.
 
+To switch from Symfony configuration to settings store for the first time, you need to copy the content of your `admin_system_settings.yaml` file and convert it into JSON format.
+
+You can then manually connect to your database and insert the converted JSON string into the `settings_store` table or use a [script](../19_Development_Tools_and_Details/42_Settings_Store.md).
+
+You need to provide these values for the settings store:
+- id => `admin_system_settings`
+- scope => `pimcore_admin_system_settings`
+- data => your converted JSON string
+- type => `string`
+
 ## Colors
 Settings regarding colors of Pimcore admin interface like login screen color, Admin interface color, Admin interface background etc.
 
