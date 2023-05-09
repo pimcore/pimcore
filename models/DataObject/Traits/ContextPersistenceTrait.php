@@ -58,7 +58,7 @@ trait ContextPersistenceTrait
             $context = $object->getContext();
             if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
                 $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? null;
+                $index = $context['index'] ?? $context['containerKey'] ?? null;
                 $row['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $row['ownername'];
             }
 
