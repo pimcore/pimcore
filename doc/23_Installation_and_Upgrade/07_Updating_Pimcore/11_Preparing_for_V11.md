@@ -128,6 +128,7 @@ If you are sure you can run all available migrations after `composer update`, in
         # perspectives:
         # custom_views:
         # object_custom_layouts:
+        # predefined_asset_metadata:
     ```
     
     You might also adapt the `config_location` from other extensions, like Datahub.
