@@ -340,6 +340,7 @@ pimcore:
 - [Editable] Removed the `attributes` field from the link editable.
 - [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`. 
 - [Requests] Replace deprecated `Symfony\Component\HttpFoundation\RequestMatcher` with `Symfony\Component\HttpFoundation\ChainRequestMatcher`
+- [DataObjects] Removed Button control for DataObjects layout definition.
 
 ## 10.6.0
 

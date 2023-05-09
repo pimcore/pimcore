@@ -1197,6 +1197,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         try {
             $class = new self();
             $name = $class->getDao()->getNameByIdIgnoreCase($id);
+            if ($name === null) {
+                throw new \Exception('Class definition with ID ' . $id . ' does not exist');
+            }
             $definitionFile = $class->getDefinitionFile($name);
             $class = @include $definitionFile;
 
