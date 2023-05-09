@@ -81,8 +81,9 @@ final class Version20230320131322 extends AbstractMigration
                                     ],
                                     'owner' => $object,
                                     'fieldname' => $objectBrickContainerField,
-                                    'saveRelationalData' => ['saveLocalizedRelations' => true]
+                                    'saveRelationalData' => ['saveLocalizedRelations' => true],
                                 ]);
+
                                 continue 2;
                             }
                         }
