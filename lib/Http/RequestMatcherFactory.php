@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
-use Symfony\Component\HttpFoundation\RequestMatcher;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
+use Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\HostRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 
 /**
  * @internal
@@ -28,9 +30,6 @@ class RequestMatcherFactory
      * Builds a set of request matchers from a config definition as configured in pimcore.admin.routes (see PimcoreCoreBundle
      * configuration).
      *
-     * @param array $entries
-     *
-     * @return RequestMatcherInterface[]
      */
     public function buildRequestMatchers(array $entries): array
     {
@@ -43,33 +42,30 @@ class RequestMatcherFactory
     }
 
     /**
-     * Builds a request matcher from a route configuration
+     * Builds a request matchers from a route configuration
      *
-     * @param array $entry
-     *
-     * @return RequestMatcher
      */
-    public function buildRequestMatcher(array $entry): RequestMatcher
+    public function buildRequestMatcher(array $entry): array
     {
         // TODO add support for IPs, attributes and schemes if necessary
-        $matcher = new RequestMatcher();
+        $matchers = [];
 
         if (isset($entry['path']) && $entry['path']) {
-            $matcher->matchPath($entry['path']);
+            $matchers[] = new PathRequestMatcher($entry['path']);
         }
 
         if (isset($entry['host']) && $entry['host']) {
-            $matcher->matchHost($entry['host']);
+            $matchers[] = new HostRequestMatcher($entry['host']);
         }
 
         if (isset($entry['methods']) && $entry['methods']) {
-            $matcher->matchMethod($entry['methods']);
+            $matchers[] = new MethodRequestMatcher($entry['methods']);
         }
 
         if (isset($entry['route']) && $entry['route']) {
-            $matcher->matchAttribute('_route', $entry['route']);
+            $matchers[] = new AttributesRequestMatcher(['_route' => $entry['route']]);
         }
 
-        return $matcher;
+        return $matchers;
     }
 }

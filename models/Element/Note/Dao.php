@@ -41,6 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');
         }
 
+        $data['locked'] = (bool)$data['locked'];
         $this->assignVariablesToModel($data);
 
         // get key-value data

@@ -16,18 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Asset extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = null;
-        if ($value) {
+        $element = $value;
+        if (is_string($value)) {
             $element = Service::getElementByPath('asset', $value);
         }
-        if ($element) {
+        if ($element instanceof \Pimcore\Model\Asset) {
             return $element->getId();
         }
 
@@ -64,11 +63,11 @@ class Asset extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = null;
-        if ($data) {
+        $element = $data;
+        if (is_string($data)) {
             $element = Service::getElementByPath('asset', $data);
         }
-        if ($element) {
+        if ($element instanceof \Pimcore\Model\Asset) {
             return $element->getId();
         }
 
@@ -77,7 +76,7 @@ class Asset extends Data
 
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
 
@@ -89,7 +88,7 @@ class Asset extends Data
         if (is_numeric($data)) {
             $data = Service::getElementById('asset', $data);
         }
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getRealFullPath();
         } else {
             return '';
@@ -130,7 +129,7 @@ class Asset extends Data
     public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\Asset::getByPath($data);
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
 

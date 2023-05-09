@@ -151,7 +151,7 @@ class Task extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setAction(string $action): static
+    public function setAction(?string $action): static
     {
         $this->action = $action;
 

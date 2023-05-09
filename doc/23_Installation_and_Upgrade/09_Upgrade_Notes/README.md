@@ -362,7 +362,7 @@ pimcore:
 -  Added global language switcher for localized fields
 -  Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 -  It's now possible to drop a video asset directly into an video editable in class
-
+-  Removed Button control for DataObjects layout definition.
 
 
 #### [Class Definitions] :
@@ -468,8 +468,6 @@ pimcore_seo:
 
 -  Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 -  Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
-
-
 #### [Video Editable] :
 
 -  Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
@@ -485,6 +483,9 @@ pimcore_seo:
 
 -  The minimum supported PHP version is now 8.1 and added support for 8.2
 
+#### [Symfony] :
+
+-  Replace deprecated `Symfony\Component\HttpFoundation\RequestMatcher` with `Symfony\Component\HttpFoundation\ChainRequestMatcher`
 
 -----------------
 ## Tools
