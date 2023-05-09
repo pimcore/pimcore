@@ -30,9 +30,6 @@ class RequestMatcherFactory
      * Builds a set of request matchers from a config definition as configured in pimcore.admin.routes (see PimcoreCoreBundle
      * configuration).
      *
-     * @param array $entries
-     *
-     * @return array
      */
     public function buildRequestMatchers(array $entries): array
     {
@@ -45,11 +42,8 @@ class RequestMatcherFactory
     }
 
     /**
-     * Builds a request matcher from a route configuration
+     * Builds a request matchers from a route configuration
      *
-     * @param array $entry
-     *
-     * @return array
      */
     public function buildRequestMatcher(array $entry): array
     {

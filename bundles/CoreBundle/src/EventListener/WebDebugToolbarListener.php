@@ -77,9 +77,6 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getExcludeMatchers(): array
     {
         if (null === $this->excludeMatchers) {

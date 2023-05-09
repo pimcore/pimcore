@@ -40,8 +40,6 @@ class PimcoreContextGuesser
     /**
      * Add context specific routes
      *
-     * @param string $context
-     * @param array $routes
      */
     public function addContextRoutes(string $context, array $routes): void
     {
@@ -51,10 +49,6 @@ class PimcoreContextGuesser
     /**
      * Guess the pimcore context
      *
-     * @param Request $request
-     * @param string $default
-     *
-     * @return string
      */
     public function guess(Request $request, string $default): string
     {
@@ -74,7 +68,6 @@ class PimcoreContextGuesser
     /**
      * Get request matchers to query admin pimcore context from
      *
-     * @return array
      */
     private function getMatchers(): array
     {
