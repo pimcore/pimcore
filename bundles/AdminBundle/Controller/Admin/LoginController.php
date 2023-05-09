@@ -53,6 +53,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 {
     public function __construct(
         protected ResponseHelper $responseHelper,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -94,8 +95,14 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
     {
+        $queryParams = $request->query->all();
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
-            return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
+            return $this->redirectToRoute('pimcore_admin_login', $queryParams, Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        $redirectUrl = $this->dispatchLoginRedirect($queryParams);
+        if ($this->generateUrl('pimcore_admin_login', $queryParams) != $redirectUrl) {
+            return new RedirectResponse($redirectUrl);
         }
 
         $csrfProtection->regenerateCsrfToken();
@@ -172,7 +179,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher, RateLimiterFactory $resetPasswordLimiter)
+    public function lostpasswordAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, RateLimiterFactory $resetPasswordLimiter)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -220,7 +227,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 try {
                     $event = new LostPasswordEvent($user, $loginUrl);
-                    $eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
+                    $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
 
                     // only send mail if it wasn't prevented in event
                     if ($event->getSendMail()) {
@@ -261,7 +268,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      */
-    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deeplinkAction(Request $request)
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
@@ -271,26 +278,22 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $perspective = strip_tags($request->get('perspective', ''));
 
             if (strpos($queryString, 'token')) {
-                $event = new LoginRedirectEvent('pimcore_admin_login', [
+                $url = $this->dispatchLoginRedirect([
                     'deeplink' => $deeplink,
                     'perspective' => $perspective,
                 ]);
-                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
-
-                $url = $this->generateUrl($event->getRouteName(), $event->getRouteParams());
                 $url .= '&' . $queryString;
 
                 return $this->redirect($url);
             } elseif ($queryString) {
-                $event = new LoginRedirectEvent('pimcore_admin_login', [
+                $url = $this->dispatchLoginRedirect([
                     'deeplink' => 'true',
                     'perspective' => $perspective,
                 ]);
-                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
                 return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,
-                    'redirect' => $this->generateUrl($event->getRouteName(), $event->getRouteParams()),
+                    'redirect' => $url,
                 ]);
             }
         }
@@ -363,5 +366,14 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         return $supported;
+    }
+
+
+    private function dispatchLoginRedirect(array $routeParams = []): string
+    {
+        $event = new LoginRedirectEvent('pimcore_admin_login', $routeParams);
+        $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
+
+        return $this->generateUrl($event->getRouteName(), $event->getRouteParams());
     }
 }
