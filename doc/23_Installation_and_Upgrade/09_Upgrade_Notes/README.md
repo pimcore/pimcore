@@ -338,7 +338,8 @@ pimcore:
 - [Tool\Console] Methods `execInBackgroundUnix` & `execInBackgroundWindows` visibility changed from `protected` to `private` and for `getSystemEnvironment` from `public` to `private`.
 - [Translations] Added Symfony's html sanitizer to `\Pimcore\Model\Translation\Dao::save` method.
 - [Editable] Removed the `attributes` field from the link editable.
-- [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
+- [Migrations] Pimcore does not run migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`. 
+- [Requests] Replace deprecated `Symfony\Component\HttpFoundation\RequestMatcher` with `Symfony\Component\HttpFoundation\ChainRequestMatcher`
 - [DataObjects] Removed Button control for DataObjects layout definition.
 
 ## 10.6.0

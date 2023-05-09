@@ -21,6 +21,7 @@ use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -32,9 +33,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestMatcherInterface[]
-     */
     protected ?array $excludeMatchers = null;
 
     public function __construct(
@@ -70,16 +68,15 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         }
 
         // do not show toolbar on excluded routes (pimcore.web_profiler.toolbar.excluded_routes config entry)
+        /** @var array $excludeMatcher */
         foreach ($this->getExcludeMatchers() as $excludeMatcher) {
-            if ($excludeMatcher->matches($request)) {
+            $chainRequestMatcher = new ChainRequestMatcher($excludeMatcher);
+            if ($chainRequestMatcher->matches($request)) {
                 $this->disableWebDebugToolbar();
             }
         }
     }
 
-    /**
-     * @return RequestMatcherInterface[]
-     */
     protected function getExcludeMatchers(): array
     {
         if (null === $this->excludeMatchers) {
