@@ -19,7 +19,6 @@ namespace Pimcore\Http\Context;
 use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * @internal
