@@ -181,7 +181,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
-                    if (preg_match_all('/[#?*:\\<>|"%&@=;]/', $item->getSlug(), $matches)) {
+                    if (preg_match_all('/[^a-z0-9-._~:\/?#[\]@!$&\'()*+,;=]/', $item->getSlug(), $matches)) {
                         throw new Model\Element\ValidationException('Slug contains forbidden characters: [ ' .  implode(' ', $matches[0]) . ' ] ');
                     }
 
