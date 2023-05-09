@@ -73,7 +73,7 @@
     - `Pimcore\Bundle\AdminBundle\Security\User\UserLoader` => `Pimcore\Security\User\UserLoader`
     - `Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver` => `Pimcore\Security\User\TokenStorageUserResolver`
   - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead.
-- [DataObjects] - Deprecated Button control for DataObjects layout definition. It will be removed in Pimcore 11.
+- [DataObjects] - Deprecated Button control for DataObjects layout definition. It will be removed in Pimcore 11. You can define your custom layout component to replace this element like described [here](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/12_Adding_Object_%20Layout_types.md)
 
 ## 10.5.21
 - [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
