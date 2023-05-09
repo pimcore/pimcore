@@ -153,8 +153,14 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                         }
                     }
 
-                    const matches = [...value.match(/([#?*:\\<>|"%&@=;])/)];
-                    if (matches.length > 0) {
+                    const regex = new RegExp(/[^a-z0-9-._~:/?#[\]@!$&'()*+,;=]/, 'g')
+                    let matches = value.match(regex);
+                    if(matches !== null) {
+                        matches = [...matches];
+                        //TODO: lets discuss if we should override the value here -> this would make the error message obsolete
+                        //const sanitizedSlug = this.getValue().replace(regex, '-');
+                        //this.setValue(sanitizedSlug);
+
                         return t('url-slug-invalid-chars') + ' [' + matches.join(', ') + ']';
                     }
                 }
