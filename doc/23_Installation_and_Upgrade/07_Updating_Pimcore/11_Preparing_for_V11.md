@@ -142,6 +142,9 @@ If you are sure you can run all available migrations including bundles and your 
     composer require --no-update pimcore/compatibility-bridge-v10
     ```
     This package provides backward compatibility layer for some Pimcore 10 classes.
-- [Definition Files] Make sure your definition files in `var/classes` are up to date and all default values are set correctly. If not, save your definitions again in the backend.
+- [Definition Files] Make sure your definition files in `var/classes` are up-to-date and all default values are set correctly by running following migration. 
+  ```bash
+  bin/console doctrine:migration:exec 'Pimcore\Bundle\CoreBundle\Migrations\Version20230508121105'
+  ```
     
 
