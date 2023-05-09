@@ -5,7 +5,7 @@
 
 ## Code Changes
 - [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
-  The return types will be added to Pimcore classes, so you `must` add return types to your classes extending Pimcore.
+  The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
   You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
 
 - [Javascript] Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
@@ -79,10 +79,10 @@
 
 ## Migrations
 Make sure that migrations are executed.
-It highly depends on your deployment process how to handle migrations.
-You can call `bin/console doctrine:migrations:migrate` at any given time manually or in your deployment pipeline.
+How to handle them highly depends on your deployment process.
+You can manually call `bin/console doctrine:migrations:migrate` at any time or add it in your deployment pipeline.
 
-If you are sure you can run all available migrations including bundles and your app-specific migrations after `composer update`, just include the following part in your `composer.json`.
+If you are sure you can run all available migrations after `composer update`, including bundles and your app-specific migrations, just include the following part in your `composer.json` file:
 ```json
 "post-update-cmd": [
     "./bin/console doctrine:migrations:migrate"
@@ -90,7 +90,7 @@ If you are sure you can run all available migrations including bundles and your 
 ```
 
 ## Configuration Adaptions
-- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
+- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml):
     ```
     security:
         enable_authenticator_manager: true
@@ -107,7 +107,7 @@ If you are sure you can run all available migrations including bundles and your 
   
     PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
     ```
-  For example see the Demo Configuration [here](https://github.com/pimcore/demo/blob/7add4ddd30be82687ba5c4bbef8048e794e58923/config/config.yaml#L28)
+  For example, see the [Demo Configuration](https://github.com/pimcore/demo/blob/7add4ddd30be82687ba5c4bbef8048e794e58923/config/config.yaml#L28).
     ```yaml
     pimcore:
       config_location:
@@ -132,7 +132,7 @@ If you are sure you can run all available migrations including bundles and your 
     
     You might also adapt write from other extensions, like Datahub. 
 
-## Additional Things to consider
+## Additional Things to Consider
 
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
 - [Config] `pimcore.assets.image.focal_point_detection` was removed
@@ -141,7 +141,7 @@ If you are sure you can run all available migrations including bundles and your 
     composer require --no-update pimcore/compatibility-bridge-v10
     ```
     This package provides backward compatibility layer for some Pimcore 10 classes.
-- [Definition Files] Make sure your definition files in `var/classes` are up-to-date and all default values are set correctly by running following migration. 
+- [Definition Files] Make sure your definition files in `var/classes` are up-to-date and all default values are set correctly by running following migration:
   ```bash
   bin/console doctrine:migration:exec 'Pimcore\Bundle\CoreBundle\Migrations\Version20230508121105'
   ```
