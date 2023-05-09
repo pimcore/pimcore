@@ -368,7 +368,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         return $supported;
     }
 
-
     private function dispatchLoginRedirect(array $routeParams = []): string
     {
         $event = new LoginRedirectEvent('pimcore_admin_login', $routeParams);

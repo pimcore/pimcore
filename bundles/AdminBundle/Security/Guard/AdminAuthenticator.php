@@ -21,7 +21,6 @@ use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
-use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Admin;

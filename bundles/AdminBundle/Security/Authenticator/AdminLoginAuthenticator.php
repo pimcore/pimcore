@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
 use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
-use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
