@@ -116,13 +116,12 @@ If you are sure you can run all available migrations including bundles and your 
             type: 'symfony-config'
             options:
               directory: '/var/www/html/var/config/image-thumbnails'
-        custom_reports:
+        document_types:
           write_target:
             type: 'settings-store'
         
         # other available write targets are the following
         # video_thumbnails:
-        # document_types:
         # web_to_print:
         # predefined_properties:
         # staticroutes:
