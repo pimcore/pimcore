@@ -366,7 +366,15 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             $config->save();
 
-            return $this->adminJson(['success' => true, 'data' => $config]);
+            return $this->adminJson(['success' => true, 'data' => [
+                'storeId' => $config->getStoreId(),
+                'id' => $config->getId(),
+                'name' => $config->getName(),
+                'description' => $config->getDescription(),
+                'modificationDate' => $config->getModificationDate(),
+                'creationDate' => $config->getCreationDate()
+                ]
+            ]);
         }
 
         return $this->adminJson(['success' => false]);
