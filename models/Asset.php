@@ -280,6 +280,7 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $type = 'unknown';
+        $tmpFile = null;
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
@@ -289,7 +290,6 @@ class Asset extends Element\AbstractElement
                 if (array_key_exists('data', $data)) {
                     $filesystem = new Filesystem();
                     $filesystem->dumpFile($tmpFile, $data['data']);
-                    unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
@@ -343,6 +343,10 @@ class Asset extends Element\AbstractElement
 
         if ($save) {
             $asset->save();
+        }
+
+        if ($tmpFile) {
+            unlink($tmpFile);
         }
 
         return $asset;
@@ -1398,7 +1402,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1460,7 +1464,7 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();

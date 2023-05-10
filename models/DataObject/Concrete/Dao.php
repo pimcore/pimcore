@@ -65,6 +65,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 WHERE objects.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {

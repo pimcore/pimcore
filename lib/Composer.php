@@ -192,7 +192,6 @@ class Composer
             $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'];
         }
 
-        $options['process-timeout'] = $event->getComposer()->getConfig()->get('process-timeout');
         $options['vendor-dir'] = $event->getComposer()->getConfig()->get('vendor-dir');
 
         return $options;
@@ -265,7 +264,7 @@ class Composer
 
         $command[] = $webDir;
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 
     /**
@@ -290,6 +289,6 @@ class Composer
             $command[] = '--ignore-maintenance-mode';
         }
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 }

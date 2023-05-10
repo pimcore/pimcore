@@ -40,7 +40,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      */
-    protected ?string $alt = null;
+    protected string $alt = '';
 
     /**
      * Contains the imageobject itself
