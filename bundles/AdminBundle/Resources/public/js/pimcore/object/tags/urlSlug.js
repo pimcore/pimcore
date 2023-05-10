@@ -153,7 +153,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                         }
                     }
 
-                    const regex = new RegExp(/[^a-z0-9-._~:/?#[\]@!$&'()*+,;=]/, 'g')
+                    const regex = new RegExp(/[^a-z0-9-._~:/?#[\]@!$&'()*+,;=]/, 'gi')
                     let matches = value.match(regex);
                     if(matches !== null) {
                         matches = [...matches];
