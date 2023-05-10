@@ -306,8 +306,7 @@ class Pimcore
         if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {
             $requestLogName = date('Y-m-d_H-i-s');
             if (!empty($_REQUEST['pimcore_log'])) {
-                // slashed are not allowed, replace them with hyphens
-                $requestLogName = str_replace('/', '-', $_REQUEST['pimcore_log']);
+                $requestLogName = str_replace(['/', '\\', '..'], '-', $_REQUEST['pimcore_log']);
             }
 
             $requestLogFile = resolvePath(PIMCORE_LOG_DIRECTORY . '/request-' . $requestLogName . '.log');

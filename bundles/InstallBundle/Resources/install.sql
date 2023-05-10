@@ -357,11 +357,13 @@ CREATE TABLE `notes` (
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
+  `auto_id` int(11) NOT NULL AUTO_INCREMENT,
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  PRIMARY KEY (`id`, `name`)
+  PRIMARY KEY (`auto_id`),
+  UNIQUE KEY `UNIQ_E5A8E5E2BF3967505E237E06` (`id`,`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;

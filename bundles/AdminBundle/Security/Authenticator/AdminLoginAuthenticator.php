@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
-use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
@@ -57,12 +56,7 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
             return $response;
         }
 
-        $event = new LoginRedirectEvent(self::PIMCORE_ADMIN_LOGIN, ['perspective' => strip_tags($request->get('perspective', ''))]);
-        $this->dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
-
-        $url = $this->router->generate($event->getRouteName(), $event->getRouteParams());
-
-        return new RedirectResponse($url);
+        return new RedirectResponse($this->router->generate(self::PIMCORE_ADMIN_LOGIN, ['perspective' => strip_tags($request->get('perspective', ''))]));
     }
 
     /**
