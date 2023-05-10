@@ -16,15 +16,29 @@ pimcore:
                 type: 'settings-store'
 ```
 
-To switch from Symfony configuration to settings store for the first time, you need to copy the content of your `system_settings.yaml` file and convert it into JSON format.
+To switch from the Symfony configuration to the settings store for the first time, please follow these steps:
 
-You can then manually connect to your database and insert the converted JSON string into the `settings_store` table or use a [script](../19_Development_Tools_and_Details/42_Settings_Store.md).
+1. Set your write target to `settings-store`:
 
-You need to provide these values for the settings store:
-- id => `system_settings`
-- scope => `pimcore_system_settings`
-- data => your converted JSON string
-- type => `string`
+```yaml
+pimcore:
+    config_location:
+        system_settings:
+            write_target:
+                type: 'settings-store'
+```
+2. Save your system settings via admin user interface (Settings > System Settings).
+3. Set your read target to `settings-store` as well:
+
+```yaml
+pimcore:
+    config_location:
+        system_settings:
+            write_target:
+                type: 'settings-store'
+            read_target:
+                type: 'settings-store' 
+```
 
 ## Localization & Internationalization (i18n/l10n) 
 These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
