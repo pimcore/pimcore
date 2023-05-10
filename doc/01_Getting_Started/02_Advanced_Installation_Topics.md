@@ -36,7 +36,7 @@ $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=passwor
   --no-interaction
 ```
 
-### Installing bundles
+### Installing Bundles
 
 The `--install-bundles` flag will install and enable the specified bundles.  
 Attention: The bundles will be added to `config/bundles.php` automatically.
@@ -51,20 +51,19 @@ Attention: The bundles will be added to `config/bundles.php` automatically.
 
 Available bundles for installation: 
 
-```
-PimcoreApplicationLoggerBundle
-PimcoreCustomReportsBundle
-PimcoreGlossaryBundle
-PimcoreSeoBundle
-PimcoreSimpleBackendSearchBundle
-PimcoreStaticRoutesBundle
-PimcoreUuidBundle
-PimcoreWordExportBundle
-PimcoreXliffBundle
-```
+- [PimcoreApplicationLoggerBundle](../18_Tools_and_Features/17_Application_Logger.md)
+- [PimcoreCustomReportsBundle](../18_Tools_and_Features/29_Custom_Reports.md)
+- [PimcoreGlossaryBundle](../18_Tools_and_Features/21_Glossary.md)
+- PimcoreSeoBundle (for SEO-related topics: [Robots.txt](../18_Tools_and_Features/38_Robots.txt.md), [Sitemaps](../18_Tools_and_Features/39_Sitemaps.md) and [Redirects](../02_MVC/04_Routing_and_URLs/04_Redirects.md))
+- PimcoreSimpleBackendSearchBundle (for default search functionality in Backend UI interface)
+- [PimcoreStaticRoutesBundle](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
+- [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md) (for default WYSIWYG editor)
+- [PimcoreUuidBundle](../19_Development_Tools_and_Details/19_UUID_Support.md)
+- PimcoreWordExportBundle (for import/export functionality for translations in Word format)
+- PimcoreXliffBundle (for import/export functionality for translations in Xliff format)
 
 
-### Preconfiguring the installer
+### Preconfiguring the Installer
 
 You can preconfigure the values used by the installer by adding a config file which sets values for the database
 credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
@@ -87,7 +86,7 @@ pimcore_install:
             port:                 "%env(DB_PORT)%"
 ```
 
-## Set a timezone
+## Set a Timezone
 Make sure to set the corresponding timezone in your configuration. 
 It will be used for displaying date/time values in the admin backend.
 
