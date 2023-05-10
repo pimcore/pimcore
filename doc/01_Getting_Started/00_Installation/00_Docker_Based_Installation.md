@@ -36,6 +36,9 @@ You don't need to have a PHP environment with composer installed.
       <http://localhost/admin>
 
 
+## Caching
+Make sure to use any sort of [caching](https://pimcore.com/docs/platform/Pimcore/Development_Tools_and_Details/Cache/) to improve performance. We recommend Redis cache storage.
+
 ## Additional Information & Help
 
 If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../../23_Installation_and_Upgrade/README.md) section.
