@@ -1367,7 +1367,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
     }
 
     /**
-     * @param Classificationstore\KeyConfig $config
+     * @param Classificationstore\KeyConfig|Classificationstore\CollectionConfig|Classificationstore\GroupConfig $config
      *
      * @return array
      */
