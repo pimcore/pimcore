@@ -349,7 +349,7 @@ class UrlSlug implements OwnerAwareFieldInterface
             $query = sprintf(
                 'SELECT * FROM %s WHERE slug = %s AND %s ORDER BY siteId DESC LIMIT 1',
                 self::TABLE_NAME,
-                $db->quote(urlencode_ignore_slash($path)),
+                $db->quote($path),
                 $filterSiteId
             );
 
