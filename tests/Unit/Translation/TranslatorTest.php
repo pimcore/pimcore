@@ -237,6 +237,7 @@ class TranslatorTest extends TestCase
 
         $translation = new Translation();
         $translation->setDomain('messages');
+        $translation->setKey('test');
         $translation->setTranslations(['en' => 'test']);
         $translation->save();
 
