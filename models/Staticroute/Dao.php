@@ -36,8 +36,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
             $config,
             self::CONFIG_KEY,
-            'PIMCORE_CONFIG_STORAGE_DIR_TARGET_STATICROUTES',
-            'PIMCORE_WRITE_TARGET_TARGET_STATICROUTES'
+            'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES',
+            'PIMCORE_WRITE_TARGET_STATICROUTES'
         );
 
         parent::configure([
