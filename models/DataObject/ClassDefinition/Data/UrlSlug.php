@@ -181,10 +181,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
-                    if (preg_match_all('/[^a-z0-9-._~:\/?#[\]@!$&\'()*+,;=]/i', $item->getSlug(), $matches)) {
-                        throw new Model\Element\ValidationException('Slug contains forbidden characters: [ ' .  implode(' ', $matches[0]) . ' ] ');
-                    }
-
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
                         throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
@@ -359,7 +355,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'objectId' => $object->getId(),
                         'classId' => $object->getClassId(),
                         'fieldname' => $this->getName(),
-                        'slug' => $slugItem->getSlug(),
+                        'slug' => urlencode_ignore_slash($slugItem->getSlug()),
                         'siteId' => $slugItem->getSiteId() ?? 0,
                     ];
                 } else {

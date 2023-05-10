@@ -123,7 +123,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function getSlug(): ?string
     {
-        return $this->slug;
+        return urldecode($this->slug);
     }
 
     /**
@@ -133,7 +133,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function setSlug(?string $slug)
     {
-        $this->slug = $slug;
+        $this->slug = urlencode_ignore_slash($slug);
 
         return $this;
     }
@@ -145,7 +145,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function getPreviousSlug(): ?string
     {
-        return $this->previousSlug;
+        return urldecode($this->previousSlug);
     }
 
     /**
@@ -155,7 +155,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function setPreviousSlug(?string $previousSlug): void
     {
-        $this->previousSlug = $previousSlug;
+        $this->previousSlug = urlencode_ignore_slash($previousSlug);
     }
 
     /**
@@ -349,7 +349,7 @@ class UrlSlug implements OwnerAwareFieldInterface
             $query = sprintf(
                 'SELECT * FROM %s WHERE slug = %s AND %s ORDER BY siteId DESC LIMIT 1',
                 self::TABLE_NAME,
-                $db->quote($path),
+                $db->quote(urlencode_ignore_slash($path)),
                 $filterSiteId
             );
 

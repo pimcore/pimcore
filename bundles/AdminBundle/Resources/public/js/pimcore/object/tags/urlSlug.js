@@ -134,7 +134,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: title + domain,
             name: "slug",
             labelWidth: 100,
-            value: siteData['slug'],
+            value: decodeURI(siteData['slug']),
             componentCls: this.getWrapperClassNames(),
             validator: function(value) {
                 if (value) {
@@ -152,17 +152,9 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                             return false;
                         }
                     }
-
-                    const regex = new RegExp(/[^a-z0-9-._~:/?#[\]@!$&'()*+,;=]/, 'gi')
-                    let matches = value.match(regex);
-                    if(matches !== null) {
-                        matches = [...matches];
-                        return t('url-slug-invalid-chars') + ' [' + matches.join(', ') + ']';
-                    }
                 }
 
                 return true;
-
             }
         };
         if (this.fieldConfig.width) {
