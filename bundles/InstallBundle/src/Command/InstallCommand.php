@@ -304,8 +304,9 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm('Do you want to install bundles? We recommend at least the PimcoreSimpleBackendSearchBundle. If you are installing the demo version please choose no', false)) {
-            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys(Installer::INSTALLABLE_BUNDLES), Installer::RECOMMENDED_BUNDLE, true);
+        if (!$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend at least the %s. If you are installing the demo version please choose no', implode(' and ', Installer::RECOMMENDED_BUNDLES)), false)) {
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys(Installer::INSTALLABLE_BUNDLES), $this->getRecommendBundles(), true);
+
             $this->installer->setBundlesToInstall($bundles);
         }
 
@@ -417,5 +418,14 @@ class InstallCommand extends Command
     private function generateBundleDescription(): string
     {
         return implode(',', array_keys(Installer::INSTALLABLE_BUNDLES));
+    }
+
+    private function getRecommendBundles() {
+        $installableBundleKeys = array_keys(Installer::INSTALLABLE_BUNDLES);
+        $recommendedBundles = [];
+        foreach(Installer::RECOMMENDED_BUNDLES as $recBundle) {
+            $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
+        }
+        return implode(',', $recommendedBundles);
     }
 }
