@@ -10,8 +10,19 @@ You don't need to have a PHP environment with composer installed.
 * Your user must be allowed to change file permissions (directly or via sudo).
 
 ### Follow These Steps
-1. Initialize the skeleton project using the `pimcore/pimcore` image
-``docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2-latest composer create-project pimcore/skeleton my-project``
+
+1. Choose a Package to Install and create the project via composer
+   * We offer 2 different installation packages:
+
+```bash
+# demo package with exemplary blueprints (`pimcore/demo`)
+docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2-latest composer create-project pimcore/demo my-project
+```  
+
+```bash 
+# empty skeleton package for experienced developers (`pimcore/skeleton`).
+docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2-latest composer create-project pimcore/skeleton my-project
+```
 
 2. Go to your new project
 `cd my-project/`
@@ -22,15 +33,9 @@ You don't need to have a PHP environment with composer installed.
     * Start the needed services with `docker compose up -d`
 
 4. Install pimcore and initialize the DB
-    `docker compose exec php vendor/bin/pimcore-install`
-    * When asked for admin user and password: Choose freely
-    * This can take a while, up to 20 minutes
+    `docker compose exec php vendor/bin/pimcore-install` (for demo package the installation can take a while)
 
-5. Run codeception tests:
-   * `docker compose run --rm test-php vendor/bin/pimcore-install -n`
-   * `docker compose run --rm test-php vendor/bin/codecept run -vv`
-
-6. :heavy_check_mark: DONE - You can now visit your pimcore instance:
+5. :heavy_check_mark: DONE - You can now visit your pimcore instance:
     * The frontend: <http://localhost>
     * The admin interface, using the credentials you have chosen above:
       <http://localhost/admin>
