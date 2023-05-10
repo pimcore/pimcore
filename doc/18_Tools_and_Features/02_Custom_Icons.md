@@ -13,7 +13,7 @@ be changed.
  
 The basic idea is to provide one's own implementation of `Pimcore\Model\Element\AdminStyle`.
  
-This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Event/AdminEvents.php#L396-L407) event. 
+This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/Event/AdminEvents.php#L428-L439) event. 
 
 Example:
 
