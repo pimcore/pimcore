@@ -41,6 +41,11 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public bool $useCurrentDate = false;
 
     /**
+     * @internal
+     */
+    public string $columnType = 'bigint(20)';
+
+    /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
@@ -433,7 +438,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     public function getColumnType(): string
     {
-        return 'bigint(20)';
+        return $this->columnType;
     }
 
     public function getQueryColumnType(): string
@@ -444,5 +449,10 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getFieldType(): string
     {
         return 'date';
+    }
+
+    public function setColumnType(string $columnType): void
+    {
+        $this->columnType = $columnType;
     }
 }

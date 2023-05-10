@@ -41,6 +41,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public bool $useCurrentDate = false;
 
     /**
+     * @internal
+     */
+    public string $columnType = 'bigint(20)';
+
+    /**
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
@@ -428,7 +433,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function getColumnType(): string
     {
-        return 'bigint(20)';
+        return $this->columnType;
     }
 
     public function getQueryColumnType(): string
@@ -439,5 +444,10 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFieldType(): string
     {
         return 'datetime';
+    }
+
+    public function setColumnType(string $columnType): void
+    {
+        $this->columnType = $columnType;
     }
 }
