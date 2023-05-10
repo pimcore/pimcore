@@ -10,7 +10,6 @@
     }
     ```
 - [Naming] Renamed master, blacklist and whitelist to main, blocklist, allowlist
-- [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Storage config] Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 - [JS Libraries] Packaged some JS libraries with encore
