@@ -65,7 +65,7 @@ This launches the interactive installer with a few questions. Make sure that you
 
 :::info
 
- Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../01_Advanced_Installation_Topics.md)
+ Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../02_Advanced_Installation_Topics.md)
 
  :::
 
@@ -105,14 +105,15 @@ Make sure to use any sort of [caching](https://pimcore.com/docs/platform/Pimcore
 
 ## 6. Additional Information & Help
 
-If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../../23_Installation_and_Upgrade/README.md) section.
 
 ## 7. Further Reading
 
-- [Advanced Installation Topics](../01_Advanced_Installation_Topics.md)
+- [Symfony Messenger](../01_Symfony_Messenger.md)
+- [Advanced Installation Topics](../02_Advanced_Installation_Topics.md)
 - [Apache Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
 - [Nginx Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 - [Database Setup](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
 - [Additional Tools Installation](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
-Next up - [Directories Structure](../02_Directory_Structure.md)
+Next up - [Directories Structure](../03_Directory_Structure.md)
