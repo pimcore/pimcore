@@ -38,8 +38,8 @@ You don't need to have a PHP environment with composer installed.
 
 ## Additional Information & Help
 
-If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../../23_Installation_and_Upgrade/README.md) section.
 
 ## Automating the Installation Process
 
-For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](./01_Advanced_Installation_Topics.md).
+For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](../01_Advanced_Installation_Topics.md).

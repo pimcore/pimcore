@@ -1,10 +1,10 @@
 # Webserver Installation
 
-The following guide assumes you're using a typical LAMP environment. If you're using a different setup (eg. Nginx) or you're facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+The following guide assumes you're using a typical LAMP environment. If you're using a different setup (eg. Nginx) or you're facing a problem, please visit the [Installation Guide](../../23_Installation_and_Upgrade/README.md) section.
 
 ## 1. System Requirements
 
-Please have a look at [System Requirements](../23_Installation_and_Upgrade/01_System_Requirements.md) and ensure your system is ready for Pimcore.
+Please have a look at [System Requirements](../../23_Installation_and_Upgrade/01_System_Requirements.md) and ensure your system is ready for Pimcore.
 
 ## 2. Install Pimcore & Dependencies
 
@@ -39,12 +39,12 @@ COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo my-project
 Point the document root of your vhost to the newly created `/public` folder (eg. `/your/project/public`).
 Keep in mind that Pimcore needs to be installed **outside** of the **document root**.
 Specific configurations and optimizations for your web server are available here:
-[Apache](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md),
-[Nginx](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
+[Apache](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md),
+[Nginx](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 
-Pimcore requires write access to the following directories (relative to your project root): `/var`, `/public/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
+Pimcore requires write access to the following directories (relative to your project root): `/var`, `/public/var` ([Details](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Configuration_Environments.md), ensure you already have the right config files in place, e.g. `config/packages/[env_name]/config.yaml`. 
+If you're running the installation using a [custom environment name](../../21_Deployment/03_Configuration_Environments.md), ensure you already have the right config files in place, e.g. `config/packages/[env_name]/config.yaml`. 
 
 ## 3. Create Database
 
@@ -52,7 +52,7 @@ If you're running the installation using a [custom environment name](../21_Deplo
 mysql -u root -p -e "CREATE DATABASE project_database charset=utf8mb4;"
 ```
 
-For further information please visit out [DB Setup Guide](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
+For further information please visit out [DB Setup Guide](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
 
 ## 4. Launch Installer
 
@@ -65,7 +65,7 @@ This launches the interactive installer with a few questions. Make sure that you
 
 :::info
 
- Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](./01_Advanced_Installation_Topics.md)
+ Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../01_Advanced_Installation_Topics.md)
 
  :::
 
@@ -106,10 +106,10 @@ If you would like to know more about the installation process or if you are havi
 
 ## 7. Further Reading
 
-- [Advanced Installation Topics](./01_Advanced_Installation_Topics.md)
-- [Apache Configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
-- [Nginx Configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
-- [Database Setup](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
-- [Additional Tools Installation](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
+- [Advanced Installation Topics](../01_Advanced_Installation_Topics.md)
+- [Apache Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
+- [Nginx Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
+- [Database Setup](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
+- [Additional Tools Installation](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
-Next up - [Directories Structure](./02_Directory_Structure.md)
+Next up - [Directories Structure](../02_Directory_Structure.md)
