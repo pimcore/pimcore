@@ -1366,12 +1366,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         return $this->adminJson(['success' => false]);
     }
 
-    /**
-     * @param Classificationstore\KeyConfig|Classificationstore\CollectionConfig|Classificationstore\GroupConfig $config
-     *
-     * @return array
-     */
-    protected function getConfigItem($config): array
+    protected function getConfigItem(Classificationstore\KeyConfig|Classificationstore\CollectionConfig|Classificationstore\GroupConfig $config): array
     {
         $name = $config->getName();
 
@@ -1393,12 +1388,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         return $item;
     }
 
-    /**
-     * @param Classificationstore\KeyConfig $config
-     *
-     * @return array
-     */
-    protected function getKeyConfigItem($config): array
+    protected function getKeyConfigItem(Classificationstore\KeyConfig $config): array
     {
         $item = $this->getConfigItem($config);
         $item['type'] = $config->getType() ? $config->getType() : 'input';
