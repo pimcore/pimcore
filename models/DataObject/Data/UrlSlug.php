@@ -123,7 +123,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function getSlug(): ?string
     {
-        return urldecode($this->slug);
+        return $this->slug;
     }
 
     /**
@@ -133,7 +133,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function setSlug(?string $slug)
     {
-        $this->slug = urlencode_ignore_slash($slug);
+        $this->slug = $slug;
 
         return $this;
     }
@@ -145,7 +145,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function getPreviousSlug(): ?string
     {
-        return urldecode($this->previousSlug);
+        return $this->previousSlug;
     }
 
     /**
@@ -155,7 +155,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function setPreviousSlug(?string $previousSlug): void
     {
-        $this->previousSlug = urlencode_ignore_slash($previousSlug);
+        $this->previousSlug = $previousSlug;
     }
 
     /**

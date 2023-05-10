@@ -355,7 +355,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'objectId' => $object->getId(),
                         'classId' => $object->getClassId(),
                         'fieldname' => $this->getName(),
-                        'slug' => urlencode_ignore_slash($slugItem->getSlug()),
+                        'slug' => $slugItem->getSlug(),
                         'siteId' => $slugItem->getSiteId() ?? 0,
                     ];
                 } else {

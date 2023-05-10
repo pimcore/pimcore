@@ -134,7 +134,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: title + domain,
             name: "slug",
             labelWidth: 100,
-            value: decodeURI(siteData['slug']),
+            value: siteData['slug'],
             componentCls: this.getWrapperClassNames(),
             validator: function(value) {
                 if (value) {
