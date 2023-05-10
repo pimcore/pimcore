@@ -25,7 +25,7 @@ final class Version20230428112302 extends AbstractMigration
 
             $notesData->dropPrimaryKey();
             $notesData->setPrimaryKey(['auto_id']);
-            $notesData->addUniqueIndex(['id', 'name']);
+            $notesData->addUniqueIndex(['id', 'name'], 'UNIQ_E5A8E5E2BF3967505E237E06');
         }
     }
 
