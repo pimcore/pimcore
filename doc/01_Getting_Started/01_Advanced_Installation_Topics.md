@@ -44,8 +44,8 @@ Available bundles for installation:
 - [PimcoreStaticRoutesBundle](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
 - [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md)
 - [PimcoreUuidBundle](../19_Development_Tools_and_Details/19_UUID_Support.md)
-- PimcoreWordExportBundle (import/export functionality for translations into Word format)
-- PimcoreXliffBundle (import/export functionality for translations into Xliff format)
+- PimcoreWordExportBundle (import/export functionality for translations in Word format)
+- PimcoreXliffBundle (import/export functionality for translations in Xliff format)
 
 
 ### Preconfiguring the Installer
