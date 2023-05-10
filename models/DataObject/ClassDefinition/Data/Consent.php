@@ -70,7 +70,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Consent
     {
         if (is_array($data) && $data[$this->getName() . '__consent'] !== null) {
-            $consent = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
+            $consent = new DataObject\Data\Consent((bool) $data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
         } else {
             $consent = new DataObject\Data\Consent();
         }
