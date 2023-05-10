@@ -247,4 +247,3 @@ class TranslatorTest extends TestCase
         $this->assertCount(count($beforeAdd) + 1, $afterAdd);
     }
 }
-
