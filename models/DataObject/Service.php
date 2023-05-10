@@ -540,7 +540,7 @@ class Service extends Model\Element\Service
         }
 
         return self::useInheritedValues(true, static function () use ($object, $config) {
-            if (!$result = $config->getLabeledValue($object)?->value) {
+            if (!isset($config->getLabeledValue($object)->value) || (!$result = $config->getLabeledValue($object)?->value)) {
                 return null;
             }
 
