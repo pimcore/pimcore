@@ -229,4 +229,20 @@ class TranslatorTest extends TestCase
         $translationValues = $translations[0]->getTranslations();
         $this->assertArrayNotHasKey('fr', $translationValues);
     }
+
+    public function testCacheGetsInvalidatedOnSave() {
+        $translationsListing = new Translation\Listing();
+        $translationsListing->setDomain('messages');
+        $beforeAdd = $translationsListing->load();
+
+        $translation = new Translation();
+        $translation->setDomain('messages');
+        $translation->setTranslations(['en' => 'test']);
+        $translation->save();
+
+        $afterAdd = $translationsListing->load();
+
+        $this->assertCount(count($beforeAdd) + 1, $afterAdd);
+    }
 }
+
