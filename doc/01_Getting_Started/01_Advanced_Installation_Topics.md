@@ -2,7 +2,16 @@
 
 To fully automate the installation process, options can be passed in the CLI as parameters, rather than adding them interactively. 
 
-The `--no-interaction` flag will prevent any interactive prompts:
+##### For Docker installation:
+
+```bash
+docker compose exec php vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
+  --mysql-username=username --mysql-password=password --mysql-database=pimcore \
+  --mysql-host-socket=127.0.0.1 --mysql-port=3306 \
+  --no-interaction
+```
+
+##### For webserver installation:
 
 ```bash
 ./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
@@ -10,6 +19,12 @@ The `--no-interaction` flag will prevent any interactive prompts:
   --mysql-host-socket=127.0.0.1 --mysql-port=3306 \
   --no-interaction
 ```
+
+:::info
+
+The `--no-interaction` flag will prevent any interactive prompts.
+
+:::
 
 To avoid having to pass sensitive data (e.g. DB password) as command line option, you can also set each parameter as env
 variable. See `./vendor/bin/pimcore-install` for details. Example:
