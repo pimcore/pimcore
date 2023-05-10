@@ -36,17 +36,16 @@ Attention: The bundles will be added to `config/bundles.php` automatically.
 
 Available bundles for installation: 
 
-
 - [PimcoreApplicationLoggerBundle](../18_Tools_and_Features/17_Application_Logger.md)
 - [PimcoreCustomReportsBundle](../18_Tools_and_Features/29_Custom_Reports.md)
 - [PimcoreGlossaryBundle](../18_Tools_and_Features/21_Glossary.md)
-- PimcoreSeoBundle
-- PimcoreSimpleBackendSearchBundle
+- PimcoreSeoBundle (for SEO-related topics: [Robots.txt](../18_Tools_and_Features/38_Robots.txt.md), [Sitemaps](../18_Tools_and_Features/39_Sitemaps.md) and [Redirects](../02_MVC/04_Routing_and_URLs/04_Redirects.md))
+- PimcoreSimpleBackendSearchBundle (search for Backend UI interface)
 - [PimcoreStaticRoutesBundle](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
-- [PimcoreTinymceBundle](../../bundles/TinymceBundle/README.md)
-- PimcoreUuidBundle
-- PimcoreWordExportBundle
-- PimcoreXliffBundle
+- [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md)
+- [PimcoreUuidBundle](../19_Development_Tools_and_Details/19_UUID_Support.md)
+- PimcoreWordExportBundle (import/export functionality for translations into Word format)
+- PimcoreXliffBundle (import/export functionality for translations into Xliff format)
 
 
 ### Preconfiguring the Installer
