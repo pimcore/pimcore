@@ -59,7 +59,7 @@ class Installer
 {
     const EVENT_NAME_STEP = 'pimcore.installer.step';
 
-    const DEFAULT_BUNDLE = 'PimcoreSimpleBackendSearchBundle';
+    const RECOMMENDED_BUNDLE = 'PimcoreSimpleBackendSearchBundle';
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
