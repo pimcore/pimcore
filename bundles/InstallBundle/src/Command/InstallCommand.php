@@ -420,7 +420,8 @@ class InstallCommand extends Command
         return implode(',', array_keys(Installer::INSTALLABLE_BUNDLES));
     }
 
-    private function getRecommendBundles() {
+    private function getRecommendBundles(): string
+    {
         $installableBundleKeys = array_keys(Installer::INSTALLABLE_BUNDLES);
         $recommendedBundles = [];
         foreach(Installer::RECOMMENDED_BUNDLES as $recBundle) {
