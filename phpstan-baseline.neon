@@ -131,7 +131,7 @@ parameters:
 
 		-
 			message: "#^Call to method getLabeledValue\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
-			count: 3
+			count: 1
 			path: models/DataObject/Service.php
 
 		-
