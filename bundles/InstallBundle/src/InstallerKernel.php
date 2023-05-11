@@ -91,6 +91,7 @@ class InstallerKernel extends Kernel
         // load installer config files if available
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/config/installer.%s', $this->getProjectDir(), $extension);
+
             if (file_exists($file)) {
                 $configurator->import($file);
             }
