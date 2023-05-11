@@ -198,9 +198,9 @@ class Installer
         $this->bundlesToInstall = $bundlesToInstall;
     }
 
-    public function dispatchBundleSetupEvent(string $eventName): BundleSetupEvent
+    public function dispatchBundleSetupEvent(): BundleSetupEvent
     {
-        return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), $eventName);
+        return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
     }
 
     public function checkPrerequisites(Connection $db = null): array
