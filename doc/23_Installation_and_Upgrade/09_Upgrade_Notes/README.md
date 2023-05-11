@@ -27,7 +27,6 @@
 
 #### [Logging] :
 
--  Change logging from the redirects of the `SeoBundle` to the channel `routing`
 -  Removed constant `PIMCORE_PHP_ERROR_LOG`
 -  Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly, eg. log records are now `LogRecord` Objects instead of array.
 
