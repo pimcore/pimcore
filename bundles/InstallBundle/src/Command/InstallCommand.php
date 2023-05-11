@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
@@ -304,9 +306,12 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend at least %s. If you are installing the demo version please choose no', implode(' and ', Installer::RECOMMENDED_BUNDLES)), false)) {
-            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys(Installer::INSTALLABLE_BUNDLES), $this->getRecommendBundles(), true);
+        // dispatch a bundle config event here to manually add/remove bundles/recommendations
+        $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent(InstallEvents::EVENT_PRE_BUNDLE_SETUP);
 
+        if (!empty($bundleSetupEvent->getBundles()) && !$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend %s.', implode(', ', $bundleSetupEvent->getRecommendedBundles())), false)) {
+
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys($bundleSetupEvent->getBundles()), $this->getRecommendBundles($bundleSetupEvent), true);
             $this->installer->setBundlesToInstall($bundles);
         }
 
@@ -363,7 +368,7 @@ class InstallCommand extends Command
         $progressBar->start();
 
         $this->eventDispatcher->addListener(
-            Installer::EVENT_NAME_STEP,
+            InstallEvents::EVENT_NAME_STEP,
             function (InstallerStepEvent $event) use ($progressBar) {
                 $progressBar->setMessage($event->getMessage());
                 $progressBar->advance();
@@ -420,11 +425,11 @@ class InstallCommand extends Command
         return implode(',', array_keys(Installer::INSTALLABLE_BUNDLES));
     }
 
-    private function getRecommendBundles(): string
+    private function getRecommendBundles(BundleSetupEvent $bundleSetupEvent): string
     {
-        $installableBundleKeys = array_keys(Installer::INSTALLABLE_BUNDLES);
+        $installableBundleKeys = array_keys($bundleSetupEvent->getBundles());
         $recommendedBundles = [];
-        foreach(Installer::RECOMMENDED_BUNDLES as $recBundle) {
+        foreach($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
             $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
         }
         return implode(',', $recommendedBundles);

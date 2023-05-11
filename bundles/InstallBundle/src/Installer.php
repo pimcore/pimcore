@@ -26,7 +26,9 @@ use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
@@ -58,8 +60,6 @@ use Symfony\Component\Process\Process;
  */
 class Installer
 {
-    const EVENT_NAME_STEP = 'pimcore.installer.step';
-
     const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle' , 'PimcoreTinymceBundle'];
 
     public const INSTALLABLE_BUNDLES = [
@@ -136,6 +136,8 @@ class Installer
         'create_config_files' => 'Creating config files...',
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
+        'pre_setup_bundles' => 'Preparing bundles setup...',
+        'post_setup_bundles' => 'Check bundles setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
         'install_bundles' => 'Installing bundles ...',
@@ -188,6 +190,11 @@ class Installer
             return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
         }, $bundlesToInstall));
         $this->bundlesToInstall = $bundlesToInstall;
+    }
+
+    public function dispatchBundleSetupEvent(string $eventName): BundleSetupEvent
+    {
+        return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), $eventName);
     }
 
     public function checkPrerequisites(Connection $db = null): array
@@ -245,7 +252,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
+        $this->eventDispatcher->dispatch($event, InstallEvents::EVENT_NAME_STEP);
 
         return $event;
     }
