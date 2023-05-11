@@ -97,7 +97,7 @@ class BundleSetupSubscriber implements EventSubscriberInterface
 }
 ```
 
-Make sure to register your listener/subscriber under `config/installer.yaml` like described in [Preconfiguring the Installer](#preconfiguring-the-installer).
+Make sure to register your listener/subscriber under `config/installer.yaml` as described in [Preconfiguring the Installer](#preconfiguring-the-installer).
 
 ```yaml
 services:
