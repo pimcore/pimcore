@@ -84,7 +84,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 length: 255,
                 width: 200,
                 value: this.node.data.configAttributes.label,
-                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
+                renderer: Ext.util.Format.htmlEncode
             });
 
             this.attributeField = new Ext.form.TextField({
@@ -92,7 +92,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 length: 255,
                 width: 200,
                 value: this.node.data.configAttributes.attribute,
-                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
+                renderer: Ext.util.Format.htmlEncode
             });
 
             this.param1Field = new Ext.form.TextField({
@@ -100,7 +100,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 length: 255,
                 width: 200,
                 value: this.node.data.configAttributes.param1,
-                listeners: {'change': pimcore.helpers.htmlEncodeTextField }
+                renderer: Ext.util.Format.htmlEncode
         });
 
             this.returnLastResultField = new Ext.form.Checkbox({

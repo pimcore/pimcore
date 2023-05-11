@@ -20,7 +20,6 @@ use Pimcore\Event\DataObjectQuantityValueEvents;
 use Pimcore\Event\Model\DataObject\QuantityValueUnitEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\DataObject\QuantityValue\Unit\Dao getDao()
@@ -210,7 +209,7 @@ class Unit extends Model\AbstractModel
      */
     public function setAbbreviation($abbreviation)
     {
-        $this->abbreviation = SecurityHelper::convertHtmlSpecialChars($abbreviation);
+        $this->abbreviation = $abbreviation;
 
         return $this;
     }
@@ -277,7 +276,7 @@ class Unit extends Model\AbstractModel
      */
     public function setGroup($group)
     {
-        $this->group = SecurityHelper::convertHtmlSpecialChars($group);
+        $this->group = $group;
 
         return $this;
     }
@@ -317,7 +316,7 @@ class Unit extends Model\AbstractModel
      */
     public function setLongname($longname)
     {
-        $this->longname = SecurityHelper::convertHtmlSpecialChars($longname);
+        $this->longname = $longname;
 
         return $this;
     }
@@ -345,7 +344,7 @@ class Unit extends Model\AbstractModel
      */
     public function setReference($reference)
     {
-        $this->reference = SecurityHelper::convertHtmlSpecialChars($reference);
+        $this->reference = $reference;
 
         return $this;
     }
@@ -385,7 +384,7 @@ class Unit extends Model\AbstractModel
      */
     public function setConverter($converter)
     {
-        $this->converter = SecurityHelper::convertHtmlSpecialChars((string)$converter);
+        $this->converter = (string)$converter;
 
         return $this;
     }

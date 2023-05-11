@@ -125,18 +125,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        //$allTranslations = $this->getAllTranslations();
-        $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
 
-        foreach ($translationsData as $t) {
-            $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+            $translations = [];
+            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+            foreach ($translationsData as $t) {
+                $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
 
-            if ($transObj) {
-                $translations[] = $transObj;
+                if ($transObj) {
+                    $translations[] = $transObj;
+                }
+            }
+
+            if (empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
 

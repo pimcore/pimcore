@@ -86,14 +86,16 @@ pimcore.object.gridcolumn.operator.propertygetter = Class.create(pimcore.object.
                 fieldLabel: t('label'),
                 length: 255,
                 width: 200,
-                value: this.node.data.configAttributes.label
+                value: this.node.data.configAttributes.label,
+                renderer: Ext.util.Format.htmlEncode
             });
 
             this.propertyNameField = new Ext.form.TextField({
                 fieldLabel: t('property_name'),
                 length: 255,
                 width: 200,
-                value: this.node.data.configAttributes.propertyName
+                value: this.node.data.configAttributes.propertyName,
+                renderer: Ext.util.Format.htmlEncode
             });
 
             this.configPanel = new Ext.Panel({

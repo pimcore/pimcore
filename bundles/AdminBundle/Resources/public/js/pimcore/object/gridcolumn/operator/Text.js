@@ -79,7 +79,8 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
             fieldLabel: t('text'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.textValue
+            value: this.node.data.configAttributes.textValue,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.configPanel = new Ext.Panel({

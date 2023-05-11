@@ -138,13 +138,13 @@ pimcore.settings.metadata.predefined = Class.create({
                 sortable: true
             },
             {text: t("name"), width: 200, sortable: true, dataIndex: 'name',
-                getEditor: function() { return new Ext.form.TextField({ listeners: {'change': pimcore.helpers.htmlEncodeTextField } }); }
+                getEditor: function() { return new Ext.form.TextField(); }
             },
             {text: t("group"), width: 200, sortable: true, dataIndex: 'group',
-                getEditor: function() { return new Ext.form.TextField({}); }
+                getEditor: function() { return new Ext.form.TextField(); }
             },
             {text: t("description"), sortable: true, dataIndex: 'description',
-                getEditor: function() { return new Ext.form.TextArea({}); },
+                getEditor: function() { return new Ext.form.TextArea(); },
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     if (empty(value)) {
                         return "";

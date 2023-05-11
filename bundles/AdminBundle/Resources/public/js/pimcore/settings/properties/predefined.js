@@ -108,26 +108,63 @@ pimcore.settings.properties.predefined = Class.create({
 
 
         var propertiesColumns = [
-            {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
-            {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({listeners: {'change': pimcore.helpers.htmlEncodeTextField}}),
+            {
+                text: t("name"),
+                flex: 100,
+                sortable: true,
+                dataIndex: 'name',
+                editor: new Ext.form.TextField()
+            },
+            {
+                text: t("description"),
+                sortable: true,
+                dataIndex: 'description',
+                editor: new Ext.form.TextArea(),
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     if(empty(value)) {
                         return "";
                     }
                     return nl2br(Ext.util.Format.htmlEncode(value));
-               }
+                }
             },
-            {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
-            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type',
+            {
+                text: t("key"),
+                flex: 50,
+                sortable: true,
+                dataIndex: 'key',
+                editor: new Ext.form.TextField()
+            },
+            {
+                text: t("type"),
+                flex: 50,
+                sortable: true,
+                dataIndex: 'type',
                 editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
                     store: ["text","document","asset","object","bool","select"]
 
-            })},
-            {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
-            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({listeners: {'change': pimcore.helpers.htmlEncodeTextField}})},
-            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                })
+            },
+            {
+                text: t("value"),
+                flex: 50,
+                sortable: true,
+                dataIndex: 'data',
+                editor: new Ext.form.TextField()
+            },
+            {
+                text: t("configuration"),
+                flex: 50,
+                sortable: false,
+                dataIndex: 'config',
+                editor: new Ext.form.TextField()
+            },
+            {
+                text: t("content_type"),
+                flex: 50,
+                sortable: true,
+                dataIndex: 'ctype',
                 editor: new Ext.ux.form.MultiSelect({
                     store: new Ext.data.ArrayStore({
                         fields: ['key', {
@@ -176,7 +213,8 @@ pimcore.settings.properties.predefined = Class.create({
                         );
                     }.bind(this)
                 }]
-            },{
+            },
+            {
                 xtype: 'actioncolumn',
                 menuText: t('translate'),
                 width: 30,
@@ -194,7 +232,11 @@ pimcore.settings.properties.predefined = Class.create({
                     }.bind(this)
                 }]
             },
-            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {
+                text: t("creationDate"),
+                sortable: true,
+                dataIndex: 'creationDate',
+                editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -205,7 +247,11 @@ pimcore.settings.properties.predefined = Class.create({
                     }
                 }
             },
-            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {
+                text: t("modificationDate"),
+                sortable: true,
+                dataIndex: 'modificationDate',
+                editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -216,7 +262,6 @@ pimcore.settings.properties.predefined = Class.create({
                     }
                 }
             }
-
         ];
 
         this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {

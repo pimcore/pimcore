@@ -88,7 +88,8 @@ pimcore.object.gridcolumn.operator.hotspotimagerenderer = Class.create(pimcore.o
         this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             labelWidth: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.configPanel = new Ext.Panel({

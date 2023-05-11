@@ -84,13 +84,15 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
             fieldLabel: t('label'),
             length: 255,
             width: 400,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.phpClassField = new Ext.form.TextField({
             fieldLabel: t('php_class'),
             width: 400,
-            value: this.node.data.configAttributes.phpClass
+            value: this.node.data.configAttributes.phpClass,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.additionalDataField = new Ext.form.TextArea({

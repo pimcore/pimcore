@@ -87,7 +87,8 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var trim = this.node.data.configAttributes.trim;
