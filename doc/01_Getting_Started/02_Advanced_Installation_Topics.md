@@ -83,7 +83,7 @@ class BundleSetupSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            InstallEvents::EVENT_PRE_BUNDLE_SETUP => [
+            InstallEvents::EVENT_BUNDLE_SETUP => [
                 ['bundleSetup'],
             ],
         ];
