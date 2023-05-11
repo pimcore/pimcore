@@ -27,7 +27,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface, ClassSavedInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface
 {
     use DataObject\Traits\ClassSavedTrait;
 
