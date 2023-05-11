@@ -108,7 +108,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
                 displayHtml += this.config.textSuffix;
             }
 
-            return '<a href="' + fullpath + '" class="' + this.config["class"] + ' ' + this.data["class"] + '">' + displayHtml + '</a>';
+            return '<a href="' + fullpath + '" class="' + this.config["class"] + ' ' + Ext.util.Format.htmlEncode(this.data["class"]) + '">' + displayHtml + '</a>';
         }
         return text;
     },

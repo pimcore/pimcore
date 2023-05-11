@@ -1814,7 +1814,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     linkTypeField.setValue("direct");
                 }
             }
-        }
+        },
+        renderer: Ext.util.Format.htmlEncode
     });
 
 
@@ -1873,7 +1874,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                             {
                                 fieldLabel: t('text'),
                                 name: 'text',
-                                value: data.text
+                                value: data.text,
+                                renderer: Ext.util.Format.htmlEncode
                             },
                             {
                                 xtype: "fieldcontainer",
@@ -1922,17 +1924,20 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                     {
                                         fieldLabel: t('parameters'),
                                         name: 'parameters',
-                                        value: data.parameters
+                                        value: data.parameters,
+                                        renderer: Ext.util.Format.htmlEncode
                                     },
                                     {
                                         fieldLabel: t('anchor'),
                                         name: 'anchor',
-                                        value: data.anchor
+                                        value: data.anchor,
+                                        renderer: Ext.util.Format.htmlEncode
                                     },
                                     {
                                         fieldLabel: t('title'),
                                         name: 'title',
-                                        value: data.title
+                                        value: data.title,
+                                        renderer: Ext.util.Format.htmlEncode
                                     }
                                 ]
                             }
@@ -1947,30 +1952,35 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                             {
                                 fieldLabel: t('accesskey'),
                                 name: 'accesskey',
-                                value: data.accesskey
+                                value: data.accesskey,
+                                renderer: Ext.util.Format.htmlEncode
                             },
                             {
                                 fieldLabel: t('relation'),
                                 name: 'rel',
                                 width: 300,
-                                value: data.rel
+                                value: data.rel,
+                                renderer: Ext.util.Format.htmlEncode
                             },
                             {
                                 fieldLabel: ('tabindex'),
                                 name: 'tabindex',
-                                value: data.tabindex
+                                value: data.tabindex,
+                                renderer: Ext.util.Format.htmlEncode
                             },
                             {
                                 fieldLabel: t('class'),
                                 name: 'class',
                                 width: 300,
-                                value: data["class"]
+                                value: data["class"],
+                                renderer: Ext.util.Format.htmlEncode
                             },
                             {
                                 fieldLabel: t('attributes') + ' (key="value")',
                                 name: 'attributes',
                                 width: 300,
-                                value: data["attributes"]
+                                value: data["attributes"],
+                                renderer: Ext.util.Format.htmlEncode
                             }
                         ]
                     }
