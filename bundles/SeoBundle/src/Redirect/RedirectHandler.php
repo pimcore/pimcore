@@ -43,9 +43,9 @@ final class RedirectHandler
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
-    private ?LoggerInterface $logger = null;
+    private LoggerInterface $logger;
 
-    private ?LoggerInterface $redirectLogger = null;
+    private LoggerInterface $redirectLogger;
 
     private RequestHelper $requestHelper;
 
