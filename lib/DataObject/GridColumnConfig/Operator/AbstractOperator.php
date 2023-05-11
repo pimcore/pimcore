@@ -42,7 +42,7 @@ abstract class AbstractOperator implements OperatorInterface
      */
     public function __construct(\stdClass $config, array $context = [])
     {
-        $this->label = SecurityHelper::convertHtmlSpecialChars($config->label);
+        $this->label = $config->label;
         $this->childs = $config->childs;
         $this->context = $context;
     }
@@ -92,7 +92,7 @@ abstract class AbstractOperator implements OperatorInterface
      */
     public function setLabel($label)
     {
-        $this->label = SecurityHelper::convertHtmlSpecialChars($label);
+        $this->label = $label;
     }
 
     /**

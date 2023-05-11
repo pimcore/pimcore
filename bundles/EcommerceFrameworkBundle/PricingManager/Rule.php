@@ -205,7 +205,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function setName($name, $locale = null)
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
