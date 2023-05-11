@@ -16,7 +16,6 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
-use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool;
 
 abstract class AbstractOperator implements OperatorInterface

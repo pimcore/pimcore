@@ -24,7 +24,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method Dao getDao()

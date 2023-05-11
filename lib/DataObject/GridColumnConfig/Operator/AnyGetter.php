@@ -16,7 +16,6 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\AbstractModel;
-use Pimcore\Security\SecurityHelper;
 use Pimcore\Tool\Admin;
 
 /**

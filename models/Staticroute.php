@@ -17,7 +17,6 @@ namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
