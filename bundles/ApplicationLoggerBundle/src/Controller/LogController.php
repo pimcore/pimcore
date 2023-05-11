@@ -224,7 +224,6 @@ class LogController extends UserAwareController implements KernelControllerEvent
     public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');
-        $response = null;
 
         $filePath = $request->get('filePath');
         $storage = Storage::get('application_log');
