@@ -88,7 +88,8 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var mode = this.node.data.configAttributes.mode;

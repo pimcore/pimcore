@@ -293,7 +293,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern($pattern)
     {
-        $this->pattern = SecurityHelper::convertHtmlSpecialChars($pattern);
+        $this->pattern = $pattern;
 
         return $this;
     }
@@ -305,7 +305,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController($controller)
     {
-        $this->controller = SecurityHelper::convertHtmlSpecialChars($controller);
+        $this->controller = $controller;
 
         return $this;
     }
@@ -317,7 +317,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables($variables)
     {
-        $this->variables = SecurityHelper::convertHtmlSpecialChars($variables);
+        $this->variables = $variables;
 
         return $this;
     }
@@ -329,7 +329,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults($defaults)
     {
-        $this->defaults = SecurityHelper::convertHtmlSpecialChars($defaults);
+        $this->defaults = $defaults;
 
         return $this;
     }
@@ -361,7 +361,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -381,7 +381,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse($reverse)
     {
-        $this->reverse = SecurityHelper::convertHtmlSpecialChars($reverse);
+        $this->reverse = $reverse;
 
         return $this;
     }
@@ -613,7 +613,7 @@ final class Staticroute extends AbstractModel
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             foreach($methods as $key => $method) {
-                $methods[$key] = SecurityHelper::convertHtmlSpecialChars(trim($method));
+                $methods[$key] = trim($method);
             }
         }
 

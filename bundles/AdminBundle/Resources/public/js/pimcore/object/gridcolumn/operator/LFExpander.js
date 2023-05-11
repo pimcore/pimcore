@@ -86,7 +86,8 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             fieldLabel: t('label'),
             length: 255,
             width: 220,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var data = [];

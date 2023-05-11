@@ -88,7 +88,8 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
             fieldLabel: t('date_format'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.format
+            value: this.node.data.configAttributes.format,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var helpButton = new Ext.Button({

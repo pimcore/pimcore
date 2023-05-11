@@ -85,21 +85,24 @@ pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.obje
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.attributeField = new Ext.form.TextField({
             fieldLabel: t('attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.attribute
+            value: this.node.data.configAttributes.attribute,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.forwardAttributeField = new Ext.form.TextField({
             fieldLabel: t('forward_attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.forwardAttribute
+            value: this.node.data.configAttributes.forwardAttribute,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

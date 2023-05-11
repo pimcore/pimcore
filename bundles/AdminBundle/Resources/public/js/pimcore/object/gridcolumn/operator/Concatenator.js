@@ -82,21 +82,24 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.glue = new Ext.form.TextField({
             fieldLabel: t('glue'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.glue
+            value: this.node.data.configAttributes.glue,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.forceValue = new Ext.form.Checkbox({
             fieldLabel: t('force_value'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.forceValue
+            value: this.node.data.configAttributes.forceValue,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

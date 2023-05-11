@@ -86,14 +86,16 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.searchField = new Ext.form.TextField({
             fieldLabel: t('search'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.search
+            value: this.node.data.configAttributes.search,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

@@ -86,7 +86,8 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.skipNullField = new Ext.form.Checkbox({
