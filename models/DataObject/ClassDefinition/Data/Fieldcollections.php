@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, ClassSavedInterface
 {
     use DataObject\Traits\ClassSavedTrait;
 
