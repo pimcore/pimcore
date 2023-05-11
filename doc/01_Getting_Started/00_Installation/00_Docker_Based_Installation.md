@@ -35,6 +35,13 @@ docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2
 4. Install pimcore and initialize the DB
     `docker compose exec php vendor/bin/pimcore-install` (for demo package the installation can take a while)
 
+:::info
+
+If you choose to install backend search (which is installed by default), you must also adapt the [supervisor configuration](https://github.com/pimcore/skeleton/blob/11.x/.docker/supervisord.conf#LL5C39-L5C90) and add the `pimcore_search_backend_message` receiver to build up the search index. 
+
+
+:::
+
 5. :heavy_check_mark: DONE - You can now visit your pimcore instance:
     * The frontend: <http://localhost>
     * The admin interface, using the credentials you have chosen above:
