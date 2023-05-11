@@ -32,9 +32,7 @@ class BundleSetupEvent extends Event
 
     public function removeBundle(string $key): void
     {
-        if(array_key_exists($key, $this->bundles)) {
-            unset($this->bundles[$key]);
-        }
+        unset($this->bundles[$key]);
     }
 
     public function addRecommendation(string $recommendedBundleKey): void
