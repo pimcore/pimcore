@@ -30,6 +30,7 @@ class BundleWriter
         }
         $bundlesToInstall = [];
         foreach ($bundles as $bundle) {
+            // check against available bundles since they can change
             if (in_array($bundle, $availableBundles)) {
                 $bundlesToInstall[$bundle] = ['all' => true];
             }
