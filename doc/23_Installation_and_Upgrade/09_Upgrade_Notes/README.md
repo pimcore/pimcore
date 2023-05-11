@@ -490,6 +490,7 @@ pimcore_seo:
 ## Tools
 #### [Application Logger] :
 
+-  Removed deprecated `PIMCORE_LOG_FILEOBJECT_DIRECTORY` constant, since flysystem is used to save/get fileobjects. Please make sure to adapt your code and migrate your fileobjects manually.
 -  Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
 
 
