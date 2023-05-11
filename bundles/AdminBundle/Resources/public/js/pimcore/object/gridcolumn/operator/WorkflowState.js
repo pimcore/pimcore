@@ -83,7 +83,8 @@ pimcore.object.gridcolumn.operator.workflowstate = Class.create(pimcore.object.g
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

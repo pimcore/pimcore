@@ -85,21 +85,24 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.yesValueField = new Ext.form.TextField({
             fieldLabel: t('yes_value'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.yesValue
+            value: this.node.data.configAttributes.yesValue,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.noValueField = new Ext.form.TextField({
             fieldLabel: t('no_value'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.noValue
+            value: this.node.data.configAttributes.noValue,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

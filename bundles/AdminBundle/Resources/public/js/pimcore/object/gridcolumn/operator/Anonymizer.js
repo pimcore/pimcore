@@ -72,7 +72,6 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
                 label: source.data.text,
                 type: this.type,
                 class: this.class
-
             }
         });
 
@@ -87,7 +86,8 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var mode = this.node.data.configAttributes.mode;
