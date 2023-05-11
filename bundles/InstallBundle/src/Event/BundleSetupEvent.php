@@ -30,11 +30,6 @@ class BundleSetupEvent extends Event
         $this->bundles[$key] = $class;
     }
 
-    public function addRecommendation(string $recommendedBundleKey): void
-    {
-        $this->recommendations[] = $recommendedBundleKey;
-    }
-
     public function removeBundle(string $key): void
     {
         if(array_key_exists($key, $this->bundles)) {
@@ -42,8 +37,25 @@ class BundleSetupEvent extends Event
         }
     }
 
+    public function addRecommendation(string $recommendedBundleKey): void
+    {
+        // Before adding a recommendation check if the bundle is available in the bundles array
+        if(array_key_exists($recommendedBundleKey, $this->bundles)) {
+            $this->recommendations[] = $recommendedBundleKey;
+        }
+    }
+
+    public function removeRecommendation(string $recommendedBundleKey): void
+    {
+        // Removing recommendations is no problem
+        if (($key = array_search($recommendedBundleKey, $this->recommendations)) !== false) {
+            unset($this->recommendations[$key]);
+        }
+    }
+
     /**
-     * Used for the demos, not bundles should be available here
+     * Used for the demos e.g. to skip bundle installation question
+     * You can also use it to build your own bundle list and recommendations
      */
     public function clearBundlesAndRecommendations(): void
     {

@@ -62,6 +62,61 @@ Available bundles for installation:
 - PimcoreWordExportBundle (for import/export functionality for translations in Word format)
 - PimcoreXliffBundle (for import/export functionality for translations in Xliff format)
 
+#### Adding or Removing Bundles / Bundle Recommendations
+Before bundles are displayed in the installation process, the `BundleSetupEvent` is fired.
+You can listen or subscribe to this event to add/remove bundles or the recommendations.
+Note that a recommendation will only be added if the bundle is already in the bundles list.
+For more info check e.g. the [pimcore/skeleton](https://github.com/pimcore/skeleton) on how the [pimcore/admin-ui-classic-bundle](https://github.com/pimcore/admin-ui-classic-bundle) is installed there.
+
+```php
+<?php
+
+namespace App\EventSubscriber;
+
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class BundleSetupSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            InstallEvents::EVENT_PRE_BUNDLE_SETUP => [
+                ['bundleSetup'],
+            ],
+        ];
+    }
+
+    public function bundleSetup(BundleSetupEvent $event): void
+    {
+        $event->addBundle('PimcoreAdminBundle', PimcoreAdminBundle::class);
+        $event->addRecommendation('PimcoreAdminBundle');
+    }
+}
+```
+
+Make sure to register your listener/subscriber under `config/installer.yaml` like described in [Preconfiguring the Installer](#preconfiguring-the-installer).
+
+```yaml
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    # ---------------------------------------------------------
+    # Event Subscribers
+    # ---------------------------------------------------------
+    App\EventSubscriber\BundleSetupSubscriber: ~
+
+```
 
 ### Preconfiguring the Installer
 

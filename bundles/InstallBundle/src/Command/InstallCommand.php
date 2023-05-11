@@ -307,7 +307,7 @@ class InstallCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // dispatch a bundle config event here to manually add/remove bundles/recommendations
-        $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent(InstallEvents::EVENT_PRE_BUNDLE_SETUP);
+        $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent(InstallEvents::EVENT_BUNDLE_SETUP);
 
         if (!empty($bundleSetupEvent->getBundles()) && !$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend %s.', implode(', ', $bundleSetupEvent->getRecommendedBundles())), false)) {
 

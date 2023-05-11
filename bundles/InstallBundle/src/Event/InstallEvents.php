@@ -12,5 +12,5 @@ class InstallEvents
     /**
      * Event is fired before bundle selection in installer. Bundles and Recommendations can be added or removed here
      */
-    public const EVENT_PRE_BUNDLE_SETUP = 'pimcore.installer.setup_bundles';
+    public const EVENT_BUNDLE_SETUP = 'pimcore.installer.setup_bundles';
 }

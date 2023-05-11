@@ -136,8 +136,6 @@ class Installer
         'create_config_files' => 'Creating config files...',
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
-        'pre_setup_bundles' => 'Preparing bundles setup...',
-        'post_setup_bundles' => 'Check bundles setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
         'install_bundles' => 'Installing bundles ...',
