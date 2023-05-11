@@ -355,7 +355,6 @@ class DateRange extends Data implements
         return $date;
     }
 
-
     /**
      * @return string[]
      */
@@ -381,8 +380,7 @@ class DateRange extends Data implements
     {
         if(is_array($columnType)) {
             $this->columnType = $columnType;
-        }
-        else {
+        } else {
             $this->columnType = [
                 'start_date' => $columnType,
                 'end_date' => $columnType,
