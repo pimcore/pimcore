@@ -190,9 +190,10 @@ class Installer
     public function setBundlesToInstall(array $bundlesToInstall, array $availableBundles): void
     {
         // map and filter the bundles
-        $bundlesToInstall = array_filter(array_map(static function (string $bundle) use ($availableBundles) {
-            return $availableBundles[$bundle] ?? null;
-        }, $bundlesToInstall));
+        $bundlesToInstall = array_filter(array_map(
+            static fn (string $bundle) => $availableBundles[$bundle] ?? null,
+            $bundlesToInstall,
+        ));
 
         $this->availableBundles = $availableBundles;
         $this->bundlesToInstall = $bundlesToInstall;
