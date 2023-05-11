@@ -113,21 +113,13 @@ pimcore.settings.properties.predefined = Class.create({
                 flex: 100,
                 sortable: true,
                 dataIndex: 'name',
-                editor: new Ext.form.TextField({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                })
+                editor: new Ext.form.TextField()
             },
             {
                 text: t("description"),
                 sortable: true,
                 dataIndex: 'description',
-                editor: new Ext.form.TextArea({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                }),
+                editor: new Ext.form.TextArea(),
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     if(empty(value)) {
                         return "";
@@ -140,11 +132,7 @@ pimcore.settings.properties.predefined = Class.create({
                 flex: 50,
                 sortable: true,
                 dataIndex: 'key',
-                editor: new Ext.form.TextField({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                })
+                editor: new Ext.form.TextField()
             },
             {
                 text: t("type"),

@@ -112,11 +112,7 @@ pimcore.settings.website = Class.create({
                 flex: 100,
                 editable: true,
                 sortable: true,
-                editor: new Ext.form.TextField({
-                    listeners: {
-                        'change': pimcore.helpers.htmlEncodeTextField
-                    }
-                })
+                editor: new Ext.form.TextField()
             },
             {
                 text: t('language'),
