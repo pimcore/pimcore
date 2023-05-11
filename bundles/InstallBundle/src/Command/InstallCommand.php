@@ -202,7 +202,7 @@ class InstallCommand extends Command
             $this->installer->setImportDatabaseDataDump(false);
         }
         if ($input->getOption('install-bundles')) {
-            $this->installer->setBundlesToInstall(explode(',', $input->getOption('install-bundles')));
+            $this->installer->setBundlesToInstall(explode(',', $input->getOption('install-bundles'), []));
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -312,7 +312,7 @@ class InstallCommand extends Command
         if (!empty($bundleSetupEvent->getBundles()) && !$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend %s.', implode(', ', $bundleSetupEvent->getRecommendedBundles())), false)) {
 
             $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys($bundleSetupEvent->getBundles()), $this->getRecommendBundles($bundleSetupEvent), true);
-            $this->installer->setBundlesToInstall($bundles);
+            $this->installer->setBundlesToInstall($bundles, $bundleSetupEvent->getBundles());
         }
 
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {

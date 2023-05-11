@@ -124,6 +124,12 @@ class Installer
      */
     private array $bundlesToInstall =  [];
 
+    /**
+     * This bundles might be different to the predefined one, due to the bundle event
+     * @var array|string[]
+     */
+    private array $availableBundles = self::INSTALLABLE_BUNDLES;
+
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
         $this->skipDatabaseConfig = $skipDatabaseConfig;
@@ -181,12 +187,14 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function setBundlesToInstall(array $bundlesToInstall): void
+    public function setBundlesToInstall(array $bundlesToInstall, array $availableBundles): void
     {
         // map and filter the bundles
-        $bundlesToInstall = array_filter(array_map(static function (string $bundle) {
-            return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
+        $bundlesToInstall = array_filter(array_map(static function (string $bundle) use ($availableBundles) {
+            return $availableBundles[$bundle] ?? null;
         }, $bundlesToInstall));
+
+        $this->availableBundles = $availableBundles;
         $this->bundlesToInstall = $bundlesToInstall;
     }
 
@@ -519,9 +527,9 @@ class Installer
     private function installBundles(): void
     {
         $writer = new BundleWriter();
-        $writer->addBundlesToConfig($this->bundlesToInstall);
+        $writer->addBundlesToConfig($this->bundlesToInstall, $this->availableBundles);
         foreach ($this->bundlesToInstall as $bundle) {
-            if (in_array($bundle, self::INSTALLABLE_BUNDLES) && !$this->isBundleInstalled($bundle)) {
+            if (in_array($bundle, $this->availableBundles) && !$this->isBundleInstalled($bundle)) {
                 $this->runCommand([
                     'pimcore:bundle:install',
                     $bundle,
@@ -793,7 +801,6 @@ class Installer
             'document_types',
             'documents',
             'emails',
-            'gdpr_data_extractor',
             'notes_events',
             'objects',
             'predefined_properties',
@@ -810,7 +817,6 @@ class Installer
             'translations',
             'users',
             'website_settings',
-            'admin_translations',
             'workflow_details',
             'notifications',
             'notifications_send',
