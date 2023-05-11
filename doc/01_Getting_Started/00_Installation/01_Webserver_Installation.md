@@ -67,7 +67,7 @@ This launches the interactive installer with a few questions. Make sure that you
 
  Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../02_Advanced_Installation_Topics.md)
 
- :::
+:::
 
 ##### Open Admin Interface
 After the installer has finished, you can open the admin interface: `https://your-host.com/admin`
