@@ -30,7 +30,8 @@ class BundleSetupEvent extends Event
         $this->bundles[$key] = $class;
     }
 
-    public function addRecommendation(string $recommendedBundleKey) {
+    public function addRecommendation(string $recommendedBundleKey): void
+    {
         $this->recommendations[] = $recommendedBundleKey;
     }
 
