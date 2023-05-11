@@ -24,6 +24,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Tool\Storage;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -219,16 +220,11 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
     /**
      * @Route("/log/show-file-object", name="pimcore_admin_bundle_applicationlogger_log_showfileobject", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return StreamedResponse|Response
-     *
-     * @throws \Exception
      */
-    public function showFileObjectAction(Request $request): StreamedResponse|Response
+    public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');
+        $response = null;
 
         $filePath = $request->get('filePath');
         $storage = Storage::get('application_log');
@@ -241,40 +237,10 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
-        } else {
-            // Fallback to local path when file is not found in flysystem that might still be using the constant
 
-            if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-                if (!file_exists($filePath)) {
-                    $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
-                }
-                $filePath = realpath($filePath);
-                $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
-            } else {
-                $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
-            }
-
-            if (!str_starts_with($filePath, $fileObjectPath)) {
-                throw new AccessDeniedHttpException('Accessing file out of scope');
-            }
-
-            if (file_exists($filePath)) {
-                $response = new StreamedResponse(
-                    static function () use ($filePath) {
-                        $handle = fopen($filePath, 'rb');
-                        fpassthru($handle);
-                        fclose($handle);
-                    }
-                );
-                $response->headers->set('Content-Type', 'text/plain');
-            } else {
-                $response = new Response();
-                $response->headers->set('Content-Type', 'text/plain');
-                $response->setContent('Path `'.$filePath.'` not found.');
-                $response->setStatusCode(404);
-            }
+            return $response;
         }
 
-        return $response;
+        throw new FileNotFoundException($filePath);
     }
 }
