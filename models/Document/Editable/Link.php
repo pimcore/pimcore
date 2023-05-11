@@ -19,7 +19,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -287,12 +286,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
-        if($editmode) {
-            unset($this->data['attributes']);
-        }
-
         // sanitize attributes
-        if (isset($this->data['attributes'])) {
+        if (!$editmode && isset($this->data['attributes'])) {
             $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
         }
 
