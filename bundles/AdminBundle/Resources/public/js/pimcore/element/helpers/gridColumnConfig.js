@@ -25,9 +25,7 @@ pimcore.element.helpers.gridColumnConfig = {
             length: 50,
             allowBlank: false,
             value: this.settings.gridConfigName ? this.settings.gridConfigName : defaultName,
-            listeners: {
-                change: pimcore.helpers.htmlEncodeTextField
-            }
+            renderer: Ext.util.Format.htmlEncode
         });
 
         var descriptionField = new Ext.form.TextArea({

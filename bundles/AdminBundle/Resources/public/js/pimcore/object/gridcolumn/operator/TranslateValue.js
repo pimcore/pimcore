@@ -85,14 +85,16 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.prefix = new Ext.form.TextField({
             fieldLabel: t('prefix'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.prefix
+            value: this.node.data.configAttributes.prefix,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 

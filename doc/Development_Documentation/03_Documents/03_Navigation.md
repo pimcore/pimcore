@@ -52,7 +52,6 @@ Having set up the navigation container as shown above, you can easily use it to 
         maxDepth: 1,
         ulClass: 'nav navbar-nav'
     }) }}
-    
 </div>
 ```
 
@@ -69,14 +68,14 @@ Having set up the navigation container as shown above, you can easily use it to 
             2: 'nav navbar-nav-third'
         }
     }) }}
-    
+
     {# alternatively, you can use 'default' key to apply class on all depth levels #}
     {{ pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
             maxDepth: 2,
             ulClass: {
-                'default': 'nav navbar-nav'
+                default: 'nav navbar-nav'
             }
-        }) }}
+    }) }}
 </div>
 ```
 
@@ -278,7 +277,6 @@ In the following example we're adding news items (objects) to the navigation usi
 <?php
 namespace App\Twig\Extension;
 
-
 use App\Website\LinkGenerator\NewsLinkGenerator;
 use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\Templating\Navigation;
@@ -287,85 +285,78 @@ use Twig\TwigFunction;
 
 class NavigationExtension extends AbstractExtension
 {
-        /**
-         * @var Navigation
-         */
-        protected $navigationHelper;
-    
-        /**
-         * @var NewsLinkGenerator
-         */
-        protected $newsLinkGenerator;
-    
-        /**
-         * @param Navigation $navigationHelper
-         */
-        public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
-        {
-            $this->navigationHelper = $navigationHelper;
-            $this->$newsLinkGenerator = $newsLinkGenerator;
-        }
-        /**
-         * @return array|TwigFunction[]
-         */
-        public function getFunctions()
-        {
-            return [
-                new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
-            ];
-        }
-        
-            /**
-             * @param Document $document
-             * @param Document $startNode
-             *
-             * @return \Pimcore\Navigation\Container
-             * @throws \Exception
-             */
-            public function getNewsLinks(Document $document, Document $startNode)
-            {
-                $navigation = $this->navigationHelper->build([
-                    'active' => $document,
-                    'root' => $startNode,
-                    'pageCallback' => function($page, $document) {
-                        /** @var \Pimcore\Model\Document $document */
-                        /** @var \Pimcore\Navigation\Page\Document $page */
-                        if($document->getProperty("templateType") == "news") {
-                            $list = new \Pimcore\Model\DataObject\News\Listing;
-                            $list->load();
-                            foreach($list as $news) {
-                                $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
-                                $uri = new \Pimcore\Navigation\Page\Document([
-                                    "label" => $news->getTitle(),
-                                    "id" => "object-" . $news->getId(),
-                                    "uri" => $detailLink,
-                                ]);
-                                $page->addPage($uri);
-                            }
-                        }
-                    }
-                ]);
-        
-                return $navigation;
-            }
-}
+    protected Navigation $navigationHelper;
+    protected NewsLinkGenerator $newsLinkGenerator;
 
-?>
+    /**
+     * @param Navigation $navigationHelper
+     * @param NewsLinkGenerator $newsLinkGenerator
+     */
+    public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
+    {
+        $this->navigationHelper = $navigationHelper;
+        $this->$newsLinkGenerator = $newsLinkGenerator;
+    }
+
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
+        ];
+    }
+
+    /**
+     * @param Document $document
+     * @param Document $startNode
+     *
+     * @return \Pimcore\Navigation\Container
+     * @throws \Exception
+     */
+    public function getNewsLinks(Document $document, Document $startNode)
+    {
+        $navigation = $this->navigationHelper->build([
+            'active' => $document,
+            'root' => $startNode,
+            'pageCallback' => function($page, $document) {
+                /** @var \Pimcore\Model\Document $document */
+                /** @var \Pimcore\Navigation\Page\Document $page */
+                if($document->getProperty("templateType") == "news") {
+                    $list = new \Pimcore\Model\DataObject\News\Listing;
+                    $list->load();
+                    foreach($list as $news) {
+                        $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
+                        $uri = new \Pimcore\Navigation\Page\Document([
+                            "label" => $news->getTitle(),
+                            "id" => "object-" . $news->getId(),
+                            "uri" => $detailLink,
+                        ]);
+                        $page->addPage($uri);
+                    }
+                }
+            }
+        ]);
+
+        return $navigation;
+    }
+}
 ```
 
 ```twig
 {% set mainNav = pimcore_build_nav({
     active: document,
     root: mainNavStartNode,
-    
 }) %}
+
 {% set mainNavigation =  app_navigation_news_links(document, navStartNode) %}
 
 <div class="my-navigation">
     {{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {
         expandSiblingNodesOfActiveBranch: true,
         ulClass: {
-            'default': 'nav my-sidenav'
+            default: 'nav my-sidenav'
         }
     }) }}
 </div>
@@ -392,54 +383,49 @@ use Twig\TwigFunction;
 
 class NavigationExtension extends AbstractExtension
 {
-        /**
-         * @var Navigation
-         */
-        protected $navigationHelper;
-    
-        /**
-         * @param Navigation $navigationHelper
-         */
-        public function __construct(Navigation $navigationHelper)
-        {
-            $this->navigationHelper = $navigationHelper;
-        }
-        
-        /**
-         * @return array|TwigFunction[]
-         */
-        public function getFunctions()
-        {
-            return [
-                new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
-            ];
-        }
-        
-        /**
-         * @param Document $document
-         * @param Document $startNode
-         *
-         * @return \Pimcore\Navigation\Container
-         * @throws \Exception
-         */
-        public function getCustomNavigation(Document $document, Document $startNode)
-        {
-            $navigation = $this->navigationHelper->build([
-                'active' => $document,
-                'root' => $startNode, 
-                'pageCallback' => function ($page, $document) {
-                    $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
-                    $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
-                    $page->setCustomSetting("title", $document->getTitle());
-                    $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
-                }]
-            );
-    
-            return $navigation;
-        }
-}
+    protected Navigation $navigationHelper;
 
-?>
+    /**
+     * @param Navigation $navigationHelper
+     */
+    public function __construct(Navigation $navigationHelper)
+    {
+        $this->navigationHelper = $navigationHelper;
+    }
+
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
+        ];
+    }
+
+    /**
+     * @param Document $document
+     * @param Document $startNode
+     *
+     * @return \Pimcore\Navigation\Container
+     * @throws \Exception
+     */
+    public function getCustomNavigation(Document $document, Document $startNode)
+    {
+        $navigation = $this->navigationHelper->build([
+            'active' => $document,
+            'root' => $startNode, 
+            'pageCallback' => function ($page, $document) {
+                $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
+                $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
+                $page->setCustomSetting("title", $document->getTitle());
+                $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
+            }]
+        );
+
+        return $navigation;
+    }
+}
 ```
 
 ```twig
@@ -453,16 +439,16 @@ Later in the template of the navigation (`navigation/partials/navigation.html.tw
 
 ```twig
 {% for page in pages %}
-        {% if page.isVisible() %}
-            {% set activeClass = page.getActive(true) ? 'active' : '' %}
-            <li class="{{ activeClass }}">
-                <a href="{{ page.getUri() }}" target="{{ page.getTarget() }}">{{ page.getLabel() }}</a>
-                <ul class="{{ page.getCustomSetting("subListClass") }}" role="menu">
-                    {% include 'navigation/partials/partials/main.html.twig' with {'pages': page.getPages()} %}
-                </ul>
-            </li>
-        {% endif %}
-    {% endfor %}
+    {% if page.isVisible() %}
+        {% set activeClass = page.getActive(true) ? 'active' : '' %}
+        <li class="{{ activeClass }}">
+            <a href="{{ page.getUri() }}" target="{{ page.getTarget() }}">{{ page.getLabel() }}</a>
+            <ul class="{{ page.getCustomSetting("subListClass") }}" role="menu">
+                {% include 'navigation/partials/partials/main.html.twig' with {pages: page.getPages()} %}
+            </ul>
+        </li>
+    {% endif %}
+{% endfor %}
 ```
 
 Using this method will dramatically improve the performance of your navigation. 
@@ -472,15 +458,15 @@ Using this method will dramatically improve the performance of your navigation.
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
 ```twig
-pimcore_build_nav({active: document, root: navStartNode, cache: 'yourindividualkey'})
+{% pimcore_build_nav({active: document, root: navStartNode, cache: 'yourindividualkey'}) %}
 ```
 
 ### Disabling the Navigation Cache
 
-You can disable the navigation cache by setting the 5th argument to `false`.
+You can disable the navigation cache by setting the `cache` argument to `false`.
 
 ```twig
-pimcore_build_nav({active: document, root: navStartNode, cache: false})
+{% pimcore_build_nav({active: document, root: navStartNode, cache: false}) %}
 ```
 
 ## FAQ
@@ -500,10 +486,10 @@ The homepage will not appear in the navigation by default. You can add the homep
 
 ```twig
 {% do navigation.addPage({
-    'order': -1,
-    'uri': '/',
-    'label': 'Home'|trans,
-    'title': 'Home'|trans,
+    order: -1,
+    uri: '/',
+    label: 'Home'|trans,
+    title: 'Home'|trans,
 }) %}
 ```
 

@@ -90,7 +90,8 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.label,
-            allowBlank: true
+            allowBlank: true,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.attributeField = new Ext.form.TextField({
@@ -98,7 +99,8 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.attr,
-            allowBlank: false
+            allowBlank: false,
+            renderer: Ext.util.Format.htmlEncode
         });
 
         this.indexField = new Ext.form.NumberField({
@@ -114,7 +116,8 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.colAttr,
-            allowBlank: false
+            allowBlank: false,
+            renderer: Ext.util.Format.htmlEncode
         });
 
 
