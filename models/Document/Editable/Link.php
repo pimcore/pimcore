@@ -287,7 +287,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
 
         // sanitize attributes
-        if (!$editmode && isset($this->data['attributes'])) {
+        if ($this->getEditmode() === false && isset($this->data['attributes'])) {
             $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
         }
 
