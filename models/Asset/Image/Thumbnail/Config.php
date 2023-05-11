@@ -427,7 +427,7 @@ final class Config extends Model\AbstractModel
         return $this->format;
     }
 
-    public function setQuality(int $quality): static
+    public function setQuality(?int $quality): static
     {
         if ($quality) {
             $this->quality = $quality;
