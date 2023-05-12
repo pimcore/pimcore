@@ -120,7 +120,7 @@ doctrine:
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
     handlers:
-        usage:
+        redirect:
             type: stream
             path:  "%kernel.logs_dir%/redirect.log"
             level: debug
