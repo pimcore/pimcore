@@ -194,7 +194,6 @@ class Installer
             static fn (string $bundle) => $availableBundles[$bundle] ?? null,
             $bundlesToInstall,
         ));
-
         $this->availableBundles = $availableBundles;
         $this->bundlesToInstall = $bundlesToInstall;
     }

@@ -64,7 +64,7 @@ Available bundles for installation:
 
 #### Adding or Removing Bundles / Bundle Recommendations
 Before bundles are displayed in the installation process, the `BundleSetupEvent` is fired.
-You can listen or subscribe to this event to add/remove bundles or the recommendations.
+You can listen or subscribe to this event to add/remove bundles.
 Note that a recommendation will only be added if the bundle is already in the bundles list.
 For more info, you can take a look at the [Pimcore Skeleton](https://github.com/pimcore/skeleton) to see how the [Admin UI Classic Bundle](https://github.com/pimcore/admin-ui-classic-bundle) is installed.
 
@@ -91,8 +91,11 @@ class BundleSetupSubscriber implements EventSubscriberInterface
 
     public function bundleSetup(BundleSetupEvent $event): void
     {
-        $event->addBundle('PimcoreAdminBundle', PimcoreAdminBundle::class);
-        $event->addRecommendation('PimcoreAdminBundle');
+        // add installable bundle and recommend it
+        $event->addInstallableBundle('PimcoreAdminBundle', PimcoreAdminBundle::class, true);
+
+        // add required bundle
+        $event->addRequiredBundle('PimcoreAdminBundle', PimcoreAdminBundle::class);
     }
 }
 ```

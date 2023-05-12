@@ -24,8 +24,7 @@
 
 -  Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 -  Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
-  - Bundles can be added and removed.
-  - Recommended bundles can be added and removed.
+  - Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
 
 
 #### [Logging] :

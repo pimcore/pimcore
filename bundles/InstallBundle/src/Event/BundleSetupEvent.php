@@ -8,6 +8,7 @@ class BundleSetupEvent extends Event
 {
     private array $bundles;
     private array $recommendations;
+    private array $required;
 
     public function __construct(array $bundles, array $recommendations)
     {
@@ -25,30 +26,30 @@ class BundleSetupEvent extends Event
         return $this->recommendations;
     }
 
-    public function addBundle(string $key, string $class) : void
+    public function addInstallableBundle(string $key, string $class, bool $recommend = false) : void
     {
         $this->bundles[$key] = $class;
+        if($recommend) {
+            $this->recommendations[] = $recommendedBundleKey;
+        }
     }
 
     public function removeBundle(string $key): void
     {
         unset($this->bundles[$key]);
+        unset($this->recommendations[$key]);
     }
 
-    public function addRecommendation(string $recommendedBundleKey): void
+    public function addRequiredBundle(string $key, string $class): void
     {
-        // Before adding a recommendation check if the bundle is available in the bundles array
-        if(array_key_exists($recommendedBundleKey, $this->bundles)) {
-            $this->recommendations[] = $recommendedBundleKey;
-        }
+        $this->bundles[$key] = $class;
+        $this->required[] = $key;
     }
 
-    public function removeRecommendation(string $recommendedBundleKey): void
+    public function getInstallableBundles(array $bundles): array
     {
-        // Removing recommendations is no problem
-        if (($key = array_search($recommendedBundleKey, $this->recommendations)) !== false) {
-            unset($this->recommendations[$key]);
-        }
+        // merge the required bundles and make sure they are unique
+        return array_unique(array_merge($this->required, $bundles));
     }
 
     /**
