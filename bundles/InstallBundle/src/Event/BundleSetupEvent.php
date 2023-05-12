@@ -37,7 +37,9 @@ class BundleSetupEvent extends Event
     public function removeBundle(string $key): void
     {
         unset($this->bundles[$key]);
-        unset($this->recommendations[$key]);
+        if (($index = array_search($key, $this->recommendations)) !== false) {
+            unset($this->recommendations[$index]);
+        }
     }
 
     public function addRequiredBundle(string $key, string $class): void
