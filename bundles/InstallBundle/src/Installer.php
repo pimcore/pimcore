@@ -544,7 +544,8 @@ class Installer
             }
         }
     }
-    private function writeBundlesToConfig() {
+    private function writeBundlesToConfig(): void
+    {
         // some bundles need to be excluded
         $bundlesToInstall = $this->bundlesToInstall;
         $availableBundles = $this->availableBundles;

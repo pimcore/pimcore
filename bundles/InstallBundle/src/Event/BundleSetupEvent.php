@@ -63,7 +63,7 @@ class BundleSetupEvent extends Event
         return array_unique(array_merge($this->required, $this->bundles));
     }
 
-    public function getExcludeFromBundlesPhpBundles(): array
+    public function getExcludeBundlesFromPhpBundles(): array
     {
         return $this->excludeFromBundlesPhp;
     }

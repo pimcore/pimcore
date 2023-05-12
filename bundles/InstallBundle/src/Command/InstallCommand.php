@@ -205,7 +205,7 @@ class InstallCommand extends Command
             $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
             $bundles = explode(',', $input->getOption('install-bundles'));
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
-            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeFromBundlesPhpBundles());
+            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -315,7 +315,7 @@ class InstallCommand extends Command
         if (!empty($bundleSetupEvent->getBundles()) && !$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend %s.', implode(', ', $bundleSetupEvent->getRecommendedBundles())), false)) {
             $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3 or just hit enter to install recommended bundles', array_keys($bundleSetupEvent->getBundles()), $this->getRecommendBundles($bundleSetupEvent), true);
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
-            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeFromBundlesPhpBundles());
+            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
 
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
