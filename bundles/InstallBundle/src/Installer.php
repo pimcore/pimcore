@@ -130,6 +130,13 @@ class Installer
      */
     private array $availableBundles = self::INSTALLABLE_BUNDLES;
 
+    /**
+     * This bundles should not be added in the bundles php, e.g. for higher priority
+     * Bundles need to be registered in the Kernel then e.g.
+     * @var array|string[]
+     */
+    private array $excludeFromBundlesPhp = [];
+
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
         $this->skipDatabaseConfig = $skipDatabaseConfig;
@@ -187,7 +194,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function setBundlesToInstall(array $bundlesToInstall, array $availableBundles): void
+    public function setBundlesToInstall(array $bundlesToInstall = [], array $availableBundles = [], array $excludeFromBundlesPhp = []): void
     {
         // map and filter the bundles
         $bundlesToInstall = array_filter(array_map(
@@ -196,6 +203,7 @@ class Installer
         ));
         $this->availableBundles = $availableBundles;
         $this->bundlesToInstall = $bundlesToInstall;
+        $this->excludeFromBundlesPhp = $excludeFromBundlesPhp;
     }
 
     public function dispatchBundleSetupEvent(): BundleSetupEvent
@@ -526,8 +534,7 @@ class Installer
 
     private function installBundles(): void
     {
-        $writer = new BundleWriter();
-        $writer->addBundlesToConfig($this->bundlesToInstall, $this->availableBundles);
+        $this->writeBundlesToConfig();
         foreach ($this->bundlesToInstall as $bundle) {
             if (in_array($bundle, $this->availableBundles) && !$this->isBundleInstalled($bundle)) {
                 $this->runCommand([
@@ -536,6 +543,19 @@ class Installer
                 ], 'Installing ' . $bundle);
             }
         }
+    }
+    private function writeBundlesToConfig() {
+        // some bundles need to be excluded
+        $bundlesToInstall = $this->bundlesToInstall;
+        $availableBundles = $this->availableBundles;
+
+        if(!empty($this->excludeFromBundlesPhp)) {
+           $excludedBundleValues = array_values($this->excludeFromBundlesPhp);
+           $bundlesToInstall = array_diff($bundlesToInstall, $excludedBundleValues);
+           $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
+        }
+        $writer = new BundleWriter();
+        $writer->addBundlesToConfig($bundlesToInstall, $availableBundles);
     }
 
     private function installAssets(KernelInterface $kernel): void
