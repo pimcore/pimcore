@@ -551,8 +551,7 @@ class Installer
         $availableBundles = $this->availableBundles;
 
         if(!empty($this->excludeFromBundlesPhp)) {
-           $excludedBundleValues = array_values($this->excludeFromBundlesPhp);
-           $bundlesToInstall = array_diff($bundlesToInstall, $excludedBundleValues);
+           $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
            $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
         }
         $writer = new BundleWriter();
