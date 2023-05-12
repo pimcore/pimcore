@@ -222,9 +222,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function setModificationDate($modificationDate)
     {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int) $modificationDate;
+        if($this->modificationDate != (int)$modificationDate) {
+            $this->markFieldDirty('modificationDate');
+            $this->modificationDate = (int)$modificationDate;
+        }
 
         return $this;
     }
