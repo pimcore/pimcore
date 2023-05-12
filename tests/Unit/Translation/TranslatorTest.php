@@ -229,7 +229,7 @@ class TranslatorTest extends TestCase
         $this->assertArrayNotHasKey('fr', $translationValues);
     }
 
-    public function testCacheGetsInvalidatedOnSave()
+    public function testCacheGetsInvalidatedOnSave(): void
     {
         $translationsListing = new Translation\Listing();
         $translationsListing->setDomain('messages');
