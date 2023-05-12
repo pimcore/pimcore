@@ -34,7 +34,7 @@ class BundleSetupEvent extends Event
         }
     }
 
-    public function removeBundle(string $key): void
+    public function removeInstallableBundle(string $key): void
     {
         unset($this->bundles[$key]);
         if (($index = array_search($key, $this->recommendations)) !== false) {
