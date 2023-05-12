@@ -34,10 +34,6 @@ class BundleSetupEvent extends Event
         }
     }
 
-    public function getAvailableBundles() {
-        return array_unique(array_merge($this->required, $this->bundles));
-    }
-
     public function removeBundle(string $key): void
     {
         unset($this->bundles[$key]);
@@ -54,6 +50,11 @@ class BundleSetupEvent extends Event
         // merge the required bundles and make sure they are unique
 
         return array_unique(array_merge(array_keys($this->required), $bundles));
+    }
+
+    public function getAvailableBundles(): array
+    {
+        return array_unique(array_merge($this->required, $this->bundles));
     }
 
     /**
