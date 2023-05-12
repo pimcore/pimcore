@@ -447,14 +447,16 @@ final class User extends User\UserRole
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                $image->load($localFile);
-                $image->cover($width, $height);
-                $image->save($targetFile, 'png');
-
-                $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                if($image->load($localFile)) {
+                    $image->cover($width, $height);
+                    $image->save($targetFile, 'png');
+                    $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                }
             }
 
-            return $storage->readStream($this->getThumbnailImageStoragePath());
+            if ($storage->fileExists($this->getThumbnailImageStoragePath())) {
+                return $storage->readStream($this->getThumbnailImageStoragePath());
+            }
         }
 
         return fopen($this->getFallbackImage(), 'rb');
