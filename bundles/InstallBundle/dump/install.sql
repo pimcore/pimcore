@@ -253,11 +253,13 @@ CREATE TABLE `notes` (
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
+  `auto_id` int(11) NOT NULL AUTO_INCREMENT,
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  PRIMARY KEY (`id`, `name`)
+  PRIMARY KEY (`auto_id`),
+  UNIQUE KEY `UNIQ_E5A8E5E2BF3967505E237E06` (`id`,`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
@@ -420,20 +422,6 @@ CREATE TABLE `settings_store` (
   `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
   PRIMARY KEY (`id`, `scope`),
   KEY `scope` (`scope`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `translations_admin`;
-CREATE TABLE `translations_admin` (
-  `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
-  `type` varchar(10) DEFAULT NULL,
-  `language` varchar(10) NOT NULL DEFAULT '',
-  `text` text,
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
-  `userOwner` int(11) unsigned DEFAULT NULL,
-  `userModification` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`key`,`language`),
-  KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `translations_messages`;

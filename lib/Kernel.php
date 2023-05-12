@@ -183,7 +183,6 @@ abstract class Kernel extends SymfonyKernel
         // initialize runtime cache (defined as synthetic service)
         RuntimeCache::getInstance();
 
-        \Pimcore::initLogger();
         \Pimcore\Cache::init();
 
         // on pimcore shutdown
