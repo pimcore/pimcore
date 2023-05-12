@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\InstallBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -7,14 +20,17 @@ use Symfony\Contracts\EventDispatcher\Event;
 class BundleSetupEvent extends Event
 {
     private array $bundles;
+
     private array $recommendations;
+
     private array $required;
+
     private array $excludeFromBundlesPhp;
 
     public function __construct(array $bundles, array $recommendations)
     {
-       $this->bundles = $bundles;
-       $this->recommendations = $recommendations;
+        $this->bundles = $bundles;
+        $this->recommendations = $recommendations;
     }
 
     public function getBundles(): array
@@ -27,7 +43,7 @@ class BundleSetupEvent extends Event
         return $this->recommendations;
     }
 
-    public function addInstallableBundle(string $key, string $class, bool $recommend = false) : void
+    public function addInstallableBundle(string $key, string $class, bool $recommend = false): void
     {
         $this->bundles[$key] = $class;
         if($recommend) {

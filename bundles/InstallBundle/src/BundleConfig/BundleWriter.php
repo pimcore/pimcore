@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 
-use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\File;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 

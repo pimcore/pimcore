@@ -435,6 +435,7 @@ class InstallCommand extends Command
         foreach($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
             $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
         }
+
         return implode(',', $recommendedBundles);
     }
 }

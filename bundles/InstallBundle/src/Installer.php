@@ -60,7 +60,7 @@ use Symfony\Component\Process\Process;
  */
 class Installer
 {
-    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle' , 'PimcoreTinymceBundle'];
+    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle', 'PimcoreTinymceBundle'];
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
@@ -72,7 +72,7 @@ class Installer
         'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
-        'PimcoreXliffBundle' => PimcoreXliffBundle::class
+        'PimcoreXliffBundle' => PimcoreXliffBundle::class,
     ];
 
     private LoggerInterface $logger;
@@ -126,6 +126,7 @@ class Installer
 
     /**
      * This bundles might be different to the predefined one, due to the bundle event
+     *
      * @var array|string[]
      */
     private array $availableBundles = self::INSTALLABLE_BUNDLES;
@@ -133,6 +134,7 @@ class Installer
     /**
      * This bundles should not be added in the bundles php, e.g. for higher priority
      * Bundles need to be registered in the Kernel then e.g.
+     *
      * @var array|string[]
      */
     private array $excludeFromBundlesPhp = [];
@@ -544,6 +546,7 @@ class Installer
             }
         }
     }
+
     private function writeBundlesToConfig(): void
     {
         // some bundles need to be excluded
@@ -551,8 +554,8 @@ class Installer
         $availableBundles = $this->availableBundles;
 
         if(!empty($this->excludeFromBundlesPhp)) {
-           $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
-           $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
+            $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
+            $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
         }
         $writer = new BundleWriter();
         $writer->addBundlesToConfig($bundlesToInstall, $availableBundles);
