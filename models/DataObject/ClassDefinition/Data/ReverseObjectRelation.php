@@ -118,7 +118,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    protected function allowObjectRelation($object): bool
+    protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());

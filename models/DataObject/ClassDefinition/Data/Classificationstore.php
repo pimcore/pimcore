@@ -715,13 +715,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
      * @throws \Exception
      */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, Concrete $object = null, array $params = []): mixed
     {
         throw new \Exception('not supported');
     }
