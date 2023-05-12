@@ -30,7 +30,7 @@ class BundleSetupEvent extends Event
     {
         $this->bundles[$key] = $class;
         if($recommend) {
-            $this->recommendations[] = $recommendedBundleKey;
+            $this->recommendations[] = $key;
         }
     }
 
