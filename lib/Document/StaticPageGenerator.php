@@ -68,7 +68,7 @@ class StaticPageGenerator
             if (!$response = $params['response'] ?? false) {
                 $response = $this->documentRenderer->render($document, [
                     'pimcore_static_page_generator' => true,
-                    StaticPageResolver::ATTRIBUTE_PIMCORE_STATIC_PAGE => true
+                    StaticPageResolver::ATTRIBUTE_PIMCORE_STATIC_PAGE => true,
                 ]);
             }
 
