@@ -524,7 +524,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $fieldsArray = $mergeFunction($this, []);
         $object = $this->getObject();
         while (!is_null($object) && ($parent = Service::hasInheritableParentObject($object)) !== null) {
-            $fieldsArray = $mergeFunction($parent->{"get" . $this->getFieldname()}(), $fieldsArray);
+            $fieldsArray = $mergeFunction($parent->{"get" . ucfirst($this->getFieldname())}(), $fieldsArray);
             
             $object = $parent;
         }
