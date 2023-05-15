@@ -22,6 +22,7 @@
 
 #### [Installer] :
 
+-  Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete. See [preparing guide](../07_Updating_Pimcore/12_V10_to_V11.md)
 -  Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 -  Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
   - Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
@@ -198,15 +199,15 @@
     $web2printConfig = $web2printConfig['chromiumSettings'];
     ```
 -  Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
--  Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+-  Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/12_V10_to_V11.md)
 -  Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 -  Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
--  Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+-  Rename config files from `*.yml` to `*.yaml`. Note that we now use `system_settings.yaml` as config file and not `system.yml`
 -  System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 -  The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 -  The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 -  Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
--  Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
+-  Recommended and default format for storing the valid languages in `system_settings.yaml` is now an array, for example:
    - en
    - de
 ```yaml
