@@ -115,6 +115,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         if(!$doGetInheritedValues) {
             return $this->items;
         }
+
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
@@ -305,6 +306,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         if(!$doGetInheritedValues) {
             return $this->activeGroups;
         }
+
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $classificationStore->activeGroups + $fieldsArray);
     }
 
@@ -479,6 +481,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         if(!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
+
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
@@ -524,10 +527,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $fieldsArray = $mergeFunction($this, []);
         $object = $this->getObject();
         while (!is_null($object) && ($parent = Service::hasInheritableParentObject($object)) !== null) {
-            $fieldsArray = $mergeFunction($parent->{"get" . ucfirst($this->getFieldname())}(), $fieldsArray);
-            
+            $fieldsArray = $mergeFunction($parent->{'get' . ucfirst($this->getFieldname())}(), $fieldsArray);
+
             $object = $parent;
         }
+
         return $fieldsArray;
     }
 
