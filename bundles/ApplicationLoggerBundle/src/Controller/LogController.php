@@ -76,20 +76,9 @@ class LogController extends UserAwareController implements KernelControllerEvent
         }
 
         $priority = $request->get('priority');
-        if ($priority !== '-1' && ($priority == '0' || $priority)) {
-            $levels = [];
-
-            // add every level until the filtered one
-            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
-                $levels[] = $level;
-
-                if ($priority === $level) {
-                    break;
-                }
-            }
-
-            $qb->andWhere($qb->expr()->in('priority', ':priority'));
-            $qb->setParameter('priority', $levels, Connection::PARAM_STR_ARRAY);
+        if(!empty($priority)) {
+            $qb->andWhere($qb->expr()->eq('priority', ':priority'));
+            $qb->setParameter('priority', $priority);
         }
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
@@ -190,7 +179,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     {
         $this->checkPermission('application_logging');
 
-        $priorities[] = ['key' => '-1', 'value' => '-'];
+        $priorities[] = ['key' => '', 'value' => '-'];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
             $priorities[] = ['key' => $key, 'value' => $p];
         }
