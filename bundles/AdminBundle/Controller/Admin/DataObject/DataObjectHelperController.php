@@ -1530,7 +1530,7 @@ class DataObjectHelperController extends AdminAbstractController
     }
 
     /**
-     * @Route("/get-batch-jobs", name="getbatchjobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="getbatchjobs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1639,6 +1639,12 @@ class DataObjectHelperController extends AdminAbstractController
                     } elseif (count($parts) > 1) {
                         // check for bricks
                         $brickType = $parts[0];
+
+                        if (strpos($brickType, '?') !== false) {
+                            $brickDescriptor = substr($brickType, 1);
+                            $brickDescriptor = json_decode($brickDescriptor, true);
+                            $brickType = $brickDescriptor['containerKey'];
+                        }
                         $brickKey = $parts[1];
                         $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 

@@ -85,7 +85,8 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_add",
-                            handler: this.addField.bind(this)
+                            handler: this.addField.bind(this),
+                            disabled: !pimcore.settings['class-definition-writeable']
                         }
                     ]
                 }
@@ -150,7 +151,8 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_delete",
-            handler: this.deleteField.bind(this, tree, record)
+            handler: this.deleteField.bind(this, tree, record),
+            disabled: !pimcore.settings['class-definition-writeable']
         }));
 
         menu.showAt(e.pageX, e.pageY);
