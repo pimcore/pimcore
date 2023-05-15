@@ -87,7 +87,7 @@ class StaticPageGenerator
                 $response = $this->documentRenderer->render($document, [
                     'pimcore_static_page_generator' => true,
                     StaticPageResolver::ATTRIBUTE_PIMCORE_STATIC_PAGE => true,
-                    DocumentMetaDataListener::FORCE_INJECTION => true
+                    DocumentMetaDataListener::FORCE_INJECTION => true,
                 ]);
             }
 
