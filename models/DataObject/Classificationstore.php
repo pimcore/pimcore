@@ -111,6 +111,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getItems()
     {
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
+            return $this->items;
+        }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
@@ -297,7 +301,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getActiveGroups()
     {
-        return $this->activeGroups;
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
+            return $this->activeGroups;
+        }
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $classificationStore->activeGroups + $fieldsArray);
     }
 
     private function sanitizeActiveGroups($activeGroups)
@@ -467,6 +475,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroupCollectionMappings(): array
     {
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
+        if(!$doGetInheritedValues) {
+            return $this->groupCollectionMapping;
+        }
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
@@ -504,7 +516,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroups(): array
     {
-        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => array_merge(Classificationstore::getActiveGroupsWithConfig($classificationStore), $fieldsArray));
+        return Classificationstore::getActiveGroupsWithConfig($this);
     }
 
     private function getAllDataFromField(callable $mergeFunction): array
@@ -512,16 +524,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $fieldsArray = $mergeFunction($this, []);
         $object = $this->getObject();
         while (!is_null($object) && ($parent = Service::hasInheritableParentObject($object)) !== null) {
-            $fieldDefintions = $parent->getClass()->getFieldDefinitions();
-            foreach ($fieldDefintions as $key => $fd) {
-                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore) {
-                    $getter = 'get' . ucfirst($key);
-                    $fieldsArray = $mergeFunction($parent->$getter(), $fieldsArray);
-                }
-            }
+            $fieldsArray = $mergeFunction($parent->{"get" . ucfirst($this->getFieldname())}(), $fieldsArray);
+            
             $object = $parent;
         }
-
         return $fieldsArray;
     }
 
