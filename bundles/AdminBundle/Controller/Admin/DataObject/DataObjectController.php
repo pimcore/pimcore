@@ -1292,7 +1292,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount([
                             DataObject::OBJECT_TYPE_OBJECT,
                             DataObject::OBJECT_TYPE_VARIANT,
-                            DataObject::OBJECT_TYPE_FOLDER
+                            DataObject::OBJECT_TYPE_FOLDER,
                         ]) .')
                             SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
                             FROM cte,
