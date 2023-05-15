@@ -493,6 +493,7 @@ pimcore.element.helpers.gridColumnConfig = {
             Ext.Ajax.request({
                 url: this.batchPrepareUrl,
                 params: params,
+                method: 'POST',
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
