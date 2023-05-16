@@ -20,7 +20,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -158,9 +157,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                         strpos($key, 'aria-') === 0 ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. SecurityHelper::sanitizeHtmlAttributes($this->data[$key]) .' '. SecurityHelper::sanitizeHtmlAttributes($this->config[$key]) .'"';
+                        $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
                     } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.SecurityHelper::sanitizeHtmlAttributes($value).'"';
+                        $attribs[] = $key.'="'.htmlspecialchars($value).'"';
                     }
                 }
             }
@@ -220,11 +219,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $anchor = str_replace('"', urlencode('"'), $this->getAnchor());
+            $anchor = str_replace('"', urlencode('"'), htmlspecialchars($this->getAnchor()));
             $url .= '#' . str_replace('#', '', $anchor);
         }
 
@@ -300,12 +299,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function getParameters(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['parameters']) ?? '';
+        return $this->data['parameters'] ?? '';
     }
 
     public function getAnchor(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['anchor']) ?? '';
+        return $this->data['anchor'] ?? '';
     }
 
     public function getTitle(): string
@@ -315,22 +314,22 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function getRel(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['rel']) ?? '';
+        return $this->data['rel'] ?? '';
     }
 
     public function getTabindex(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['tabindex']) ?? '';
+        return $this->data['tabindex'] ?? '';
     }
 
     public function getAccesskey(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['accesskey']) ?? '';
+        return $this->data['accesskey'] ?? '';
     }
 
     public function getClass(): mixed
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['class']) ?? '';
+        return $this->data['class'] ?? '';
     }
 
     /**
@@ -341,14 +340,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
             $this->data = [];
-        }
-
-        //sanitize fields
-        $fieldsToExclude = ['path'];
-        foreach($this->data as $key => $value) {
-            if(!in_array($key, $fieldsToExclude)) {
-                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes((string) $value);
-            }
         }
 
         return $this;

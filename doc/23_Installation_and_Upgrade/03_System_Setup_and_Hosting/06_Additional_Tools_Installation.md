@@ -43,8 +43,6 @@ Add a new service as
 ```dockerfile
     chrome:
         image: browserless/chrome
-        ports:
-            - "3000:3000"
 ```
 and set accordingly
 - config `pimcore.chromium.uri` value , eg. `ws://chrome:3000/` 

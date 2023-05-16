@@ -20,7 +20,6 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
-use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -242,7 +241,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern(string $pattern): static
     {
-        $this->pattern = SecurityHelper::convertHtmlSpecialChars($pattern);
+        $this->pattern = $pattern;
 
         return $this;
     }
@@ -252,7 +251,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController(?string $controller): static
     {
-        $this->controller = SecurityHelper::convertHtmlSpecialChars($controller);
+        $this->controller = $controller;
 
         return $this;
     }
@@ -262,7 +261,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables(string $variables): static
     {
-        $this->variables = SecurityHelper::convertHtmlSpecialChars($variables);
+        $this->variables = $variables;
 
         return $this;
     }
@@ -272,7 +271,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults(string $defaults): static
     {
-        $this->defaults = SecurityHelper::convertHtmlSpecialChars($defaults);
+        $this->defaults = $defaults;
 
         return $this;
     }
@@ -297,7 +296,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -312,7 +311,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse(string $reverse): static
     {
-        $this->reverse = SecurityHelper::convertHtmlSpecialChars($reverse);
+        $this->reverse = $reverse;
 
         return $this;
     }
@@ -367,6 +366,8 @@ final class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $urlOptions
      * @param bool $encode
      *
@@ -465,14 +466,14 @@ final class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $path
      * @param array $params
      *
      * @return array|bool
      *
      * @throws \Exception
-     *
-     * @internal
      */
     public function match(string $path, array $params = []): bool|array
     {
@@ -539,7 +540,7 @@ final class Staticroute extends AbstractModel
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             foreach($methods as $key => $method) {
-                $methods[$key] = SecurityHelper::convertHtmlSpecialChars(trim($method));
+                $methods[$key] = trim($method);
             }
         }
 

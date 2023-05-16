@@ -231,16 +231,18 @@ trait ImageThumbnailTrait
                 $dimensions = $this->readDimensionsFromFile();
             }
 
-            $this->width = $dimensions['width'] ?? null;
-            $this->height = $dimensions['height'] ?? null;
-
-            // the following is only relevant if using high-res option (retina, ...)
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = (int)floor($this->width * $config->getHighResolution());
-                $this->realHeight = (int)floor($this->height * $config->getHighResolution());
+            // realWidth / realHeight is only relevant if using high-res option (retina, ...)
+            $width = $dimensions['width'] ?? null;
+            $this->width = $this->realWidth = ($width !== null ? (int) $width : null);
+            $height = $dimensions['height'] ?? null;
+            $this->height = $this->realHeight = ($height !== null ? (int) $height : null);
+            if ($config && $config->getHighResolution() > 1) {
+                if ($this->width) {
+                    $this->width = (int)floor($this->realWidth / $config->getHighResolution());
+                }
+                if ($this->height) {
+                    $this->height = (int)floor($this->realHeight / $config->getHighResolution());
+                }
             }
         }
 
