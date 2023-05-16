@@ -98,8 +98,7 @@ class Chromium
                 'clip' => $page->getFullPageClip(),
             ])->saveToFile($outputFile);
         } catch (\Throwable $e) {
-            Logger::debug('Could not create image from url: ' . $url);
-            Logger::debug((string) $e);
+            Logger::debug('Could not create image from url ' . $url . ': ' . $e);
 
             return false;
         } finally {

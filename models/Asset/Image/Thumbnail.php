@@ -151,8 +151,7 @@ final class Thumbnail
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
-                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    Logger::error($e->getMessage());
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath() . ': ' . $e);
                 }
             }
         }

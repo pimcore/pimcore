@@ -155,8 +155,7 @@ class Imagick extends Adapter
                 //}
             }
         } catch (\Exception $e) {
-            Logger::error('Unable to load image: ' . $imagePath);
-            Logger::error($e->getMessage());
+            Logger::error('Unable to load image ' . $imagePath . ': ' . $e);
 
             return false;
         }
