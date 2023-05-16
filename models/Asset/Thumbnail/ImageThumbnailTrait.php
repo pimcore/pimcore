@@ -232,8 +232,8 @@ trait ImageThumbnailTrait
             }
 
             // realWidth / realHeight is only relevant if using high-res option (retina, ...)
-            $this->width = $this->realWidth = $dimensions['width'] ?? null;
-            $this->height = $this->realHeight = $dimensions['height'] ?? null;
+            $this->width = $this->realWidth = (int) $dimensions['width'] ?? null;
+            $this->height = $this->realHeight = (int) $dimensions['height'] ?? null;
             if ($config && $config->getHighResolution() > 1) {
                 if ($this->width) {
                     $this->width = (int)floor($this->realWidth / $config->getHighResolution());
