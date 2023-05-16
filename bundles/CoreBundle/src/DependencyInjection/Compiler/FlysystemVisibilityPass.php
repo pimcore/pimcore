@@ -39,7 +39,7 @@ final class FlysystemVisibilityPass implements CompilerPassInterface
                     $adapter = $container->findDefinition((string)$definition->getArgument(0));
                     /** @var Definition $visibilityDef */
                     $visibilityDef = $adapter->getArgument(1);
-                    $visibilityDef->addArgument(Visibility::PUBLIC);
+                    $visibilityDef->setArgument(1, Visibility::PUBLIC);
                 }
             }
         }
