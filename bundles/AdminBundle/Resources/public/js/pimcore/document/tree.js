@@ -1522,37 +1522,46 @@ pimcore.document.tree = Class.create({
         var parameters = {};
         parameters.id = id;
 
-        Ext.Ajax.request({
-            url: '/admin/' + type + '/save?task=' + task,
-            method: "PUT",
-            params: parameters,
-            success: function (task, response) {
-                try {
-                    var rdata = Ext.decode(response.responseText);
-                    if (rdata && rdata.success) {
-                        var options = {
-                            elementType: "document",
-                            id: record.data.id,
-                            published: task != "unpublish"
-                        };
-                        pimcore.elementservice.setElementPublishedState(options);
-                        pimcore.elementservice.setElementToolbarButtons(options);
-                        pimcore.elementservice.reloadVersions(options);
+        var doc = pimcore.globalmanager.get("document_" + id);
 
-                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
-                            "success");
+        if (doc) {
+            if (task == "publish") {
+                doc.publish(false);
+            } else {
+                doc.unpublish(false);
+            }
+        } else {
+            Ext.Ajax.request({
+                url: '/admin/' + type + '/save?task=' + task,
+                method: "PUT",
+                params: parameters,
+                success: function (task, response) {
+                    try {
+                        var rdata = Ext.decode(response.responseText);
+                        if (rdata && rdata.success) {
+                            var options = {
+                                elementType: "document",
+                                id: record.data.id,
+                                published: task != "unpublish"
+                            };
+                            pimcore.elementservice.setElementPublishedState(options);
+                            pimcore.elementservice.setElementToolbarButtons(options);
+                            pimcore.elementservice.reloadVersions(options);
+
+                            pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
+                                "success");
+                        }
+                        else {
+                            pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"),
+                                "error", t(rdata.message));
+                        }
+                    } catch (e) {
+                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error");
                     }
-                    else {
-                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"),
-                            "error", t(rdata.message));
-                    }
-                } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error");
-                }
 
-            }.bind(this, task)
-        });
-
+                }.bind(this, task)
+            });
+        }
     },
 
     addDocumentCreate : function (tree, record, params) {

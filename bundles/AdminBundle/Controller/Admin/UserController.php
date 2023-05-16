@@ -289,12 +289,13 @@ class UserController extends AdminAbstractController implements KernelController
     public function updateAction(Request $request, TranslatorInterface $translator)
     {
         $user = User\UserRole::getById((int)$request->get('id'));
+        $currentUserIsAdmin = $this->getAdminUser()->isAdmin();
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
+        if ($user instanceof User && $user->isAdmin() && !$currentUserIsAdmin) {
             throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
@@ -327,7 +328,7 @@ class UserController extends AdminAbstractController implements KernelController
 
             // only admins are allowed to create admin users
             // if the logged in user isn't an admin, set admin always to false
-            if ($user instanceof User && !$this->getAdminUser()->isAdmin()) {
+            if ($user instanceof User && !$currentUserIsAdmin) {
                 $user->setAdmin(false);
             }
 
