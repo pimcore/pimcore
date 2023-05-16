@@ -11,15 +11,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.webadmintools.settings");
-pimcore.report.webadmintools.settings = Class.create({
+pimcore.registerNS("pimcore.report.google_search_console.settings");
+pimcore.report.google_search_console.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
     },
 
     getKey: function () {
-        return "webadmintools";
+        return "google_search_console";
     },
 
     getLayout: function () {
@@ -79,8 +79,8 @@ pimcore.report.webadmintools.settings = Class.create({
                     name: "verification",
                     labelWidth: 250,
                     width: 650,
-                    value: this.parent.getValue("webadmintools.sites." + key + ".verification"),
-                    id: "report_settings_webadmintools_verification_" + id
+                    value: this.parent.getValue("google_search_console.sites." + key + ".verification"),
+                    id: "report_settings_google_search_console_verification_" + id
                 }
             ]
         };
@@ -102,7 +102,7 @@ pimcore.report.webadmintools.settings = Class.create({
             }
 
             sitesData[key] = {
-                verification: Ext.getCmp("report_settings_webadmintools_verification_" + id).getValue()
+                verification: Ext.getCmp("report_settings_google_search_console_verification_" + id).getValue()
             };
         }, this);
 
@@ -115,4 +115,4 @@ pimcore.report.webadmintools.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.report.webadmintools.settings");
+pimcore.report.settings.broker.push("pimcore.report.google_search_console.settings");
