@@ -2,7 +2,7 @@
 
 ## 10.6.0
 - [Assets] Deprecated `Import from Server` and `Import from URL` Admin UI options for adding assets. They will be removed in Pimcore 11.
-- [Naming] Deprecated master, blacklist, whitelist. Instead, use main, blocklist, allowlist. As an example, webmastertools were renamed to google_search_console.
+- [Naming] Deprecated master, blacklist and whitelist. Instead, use main, blocklist, allowlist. As an example, `webmastertools` were renamed to `google_search_console`.
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
