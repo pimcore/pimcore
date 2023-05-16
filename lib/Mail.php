@@ -553,6 +553,8 @@ class Mail extends Email
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 
+            \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
+
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
             } catch (\Exception $e) {
