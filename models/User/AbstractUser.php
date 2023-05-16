@@ -39,7 +39,7 @@ abstract class AbstractUser extends Model\AbstractModel
 
     public static function getById(int $id): static|null
     {
-        if (!is_numeric($id) || $id < 0) {
+        if ($id < 0) {
             return null;
         }
 
