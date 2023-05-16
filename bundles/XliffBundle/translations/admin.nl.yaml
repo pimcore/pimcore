@@ -1,0 +1,16 @@
+---
+xliff_export_documents: Indien je bijvoorbeeld de volledige /en boomstructuur wenst
+  te vertalen, maak dan eerst een kopie van /en (bijvoorbeeld /de) en exporteer dan
+  /de om te vertalen. Bij het importeren van de vertaalde XLIFF wordt de Engelse inhoud
+  in /de overschreven door de Duitse vertaling uit het XLIFF bestand.
+xliff_export_objects: Uitsluitend velden in een Localized Fields container worden
+  herkend. Bij het importeren van een XLIFF blijft de brontaal ongewijzigd, enkel
+  de velden in de doeltaal worden overschreven.
+xliff_export_notice: Hier kan je de documenten en objecten selecteren die je wenst
+  de exporteren voor externe vertaling.
+xliff_import_notice: "Selecteer een vertaalde XLIFF die voorheen door Pimcore ge\xEBxporteerd
+  en vertaald werd door een localization service provider (LSP) of door een CAT toepassing.
+  \ Opgelet, deze import zal de elementen overschrijven die geselecteerd werden bij
+  de import (lees: ook export)"
+xliff_import_export: Xliff Import/Export
+...
