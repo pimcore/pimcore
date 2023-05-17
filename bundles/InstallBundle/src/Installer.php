@@ -845,6 +845,10 @@ class Installer
             'notifications_send',
             'sites',
             'objects_sort_method',
+            'objectbricks',
+            'fieldcollections',
+            'quantityValueUnits',
+            'classificationstore'
         ];
 
         foreach ($userPermissions as $permission) {
