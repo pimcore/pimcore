@@ -848,7 +848,7 @@ class Installer
             'objectbricks',
             'fieldcollections',
             'quantityValueUnits',
-            'classificationstore'
+            'classificationstore',
         ];
 
         foreach ($userPermissions as $permission) {
