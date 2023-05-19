@@ -1184,7 +1184,8 @@ span.warning {
 .pimcore_editable_wysiwyg {
     position:relative;
     padding: 10px;
-    height: max(100%, 100px);
+    min-height: 80px;
+    height: 100%;
     font: normal 12px tahoma, arial, helvetica, sans-serif;
     background-color: #fff;
 }
