@@ -55,7 +55,7 @@ trait Parallelization
 
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-        if ((int)$this->input->getOption('processes') <= 1) {
+        if ($this->input->hasOption('processes') && (int)$this->input->getOption('processes') <= 1) {
             if ($output->isVeryVerbose()) {
                 $output->writeln('Collect garbage.');
             }
