@@ -106,20 +106,22 @@ Request::setTrustedProxies(['192.0.0.1', '10.0.0.0/8'], Request::HEADER_X_FORWAR
 ```
 
 
-## How to inject the .yml param to class variable
+## How to inject the .yaml param to class variable
 
-In you services.yml add your service, e.g.:
+In your `services.yaml` add your service, e.g.:
 
+```yaml
     SomeBundle\Service\SomeSender:
         arguments:
             $emails: '%email.debug.email_addresses%'
-            
+```
 
 Then in your class you can access this param in **2 approaches**:
 
+```php
     public function __construct(string $emails, private ParameterBagInterface $params)
     {
         $emailsArray =  $this->params->get('email.debug.email_addresses');
         var_dump($emails, $emailsArray);
     }
-
+```
