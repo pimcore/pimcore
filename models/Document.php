@@ -265,9 +265,9 @@ class Document extends Element\AbstractElement
 
             try {
                 // Getting classname from document resolver
-               
-                if(!$className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType())){
-                        throw new UnsupportedException();
+
+                if(!$className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType())) {
+                    throw new UnsupportedException();
                 }
             } catch(UnsupportedException $ex) {
                 trigger_deprecation(
