@@ -41,17 +41,6 @@ class LinkTest extends ModelTestCase
     {
         parent::setUp();
         TestHelper::cleanUp();
-
-        $this->testAsset = TestHelper::createImageAsset();
-
-        $link = new Link();
-        $link->setInternal($this->testAsset->getId());
-        $link->setInternalType('asset');
-        $this->link = $link;
-
-        $linkObject = $this->createLinkObject();
-        $linkObject->setTestlink($link);
-        $this->linkDefinition = $linkObject->getClass()->getFieldDefinition('testlink');
     }
 
     public function tearDown(): void
@@ -63,6 +52,20 @@ class LinkTest extends ModelTestCase
     protected function setUpTestClasses()
     {
         $this->tester->setupPimcoreClass_Link();
+    }
+
+    protected function setupInternalLinkObjects()
+    {
+        $this->testAsset = TestHelper::createImageAsset();
+
+        $link = new Link();
+        $link->setInternal($this->testAsset->getId());
+        $link->setInternalType('asset');
+        $this->link = $link;
+
+        $linkObject = $this->createLinkObject();
+        $linkObject->setTestlink($link);
+        $this->linkDefinition = $linkObject->getClass()->getFieldDefinition('testlink');
     }
 
     /**
@@ -107,6 +110,7 @@ class LinkTest extends ModelTestCase
      */
     public function testInternalCheckValidity()
     {
+        $this->setupInternalLinkObjects();
         $this->testAsset->delete();
 
         //Should return validation exception as asset was deleted
@@ -116,6 +120,7 @@ class LinkTest extends ModelTestCase
 
     public function testAsset()
     {
+        $this->setupInternalLinkObjects();
         $this->testAsset->delete();
         //Should not return validation exception as parameter is set
         $this->linkDefinition->checkValidity($this->link, true, ['resetInvalidFields' => true]);
