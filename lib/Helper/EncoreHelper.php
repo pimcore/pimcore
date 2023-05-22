@@ -29,7 +29,7 @@ final class EncoreHelper
 
         $paths = [];
         foreach ($entrypoints as $entrypoint) {
-            $paths = $entrypoint[$type] ?? [];
+            $paths[] = $entrypoint[$type] ?? [];
         }
 
         return array_merge(...$paths);
