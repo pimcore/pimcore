@@ -20,8 +20,7 @@ use Pimcore\Security\User\User as PimcoreUser;
 trigger_deprecation(
     'pimcore/pimcore',
     '10.6',
-    'The "%s" class is deprecated and will be removed in Pimcore 11. Use %s instead.',
-    [User::class, PimcoreUser::class]
+    sprintf('The "%s" class is deprecated and will be removed in Pimcore 11. Use %s instead.', User::class, PimcoreUser::class)
 );
 
 /**
