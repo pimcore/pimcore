@@ -109,7 +109,7 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * Verifies that Internal Link data throws correct exception if invalid data is given
+     * Verifies that checkValidity method throws correct exception if invalid data is provided
      *
      */
     public function testInternalCheckValidity()
@@ -123,7 +123,7 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * Verifies that Internal Link data sanitize the link data if invalid data is given
+     * Verifies that checkValidity method sanitize the link data if invalid data is provided
      *
      */
     public function testInternalCheckValidityParam()
