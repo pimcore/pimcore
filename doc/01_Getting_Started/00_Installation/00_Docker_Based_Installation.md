@@ -30,10 +30,10 @@ docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2
 3. Part of the new project is a docker compose file
     * Run `` echo `id -u`:`id -g` `` to retrieve your local user and group id
     * Open the `docker-compose.yaml` file in an editor, uncomment all the `user: '1000:1000'` lines and update the ids if necessary
-    * Start the needed services with `docker compose up -d`
+    * Start the needed services with `docker-compose up -d`
 
 4. Install pimcore and initialize the DB
-    `docker compose exec php vendor/bin/pimcore-install` (for demo package the installation can take a while)
+    `docker-compose exec php vendor/bin/pimcore-install --mysql-host-socket=db --mysql-username=pimcore --mysql-password=pimcore --mysql-database=pimcore` (for demo package the installation can take a while)
 
 :::info
 
