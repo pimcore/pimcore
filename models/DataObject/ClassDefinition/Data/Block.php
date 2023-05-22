@@ -1125,6 +1125,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 $fd->performMultipleAssignmentCheck($data);
                             }
 
+                            if ($fd instanceof Link) {
+                                $params['resetInvalidFields'] = true;
+                            }
                             $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
