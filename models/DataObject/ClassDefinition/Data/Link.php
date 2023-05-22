@@ -243,12 +243,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 }
             }
         } elseif ($data !== null) {
-            if (isset($params['resetInvalidFields']) && $params['resetInvalidFields']) {
-                $data->setInternalType(null);
-                $data->setInternal(null);
-            } else {
-                throw new Element\ValidationException('Expected DataObject\\Data\\Link or null');
-            }
+            throw new Element\ValidationException('Expected DataObject\\Data\\Link or null');
         }
     }
 
