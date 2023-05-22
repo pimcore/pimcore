@@ -15,6 +15,8 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
@@ -29,10 +31,27 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class LinkTest extends ModelTestCase
 {
+    protected Asset $testAsset;
+
+    protected Link $link;
+
+    protected Data $linkDefinition;
+
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
+
+        $this->testAsset = TestHelper::createImageAsset();
+
+        $link = new Link();
+        $link->setInternal($this->testAsset->getId());
+        $link->setInternalType('asset');
+        $this->link = $link;
+
+        $linkObject = $this->createLinkObject();
+        $linkObject->setTestlink($link);
+        $this->linkDefinition = $linkObject->getClass()->getFieldDefinition('testlink');
     }
 
     public function tearDown(): void
@@ -79,6 +98,31 @@ class LinkTest extends ModelTestCase
 
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
+    }
+
+    /**
+     * Verifies that Internal Link data throws correct exceptions if invalid data is given
+     *
+     * @throws \Exception
+     */
+    public function testInternalCheckValidity()
+    {
+        $this->testAsset->delete();
+
+        //Should return validation exception as asset was deleted
+        $this->expectException(ValidationException::class);
+        $this->linkDefinition->checkValidity($this->link);
+    }
+
+    public function testAsset()
+    {
+        $this->testAsset->delete();
+        //Should not return validation exception as parameter is set
+        $this->linkDefinition->checkValidity($this->link, true, ['resetInvalidFields' => true]);
+
+        //Should return sanitized link data
+        $this->assertTrue($this->link->getInternal() === null);
+        $this->assertTrue($this->link->getInternalType() === null);
     }
 
     /**
