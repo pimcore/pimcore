@@ -273,6 +273,7 @@ final class Thumbnail
             array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
             foreach ($mediaConfigs as $mediaQuery => $config) {
+                $thumbConfig->setItems($config);
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
