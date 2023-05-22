@@ -54,6 +54,11 @@ class LinkTest extends ModelTestCase
         $this->tester->setupPimcoreClass_Link();
     }
 
+    /**
+     * Prepares objects for internal link tests
+     *
+     * @throws \Exception
+     */
     protected function setupInternalLinkObjects()
     {
         $this->testAsset = TestHelper::createImageAsset();
@@ -104,9 +109,8 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * Verifies that Internal Link data throws correct exceptions if invalid data is given
+     * Verifies that Internal Link data throws correct exception if invalid data is given
      *
-     * @throws \Exception
      */
     public function testInternalCheckValidity()
     {
@@ -118,7 +122,11 @@ class LinkTest extends ModelTestCase
         $this->linkDefinition->checkValidity($this->link);
     }
 
-    public function testAsset()
+    /**
+     * Verifies that Internal Link data sanitize the link data if invalid data is given
+     *
+     */
+    public function testInternalCheckValidityParam()
     {
         $this->setupInternalLinkObjects();
         $this->testAsset->delete();
