@@ -32,11 +32,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DataObjectParamResolver implements ArgumentValueResolverInterface
 {
     /**
-     * {@inheritdoc}
-     *
-     * @throws NotFoundHttpException When invalid data object ID given
+     * @return DataObjectParam[]
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    private function getDataObjectOptions(Request $request, ArgumentMetadata $argument): array
     {
         $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
 
@@ -53,22 +51,25 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
             }
         }
 
+        return $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws NotFoundHttpException When invalid data object ID given
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    {
+        $options = $this->getDataObjectOptions($request, $argument);
+
         $class = $options[0]->class ?? $argument->getType();
-        if (null === $class || !is_subclass_of($class, AbstractObject::class)) {
-            return [];
-        }
-
         $param = $argument->getName();
-        if (!$request->attributes->has($param)) {
-            return [];
-        }
-
         $value = $request->attributes->get($param);
 
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
-
-            return [];
+            return [null];
         }
 
         /** @var Concrete|null $object */
@@ -90,10 +91,14 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument)
     {
-        if (null === $argument->getType()) {
+        $param = $argument->getName();
+        if (!$request->attributes->has($param)) {
             return false;
         }
 
-        return is_subclass_of($argument->getType(), AbstractObject::class);
+        $options = $this->getDataObjectOptions($request, $argument);
+        $class = $options[0]->class ?? $argument->getType();
+
+        return $class !== null && is_subclass_of($class, AbstractObject::class);
     }
 }
