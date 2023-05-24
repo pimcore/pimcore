@@ -25,7 +25,7 @@
             {% endif %}
         </td>
 
-        <td><img src="/bundles/pimcoreadmin/img/flat-color-icons/{{ icon }}.svg" /></td>
+        <td><img src="/bundles/pimcoreadmin/img/flat-color-icons/{{ icon }}.svg" title="{% if check.message is defined %}{{ check.message }}{%  endif %}" /></td>
     </tr>
 {% endmacro %}
 
