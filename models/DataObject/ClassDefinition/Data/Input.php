@@ -239,7 +239,7 @@ class Input extends Data implements
             }
 
             if ($this->getColumnLength() && mb_strlen($data) > $this->getColumnLength()) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] is longer than ".$this->getColumnLength()." characters");
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is longer than '.$this->getColumnLength().' characters');
             }
         }
 
