@@ -116,7 +116,7 @@ class VersionTest extends TestCase
         /** @var Unittest $savedObject */
 
         // create target object
-        $randomText = TestHelper::generateRandomString(10000);
+        $randomText = TestHelper::generateRandomString(190);
 
         /** @var Unittest $targetObject */
         $targetObject = TestHelper::createEmptyObject();
