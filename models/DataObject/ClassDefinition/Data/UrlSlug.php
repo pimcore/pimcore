@@ -189,10 +189,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
-
-                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
-                        throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
-                    }
                 }
             }
         }
