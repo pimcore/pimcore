@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -337,5 +338,16 @@ class ObjectTest extends ModelTestCase
         $iqv = ['value' => null, 'unit' => null];
         $value = $dataType->getDataFromEditmode($iqv, $object);
         $this->assertNull($value);
+    }
+
+    public function testInputCheckValidate(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $targetObject = TestHelper::createEmptyObject();
+        $randomText = TestHelper::generateRandomString(500);
+
+        $targetObject->setInput($randomText);
+        $targetObject->save();
     }
 }
