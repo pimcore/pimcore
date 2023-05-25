@@ -561,7 +561,7 @@ class Service
         if ($useParts) {
             $result = '';
             foreach ($useParts as $part) {
-                $result .= 'use ' . $part . ";\r\n";
+                $result .= 'use ' . $part . ";\n";
             }
             $result .= "\n";
 
