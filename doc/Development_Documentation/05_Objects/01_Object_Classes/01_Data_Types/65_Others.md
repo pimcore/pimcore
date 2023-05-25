@@ -130,7 +130,7 @@ For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug simply
 This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
 Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.
 
-Slugs are validated against [`FILTER_VALIDATE_URL`](https://www.php.net/manual/en/filter.filters.validate.php) and you could use the [Symfony String component's slugger](https://symfony.com/doc/current/components/string.html#slugger) to generate them 
+You could use the [Symfony String component's slugger](https://symfony.com/doc/current/components/string.html#slugger) to generate the slugs. 
 
 ### Example
 
