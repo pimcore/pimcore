@@ -18,6 +18,8 @@ But of course you can setup your custom views to have separate trees for web doc
 Just use our completely redesigned [custom views](../../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md) 
 and all [new perspectives features](../../18_Tools_and_Features/13_Perspectives.md).
 
+Please note that [maintenance cron job](../../01_Getting_Started/00_Installation.md#5-maintenance-cron-job) is required to be set in place to properly process all the pdf conversion.
+
 For more detail-information on the settings see later.
 
 ## Web-To-Print Document Types
