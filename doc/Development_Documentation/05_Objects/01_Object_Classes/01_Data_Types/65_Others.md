@@ -132,7 +132,7 @@ Pimcore then cares automatically about the routing and calls the configured cont
 
 You could use the [Symfony String component's slugger](https://symfony.com/doc/current/components/string.html#slugger) to generate the slugs.
 
-> Note that slugs can't contain the following chars: `! * ' ( ) ; : @ & = + $ , ? % # [ ]` since they are reserved characters.
+> Note that slugs can't contain the following chars: `! #` since they are reserved characters.
 > For more information check the [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986#section-2.2).
 
 ### Example
