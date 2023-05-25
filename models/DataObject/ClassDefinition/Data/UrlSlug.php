@@ -177,6 +177,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
+                $matches = [];
                 $slug = htmlspecialchars($item->getSlug());
                 $foundSlug = true;
 
@@ -188,6 +189,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
+                    }
+
+                    if(preg_match_all('([!*\'\(\);:@&=+$,?%#\[\]])', $item->getSlug(), $matches)) {
+                        throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
                     }
                 }
             }
