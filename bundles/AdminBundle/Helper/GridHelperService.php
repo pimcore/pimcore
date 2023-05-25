@@ -864,8 +864,6 @@ class GridHelperService
             $tempMetaData = stream_get_meta_data($csvStream);
             $spreadsheet = $csvReader->load($tempMetaData['uri']);
         } else {
-            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-            //$spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
             $tmpFilePath = File::getLocalTempFilePath('xlsx', false);
             $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
             if (!$dest) {
