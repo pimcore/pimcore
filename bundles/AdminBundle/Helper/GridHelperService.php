@@ -869,7 +869,7 @@ class GridHelperService
             if (!$dest) {
                 throw new \Exception(sprintf('Unable to create temporary file in %s', $tmpFilePath));
             }
-    
+
             stream_copy_to_stream($csvStream, $dest);
             fclose($dest);
 
