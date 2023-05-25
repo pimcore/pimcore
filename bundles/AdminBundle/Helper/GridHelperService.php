@@ -24,6 +24,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Db;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -859,10 +860,22 @@ class GridHelperService
         $csvReader->setSheetIndex(0);
 
         $csvStream= $storage->readStream($csvFile);
-        $tempMetaData = stream_get_meta_data($csvStream);
-        //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-        //$spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
-        $spreadsheet = $csvReader->load($tempMetaData['uri']);
+        if (stream_is_local($csvStream)) {
+            $tempMetaData = stream_get_meta_data($csvStream);
+            $spreadsheet = $csvReader->load($tempMetaData['uri']);
+        } else {
+            $tmpFilePath = File::getLocalTempFilePath('xlsx', false);
+            $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
+            if (!$dest) {
+                throw new \Exception(sprintf('Unable to create temporary file in %s', $tmpFilePath));
+            }
+    
+            stream_copy_to_stream($csvStream, $dest);
+            fclose($dest);
+
+            $spreadsheet = $csvReader->load($tmpFilePath);
+        }
+
         $writer = new Xlsx($spreadsheet);
         $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
         $writer->save($xlsxFilename);
