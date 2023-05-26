@@ -822,8 +822,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     RuntimeCache::set($tag, null);
                 }
             }
+            self::updateDependendencies(self::getById($this->getId(), true));
             $this->clearDependentCache($additionalTags);
-            self::updateDependendencies(AbstractObject::getById($this->getId(), true));
 
             $postEvent = new DataObjectEvent($this, $params);
             if ($isUpdate) {
