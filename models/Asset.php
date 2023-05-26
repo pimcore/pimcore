@@ -584,8 +584,10 @@ class Asset extends Element\AbstractElement
                     RuntimeCache::set($tag, null);
                 }
             }
-            self::updateDependendencies(self::getById($this->getId(), true));
             $this->clearDependentCache($additionalTags);
+            if ($isUpdate) {
+                self::updateDependendencies(self::getById($this->getId(), true));
+            }
 
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {

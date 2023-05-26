@@ -453,8 +453,10 @@ class Document extends Element\AbstractElement
                     RuntimeCache::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
             }
-            self::updateDependendencies(self::getById($this->getId(), true));
             $this->clearDependentCache($additionalTags);
+            if ($isUpdate) {
+                self::updateDependendencies(self::getById($this->getId(), true));
+            }
 
 
             $postEvent = new DocumentEvent($this, $params);
