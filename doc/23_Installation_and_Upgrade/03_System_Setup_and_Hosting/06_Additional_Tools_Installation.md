@@ -50,7 +50,7 @@ Add a new service as:
     chrome:
         image: browserless/chrome
 ```
-and set accordingly
+and set accordingly:
 - config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`) 
 - web2print settings hostUrl as the Docker web server service (e.g. `http://nginx:80`)
 
