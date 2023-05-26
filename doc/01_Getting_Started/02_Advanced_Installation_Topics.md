@@ -153,3 +153,8 @@ pimcore:
     general:
         timezone: Europe/Berlin
 ```
+
+## Office document preview
+
+If you want to use the feauture of displaying a [preview of documents](../04_Assets/03_Working_with_Thumbnails/05_Document_Thumbnails.md) directly in Pimcore, it would be required some extra steps. 
+Please follow the instruction of the preferred approach according to your own project requirements. [Gotenberg](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-)
