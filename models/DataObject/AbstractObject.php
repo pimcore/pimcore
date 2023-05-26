@@ -823,6 +823,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+            self::updateDependendencies(AbstractObject::getById($this->getId(), true));
 
             $postEvent = new DataObjectEvent($this, $params);
             if ($isUpdate) {
@@ -934,22 +935,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Model\Dependency();
-        $d->setSourceType('object');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // dont't add a reference to yourself
-                continue;
-            }
-
-            $d->addRequirement($requirement['id'], $requirement['type']);
-        }
-
-        $d->save();
 
         //set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);

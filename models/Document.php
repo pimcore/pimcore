@@ -455,6 +455,8 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            self::updateDependendencies(Document::getById($this->getId(), true));
+
             $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -568,21 +570,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('document');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                // dont't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 

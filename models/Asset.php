@@ -585,6 +585,7 @@ class Asset extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+            self::updateDependendencies(Asset::getById($this->getId(), true));
 
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
@@ -775,21 +776,6 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('asset');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // dont't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 
