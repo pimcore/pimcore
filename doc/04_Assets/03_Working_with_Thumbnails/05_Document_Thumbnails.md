@@ -30,5 +30,5 @@ if($asset instanceof Asset\Document) {
 }
 ```
 
-> This feature requires Ghostscript and at least [Gotenberg](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or LibreOffice be installed on the server.
+> This feature requires Ghostscript and at least [Gotenberg](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-) to be installed on the server.
 
