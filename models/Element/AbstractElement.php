@@ -870,13 +870,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
-    protected static function updateDependendencies($element)
+    protected static function updateDependendencies(object $element): void
     {
         $type = match (true) {
             $element instanceof \Pimcore\Model\Asset => "asset",
             $element instanceof \Pimcore\Model\Document => "document",
             $element instanceof \Pimcore\Model\DataObject\AbstractObject => "object",
-            default => "object"
+            default => throw new \InvalidArgumentException('Unexpected element');
         };
 
         $d = new Dependency();
@@ -887,9 +887,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             if ($requirement['id'] == $element->getId() && $requirement['type'] == $type) {
                 // dont't add a reference to yourself
                 continue;
-            } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
             }
+
+            $d->addRequirement($requirement['id'], $requirement['type']);
         }
         $d->save();
     }
