@@ -876,7 +876,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $element instanceof \Pimcore\Model\Asset => "asset",
             $element instanceof \Pimcore\Model\Document => "document",
             $element instanceof \Pimcore\Model\DataObject\AbstractObject => "object",
-            default => throw new \InvalidArgumentException('Unexpected element');
+            default => throw new \InvalidArgumentException('Unexpected element')
         };
 
         $d = new Dependency();
