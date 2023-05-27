@@ -873,10 +873,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected static function updateDependendencies(object $element): void
     {
         $type = match (true) {
-            $element instanceof \Pimcore\Model\Asset => "asset",
-            $element instanceof \Pimcore\Model\Document => "document",
-            $element instanceof \Pimcore\Model\DataObject\AbstractObject => "object",
-            default => throw new \InvalidArgumentException('Unexpected element')
+            $element instanceof Model\Asset => "asset",
+            $element instanceof Model\Document => "document",
+            $element instanceof Model\DataObject\AbstractObject => "object",
+            default => throw new \InvalidArgumentException('Unexpected element, expected Asset, Document, or AbstractObject')
         };
 
         $d = new Dependency();
