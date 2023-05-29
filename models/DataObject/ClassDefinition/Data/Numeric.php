@@ -439,9 +439,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return (float) $value;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if (!is_null($data) && $this->getDecimalPrecision()) {

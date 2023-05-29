@@ -288,13 +288,11 @@ class RgbaColor extends Data implements
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /** { @inheritdoc } */
     public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
     public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);

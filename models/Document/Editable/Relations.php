@@ -183,9 +183,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store

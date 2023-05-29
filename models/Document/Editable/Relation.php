@@ -274,9 +274,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this->subtype;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {

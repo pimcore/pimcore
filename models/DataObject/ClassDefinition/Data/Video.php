@@ -325,9 +325,6 @@ class Video extends Data implements
         return $tags;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
@@ -337,9 +334,6 @@ class Video extends Data implements
         return $this;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         return $this->enrichFieldDefinition($context);
@@ -396,9 +390,6 @@ class Video extends Data implements
         return '';
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);

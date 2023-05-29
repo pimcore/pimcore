@@ -291,9 +291,6 @@ class Select extends Data implements
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),

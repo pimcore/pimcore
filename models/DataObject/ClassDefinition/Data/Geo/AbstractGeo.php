@@ -90,13 +90,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this;
     }
 
-    /** { @inheritdoc } */
     public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
     public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);

@@ -417,9 +417,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {

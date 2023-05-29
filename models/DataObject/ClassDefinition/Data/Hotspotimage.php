@@ -385,9 +385,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);

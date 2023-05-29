@@ -711,9 +711,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return true;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);

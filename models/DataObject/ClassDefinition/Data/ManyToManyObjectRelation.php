@@ -349,9 +349,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
@@ -401,9 +398,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $value;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
