@@ -36,9 +36,6 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
             ->setDescription('Change thumbnail folder structure to <asset storage>/<path to asset>/<asset id>/image-thumb__<asset id>__<thumbnail name>/<asset filename> instead of <asset storage>/<path to asset>/image-thumb__<asset id>__<thumbnail name>/<asset filename>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $thumbnailStorage = Storage::get('thumbnail');

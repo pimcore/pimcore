@@ -88,9 +88,6 @@ abstract class UserRole extends AbstractUser
      */
     protected array $websiteTranslationLanguagesEdit = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(): void
     {
         $this->getDao()->update();

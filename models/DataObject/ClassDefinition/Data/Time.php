@@ -76,9 +76,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -106,9 +103,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

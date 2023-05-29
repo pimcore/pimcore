@@ -28,9 +28,6 @@ use Pimcore\Tool\Storage;
  */
 class Folder extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 
     /**

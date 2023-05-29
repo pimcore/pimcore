@@ -96,9 +96,6 @@ class Ghostscript extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {
@@ -115,9 +112,6 @@ class Ghostscript extends Adapter
         throw new \Exception($message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());

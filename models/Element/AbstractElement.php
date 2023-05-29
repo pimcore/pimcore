@@ -250,9 +250,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setProperties(?array $properties): static
     {
         $this->properties = $properties;
@@ -320,9 +317,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $properties = $this->getProperties();
@@ -409,9 +403,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_merge(...$dependencies);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocked(): bool
     {
         if ($this->getLocked()) {
@@ -470,9 +461,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $permissions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllowed(string $type, ?User $user = null): bool
     {
         if (null === $user) {
@@ -610,17 +598,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getScheduledTasks(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         return [];

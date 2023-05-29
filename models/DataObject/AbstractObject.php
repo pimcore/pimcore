@@ -116,9 +116,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected ?string $childrenSortOrder = null;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
@@ -508,9 +505,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;

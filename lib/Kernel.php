@@ -56,36 +56,21 @@ abstract class Kernel extends SymfonyKernel
 
     private BundleCollection $bundleCollection;
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function getProjectDir(): string
     {
         return PIMCORE_PROJECT_ROOT;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function getCacheDir(): string
     {
         return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $bundleConfigLocator = new BundleConfigLocator($this);
@@ -139,9 +124,6 @@ abstract class Kernel extends SymfonyKernel
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function boot(): void
     {
         if (true === $this->booted) {
@@ -157,9 +139,6 @@ abstract class Kernel extends SymfonyKernel
         parent::boot();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shutdown(): void
     {
         if (true === $this->booted) {
@@ -170,9 +149,6 @@ abstract class Kernel extends SymfonyKernel
         parent::shutdown();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initializeContainer(): void
     {
         parent::initializeContainer();

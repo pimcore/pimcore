@@ -260,9 +260,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory()) {
@@ -287,9 +284,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
@@ -372,9 +366,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

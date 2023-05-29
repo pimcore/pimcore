@@ -32,17 +32,11 @@ class Scheduledblock extends Block implements BlockInterface
      */
     protected ?array $cachedCurrentElement = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'scheduledblock';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
@@ -58,9 +52,6 @@ class Scheduledblock extends Block implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setDefault(): static
     {
         if (empty($this->indices)) {
@@ -127,9 +118,6 @@ class Scheduledblock extends Block implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loop(): bool
     {
         $this->setDefault();
@@ -158,9 +146,6 @@ class Scheduledblock extends Block implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start(): void
     {
         if ($this->getEditmode()) {
@@ -180,9 +165,6 @@ class Scheduledblock extends Block implements BlockInterface
         $this->outputEditmode('<div class="pimcore_scheduled_block_controls" ></div>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
@@ -192,9 +174,6 @@ class Scheduledblock extends Block implements BlockInterface
         $this->getBlockState()->pushIndex((int) $elements[$this->current]['key']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = ''): void
     {
         $attributes = [
@@ -216,9 +195,6 @@ class Scheduledblock extends Block implements BlockInterface
         $this->current++;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrentIndex(): int
     {
         return (int) $this->indices[$this->getCurrent()]['key'];
@@ -231,9 +207,6 @@ class Scheduledblock extends Block implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getElements(): array
     {
         $document = $this->getDocument();

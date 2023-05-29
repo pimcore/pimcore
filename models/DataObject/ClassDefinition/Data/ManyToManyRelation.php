@@ -164,9 +164,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
@@ -195,9 +192,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $elements = [
@@ -362,9 +356,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -397,9 +388,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -546,9 +534,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->allowToClearRelation = $allowToClearRelation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -600,9 +585,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->documentTypes = $mainDefinition->documentTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getPhpdocType(): string
     {
         return $this->getPhpDocClassString(true);
@@ -726,9 +708,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $originalData = $data;
@@ -761,9 +740,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
@@ -779,17 +755,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->enableTextSelection = $enableTextSelection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
         if ($data instanceof Element\ElementInterface) {

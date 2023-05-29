@@ -30,18 +30,9 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
         $this->fullConfig = $fullConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     abstract public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array;
 
-    /**
-     * {@inheritdoc}
-     */
     abstract public function getColumns(?\stdClass $configuration): array;
 
-    /**
-     * {@inheritdoc}
-     */
     abstract public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array;
 }

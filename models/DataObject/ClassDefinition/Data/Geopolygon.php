@@ -36,9 +36,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return Serialize::serialize($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -146,9 +143,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return $this->getDiffVersionPreview($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -172,9 +166,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

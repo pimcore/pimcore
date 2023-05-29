@@ -161,9 +161,6 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -252,9 +249,6 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return $obj;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         /** @var UnitConversionService $converter */

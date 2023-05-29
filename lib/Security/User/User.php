@@ -39,9 +39,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $this->user->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserIdentifier(): string
     {
         return $this->user->getName() ?? '';
@@ -52,9 +49,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $this->user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoles(): array
     {
         $roles = [];
@@ -79,18 +73,12 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $this->user->getPassword();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function eraseCredentials(): void
     {
         // TODO: Implement eraseCredentials() method.
         // TODO: anything to do here?
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isEqualTo(UserInterface $user): bool
     {
         return $user instanceof self && $user->getId() === $this->getId();

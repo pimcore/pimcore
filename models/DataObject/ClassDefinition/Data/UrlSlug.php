@@ -122,9 +122,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data && !is_array($data)) {
@@ -428,9 +425,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -553,9 +547,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $result = [];
@@ -571,9 +562,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return implode(',', $result);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;

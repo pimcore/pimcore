@@ -304,9 +304,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return 'BRICKS';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
@@ -391,9 +388,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data instanceof DataObject\Objectbrick) {
@@ -449,9 +443,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter
@@ -495,9 +486,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Objectbrick) {
@@ -718,9 +706,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $brickdata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

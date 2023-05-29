@@ -320,7 +320,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws Exception
      */
@@ -340,9 +340,6 @@ class NumericRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -374,9 +371,6 @@ class NumericRange extends Data implements
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;

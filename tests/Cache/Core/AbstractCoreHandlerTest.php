@@ -51,9 +51,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      */
     protected static array $logHandlers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->cache = $this->createCachePool();
@@ -146,17 +143,11 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $handler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function setUpBeforeClass(): void
     {
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function tearDownAfterClass(): void
     {
         static::handleLogOutput();

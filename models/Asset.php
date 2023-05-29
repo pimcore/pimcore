@@ -131,9 +131,6 @@ class Asset extends Element\AbstractElement
      */
     protected bool $dataChanged = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
@@ -420,9 +417,6 @@ class Asset extends Element\AbstractElement
         return $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -1151,9 +1145,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         if ($this->versions === null) {
@@ -1526,9 +1517,6 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];

@@ -163,9 +163,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
@@ -177,9 +174,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

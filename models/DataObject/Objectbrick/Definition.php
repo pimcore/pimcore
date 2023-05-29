@@ -226,9 +226,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->enforceBlockRules($fds);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
@@ -522,9 +519,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {

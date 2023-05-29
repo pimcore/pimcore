@@ -113,9 +113,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return (string)$data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
@@ -128,9 +125,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         }*/
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params) ?? '';
@@ -138,9 +132,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return (string)$data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -198,9 +189,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $data === null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

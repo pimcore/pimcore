@@ -83,9 +83,6 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

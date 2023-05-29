@@ -177,9 +177,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -190,9 +187,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $return ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

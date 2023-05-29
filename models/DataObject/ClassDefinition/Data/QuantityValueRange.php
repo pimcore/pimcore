@@ -219,7 +219,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws Exception
      */
@@ -281,9 +281,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fieldName = $this->getName();

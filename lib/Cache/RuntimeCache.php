@@ -135,9 +135,6 @@ class RuntimeCache extends \ArrayObject
         parent::__construct($array, $flags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($index, $value): void
     {
         parent::offsetSet($index, $value);

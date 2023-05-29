@@ -22,8 +22,5 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface DataLoaderInterface extends LoaderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): Data;
 }

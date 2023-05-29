@@ -30,16 +30,10 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {

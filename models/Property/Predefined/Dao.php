@@ -129,9 +129,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

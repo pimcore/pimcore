@@ -113,9 +113,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -169,9 +166,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

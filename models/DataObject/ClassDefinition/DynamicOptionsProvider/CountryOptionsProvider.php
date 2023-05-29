@@ -59,9 +59,6 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;

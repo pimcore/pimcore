@@ -31,25 +31,16 @@ class Table extends Model\Document\Editable
      */
     protected array $data = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'table';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $html = '';
@@ -72,9 +63,6 @@ class Table extends Model\Document\Editable
         return $html;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -82,9 +70,6 @@ class Table extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->data = $data;

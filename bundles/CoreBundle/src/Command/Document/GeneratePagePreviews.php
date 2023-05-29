@@ -30,9 +30,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GeneratePagePreviews extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -94,9 +91,6 @@ class GeneratePagePreviews extends AbstractCommand
         return $docs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $hostUrl = $input->getOption('urlPrefix');

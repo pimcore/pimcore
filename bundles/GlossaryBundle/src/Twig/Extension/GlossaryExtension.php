@@ -33,9 +33,6 @@ class GlossaryExtension extends AbstractExtension
         $this->glossaryProcessor = $glossaryProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(): array
     {
         return [

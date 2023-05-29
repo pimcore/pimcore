@@ -342,9 +342,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return (string) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -380,9 +377,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params) ?? '';
@@ -420,9 +414,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -460,9 +451,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

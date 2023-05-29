@@ -424,17 +424,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -705,9 +699,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
@@ -797,9 +788,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
@@ -857,9 +845,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowReorder = $disallowReorder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck) {

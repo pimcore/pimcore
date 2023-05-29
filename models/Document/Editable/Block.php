@@ -46,43 +46,28 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     protected int $current = 0;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'block';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->indices;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
@@ -90,9 +75,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
@@ -198,9 +180,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementAttributes(): array
     {
         $attributes = parent::getEditmodeElementAttributes();
@@ -213,9 +192,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $attributes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start()
     {
         // set name suffix for the whole block element, this will be added to all child elements of the block
@@ -229,9 +205,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function end(bool $return = false): void
     {
         $this->current = 0;
@@ -245,9 +218,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
@@ -255,9 +225,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->getBlockState()->pushIndex((int) ($this->indices[$this->current] ?? 0));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockDestruct(): void
     {
         $blockState = $this->getBlockState();
@@ -349,25 +316,16 @@ EOT;
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCount(): int
     {
         return count($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrent(): int
     {
         return $this->current - 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrentIndex(): int
     {
         return (int) ($this->indices[$this->getCurrent()] ?? 0);

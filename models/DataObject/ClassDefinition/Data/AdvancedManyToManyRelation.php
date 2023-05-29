@@ -69,9 +69,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public bool $allowMultipleAssignments = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
@@ -101,9 +98,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $list = [
@@ -445,9 +439,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -485,9 +476,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -813,9 +801,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
@@ -846,9 +831,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function processDiffDataForEditMode(?array $originalData, ?array $data, Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
@@ -897,9 +879,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = parent::getDiffDataForEditMode($data, $object, $params);
@@ -943,9 +922,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $elementType . $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return $this->optimizedAdminLoading;

@@ -198,9 +198,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return (string)$data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
@@ -212,9 +209,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -232,9 +226,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $mainDefinition->decimalPrecision;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

@@ -179,17 +179,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return $this->getDataFromObjectParam($object, $params) ?? '';
@@ -200,9 +194,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -230,9 +221,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -285,9 +273,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
@@ -312,9 +297,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
@@ -341,33 +323,21 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
@@ -378,9 +348,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;

@@ -110,7 +110,7 @@ class Gotenberg extends Ghostscript
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws \Exception
      */

@@ -152,9 +152,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'video';
@@ -176,9 +173,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->allowedTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         $path = $this->id;
@@ -241,9 +235,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $inAdmin = false;
@@ -273,9 +264,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -324,9 +312,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $valid;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         $html = parent::admin();
@@ -338,9 +323,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $html;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
@@ -356,9 +338,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (isset($data['type'])

@@ -113,9 +113,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function allowObjectRelation($object): bool
     {
         //only relations of owner type are allowed
@@ -130,9 +127,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
@@ -184,17 +178,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);

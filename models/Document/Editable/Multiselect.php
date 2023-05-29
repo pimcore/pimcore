@@ -31,17 +31,11 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
      */
     protected array $values = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'multiselect';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->values;
@@ -52,25 +46,16 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return implode(',', $this->values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): array
     {
         return $this->values;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->values = \Pimcore\Tool\Serialize::unserialize($data);
@@ -78,9 +63,6 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (empty($data)) {

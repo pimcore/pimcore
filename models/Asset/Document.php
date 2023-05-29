@@ -25,14 +25,8 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'document';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {

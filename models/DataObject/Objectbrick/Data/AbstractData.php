@@ -200,9 +200,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $lazyLoadedFieldNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();

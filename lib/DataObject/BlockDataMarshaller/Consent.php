@@ -23,9 +23,6 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Consent implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
@@ -35,9 +32,6 @@ class Consent implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\Consent) {

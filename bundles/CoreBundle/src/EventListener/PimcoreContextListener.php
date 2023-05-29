@@ -42,9 +42,6 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

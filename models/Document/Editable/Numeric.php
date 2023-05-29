@@ -30,17 +30,11 @@ class Numeric extends Model\Document\Editable
      */
     protected ?string $number = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'numeric';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->number;
@@ -55,17 +49,11 @@ class Numeric extends Model\Document\Editable
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return $this->number;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->number = $data;
@@ -73,9 +61,6 @@ class Numeric extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->number = (string)$data;

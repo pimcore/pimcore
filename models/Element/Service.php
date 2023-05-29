@@ -1075,9 +1075,6 @@ class Service extends Model\AbstractModel
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
-            /**
-             * {@inheritdoc}
-             */
             public function matches($object, $property): bool
             {
                 try {

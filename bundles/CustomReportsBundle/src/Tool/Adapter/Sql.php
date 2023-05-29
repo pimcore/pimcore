@@ -23,9 +23,6 @@ use Pimcore\Db;
  */
 class Sql extends AbstractAdapter
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
@@ -54,9 +51,6 @@ class Sql extends AbstractAdapter
         return ['data' => $data, 'total' => $total];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns(?\stdClass $configuration): array
     {
         $sql = '';
@@ -210,9 +204,6 @@ class Sql extends AbstractAdapter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $db = Db::get();

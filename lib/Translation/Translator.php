@@ -57,10 +57,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $id = trim($id);
@@ -105,9 +101,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $term;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLocale(string $locale): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -115,10 +108,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -128,10 +117,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function getCatalogue(string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);

@@ -40,9 +40,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function register(string $id, AreabrickInterface $brick): void
     {
         if (array_key_exists($id, $this->bricks)) {
@@ -68,9 +65,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->bricks[$id] = $brick;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerService(string $id, string $serviceId): void
     {
         if (array_key_exists($id, $this->bricks)) {
@@ -94,9 +88,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->brickServiceIds[$id] = $serviceId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBrick(string $id): AreabrickInterface
     {
         $brick = null;
@@ -113,9 +104,6 @@ class AreabrickManager implements AreabrickManagerInterface
         return $brick;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBricks(): array
     {
         if (count($this->brickServiceIds) > 0) {
@@ -125,9 +113,6 @@ class AreabrickManager implements AreabrickManagerInterface
         return $this->bricks;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBrickIds(): array
     {
         $ids = array_merge(

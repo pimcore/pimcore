@@ -113,9 +113,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $v['classId'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(bool $isUpdate = null, array $params = []): void
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
@@ -220,9 +217,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
@@ -351,9 +345,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
@@ -693,9 +684,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $lazyLoadedFieldNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         if (!$this->getId()) {

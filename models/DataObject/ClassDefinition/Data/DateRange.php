@@ -177,7 +177,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws Exception
      */
@@ -199,9 +199,6 @@ class DateRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -237,9 +234,6 @@ class DateRange extends Data implements
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;

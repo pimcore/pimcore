@@ -39,9 +39,6 @@ class Page extends PageSnippet
      */
     protected string $description = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'page';
 
     /**

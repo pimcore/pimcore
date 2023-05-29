@@ -580,9 +580,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();

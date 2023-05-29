@@ -852,7 +852,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -864,7 +864,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -876,7 +876,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -888,7 +888,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -900,7 +900,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */

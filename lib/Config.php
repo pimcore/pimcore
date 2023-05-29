@@ -42,32 +42,23 @@ final class Config implements ArrayAccess
      */
     protected static ?array $systemConfig = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetExists($offset): bool
     {
         return self::getSystemConfiguration($offset) !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($offset, $value): void
     {
         throw new Exception("modifying the config isn't allowed");
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetUnset($offset): void
     {
         throw new Exception("modifying the config isn't allowed");
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return array<string, mixed>|null
      */

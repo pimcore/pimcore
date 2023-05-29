@@ -41,9 +41,6 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
 
     protected ?string $id = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setId(string $id): void
     {
         // make sure ID is only set once
@@ -58,75 +55,48 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->id ? ucfirst($this->id) : '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersion(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIcon(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasTemplate(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function action(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function postRenderAction(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHtmlTagOpen(Info $info): string
     {
         return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content '. $this->getOpenTagCssClass($info) .'">';
@@ -137,9 +107,6 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHtmlTagClose(Info $info): string
     {
         return '</div>';

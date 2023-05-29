@@ -73,9 +73,6 @@ class ObjectUserProvider implements UserProviderInterface
         $this->className = $className;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadUserByIdentifier(string $username): UserInterface
     {
         $getter = sprintf('getBy%s', ucfirst($this->usernameField));
@@ -89,9 +86,6 @@ class ObjectUserProvider implements UserProviderInterface
         throw new UserNotFoundException(sprintf('User %s was not found', $username));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof $this->className || !$user instanceof AbstractObject) {
@@ -103,9 +97,6 @@ class ObjectUserProvider implements UserProviderInterface
         return $refreshedUser;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsClass(string $class): bool
     {
         return $class === $this->className;

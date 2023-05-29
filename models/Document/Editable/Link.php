@@ -34,17 +34,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     protected ?array $data = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'link';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         // update path if internal link
@@ -53,9 +47,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         // update path if internal link
@@ -64,9 +55,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
@@ -79,9 +67,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $classes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $url = $this->getHref();
@@ -335,9 +320,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data['class'] ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -348,9 +330,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
@@ -406,9 +385,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return strlen($this->getHref()) < 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];

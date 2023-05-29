@@ -221,9 +221,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
@@ -359,9 +356,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Fieldcollection) {
@@ -458,9 +452,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter, no inheritance here, that's the only difference
@@ -505,9 +496,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->maxItems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -688,9 +676,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;

@@ -374,9 +374,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return 'CLASSIFICATIONSTORE';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'not supported';
@@ -592,9 +589,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->title;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $activeGroups = $data->getActiveGroups();
@@ -689,9 +683,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         throw new \Exception('not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return false;
@@ -843,9 +834,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $activeGroups;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->activeGroupDefinitions = [];

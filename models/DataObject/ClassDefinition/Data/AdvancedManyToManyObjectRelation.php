@@ -74,9 +74,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public array $visibleFieldDefinitions = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
@@ -106,9 +103,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $list = [
@@ -346,9 +340,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -381,9 +372,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -525,9 +513,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         parent::save($object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): array
     {
         $data = null;
@@ -679,9 +664,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $temp->getDao()->createOrUpdateTable($class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -704,9 +686,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         if ($mainDefinition instanceof self) {
@@ -716,9 +695,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $classId = $this->allowedClassId;

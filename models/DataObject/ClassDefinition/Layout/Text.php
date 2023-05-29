@@ -97,9 +97,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         $this->border = $border;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $renderer = null;

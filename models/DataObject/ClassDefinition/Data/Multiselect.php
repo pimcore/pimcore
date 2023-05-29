@@ -216,9 +216,6 @@ class Multiselect extends Data implements
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
     {
         $data = $data[0]['data'];
@@ -246,9 +243,6 @@ class Multiselect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -260,9 +254,6 @@ class Multiselect extends Data implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -334,9 +325,6 @@ class Multiselect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -428,9 +416,6 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -450,9 +435,6 @@ class Multiselect extends Data implements
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
@@ -520,9 +502,6 @@ class Multiselect extends Data implements
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -531,9 +510,6 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),

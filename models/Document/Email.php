@@ -23,9 +23,6 @@ use Pimcore\Model;
  */
 class Email extends Model\Document\PageSnippet
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'email';
 
     /**
@@ -70,9 +67,6 @@ class Email extends Model\Document\PageSnippet
      */
     protected string $bcc = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected bool $supportsContentMain = false;
 
     /**

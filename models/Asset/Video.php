@@ -29,14 +29,8 @@ class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'video';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {

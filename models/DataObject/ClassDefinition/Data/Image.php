@@ -143,9 +143,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -186,9 +183,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -241,9 +235,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $mainDefinition->uploadPath;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

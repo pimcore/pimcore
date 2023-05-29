@@ -43,9 +43,6 @@ final class AreabrickPass implements CompilerPassInterface
         $this->inflector = InflectorFactory::create()->build();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         $config = $container->getParameter('pimcore.config');

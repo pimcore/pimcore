@@ -195,9 +195,6 @@ class Input extends Data implements
         return $this->getColumnType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if(is_string($data)) {
@@ -235,9 +232,6 @@ class Input extends Data implements
         $this->columnLength = $mainDefinition->columnLength;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

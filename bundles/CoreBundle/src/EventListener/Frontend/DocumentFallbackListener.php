@@ -68,9 +68,6 @@ class DocumentFallbackListener implements EventSubscriberInterface
         $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -23,33 +23,21 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
 {
     protected bool $locked = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function lock(): void
     {
         $this->locked = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unlock(): void
     {
         $this->locked = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocked(): bool
     {
         return $this->locked;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set(string $name, mixed $value): void
     {
         $this->checkLock();
@@ -64,10 +52,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
         parent::replace($attributes);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function remove(string $name): mixed
     {
         $this->checkLock();
@@ -75,10 +59,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
         return parent::remove($name);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     public function clear(): mixed
     {
         $this->checkLock();

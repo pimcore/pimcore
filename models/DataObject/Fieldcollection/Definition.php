@@ -45,9 +45,6 @@ class Definition extends Model\AbstractModel
         'object', 'interface', 'default',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {

@@ -31,17 +31,11 @@ class Checkbox extends Model\Document\Editable
      */
     protected bool $value = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'checkbox';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->value;
@@ -52,17 +46,11 @@ class Checkbox extends Model\Document\Editable
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return (string)$this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->value = (bool) $data;
@@ -70,9 +58,6 @@ class Checkbox extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->value = (bool) $data;

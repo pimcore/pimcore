@@ -1067,9 +1067,6 @@ abstract class Page extends Container
         return \spl_object_id($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return array_merge(

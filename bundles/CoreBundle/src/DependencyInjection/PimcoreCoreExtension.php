@@ -41,9 +41,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         return 'pimcore';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called

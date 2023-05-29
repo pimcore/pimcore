@@ -33,9 +33,6 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = Db::get();

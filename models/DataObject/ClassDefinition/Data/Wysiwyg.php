@@ -175,9 +175,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -264,9 +261,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

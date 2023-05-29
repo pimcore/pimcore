@@ -253,9 +253,6 @@ class Breadcrumbs extends AbstractRenderer
         return $this->renderTemplate($container, $partial);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render(Container $container): string
     {
         if ($partial = $this->getTemplate()) {

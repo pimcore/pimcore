@@ -379,9 +379,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->document = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function render(): mixed
     {
         if ($this->editmode) {

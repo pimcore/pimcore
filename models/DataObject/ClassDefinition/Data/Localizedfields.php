@@ -327,9 +327,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return 'LOCALIZED FIELDS';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
@@ -531,9 +528,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $container->getObjectVar('localizedfields');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode($class): string
     {
         $code = '';
@@ -549,9 +543,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $code = '';
@@ -666,9 +657,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->region;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $languages = Tool::getValidLanguages();
@@ -856,9 +844,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $localizedFields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -976,9 +961,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

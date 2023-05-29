@@ -43,17 +43,11 @@ class Area extends Model\Document\Editable
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'area';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -75,9 +69,6 @@ class Area extends Model\Document\Editable
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin(): void
     {
         $attributes = $this->getEditmodeElementAttributes();
@@ -134,9 +125,6 @@ class Area extends Model\Document\Editable
         return $info;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend(): void
     {
         $config = $this->getConfig();
@@ -200,9 +188,6 @@ class Area extends Model\Document\Editable
         $blockState->popBlock();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
@@ -214,9 +199,6 @@ class Area extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {

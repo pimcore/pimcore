@@ -40,9 +40,6 @@ class EncryptedField implements MarshallerInterface
         $this->marshallerService = $marshallerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
@@ -78,9 +75,6 @@ class EncryptedField implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {

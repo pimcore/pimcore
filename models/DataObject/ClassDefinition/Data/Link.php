@@ -182,9 +182,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return (string) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Data\Link) {
@@ -248,9 +245,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -271,9 +265,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

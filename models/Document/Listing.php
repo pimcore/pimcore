@@ -96,9 +96,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $condition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);

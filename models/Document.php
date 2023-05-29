@@ -86,9 +86,6 @@ class Document extends Element\AbstractElement
      */
     protected array $siblings = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
@@ -280,9 +277,6 @@ class Document extends Element\AbstractElement
         return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;

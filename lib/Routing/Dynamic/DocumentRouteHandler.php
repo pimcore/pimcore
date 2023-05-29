@@ -87,9 +87,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         return $this->directRouteDocumentTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
@@ -103,9 +100,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());

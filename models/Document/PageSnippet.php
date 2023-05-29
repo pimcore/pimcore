@@ -122,9 +122,6 @@ abstract class PageSnippet extends Model\Document
         return self::$getInheritedValues;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         // checking the required editables renders the document, so this needs to be
@@ -137,9 +134,6 @@ abstract class PageSnippet extends Model\Document
         return parent::save($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         // update elements
@@ -224,9 +218,6 @@ abstract class PageSnippet extends Model\Document
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
@@ -251,9 +242,6 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];

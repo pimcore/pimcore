@@ -197,9 +197,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -230,9 +227,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->useCurrentDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -311,9 +305,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

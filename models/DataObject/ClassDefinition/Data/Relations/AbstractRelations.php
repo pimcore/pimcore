@@ -323,9 +323,6 @@ abstract class AbstractRelations extends Data implements
         return $elementType . $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isEqual(mixed $array1, mixed $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);

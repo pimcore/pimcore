@@ -34,9 +34,6 @@ class DocumentEditableExtension extends AbstractExtension
         $this->editableRenderer = $editableRenderer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [

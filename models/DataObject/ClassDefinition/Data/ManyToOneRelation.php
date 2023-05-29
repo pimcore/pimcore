@@ -149,9 +149,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         if ($data instanceof Element\ElementInterface) {
@@ -168,9 +165,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         // data from relation table
@@ -282,9 +276,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -309,9 +300,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -415,9 +403,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $this->allowToClearRelation = $allowToClearRelation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -446,9 +431,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $this->relationType = $mainDefinition->relationType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getPhpdocType(): string
     {
         return $this->getPhpDocClassString(false);
@@ -489,9 +471,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -507,9 +486,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '?\\' . Element\AbstractElement::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
         if ($data instanceof Element\ElementInterface) {

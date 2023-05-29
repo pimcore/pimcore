@@ -56,9 +56,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
         $this->configureDryRunOption();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $this->getPath();

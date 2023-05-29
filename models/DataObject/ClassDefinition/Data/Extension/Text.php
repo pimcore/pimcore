@@ -21,9 +21,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 trait Text
 {
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -36,9 +33,6 @@ trait Text
         return strlen((string) $data) < 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;

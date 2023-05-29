@@ -66,9 +66,6 @@ class Link extends Model\Document
      */
     protected string $linktype = 'internal';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'link';
 
     /**
@@ -78,9 +75,6 @@ class Link extends Model\Document
      */
     protected string $href = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -333,9 +327,6 @@ class Link extends Model\Document
         return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);
