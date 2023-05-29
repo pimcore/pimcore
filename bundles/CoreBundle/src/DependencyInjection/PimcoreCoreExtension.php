@@ -248,8 +248,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Allows us to prepend/modify configurations of different extensions
-     *
-     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container): void
     {
