@@ -28,35 +28,30 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'text';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $html = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $renderingClass = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $renderingData;
 
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $border = false;
 

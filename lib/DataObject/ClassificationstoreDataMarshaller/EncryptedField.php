@@ -34,7 +34,6 @@ class EncryptedField implements MarshallerInterface
     /**
      * Localizedfields constructor.
      *
-     * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
     {
@@ -111,10 +110,7 @@ class EncryptedField implements MarshallerInterface
     }
 
     /**
-     * @param mixed $data
-     * @param array $params
      *
-     * @return string
      *
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
@@ -147,10 +143,7 @@ class EncryptedField implements MarshallerInterface
     }
 
     /**
-     * @param string|null $data
-     * @param array $params
      *
-     * @return string|null
      *
      * @throws \Exception
      */

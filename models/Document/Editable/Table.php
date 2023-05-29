@@ -28,7 +28,6 @@ class Table extends Model\Document\Editable
      *
      * @internal
      *
-     * @var array
      */
     protected array $data = [];
 

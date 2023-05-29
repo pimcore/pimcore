@@ -29,16 +29,11 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var int
      */
     public int $defaultValue = 0;
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -59,11 +54,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Consent
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -85,11 +76,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -103,11 +90,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -127,11 +110,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Consent
      *
      * @see Data::getDataFromEditmode
      */
@@ -172,11 +151,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return DataObject\Data\Consent
      */
     public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): DataObject\Data\Consent
     {
@@ -216,11 +192,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Data\Consent|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?DataObject\Data\Consent $data, Concrete $object = null, array $params = []): ?array
     {
@@ -228,11 +201,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param bool|string $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return DataObject\Data\Consent
      */
     public function getDataFromGridEditor(bool|string $data, Concrete $object = null, array $params = []): DataObject\Data\Consent
     {
@@ -240,11 +210,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -298,11 +264,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -319,11 +281,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

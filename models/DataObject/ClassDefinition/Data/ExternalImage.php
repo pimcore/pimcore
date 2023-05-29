@@ -27,21 +27,18 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $previewWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $inputWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $previewHeight = null;
 
@@ -76,11 +73,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -94,9 +87,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      *
@@ -117,11 +107,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -131,11 +117,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -152,9 +134,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForGrid(?DataObject\Data\ExternalImage $data, Concrete $object = null, array $params = []): ?string
     {
@@ -162,9 +142,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      *
@@ -176,9 +153,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param string|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      */
@@ -188,11 +163,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -230,11 +201,8 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param string $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(string $data, Concrete $object = null, array $params = []): string
     {
@@ -256,9 +224,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException
      */

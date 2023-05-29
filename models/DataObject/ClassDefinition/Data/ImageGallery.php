@@ -32,7 +32,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @internal
      *
-     * @var string
      */
     public string $uploadPath;
 
@@ -49,7 +48,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @internal
      *
-     * @var string
      */
     public string $predefinedDataTemplates;
 
@@ -94,11 +92,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -135,11 +129,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\ImageGallery
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -203,11 +193,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param Concrete|null $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -217,11 +203,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -241,11 +223,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\ImageGallery
      *
      * @see Data::getDataFromEditmode
      */
@@ -264,24 +242,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return new DataObject\Data\ImageGallery($resultItems);
     }
 
-    /**
-     * @param array|null $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\ImageGallery
-     */
     public function getDataFromGridEditor(?array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -341,13 +308,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $dependencies;
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array
-     */
     public function getDataForGrid(?DataObject\Data\ImageGallery $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
@@ -370,9 +330,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Element\ValidationException
      */

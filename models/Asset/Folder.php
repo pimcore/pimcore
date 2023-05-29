@@ -43,7 +43,6 @@ class Folder extends Model\Asset
     /**
      * set the children of the document
      *
-     * @param Listing|null $children
      *
      * @return $this
      */
@@ -81,8 +80,6 @@ class Folder extends Model\Asset
 
     /**
      * @internal
-     *
-     * @param bool $force
      *
      * @return resource|null
      *

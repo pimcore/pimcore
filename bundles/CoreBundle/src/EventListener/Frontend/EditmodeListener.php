@@ -141,8 +141,6 @@ class EditmodeListener implements EventSubscriberInterface
     /**
      * Inject editmode assets into response HTML
      *
-     * @param Document $document
-     * @param Response $response
      */
     protected function addEditmodeAssets(Document $document, Response $response): void
     {

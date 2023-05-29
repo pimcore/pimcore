@@ -36,7 +36,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
@@ -48,7 +47,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
-     * @var array|string|null
      */
     public array|string|null $visibleFields = null;
 
@@ -75,7 +73,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
-     * @var array
      */
     public array $visibleFieldDefinitions = [];
 
@@ -137,11 +134,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @throws \Exception
      *
@@ -171,11 +164,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -201,11 +190,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -231,11 +216,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -245,24 +226,13 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * @param array|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDataForGrid(?array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -430,9 +400,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @param Element\ElementInterface[]|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -601,9 +569,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param array $item
      *
-     * @return string
      *
      * @internal
      *
@@ -683,11 +649,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /** See parent class.
      *
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -795,11 +757,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

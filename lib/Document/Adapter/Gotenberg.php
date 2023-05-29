@@ -56,7 +56,6 @@ class Gotenberg extends Ghostscript
     }
 
     /**
-     * @return bool
      *
      * @throws \Exception
      */

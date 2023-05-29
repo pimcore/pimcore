@@ -37,7 +37,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @internal
      *
-     * @var array
      */
     protected array $elementIds = [];
 

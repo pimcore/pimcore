@@ -28,7 +28,6 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var string
      */
     protected string $text = '';
 

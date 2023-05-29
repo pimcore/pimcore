@@ -53,7 +53,6 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */

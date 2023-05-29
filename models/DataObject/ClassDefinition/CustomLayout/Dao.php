@@ -45,7 +45,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -131,9 +130,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get latest identifier
      *
-     * @param string $classId
      *
-     * @return UuidV4
      */
     public function getLatestIdentifier(string $classId): UuidV4
     {

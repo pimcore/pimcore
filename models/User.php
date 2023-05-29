@@ -111,7 +111,6 @@ final class User extends User\UserRole
     /**
      * Alias for getName()
      *
-     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -198,7 +197,6 @@ final class User extends User\UserRole
     /**
      * @see getAdmin()
      *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -426,8 +424,6 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param int|null $width
-     * @param int|null $height
      *
      * @return resource
      */

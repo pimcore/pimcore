@@ -35,7 +35,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var array
      */
     protected array $indices = [];
 
@@ -44,7 +43,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var int
      */
     protected int $current = 0;
 
@@ -163,7 +161,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return bool
      */
     public function loop(): bool
     {

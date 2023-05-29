@@ -102,11 +102,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public ?array $permissionEdit = null;
 
     /**
-     * @param mixed $localizedField
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -258,9 +254,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Localizedfield
      *
@@ -300,9 +293,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @param DataObject\Localizedfield|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return \stdClass
      */
     public function getDataForGrid(?Localizedfield $data, Concrete $object = null, array $params = []): \stdClass
     {
@@ -324,11 +315,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -479,8 +466,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
@@ -653,7 +638,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param string $name
      *
      * @return $this
      *
@@ -779,13 +763,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
@@ -830,9 +807,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
      * @return DataObject\Localizedfield
      */

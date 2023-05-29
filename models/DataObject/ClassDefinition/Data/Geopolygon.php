@@ -26,11 +26,7 @@ use Pimcore\Tool\Serialize;
 class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -75,11 +71,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -89,11 +81,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -103,11 +91,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -132,9 +116,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
      *
@@ -155,11 +136,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -206,11 +183,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {

@@ -29,7 +29,6 @@ class TranslatorTest extends TestCase
     /**
      * ['locale' => 'fallback']
      *
-     * @var array
      */
     protected array $locales = [
         'en' => '',

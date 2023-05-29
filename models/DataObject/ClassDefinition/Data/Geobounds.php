@@ -30,11 +30,7 @@ class Geobounds extends AbstractGeo implements
     NormalizerInterface
 {
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -78,11 +74,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Geobounds|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -108,11 +100,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -122,11 +110,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -146,11 +130,8 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param DataObject\Data\Geobounds|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?DataObject\Data\Geobounds $data, Concrete $object = null, array $params = []): ?array
     {
@@ -158,11 +139,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Geobounds|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -179,11 +156,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *

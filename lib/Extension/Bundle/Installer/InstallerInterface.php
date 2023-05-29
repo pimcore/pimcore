@@ -39,28 +39,24 @@ interface InstallerInterface
     /**
      * Determine if bundle is installed
      *
-     * @return bool
      */
     public function isInstalled(): bool;
 
     /**
      * Determine if bundle is ready to be installed. Can be used to check prerequisites
      *
-     * @return bool
      */
     public function canBeInstalled(): bool;
 
     /**
      * Determine if bundle can be uninstalled
      *
-     * @return bool
      */
     public function canBeUninstalled(): bool;
 
     /**
      * Determines if admin interface should be reloaded after installation/uninstallation
      *
-     * @return bool
      */
     public function needsReloadAfterInstall(): bool;
 

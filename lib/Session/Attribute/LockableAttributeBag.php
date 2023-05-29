@@ -67,7 +67,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      *
-     * @return mixed
      */
     public function remove(string $name): mixed
     {
@@ -79,7 +78,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      *
-     * @return mixed
      */
     public function clear(): mixed
     {

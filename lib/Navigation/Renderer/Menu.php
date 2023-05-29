@@ -47,77 +47,66 @@ class Menu extends AbstractRenderer
     /**
      * CSS class to use for the ul element
      *
-     * @var string
      */
     protected string $_ulClass = 'navigation';
 
     /**
      * Unique identifier (id) for the ul element
      *
-     * @var string|null
      */
     protected ?string $_ulId = null;
 
     /**
      * CSS class to use for the active elements
      *
-     * @var string
      */
     protected string $_activeClass = 'active';
 
     /**
      * CSS class to use for the parent li element
      *
-     * @var string
      */
     protected string $_parentClass = 'menu-parent';
 
     /**
      * Whether parent li elements should be rendered with parent class
      *
-     * @var bool
      */
     protected bool $_renderParentClass = false;
 
     /**
      * Whether only active branch should be rendered
      *
-     * @var bool
      */
     protected bool $_onlyActiveBranch = false;
 
     /**
      * Whether parents should be rendered when only rendering active branch
      *
-     * @var bool
      */
     protected bool $_renderParents = true;
 
     /**
      * Partial view script to use for rendering menu
      *
-     * @var string|array|null
      */
     protected string|array|null $_template = null;
 
     /**
      * Expand all sibling nodes of active branch nodes
      *
-     * @var bool
      */
     protected bool $_expandSiblingNodesOfActiveBranch = false;
 
     /**
      * Adds CSS class from page to li element
      *
-     * @var bool
      */
     protected bool $_addPageClassToLi = false;
 
     /**
      * Inner indentation string
      *
-     * @var string
      */
     protected string $_innerIndent = '    ';
 
@@ -355,7 +344,6 @@ class Menu extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param array|string $partial
      *
      * @return $this
      */
@@ -369,7 +357,6 @@ class Menu extends AbstractRenderer
     /**
      * Alias of getTemplate()
      *
-     * @return array|string|null
      */
     public function getPartial(): array|string|null
     {
@@ -409,7 +396,6 @@ class Menu extends AbstractRenderer
      * Returns a flag indicating whether the CSS class from page to be added to
      * li element
      *
-     * @return bool
      */
     public function getAddPageClassToLi(): bool
     {
@@ -892,7 +878,6 @@ class Menu extends AbstractRenderer
      *
      * Available $options:
      *
-     * @param  Container $container
      * @param  array $options    [optional] options for controlling rendering
      *
      * @return string rendered menu
@@ -951,7 +936,6 @@ class Menu extends AbstractRenderer
      * ));
      * </code>
      *
-     * @param  Container $container
      * @param string|null $ulClass    [optional] CSS class to
      *                                               use for UL element. Default
      *                                               is to use the value from
@@ -1001,7 +985,6 @@ class Menu extends AbstractRenderer
      * as-is, and will be available in the partial script as 'container', e.g.
      * <code>echo 'Number of pages: ', count($this->container);</code>.
      *
-     * @param  Container $container
      * @param array|string|null $partial     [optional] partial view
      *                                               script to use. Default is to
      *                                               use the partial registered
@@ -1038,10 +1021,7 @@ class Menu extends AbstractRenderer
     /**
      * Alias of renderTemplate()
      *
-     * @param Container $container
-     * @param array|string|null $partial
      *
-     * @return string
      */
     public function renderPartial(Container $container, array|string $partial = null): string
     {

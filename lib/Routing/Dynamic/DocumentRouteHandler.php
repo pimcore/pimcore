@@ -45,7 +45,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * Determines if unpublished documents should be matched, even when not in admin mode. This
      * is mainly needed for maintencance jobs/scripts.
      *
-     * @var bool
      */
     private bool $forceHandleUnpublishedDocuments = false;
 
@@ -158,10 +157,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * Build a route for a document. Context is only set from match mode, not when generating URLs.
      *
-     * @param Document $document
-     * @param DynamicRequestContext|null $context
      *
-     * @return DocumentRoute|null
      */
     public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null): ?DocumentRoute
     {

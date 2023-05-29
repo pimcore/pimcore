@@ -68,7 +68,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Set up a logger with a buffer and a test handler (can be printed to STDOUT on demand)
      *
-     * @param string $name
      */
     protected static function setupLogger(string $name): void
     {
@@ -105,7 +104,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Initializes item pool
      *
-     * @return TagAwareAdapterInterface
      */
     abstract protected function createCachePool(): TagAwareAdapterInterface;
 
@@ -164,12 +162,6 @@ abstract class AbstractCoreHandlerTest extends Unit
         static::handleLogOutput();
     }
 
-    /**
-     * @param string $property
-     * @param CoreCacheHandler|null $handler
-     *
-     * @return mixed
-     */
     protected function getHandlerPropertyValue(string $property, CoreCacheHandler $handler = null): mixed
     {
         if (null === $handler) {
@@ -192,8 +184,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Add sample entries to cache
      *
-     * @param bool $write
-     * @param bool $assertExisting
      */
     protected function buildSampleEntries(bool $write = true, bool $assertExisting = true): void
     {
@@ -222,7 +212,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @dataProvider invalidKeys
      *
-     * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave(string $key): void
     {
@@ -235,7 +224,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @dataProvider invalidKeys
      *
-     * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove(string $key): void
     {
@@ -572,8 +560,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @dataProvider tagEntriesProvider
      *
-     * @param string $tag
-     * @param array $expectedRemoveEntries
      */
     public function testClearTag(string $tag, array $expectedRemoveEntries): void
     {
@@ -588,8 +574,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @skipped
      *
-     * @param array $tags
-     * @param array $expectedRemoveEntries
      */
     public function testClearTags(array $tags, array $expectedRemoveEntries): void
     {
@@ -725,7 +709,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Data provider for invalid keys.
      *
-     * @return array
      */
     public static function invalidKeys(): array
     {

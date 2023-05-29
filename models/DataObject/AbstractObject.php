@@ -137,7 +137,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @return bool
      */
     public static function getHideUnpublished(): bool
     {
@@ -147,7 +146,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param bool $hideUnpublished
      */
     public static function setHideUnpublished(bool $hideUnpublished): void
     {
@@ -157,7 +155,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @return bool
      */
     public static function doHideUnpublished(): bool
     {
@@ -167,7 +164,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param bool $getInheritedValues
      */
     public static function setGetInheritedValues(bool $getInheritedValues): void
     {
@@ -177,7 +173,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @return bool
      */
     public static function getGetInheritedValues(): bool
     {
@@ -187,9 +182,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param Concrete|null $object
      *
-     * @return bool
      */
     public static function doGetInheritedValues(Concrete $object = null): bool
     {
@@ -305,7 +298,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $config
      *
      * @return DataObject\Listing
      *
@@ -710,8 +702,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool|null $isUpdate
-     * @param array $params
      *
      * @throws \Exception
      *
@@ -763,8 +753,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $objectId
-     * @param array $additionalTags
      *
      * @internal
      */
@@ -785,7 +773,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $index
      *
      * @internal
      */
@@ -939,10 +926,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $fieldName
-     * @param string|null $language
      *
-     * @return mixed
      *
      * @throws \Exception
      */
@@ -956,11 +940,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $fieldName
-     * @param mixed $value
-     * @param string|null $language
      *
-     * @return mixed
      *
      * @throws \Exception
      */
@@ -976,7 +956,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @return bool
      */
     public static function isDirtyDetectionDisabled(): bool
     {
@@ -986,7 +965,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @param bool $disableDirtyDetection
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
@@ -1012,9 +990,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @param array $args
      *
-     * @return string
      */
     protected function getListingCacheKey(array $args = []): string
     {
@@ -1031,7 +1007,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string | null $reverseSort
      *
      * @return AbstractObject
      */
@@ -1060,8 +1035,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
      *
      * @return mixed
      *
@@ -1112,10 +1085,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $listConfig
-     * @param array|null $objectTypes
      *
-     * @return Listing
      *
      * @throws \Exception
      */

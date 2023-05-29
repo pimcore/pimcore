@@ -419,7 +419,6 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $CMYKColorProfile
      *
      * @internal
      */
@@ -431,7 +430,6 @@ class Imagick extends Adapter
     /**
      * @internal
      *
-     * @return string
      */
     public static function getCMYKColorProfile(): string
     {
@@ -450,7 +448,6 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $RGBColorProfile
      *
      * @internal
      *
@@ -463,7 +460,6 @@ class Imagick extends Adapter
     /**
      * @internal
      *
-     * @return string
      */
     public static function getRGBColorProfile(): string
     {

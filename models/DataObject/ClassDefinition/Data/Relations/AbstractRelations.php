@@ -44,7 +44,6 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @var array
      */
     public array $classes = [];
 
@@ -60,7 +59,6 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @var null|string
      */
     public ?string $pathFormatterClass = null;
 
@@ -192,11 +190,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param array $data
-     * @param Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
-     * @param array $params
      *
-     * @return mixed
      *
      * @internal
      */
@@ -205,9 +199,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @param array|ElementInterface $data
      * @param Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
      *
      * @internal
      */
@@ -228,10 +219,7 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $data
-     * @param array $idMapping
      *
-     * @return array
      *
      * @internal
      */
@@ -323,9 +311,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param Element\ElementInterface $item
      *
-     * @return string
      *
      * @internal
      */
@@ -375,8 +361,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @param DataObject\Fieldcollection\Data\AbstractData $item
-     *
      * @throws \Exception
      */
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item): void
@@ -395,8 +379,6 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
-     *
-     * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */
@@ -419,7 +401,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @param array|null $data
      *
      * @throws Element\ValidationException
      *
@@ -492,7 +473,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @return string
      */
     abstract protected function getPhpdocType(): string;
 }

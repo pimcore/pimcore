@@ -79,9 +79,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
      *
-     * @return null|CustomLayout
      *
      * @throws \Exception
      */
@@ -108,10 +106,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param string $classId
      *
-     * @return null|CustomLayout
      *
      * @throws \Exception
      */
@@ -202,7 +197,6 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {
@@ -222,9 +216,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $classId
      *
-     * @return UuidV4|null
      *
      *
      */

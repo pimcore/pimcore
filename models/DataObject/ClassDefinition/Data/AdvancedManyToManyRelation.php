@@ -36,7 +36,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * @internal
      *
-     * @var array
      */
     public array $columns;
 
@@ -52,7 +51,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @internal
      *
-     * @var string
      */
     public string $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
@@ -193,11 +191,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -226,11 +220,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -347,11 +337,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -412,13 +398,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $multihrefMetadata;
     }
 
-    /**
-     * @param array|null $data
-     * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
         $ret = $this->getDataForEditmode($data, $object, $params);
@@ -427,11 +406,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -933,11 +908,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /** See parent class.
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
     {
@@ -959,9 +931,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param ElementInterface $item
      *
-     * @return string
      *
      * @internal
      */

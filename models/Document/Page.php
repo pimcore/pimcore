@@ -28,7 +28,6 @@ class Page extends PageSnippet
      *
      * @internal
      *
-     * @var string
      */
     protected string $title = '';
 
@@ -37,7 +36,6 @@ class Page extends PageSnippet
      *
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
@@ -49,7 +47,6 @@ class Page extends PageSnippet
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $prettyUrl = null;
 

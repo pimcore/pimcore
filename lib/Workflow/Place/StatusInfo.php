@@ -48,9 +48,6 @@ class StatusInfo
         );
     }
 
-    /**
-     * @param string|null $workflowName
-     */
     public function getAllPalacesHtml(object $subject, string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);

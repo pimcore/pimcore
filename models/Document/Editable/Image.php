@@ -47,56 +47,48 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementInterface|Element\ElementDescriptor|null
      */
     protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $cropPercent = false;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropLeft = 0.0;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $hotspots = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $marker = [];
 

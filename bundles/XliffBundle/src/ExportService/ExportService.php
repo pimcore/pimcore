@@ -29,8 +29,6 @@ class ExportService implements ExportServiceInterface
     /**
      * ExportService constructor.
      *
-     * @param ExportDataExtractorServiceInterface $exportDataExtractorService
-     * @param ExporterInterface $translationExporter
      */
     public function __construct(
         ExportDataExtractorServiceInterface $exportDataExtractorService,

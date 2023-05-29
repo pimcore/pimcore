@@ -51,14 +51,12 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * An index that contains the order in which to iterate pages
      *
-     * @var array
      */
     protected array $_index = [];
 
     /**
      * Whether index is dirty and needs to be re-arranged
      *
-     * @var bool
      */
     protected bool $_dirtyIndex = false;
 
@@ -487,7 +485,6 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Returns an array representation of all pages in container
      *
-     * @return array
      */
     public function toArray(): array
     {
@@ -504,7 +501,6 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return Page
      *
      * @throws \Exception
      */

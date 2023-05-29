@@ -38,7 +38,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Adds a new state to the stack
      *
-     * @param BlockState|null $blockState
      */
     public function push(BlockState $blockState = null): void
     {
@@ -52,7 +51,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Removes current state from the stack
      *
-     * @return BlockState
      */
     public function pop(): BlockState
     {
@@ -66,7 +64,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Returns current state
      *
-     * @return BlockState
      */
     public function getCurrentState(): BlockState
     {

@@ -79,8 +79,6 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     /**
      * Do context specific initialization
      *
-     * @param string $context
-     * @param Request $request
      */
     protected function initializeContext(string $context, Request $request): void
     {

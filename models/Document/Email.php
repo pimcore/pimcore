@@ -78,7 +78,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Contains the email subject
      *
-     * @param string $subject
      *
      * @return $this
      */
@@ -92,7 +91,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the email subject
      *
-     * @return string
      */
     public function getSubject(): string
     {
@@ -102,7 +100,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "to" receiver
      *
-     * @param string $to
      *
      * @return $this
      */
@@ -116,7 +113,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "to" receivers
      *
-     * @return string
      */
     public function getTo(): string
     {
@@ -126,7 +122,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "from" email address
      *
-     * @param string $from
      *
      * @return $this
      */
@@ -140,7 +135,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "from" email address
      *
-     * @return string
      */
     public function getFrom(): string
     {
@@ -150,7 +144,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "replyTo" email address
      *
-     * @param string $replyTo
      *
      * @return $this
      */
@@ -164,7 +157,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "replyTo" email address
      *
-     * @return string
      */
     public function getReplyTo(): string
     {
@@ -174,7 +166,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the carbon copy receivers (multiple receivers should be separated with a ",")
      *
-     * @param string $cc
      *
      * @return $this
      */
@@ -188,7 +179,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the carbon copy receivers
      *
-     * @return string
      */
     public function getCc(): string
     {
@@ -198,7 +188,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the blind carbon copy receivers (multiple receivers should be separated with a ",")
      *
-     * @param string $bcc
      *
      * @return $this
      */
@@ -212,7 +201,6 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the blind carbon copy receivers
      *
-     * @return string
      */
     public function getBcc(): string
     {

@@ -36,21 +36,18 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $allowedClassId = null;
 
     /**
      * @internal
      *
-     * @var array|string|null
      */
     public array|string|null $visibleFields = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $columns = [];
 
@@ -74,7 +71,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var array
      */
     public array $visibleFieldDefinitions = [];
 
@@ -206,11 +202,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -251,11 +243,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -308,11 +296,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -320,11 +305,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -945,9 +926,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param ElementInterface $item
      *
-     * @return string
      *
      * @internal
      */

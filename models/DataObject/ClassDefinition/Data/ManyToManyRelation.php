@@ -41,7 +41,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
@@ -53,7 +52,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      *
-     * @var string
      */
     public string $assetUploadPath;
 
@@ -82,7 +80,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @internal
      *
-     * @var array
      */
     public array $assetTypes = [];
 
@@ -96,7 +93,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @internal
      *
-     * @var array
      */
     public array $documentTypes = [];
 
@@ -229,11 +225,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @throws \Exception
      *
@@ -263,11 +255,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -299,11 +287,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -337,11 +321,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
@@ -349,11 +330,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
      *
      * @todo: $pathes is undefined
      */
@@ -363,11 +340,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -584,11 +557,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -659,10 +629,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** See marshal
      *
-     * @param mixed $value
-     * @param array $params
      *
-     * @return array|null
      */
     public function denormalize(mixed $value, array $params = []): ?array
     {
@@ -686,9 +653,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param array $item
      *
-     * @return string
      */
     public function buildUniqueKeyForDiffEditor(array $item): string
     {
@@ -704,11 +669,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @param Element\ElementInterface[]|null $originalData
-     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     protected function processDiffDataForEditMode(?array $originalData, ?array $data, Concrete $object = null, array $params = []): ?array
     {
@@ -777,11 +739,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** See parent class.
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
     {
@@ -856,11 +815,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

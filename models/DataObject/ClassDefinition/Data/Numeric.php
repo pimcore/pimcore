@@ -47,7 +47,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float|int|string|null
      */
     public string|int|null|float $defaultValue = null;
 
@@ -64,14 +63,12 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $minValue = null;
 
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $maxValue = null;
 
@@ -87,7 +84,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @internal
      *
-     * @var int|null
      */
     public ?int $decimalSize = null;
 
@@ -97,7 +93,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @internal
      *
-     * @var int|null
      */
     public ?int $decimalPrecision = null;
 
@@ -274,11 +269,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -294,11 +285,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -313,11 +300,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
@@ -330,11 +313,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see Data::getDataForEditmode
      */
@@ -344,11 +323,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|int|string|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -358,11 +333,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
      *
      * @see Data::getVersionPreview
      */
@@ -422,11 +393,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

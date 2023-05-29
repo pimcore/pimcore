@@ -41,7 +41,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @internal
      *
-     * @var string
      */
     public string $elementType = 'input';
 
@@ -58,7 +57,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @internal
      *
-     * @var string
      */
     public string $calculatorClass;
 
@@ -67,7 +65,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @internal
      *
-     * @var int
      */
     public int $columnLength = 190;
 
@@ -136,11 +133,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -150,11 +143,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
      * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      */
@@ -168,9 +157,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return null
      *
@@ -183,11 +169,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -391,13 +373,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;

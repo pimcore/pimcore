@@ -78,14 +78,6 @@ class Sql extends AbstractAdapter
         throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    /**
-     * @param \stdClass $config
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return string
-     */
     protected function buildQueryString(\stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
     {
         $config = (array)$config;
@@ -139,15 +131,6 @@ class Sql extends AbstractAdapter
         return $sql;
     }
 
-    /**
-     * @param array $filters
-     * @param array $fields
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return array|null
-     */
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
     {
         $db = Db::get();

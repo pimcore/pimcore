@@ -45,11 +45,7 @@ trait Text
     }
 
     /**
-     * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *

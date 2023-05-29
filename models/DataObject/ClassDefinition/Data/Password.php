@@ -35,21 +35,18 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @internal
      *
-     * @var string
      */
     public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $salt = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $saltlocation = '';
 
@@ -96,11 +93,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -156,9 +149,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
-     * @param string $data
      *
-     * @return string
      *
      * @internal
      */
@@ -190,11 +181,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @param string $password
-     * @param DataObject\Concrete $object
      * @param bool|true $updateHash
-     *
-     * @return bool
      *
      * @internal
      */
@@ -230,11 +217,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -244,11 +227,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -276,11 +255,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -309,11 +284,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return mixed
      */
     public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
     {
@@ -321,11 +293,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -380,9 +348,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException|\Exception
      */

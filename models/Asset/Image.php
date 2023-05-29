@@ -62,9 +62,7 @@ class Image extends Model\Asset
     }
 
     /**
-     * @param string|null $generator
      *
-     * @return bool|string
      *
      * @throws \Exception
      *
@@ -170,7 +168,6 @@ EOT;
      *
      * @internal
      *
-     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
@@ -192,7 +189,6 @@ EOT;
      *
      * @throws \Exception
      *
-     * @return null|\Pimcore\Image\Adapter
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
@@ -223,10 +219,7 @@ EOT;
     }
 
     /**
-     * @param string|null $path
-     * @param bool $force
      *
-     * @return array|null
      *
      * @throws \Exception
      */
@@ -355,7 +348,6 @@ EOT;
     /**
      * Checks if this file represents an animated image (png or gif)
      *
-     * @return bool
      */
     public function isAnimated(): bool
     {

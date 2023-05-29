@@ -31,7 +31,6 @@ trait JsonHelperTrait
     /**
      * @required
      *
-     * @param PimcoreSerializer $pimcoreSerializer
      */
     public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
     {

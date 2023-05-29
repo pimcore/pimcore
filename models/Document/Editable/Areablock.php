@@ -35,7 +35,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var array
      */
     protected array $indices = [];
 
@@ -44,28 +43,24 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var int
      */
     protected int $current = 0;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $currentIndex;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $blockStarted;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $brickTypeUsageCounter = [];
 
@@ -144,7 +139,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return bool
      */
     public function loop(): bool
     {
@@ -203,7 +197,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return Area\Info
      */
     public function buildInfoObject(): Area\Info
     {
@@ -230,8 +223,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @param null|Document\Editable\Area\Info $info
-     * @param array $templateParams
-     * @param bool $return
      *
      * @return string|void
      */
@@ -263,7 +254,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return EditableHandler
      */
     protected function getEditableHandler(): EditableHandler
     {
@@ -458,10 +448,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * This method needs to be `protected` as it is used in other bundles such as pimcore/headless-documents
      *
-     * @param array $config
-     * @param EditableRenderer $editableRenderer
-     * @param string $dialogId
-     * @param string $html
      *
      * @throws \Exception
      *
@@ -657,7 +643,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param string $name
      *
      * @return Areablock\Item[]
      */

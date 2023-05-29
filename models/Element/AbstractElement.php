@@ -182,7 +182,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
     public function getLocked(): ?string
     {
@@ -196,7 +195,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
@@ -373,9 +371,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|string $id
      *
-     * @return string
      *
      * @internal
      */
@@ -398,7 +394,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      *
-     * @return array
      */
     protected function resolveDependencies(): array
     {
@@ -428,9 +423,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param User|null $user
      *
-     * @return array
      *
      * @throws \Exception
      *
@@ -561,12 +554,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param string|null $versionNote
-     * @param bool $saveOnlyVersion
-     * @param bool $saveStackTrace
-     * @param bool $isAutoSave
      *
-     * @return Model\Version
      *
      * @throws \Exception
      *
@@ -685,7 +673,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|null $userId
      *
      * @internal
      */

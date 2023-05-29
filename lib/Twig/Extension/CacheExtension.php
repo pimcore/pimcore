@@ -52,9 +52,6 @@ class CacheExtension extends AbstractExtension
     }
 
     /**
-     * @param string $name
-     * @param int|null $lifetime
-     * @param bool $force
      *
      * @return $this
      */
@@ -126,9 +123,6 @@ class CacheExtension extends AbstractExtension
     /**
      * Save the (rendered) content to to cache. May be overriden to add custom markup / code, or specific tags, etc.
      *
-     * @param string $content
-     * @param string $key
-     * @param array $tags
      */
     protected function saveContentToCache(string $content, string $key, array $tags): void
     {

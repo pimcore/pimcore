@@ -65,7 +65,6 @@ class Url extends Page
     /**
      * Returns URI
      *
-     * @return string|null
      */
     public function getUri(): ?string
     {

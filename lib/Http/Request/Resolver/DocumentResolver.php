@@ -22,11 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DocumentResolver extends AbstractRequestResolver
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return null|Document
-     */
     public function getDocument(Request $request = null): ?Document
     {
         if (null === $request) {

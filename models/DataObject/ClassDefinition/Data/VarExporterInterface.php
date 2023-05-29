@@ -23,7 +23,6 @@ interface VarExporterInterface
     /**
      * Resolves blocked vars to cleanup on export
      *
-     * @return array
      */
     public function resolveBlockedVars(): array;
 

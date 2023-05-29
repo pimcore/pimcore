@@ -45,7 +45,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @internal
      *
-     * @var string
      */
     public string $assetUploadPath;
 
@@ -74,7 +73,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @internal
      *
-     * @var array
      */
     public array $assetTypes = [];
 
@@ -88,7 +86,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @internal
      *
-     * @var array
      */
     public array $documentTypes = [];
 
@@ -197,11 +194,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -220,11 +213,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -247,11 +236,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return Asset|Document|DataObject\AbstractObject|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -265,11 +250,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return Asset|Document|DataObject\AbstractObject|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
@@ -277,11 +259,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\ElementInterface|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?Element\ElementInterface $data, Concrete $object = null, array $params = []): ?array
     {
@@ -289,11 +268,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -578,11 +553,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

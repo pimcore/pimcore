@@ -101,10 +101,7 @@ class RoutingListener implements EventSubscriberInterface
     /**
      * Initialize Site
      *
-     * @param Request $request
-     * @param string $path
      *
-     * @return string
      */
     protected function resolveSite(Request $request, string $path): string
     {
@@ -152,8 +149,6 @@ class RoutingListener implements EventSubscriberInterface
     /**
      * Redirect to the main domain if specified
      *
-     * @param RequestEvent $event
-     * @param bool $adminContext
      */
     protected function handleMainDomainRedirect(RequestEvent $event, bool $adminContext = false): void
     {

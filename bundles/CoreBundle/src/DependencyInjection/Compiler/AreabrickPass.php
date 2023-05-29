@@ -104,12 +104,7 @@ final class AreabrickPass implements CompilerPassInterface
      *  - MyBundle\Document\Areabrick\Foo
      *  - MyBundle\Document\Areabrick\Foo\Bar\Baz
      *
-     * @param ContainerBuilder $container
-     * @param Definition $areaManagerDefinition
-     * @param array $locatorMapping
-     * @param array $excludedClasses
      *
-     * @return array
      */
     protected function autoloadAreabricks(
         ContainerBuilder $container,
@@ -172,9 +167,6 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * Adds setContainer() call to bricks implementing ContainerAwareInterface
      *
-     * @param ContainerBuilder $container
-     * @param Definition $definition
-     * @param \ReflectionClass|null $reflector
      */
     protected function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null): void
     {
@@ -190,12 +182,7 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * Look for classes implementing AreabrickInterface in each bundle's Document\Areabrick sub-namespace
      *
-     * @param ContainerBuilder $container
-     * @param string $name
-     * @param array $metadata
-     * @param array $excludedClasses
      *
-     * @return array
      */
     protected function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
@@ -262,9 +249,7 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * GalleryTeaserRow -> gallery-teaser-row
      *
-     * @param \ReflectionClass $reflector
      *
-     * @return string
      */
     protected function generateBrickId(\ReflectionClass $reflector): string
     {
@@ -280,11 +265,7 @@ final class AreabrickPass implements CompilerPassInterface
      *  - MyBundle\Document\Areabrick\Foo         -> my.area.brick.foo
      *  - MyBundle\Document\Areabrick\Foo\Bar\Baz -> my.area.brick.foo.bar.baz
      *
-     * @param string $bundleName
-     * @param string $subNamespace
-     * @param string $className
      *
-     * @return string
      */
     protected function generateServiceId(string $bundleName, string $subNamespace, string $className): string
     {

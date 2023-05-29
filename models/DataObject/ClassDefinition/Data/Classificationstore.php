@@ -34,49 +34,42 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var array
      */
     public array $children = [];
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $name = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $region;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $layout;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $title = null;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $maxTabs;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $labelWidth = 0;
 
@@ -88,7 +81,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var int
      */
     public int $storeId;
 
@@ -107,58 +99,47 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @internal
      *
-     * @var array
      */
     protected array $referencedFields = [];
 
     /**
      * @internal
      *
-     * @var array|null
      */
     public ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $allowedGroupIds;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $activeGroupDefinitions = [];
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $permissionView;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $permissionEdit;
 
     /**
-     * @param mixed $data
      * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return array
      *
      * @throws \Exception
      *
@@ -311,11 +292,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Classificationstore
      *
      * @see Data::getDataFromEditmode
      */
@@ -376,11 +353,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): string
     {
@@ -388,11 +362,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -538,8 +508,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
@@ -703,9 +671,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -715,9 +680,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -849,9 +812,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param DataObject\Concrete|null $object
-     * @param array $activeGroups
-     *
-     * @return array|null
      *
      * @internal
      */
@@ -1148,9 +1108,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {

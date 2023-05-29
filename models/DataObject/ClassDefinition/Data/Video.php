@@ -54,14 +54,12 @@ class Video extends Data implements
     /**
      * @internal
      *
-     * @var array|null
      */
     public ?array $allowedTypes = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $supportedTypes = [
         self::TYPE_ASSET,
@@ -103,11 +101,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -133,11 +127,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\Video|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -180,11 +170,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -194,11 +180,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -221,11 +203,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Video|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -262,11 +240,8 @@ class Video extends Data implements
     }
 
     /**
-     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Video|null
      */
     public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
@@ -274,11 +249,8 @@ class Video extends Data implements
     }
 
     /**
-     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForGrid(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array
     {
@@ -295,11 +267,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -412,11 +380,8 @@ class Video extends Data implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array|string
     {

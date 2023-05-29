@@ -29,7 +29,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $restrictTo = null;
 

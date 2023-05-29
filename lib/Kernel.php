@@ -59,7 +59,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      *
-     * @return string
      */
     public function getProjectDir(): string
     {
@@ -69,7 +68,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      *
-     * @return string
      */
     public function getCacheDir(): string
     {
@@ -79,7 +77,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      *
-     * @return string
      */
     public function getLogDir(): string
     {
@@ -233,7 +230,6 @@ abstract class Kernel extends SymfonyKernel
      * Creates bundle collection. Use this method to set bundles on the collection
      * early.
      *
-     * @return BundleCollection
      */
     protected function createBundleCollection(): BundleCollection
     {
@@ -243,7 +239,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Returns the bundle collection which was used to build the set of used bundles
      *
-     * @return BundleCollection
      */
     public function getBundleCollection(): BundleCollection
     {
@@ -253,7 +248,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Registers "core" bundles
      *
-     * @param BundleCollection $collection
      */
     protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
@@ -301,7 +295,6 @@ abstract class Kernel extends SymfonyKernel
      *
      * To be implemented in child classes
      *
-     * @param BundleCollection $collection
      */
     public function registerBundlesToCollection(BundleCollection $collection): void
     {

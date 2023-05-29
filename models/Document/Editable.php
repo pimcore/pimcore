@@ -357,7 +357,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Returns only the properties which should be serialized
      *
-     * @return array
      */
     public function __sleep(): array
     {

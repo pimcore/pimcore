@@ -38,7 +38,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
     protected array $handlers = [];
 
     /**
-     * @param SiteResolver $siteResolver
      * @param DynamicRouteHandlerInterface[] $handlers
      */
     public function __construct(SiteResolver $siteResolver, array $handlers = [])

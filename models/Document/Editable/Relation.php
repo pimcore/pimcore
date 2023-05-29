@@ -32,7 +32,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -41,7 +40,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -50,7 +48,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $subtype = null;
 
@@ -59,7 +56,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var mixed
      */
     protected mixed $element = null;
 

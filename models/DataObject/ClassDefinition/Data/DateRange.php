@@ -46,7 +46,6 @@ class DateRange extends Data implements
     ];
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -74,7 +73,6 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param null|DataObject\Concrete $object
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -99,11 +97,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -113,11 +107,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -137,11 +127,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return CarbonPeriod|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -176,11 +162,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *

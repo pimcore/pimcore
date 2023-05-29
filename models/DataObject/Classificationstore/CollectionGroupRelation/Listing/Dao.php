@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of Classificationstore group configs for the specified parameters, returns an array of config elements
      *
-     * @return array
      */
     public function load(): array
     {

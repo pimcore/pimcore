@@ -49,7 +49,6 @@ class Numeric extends Model\Document\Editable
     /**
      * @see EditableInterface::getData
      *
-     * @return string
      */
     public function getNumber(): string
     {

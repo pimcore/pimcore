@@ -73,7 +73,6 @@ class Composer
     }
 
     /**
-     * @param string $rootPath
      *
      * @internal
      */
@@ -241,7 +240,6 @@ class Composer
      * strict user permission checks (which can be done on Windows 7 but not on Windows
      * Vista).
      *
-     * @param Event $event
      */
     public static function installAssets(Event $event): void
     {
@@ -277,7 +275,6 @@ class Composer
      *
      * Clears the Symfony cache.
      *
-     * @param Event $event
      */
     public static function clearCache(Event $event): void
     {

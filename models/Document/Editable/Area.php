@@ -35,7 +35,6 @@ class Area extends Model\Document\Editable
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -237,9 +236,7 @@ class Area extends Model\Document\Editable
      * as used areabrick and this areabrick defines a block "gallery", you can use $area->getElement('gallery') to get
      * an instance of the block element.
      *
-     * @param string $name
      *
-     * @return Model\Document\Editable
      */
     public function getElement(string $name): Model\Document\Editable
     {

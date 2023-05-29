@@ -43,7 +43,6 @@ class ObjectUserProvider implements UserProviderInterface
      * name (e.g. Pimcore\Model\DataObject\User or your custom user class extending
      * the generated one.
      *
-     * @var string
      */
     protected string $className;
 

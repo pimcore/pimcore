@@ -23,12 +23,6 @@ abstract class ClassResolver
 {
     private static array $cache;
 
-    /**
-     * @param string|null $class
-     * @param callable|null $validationCallback
-     *
-     * @return object|null
-     */
     protected static function resolve(?string $class, callable $validationCallback = null): ?object
     {
         if (!$class) {

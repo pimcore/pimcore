@@ -43,7 +43,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param string|null $id
      *
      * @throws \Exception
      */

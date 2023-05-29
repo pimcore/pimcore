@@ -47,7 +47,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var int|string|null
      */
     protected string|int|null $id = null;
 
@@ -56,7 +55,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -65,28 +63,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $poster = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $title = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $allowedTypes = null;
 
@@ -1052,7 +1046,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|string
      *

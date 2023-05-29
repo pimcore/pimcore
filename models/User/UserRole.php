@@ -125,8 +125,6 @@ abstract class UserRole extends AbstractUser
     }
 
     /**
-     * @param string $permissionName
-     * @param bool|null $value
      *
      * @return $this
      */

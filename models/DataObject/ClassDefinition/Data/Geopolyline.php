@@ -31,11 +31,7 @@ class Geopolyline extends AbstractGeo implements
     NormalizerInterface
 {
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -46,11 +42,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -60,11 +52,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -108,11 +96,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -137,9 +121,6 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
      *
@@ -160,11 +141,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -211,11 +188,8 @@ class Geopolyline extends AbstractGeo implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {

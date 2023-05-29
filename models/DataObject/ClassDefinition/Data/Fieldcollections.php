@@ -32,7 +32,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @internal
      *
-     * @var array
      */
     public array $allowedTypes = [];
 
@@ -44,7 +43,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
@@ -86,11 +84,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -143,11 +137,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Fieldcollection
      *
      * @see Data::getDataFromEditmode
      */
@@ -221,11 +211,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -464,11 +450,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
     {
@@ -533,11 +516,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): array
     {
@@ -614,8 +594,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {

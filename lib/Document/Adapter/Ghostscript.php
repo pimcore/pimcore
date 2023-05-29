@@ -59,7 +59,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -69,7 +68,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -135,7 +133,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -159,7 +156,6 @@ class Ghostscript extends Adapter
     /**
      * Get the version of the installed Ghostscript CLI.
      *
-     * @return string
      *
      * @throws \Exception
      */

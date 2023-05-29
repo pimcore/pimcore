@@ -32,28 +32,24 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @internal
      *
-     * @var int
      */
     public int $labelWidth = 0;
 
     /**
      * v
      *
-     * @var string
      */
     public string $labelFirstCell;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $cols = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $rows = [];
 
@@ -127,11 +123,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -154,11 +146,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\StructuredTable
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -185,11 +173,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -199,11 +183,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -232,11 +212,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\StructuredTable
      *
      * @see Data::getDataFromEditmode
      */
@@ -255,11 +231,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param DataObject\Data\StructuredTable|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?DataObject\Data\StructuredTable $data, Concrete $object = null, array $params = []): ?array
     {
@@ -273,11 +246,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -382,7 +351,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param string $type text|number|bool
      * @param int|null $length The length of the column, default is 255 for text
      *
-     * @return string|null
      */
     protected function typeMapper(string $type, int $length = null): ?string
     {
@@ -413,11 +381,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {

@@ -28,7 +28,6 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
      *
      * @internal
      *
-     * @var array
      */
     protected array $values = [];
 

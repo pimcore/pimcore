@@ -29,7 +29,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var Carbon|null
      */
     protected ?\Carbon\Carbon $date = null;
 

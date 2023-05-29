@@ -34,11 +34,6 @@ class DeviceDetector
 
     protected bool $wasUsed = false;
 
-    /**
-     * @param string|null $default
-     *
-     * @return DeviceDetector
-     */
     public static function getInstance(string $default = null): DeviceDetector
     {
         if (!self::$instance) {
@@ -48,9 +43,6 @@ class DeviceDetector
         return self::$instance;
     }
 
-    /**
-     * @param string|null $default
-     */
     public function __construct(string $default = null)
     {
         if ($default && in_array($default, ['desktop', 'mobile', 'tablet'])) {
@@ -92,7 +84,6 @@ class DeviceDetector
     /**
      * Set the device type manually. Possible values for type: 'desktop', 'tablet', or 'phone'
      *
-     * @param string $type
      *
      * @throws \Exception
      */

@@ -29,7 +29,6 @@ class Localizedfields implements MarshallerInterface
     /**
      * Localizedfields constructor.
      *
-     * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
     {
