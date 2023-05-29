@@ -216,7 +216,7 @@ class Multiselect extends Data implements
         return $data;
     }
 
-    public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = $data[0]['data'];
         if (is_string($data) && $data !== '') {
