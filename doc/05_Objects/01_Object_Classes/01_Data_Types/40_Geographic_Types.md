@@ -7,8 +7,7 @@ listed with the other select widgets.
 
 ## Geopoint
 
-![GeoPoint Config](../../../img/classes-datatypes-geo1.jpg)
-![GeoPoint Field](../../../img/classes-datatypes-geo2.jpg)
+![GeoPoint Field](../../../img/classes-datatypes-geo1.jpg)
 
 The geopoint consists of two coordinates: latitude and longitude. In the Pimcore GUI there is the same geopoint selector 
 widget as shown above. It allows to find coordinates for a geographic point easily. In the database the values are 
@@ -27,7 +26,7 @@ $object->save();
 
 ## Geobounds
 
-![GeoBounds Field](../../../img/classes-datatypes-geo3.jpg)
+![GeoBounds Field](../../../img/classes-datatypes-geo2.jpg)
 
 Geobounds represent a geographic area defined by a north eastern point and a south western point. In the pimcore GUI the 
 input widget as shown above is available. In the database there are 4 columns with coordinates to hold the data of 
@@ -47,7 +46,7 @@ $object->save();
 
 ## Geopolygon
 
-![GeoPolygon Field](../../../img/classes-datatypes-geo4.jpg)
+![GeoPolygon Field](../../../img/classes-datatypes-geo3.jpg)
 
 The geopolygon is the third in the row of geo widgets. It allows to define a geographic area by setting an arbitrary 
 amount of geo points. In the database these points are stored in a single column of the data type LONGTEXT in the 
@@ -68,7 +67,7 @@ $object->save();
 
 ## Geopolyline
 
-![GeoPolygon Field](../../../img/classes-datatypes-geo5.jpg)
+![GeoPolyline Field](../../../img/classes-datatypes-geo4.jpg)
 
 It allows to define a geographic path by setting an arbitrary amount of geo points. In the database these points are 
 stored in a single column of the data type LONGTEXT in the form of a serialized array of 
