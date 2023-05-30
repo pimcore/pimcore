@@ -360,7 +360,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper->resetFieldsToCheck();
     }
 
-    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {
