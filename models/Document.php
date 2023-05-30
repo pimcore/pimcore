@@ -416,6 +416,13 @@ class Document extends Element\AbstractElement
                             $this->getDao()->updateChildPaths($oldPath),
                         );
                     }
+                    
+                    // if the path changed, refresh the inherited proprerties
+                    if ($differentOldPath){
+                        $this->renewInheritedProperties();
+                    }
+                    self::updateDependendencies($this->getId());
+                    
 
                     $this->commit();
 
@@ -454,10 +461,6 @@ class Document extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
-            if ($isUpdate) {
-                self::updateDependendencies(self::getById($this->getId(), true));
-            }
-
 
             $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {
