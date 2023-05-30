@@ -421,7 +421,7 @@ class Document extends Element\AbstractElement
                     if ($differentOldPath){
                         $this->renewInheritedProperties();
                     }
-                    self::updateDependendencies($this->getId());
+                    self::updateDependendencies($this);
                     
 
                     $this->commit();
