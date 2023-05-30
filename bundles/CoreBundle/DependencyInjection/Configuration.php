@@ -182,9 +182,9 @@ final class Configuration implements ConfigurationInterface
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image-thumbnails',
+            'image_thumbnails' => '/var/config/image_thumbnails',
             'custom_reports' => '/var/config/custom_reports',
-            'video_thumbnails' => '/var/config/video-thumbnails',
+            'video_thumbnails' => '/var/config/video_thumbnails',
             'document_types' => '/var/config/document_types',
             'web_to_print' => '/var/config/web_to_print',
             'predefined_properties' => '/var/config/predefined_properties',

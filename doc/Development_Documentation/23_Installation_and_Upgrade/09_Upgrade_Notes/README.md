@@ -62,6 +62,16 @@
             hide_edit_image: false
             disable_tree_preview: true
     ```
+- [Configuration] Renamed following config folders:
+  - `/var/config/image-thumbnails` => `/var/config/image_thumbnails`,
+  - `/var/config/custom-reports` => `/var/config/custom_reports`,
+  - `/var/config/video-thumbnails` => `/var/config/video-thumbnails`,
+  - `/var/config/document-types` => `/var/config/document_types`,
+  - `/var/config/web-to-print` => `/var/config/web_to_print`,
+  - `/var/config/predefined-properties` => `/var/config/predefined_properties`,
+  - `/var/config/predefined-asset-metadata` => `/var/config/predefined_asset_metadata`,
+  - `/var/config/custom-views` => `/var/config/custom_views`,
+  - `/var/config/object-custom-layouts` => `/var/config/object_custom_layouts`
 - [Link Editable] The "attributes" field in the "advanced" tab is deprecated. The field will be removed in Pimcore 11 due to security reasons.
 - [Admin] `AdminController` & `AdminControllerInterface` has been deprecated and will be removed in Pimcore 11. Please use `Use Pimcore\Controller\UserAwareController` instead, with following method calls:
   - call `getPimcoreUser()` instead of `getAdminUser()`
