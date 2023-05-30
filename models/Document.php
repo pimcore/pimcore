@@ -416,13 +416,6 @@ class Document extends Element\AbstractElement
                             $this->getDao()->updateChildPaths($oldPath),
                         );
                     }
-                    
-                    // if the path changed, refresh the inherited proprerties
-                    if ($differentOldPath){
-                        $this->renewInheritedProperties();
-                    }
-                    self::updateDependendencies($this);
-                    
 
                     $this->commit();
 
@@ -461,6 +454,13 @@ class Document extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+
+            // if the path changed, refresh the inherited properties before updating dependencies
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+            self::updateDependendencies($this);
+
 
             $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {

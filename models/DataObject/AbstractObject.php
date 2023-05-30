@@ -823,9 +823,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
-            if ($isUpdate) {
-                self::updateDependendencies(self::getById($this->getId(), true));
+
+            // if the path changed, refresh the inherited properties before updating dependencies
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
             }
+            self::updateDependendencies($this);
 
             $postEvent = new DataObjectEvent($this, $params);
             if ($isUpdate) {
