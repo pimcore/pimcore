@@ -37,12 +37,12 @@ class QueryParams
             $sortParam = json_decode($sortParam, true);
             $sortParam = $sortParam[0];
 
+            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+
             if (substr($sortParam['property'], 0, 1) != '~') {
                 $orderKey = $sortParam['property'];
-                $order = $sortParam['direction'];
             } else {
                 $orderKey = $sortParam['property'];
-                $order = $sortParam['direction'];
 
                 $parts = explode('~', $orderKey);
 
