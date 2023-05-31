@@ -1,4 +1,4 @@
-# Add your own permissions
+# Add Your Own Permissions
 
 ## Add your permission to the database
 Choose a custom unique name and add it to the `users_permission_definitions` table in your database.

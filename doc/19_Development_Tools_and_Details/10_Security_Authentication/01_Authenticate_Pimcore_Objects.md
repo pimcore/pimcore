@@ -1,4 +1,4 @@
-# Authenticate against Pimcore Objects
+# Authenticate Against Pimcore Objects
 
 As Symfony's security component is quite complex, Pimcore provides base implementations to facilitate integrating the security
 configuration with users stored as Pimcore objects.
