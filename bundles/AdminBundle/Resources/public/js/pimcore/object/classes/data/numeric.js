@@ -113,10 +113,9 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 maxValue: 30,
                 value: datax.decimalPrecision,
                 listeners: {
-                    change: function (el) {
-                        var minValueComponent = this.specificPanel.getComponent('minValue');
-                        var maxValueComponent = this.specificPanel.getComponent('maxValue');
-                        var value = parseInt(el.getValue());
+                    change: function (el, value) {
+                        let minValueComponent = this.specificPanel.getComponent('minValue');
+                        let maxValueComponent = this.specificPanel.getComponent('maxValue');
 
                         if (minValueComponent) {
                             minValueComponent.decimalPrecision = value;
