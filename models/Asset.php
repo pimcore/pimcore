@@ -585,12 +585,21 @@ class Asset extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
-            
+
             // if the path changed, refresh the inherited properties before updating dependencies
             if ($differentOldPath){
                 $this->renewInheritedProperties();
             }
             self::updateDependendencies($this);
+
+            // refresh the inherited properties and update dependencies of each children
+            if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $updatedDocument) {
+                    $updatedDocument = self::getById($updatedDocument['id'], true);
+                    $updatedDocument->renewInheritedProperties();
+                    self::updateDependendencies($updatedDocument);
+                }
+            }
 
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
