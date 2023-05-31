@@ -19,7 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\DataObject;
+use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
