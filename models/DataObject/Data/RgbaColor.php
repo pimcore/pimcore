@@ -142,10 +142,10 @@ class RgbaColor implements OwnerAwareFieldInterface
         $length = strlen($hexValue);
         if ($length == 6 || $length == 8) {
             if ($length == 6) {
-                list($r, $g, $b) = sscanf($hexValue, '%02x%02x%02x');
+                [$r, $g, $b] = sscanf($hexValue, '%02x%02x%02x');
                 $a = 255;
             } else {
-                list($r, $g, $b, $a) = sscanf($hexValue, '%02x%02x%02x%02x');
+                [$r, $g, $b, $a] = sscanf($hexValue, '%02x%02x%02x%02x');
             }
             $this->setR($r);
             $this->setG($g);

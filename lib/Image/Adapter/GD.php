@@ -38,7 +38,7 @@ class GD extends Adapter
         }
 
         // set dimensions
-        list($width, $height) = getimagesize($this->path);
+        [$width, $height] = getimagesize($this->path);
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -218,7 +218,7 @@ class GD extends Adapter
     {
         $this->preModify();
 
-        list($r, $g, $b) = $this->colorhex2colorarray($color);
+        [$r, $g, $b] = $this->colorhex2colorarray($color);
 
         // just imagefill() on the existing image doesn't work, so we have to create a new image, fill it and then merge
         // the source image with the background-image together
@@ -245,7 +245,7 @@ class GD extends Adapter
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
-            list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+            [$backgroundImageWidth, $backgroundImageHeight] = getimagesize($image);
 
             $newImg = $this->createImage($this->getWidth(), $this->getHeight());
 
@@ -304,7 +304,7 @@ class GD extends Adapter
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
         if (is_file($image)) {
-            list($oWidth, $oHeight) = getimagesize($image);
+            [$oWidth, $oHeight] = getimagesize($image);
 
             if ($origin === 'top-right') {
                 $x = $this->getWidth() - $oWidth - $x;

@@ -123,8 +123,7 @@ class Authentication
         $timestamp = null;
 
         try {
-            $decrypted = self::tokenDecrypt($token);
-            list($timestamp, $username) = $decrypted;
+            [$timestamp, $username] = self::tokenDecrypt($token);
         } catch (CryptoException $e) {
             return null;
         }
