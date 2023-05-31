@@ -281,8 +281,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         $t->setKey($id);
 
                         // add all available languages
-                        $availableLanguages = Translation::getValidLanguages();
-                        foreach ($availableLanguages as $language) {
+                        foreach (Translation::getValidLanguages() as $language) {
                             $t->addTranslation($language, '');
                         }
                     }
