@@ -23,11 +23,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class DocumentResolver extends AbstractRequestResolver
 {
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
-
     /**
      * @param Request|null $request
      *
