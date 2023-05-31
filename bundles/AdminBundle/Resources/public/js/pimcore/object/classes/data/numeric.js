@@ -111,7 +111,22 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("decimal_precision"),
                 name: "decimalPrecision",
                 maxValue: 30,
-                value: datax.decimalPrecision
+                value: datax.decimalPrecision,
+                listeners: {
+                    change: function (el) {
+                        var minValueComponent = this.specificPanel.getComponent('minValue');
+                        var maxValueComponent = this.specificPanel.getComponent('maxValue');
+                        var value = parseInt(el.getValue());
+
+                        if (minValueComponent) {
+                            minValueComponent.decimalPrecision = value;
+                        }
+
+                        if (maxValueComponent) {
+                            maxValueComponent.decimalPrecision = value;
+                        }
+                    }.bind(this)
+                }
             }, {
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
@@ -136,12 +151,14 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 xtype: "numberfield",
                 fieldLabel: t("min_value"),
                 name: "minValue",
+                itemId: "minValue",
                 decimalPrecision: datax.decimalPrecision || 2,
                 value: datax.minValue
             }, {
                 xtype: "numberfield",
                 fieldLabel: t("max_value"),
                 name: "maxValue",
+                itemId: "maxValue",
                 decimalPrecision: datax.decimalPrecision || 2,
                 value: datax.maxValue
             }
