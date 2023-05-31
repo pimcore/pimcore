@@ -185,31 +185,31 @@ abstract class Kernel extends SymfonyKernel
         $configArray = [
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
-                'defaultStorageDirectoryName' => 'image-thumbnails',
+                'defaultStorageDirectoryName' => 'image_thumbnails',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS',
-                'defaultStorageDirectoryName' => 'video-thumbnails',
+                'defaultStorageDirectoryName' => 'video_thumbnails',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS',
-                'defaultStorageDirectoryName' => 'custom-reports',
+                'defaultStorageDirectoryName' => 'custom_reports',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES',
-                'defaultStorageDirectoryName' => 'document-types',
+                'defaultStorageDirectoryName' => 'document_types',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT',
-                'defaultStorageDirectoryName' => 'web-to-print',
+                'defaultStorageDirectoryName' => 'web_to_print',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
-                'defaultStorageDirectoryName' => 'predefined-properties',
+                'defaultStorageDirectoryName' => 'predefined_properties',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA',
-                'defaultStorageDirectoryName' => 'predefined-asset-metadata',
+                'defaultStorageDirectoryName' => 'predefined_asset_metadata',
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES',
@@ -221,7 +221,7 @@ abstract class Kernel extends SymfonyKernel
             ],
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
-                'defaultStorageDirectoryName' => 'custom-views',
+                'defaultStorageDirectoryName' => 'custom_views',
             ],
         ];
 
@@ -242,13 +242,12 @@ abstract class Kernel extends SymfonyKernel
             }
 
             foreach ($configArray as $config) {
-                $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
+                $configKey = $config['defaultStorageDirectoryName'];
                 if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
                     continue;
                 }
-                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['write_target']['options'];
 
-                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = rtrim(self::getStorageDirectoryFromSymfonyConfig($containerConfig, $configKey, $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
