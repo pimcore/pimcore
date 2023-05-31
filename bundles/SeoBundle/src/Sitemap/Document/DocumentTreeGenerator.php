@@ -79,7 +79,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
             }
         }
 
-        if ($this->options['handleCurrentDomain'] && (null === $section || $section === 'default')) {
+        if ($this->options['handleCurrentSite']) {
             try {
                 $currentSite = Site::getCurrentSite();
                 $rootDocument = $currentSite->getRootDocument();
