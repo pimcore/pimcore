@@ -76,7 +76,7 @@ class RgbaColor extends Data implements
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
-            list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
+            [$r, $g, $b] = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
             $a = hexdec($data[$this->getName() . '__a']);
             $data = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
         }
@@ -142,7 +142,7 @@ class RgbaColor extends Data implements
     {
         if ($data) {
             $data = trim($data, '# ');
-            list($r, $g, $b, $a) = sscanf($data, '%02x%02x%02x%02x');
+            [$r, $g, $b, $a] = sscanf($data, '%02x%02x%02x%02x');
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
             return $color;
