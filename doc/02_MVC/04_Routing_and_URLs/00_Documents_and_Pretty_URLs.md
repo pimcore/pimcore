@@ -1,4 +1,4 @@
-# URLs based on Documents and Pretty URLs
+# URLs Based on Documents and Pretty URLs
  
 ## Introduction
 

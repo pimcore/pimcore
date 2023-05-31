@@ -1,4 +1,4 @@
-# Style backend depending on the application environment
+# Style Backend Depending on the Application Environment
 
 Sometimes it makes sense to style the Pimcore backend UI depending on the application environment (`APP_ENV`) so that
 backend users can easily differentiate by the looks.

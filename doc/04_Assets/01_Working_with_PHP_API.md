@@ -1,4 +1,4 @@
-# Working with Assets via PHP API
+# Working With Assets via PHP API
 
 Pimcore provides an object orientated PHP API to work with Assets.
 

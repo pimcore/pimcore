@@ -1,4 +1,4 @@
-# Working with Documents via PHP API
+# Working With Documents via PHP API
 
 Pimcore provides the object orientated PHP API to work with Documents.
 
