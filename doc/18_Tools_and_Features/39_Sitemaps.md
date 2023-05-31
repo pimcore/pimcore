@@ -121,6 +121,10 @@ services:
             $processors:
                 - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
                 - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+            $options:
+                handleMainDomain: true
+                handleCurrentSite: true
+                handleSites: true
 ```
 
 If you need to influence the behaviour of the document tree sitemap either overwrite the core service definition or define
