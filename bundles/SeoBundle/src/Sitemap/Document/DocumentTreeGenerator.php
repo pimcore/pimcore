@@ -63,7 +63,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
 
         $options->setAllowedTypes('rootId', 'int');
         $options->setAllowedTypes('handleMainDomain', 'bool');
-        $options->setAllowedTypes('handleCurrentDomain', 'bool');
+        $options->setAllowedTypes('handleCurrentSite', 'bool');
         $options->setAllowedTypes('handleSites', 'bool');
         $options->setAllowedTypes('urlGeneratorOptions', 'array');
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
