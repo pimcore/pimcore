@@ -75,12 +75,12 @@ class NotificationServiceFilterParser
 
             switch ($type) {
                 case self::TYPE_STRING:
-                    list($key, $value) = $this->parseString($item);
+                    [$key, $value] = $this->parseString($item);
                     $result[$key] = $value;
 
                     break;
                 case self::TYPE_DATE:
-                    list($key, $value) = $this->parseDate($item);
+                    [$key, $value] = $this->parseDate($item);
                     $result[$key] = $value;
 
                     break;
