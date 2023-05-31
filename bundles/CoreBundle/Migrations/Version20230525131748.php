@@ -20,8 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\File;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 
 final class Version20230525131748 extends AbstractMigration
 {
@@ -41,7 +39,7 @@ final class Version20230525131748 extends AbstractMigration
             'predefined-properties' => 'predefined_properties',
             'predefined-asset-metadata' => 'predefined_asset_metadata',
             'custom-views' => 'custom_views',
-            'object-custom-layouts' => 'object_custom_layouts'
+            'object-custom-layouts' => 'object_custom_layouts',
         ];
 
         $this->moveConfigFromFolders($folders);
@@ -58,7 +56,7 @@ final class Version20230525131748 extends AbstractMigration
             'predefined_properties' => 'predefined-properties',
             'predefined_asset_metadata' => 'predefined-asset-metadata',
             'custom_views' => 'custom-views',
-            'object_custom_layouts' => 'object-custom-layouts'
+            'object_custom_layouts' => 'object-custom-layouts',
         ];
 
         $this->moveConfigFromFolders($folders);
@@ -85,7 +83,7 @@ final class Version20230525131748 extends AbstractMigration
                     File::mkdir($newConfigFolder);
                 }
 
-                $files = array_diff(scandir($configFolder), array('.','..'));
+                $files = array_diff(scandir($configFolder), ['.', '..']);
                 foreach ($files as $file) {
                     rename($configFolder . '/' . $file, $newConfigFolder . '/' . $file);
                 }
