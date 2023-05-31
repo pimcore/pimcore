@@ -48,10 +48,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->setData($assets);
     }
 
-    /**
-     *
-     * Methods for AdapterInterface
-     */
     public function count(): int
     {
         return $this->getTotalCount();
