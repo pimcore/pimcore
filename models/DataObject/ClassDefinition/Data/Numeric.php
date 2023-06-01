@@ -449,6 +449,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 
+        if ($operator === 'in') {
+            return $key . ' ' . $operator . ' (' . $value . ')';
+        }
+
         return '';
     }
 
