@@ -123,7 +123,7 @@ services:
                 - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
             $options:
                 handleMainDomain: true
-                handleCurrentSite: true
+                handleCurrentSite: false
                 handleSites: true
 ```
 

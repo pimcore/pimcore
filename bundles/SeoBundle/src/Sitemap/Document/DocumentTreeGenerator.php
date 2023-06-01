@@ -55,7 +55,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setDefaults([
             'rootId' => 1,
             'handleMainDomain' => true,
-            'handleCurrentSite' => true,
+            'handleCurrentSite' => false,
             'handleSites' => true,
             'urlGeneratorOptions' => [],
             'garbageCollectThreshold' => 50,
