@@ -1,4 +1,4 @@
-# Asset Document Thumbnails (PDF, docx, odf, ...)
+# Asset Document Thumbnails (PDF, DOCX, ODF, ...)
 
 This feature allows you to create an image thumbnail of nearly any document format, like doc(x), ppt(x), pdf, xls(x), 
 odt, ods, odp and many others. 

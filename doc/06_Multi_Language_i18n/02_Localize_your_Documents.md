@@ -1,4 +1,4 @@
-# Localize your Documents
+# Localize Your Documents
 
 Pimcore allows you to localize every document. You can find the setting in your document in the tab `Properties`. 
 There you can choose from language which is configured in the system settings.
