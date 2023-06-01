@@ -31,36 +31,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DataObjectParamResolver implements ValueResolverInterface
 {
     /**
-     * @return DataObjectParam[]
-     */
-    private function getDataObjectOptions(Request $request, ArgumentMetadata $argument): array
-    {
-        $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
-
-        if (!isset($options[0])) {
-            $converters = $request->attributes->get('_converters');
-            $converter = $converters[0] ?? false;
-            if ($converter instanceof ParamConverter) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6',
-                    'Usage of @ParamConverter annotation is deprecated. please use #[DataObjectParam] argument attribute instead.'
-                );
-                $options[0] = new DataObjectParam($converter->getClass(), $converter->getOptions()['unpublished'] ?? null, $converter->getOptions());
-            }
-        }
-
-        return $options;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @throws NotFoundHttpException When invalid data object ID given
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        $options = $this->getDataObjectOptions($request, $argument);
+        $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
 
         $class = $options[0]->class ?? $argument->getType();
         if (null === $class || !is_subclass_of($class, AbstractObject::class)) {
