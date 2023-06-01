@@ -16,47 +16,82 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 
-/**
- * @internal
- */
 final class ConfigurationHelper
 {
-    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
+    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): NodeBuilder
     {
         $storageNode = $rootNode
             ->children()
-            ->arrayNode('config_location')
+            ->arrayNode(LocationAwareConfigRepository::CONFIG_LOCATION)
             ->addDefaultsIfNotSet()
             ->children();
 
-        foreach ($nodes as $node) {
-            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
+        foreach ($nodes as $node => $dir) {
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, $dir, $additionalNodes);
         }
+
+        return $storageNode;
     }
 
-    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
+    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
     {
-        $node->
-        arrayNode($name)
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->enumNode('target')
-            ->values(['symfony-config', 'settings-store'])
-            ->defaultValue('symfony-config')
-            ->end()
-            ->arrayNode('options')
-            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
-            ->variablePrototype()
-            ->end()
-            ->end()
-            ->end()
-            ->end();
+        if (in_array(LocationAwareConfigRepository::READ_TARGET, $additionalNodes)) {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->arrayNode(LocationAwareConfigRepository::WRITE_TARGET)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->enumNode(LocationAwareConfigRepository::TYPE)
+                ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE, LocationAwareConfigRepository::LOCATION_DISABLED])
+                ->defaultValue('symfony-config')
+                ->end()
+                ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => '%kernel.project_dir%' . $folder])
+                ->variablePrototype()->end()
+                ->end()
+                ->end()
+                ->end()
+                ->arrayNode(LocationAwareConfigRepository::READ_TARGET)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->enumNode(LocationAwareConfigRepository::TYPE)
+                ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE])
+                ->defaultValue(null)
+                ->end()
+                ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => null])
+                ->variablePrototype()->end()
+                ->end()
+                ->end()
+                ->end()
+                ->end();
+        } else {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode(LocationAwareConfigRepository::WRITE_TARGET)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode(LocationAwareConfigRepository::TYPE)
+                        ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE, LocationAwareConfigRepository::LOCATION_DISABLED])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                    ->defaultValue([LocationAwareConfigRepository::DIRECTORY => '%kernel.project_dir%' . $folder])
+                    ->variablePrototype()->end()
+                    ->end()
+                ->end();
+        }
     }
 
     public static function getSymfonyConfigFiles(string $configPath, array $params = []): array

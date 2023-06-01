@@ -223,11 +223,11 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     sortable: false,
                     renderer: function (value, p, record) {
                         if (value) {
-                            return Ext.String.format('<a href="#" onclick="pimcore.helpers.openElement({0}, \'{1}\')">{2}</a>', value, record.get('relatedobjecttype'), record.get('relatedobjecttype')+' '+value);
+                            return Ext.String.format('<a href="#">{0}</a>', record.get('relatedobjecttype')+' '+value);
                         }
 
                         return '';
-                    },
+                    }
                 },{
                     text: t("log_component"),
                     dataIndex: 'component',
@@ -253,6 +253,12 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
                         new pimcore.bundle.applicationlogger.log.detailwindow(this.store.getAt(rowIndex).data);
+                    }.bind(this),
+                    cellclick: function(grid,  td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                        const row = this.store.getAt(rowIndex);
+                        if (cellIndex === 5 && row.data.relatedobject && row.data.relatedobjecttype) { //5 = relatedobject
+                            pimcore.helpers.openElement(row.data.relatedobject, row.data.relatedobjecttype);
+                        }
                     }.bind(this)
                 },
 

@@ -280,7 +280,7 @@ class Ffmpeg extends Adapter
 
             if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
                 $dimensionRaw = $matches[1];
-                list($width, $height) = explode('x', $dimensionRaw);
+                [$width, $height] = explode('x', $dimensionRaw);
 
                 return ['width' => $width, 'height' => $height];
             }
@@ -342,8 +342,6 @@ class Ffmpeg extends Adapter
 
     public function setVideoBitrate(int $videoBitrate): static
     {
-        $videoBitrate = (int)$videoBitrate;
-
         $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
         parent::setVideoBitrate($videoBitrate);
@@ -357,8 +355,6 @@ class Ffmpeg extends Adapter
 
     public function setAudioBitrate(int $audioBitrate): static
     {
-        $audioBitrate = (int)$audioBitrate;
-
         $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
 
         parent::setAudioBitrate($audioBitrate);

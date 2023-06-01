@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -205,7 +206,8 @@ class Definition extends Model\AbstractModel
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($definitionFile, $data);
         }
 
         \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);

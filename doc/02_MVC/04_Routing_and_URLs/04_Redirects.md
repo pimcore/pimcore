@@ -1,9 +1,11 @@
 # URLs based on Redirects
+:::caution
 
-To use this feature please enable the `PimcoreSeoBundle` in your bundles.php file and install it accordingly. 
- ```console
-bin/console  pimcore:bundle:install PimcoreSeoBundle
-```
+To use this feature, please enable the `PimcoreSeoBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreSeoBundle`
+
+:::
 
 ## Introduction
 Redirects are a useful feature of Pimcore for directing the user to the correct pages - may it be for marketing URLs, 
@@ -47,7 +49,7 @@ Pimcore provides the ability to automatically create Redirects when renaming and
 The redirect status codes list can be extended by adding custom codes in config.yaml:
 
 ```yaml
-pimcore:
+pimcore_seo:
     redirects:
         status_codes:
             308: Permanent Redirect

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -122,8 +121,7 @@ class Video extends Model\Asset
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
-                Logger::error((string) $e);
+                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath() . ': ' . $e);
             }
         }
 
@@ -290,7 +288,7 @@ class Video extends Model\Asset
     {
         $data = [];
 
-        if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
+        if (in_array(pathinfo($this->getFilename(), PATHINFO_EXTENSION), ['mp4', 'webm'])) {
             $chunkSize = 1024;
             $file_pointer = $this->getStream();
 

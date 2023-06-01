@@ -5,7 +5,7 @@ If you need to load assets (JS, CSS) in the Admin or Editmode UI, you have 2 opt
 
 ## Pimcore Bundles
 
-Just add the [`PimcoreBundleAdminSupportInterface`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Support/PimcoreBundleAdminSupportInterface.php) to your bundle class.
+Just add the [`PimcoreBundleAdminClassicInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php) to your bundle class.
 The interface prescribes the following methods: 
 - `getJsPaths`
 - `getCssPaths`
@@ -13,7 +13,41 @@ The interface prescribes the following methods:
 - `getEditmodeCssPaths`
 
 
-In order to implement all four methods prescribed by the interface you can use the [`BundleAdminSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Support/BundleAdminSupportTrait.php).
+In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php).
+
+As Pimcore uses [Encore](https://symfony.com/doc/current/frontend/encore/simple-example.html) to build its assets, it also provides an [`EncoreHelper`](https://github.com/pimcore/pimcore/blob/131b0e917f9e7b929cb189e74f9404b73551938c/lib/Helper/EncoreHelper.php)-Class to include built files in your bundle. You can use `EncoreHelper::getBuildPathsFromEntryPoints` to get all paths from the assets and load them with the methods mentioned above.
+
+The following example illustrates this for loading the built webencore-files:
+```php
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Pimcore\Helper\EncoreHelper;
+
+class EncoreBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+{
+    use BundleAdminClassicTrait;
+    use PackageVersionTrait;
+
+    public function getCssPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json', 'css');
+    }
+
+    public function getJsPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/encorebundle/entrypoints.json');
+    }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+
+    // ...
+}
+```
 
 ## Event Based
 
@@ -48,5 +82,3 @@ class AdminAssetsListener implements EventSubscriberInterface
     }
 }
 ```
-
- 

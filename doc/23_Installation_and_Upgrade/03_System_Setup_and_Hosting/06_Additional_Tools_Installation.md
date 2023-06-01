@@ -43,8 +43,6 @@ Add a new service as
 ```dockerfile
     chrome:
         image: browserless/chrome
-        ports:
-            - "3000:3000"
 ```
 and set accordingly
 - config `pimcore.chromium.uri` value , eg. `ws://chrome:3000/` 
@@ -102,14 +100,6 @@ Install graphviz for [Workflow](../../07_Workflow_Management/README.md)
 
 ```bash
 apt-get install graphviz
-```
-
-## Facedetect
-
-Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
-
-```bash
-apt-get install facedetect
 ```
 
 

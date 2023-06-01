@@ -39,7 +39,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
@@ -432,7 +431,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      */
     public function setAllowArbitraryAttributes(bool $flag): static
     {
-        $this->_arbitraryAttributes = (bool) $flag;
+        $this->_arbitraryAttributes = $flag;
 
         return $this;
     }
@@ -483,9 +482,14 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
 
-        /** @var ContentSecurityPolicyHandler $cspHandler */
-        $cspHandler = \Pimcore::getContainer()->get(ContentSecurityPolicyHandler::class);
-        $attrString .= $cspHandler->getNonceHtmlAttribute();
+        $container = \Pimcore::getContainer();
+
+        //@phpstan-ignore-next-line
+        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+            $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
+            $attrString .= $cspHandler->getNonceHtmlAttribute();
+        }
+
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
         $html = '<script' . $attrString . '>';

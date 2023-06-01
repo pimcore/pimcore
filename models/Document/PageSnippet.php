@@ -25,6 +25,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -76,6 +77,13 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
+     * @var null|int
+     */
+    protected $contentMasterDocumentId;
+
+    /**
+     * @internal
      */
     protected bool $supportsContentMain = true;
 
@@ -106,6 +114,11 @@ abstract class PageSnippet extends Model\Document
     protected array $inheritedEditables = [];
 
     private static bool $getInheritedValues = false;
+
+    public function __construct()
+    {
+        $this->contentMasterDocumentId = & $this->contentMainDocumentId;
+    }
 
     public static function setGetInheritedValues(bool $getInheritedValues): void
     {
@@ -193,7 +206,7 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            $documentsConfig = SystemSettingsConfig::get()['documents'];
             if ((is_null($documentsConfig['versions']['days'] ?? null) && is_null($documentsConfig['versions']['steps'] ?? null))
                 || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
@@ -522,9 +535,6 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -597,10 +607,6 @@ abstract class PageSnippet extends Model\Document
 
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = (bool) $missingRequiredEditable;
-        }
-
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -675,5 +681,21 @@ abstract class PageSnippet extends Model\Document
     public function setStaticGeneratorLifetime(?int $staticGeneratorLifetime): void
     {
         $this->staticGeneratorLifetime = $staticGeneratorLifetime;
+    }
+
+    public function __wakeup(): void
+    {
+        $propertyMappings = [
+            'contentMasterDocumentId' => 'contentMainDocumentId',
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }

@@ -144,18 +144,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'type',
                 'referrerpolicy',
                 'xml:lang',
-                'onblur',
-                'onclick',
-                'ondblclick',
-                'onfocus',
-                'onmousedown',
-                'onmousemove',
-                'onmouseout',
-                'onmouseover',
-                'onmouseup',
-                'onkeydown',
-                'onkeypress',
-                'onkeyup',
             ];
             $defaultAttributes = [];
 
@@ -173,18 +161,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                         strpos($key, 'aria-') === 0 ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->config[$key] .'"';
+                        $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
                     } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.$value.'"';
+                        $attribs[] = $key.'="'.htmlspecialchars($value).'"';
                     }
                 }
             }
 
             $attribs = array_unique($attribs);
-
-            if (array_key_exists('attributes', $this->data) && !empty($this->data['attributes'])) {
-                $attribs[] = $this->data['attributes'];
-            }
 
             return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
         }
@@ -239,12 +223,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $anchor = $this->getAnchor();
-            $anchor = str_replace('"', urlencode('"'), $anchor);
+            $anchor = str_replace('"', urlencode('"'), htmlspecialchars($this->getAnchor()));
             $url .= '#' . str_replace('#', '', $anchor);
         }
 
@@ -294,11 +277,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 }
             }
-        }
-
-        // sanitize attributes
-        if (isset($this->data['attributes'])) {
-            $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
         }
 
         // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
@@ -356,11 +334,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
-    }
-
-    public function getAttributes(): mixed
-    {
-        return $this->data['attributes'] ?? '';
     }
 
     /**

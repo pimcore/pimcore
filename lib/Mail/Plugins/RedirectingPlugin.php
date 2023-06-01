@@ -18,6 +18,7 @@ namespace Pimcore\Mail\Plugins;
 
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
+use Pimcore\SystemSettingsConfig;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 
 /**
@@ -39,7 +40,7 @@ final class RedirectingPlugin
      */
     public function __construct(array $recipient = [])
     {
-        $config = \Pimcore\Config::getSystemConfiguration('email');
+        $config = SystemSettingsConfig::get()['email'];
         if (!empty($config['debug']['email_addresses'])) {
             $recipient = array_merge($recipient, array_filter(explode(',', $config['debug']['email_addresses'])));
         }

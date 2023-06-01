@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # REQUEST + ROUTING
@@ -58,6 +57,7 @@ services:
             - [setLogger, ['@logger']]
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
+
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 
     #
@@ -76,8 +76,6 @@ services:
         public: true # can be disabled
 
     Pimcore\Bundle\CoreBundle\EventListener\ElementTagsListener: ~
-
-    Pimcore\Bundle\CoreBundle\EventListener\SearchBackendListener: ~
 
     #
     # EXCEPTION HANDLING

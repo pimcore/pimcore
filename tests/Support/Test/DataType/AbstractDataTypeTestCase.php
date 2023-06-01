@@ -625,22 +625,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
-    public function testNewsletterActive(): void
-    {
-        $this->createTestObject('newsletterActive');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertNewsletterActive($this->testObject, 'newsletterActive', $this->seed);
-    }
-
-    public function testNewsletterConfirmed(): void
-    {
-        $this->createTestObject('newsletterConfirmed');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertNewsletterConfirmed($this->testObject, 'newsletterConfirmed', $this->seed);
-    }
-
     public function testNumeric(): void
     {
         $this->createTestObject('number');

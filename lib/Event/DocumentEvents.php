@@ -162,32 +162,6 @@ final class DocumentEvents
     const RENDERER_POST_RENDER = 'pimcore.document.renderer.post_render';
 
     /**
-     * Arguments:
-     *  - mail | \Pimcore\Mail | the pimcore mail instance
-     *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
-     *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific mailer if enabled in system settings
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const NEWSLETTER_PRE_SEND = 'pimcore.document.newsletter.pre_send';
-
-    /**
-     * Arguments:
-     *  - mail | \Pimcore\Mail | the pimcore mail instance
-     *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
-     *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific swift mailer if enabled in system settings
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
-
-    /**
      * The INCLUDERENDERER_PRE_RENDER event is triggered before the IncludeRenderer renders an include
      *
      * @Event("Pimcore\Event\Model\DocumentEvent")

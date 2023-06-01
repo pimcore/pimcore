@@ -16,14 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
-    use BundleAdminSupportTrait;
+    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function getCssPaths(): array
@@ -45,7 +45,6 @@ class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements Pimcor
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/panel.js',
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/report.js',
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/toolbarenricher.js',
-            '/bundles/pimcorecustomreports/js/pimcore/document/newsletters/addressSourceAdapters/report.js',
         ];
     }
 

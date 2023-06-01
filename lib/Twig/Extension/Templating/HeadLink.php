@@ -375,7 +375,7 @@ class HeadLink extends CacheBusterAware
             ]);
             \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
 
-            $source = (string)($item->href ?? '');
+            $source = $item->href ?? '';
             $itemAttributes = isset($item->extras) ? $item->extras : [];
 
             if (isset($item->extras) && is_array($item->extras) && isset($item->extras['webLink'])) {
@@ -433,7 +433,7 @@ class HeadLink extends CacheBusterAware
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
             if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
-                $conditionalStylesheet = (string) $conditionalStylesheet;
+                $conditionalStylesheet = $conditionalStylesheet;
             } else {
                 $conditionalStylesheet = null;
             }

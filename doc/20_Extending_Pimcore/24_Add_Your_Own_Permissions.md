@@ -23,7 +23,7 @@ class AdminController extends PimcoreAdminController
      */
     public function myAdminAction(Request $request): Response
     {
-        /** @var \Pimcore\Bundle\AdminBundle\Security\User\User $user */
+        /** @var \Pimcore\Security\User\User $user */
         $user = $this->getUser();
         $pimcoreUser = $user->getUser();
 

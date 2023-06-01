@@ -10,7 +10,6 @@ framework:
     router:
         strict_requirements: ~
         utf8: true
-    form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
     default_locale:  "%locale%"
@@ -28,7 +27,6 @@ framework:
         enabled: true
         transports:
             main: native://default
-            pimcore_newsletter: native://default
     messenger:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
@@ -37,7 +35,6 @@ framework:
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
-            'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
@@ -57,6 +54,39 @@ framework:
             policy: 'fixed_window'
             limit: 5
             interval: '5 minutes'
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_elements:
+                    span : [ 'class', 'style', 'id' ]
+                    div : [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: ['class', 'id']
+                    a: ['class', 'id', 'href', 'target', 'title', 'rel']
+                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id']
+                    colgroup: 'class'
+                    col: ['class', 'style', 'id']
+                    tbody: ['class', 'id']
+                    tr: ['class', 'id']
+                    td: ['class', 'id']
+                    ul: ['class', 'style', 'id']
+                    li: ['class', 'style', 'id']
+                    ol: ['class', 'style', 'id']
+            pimcore.translation_sanitizer:
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
 
 # Twig Configuration
 twig:
@@ -90,7 +120,7 @@ doctrine:
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
     handlers:
-        usage:
+        redirect:
             type: stream
             path:  "%kernel.logs_dir%/redirect.log"
             level: debug
@@ -187,7 +217,6 @@ pimcore:
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
-                    newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
@@ -252,22 +281,9 @@ pimcore:
                     children_supported: false
                     direct_route: true
                     predefined_document_types: true
-                newsletter:
-                    class: \Pimcore\Model\Document\Newsletter
-                    translatable: false
-                    valid_table: 'newsletter'
-                    translatable_inheritance: false
-                    children_supported: false
-                    direct_route: true
-                    predefined_document_types: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-
-    newsletter:
-        source_adapters:
-            defaultAdapter: pimcore.document.newsletter.factory.default
-            csvList: pimcore.document.newsletter.factory.csv
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

@@ -51,8 +51,6 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 
     public function setLongitude(float $longitude): static
     {
-        $longitude = (float)$longitude;
-
         if ($this->longitude != $longitude) {
             $this->longitude = $longitude;
             $this->markMeDirty();
@@ -68,7 +66,6 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 
     public function setLatitude(float $latitude): static
     {
-        $latitude = (float)$latitude;
         if ($this->latitude != $latitude) {
             $this->latitude = $latitude;
             $this->markMeDirty();

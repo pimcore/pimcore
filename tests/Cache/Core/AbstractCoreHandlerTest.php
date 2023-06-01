@@ -177,9 +177,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
 
         $reflector = new \ReflectionClass($handler);
-
         $property = $reflector->getProperty($property);
-        $property->setAccessible(true);
 
         return $property->getValue($handler);
     }

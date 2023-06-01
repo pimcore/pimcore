@@ -19,14 +19,14 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Tool\Storage;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -35,11 +35,13 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-class LogController extends AdminController implements KernelControllerEventInterface
+class LogController extends UserAwareController implements KernelControllerEventInterface
 {
+    use JsonHelperTrait;
+
     public function onKernelControllerEvent(ControllerEvent $event): void
     {
-        if (!$this->getAdminUser()->isAllowed('application_logging')) {
+        if (!$this->getPimcoreUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
     }
@@ -60,32 +62,23 @@ class LogController extends AdminController implements KernelControllerEventInte
             ->setFirstResult($request->get('start', 0))
             ->setMaxResults($request->get('limit', 50));
 
-        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
-            $request->request->all(),
-            $request->query->all()
-        ));
+        $qb->orderBy('id', 'DESC');
 
-        if ($sortingSettings['orderKey']) {
-            $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
-        } else {
-            $qb->orderBy('id', 'DESC');
+        if (class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge(
+                $request->request->all(),
+                $request->query->all()
+            ));
+
+            if ($sortingSettings['orderKey']) {
+                $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
+            }
         }
 
         $priority = $request->get('priority');
-        if ($priority !== '-1' && ($priority == '0' || $priority)) {
-            $levels = [];
-
-            // add every level until the filtered one
-            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
-                $levels[] = $level;
-
-                if ($priority === $level) {
-                    break;
-                }
-            }
-
-            $qb->andWhere($qb->expr()->in('priority', ':priority'));
-            $qb->setParameter('priority', $levels, Connection::PARAM_STR_ARRAY);
+        if(!empty($priority)) {
+            $qb->andWhere($qb->expr()->eq('priority', ':priority'));
+            $qb->setParameter('priority', $priority);
         }
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
@@ -149,7 +142,7 @@ class LogController extends AdminController implements KernelControllerEventInte
             $logEntries[] = $logEntry;
         }
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'p_totalCount' => $total,
             'p_results' => $logEntries,
         ]);
@@ -186,12 +179,12 @@ class LogController extends AdminController implements KernelControllerEventInte
     {
         $this->checkPermission('application_logging');
 
-        $priorities[] = ['key' => '-1', 'value' => '-'];
+        $priorities[] = ['key' => '', 'value' => '-'];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
             $priorities[] = ['key' => $key, 'value' => $p];
         }
 
-        return $this->adminJson(['priorities' => $priorities]);
+        return $this->jsonResponse(['priorities' => $priorities]);
     }
 
     /**
@@ -210,19 +203,13 @@ class LogController extends AdminController implements KernelControllerEventInte
             $components[] = ['key' => $p, 'value' => $p];
         }
 
-        return $this->adminJson(['components' => $components]);
+        return $this->jsonResponse(['components' => $components]);
     }
 
     /**
      * @Route("/log/show-file-object", name="pimcore_admin_bundle_applicationlogger_log_showfileobject", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return StreamedResponse|Response
-     *
-     * @throws \Exception
      */
-    public function showFileObjectAction(Request $request): StreamedResponse|Response
+    public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');
 
@@ -237,40 +224,10 @@ class LogController extends AdminController implements KernelControllerEventInte
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
-        } else {
-            // Fallback to local path when file is not found in flysystem that might still be using the constant
 
-            if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-                if (!file_exists($filePath)) {
-                    $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
-                }
-                $filePath = realpath($filePath);
-                $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
-            } else {
-                $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
-            }
-
-            if (!str_starts_with($filePath, $fileObjectPath)) {
-                throw new AccessDeniedHttpException('Accessing file out of scope');
-            }
-
-            if (file_exists($filePath)) {
-                $response = new StreamedResponse(
-                    static function () use ($filePath) {
-                        $handle = fopen($filePath, 'rb');
-                        fpassthru($handle);
-                        fclose($handle);
-                    }
-                );
-                $response->headers->set('Content-Type', 'text/plain');
-            } else {
-                $response = new Response();
-                $response->headers->set('Content-Type', 'text/plain');
-                $response->setContent('Path `'.$filePath.'` not found.');
-                $response->setStatusCode(404);
-            }
+            return $response;
         }
 
-        return $response;
+        throw new FileNotFoundException($filePath);
     }
 }

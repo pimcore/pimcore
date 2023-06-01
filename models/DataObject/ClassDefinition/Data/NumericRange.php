@@ -138,9 +138,6 @@ class NumericRange extends Data implements
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getColumnType(): array
     {
         if ($this->getInteger()) {
@@ -160,9 +157,6 @@ class NumericRange extends Data implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getQueryColumnType(): array
     {
         return $this->getColumnType();

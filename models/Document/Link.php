@@ -233,7 +233,7 @@ class Link extends Model\Document
     public function setInternal(int $internal): static
     {
         if (!empty($internal)) {
-            $this->internal = (int) $internal;
+            $this->internal = $internal;
             $this->setObjectFromId();
         } else {
             $this->internal = null;

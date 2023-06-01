@@ -54,7 +54,7 @@ class Task extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $task = new self();
-                $task->getDao()->getById((int)$id);
+                $task->getDao()->getById($id);
                 \Pimcore\Cache\RuntimeCache::set($cacheKey, $task);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -151,7 +151,7 @@ class Task extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setAction(string $action): static
+    public function setAction(?string $action): static
     {
         $this->action = $action;
 

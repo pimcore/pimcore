@@ -336,7 +336,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
+        // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
         return 'LOCALIZED FIELDS';
     }
 
@@ -687,11 +687,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        $config = \Pimcore\Config::getSystemConfiguration('general');
-        $languages = [];
-        if (isset($config['valid_languages'])) {
-            $languages = $config['valid_languages'];
-        }
+        $languages = Tool::getValidLanguages();
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
@@ -904,9 +900,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         ];
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $vars = get_object_vars($this);
@@ -965,7 +958,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function setLabelWidth(int $labelWidth): void
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
     }
 
     public function getLabelWidth(): int
@@ -1000,7 +993,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function setProvideSplitView(bool $provideSplitView): void
     {
-        $this->provideSplitView = (bool) $provideSplitView;
+        $this->provideSplitView = $provideSplitView;
     }
 
     public function supportsDirtyDetection(): bool

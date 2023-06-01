@@ -100,7 +100,6 @@ return [
     'Pimcore\\Model\\Document\\Hardlink\\Wrapper\\Snippet' => 'Pimcore\\Model\\Document\\Hardlink\\Dao',
     'Pimcore\\Model\\Document\\Link' => 'Pimcore\\Model\\Document\\Link\\Dao',
     'Pimcore\\Model\\Document\\Listing' => 'Pimcore\\Model\\Document\\Listing\\Dao',
-    'Pimcore\\Model\\Document\\Newsletter' => 'Pimcore\\Model\\Document\\Newsletter\\Dao',
     'Pimcore\\Model\\Document\\Page' => 'Pimcore\\Model\\Document\\Page\\Dao',
     'Pimcore\\Model\\Document\\Printcontainer' => 'Pimcore\\Model\\Document\\Printcontainer\\Dao',
     'Pimcore\\Model\\Document\\Printpage' => 'Pimcore\\Model\\Document\\Printpage\\Dao',

@@ -63,7 +63,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
     public function isExcludeFromSearchIndex(): bool
@@ -190,7 +190,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
-            if (mb_strlen($data) > $this->getMaxLength()) {
+            if ($data !== null && mb_strlen($data) > $this->getMaxLength()) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'");
             }
         }

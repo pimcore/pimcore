@@ -366,6 +366,8 @@ final class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $urlOptions
      * @param bool $encode
      *
@@ -464,14 +466,14 @@ final class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $path
      * @param array $params
      *
      * @return array|bool
      *
      * @throws \Exception
-     *
-     * @internal
      */
     public function match(string $path, array $params = []): bool|array
     {
@@ -539,7 +541,9 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map('trim', $methods);
+            foreach($methods as $key => $method) {
+                $methods[$key] = trim($method);
+            }
         }
 
         $this->methods = $methods;

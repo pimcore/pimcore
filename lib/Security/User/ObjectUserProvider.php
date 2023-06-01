@@ -93,7 +93,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof $this->className || !$user instanceof AbstractObject) {
             throw new UnsupportedUserException();

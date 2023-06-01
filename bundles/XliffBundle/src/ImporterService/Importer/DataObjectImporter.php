@@ -38,7 +38,7 @@ class DataObjectImporter extends AbstractElementImporter
         }
 
         if ($attribute->getType() === Attribute::TYPE_BRICK_LOCALIZED_FIELD) {
-            list($brickField, $brick, $field) = explode(DataObjectDataExtractor::BRICK_DELIMITER, $attribute->getName());
+            [$brickField, $brick, $field] = explode(DataObjectDataExtractor::BRICK_DELIMITER, $attribute->getName());
 
             $brickGetter = null;
             $brickContainerGetter = 'get' . ucfirst($brickField);
@@ -58,7 +58,7 @@ class DataObjectImporter extends AbstractElementImporter
         }
 
         if ($attribute->getType() === Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD) {
-            list($blockName, $blockIndex, $fieldname, $sourceLanguage) = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
+            [$blockName, $blockIndex, $fieldname, $sourceLanguage] = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
             /** @var array $originalBlockData */
             $originalBlockData = $element->{'get' . $blockName}($sourceLanguage);
             $originalBlockItem = $originalBlockData[$blockIndex] ?? null;
@@ -81,7 +81,7 @@ class DataObjectImporter extends AbstractElementImporter
         }
 
         if ($attribute->getType() === Attribute::TYPE_BLOCK) {
-            list($blockName, $blockIndex, $dummy, $fieldname) = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
+            [$blockName, $blockIndex, $dummy, $fieldname] = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
             /** @var array $blockData */
             $blockData = $element->{'get' . $blockName}();
             $blockItem = $blockData[$blockIndex];
@@ -95,7 +95,7 @@ class DataObjectImporter extends AbstractElementImporter
         }
 
         if ($attribute->getType() === Attribute::TYPE_FIELD_COLLECTION_LOCALIZED_FIELD) {
-            list($fieldCollectionField, $index, $field) = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
+            [$fieldCollectionField, $index, $field] = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
 
             /** @var DataObject\Fieldcollection|null $fieldCollection */
             $fieldCollection = $element->{'get' . $fieldCollectionField}();

@@ -93,11 +93,7 @@ class ContainerService
      */
     public function createContainer(string $key, array $value = []): Container
     {
-        $key = (string) $key;
-
-        $this->_items[$this->currentIndex][$key] = new Container($value);
-
-        return $this->_items[$this->currentIndex][$key];
+        return $this->_items[$this->currentIndex][$key] = new Container($value);
     }
 
     /**
@@ -109,14 +105,7 @@ class ContainerService
      */
     public function getContainer(string $key): Container
     {
-        $key = (string) $key;
-        if (isset($this->_items[$this->currentIndex][$key])) {
-            return $this->_items[$this->currentIndex][$key];
-        }
-
-        $container = $this->createContainer($key);
-
-        return $container;
+        return $this->_items[$this->currentIndex][$key] ?? $this->createContainer($key);
     }
 
     /**
@@ -128,10 +117,7 @@ class ContainerService
      */
     public function containerExists(string $key): bool
     {
-        $key = (string) $key;
-        $return = array_key_exists($key, $this->_items[$this->currentIndex]);
-
-        return $return;
+        return array_key_exists($key, $this->_items[$this->currentIndex]);
     }
 
     /**
@@ -144,7 +130,6 @@ class ContainerService
      */
     public function setContainer(string $key, Container $container): static
     {
-        $key = (string) $key;
         $this->_items[$this->currentIndex][$key] = $container;
 
         return $this;
@@ -159,7 +144,6 @@ class ContainerService
      */
     public function deleteContainer(string $key): bool
     {
-        $key = (string) $key;
         if (isset($this->_items[$this->currentIndex][$key])) {
             unset($this->_items[$this->currentIndex][$key]);
 

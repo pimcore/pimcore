@@ -36,6 +36,9 @@ final class Version20230202152342 extends AbstractMigration
 
         //update default site data in marketing settings
         $settings = SettingsStore::get(ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE);
+        if (!$settings) {
+            return;
+        }
         $data = json_decode($settings->getData(), true);
 
         $marketingScopes = ['analytics', 'google_search_console', 'tagmanager'];

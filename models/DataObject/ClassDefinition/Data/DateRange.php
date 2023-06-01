@@ -36,6 +36,16 @@ class DateRange extends Data implements
     use DataObject\Traits\DataWidthTrait;
 
     /**
+     * @internal
+     *
+     * @var string[] $columnType
+     */
+    public array $columnType = [
+        'start_date' => 'bigint(20)',
+        'end_date' => 'bigint(20)',
+    ];
+
+    /**
      * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -50,7 +60,7 @@ class DateRange extends Data implements
             $endDate = $data->getEndDate();
 
             $result = [
-                $startDateKey => $startDate->getTimestamp(),
+                $startDateKey =>  $startDate->getTimestamp(),
                 $endDateKey => $endDate instanceof CarbonInterface ? $endDate->getTimestamp() : null,
             ];
 
@@ -234,6 +244,18 @@ class DateRange extends Data implements
     }
 
     /**
+     * overwrite default implementation to consider columnType & queryColumnType from class config
+     */
+    public function resolveBlockedVars(): array
+    {
+        $defaultBlockedVars = [
+            'fieldDefinitionsCache',
+        ];
+
+        return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
@@ -333,12 +355,12 @@ class DateRange extends Data implements
         return $date;
     }
 
+    /**
+     * @return string[]
+     */
     public function getColumnType(): array
     {
-        return [
-            'start_date' => 'bigint(20)',
-            'end_date' => 'bigint(20)',
-        ];
+        return $this->columnType;
     }
 
     public function getQueryColumnType(): array
@@ -349,5 +371,20 @@ class DateRange extends Data implements
     public function getFieldType(): string
     {
         return 'dateRange';
+    }
+
+    /**
+     * @param string|string[] $columnType
+     */
+    public function setColumnType(string|array $columnType): void
+    {
+        if(is_array($columnType)) {
+            $this->columnType = $columnType;
+        } else {
+            $this->columnType = [
+                'start_date' => $columnType,
+                'end_date' => $columnType,
+            ];
+        }
     }
 }

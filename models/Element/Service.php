@@ -28,7 +28,6 @@ use Pimcore;
 use Pimcore\Bundle\AdminBundle\CustomView\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -396,7 +395,7 @@ class Service extends Model\AbstractModel
         $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
-            if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
+            if ($type == 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
             } elseif (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
                 // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
@@ -974,27 +973,6 @@ class Service extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return array|null
-     *
-     * @internal
-     */
-    public static function getCustomViewById(string $id): ?array
-    {
-        $customViews = Config::get();
-        if ($customViews) {
-            foreach ($customViews as $customView) {
-                if ($customView['id'] == $id) {
-                    return $customView;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public static function getValidKey(string $key, string $type): string
     {
         $event = new GenericEvent(null, [
@@ -1172,9 +1150,8 @@ class Service extends Model\AbstractModel
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
-                    $reflectionProperty->setAccessible(true);
                     $myValue = $reflectionProperty->getValue($object);
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     return false;
                 }
 

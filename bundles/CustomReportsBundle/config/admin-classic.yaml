@@ -1,0 +1,25 @@
+pimcore_admin:
+    user:
+        default_key_bindings:
+            reports:
+                key: 'M'
+                action: reports
+                ctrl: true
+                alt: true
+            custom_reports:
+                key: 'C'
+                action: customReports
+                ctrl: true
+                alt: true
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # Event Listeners
+    #
+    Pimcore\Bundle\CustomReportsBundle\EventListener\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }

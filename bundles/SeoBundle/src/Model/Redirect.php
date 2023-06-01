@@ -146,7 +146,7 @@ final class Redirect extends AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -175,14 +175,14 @@ final class Redirect extends AbstractModel
         $this->type = $type;
     }
 
-    public function setSource(string $source): static
+    public function setSource(?string $source): static
     {
         $this->source = $source;
 
         return $this;
     }
 
-    public function setTarget(string $target): static
+    public function setTarget(?string $target): static
     {
         $this->target = $target;
 
@@ -264,7 +264,7 @@ final class Redirect extends AbstractModel
 
     public function setRegex(?bool $regex): static
     {
-        $this->regex = $regex ? (bool) $regex : null;
+        $this->regex = $regex;
 
         return $this;
     }
@@ -276,18 +276,14 @@ final class Redirect extends AbstractModel
 
     public function setActive(bool $active): static
     {
-        $this->active = (bool) $active;
+        $this->active = $active;
 
         return $this;
     }
 
     public function setSourceSite(?int $sourceSite): static
     {
-        if ($sourceSite) {
-            $this->sourceSite = (int) $sourceSite;
-        } else {
-            $this->sourceSite = null;
-        }
+        $this->sourceSite = $sourceSite;
 
         return $this;
     }
@@ -299,11 +295,7 @@ final class Redirect extends AbstractModel
 
     public function setTargetSite(?int $targetSite): static
     {
-        if ($targetSite) {
-            $this->targetSite = (int) $targetSite;
-        } else {
-            $this->targetSite = null;
-        }
+        $this->targetSite = $targetSite;
 
         return $this;
     }
@@ -315,7 +307,7 @@ final class Redirect extends AbstractModel
 
     public function setPassThroughParameters(bool $passThroughParameters): static
     {
-        $this->passThroughParameters = (bool) $passThroughParameters;
+        $this->passThroughParameters = $passThroughParameters;
 
         return $this;
     }
@@ -327,7 +319,7 @@ final class Redirect extends AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -339,7 +331,7 @@ final class Redirect extends AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

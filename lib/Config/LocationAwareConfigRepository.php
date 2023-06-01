@@ -16,10 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Config;
-use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
@@ -31,6 +35,18 @@ class LocationAwareConfigRepository
     public const LOCATION_SETTINGS_STORE = 'settings-store';
 
     public const LOCATION_DISABLED = 'disabled';
+
+    public const READ_TARGET = 'read_target';
+
+    public const WRITE_TARGET = 'write_target';
+
+    public const CONFIG_LOCATION = 'config_location';
+
+    public const TYPE = 'type';
+
+    public const OPTIONS = 'options';
+
+    public const DIRECTORY = 'directory';
 
     protected array $containerConfig = [];
 
@@ -50,14 +66,24 @@ class LocationAwareConfigRepository
 
     public function loadConfigByKey(string $key): array
     {
+        $data = null;
         $dataSource = null;
 
-        // try to load from container config
-        $data = $this->getDataFromContainerConfig($key, $dataSource);
+        $loadType = $this->getReadTargets()[0] ?? null;
+        if($loadType === null) {
+            // try to load from container config
+            $data = $this->getDataFromContainerConfig($key, $dataSource);
 
-        // try to load from SettingsStore
-        if (!$data) {
-            $data = $this->getDataFromSettingsStore($key, $dataSource);
+            // try to load from SettingsStore
+            if (!$data) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
+        } else {
+            if($loadType === self::LOCATION_SYMFONY_CONFIG) {
+                $data = $this->getDataFromContainerConfig($key, $dataSource);
+            } elseif ($loadType === self::LOCATION_SETTINGS_STORE) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
         }
 
         return [
@@ -120,13 +146,28 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->storageConfig['target'];
+        $writeLocation = $this->storageConfig[self::WRITE_TARGET][self::TYPE];
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
         }
 
         return $writeLocation;
+    }
+
+    public function getReadTargets(): array
+    {
+        if (!isset($this->storageConfig[self::READ_TARGET])) {
+            return [];
+        }
+
+        $readLocation = $this->storageConfig[self::READ_TARGET][self::TYPE];
+
+        if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
+            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
+        }
+
+        return $readLocation ? [$readLocation] : [];
     }
 
     /**
@@ -160,7 +201,8 @@ class LocationAwareConfigRepository
 
         $this->searchAndReplaceMissingParameters($data);
 
-        File::put($yamlFilename, Yaml::dump($data, 50));
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($yamlFilename, Yaml::dump($data, 50));
 
         $this->invalidateConfigCache();
     }
@@ -196,7 +238,7 @@ class LocationAwareConfigRepository
 
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->storageConfig['options']['directory'], '/\\');
+        $directory = rtrim($this->storageConfig[self::WRITE_TARGET][self::OPTIONS][self::DIRECTORY], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -234,9 +276,43 @@ class LocationAwareConfigRepository
     private function invalidateConfigCache(): void
     {
         // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yaml');
-        if ($systemConfigFile) {
-            touch($systemConfigFile);
+        $servicesConfig = PIMCORE_PROJECT_ROOT . '/config/services.yaml';
+        if (is_file($servicesConfig)) {
+            touch($servicesConfig);
+        }
+    }
+
+    public static function loadSymfonyConfigFiles(ContainerBuilder $container, string $containerKey, string $configKey): void
+    {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, $containerKey);
+
+        $readTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::READ_TARGET] ?? null;
+        $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::WRITE_TARGET];
+
+        $configDir = null;
+        if($readTargetConf !== null) {
+            if ($readTargetConf[self::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
+                ($readTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
+            ) {
+                return;
+            }
+
+            $configDir = $readTargetConf[self::OPTIONS][self::DIRECTORY];
+        }
+
+        if ($configDir === null) {
+            $configDir = $writeTargetConf[self::OPTIONS][self::DIRECTORY];
+        }
+
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
         }
     }
 }

@@ -24,6 +24,7 @@ $config->setRules([
     '@PSR1'                  => true,
     '@PSR2'                  => true,
     'array_syntax'           => ['syntax' => 'short'],
+    'list_syntax'            => ['syntax' => 'short'],
 
     'header_comment'         => [
         'comment_type' => 'PHPDoc',

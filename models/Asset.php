@@ -47,11 +47,13 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -64,18 +66,6 @@ class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
-
-    /**
-     * all possible types of assets
-     *
-     * @internal
-     *
-     * @var string[]
-     *
-     * @deprecated use getTypes() instead.
-     *
-     */
-    public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
     /**
      * @internal
@@ -290,15 +280,16 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $type = 'unknown';
+        $tmpFile = null;
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
                 $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
-                    File::put($tmpFile, $data['data']);
-                    unlink($tmpFile);
+                    $filesystem = new Filesystem();
+                    $filesystem->dumpFile($tmpFile, $data['data']);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
@@ -352,6 +343,10 @@ class Asset extends Element\AbstractElement
 
         if ($save) {
             $asset->save();
+        }
+
+        if ($tmpFile) {
+            unlink($tmpFile);
         }
 
         return $asset;
@@ -424,7 +419,7 @@ class Asset extends Element\AbstractElement
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
             foreach ($assetTypeConfiguration['matching'] as $pattern) {
-                if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
+                if (preg_match($pattern, $mimeType . ' .' . pathinfo($filename, PATHINFO_EXTENSION))) {
                     $type = $assetType;
 
                     break;
@@ -815,7 +810,7 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = Config::getSystemConfiguration('assets');
+            $assetsConfig = SystemSettingsConfig::get()['assets'];
             if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
@@ -1048,7 +1043,7 @@ class Asset extends Element\AbstractElement
 
     public function setFilename(string $filename): static
     {
-        $this->filename = (string)$filename;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -1060,7 +1055,7 @@ class Asset extends Element\AbstractElement
 
     public function setType(string $type): static
     {
-        $this->type = (string)$type;
+        $this->type = $type;
 
         return $this;
     }
@@ -1287,7 +1282,7 @@ class Asset extends Element\AbstractElement
      */
     public function setMimeType(string $mimetype): static
     {
-        $this->mimetype = (string)$mimetype;
+        $this->mimetype = $mimetype;
 
         return $this;
     }
@@ -1320,7 +1315,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = [];
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
-            foreach ((array)$metadata as $metaItem) {
+            foreach ($metadata as $metaItem) {
                 $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
@@ -1413,7 +1408,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1475,7 +1470,7 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();

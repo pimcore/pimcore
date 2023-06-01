@@ -52,7 +52,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function setUpdateHash(bool $updateHash): void
     {
-        $this->updateHash = (bool)$updateHash;
+        $this->updateHash = $updateHash;
     }
 
     public function hashPassword(string $raw, ?string $salt): string

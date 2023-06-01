@@ -190,7 +190,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setMandatory(bool $mandatory): static
     {
-        $this->mandatory = (bool)$mandatory;
+        $this->mandatory = $mandatory;
 
         return $this;
     }
@@ -225,7 +225,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setNoteditable(bool $noteditable): static
     {
-        $this->noteditable = (bool)$noteditable;
+        $this->noteditable = $noteditable;
 
         return $this;
     }
@@ -261,7 +261,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function setLocked(bool $locked): static
     {
-        $this->locked = (bool)$locked;
+        $this->locked = $locked;
 
         return $this;
     }

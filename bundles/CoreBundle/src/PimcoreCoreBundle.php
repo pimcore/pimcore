@@ -18,6 +18,8 @@ namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheFallbackPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\FlysystemVisibilityPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\HtmlSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessageBusPublicPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
@@ -27,7 +29,9 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -79,6 +83,10 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new MessageBusPublicPass());
+        $container->addCompilerPass(new HtmlSanitizerPass());
+        $container->addCompilerPass(new TranslationSanitizerPass());
+        $container->addCompilerPass(new SerializerPass());
+        $container->addCompilerPass(new FlysystemVisibilityPass());
     }
 
     public function getPath(): string

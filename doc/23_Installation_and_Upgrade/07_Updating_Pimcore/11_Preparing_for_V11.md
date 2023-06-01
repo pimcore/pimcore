@@ -1,20 +1,12 @@
 # Preparing Pimcore for Version 11
 
-## Preparatory Work
+## Upgrade to Pimcore 10.6
 - Upgrade to version 10.6.x, if you are using a lower version.
-- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
-    ```
-    security:
-        enable_authenticator_manager: true
-    ```
-    Points to consider when moving to new Authenticator:
-  - New authentication system works with password hasher factory instead of encoder factory.
-  - BruteforceProtectionHandler will be replaced with Login Throttling.
-  - Custom Guard Authenticator will be replaced with Http\Authenticator.
-- [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
-  The return types will be added to Pimcore classes, so you `must` add return types to your classes extending Pimcore.
-  You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
 
+## Code Changes
+- [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
+  The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
+  You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
 
 - [Javascript] Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
     ```javascript
@@ -80,28 +72,79 @@
 
 - [Symfony]
   - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
-
+    ```bash
+    composer require --no-update symfony/dotenv
+    ```
 - [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
 
+## Migrations
+Make sure that migrations are executed.
+How to handle them highly depends on your deployment process.
+You can manually call `bin/console doctrine:migrations:migrate` at any time or add it in your deployment pipeline.
+
+If you are sure you can run all available migrations after `composer update`, including bundles and your app-specific migrations, just include the following part in your `composer.json` file:
+```json
+"post-update-cmd": [
+    "./bin/console doctrine:migrations:migrate"
+]
+```
+
+## Configuration Adaptions
+- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml):
+    ```
+    security:
+        enable_authenticator_manager: true
+    ```
+    Points to consider when moving to new Authenticator:
+  - New authentication system works with password hasher factory instead of encoder factory.
+  - BruteforceProtectionHandler will be replaced with Login Throttling.
+  - Custom Guard Authenticator will be replaced with Http\Authenticator.
+  
 - [Config Environment] Replace deprecated setting write targets and storage directory in the .env file with symfony config
     ```bash
     PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=symfony-config
-    PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=symfony-config
+    PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
   
     PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
-    PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS=/var/www/html/var/config/custom-reports
     ```
+  For example, see the [Demo Configuration](https://github.com/pimcore/demo/blob/7add4ddd30be82687ba5c4bbef8048e794e58923/config/config.yaml#L28).
     ```yaml
     pimcore:
       config_location:
         image_thumbnails:
-          target: 'symfony-config'
-          options:
-            directory: '/var/www/html/var/config/image-thumbnails'
-        custom_reports:
-          target: 'symfony-config'
-          options:
-            directory: '/var/www/html/var/config/custom_reports'
+          write_target:
+            type: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/image-thumbnails'
+        document_types:
+          write_target:
+            type: 'settings-store'
+        
+        # other available write targets are the following
+        # video_thumbnails:
+        # web_to_print:
+        # predefined_properties:
+        # staticroutes:
+        # perspectives:
+        # custom_views:
+        # object_custom_layouts:
+        # predefined_asset_metadata:
     ```
-  
+    
+    You might also adapt the `config_location` from other extensions, like Datahub.
+
+## Additional Things to Consider
+
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
+- [Config] `pimcore.assets.image.focal_point_detection` was removed
+- [Composer] Please make sure to add the `pimcore/compatibility-bridge-v10` to your composer.json file:
+    ```bash
+    composer require --no-update pimcore/compatibility-bridge-v10
+    ```
+    This package provides backward compatibility layer for some Pimcore 10 classes.
+- [Definition Files] Make sure your definition files in `var/classes` are up-to-date and all default values are set correctly by running following migration:
+  ```bash
+  bin/console doctrine:migration:exec 'Pimcore\Bundle\CoreBundle\Migrations\Version20230508121105'
+  ```
+    
+

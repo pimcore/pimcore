@@ -29,8 +29,6 @@ final class User extends User\UserRole
 {
     use TemporaryFileHelperTrait;
 
-    protected const DEFAULT_KEY_BINDINGS = 'default_key_bindings';
-
     protected string $type = 'user';
 
     protected ?string $password = null;
@@ -335,7 +333,7 @@ final class User extends User\UserRole
      */
     public function setWelcomescreen(bool $welcomescreen): static
     {
-        $this->welcomescreen = (bool)$welcomescreen;
+        $this->welcomescreen = $welcomescreen;
 
         return $this;
     }
@@ -449,14 +447,16 @@ final class User extends User\UserRole
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                $image->load($localFile);
-                $image->cover($width, $height);
-                $image->save($targetFile, 'png');
-
-                $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                if($image->load($localFile)) {
+                    $image->cover($width, $height);
+                    $image->save($targetFile, 'png');
+                    $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                }
             }
 
-            return $storage->readStream($this->getThumbnailImageStoragePath());
+            if ($storage->fileExists($this->getThumbnailImageStoragePath())) {
+                return $storage->readStream($this->getThumbnailImageStoragePath());
+            }
         }
 
         return fopen($this->getFallbackImage(), 'rb');
@@ -467,7 +467,7 @@ final class User extends User\UserRole
      */
     public function getContentLanguages(): array
     {
-        if (strlen($this->contentLanguages)) {
+        if (is_string($this->contentLanguages) && strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
 
@@ -636,253 +636,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @internal
-     *
-     * @return string
-     */
-    public static function getDefaultKeyBindings(): string
+    public function getKeyBindings(): ?string
     {
-        $userConfig = \Pimcore\Config::getSystemConfiguration('user');
-        // make sure the default key binding node is in the config
-        if (is_array($userConfig) && array_key_exists(self::DEFAULT_KEY_BINDINGS, $userConfig)) {
-            $defaultKeyBindingsConfig = $userConfig[self::DEFAULT_KEY_BINDINGS];
-            $defaultKeyBindings = [];
-            if (!empty($defaultKeyBindingsConfig)) {
-                foreach ($defaultKeyBindingsConfig as $keys) {
-                    $defaultKeyBinding = [];
-                    // we do not check if the keys are empty because key is required
-                    foreach ($keys as $index => $value) {
-                        if ($index === 'key') {
-                            $value = ord($value);
-                        }
-                        $defaultKeyBinding[$index] = $value;
-                    }
-                    $defaultKeyBindings[] = $defaultKeyBinding;
-                }
-            }
-        }
-
-        if (!empty($defaultKeyBindings)) {
-            return json_encode($defaultKeyBindings);
-        }
-
-        // keep for legacy reasons
-
-        $bindings = [
-            [
-                'action' => 'save',
-                'key' => ord('S'),
-                'ctrl' => true,
-            ],
-            [
-                'action' => 'publish',
-                'key' => ord('P'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'unpublish',
-                'key' => ord('U'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'rename',
-                'key' => ord('R'),
-                'alt' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'refresh',
-                'key' => 116,
-            ],
-            [
-                'action' => 'openAsset',
-                'key' => ord('A'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'openObject',
-                'key' => ord('O'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'openDocument',
-                'key' => ord('D'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-            [
-                'action' => 'openClassEditor',
-                'key' => ord('C'),
-                'ctrl' => true,
-                'shift' => true,
-
-            ],
-            [
-                'action' => 'openInTree',
-                'key' => ord('L'),
-                'ctrl' => true,
-                'shift' => true,
-
-            ],
-            [
-                'action' => 'showMetaInfo',
-                'key' => ord('I'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'searchDocument',
-                'key' => ord('W'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'searchAsset',
-                'key' => ord('A'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'searchObject',
-                'key' => ord('O'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'showElementHistory',
-                'key' => ord('H'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'closeAllTabs',
-                'key' => ord('T'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'searchAndReplaceAssignments',
-                'key' => ord('S'),
-                'alt' => true,
-            ],
-            [
-                'action' => 'redirects',
-                'key' => ord('R'),
-                'ctrl' => false,
-                'alt' => true,
-            ],
-            [
-                'action' => 'sharedTranslations',
-                'key' => ord('T'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'recycleBin',
-                'key' => ord('R'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'notesEvents',
-                'key' => ord('N'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'applicationLogger',
-                'key' => ord('L'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'tagManager',
-                    'key' => ord('H'),
-                    'ctrl' => true,
-                    'alt' => true,
-                ],
-                [
-                    'action' => 'seoDocumentEditor',
-                    'key' => ord('S'),
-                    'ctrl' => true,
-                    'alt' => true,
-                ],
-                [
-                    'action' => 'robots',
-                    'key' => ord('J'),
-                    'ctrl' => true,
-                    'alt' => true,
-                ],
-                [
-                    'action' => 'httpErrorLog',
-                    'key' => ord('O'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'tagConfiguration',
-                'key' => ord('N'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'users',
-                'key' => ord('U'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'roles',
-                'key' => ord('P'),
-                'ctrl' => true,
-                'alt' => true,
-            ],
-            [
-                'action' => 'clearAllCaches',
-                'key' => ord('Q'),
-                'ctrl' => false,
-                'alt' => true,
-            ],
-            [
-                'action' => 'clearDataCache',
-                'key' => ord('C'),
-                'ctrl' => false,
-                'alt' => true,
-            ],
-            [
-                'action' => 'quickSearch',
-                'key' => ord('F'),
-                'ctrl' => true,
-                'shift' => true,
-            ],
-        ];
-
-        return json_encode(self::strictKeybinds($bindings));
+        return $this->keyBindings;
     }
 
-    public function getKeyBindings(): string
-    {
-        return $this->keyBindings ?: self::getDefaultKeyBindings();
-    }
-
-    /**
-     * @param list<array{action: string, key: int, alt?: bool, ctrl?: bool, shift?: bool}> $bindings
-     *
-     * @return list<array{action: string, key: int, alt: bool, ctrl: bool, shift: bool}>
-     */
-    public static function strictKeybinds(array $bindings): array
-    {
-        foreach ($bindings as $ind => $binding) {
-            $bindings[$ind]['ctrl'] ??= false;
-            $bindings[$ind]['alt'] ??= false;
-            $bindings[$ind]['shift'] ??= false;
-        }
-
-        return $bindings;
-    }
-
-    /**
-     * @param string $keyBindings
-     */
     public function setKeyBindings(string $keyBindings): void
     {
         $this->keyBindings = $keyBindings;

@@ -23,6 +23,7 @@ use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -194,7 +195,8 @@ class RoutingListener implements EventSubscriberInterface
     {
         $hostRedirect = null;
 
-        $gc = $this->config['general'];
+        $systemConfig = SystemSettingsConfig::get();
+        $gc = $systemConfig['general'];
         if (isset($gc['redirect_to_maindomain']) && $gc['redirect_to_maindomain'] === true && isset($gc['domain']) && $gc['domain'] !== $request->getHost()) {
             $hostRedirect = $gc['domain'];
         }

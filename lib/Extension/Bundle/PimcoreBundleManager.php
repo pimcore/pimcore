@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -490,7 +489,7 @@ class PimcoreBundleManager
 
         $result = [];
         foreach ($this->getActiveBundles() as $bundle) {
-            if ($bundle instanceof PimcoreBundleAdminSupportInterface) {
+            if ($bundle instanceof PimcoreBundleAdminClassicInterface) {
                 $paths = $bundle->$getter();
 
                 foreach ($paths as $path) {

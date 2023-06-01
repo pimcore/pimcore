@@ -21,9 +21,11 @@ use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
+use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Yaml\Yaml;
 
 final class Config implements ArrayAccess
@@ -93,7 +95,7 @@ final class Config implements ArrayAccess
             // check for environment configuration
             $env = self::getEnvironment();
             if ($env) {
-                $fileExt = File::getFileExtension($name);
+                $fileExt = pathinfo($name, PATHINFO_EXTENSION);
                 $pureName = str_replace('.' . $fileExt, '', $name);
                 foreach ($pathsToCheck as $path) {
                     $tmpFile = $path . '/' . $pureName . '_' . $env . '.' . $fileExt;
@@ -151,10 +153,17 @@ final class Config implements ArrayAccess
     public static function getSystemConfiguration(string $offset = null): ?array
     {
         if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
-            $config = $container->getParameter('pimcore.config');
-            $adminConfig = $container->getParameter('pimcore_admin.config');
 
-            static::$systemConfig = array_merge_recursive($config, $adminConfig);
+            $settings = $container->getParameter('pimcore.config');
+
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+            ]);
+            $eventDispatcher = $container->get('event_dispatcher');
+            $eventDispatcher->dispatch($saveSettingsEvent, SystemEvents::GET_SYSTEM_CONFIGURATION);
+            $settings = $saveSettingsEvent->getArgument('settings');
+
+            static::$systemConfig = $settings;
         }
 
         if (null !== $offset) {

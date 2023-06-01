@@ -19,5 +19,12 @@ Before working on a contribution, you must determine on which branch you need to
 ## Changes in this pull request  
 Resolves #
 
-## Additional info  
+## Additional info
 
+### WHAT
+copilot:summary
+
+copilot:poem
+
+### HOW
+copilot:walkthrough

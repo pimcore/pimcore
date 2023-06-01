@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 
-use Pimcore\File;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -25,62 +25,11 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class ConfigWriter
 {
-    private array $defaultConfig = [
-        'pimcore' => [
-            'general' => [
-                'language' => 'en',
-            ],
-        ],
-    ];
+    protected Filesystem $filesystem;
 
-    public function __construct(array $defaultConfig = null)
+    public function __construct()
     {
-        if (null !== $defaultConfig) {
-            $this->defaultConfig = $defaultConfig;
-        }
-    }
-
-    public function writeSystemConfig(): void
-    {
-        $settings = null;
-
-        // check for an initial configuration template
-        // used eg. by the demo installer
-        $configTemplatePaths = [
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.yaml',
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yaml',
-        ];
-
-        foreach ($configTemplatePaths as $configTemplatePath) {
-            if (!file_exists($configTemplatePath)) {
-                continue;
-            }
-
-            try {
-                $configTemplateArray = Yaml::parseFile($configTemplatePath);
-
-                if (!is_array($configTemplateArray)) {
-                    continue;
-                }
-
-                if (isset($configTemplateArray['pimcore']['general'])) { // check if the template contains a valid configuration
-                    $settings = $configTemplateArray;
-
-                    break;
-                }
-            } catch (\Exception $e) {
-            }
-        }
-
-        // set default configuration if no template is present
-        if (!$settings) {
-            // write configuration file
-            $settings = $this->defaultConfig;
-        }
-
-        $configFile = \Pimcore\Config::locateConfigFile('system.yaml');
-        $settingsYml = Yaml::dump($settings, 5);
-        File::put($configFile, $settingsYml);
+        $this->filesystem = new Filesystem();
     }
 
     public function writeDbConfig(array $config = []): void
@@ -88,7 +37,7 @@ final class ConfigWriter
         if (count($config)) {
             $content = Yaml::dump($config);
             $configFile = PIMCORE_PROJECT_ROOT .'/config/local/database.yaml';
-            File::put($configFile, $content);
+            $this->filesystem->dumpFile($configFile, $content);
         }
     }
 }

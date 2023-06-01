@@ -13,7 +13,6 @@ https://acme.com/admin/login/deeplink?document_45_snippet
 https://acme.com/admin/login/deeplink?document_67_link 
 https://acme.com/admin/login/deeplink?document_8_hardlink 
 https://acme.com/admin/login/deeplink?document_9_email 
-https://acme.com/admin/login/deeplink?document_10_newsletter 
 ```
 
 #### Assets 

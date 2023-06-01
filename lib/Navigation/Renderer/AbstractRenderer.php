@@ -105,11 +105,7 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMinDepth(int $minDepth = null): static
     {
-        if (null !== $minDepth) {
-            $this->_minDepth = (int) $minDepth;
-        } else {
-            $this->_minDepth = null;
-        }
+        $this->_minDepth = $minDepth;
 
         return $this;
     }
@@ -130,11 +126,7 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMaxDepth(int $maxDepth = null): static
     {
-        if (null !== $maxDepth) {
-            $this->_maxDepth = (int) $maxDepth;
-        } else {
-            $this->_maxDepth = null;
-        }
+        $this->_maxDepth = $maxDepth;
 
         return $this;
     }
@@ -184,7 +176,7 @@ abstract class AbstractRenderer implements RendererInterface
 
     public function skipPrefixForId(bool $flag = true): static
     {
-        $this->_skipPrefixForId = (bool) $flag;
+        $this->_skipPrefixForId = $flag;
 
         return $this;
     }
@@ -196,7 +188,7 @@ abstract class AbstractRenderer implements RendererInterface
 
     public function setRenderInvisible(bool $renderInvisible = true): static
     {
-        $this->_renderInvisible = (bool) $renderInvisible;
+        $this->_renderInvisible = $renderInvisible;
 
         return $this;
     }
@@ -363,7 +355,7 @@ abstract class AbstractRenderer implements RendererInterface
         }
 
         $xhtml = '';
-        foreach ((array) $attribs as $key => $val) {
+        foreach ($attribs as $key => $val) {
             $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
             if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {

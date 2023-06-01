@@ -27,6 +27,7 @@ use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -755,7 +756,7 @@ class Document extends Element\AbstractElement
             }
 
             if (!$link) {
-                $config = \Pimcore\Config::getSystemConfiguration('general');
+                $config = SystemSettingsConfig::get()['general'];
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
                 if ($request) {
@@ -854,7 +855,7 @@ class Document extends Element\AbstractElement
 
     public function setKey(string $key): static
     {
-        $this->key = (string)$key;
+        $this->key = $key;
 
         return $this;
     }
@@ -894,7 +895,7 @@ class Document extends Element\AbstractElement
      */
     public function setIndex(int $index): static
     {
-        $this->index = (int) $index;
+        $this->index = $index;
 
         return $this;
     }
@@ -925,7 +926,7 @@ class Document extends Element\AbstractElement
 
     public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
     public function setPublished(bool $published): static

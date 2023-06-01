@@ -289,7 +289,7 @@ class Unit extends Model\AbstractModel
      */
     public function setConverter(?string $converter): static
     {
-        $this->converter = $converter;
+        $this->converter = (string)$converter;
 
         return $this;
     }

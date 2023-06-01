@@ -125,7 +125,7 @@ class Processor
             $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&
-                !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
+                !in_array($parentNode->nodeName(), $this->blockedTags) &&
                 strlen(trim($text))
             ) {
                 $originalText = $text;

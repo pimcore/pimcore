@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\WordExportBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\File;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
@@ -24,6 +24,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,8 +35,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/translation")
  *
  */
-class TranslationController extends AdminController
+class TranslationController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     private const PERMISSION = 'word_export';
 
     /**
@@ -45,7 +48,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function wordExportAction(Request $request): JsonResponse
+    public function wordExportAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission(self::PERMISSION);
         ini_set('display_errors', 'off');
@@ -56,7 +59,7 @@ class TranslationController extends AdminController
         $source = $request->get('source');
 
         if (!is_file($exportFile)) {
-            File::put($exportFile, '');
+            $filesystem->dumpFile($exportFile, '');
         }
 
         foreach ($data as $el) {
@@ -234,18 +237,15 @@ class TranslationController extends AdminController
                     fclose($f);
                 }
             } catch (\Exception $e) {
-                Logger::error('Word Export: ' . $e->getMessage());
-                Logger::error((string) $e);
+                Logger::error('Word Export: ' . $e);
 
                 throw $e;
             }
         }
 
-        return $this->adminJson(
-            [
-                'success' => true,
-            ]
-        );
+        return new JsonResponse([
+            'success' => true,
+        ]);
     }
 
     /**
@@ -273,7 +273,7 @@ class TranslationController extends AdminController
             "<html>\n" .
             "<head>\n" .
             '<style type="text/css">' . "\n" .
-            file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/css/word-export.css') .
+            file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcorewordexport/css/word-export.css') .
             "</style>\n" .
             "</head>\n\n" .
             "<body>\n" .

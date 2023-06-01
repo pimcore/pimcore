@@ -191,7 +191,7 @@ class Input extends Data implements
 
     public function setUnique(bool $unique): void
     {
-        $this->unique = (bool) $unique;
+        $this->unique = $unique;
     }
 
     public function getShowCharCount(): bool
@@ -201,20 +201,14 @@ class Input extends Data implements
 
     public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueryColumnType(): string
     {
         return $this->getColumnType();
@@ -225,21 +219,27 @@ class Input extends Data implements
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
-            $throwException = false;
-            if (in_array('g', $this->getRegexFlags())) {
-                $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
-                if (!preg_match_all('#' . $this->getRegex() . '#' . $flags, $data)) {
-                    $throwException = true;
+        if(is_string($data)) {
+            if ($this->getRegex() && $data !== '') {
+                $throwException = false;
+                if (in_array('g', $this->getRegexFlags())) {
+                    $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
+                    if (!preg_match_all('#' . $this->getRegex() . '#' . $flags, $data)) {
+                        $throwException = true;
+                    }
+                } else {
+                    if (!preg_match('#'.$this->getRegex().'#'.implode('', $this->getRegexFlags()), $data)) {
+                        $throwException = true;
+                    }
                 }
-            } else {
-                if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
-                    $throwException = true;
+
+                if ($throwException) {
+                    throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] doesn't match input validation '".$this->getRegex()."'");
                 }
             }
 
-            if ($throwException) {
-                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
+            if ($this->getColumnLength() && mb_strlen($data) > $this->getColumnLength()) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is longer than '.$this->getColumnLength().' characters');
             }
         }
 
@@ -274,7 +274,7 @@ class Input extends Data implements
 
     public function setDefaultValue(string $defaultValue): static
     {
-        if ((string)$defaultValue !== '') {
+        if ($defaultValue !== '') {
             $this->defaultValue = $defaultValue;
         }
 
