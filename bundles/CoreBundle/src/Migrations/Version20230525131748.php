@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\File;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class Version20230525131748 extends AbstractMigration
 {
@@ -80,7 +81,8 @@ final class Version20230525131748 extends AbstractMigration
             if (is_dir($configFolder)) {
                 $newConfigFolder = $configDir . $targetFolder;
                 if (!is_dir($newConfigFolder)) {
-                    File::mkdir($newConfigFolder);
+                    $filesystem = new Filesystem();
+                    $filesystem->mkdir($newConfigFolder);
                 }
 
                 $files = array_diff(scandir($configFolder), ['.', '..']);
