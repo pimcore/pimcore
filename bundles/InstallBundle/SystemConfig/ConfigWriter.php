@@ -35,19 +35,19 @@ final class ConfigWriter
             ],
             'objects' => [
                 'versions' => [
-                    'steps' => 10
-                ]
+                    'steps' => 10,
+                ],
             ],
             'assets' => [
                 'versions' => [
-                    'steps' => 10
-                ]
+                    'steps' => 10,
+                ],
             ],
             'documents' => [
                 'versions' => [
-                    'steps' => 10
-                ]
-            ]
+                    'steps' => 10,
+                ],
+            ],
         ],
     ];
 
