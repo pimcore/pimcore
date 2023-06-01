@@ -33,6 +33,21 @@ final class ConfigWriter
             'general' => [
                 'language' => 'en',
             ],
+            'objects' => [
+                'versions' => [
+                    'days' => 10
+                ]
+            ],
+            'assets' => [
+                'versions' => [
+                    'days' => 10
+                ]
+            ],
+            'documents' => [
+                'versions' => [
+                    'days' => 10
+                ]
+            ]
         ],
     ];
 
