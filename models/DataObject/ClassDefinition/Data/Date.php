@@ -99,15 +99,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
-     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|null|string
     {
         return $this->getDataForResource($data, $object, $params);
     }

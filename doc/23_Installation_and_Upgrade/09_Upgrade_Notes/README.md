@@ -363,7 +363,7 @@ pimcore:
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue;
     ```
 -  Added global language switcher for localized fields
--  Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
+-  Added new helper inheritance helper function `DataObject\Service::useInheritedValues`
 -  It's now possible to drop a video asset directly into an video editable in class
 -  Removed Button control for DataObjects layout definition.
 

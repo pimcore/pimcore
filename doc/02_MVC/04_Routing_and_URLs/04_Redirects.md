@@ -1,4 +1,4 @@
-# URLs based on Redirects
+# URLs Based on Redirects
 :::caution
 
 To use this feature, please enable the `PimcoreSeoBundle` in your `bundle.php` file and install it accordingly with the following command:

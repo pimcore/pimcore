@@ -1,6 +1,6 @@
-# Structure table
+# Structured Table
 
-## Add structure table to the class
+## Add Structured Table to the Class
 
 Similar to the table widget, the structured table can hold structured data. 
 But there are a few fundamental differences:

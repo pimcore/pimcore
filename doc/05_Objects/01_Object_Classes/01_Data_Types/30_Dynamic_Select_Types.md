@@ -1,4 +1,4 @@
-# Select Types with Dynamic Options
+# Select Types With Dynamic Options
 
 For the select & multiselect datatype you can specify a dynamic options provider class. 
 This allows you to generate a list of valid options on-the-fly instead of using a static list.

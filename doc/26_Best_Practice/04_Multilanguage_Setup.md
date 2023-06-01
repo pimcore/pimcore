@@ -1,4 +1,4 @@
-# Multilanguage i18n websites
+# Multilanguage i18n Websites
 
 ## Best practice for multi-language websites
 Every document has one single language/locale assigned. As a consequence of that, Pimcores best practice in terms of 

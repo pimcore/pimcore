@@ -1,4 +1,4 @@
-# Working with PHP API
+# Working With PHP API
 
 The Pimcore workflow management can also be used via PHP API. 
 

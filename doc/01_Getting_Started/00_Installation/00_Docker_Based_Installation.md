@@ -33,7 +33,7 @@ docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2
     * Start the needed services with `docker compose up -d`
 
 4. Install pimcore and initialize the DB
-    `docker compose exec php vendor/bin/pimcore-install` (for demo package the installation can take a while)
+    `docker compose exec php vendor/bin/pimcore-install --mysql-host-socket=db --mysql-username=pimcore --mysql-password=pimcore --mysql-database=pimcore` (for demo package the installation can take a while)
 
 :::info
 

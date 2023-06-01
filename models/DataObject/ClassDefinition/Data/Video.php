@@ -169,8 +169,8 @@ class Video extends Data implements
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
                 $video->setPoster($raw['poster']);
-                $video->setTitle($raw['title']);
-                $video->setDescription($raw['description']);
+                $video->setTitle($raw['title'] ?? null);
+                $video->setDescription($raw['description'] ?? null);
 
                 return $video;
             }
@@ -254,8 +254,8 @@ class Video extends Data implements
             $video->setData($data['data']);
             $video->setType($data['type']);
             $video->setPoster($data['poster']);
-            $video->setTitle($data['title']);
-            $video->setDescription($data['description']);
+            $video->setTitle($data['title'] ?? null);
+            $video->setDescription($data['description'] ?? null);
         }
 
         return $video;

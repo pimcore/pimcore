@@ -15,11 +15,6 @@ flysystem:
             directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/assets'
-                permissions:
-                    file:
-                        private: 0o644
-                    dir:
-                        private: 0o755
         pimcore.asset_cache.storage:
             # Storage for cached asset files, e.g. PDF and image files generated out of Office files or videos
             # which are then used by the thumbnail engine as source files
@@ -34,11 +29,6 @@ flysystem:
             directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
-                permissions:
-                    file:
-                        private: 0o644
-                    dir:
-                        private: 0o755
         pimcore.version.storage:
             # Storage for serialized versioning data of documents/asset/data objects
             adapter: 'local'

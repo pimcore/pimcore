@@ -1,4 +1,4 @@
-### Working with Runtime Cache
+# Working With Runtime Cache
 Pimcore heavily uses runtime cache to cache API results for performance reasons. However, it is very crucial to understand that how to deal with cached results so that correct data should utilized from the API. Let's take few examples to understand similar situations:
 
 ```php
