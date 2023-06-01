@@ -33,6 +33,21 @@ final class ConfigWriter
             'general' => [
                 'language' => 'en',
             ],
+            'objects' => [
+                'versions' => [
+                    'steps' => 10
+                ]
+            ],
+            'assets' => [
+                'versions' => [
+                    'steps' => 10
+                ]
+            ],
+            'documents' => [
+                'versions' => [
+                    'steps' => 10
+                ]
+            ]
         ],
     ];
 
