@@ -40,7 +40,7 @@ final class ConfigWriter
             ],
             'assets' => [
                 'versions' => [
-                    'days' => 10
+                    'steps' => 10
                 ]
             ],
             'documents' => [
