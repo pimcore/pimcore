@@ -45,7 +45,7 @@ final class ConfigWriter
             ],
             'documents' => [
                 'versions' => [
-                    'days' => 10
+                    'steps' => 10
                 ]
             ]
         ],
