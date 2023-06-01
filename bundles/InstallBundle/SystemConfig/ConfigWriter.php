@@ -35,7 +35,7 @@ final class ConfigWriter
             ],
             'objects' => [
                 'versions' => [
-                    'days' => 10
+                    'steps' => 10
                 ]
             ],
             'assets' => [
