@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Http\Request\Resolver;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @internal
@@ -30,11 +29,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP = '_pimcore_output_timestamp';
 
     protected bool $timestampWasQueried = false;
-
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
 
     /**
      * Gets timestamp for with the output should be rendered to
