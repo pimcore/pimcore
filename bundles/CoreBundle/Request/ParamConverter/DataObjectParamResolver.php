@@ -69,6 +69,7 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
 
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
+
             return [null];
         }
 
