@@ -21,7 +21,9 @@ namespace Pimcore\Helper;
 class CsvFormulaFormatter extends \League\Csv\EscapeFormula
 {
     /**
-     * @var string
+     * @param string $field
+     *
+     * @return string
      */
     public function unEscapeField(string $field) : string
     {
