@@ -43,7 +43,7 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 ./bin/console pimcore:deployment:classes-rebuild
 ```
 
-To create new classes from your configuration files in the database you can use the create-classes option. 
+To create new classes from your configuration files in the database you can use the `create-classes` option. 
 
 ```bash
 ./bin/console pimcore:deployment:classes-rebuild --create-classes
