@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\File;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class Version20230525131748 extends AbstractMigration
