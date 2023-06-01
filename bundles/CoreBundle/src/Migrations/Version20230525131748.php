@@ -76,12 +76,12 @@ final class Version20230525131748 extends AbstractMigration
     private function moveConfigFromFolders(array $folders): void
     {
         $configDir = \Pimcore::getContainer()->getParameter('kernel.project_dir') . '/var/config/';
+        $filesystem = new Filesystem();
         foreach ($folders as $srcFolder => $targetFolder) {
             $configFolder = $configDir . $srcFolder;
             if (is_dir($configFolder)) {
                 $newConfigFolder = $configDir . $targetFolder;
                 if (!is_dir($newConfigFolder)) {
-                    $filesystem = new Filesystem();
                     $filesystem->mkdir($newConfigFolder);
                 }
 
