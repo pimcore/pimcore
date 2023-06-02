@@ -699,7 +699,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         }
 
         return activeGroups;
-    },
+    }
 });
 
 pimcore.object.tags.classificationstore.addMethods(pimcore.object.helpers.edit);
