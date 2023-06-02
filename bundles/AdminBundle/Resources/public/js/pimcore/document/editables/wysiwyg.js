@@ -107,9 +107,15 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
-            this.component.up('panel').body.dom.onscroll = function () {
-                CKEDITOR.document.getWindow().fire('scroll');
-            }
+            let panelComponent = this.component.up('panel');
+            do{
+                if(panelComponent?.scrollable){
+                    panelComponent.body.dom.onscroll = function () {
+                        CKEDITOR.document.getWindow().fire('scroll');
+                    }
+                }
+                panelComponent = panelComponent.up('panel');
+            } while(panelComponent)
 
             this.ckeditor.on('change', this.checkValue.bind(this, true));
 
