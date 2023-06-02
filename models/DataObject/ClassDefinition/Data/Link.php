@@ -276,7 +276,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                         ];
                     }
                 } elseif ($data->getInternalType() == 'object') {
-                    if ($object = DataObject\Concrete::getById($data->getInternalType())) {
+                    if ($object = DataObject\Concrete::getById($data->getInternal())) {
                         $key = 'object_' . $object->getId();
 
                         $dependencies[$key] = [
