@@ -122,7 +122,7 @@ class LogArchiveTask implements TaskInterface
                 AND table_name LIKE ?',
             [
                 $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
-                ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%'
+                ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%',
             ]
         );
         foreach($archiveTables as $archiveTable) {
