@@ -230,7 +230,7 @@
     "geobounds": "Granice obiektu",
     "sure_to_install_unstable_update": "Czy jesteś pewien, że chcesz zainstalować prawdopodobnie nie działającą wersję?",
     "analytics_accountid": "Identyfikator konta (np. 1234567)",
-    "verification_filename_text": "Nazwa pliko weryfikacji<br /><small>wymagana do weryfikacji</small>",
+    "verification_filename_text": "Nazwa pliku weryfikacyjnego<br /><small>wymagana do weryfikacji</small>",
     "analytics_notice": "Zapoznaj się z dokumentacją dotyczącą integracji z Google Analytics. Tryb zaawansowany wymaga ingerencji w ustawienia GA.",
     "analytics_trackid_code": "Track-ID (np. UA-XXXXX-X)<br><small>wymagane do integracji kodu</small>",
     "multiselect": "Wybór wielokrotny",
