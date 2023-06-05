@@ -15,7 +15,12 @@ The interface prescribes the following methods:
 
 In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php).
 
-As Pimcore uses [Encore](https://symfony.com/doc/current/frontend/encore/simple-example.html) to build its assets, it also provides an [`EncoreHelper`](https://github.com/pimcore/pimcore/blob/131b0e917f9e7b929cb189e74f9404b73551938c/lib/Helper/EncoreHelper.php)-Class to include built files in your bundle. You can use `EncoreHelper::getBuildPathsFromEntryPoints` to get all paths from the assets and load them with the methods mentioned above.
+### Encore
+
+As Pimcore uses [Encore](https://symfony.com/doc/current/frontend/encore/simple-example.html) to build its assets, it also provides an [`EncoreHelper`](https://github.com/pimcore/pimcore/blob/131b0e917f9e7b929cb189e74f9404b73551938c/lib/Helper/EncoreHelper.php)-Class to include built files in your bundle. 
+
+You can use `EncoreHelper::getBuildPathsFromEntryPoints` to get all paths from the assets and load them with the methods mentioned above. 
+> This command accepts the path to `entrypoints.json`, file ending as string and returns an array with paths to the built files.
 
 The following example illustrates this for loading the built webencore-files:
 ```php

@@ -26,9 +26,8 @@ See the [Pimcore Bundles](./05_Pimcore_Bundles/README.md) documentation to getti
 
 ### Generating Pimcore Bundles
 
-With the [Pimcore Bundle Generator](https://github.com/pimcore/bundle-generator) we provide a tool for generating bundle
-skeletons. You can install and activate this bundle in your development instance and so simplify starting Pimcore bundle 
-development.  
+With the [Pimcore Bundle Generator](https://github.com/pimcore/bundle-generator), we provide a tool for generating bundle
+skeletons. You can install and activate this bundle in your development instance and so simplify starting the Pimcore bundle development.  
 
 ```
 # generate bundle interactively
@@ -37,8 +36,6 @@ $ bin/console pimcore:generate:bundle
 # generate bundle with a given name and don't ask questions
 $ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
 
-# activate bundle
-$ bin/console pimcore:bundle:enable FooBundle
 ```
 
 ## Common tasks
