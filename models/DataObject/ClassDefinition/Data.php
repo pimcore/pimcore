@@ -405,7 +405,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($operator === 'in') {
-            $formattedValues = implode(',', array_map('floatval', explode(',', $value)));
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
 
             return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
