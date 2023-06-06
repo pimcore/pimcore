@@ -48,11 +48,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->setData($assets);
     }
 
-    public function count(): int
-    {
-        return $this->getTotalCount();
-    }
-
     /**
      * @param int $offset
      * @param int $itemCountPerPage
