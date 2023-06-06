@@ -1003,7 +1003,7 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '. ');
         }
 
-        return mb_substr($key, 0, 255);
+        return trim(mb_substr($key, 0, 255));
     }
 
     public static function isValidKey(string $key, string $type): bool
