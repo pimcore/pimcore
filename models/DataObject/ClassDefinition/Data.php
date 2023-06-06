@@ -378,7 +378,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
-        } elseif (!is_array($value) && !is_object($value)) {
+        } elseif (!is_array($value) && !is_object($value) && $operator !== 'in') {
             if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
@@ -386,7 +386,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
+        if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators) && $operator !== 'in') {
             $trailer = '';
             //the db interprets 0 as NULL -> if empty (0) is selected in the filter, we must also filter for NULL
             if ($value === '\'0\'' || is_array($value) && in_array(0, $value)) {
@@ -402,6 +402,17 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
 
             return $key . ' ' . $operator . ' ' . $value . ' ' . $trailer;
+        }
+
+        if ($operator === 'in') {
+            $formattedValues = implode(
+                ',',
+                array_map(function ($value) {
+                    return (float)$value;
+                }, explode(',', $value))
+            );
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
         return '';
