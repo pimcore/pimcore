@@ -595,6 +595,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
             }
         }
+        unset($child);
 
         //TODO remove in Pimcore 11
         if (isset($layout['childs'])) {
