@@ -6,7 +6,7 @@ available to standard users through the workspace settings.
 > **Security Note**    
 > Custom layouts are not intended to restrict access to sensitive data in high-security scenarios.
 
-To define a custom layout, open the `Custom Layout Editor` through the `Configure Custom Layouts` button in the `Class` editor. You can define as many layouts as you want. 
+To define a custom layout, open the `Custom Layout Editor` through the `Configure Custom Layouts` button in the `Classes` editor. You can define as many layouts as you want. 
 
 In the left panel, you will see the main definition. In the middle is the custom layout you are currently editing. And on the right, the specific settings for the selected field. 
 
@@ -17,7 +17,7 @@ Note that there is no need to add all data elements from the main layout to the 
 
 ![Custom Layouts](../../../img/classes-custom-layouts1.png)
 
-In the `Data Object` editor, the layout can then be chosen via the `reload` button. Note that any data changes will be lost.
+In the `Data Objects` editor, the layout can then be chosen via the `reload` button. Note that any data changes will be lost.
 
 ![Custom Layouts](../../../img/classes-custom-layouts2.png)
 

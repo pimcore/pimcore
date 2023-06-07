@@ -14,14 +14,13 @@ The available tags have to be defined centrally (user permission *tags configura
 
 ## Tags Assignment
 
-In Document, Asset, or Data Object editor, there is an additional tab 
-where tags can be assigned to the current element (user permission *tags assignment* is necessary).
+In `Documents`, `Assets`, or `Data Objects` editor, there is an additional tab where tags can be assigned to the current element (user permission *tags assignment* is necessary).
 
 ![Tags assignment](../img/tags_assignment.png)
 
 ## Tags Usage
 
-In the Search dialog, tags can be selected as additional criteria for the search (user permission *tags search* necessary).
+In the `Search` dialog, tags can be selected as additional criteria for the search (user permission *tags search* necessary).
 
 ![Tags usage](../img/tags_filtering.png)
 
