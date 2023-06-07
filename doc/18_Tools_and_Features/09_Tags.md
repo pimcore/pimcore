@@ -26,7 +26,7 @@ In Search Dialogs, tags can be selected as additional criteria for the search (u
 
 ![Tags usage](../img/tags_filtering.png)
 
-## Working with Tags via API
+## Working With Tags via API
 
 ### Overview 
 
