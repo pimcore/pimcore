@@ -298,7 +298,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Hotspotimage
+     * @return DataObject\Data\Hotspotimage|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
