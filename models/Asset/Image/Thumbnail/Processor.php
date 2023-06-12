@@ -435,7 +435,9 @@ class Processor
                     fclose($stream);
                 }
 
-                self::addOrUpdateThumbnailCache($asset, $config, $filename);
+                if ($statusCacheEnabled) {
+                    self::addOrUpdateThumbnailCache($asset, $config, $filename);
+                }
 
                 $generated = true;
 
