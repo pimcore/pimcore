@@ -1148,7 +1148,7 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '. ');
         }
 
-        // key should not end with space after cut
+        // key should not end (or start) with space after cut
         return trim(mb_substr($key, 0, 255));
     }
 
