@@ -205,6 +205,11 @@ class Processor
                     // the local tmp-file to the real storage a bit further down doesn't work, as it has a
                     // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
                     $storage->delete($storagePath);
+
+                    // refresh the thumbnail cache, if the asset modification date is modified
+                    // this is necessary because the thumbnail cache is not cleared automatically
+                    // when the original asset is modified
+                    self::addOrUpdateThumbnailCache($asset, $config, $filename);
                 }
             } catch (FilesystemException $e) {
                 // nothing to do
@@ -430,11 +435,7 @@ class Processor
                     fclose($stream);
                 }
 
-                if ($statusCacheEnabled) {
-                    if ($imageInfo = @getimagesize($tmpFsPath)) {
-                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, filesize($tmpFsPath), $imageInfo[0], $imageInfo[1]);
-                    }
-                }
+                self::addOrUpdateThumbnailCache($asset, $config, $filename);
 
                 $generated = true;
 
@@ -470,6 +471,27 @@ class Processor
             'type' => 'thumbnail',
             'storagePath' => $storagePath,
         ];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private static function addOrUpdateThumbnailCache(
+        Asset $asset,
+        Config $config,
+        string $filename
+    ): void
+    {
+        $tmpFsPath = $asset->getLocalFile();
+        if ($imageInfo = @getimagesize($tmpFsPath)) {
+            $asset->getDao()->addToThumbnailCache(
+                $config->getName(),
+                $filename,
+                filesize($tmpFsPath),
+                $imageInfo[0],
+                $imageInfo[1]
+            );
+        }
     }
 
     /**
