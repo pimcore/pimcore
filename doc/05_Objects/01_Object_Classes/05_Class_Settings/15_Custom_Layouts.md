@@ -17,7 +17,7 @@ Note that there is no need to add all data elements from the main layout to the 
 
 ![Custom Layouts](../../../img/classes-custom-layouts1.png)
 
-In the `Data Objects` editor, the layout can then be chosen via the `reload` button. Note that any data changes will be lost.
+In the `Data Objects` editor, the layout can then be chosen via the `reload` button.
 
 ![Custom Layouts](../../../img/classes-custom-layouts2.png)
 
