@@ -455,7 +455,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      */
     public function getImage()
     {
-        if (!$this->image instanceof Asset\Image) {
+        if (!$this->image instanceof Asset\Image && $this->getId()) {
             $this->image = Asset\Image::getById($this->getId());
         }
 
