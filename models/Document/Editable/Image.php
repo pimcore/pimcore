@@ -463,18 +463,16 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @param Asset\Image|null $image
+     * @param Asset\Image|ElementDescriptor|null $image
      *
      * @return $this
      */
     public function setImage($image)
     {
+        $this->image = $image;
+
         if ($image instanceof Asset\Image) {
-            $this->image = $image;
             $this->setId($image->getId());
-        } else {
-            $this->image = null;
-            $this->setId(null);
         }
 
         return $this;
