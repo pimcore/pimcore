@@ -74,7 +74,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
                 'userOwner',
                 'userModification',
                 'data',
-                'properties'
+                'properties',
             ]
         );
     }
