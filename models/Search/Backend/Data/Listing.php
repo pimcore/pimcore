@@ -52,4 +52,30 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     {
         $this->initDao(__CLASS__);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function isValidOrderKey($key)
+    {
+        return in_array(
+            $key,
+            [
+                'type',
+                'id',
+                'key',
+                'index',
+                'fullpath',
+                'maintype',
+                'subtype',
+                'published',
+                'creationDate',
+                'modificationDate',
+                'userOwner',
+                'userModification',
+                'data',
+                'properties',
+            ]
+        );
+    }
 }

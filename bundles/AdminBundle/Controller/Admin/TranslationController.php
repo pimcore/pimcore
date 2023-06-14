@@ -443,6 +443,7 @@ class TranslationController extends AdminAbstractController
 
             $list->setOrder('asc');
             $list->setOrderKey($tableName . '.key', false);
+            $list->setLanguages($validLanguages);
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(
                 array_merge($request->request->all(), $request->query->all())

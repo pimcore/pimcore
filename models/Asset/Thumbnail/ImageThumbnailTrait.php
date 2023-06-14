@@ -188,11 +188,24 @@ trait ImageThumbnailTrait
             try {
                 $localFile = $this->getLocalFile();
                 if (null !== $localFile) {
-                    if ($imageInfo = @getimagesize($localFile)) {
+                    //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
+                    if ($imageSize = @getimagesize($localFile)) {
                         $dimensions = [
-                            'width' => $imageInfo[0],
-                            'height' => $imageInfo[1],
+                            'width' => $imageSize[0],
+                            'height' => $imageSize[1],
                         ];
+                    } else {
+                        //fallback to Default Adapter
+                        $image = \Pimcore\Image::getInstance();
+                        if ($image->load($localFile)) {
+                            $dimensions = [
+                                'width' => $image->getWidth(),
+                                'height' => $image->getHeight(),
+                            ];
+                        }
+                    }
+
+                    if (!empty($dimensions)) {
                         if ($config = $this->getConfig()) {
                             $this->getAsset()->getDao()->addToThumbnailCache(
                                 $config->getName(),
