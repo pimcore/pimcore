@@ -373,8 +373,8 @@ class RgbaColor extends Data implements
     public function getColumnType(): array
     {
         return [
-            'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-            'a' => 'VARCHAR(2) NULL DEFAULT NULL',
+            'rgb' => 'VARCHAR(6) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL',
+            'a' => 'VARCHAR(2) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL',
         ];
     }
 
