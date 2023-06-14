@@ -209,7 +209,7 @@ class Processor
                     // refresh the thumbnail cache, if the asset modification date is modified
                     // this is necessary because the thumbnail cache is not cleared automatically
                     // when the original asset is modified
-                    self::addOrUpdateThumbnailCache($asset, $config, $filename);
+                    $asset->getDao()->deleteFromThumbnailCache($config->getName());
                 }
             } catch (FilesystemException $e) {
                 // nothing to do
