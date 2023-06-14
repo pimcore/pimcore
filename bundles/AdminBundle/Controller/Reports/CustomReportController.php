@@ -292,6 +292,7 @@ class CustomReportController extends ReportsControllerBase
         $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
         foreach ($items as $report) {
+            if($report->getDataSourceConfig() !== null){
             $reports[] = [
                 'name' => htmlspecialchars($report->getName()),
                 'niceName' => htmlspecialchars($report->getNiceName()),
@@ -301,6 +302,7 @@ class CustomReportController extends ReportsControllerBase
                 'menuShortcut' => $report->getMenuShortcut(),
                 'reportClass' => htmlspecialchars($report->getReportClass()),
             ];
+        }
         }
 
         return $this->adminJson([
