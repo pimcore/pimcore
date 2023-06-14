@@ -33,6 +33,7 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 | `6.x`    |     ❌     |   ✅   |    `2021-06-23`    |
 | `10.5`   |     ✅     |   ❌   |    `2023-06-21`    |
 | `10.6`   |     ✅     |   ☑   |    `2023-08-16`    |
+| `11.0`   |     ✅     |   ☑   |                    |
 | `11.x`   |     ✅     |   ☑   |                    |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
