@@ -904,7 +904,7 @@ CREATE TABLE `gridconfigs` (
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
 	`shareGlobally` TINYINT(1) NULL,
-  `setAsFavourite` TINYINT(1) NULL,
+	`setAsFavourite` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
