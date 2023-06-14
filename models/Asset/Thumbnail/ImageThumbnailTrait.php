@@ -180,7 +180,12 @@ trait ImageThumbnailTrait
         return $this->realHeight;
     }
 
-    private function readDimensionsFromFile(): array
+    /**
+     * @internal
+     *
+     * @return array
+     */
+    public function readDimensionsFromFile(): array
     {
         $dimensions = [];
         $pathReference = $this->getPathReference();

@@ -435,8 +435,8 @@ class Processor
                     fclose($stream);
                 }
 
-                if ($statusCacheEnabled) {
-                    self::addOrUpdateThumbnailCache($asset, $config, $filename);
+                if ($statusCacheEnabled && $asset instanceof Asset\Image) {
+                    $asset->getThumbnail($config->getName())->readDimensionsFromFile(); //update thumbnail dimensions to cache
                 }
 
                 $generated = true;
@@ -473,27 +473,6 @@ class Processor
             'type' => 'thumbnail',
             'storagePath' => $storagePath,
         ];
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private static function addOrUpdateThumbnailCache(
-        Asset $asset,
-        Config $config,
-        string $filename
-    ): void
-    {
-        $tmpFsPath = $asset->getLocalFile();
-        if ($imageInfo = @getimagesize($tmpFsPath)) {
-            $asset->getDao()->addToThumbnailCache(
-                $config->getName(),
-                $filename,
-                filesize($tmpFsPath),
-                $imageInfo[0],
-                $imageInfo[1]
-            );
-        }
     }
 
     /**
