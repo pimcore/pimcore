@@ -67,7 +67,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         ));
 
         if ($sortingSettings['orderKey']) {
-            $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
+            $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
         } else {
             $qb->orderBy('id', 'DESC');
         }
