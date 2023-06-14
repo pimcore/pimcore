@@ -293,16 +293,16 @@ class CustomReportController extends ReportsControllerBase
 
         foreach ($items as $report) {
             if($report->getDataSourceConfig() !== null){
-            $reports[] = [
-                'name' => htmlspecialchars($report->getName()),
-                'niceName' => htmlspecialchars($report->getNiceName()),
-                'iconClass' => htmlspecialchars($report->getIconClass()),
-                'group' => htmlspecialchars($report->getGroup()),
-                'groupIconClass' => htmlspecialchars($report->getGroupIconClass()),
-                'menuShortcut' => $report->getMenuShortcut(),
-                'reportClass' => htmlspecialchars($report->getReportClass()),
-            ];
-        }
+                $reports[] = [
+                    'name' => htmlspecialchars($report->getName()),
+                    'niceName' => htmlspecialchars($report->getNiceName()),
+                    'iconClass' => htmlspecialchars($report->getIconClass()),
+                    'group' => htmlspecialchars($report->getGroup()),
+                    'groupIconClass' => htmlspecialchars($report->getGroupIconClass()),
+                    'menuShortcut' => $report->getMenuShortcut(),
+                    'reportClass' => htmlspecialchars($report->getReportClass()),
+                ];
+            }
         }
 
         return $this->adminJson([
