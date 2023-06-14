@@ -115,7 +115,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 bodyCls: "pimcore_overflow_scrolling",
                 html: ''
             });
-            this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
+            this.previewPanel.on("boxready", function (el, width, height) {
                 if (this.previewMode == 'vr') {
                     this.initPreviewVr();
                 } else {
