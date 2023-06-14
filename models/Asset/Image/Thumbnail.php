@@ -272,8 +272,8 @@ final class Thumbnail
             ksort($mediaConfigs, SORT_NUMERIC);
             array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
+            $thumbConfigRes = clone $thumbConfig;
             foreach ($mediaConfigs as $mediaQuery => $config) {
-                $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setItems($config);
                 $sourceHtml = $this->getSourceTagHtml($thumbConfigRes, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
