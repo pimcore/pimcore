@@ -587,7 +587,7 @@ class Asset extends Element\AbstractElement
             $this->clearDependentCache($additionalTags);
 
             // if the path changed, refresh the inherited properties before updating dependencies
-            if ($differentOldPath){
+            if ($differentOldPath) {
                 $this->renewInheritedProperties();
             }
             self::updateDependendencies($this);

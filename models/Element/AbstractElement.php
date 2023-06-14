@@ -873,9 +873,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected static function updateDependendencies(object $element): void
     {
         $type = match (true) {
-            $element instanceof Model\Asset => "asset",
-            $element instanceof Model\Document => "document",
-            $element instanceof Model\DataObject\AbstractObject => "object",
+            $element instanceof Model\Asset => 'asset',
+            $element instanceof Model\Document => 'document',
+            $element instanceof Model\DataObject\AbstractObject => 'object',
             default => throw new \InvalidArgumentException('Unexpected element, expected Asset, Document, or AbstractObject')
         };
 
