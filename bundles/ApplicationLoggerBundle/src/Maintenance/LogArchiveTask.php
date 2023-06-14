@@ -106,16 +106,18 @@ class LogArchiveTask implements TaskInterface
                 ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%',
             ]
         );
+
         foreach($archiveTables as $archiveTable) {
-            if(preg_match('/^'.ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_(\d{2})_(\d{4})$/', $archiveTable, $matches)) {
-                $deleteArchiveLogDate = Carbon::createFromFormat('m/Y', $matches[1].'/'.$matches[2]);
-                if($deleteArchiveLogDate->add(new DateInterval('P'.($this->config['applicationlog']['delete_archive_threshold'] ?? 6).'M')) < new DateTimeImmutable()) {
-                    $db->executeStatement('DROP TABLE IF EXISTS `'.($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()).'`.'.$archiveTable);
+            if (preg_match('/^' . ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_(\d{2})_(\d{4})$/', $archiveTable, $matches)) {
+                $deleteArchiveLogDate = Carbon::createFromFormat('m/Y', $matches[1] . '/' . $matches[2]);
+                if ($deleteArchiveLogDate->add(new DateInterval('P' . ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) . 'M')) < new DateTimeImmutable()) {
+                    $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $archiveTable);
 
                     $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                if ($storage->directoryExists($folderName)) {
-                    $storage->deleteDirectory($folderName);
+                    if ($storage->directoryExists($folderName)) {
+                        $storage->deleteDirectory($folderName);
+                    }
                 }
             }
         }
