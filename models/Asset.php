@@ -594,10 +594,10 @@ class Asset extends Element\AbstractElement
 
             // refresh the inherited properties and update dependencies of each children
             if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $updatedDocument) {
-                    $updatedDocument = self::getById($updatedDocument['id'], true);
-                    $updatedDocument->renewInheritedProperties();
-                    self::updateDependendencies($updatedDocument);
+                foreach ($updatedChildren as $updatedAsset) {
+                    $updatedAsset = self::getById($updatedAsset['id'], true);
+                    $updatedAsset->renewInheritedProperties();
+                    self::updateDependendencies($updatedAsset);
                 }
             }
 
