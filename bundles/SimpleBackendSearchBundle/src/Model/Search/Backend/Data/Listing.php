@@ -55,10 +55,7 @@ class Listing extends AbstractListing
         $this->initDao(__CLASS__);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return in_array(
             $key,

@@ -52,10 +52,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected ?array $languages = null;
 
-    /**
-     * @inheritdoc
-     */
-    public function isValidOrderKey($key): bool
+    public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
     }
