@@ -304,6 +304,7 @@ final class Thumbnail
                 $html .= "\t" . $sourceHtml . "\n";
             }
         }
+
         return $html;
     }
 
