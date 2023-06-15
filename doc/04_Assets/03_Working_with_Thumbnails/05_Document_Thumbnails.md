@@ -31,13 +31,27 @@ if($asset instanceof Asset\Document) {
 ```
 
 > This feature requires Ghostscript and at least Gotenberg or LibreOffice be installed on the server.
-> To install it on Linux:
-> sudo apt-get install ghostscript
-> sudo apt-get install libreoffice
+>
+> Installation on Linux:
+>
+> `sudo apt-get install ghostscript`
+>
+> `sudo apt-get install libreoffice`
+>
+> You also have the possibility to install Gotenberg with a Docker image. To make it available, simply add the following config to your `docker-compose.yaml` file:
+>
+> ```yaml
+>  services:
+>     gotenberg:
+>        image: gotenberg/gotenberg:7
+>  ```
+>
 > 
-> To install it on Mac:
-> brew install ghostscript
-> brew install --cask libreoffice
+> Installation on Mac:
+>
+> `brew install ghostscript`
+>
+> `brew install --cask libreoffice`
 
 
 ##### To build the function generating thumbnail for List of assets:
