@@ -183,7 +183,7 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @return array
+     * @return array{width?: int, height?: int}
      */
     public function readDimensionsFromFile(): array
     {
