@@ -55,7 +55,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
     public array $columnKeys = [];
 
