@@ -72,6 +72,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
+     * @var array<string, array<string, mixed>>
      */
     public array $visibleFieldDefinitions = [];
 
