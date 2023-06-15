@@ -260,7 +260,9 @@ final class Thumbnail
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
-        $html.= $this->getMediaConfigsHtml($thumbConfig, $image, $options, $isAutoFormat);
+        if ($thumbConfig instanceof Image\Thumbnail\Config) {
+            $html.= $this->getMediaConfigsHtml($thumbConfig, $image, $options, $isAutoFormat);
+        }
 
         if (!($options['disableImgTag'] ?? null)) {
             $html .= "\t" . $this->getImageTag($options) . "\n";
