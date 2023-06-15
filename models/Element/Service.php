@@ -53,9 +53,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    /**
-     * @var CsvFormulaFormatter|null
-     */
     private static ?CsvFormulaFormatter $formatter = null;
 
     /**
@@ -1659,10 +1656,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @param string $value
-     *
-     * @return string
      */
     public static function unEscapeCsvField(string $value): string
     {

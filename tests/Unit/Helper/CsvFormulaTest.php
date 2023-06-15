@@ -21,7 +21,7 @@ use Pimcore\Tests\Test\TestCase;
 
 class CsvFormulaTest extends TestCase
 {
-    public function testUnEscapeFormula()
+    public function testUnEscapeFormula(): void
     {
         $formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
 
