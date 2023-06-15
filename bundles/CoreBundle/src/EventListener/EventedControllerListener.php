@@ -28,9 +28,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class EventedControllerListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

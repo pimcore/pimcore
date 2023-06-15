@@ -31,7 +31,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $defaultValue = null;
 
@@ -46,11 +45,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public string $columnType = 'bigint(20)';
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -72,11 +67,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return \Carbon\Carbon|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -99,25 +90,15 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
-     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|null|string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|null
      *
      * @see Data::getDataForEditmode
      *
@@ -140,11 +121,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return \Carbon\Carbon|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -158,11 +135,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param float $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return \Carbon\Carbon|null
      */
     public function getDataFromGridEditor(float $data, Concrete $object = null, array $params = []): ?Carbon
     {
@@ -174,11 +148,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param Carbon|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return int|null
      */
     public function getDataForGrid(?Carbon $data, Concrete $object = null, array $params = []): ?int
     {
@@ -190,11 +161,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -230,9 +197,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -263,9 +227,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->useCurrentDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -282,11 +243,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -313,11 +270,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -346,9 +300,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -417,7 +368,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * overwrite default implementation to consider columnType & queryColumnType from class config
      *
-     * @return array
      */
     public function resolveBlockedVars(): array
     {

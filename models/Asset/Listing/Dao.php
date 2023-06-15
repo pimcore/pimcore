@@ -31,7 +31,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Get the assets from database
      *
-     * @return array
      */
     public function load(): array
     {
@@ -56,7 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {

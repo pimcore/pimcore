@@ -42,9 +42,6 @@ class ContentTemplateListener implements EventSubscriberInterface
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -57,7 +54,6 @@ class ContentTemplateListener implements EventSubscriberInterface
      * the router or from the sub-action renderer and takes precedence over the auto-resolved and manually configured
      * template.
      *
-     * @param ViewEvent $event
      */
     public function onKernelView(ViewEvent $event): void
     {

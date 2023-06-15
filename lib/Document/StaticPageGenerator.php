@@ -89,7 +89,6 @@ class StaticPageGenerator
     }
 
     /**
-     * @param Document\PageSnippet $document
      *
      * @throws \League\Flysystem\FilesystemException
      */

@@ -21,10 +21,7 @@ use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 interface ImporterInterface
 {
     /**
-     * @param AttributeSet $attributeSet
-     * @param bool $saveElement
      *
-     * @return void
      *
      * @throws \Exception
      */

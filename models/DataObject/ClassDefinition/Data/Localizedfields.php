@@ -102,11 +102,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public ?array $permissionEdit = null;
 
     /**
-     * @param mixed $localizedField
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -258,9 +254,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Localizedfield
      *
@@ -300,9 +293,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @param DataObject\Localizedfield|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return \stdClass
      */
     public function getDataForGrid(?Localizedfield $data, Concrete $object = null, array $params = []): \stdClass
     {
@@ -324,11 +315,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -340,9 +327,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return 'LOCALIZED FIELDS';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
@@ -479,8 +463,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
@@ -498,9 +480,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (
@@ -546,27 +525,20 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $container->getObjectVar('localizedfields');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getGetterCode($class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $code = '';
         if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= parent::getGetterCode($class);
         }
 
-        $fieldDefinitions = $this->getFieldDefinitions();
-        foreach ($fieldDefinitions as $fd) {
+        foreach ($this->getFieldDefinitions() as $fd) {
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
 
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $code = '';
@@ -653,7 +625,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param string $name
      *
      * @return $this
      *
@@ -682,9 +653,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->region;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $languages = Tool::getValidLanguages();
@@ -779,13 +747,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
@@ -874,9 +835,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $localizedFields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -905,9 +863,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return array_keys($vars);
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -994,9 +949,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

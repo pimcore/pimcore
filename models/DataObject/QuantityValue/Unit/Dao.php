@@ -30,7 +30,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Contains all valid columns in the database table
      *
-     * @var array
      */
     protected array $validColumns = [];
 
@@ -44,7 +43,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $abbreviation
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -58,7 +56,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $reference
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -72,7 +69,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */

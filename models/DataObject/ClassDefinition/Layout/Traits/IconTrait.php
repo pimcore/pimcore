@@ -24,7 +24,6 @@ trait IconTrait
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $icon = null;
 

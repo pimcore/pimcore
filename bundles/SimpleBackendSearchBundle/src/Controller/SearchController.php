@@ -382,9 +382,7 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param array $types
      *
-     * @return string
      *
      * @internal
      */
@@ -471,10 +469,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return JsonResponse
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -546,10 +541,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
      *
-     * @param Request $request
-     * @param Config $config
      *
-     * @return JsonResponse
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
@@ -618,9 +610,6 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param ElementInterface $element
-     * @param int|null $context
-     * @param array $data
      *
      * @throws \Exception
      */

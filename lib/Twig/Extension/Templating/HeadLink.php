@@ -70,7 +70,6 @@ class HeadLink extends CacheBusterAware
     /**
      * $_validAttributes
      *
-     * @var array
      */
     protected array $_itemKeys = [
         'charset',
@@ -103,8 +102,6 @@ class HeadLink extends CacheBusterAware
      *
      * Use PHP_EOL as separator
      *
-     * @param ContainerService $containerService
-     * @param WebLinkExtension $webLinkExtension
      */
     public function __construct(
         ContainerService $containerService,
@@ -122,8 +119,6 @@ class HeadLink extends CacheBusterAware
      * Returns current object instance. Optionally, allows passing array of
      * values to build link.
      *
-     * @param array|null $attributes
-     * @param string $placement
      *
      * @return $this
      */
@@ -207,9 +202,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Check if value is valid
      *
-     * @param  mixed $value
      *
-     * @return bool
      */
     protected function _isValid(mixed $value): bool
     {
@@ -232,7 +225,6 @@ class HeadLink extends CacheBusterAware
      *
      * @param  \stdClass $value
      *
-     * @return void
      */
     public function append($value): void
     {
@@ -247,9 +239,7 @@ class HeadLink extends CacheBusterAware
      * offsetSet()
      *
      * @param  string|int $offset
-     * @param mixed $value
      *
-     * @return void
      */
     public function offsetSet($offset, mixed $value): void
     {
@@ -291,9 +281,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Create HTML link element from data item
      *
-     * @param  \stdClass $item
      *
-     * @return string
      */
     public function itemToString(\stdClass $item): string
     {
@@ -333,9 +321,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Render link elements as string
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {
@@ -391,9 +377,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Create data item for stack
      *
-     * @param  array $attributes
      *
-     * @return \stdClass
      */
     public function createData(array $attributes): \stdClass
     {
@@ -405,7 +389,6 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for stylesheet link item
      *
-     * @param  array $args
      *
      * @return \stdClass|false Returns fals if stylesheet is a duplicate
      */
@@ -452,9 +435,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Is the linked stylesheet a duplicate?
      *
-     * @param string $uri
      *
-     * @return bool
      */
     protected function _isDuplicateStylesheet(string $uri): bool
     {
@@ -470,9 +451,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for alternate link item
      *
-     * @param  array $args
      *
-     * @return \stdClass
      */
     public function createDataAlternate(array $args): \stdClass
     {
@@ -507,9 +486,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Apply any overrides specified in the 'extras' array
      *
-     * @param array $attributes
      *
-     * @return array
      */
     protected function _applyExtras(array $attributes): array
     {

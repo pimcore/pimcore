@@ -69,21 +69,18 @@ class BooleanSelect extends Data implements
     /**
      * @internal
      *
-     * @var string
      */
     public string $yesLabel;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $noLabel;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $emptyLabel;
 
@@ -106,11 +103,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -131,11 +124,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -145,11 +134,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -169,11 +154,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -190,20 +171,13 @@ class BooleanSelect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -233,9 +207,6 @@ class BooleanSelect extends Data implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO mandatory probably doesn't make much sense
@@ -319,11 +290,8 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param bool|null $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int
      */
     public function getDataForGrid(?bool $data, Concrete $object = null, array $params = []): int
     {
@@ -331,11 +299,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int
      *
      * @see Data::getDataForEditmode
      *
@@ -353,11 +317,8 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param string $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return bool|null
      */
     public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?bool
     {
@@ -365,11 +326,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -390,9 +347,6 @@ class BooleanSelect extends Data implements
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);

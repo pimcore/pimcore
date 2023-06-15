@@ -27,9 +27,7 @@ trait AllowAssetRelationTrait
     /**
      * Checks if an asset is an allowed relation
      *
-     * @param Asset $asset
      *
-     * @return bool
      *
      * @internal
      */

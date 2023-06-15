@@ -39,14 +39,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $domainLabelWidth = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $action;
 
@@ -60,11 +58,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @see Data::getDataForEditmode
      *
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -94,9 +89,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
      */
@@ -121,9 +113,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param float $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
      */
@@ -132,9 +122,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data && !is_array($data)) {
@@ -253,11 +240,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param mixed $data
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function prepareDataForPersistence(mixed $data, Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): ?array
     {
@@ -434,18 +418,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -454,11 +433,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -504,9 +479,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
@@ -553,9 +525,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
@@ -572,9 +541,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $result = [];
@@ -590,9 +556,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return implode(',', $result);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;

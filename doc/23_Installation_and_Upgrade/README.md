@@ -1,8 +1,7 @@
 # Installation, Setup and Upgrade
 
 ## General Topics
-- [System Requirements](../01_Getting_Started/00_Installation.md)
-- [Installation Guide](../01_Getting_Started/00_Installation.md)
+- [Installation Guide](../01_Getting_Started/README.md)
   - [Apache Configuration](03_System_Setup_and_Hosting/01_Apache_Configuration.md)
   - [Nginx Configuration](03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
   - [File Permissions](03_System_Setup_and_Hosting/03_File_Permissions.md)

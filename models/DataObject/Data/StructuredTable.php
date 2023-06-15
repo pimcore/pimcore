@@ -47,8 +47,6 @@ class StructuredTable implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
      *
      * @return mixed|void
      *

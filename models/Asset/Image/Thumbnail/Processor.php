@@ -80,13 +80,8 @@ class Processor
     }
 
     /**
-     * @param Asset $asset
-     * @param Config $config
      * @param string|resource|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
-     * @param bool $generated
-     *
-     * @return array
      *
      * @throws \Exception
      */
@@ -207,7 +202,8 @@ class Processor
         if ($deferred) {
             // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
             if (!Config::exists($config->getName())) {
-                $configId = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
+                $pathInfo = trim($asset->getRealPath(), '/').'/'.$asset->getId() . '/';
+                $configId = 'thumb_' . $asset->getId() . '__' . md5($pathInfo);
                 TmpStore::add($configId, $config, 'thumbnail_deferred');
             }
 

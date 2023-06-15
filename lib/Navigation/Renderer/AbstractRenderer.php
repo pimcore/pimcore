@@ -50,42 +50,36 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int|null
      */
     protected ?int $_minDepth = null;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
-     * @var int|null
      */
     protected ?int $_maxDepth = null;
 
     /**
      * Indentation string
      *
-     * @var string
      */
     protected string $_indent = '';
 
     /**
      * Prefix for IDs when they are normalized
      *
-     * @var string|null
      */
     protected ?string $_prefixForId = null;
 
     /**
      * Skip current prefix for IDs when they are normalized (flag)
      *
-     * @var bool
      */
     protected bool $_skipPrefixForId = false;
 
     /**
      * Whether invisible items should be rendered by this helper
      *
-     * @var bool
      */
     protected bool $_renderInvisible = false;
 
@@ -99,17 +93,12 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Sets the minimum depth a page must have to be included when rendering
      *
-     * @param int|null $minDepth
      *
      * @return $this
      */
     public function setMinDepth(int $minDepth = null): static
     {
-        if (null !== $minDepth) {
-            $this->_minDepth = $minDepth;
-        } else {
-            $this->_minDepth = null;
-        }
+        $this->_minDepth = $minDepth;
 
         return $this;
     }
@@ -124,17 +113,12 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param int|null $maxDepth
      *
      * @return $this
      */
     public function setMaxDepth(int $maxDepth = null): static
     {
-        if (null !== $maxDepth) {
-            $this->_maxDepth = $maxDepth;
-        } else {
-            $this->_maxDepth = null;
-        }
+        $this->_maxDepth = $maxDepth;
 
         return $this;
     }
@@ -303,10 +287,7 @@ abstract class AbstractRenderer implements RendererInterface
      * - If page is accepted by the rules above and $recursive is true, the page
      *   will not be accepted if it is the descendant of a non-accepted page.
      *
-     * @param  Page $page
-     * @param bool $recursive
      *
-     * @return bool
      */
     public function accept(Page $page, bool $recursive = true): bool
     {
@@ -333,9 +314,7 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param int|string $indent
      *
-     * @return string
      */
     protected function _getWhitespace(int|string $indent): string
     {
@@ -349,9 +328,7 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Converts an associative array to a string of tag attributes.
      *
-     * @param array $attribs
      *
-     * @return string
      */
     protected function _htmlAttribs(array $attribs): string
     {

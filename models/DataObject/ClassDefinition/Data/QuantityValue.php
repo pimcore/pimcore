@@ -269,9 +269,6 @@ class QuantityValue extends AbstractQuantityValue
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (

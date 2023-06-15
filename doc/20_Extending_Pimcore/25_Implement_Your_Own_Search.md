@@ -1,4 +1,4 @@
-# Implement your own search
+# Implement Your Own Search
 
 ## Register Implementation
 

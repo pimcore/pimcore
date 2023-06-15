@@ -22,9 +22,7 @@ namespace Pimcore;
 class Video
 {
     /**
-     * @param string|null $adapter
      *
-     * @return Video\Adapter|null
      *
      * @throws \Exception
      */

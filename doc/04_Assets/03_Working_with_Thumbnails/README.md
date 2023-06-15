@@ -1,4 +1,4 @@
-# Working with Thumbnails
+# Working With Thumbnails
 
 Pimcore provides a sophisticated thumbnail processing engine for calculating thumbnails based on source assets. So for 
 different output channels Pimcore can calculate and provide optimized images in terms of dimensions, file sizes, formats

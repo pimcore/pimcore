@@ -57,21 +57,18 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Registry key for placeholder
      *
-     * @var string
      */
     protected string $_regKey = 'HeadStyle';
 
     /**
      * Allowed optional attributes
      *
-     * @var array
      */
     protected array $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
 
     /**
      * Allowed media types
      *
-     * @var array
      */
     protected array $_mediaTypes = [
         'all', 'aural', 'braille', 'handheld', 'print',
@@ -81,21 +78,18 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Capture type and/or attributes (used for hinting during capture)
      *
-     * @var array|null
      */
     protected ?array $_captureAttrs = null;
 
     /**
      * Capture lock
      *
-     * @var bool
      */
     protected bool $_captureLock = false;
 
     /**
      * Capture type (append, prepend, set)
      *
-     * @var string
      */
     protected string $_captureType;
 
@@ -104,7 +98,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * Set separator to PHP_EOL.
      *
-     * @param ContainerService $containerService
      */
     public function __construct(ContainerService $containerService)
     {
@@ -156,10 +149,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * - prependStyle($content, $attributes = array())
      * - setStyle($content, $attributes = array())
      *
-     * @param string $method
-     * @param array $args
      *
-     * @return mixed
      *
      * @throws Exception When no $content provided or invalid method
      */
@@ -204,9 +194,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Determine if a value is a valid style tag
      *
-     * @param mixed $value
      *
-     * @return bool
      */
     protected function _isValid(mixed $value): bool
     {
@@ -222,9 +210,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override append to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function append(mixed $value): void
     {
@@ -239,9 +225,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * Override offsetSet to enforce style creation
      *
      * @param  string|int $offset
-     * @param mixed $value
      *
-     * @return void
      */
     public function offsetSet($offset, mixed $value): void
     {
@@ -255,9 +239,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override prepend to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function prepend(mixed $value): void
     {
@@ -271,9 +253,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override set to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function set(mixed $value): void
     {
@@ -290,7 +270,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $type
      * @param array|null $attrs
      *
-     * @return void
      */
     public function captureStart($type = Container::APPEND, $attrs = null): void
     {
@@ -307,7 +286,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
-     * @return void
      */
     public function captureEnd(): void
     {
@@ -339,7 +317,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param  \stdClass $item Item to render
      * @param string|null $indent Indentation to use
      *
-     * @return string
      */
     public function itemToString(\stdClass $item, ?string $indent): string
     {
@@ -398,9 +375,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create string representation of placeholder
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {
@@ -426,10 +401,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create data item for use in stack
      *
-     * @param string $content
-     * @param  array $attributes
      *
-     * @return \stdClass
      */
     public function createData(string $content, array $attributes): \stdClass
     {

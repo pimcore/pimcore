@@ -36,21 +36,18 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
     /**
      * Parent id
      *
-     * @var int|null
      */
     protected ?int $parentId = null;
 
     /**
      * The group name.
      *
-     * @var string
      */
     protected string $name;
 
@@ -91,11 +88,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool|null $force
      *
-     * @return self|null
      *
      * @throws \Exception
      */

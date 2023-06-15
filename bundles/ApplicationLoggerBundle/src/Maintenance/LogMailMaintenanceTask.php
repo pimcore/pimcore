@@ -37,9 +37,6 @@ class LogMailMaintenanceTask implements TaskInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = $this->db;

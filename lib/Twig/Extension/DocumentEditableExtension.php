@@ -34,9 +34,6 @@ class DocumentEditableExtension extends AbstractExtension
         $this->editableRenderer = $editableRenderer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -75,13 +72,6 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * @internal
      *
-     * @param array $context
-     * @param string $type
-     * @param string $name
-     * @param array $options
-     *
-     * @return \Pimcore\Model\Document\Editable\EditableInterface|string
-     *
      * @throws \Exception
      */
     public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
@@ -100,9 +90,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @internal
      *
-     * @param BlockInterface $block
      *
-     * @return \Generator
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {

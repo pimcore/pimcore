@@ -37,13 +37,9 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @internal
      *
-     * @var array
      */
     protected array $elementIds = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'relations';
@@ -69,9 +65,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         $this->setElements();
@@ -84,9 +77,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): array
     {
         $this->setElements();
@@ -109,9 +99,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $this->setElements();
@@ -126,9 +113,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
@@ -138,9 +122,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
@@ -180,9 +161,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return count($this->elements) > 0 ? false : true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $this->setElements();
@@ -205,9 +183,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store
@@ -225,9 +200,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -242,9 +214,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         $this->setElements();

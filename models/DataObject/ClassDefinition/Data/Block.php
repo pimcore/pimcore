@@ -63,28 +63,24 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $styleElement = '';
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $children = [];
 
     /**
      * @internal
      *
-     * @var array|null
      */
     public ?array $layout = null;
 
@@ -93,18 +89,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @internal
      *
-     * @var array
      */
     protected array $referencedFields = [];
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -164,11 +155,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -257,11 +244,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataForEditmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -305,11 +288,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -372,9 +351,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
      *
      * @throws \Exception
      */
@@ -441,28 +417,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getVersionPreview
      *
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -471,11 +437,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -736,9 +699,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
@@ -828,9 +788,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
@@ -888,9 +845,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowReorder = $disallowReorder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck) {
@@ -959,8 +913,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * This method is called in DataObject\ClassDefinition::save()
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {

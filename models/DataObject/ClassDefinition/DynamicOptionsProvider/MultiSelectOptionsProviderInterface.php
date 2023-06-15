@@ -28,10 +28,7 @@ interface MultiSelectOptionsProviderInterface
      * there will be no batch assignment mode, and filtering can only be done through a text field instead of the
      * options list.
      *
-     * @param array $context
-     * @param Data $fieldDefinition
      *
-     * @return bool
      */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
 }

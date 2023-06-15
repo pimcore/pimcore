@@ -26,11 +26,14 @@ use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
+use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
@@ -57,7 +60,7 @@ use Symfony\Component\Process\Process;
  */
 class Installer
 {
-    const EVENT_NAME_STEP = 'pimcore.installer.step';
+    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle', 'PimcoreTinymceBundle'];
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
@@ -66,6 +69,7 @@ class Installer
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
         'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
+        'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
@@ -78,7 +82,6 @@ class Installer
     /**
      * Predefined DB credentials from config
      *
-     * @var array
      */
     private array $dbCredentials;
 
@@ -87,14 +90,12 @@ class Installer
     /**
      * When false, skips creating database structure during install
      *
-     * @var bool
      */
     private bool $createDatabaseStructure = true;
 
     /**
      * When false, skips importing all database data during install
      *
-     * @var bool
      */
     private bool $importDatabaseData = true;
 
@@ -102,23 +103,35 @@ class Installer
      * When false, skips importing database data dump files (if available) during install
      * only imports needed base data
      *
-     * @var bool
      */
     private bool $importDatabaseDataDump = true;
 
     /**
      * skip writing database.yaml file
      *
-     * @var bool
      */
     private bool $skipDatabaseConfig = false;
 
     /**
      * Bundles that will be installed
      *
-     * @var array
      */
     private array $bundlesToInstall =  [];
+
+    /**
+     * This bundles might be different to the predefined one, due to the bundle event
+     *
+     * @var array|string[]
+     */
+    private array $availableBundles = self::INSTALLABLE_BUNDLES;
+
+    /**
+     * This bundles should not be added in the bundles php, e.g. for higher priority
+     * Bundles need to be registered in the Kernel then e.g.
+     *
+     * @var array|string[]
+     */
+    private array $excludeFromBundlesPhp = [];
 
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
@@ -177,13 +190,21 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function setBundlesToInstall(array $bundlesToInstall): void
+    public function setBundlesToInstall(array $bundlesToInstall = [], array $availableBundles = [], array $excludeFromBundlesPhp = []): void
     {
         // map and filter the bundles
-        $bundlesToInstall = array_filter(array_map(static function (string $bundle) {
-            return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
-        }, $bundlesToInstall));
+        $bundlesToInstall = array_filter(array_map(
+            static fn (string $bundle) => $availableBundles[$bundle] ?? null,
+            $bundlesToInstall,
+        ));
+        $this->availableBundles = $availableBundles;
         $this->bundlesToInstall = $bundlesToInstall;
+        $this->excludeFromBundlesPhp = $excludeFromBundlesPhp;
+    }
+
+    public function dispatchBundleSetupEvent(): BundleSetupEvent
+    {
+        return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
     }
 
     public function checkPrerequisites(Connection $db = null): array
@@ -199,9 +220,7 @@ class Installer
 
     /**
      * @param Check[] $checks
-     * @param array $filterStates
      *
-     * @return array
      */
     public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR]): array
     {
@@ -241,13 +260,12 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
+        $this->eventDispatcher->dispatch($event, InstallEvents::EVENT_NAME_STEP);
 
         return $event;
     }
 
     /**
-     * @param array $params
      *
      * @return array Array of errors
      */
@@ -509,16 +527,29 @@ class Installer
 
     private function installBundles(): void
     {
-        $writer = new BundleWriter();
-        $writer->addBundlesToConfig($this->bundlesToInstall);
+        $this->writeBundlesToConfig();
         foreach ($this->bundlesToInstall as $bundle) {
-            if (in_array($bundle, self::INSTALLABLE_BUNDLES) && !$this->isBundleInstalled($bundle)) {
+            if (in_array($bundle, $this->availableBundles) && !$this->isBundleInstalled($bundle)) {
                 $this->runCommand([
                     'pimcore:bundle:install',
                     $bundle,
                 ], 'Installing ' . $bundle);
             }
         }
+    }
+
+    private function writeBundlesToConfig(): void
+    {
+        // some bundles need to be excluded
+        $bundlesToInstall = $this->bundlesToInstall;
+        $availableBundles = $this->availableBundles;
+
+        if(!empty($this->excludeFromBundlesPhp)) {
+            $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
+            $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
+        }
+        $writer = new BundleWriter();
+        $writer->addBundlesToConfig($bundlesToInstall, $availableBundles);
     }
 
     private function installAssets(KernelInterface $kernel): void
@@ -691,7 +722,6 @@ class Installer
     }
 
     /**
-     * @param string $file
      *
      * @throws \Exception
      */
@@ -805,6 +835,10 @@ class Installer
             'notifications_send',
             'sites',
             'objects_sort_method',
+            'objectbricks',
+            'fieldcollections',
+            'quantityValueUnits',
+            'classificationstore',
         ];
 
         foreach ($userPermissions as $permission) {

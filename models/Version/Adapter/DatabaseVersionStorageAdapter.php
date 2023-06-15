@@ -55,12 +55,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
-     * @param bool $binaryData
      *
-     * @return mixed
      *
      * @throws \Doctrine\DBAL\Exception
      */

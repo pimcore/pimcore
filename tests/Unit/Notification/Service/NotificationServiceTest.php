@@ -26,9 +26,6 @@ class NotificationServiceTest extends TestCase
 {
     protected NotificationService $notificationService;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

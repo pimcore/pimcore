@@ -24,9 +24,6 @@ use Pimcore\Model\Element;
 
 class AbstractElementImporter implements ImporterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $translationItem = $attributeSet->getTranslationItem();

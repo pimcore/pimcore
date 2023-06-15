@@ -7,7 +7,7 @@ Pimcore implements the `Symfony\Console` component and provides `bin/console` as
 entry point to console commands registered to the `Symfony\Console` application. 
 
 
-### Implementing own Commands
+### Implementing Own Commands
 Have a look at the `Symfony\Console` [documentation](https://symfony.com/doc/5.2/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
 `Pimcore\Console\AbstractCommand` to get some defaults like a helper for the 
@@ -18,7 +18,7 @@ set up automatically (see below).
 Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yaml` 
 of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
 
-### Helpers provided by `Pimcore\Console\AbstractCommand`
+### Helpers Provided By `Pimcore\Console\AbstractCommand`
 The `AbstractCommand` base class provides helpers which make your life easier.
 
 ##### `--ignore-maintenance-mode`

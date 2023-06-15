@@ -81,10 +81,6 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $action
-     * @param array $actionConfig
-     * @param CustomHtmlServiceInterface|null $customHtmlService
      *
      * @return $this
      */
@@ -117,8 +113,6 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     * @param Workflow $workflow
-     * @param Marking|null $marking
      *
      * @return PlaceConfig[];
      */
@@ -175,7 +169,6 @@ class Manager
     }
 
     /**
-     * @param object $subject
      *
      * @return Workflow[]
      */
@@ -216,13 +209,7 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param Asset|Concrete|PageSnippet $subject
-     * @param string $transition
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
      * @throws ValidationException
      * @throws \Exception
@@ -250,13 +237,7 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param object $subject
-     * @param string $globalAction
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
      * @throws \Exception
      */
@@ -297,10 +278,7 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $transitionName
      *
-     * @return null|\Symfony\Component\Workflow\Transition
      *
      * @throws \Exception
      */
@@ -324,8 +302,6 @@ class Manager
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
      * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
-     * @param string $workflowName
-     * @param object $subject
      *
      * @return bool true if initial state was applied
      *

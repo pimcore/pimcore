@@ -36,9 +36,6 @@ class StaticPagesGenerationTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $listing = new Document\Listing();

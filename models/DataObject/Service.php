@@ -54,7 +54,6 @@ class Service extends Model\Element\Service
     /**
      * System fields used by filter conditions
      *
-     * @var array
      */
     protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
@@ -68,9 +67,6 @@ class Service extends Model\Element\Service
                                                                 'classid', 'childrensortby', 'classname', 'childrensortorder',
                                                                 'versioncount', ];
 
-    /**
-     * @param Model\User|null $user
-     */
     public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
@@ -80,8 +76,6 @@ class Service extends Model\Element\Service
      * finds all objects which hold a reference to a specific user
      *
      * @static
-     *
-     * @param int $userId
      *
      * @return Concrete[]
      */
@@ -171,8 +165,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
      *
      * @return AbstractObject copied object
      */
@@ -277,9 +269,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $field
      *
-     * @return bool
      *
      * @internal
      */
@@ -291,12 +281,7 @@ class Service extends Model\Element\Service
     /**
      * Language only user for classification store !!!
      *
-     * @param AbstractObject $object
-     * @param array|null $fields
-     * @param string|null $requestedLanguage
-     * @param array $params
      *
-     * @return array
      *
      * @internal
      */
@@ -478,8 +463,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $helperDefinitions
-     * @param string $key
      *
      * @return string[]|null
      *
@@ -496,11 +479,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $helperDefinitions
-     * @param string $key
-     * @param array $context
      *
-     * @return ConfigElementInterface|null
      *
      * @internal
      */
@@ -755,7 +734,6 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param AbstractObject $object
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
@@ -783,10 +761,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string|Concrete $object
-     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $definition
      *
-     * @return array
      */
     public static function getOptionsForSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $definition): array
     {
@@ -830,10 +805,7 @@ class Service extends Model\Element\Service
     /**
      * alias of getOptionsForMultiSelectField
      *
-     * @param string|Concrete $object
-     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $fieldname
      *
-     * @return array
      */
     public static function getOptionsForMultiSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $fieldname): array
     {
@@ -843,10 +815,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string $path
-     * @param string|null $type
      *
-     * @return bool
      */
     public static function pathExists(string $path, string $type = null): bool
     {
@@ -889,11 +858,7 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param AbstractObject $object
-     * @param array $rewriteConfig
-     * @param array $params
      *
-     * @return AbstractObject
      */
     public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject
     {
@@ -923,7 +888,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
      *
      * @return array<string, DataObject\ClassDefinition\CustomLayout>
      */
@@ -992,9 +956,7 @@ class Service extends Model\Element\Service
      * Returns the fields of a datatype container (e.g. block or localized fields)
      *
      * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
-     * @param string $targetClass
      * @param ClassDefinition\Data[] $targetList
-     * @param bool $insideDataType
      *
      * @return ClassDefinition\Data[]
      */
@@ -1018,9 +980,7 @@ class Service extends Model\Element\Service
     }
 
     /** Calculates the super layout definition for the given object.
-     * @param Concrete $object
      *
-     * @return mixed
      */
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
@@ -1091,7 +1051,6 @@ class Service extends Model\Element\Service
     }
 
     /** Synchronizes a custom layout with its main layout
-     * @param ClassDefinition\CustomLayout $customLayout
      */
     public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
@@ -1112,10 +1071,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $classId
-     * @param int $objectId
      *
-     * @return array|null
      *
      * @internal
      */
@@ -1286,8 +1242,6 @@ class Service extends Model\Element\Service
     }
 
     /**  Determines the custom layout definition (if necessary) for the given class
-     * @param ClassDefinition $class
-     * @param int $objectId
      *
      * @return array layout
      *
@@ -1366,7 +1320,6 @@ class Service extends Model\Element\Service
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
-     * @param Concrete|null $object
      * @param array<string, mixed> $context additional contextual data
      *
      * @internal
@@ -1480,11 +1433,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param array $params
      * @param Model\DataObject\Data\CalculatedValue|null $data
-     *
-     * @return string|null
      *
      * @internal
      */
@@ -1639,9 +1588,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $descriptor
      *
-     * @return array
      *
      * @internal
      */
@@ -1662,15 +1609,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param string $requestedLanguage
-     * @param array $fields
-     * @param array $helperDefinitions
-     * @param LocaleServiceInterface $localeService
-     * @param bool $returnMappedFieldNames
-     * @param array $context
      *
-     * @return array
      *
      * @internal
      */
@@ -1729,14 +1668,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $requestedLanguage
-     * @param LocaleServiceInterface $localeService
      * @param DataObject\Listing $list
      * @param string[] $fields
-     * @param bool $addTitles
-     * @param array $context
-     *
-     * @return array
      *
      * @internal
      */
@@ -1881,7 +1814,7 @@ class Service extends Model\Element\Service
                             );
                         }
                     }
-                //key value store - ignore for now
+                    //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];

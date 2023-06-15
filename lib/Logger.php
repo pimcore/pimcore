@@ -19,9 +19,6 @@ namespace Pimcore;
 class Logger
 {
     /**
-     * @param string $message
-     * @param string $level
-     * @param array $context
      *
      * @internal
      */
