@@ -192,35 +192,12 @@ trait ImageThumbnailTrait
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile) {
-                    //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
-                    if ($imageSize = @getimagesize($localFile)) {
-                        $dimensions = [
-                            'width' => $imageSize[0],
-                            'height' => $imageSize[1],
-                        ];
-                    } else {
-                        //fallback to Default Adapter
-                        $image = \Pimcore\Image::getInstance();
-                        if ($image->load($localFile)) {
-                            $dimensions = [
-                                'width' => $image->getWidth(),
-                                'height' => $image->getHeight(),
-                            ];
-                        }
-                    }
-
-                    if (!empty($dimensions)) {
-                        if ($config = $this->getConfig()) {
-                            $this->getAsset()->getDao()->addToThumbnailCache(
-                                $config->getName(),
-                                basename($pathReference['storagePath']),
-                                filesize($localFile),
-                                $dimensions['width'],
-                                $dimensions['height']
-                            );
-                        }
-                    }
+                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
+                    $this->getAsset()->addThumbnailFileToCache(
+                        $localFile,
+                        basename($pathReference['storagePath']),
+                        $config
+                    );
                 }
             } catch (\Exception $e) {
                 // noting to do

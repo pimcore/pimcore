@@ -436,7 +436,8 @@ class Processor
                 }
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {
-                    $asset->getThumbnail($config->getName())->readDimensionsFromFile(); //update thumbnail dimensions to cache
+                    //update thumbnail dimensions to cache
+                    $asset->addThumbnailFileToCache($tmpFsPath, $filename, $config);
                 }
 
                 $generated = true;
