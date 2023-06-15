@@ -2060,8 +2060,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 throw new NotFoundHttpException('Cannot render preview due to empty URL');
             }
 
-            // replace all remaining % signs
-            $url = str_replace('%', '%25', $url);
+            // replace all remaining % signs which are not an url encoded characters
+            $url = preg_replace('/%(?![0-9A-F]{2})/i', '%25', $url);
 
             $urlParts = parse_url($url);
 
