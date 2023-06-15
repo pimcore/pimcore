@@ -261,7 +261,8 @@ final class Thumbnail
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
         if ($thumbConfig instanceof Image\Thumbnail\Config) {
-            $html.= $this->getMediaConfigsHtml($thumbConfig, $image, $options, $isAutoFormat);
+            $thumbConfigRes = clone $thumbConfig;
+            $html.= $this->getMediaConfigsHtml($thumbConfigRes, $image, $options, $isAutoFormat);
         }
 
         if (!($options['disableImgTag'] ?? null)) {
@@ -287,6 +288,7 @@ final class Thumbnail
         array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
         foreach ($mediaConfigs as $mediaQuery => $config) {
+            $thumbConfig->setItems($config);
             $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
             if (!empty($sourceHtml)) {
                 if ($isAutoFormat) {
