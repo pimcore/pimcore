@@ -25,6 +25,8 @@ class ClassDefinitionManager
 
     public const CREATED = 'created';
 
+    public const SKIPPED = 'skipped';
+
     public const DELETED = 'deleted';
 
     /**
@@ -63,10 +65,10 @@ class ClassDefinitionManager
     {
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
-        foreach ($objectClassesFolders as $objectClassesFolder) {
-            $files = glob($objectClassesFolder.'/*.php');
+        $changes = [];
 
-            $changes = [];
+        foreach ($objectClassesFolders as $objectClassesFolder) {
+            $files = glob($objectClassesFolder . '/*.php');
 
             foreach ($files as $file) {
                 $class = include $file;
@@ -75,16 +77,39 @@ class ClassDefinitionManager
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinition) {
-                        $changes[] = [$class->getName(), $class->getId(), self::SAVED];
-                        $existingClass->save(false);
+                        $classSaved = $this->saveClass($existingClass, false);
+                    $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
-                        $changes[] = [$class->getName(), $class->getId(), self::CREATED];
-                        $class->save(false);
+                        $classSaved = $this->saveClass($class, false);
+                    $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }
             }
         }
 
         return $changes;
+    }
+
+    /**
+     * @return bool whether the class was saved or not
+     */
+    public function saveClass(ClassDefinition $class, bool $saveDefinitionFile, bool $force = false): bool
+    {
+        $shouldSave = $force;
+
+        if (!$force) {
+            $db = Db::get();
+            $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', $class->getId());
+
+            if (!$lastRebuildDate || $lastRebuildDate !== $class->getModificationDate()) {
+                $shouldSave = true;
+            }
+        }
+
+        if ($shouldSave) {
+            $class->save($saveDefinitionFile);
+        }
+
+        return $shouldSave;
     }
 }

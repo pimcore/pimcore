@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
 	`id` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NOT NULL DEFAULT '',
+    `lastRebuildDate` INT(11) UNSIGNED NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;

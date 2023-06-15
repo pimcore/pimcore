@@ -104,11 +104,17 @@ class ClassesRebuildCommand extends AbstractCommand
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
                 if ($class instanceof ClassDefinition) {
+                    $classSaved = $this->classDefinitionManager->saveClass($class, false);
                     if ($output->isVerbose()) {
-                        $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
+                        $output->writeln(
+                            sprintf(
+                                '%s [%s] %s',
+                                $class->getName(),
+                                $class->getId(),
+                                $classSaved ? ClassDefinitionManager::SAVED : ClassDefinitionManager::SKIPPED
+                            )
+                        );
                     }
-
-                    $class->save(false);
                 }
             }
         }
