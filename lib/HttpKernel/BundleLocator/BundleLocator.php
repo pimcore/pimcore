@@ -30,17 +30,11 @@ class BundleLocator implements BundleLocatorInterface
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBundle(object|string $class): BundleInterface
     {
         return $this->getBundleForClass($class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBundlePath(object|string $class): string
     {
         return $this->getBundleForClass($class)->getPath();

@@ -36,7 +36,6 @@ final class Tag extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
     protected string $name;
 
@@ -48,7 +47,6 @@ final class Tag extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
     protected string $idPath = '';
 
@@ -62,16 +60,13 @@ final class Tag extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var Tag|null
      */
     protected ?Tag $parent = null;
 
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return Tag|null
      */
     public static function getById(int $id): ?Tag
     {
@@ -88,8 +83,6 @@ final class Tag extends Model\AbstractModel
     /**
      * returns all assigned tags for element
      *
-     * @param string $cType
-     * @param int $cId
      *
      * @return Tag[]
      */
@@ -103,9 +96,6 @@ final class Tag extends Model\AbstractModel
     /**
      * adds given tag to element
      *
-     * @param string $cType
-     * @param int $cId
-     * @param Tag $tag
      */
     public static function addTagToElement(string $cType, int $cId, Tag $tag): void
     {
@@ -123,9 +113,6 @@ final class Tag extends Model\AbstractModel
     /**
      * removes given tag from element
      *
-     * @param string $cType
-     * @param int $cId
-     * @param Tag $tag
      */
     public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
     {
@@ -144,8 +131,6 @@ final class Tag extends Model\AbstractModel
      * sets given tags to element and removes all other tags
      * to remove all tags from element, provide empty array of tags
      *
-     * @param string $cType
-     * @param int $cId
      * @param Tag[] $tags
      */
     public static function setTagsForElement(string $cType, int $cId, array $tags): void
@@ -169,7 +154,6 @@ final class Tag extends Model\AbstractModel
      * @param array $classNames        For objects only: filter by classnames
      * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public static function getElementsForTag(
         Tag $tag,
@@ -184,7 +168,6 @@ final class Tag extends Model\AbstractModel
     /**
      * @param string $path name path of tags
      *
-     * @return Tag|null
      */
     public static function getByPath(string $path): ?Tag
     {

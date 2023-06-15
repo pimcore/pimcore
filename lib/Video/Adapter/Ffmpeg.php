@@ -52,7 +52,6 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return string|bool
      *
      * @throws \Exception
      */
@@ -70,7 +69,6 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return bool
      *
      * @throws \Exception
      */
@@ -223,7 +221,6 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */

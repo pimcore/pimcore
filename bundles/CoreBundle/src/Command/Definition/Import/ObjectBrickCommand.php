@@ -28,7 +28,6 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Get type
      *
-     * @return string
      */
     protected function getType(): string
     {
@@ -38,9 +37,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
-     * @param string $filename
      *
-     * @return string|null
      */
     protected function getDefinitionName(string $filename): ?string
     {
@@ -55,9 +52,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Try to load definition by name
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
     protected function loadDefinition(string $name): ?AbstractModel
     {
@@ -67,9 +62,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Create a new definition
      *
-     * @param string $name
      *
-     * @return Definition
      */
     protected function createDefinition(string $name): Definition
     {
@@ -82,10 +75,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Process import
      *
-     * @param AbstractModel $definition
-     * @param string $json
      *
-     * @return bool
      */
     protected function import(AbstractModel $definition, string $json): bool
     {

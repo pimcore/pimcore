@@ -26,11 +26,7 @@ trait RelationFilterConditionParser
     /**
      * Parses filter value of a relation field and creates the filter condition
      *
-     * @param string|null $value
-     * @param string $operator
-     * @param string $name
      *
-     * @return string
      */
     public function getRelationFilterCondition(?string $value, string $operator, string $name): string
     {

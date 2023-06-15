@@ -34,10 +34,6 @@ class GlobalActionEvent extends Event
     /**
      * DocumentEvent constructor.
      *
-     * @param Workflow $workflow
-     * @param mixed $subject
-     * @param GlobalAction $globalAction
-     * @param array $arguments
      */
     public function __construct(Workflow $workflow, mixed $subject, GlobalAction $globalAction, array $arguments = [])
     {

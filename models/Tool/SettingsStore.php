@@ -42,35 +42,30 @@ final class SettingsStore extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
     protected string $id;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $scope = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type = '';
 
     /**
      * @internal
      *
-     * @var mixed
      */
     protected mixed $data = null;
 
     /**
      * @internal
      *
-     * @var self|null
      */
     protected static ?self $instance = null;
 
@@ -96,12 +91,7 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param float|bool|int|string $data
-     * @param string $type
-     * @param string|null $scope
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -131,7 +121,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $scope
      *
      * @return string[]
      */
@@ -168,7 +157,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
      *
      * @throws \Exception
      */

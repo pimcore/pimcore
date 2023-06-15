@@ -33,9 +33,6 @@ class HousekeepingTask implements TaskInterface
         $this->profilerTime = $profilerTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         foreach (['dev'] as $environment) {

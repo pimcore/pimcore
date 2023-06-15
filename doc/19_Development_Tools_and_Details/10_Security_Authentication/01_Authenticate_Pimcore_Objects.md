@@ -29,10 +29,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User extends BaseUser implements UserInterface
 {
     /**
-     * Trigger the hash calculation to remove the plain text password from the instance. This
-     * is necessary to make sure no plain text passwords are serialized.
-     *
-     * {@inheritdoc}
+     * Trigger the hash calculation to remove the plain text password from the instance. 
+     * 
+     * This is necessary to make sure no plain text passwords are serialized.
      */
     public function eraseCredentials(): void
     {

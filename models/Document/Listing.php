@@ -37,14 +37,12 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @internal
      *
-     * @var bool
      */
     protected bool $objectTypeDocument = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $unpublished = false;
 
@@ -64,7 +62,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Checks if the document is unpublished.
      *
-     * @return bool
      */
     public function getUnpublished(): bool
     {
@@ -74,7 +71,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Set the unpublished flag for the document.
      *
-     * @param bool $unpublished
      *
      * @return $this
      */
@@ -100,9 +96,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $condition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);

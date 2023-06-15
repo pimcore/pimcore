@@ -53,9 +53,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

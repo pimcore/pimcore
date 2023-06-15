@@ -27,11 +27,6 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class Authentication
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return User|null
-     */
     public static function authenticateSession(Request $request = null): ?User
     {
         if (null === $request) {
@@ -180,10 +175,7 @@ class Authentication
     }
 
     /**
-     * @param string $username
-     * @param string $plainTextPassword
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -209,9 +201,7 @@ class Authentication
     }
 
     /**
-     * @param string $username
      *
-     * @return string
      *
      * @internal
      */

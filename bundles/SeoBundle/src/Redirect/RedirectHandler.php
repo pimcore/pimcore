@@ -71,11 +71,7 @@ final class RedirectHandler
     }
 
     /**
-     * @param Request $request
-     * @param bool $override
-     * @param Site|null $sourceSite
      *
-     * @return RedirectResponse|null
      *
      * @throws \Exception
      */
@@ -146,11 +142,7 @@ final class RedirectHandler
     }
 
     /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param array $matches
      *
-     * @return RedirectResponse|null
      *
      * @throws \Exception
      */

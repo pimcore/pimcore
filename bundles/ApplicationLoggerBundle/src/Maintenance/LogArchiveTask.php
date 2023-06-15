@@ -44,9 +44,6 @@ class LogArchiveTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = $this->db;

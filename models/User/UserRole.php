@@ -88,9 +88,6 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
      */
     protected array $websiteTranslationLanguagesEdit = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(): void
     {
         $this->getDao()->update();
@@ -125,8 +122,6 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
     }
 
     /**
-     * @param string $permissionName
-     * @param bool|null $value
      *
      * @return $this
      */

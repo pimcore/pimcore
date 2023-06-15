@@ -29,9 +29,6 @@ abstract class ModelTestCase extends TestCase
 {
     private ?SessionInterface $session = null;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,9 +45,6 @@ abstract class ModelTestCase extends TestCase
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;

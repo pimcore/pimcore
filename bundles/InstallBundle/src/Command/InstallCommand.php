@@ -128,9 +128,6 @@ class InstallCommand extends Command
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $options = $this->getOptions();
@@ -182,9 +179,6 @@ class InstallCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if ($input->getOption('skip-database-config')) {
@@ -304,9 +298,6 @@ class InstallCommand extends Command
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // dispatch a bundle config event here to manually add/remove bundles/recommendations

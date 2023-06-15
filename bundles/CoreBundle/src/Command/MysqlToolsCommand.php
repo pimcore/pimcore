@@ -41,9 +41,6 @@ class MysqlToolsCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // display error message

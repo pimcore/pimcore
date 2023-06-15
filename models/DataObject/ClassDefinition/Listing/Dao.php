@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of object-classes for the specicifies parameters, returns an array of DataObject\ClassDefinition elements
      *
-     * @return array
      */
     public function load(): array
     {

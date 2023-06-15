@@ -250,9 +250,6 @@ use Pimcore\Model\Document\Editable\Area\Info;
 
 class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'WYSIWYG w. Images';
@@ -301,9 +298,6 @@ use Pimcore\Model\Document\Editable\Area\Info;
 
 class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'WYSIWYG w. Images';

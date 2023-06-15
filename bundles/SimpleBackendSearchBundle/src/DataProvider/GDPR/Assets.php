@@ -24,17 +24,6 @@ use Pimcore\Model\Element\Service;
 
 class Assets extends DataProvider\Assets
 {
-    /**
-     * @param int $id
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
-     * @param int $start
-     * @param int $limit
-     * @param string|null $sort
-     *
-     * @return array
-     */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
         if (empty($id) && empty($firstname) && empty($lastname) && empty($email)) {

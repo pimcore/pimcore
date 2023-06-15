@@ -27,21 +27,18 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'iframe';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $iframeUrl;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $renderingData;
 
@@ -65,9 +62,6 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
         $this->renderingData = $renderingData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->width = $this->getWidth() ? $this->getWidth() : 500;

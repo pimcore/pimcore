@@ -49,13 +49,6 @@ final class WebsiteSetting extends AbstractModel
      */
     protected static array $nameIdMappingCache = [];
 
-    /**
-     * @param string $name
-     * @param int|null $siteId
-     * @param string|null $language
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
@@ -88,8 +81,6 @@ final class WebsiteSetting extends AbstractModel
      * @param int|null $siteId site ID
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
-     *
-     * @return WebsiteSetting|null
      *
      * @throws \Exception
      */
@@ -231,7 +222,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -245,7 +235,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @return string
      */
     public function getType(): string
     {

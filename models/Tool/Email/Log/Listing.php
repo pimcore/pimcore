@@ -39,7 +39,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * Sets EmailLog entries
      *
-     * @param array $emailLogs
      *
      * @return $this
      */

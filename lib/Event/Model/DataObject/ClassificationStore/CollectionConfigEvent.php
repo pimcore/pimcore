@@ -26,7 +26,6 @@ class CollectionConfigEvent extends Event
     /**
      * DocumentEvent constructor.
      *
-     * @param CollectionConfig $collectionConfig
      */
     public function __construct(CollectionConfig $collectionConfig)
     {

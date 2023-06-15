@@ -33,7 +33,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Gets timestamp for with the output should be rendered to
      *
-     * @return int
      */
     public function getOutputTimestamp(): int
     {
@@ -54,7 +53,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Sets output timestamp to given value
      *
-     * @param int $timestamp
      */
     public function setOutputTimestamp(int $timestamp): void
     {
@@ -64,7 +62,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Returns if timestamp was queried during request at least once
      *
-     * @return bool
      */
     public function timestampWasQueried(): bool
     {

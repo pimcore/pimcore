@@ -28,17 +28,11 @@ class Embed extends Model\Document\Editable
      */
     protected ?string $url = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'embed';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -58,9 +52,6 @@ class Embed extends Model\Document\Editable
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         if ($this->url) {
@@ -90,9 +81,6 @@ class Embed extends Model\Document\Editable
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         $html = parent::admin();
@@ -104,9 +92,6 @@ class Embed extends Model\Document\Editable
         return $html;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
@@ -118,9 +103,6 @@ class Embed extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if ($data['url']) {
