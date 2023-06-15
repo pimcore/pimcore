@@ -234,21 +234,16 @@ final class Thumbnail
      */
     public function getHtml($options = [])
     {
+        $emptyGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         /** @var Image $image */
         $image = $this->getAsset();
         $thumbConfig = $this->getConfig();
 
         $pictureTagAttributes = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
-        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
-            $previewDataUri = $image->getLowQualityPreviewDataUri();
-            if (!$previewDataUri) {
-                // use a 1x1 transparent GIF as a fallback if no LQIP exists
-                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-            }
-
-            // this gets used in getImagTag() later
-            $options['previewDataUri'] = $previewDataUri;
+        if (($options['lowQualityPlaceholder'] ?? false) && !Tool::isFrontendRequestByAdmin()) {
+            // this gets used in getImagTag() later, use a 1x1 transparent GIF as a fallback if no LQIP exists
+            $options['previewDataUri'] =  $image->getLowQualityPreviewDataUri() ?: $emptyGif;
         }
 
         $isAutoFormat = $thumbConfig instanceof Image\Thumbnail\Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
@@ -265,31 +260,7 @@ final class Thumbnail
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
-        if ($thumbConfig instanceof Image\Thumbnail\Config) {
-            $mediaConfigs = $thumbConfig->getMedias();
-
-            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-            ksort($mediaConfigs, SORT_NUMERIC);
-            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
-
-            $thumbConfigRes = clone $thumbConfig;
-            foreach ($mediaConfigs as $mediaQuery => $config) {
-                $thumbConfigRes->setItems($config);
-                $sourceHtml = $this->getSourceTagHtml($thumbConfigRes, $mediaQuery, $image, $options);
-                if (!empty($sourceHtml)) {
-                    if ($isAutoFormat) {
-                        foreach ($thumbConfigRes->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
-                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
-                            if (!empty($autoFormatThumbnailHtml)) {
-                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
-                            }
-                        }
-                    }
-
-                    $html .= "\t" . $sourceHtml . "\n";
-                }
-            }
-        }
+        $html.= $this->getMediaConfigsHtml($thumbConfig, $image, $options, $isAutoFormat);
 
         if (!($options['disableImgTag'] ?? null)) {
             $html .= "\t" . $this->getImageTag($options) . "\n";
@@ -297,10 +268,37 @@ final class Thumbnail
 
         $html .= '</picture>' . "\n";
 
-        if (isset($options['useDataSrc']) && $options['useDataSrc']) {
+        if ($options['useDataSrc'] ?? false) {
             $html = preg_replace('/ src(set)?=/i', ' data-src$1=', $html);
         }
 
+        return $html;
+    }
+
+    protected function getMediaConfigsHtml(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
+    {
+        $html = '';
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+        ksort($mediaConfigs, SORT_NUMERIC);
+        array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+
+        foreach ($mediaConfigs as $mediaQuery => $config) {
+            $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
+            if (!empty($sourceHtml)) {
+                if ($isAutoFormat) {
+                    foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                        $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                        if (!empty($autoFormatThumbnailHtml)) {
+                            $html .= "\t" . $autoFormatThumbnailHtml . "\n";
+                        }
+                    }
+                }
+
+                $html .= "\t" . $sourceHtml . "\n";
+            }
+        }
         return $html;
     }
 
