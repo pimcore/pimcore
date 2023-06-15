@@ -58,7 +58,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $this->assertEquals($latestObjectVersion->getLocalizedfields()->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in localized field is not right.');
     }
@@ -85,7 +85,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $fieldCollectionItems = $latestObjectVersion->getFieldcollection()->getItems();
         foreach ($fieldCollectionItems as $item) {
@@ -110,7 +110,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $brickItems = $latestObjectVersion->getBricks()->getItems();
         foreach ($brickItems as $item) {

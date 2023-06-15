@@ -48,9 +48,6 @@ class GenerateStaticPagesCommand extends AbstractCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getOption('path');

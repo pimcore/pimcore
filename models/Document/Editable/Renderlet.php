@@ -36,7 +36,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -52,7 +51,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -61,21 +59,14 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $subtype = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'renderlet';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -85,9 +76,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         if ($this->o instanceof Element\ElementInterface) {
@@ -101,9 +89,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
@@ -164,7 +149,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -182,7 +167,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -213,9 +198,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $this->load();
@@ -281,9 +263,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -298,9 +277,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         if (!$this->o) {
@@ -350,9 +326,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this->subtype;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(array $idMapping): void
     {
         $type = (string) $this->type;

@@ -31,7 +31,6 @@ final class EditmodeEditableDefinitionCollector
     private array $stash = [];
 
     /**
-     * @param Editable $editable
      *
      * @throws \Exception
      */
@@ -105,7 +104,6 @@ final class EditmodeEditableDefinitionCollector
     }
 
     /**
-     * @return string
      *
      * @throws \JsonException
      */

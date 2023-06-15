@@ -28,7 +28,6 @@ interface UserAwarePasswordHasherInterface extends PasswordHasherInterface
     /**
      * Set the user
      *
-     * @param UserInterface $user
      *
      * @throws RuntimeException
      *      if the user is already set to prevent overwriting the scoped user object
@@ -38,7 +37,6 @@ interface UserAwarePasswordHasherInterface extends PasswordHasherInterface
     /**
      * Get the user object
      *
-     * @return UserInterface
      *
      * @throws RuntimeException
      *      if no user was set

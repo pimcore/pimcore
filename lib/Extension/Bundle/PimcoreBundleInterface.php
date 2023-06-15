@@ -24,28 +24,24 @@ interface PimcoreBundleInterface extends BundleInterface
     /**
      * Bundle name as shown in extension manager
      *
-     * @return string
      */
     public function getNiceName(): string;
 
     /**
      * Bundle description as shown in extension manager
      *
-     * @return string
      */
     public function getDescription(): string;
 
     /**
      * Bundle version as shown in extension manager
      *
-     * @return string
      */
     public function getVersion(): string;
 
     /**
      * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
      *
-     * @return InstallerInterface|null
      */
     public function getInstaller(): ?InstallerInterface;
 }

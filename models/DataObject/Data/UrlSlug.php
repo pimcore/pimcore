@@ -58,8 +58,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * UrlSlug constructor.
      *
-     * @param string|null $slug
-     * @param int|null $siteId
      */
     public function __construct(?string $slug, ?int $siteId = 0)
     {
@@ -94,7 +92,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * @return string|null
      */
     public function getPreviousSlug(): ?string
     {
@@ -104,7 +101,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * @param string|null $previousSlug
      */
     public function setPreviousSlug(?string $previousSlug): void
     {
@@ -198,10 +194,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $path
-     * @param int $siteId
      *
-     * @return UrlSlug|null
      *
      * @internal
      */
@@ -248,8 +241,6 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     /**
      * @internal
-     *
-     * @return string
      *
      * @throws \Exception
      */
@@ -369,7 +360,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $siteId
      *
      * @throws \Exception
      */
@@ -380,7 +370,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $classId
      *
      * @throws \Exception
      */
@@ -391,10 +380,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $path
-     * @param int $siteId
      *
-     * @return string
      *
      * @internal
      */

@@ -42,13 +42,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
     /**
      * @param TItem[] $items
-     * @param string|null $fieldname
      */
     public function __construct(array $items = [], string $fieldname = null)
     {
@@ -111,7 +109,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Concrete $object
      * @param array<string, mixed> $params
      *
      * @throws \Exception
@@ -227,11 +224,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Concrete $object
-     * @param string $type
-     * @param string $fcField
-     * @param int $index
-     * @param string $field
      *
      * @throws \Exception
      *

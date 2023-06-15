@@ -29,9 +29,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class LongRunningHelperPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         $helperDefinition = $container->getDefinition(LongRunningHelper::class);

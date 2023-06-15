@@ -59,9 +59,6 @@ class PrefixLoader extends AbstractClassNameLoader
         $this->prefixes = array_unique($this->prefixes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return null !== $this->findClassName($name);

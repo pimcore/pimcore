@@ -68,7 +68,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Types of attributes
      *
-     * @var array
      */
     protected array $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
 
@@ -88,7 +87,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * Set separator to PHP_EOL.
      *
-     * @param ContainerService $containerService
      */
     public function __construct(ContainerService $containerService)
     {
@@ -99,11 +97,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param string|null $content
-     * @param string|null $keyValue
-     * @param string $keyType
-     * @param array $modifiers
-     * @param string $placement
      *
      * @return $this
      */
@@ -168,8 +161,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * - prependProperty($keyValue, $content, $modifiers = array())
      * - setProperty($keyValue, $content, $modifiers = array())
      *
-     * @param string $method
-     * @param array $args
      *
      * @return HeadMeta
      */
@@ -215,9 +206,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Determine if item is valid
      *
-     * @param  mixed $item
      *
-     * @return bool
      */
     protected function _isValid(mixed $item): bool
     {
@@ -228,8 +217,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * Append
      *
      * @param  \stdClass $value
-     *
-     * @return void
      *
      * @throws Exception
      */
@@ -246,9 +233,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * OffsetSet
      *
      * @param  string|int $offset
-     * @param mixed $value
-     *
-     * @return void
      *
      * @throws Exception
      */
@@ -266,8 +250,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @param  string|int $index
      *
-     * @return void
-     *
      * @throws Exception
      */
     public function offsetUnset($index): void
@@ -284,8 +266,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @param  string $value
      *
-     * @return void
-     *
      * @throws Exception
      */
     public function prepend($value): void
@@ -300,9 +280,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Set
      *
-     * @param mixed $value
      *
-     * @return void
      *
      * @throws Exception
      */
@@ -325,9 +303,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Build meta HTML string
      *
-     * @param \stdClass $item
      *
-     * @return string
      */
     public function itemToString(\stdClass $item): string
     {
@@ -369,9 +345,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Render placeholder as string
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {
@@ -403,12 +377,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create data item for inserting into stack
      *
-     * @param string $type
-     * @param string $typeValue
-     * @param string $content
-     * @param  array $modifiers
      *
-     * @return \stdClass
      */
     public function createData(string $type, string $typeValue, string $content, array $modifiers): \stdClass
     {
@@ -434,9 +403,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * @param string $string
-     * @param int|null $length
-     * @param string $suffix
      *
      * @return $this
      */

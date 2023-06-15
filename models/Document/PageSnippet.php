@@ -38,14 +38,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $controller = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $template = null;
 
@@ -54,7 +52,6 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      *
      */
     protected ?array $editables = null;
@@ -64,14 +61,12 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var null|int
      */
     protected ?int $contentMainDocumentId = null;
 
@@ -90,7 +85,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var null|bool
      */
     protected ?bool $missingRequiredEditable = null;
 
@@ -102,14 +96,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var null|int
      */
     protected ?int $staticGeneratorLifetime = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $inheritedEditables = [];
 
@@ -130,9 +122,6 @@ abstract class PageSnippet extends Model\Document
         return self::$getInheritedValues;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         // checking the required editables renders the document, so this needs to be
@@ -145,9 +134,6 @@ abstract class PageSnippet extends Model\Document
         return parent::save($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         // update elements
@@ -170,12 +156,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
-     * @param string|null $versionNote
-     * @param bool $isAutoSave
      *
-     * @return null|Model\Version
      *
      * @throws \Exception
      */
@@ -235,9 +216,6 @@ abstract class PageSnippet extends Model\Document
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
@@ -262,9 +240,6 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
@@ -319,10 +294,6 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setRawEditable(string $name, string $type, mixed $data): static
@@ -349,7 +320,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * Set an element with the given key/name
      *
-     * @param Editable $editable
      *
      * @return $this
      */
@@ -374,9 +344,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * Get an editable with the given key/name
      *
-     * @param string $name
      *
-     * @return Editable|null
      */
     public function getEditable(string $name): ?Editable
     {
@@ -407,8 +375,6 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param int|string|null $contentMainDocumentId
-     * @param bool $validate
      *
      * @return $this
      *
@@ -526,7 +492,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @see Document::getFullPath
      *
-     * @return string
      */
     public function getHref(): string
     {
@@ -550,10 +515,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string|null $hostname
-     * @param string|null $scheme
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -596,7 +558,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * checks if the document is missing values for required editables
      *
-     * @return bool|null
      */
     public function getMissingRequiredEditable(): ?bool
     {
@@ -605,10 +566,6 @@ abstract class PageSnippet extends Model\Document
 
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = $missingRequiredEditable;
-        }
-
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -617,7 +574,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @return bool
      */
     public function supportsContentMain(): bool
     {

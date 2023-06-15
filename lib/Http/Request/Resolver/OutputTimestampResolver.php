@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Http\Request\Resolver;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @internal
@@ -31,15 +30,9 @@ class OutputTimestampResolver extends AbstractRequestResolver
 
     protected bool $timestampWasQueried = false;
 
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
-
     /**
      * Gets timestamp for with the output should be rendered to
      *
-     * @return int
      */
     public function getOutputTimestamp(): int
     {
@@ -60,7 +53,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Sets output timestamp to given value
      *
-     * @param int $timestamp
      */
     public function setOutputTimestamp(int $timestamp): void
     {
@@ -70,7 +62,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Returns if timestamp was queried during request at least once
      *
-     * @return bool
      */
     public function timestampWasQueried(): bool
     {

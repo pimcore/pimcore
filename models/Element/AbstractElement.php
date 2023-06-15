@@ -182,7 +182,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
     public function getLocked(): ?string
     {
@@ -196,7 +195,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
@@ -252,9 +250,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setProperties(?array $properties): static
     {
         $this->properties = $properties;
@@ -322,9 +317,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $properties = $this->getProperties();
@@ -373,9 +365,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|string $id
      *
-     * @return string
      *
      * @internal
      */
@@ -398,7 +388,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      *
-     * @return array
      */
     protected function resolveDependencies(): array
     {
@@ -412,9 +401,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_merge(...$dependencies);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocked(): bool
     {
         if ($this->getLocked()) {
@@ -426,9 +412,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param User|null $user
      *
-     * @return array
      *
      * @throws \Exception
      *
@@ -475,9 +459,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $permissions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllowed(string $type, ?User $user = null): bool
     {
         if (null === $user) {
@@ -559,12 +540,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param string|null $versionNote
-     * @param bool $saveOnlyVersion
-     * @param bool $saveStackTrace
-     * @param bool $isAutoSave
      *
-     * @return Model\Version
      *
      * @throws \Exception
      *
@@ -620,17 +596,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getScheduledTasks(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         return [];
@@ -683,7 +653,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|null $userId
      *
      * @internal
      */

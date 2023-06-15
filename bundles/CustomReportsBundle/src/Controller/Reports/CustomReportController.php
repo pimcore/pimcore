@@ -42,9 +42,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function treeAction(Request $request): JsonResponse
     {
@@ -57,9 +55,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/portlet-report-list", name="pimcore_bundle_customreports_customreport_portletreportlist", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function portletReportListAction(Request $request): JsonResponse
     {
@@ -72,9 +68,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/add", name="pimcore_bundle_customreports_customreport_add", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function addAction(Request $request): JsonResponse
     {
@@ -104,9 +98,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/delete", name="pimcore_bundle_customreports_customreport_delete", methods={"DELETE"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function deleteAction(Request $request): JsonResponse
     {
@@ -128,9 +120,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/clone", name="pimcore_bundle_customreports_customreport_clone", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function cloneAction(Request $request): JsonResponse
     {
@@ -168,9 +158,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/get", name="pimcore_bundle_customreports_customreport_get", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function getAction(Request $request): JsonResponse
     {
@@ -189,9 +177,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/update", name="pimcore_bundle_customreports_customreport_update", methods={"PUT"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function updateAction(Request $request): JsonResponse
     {
@@ -226,9 +212,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/column-config", name="pimcore_bundle_customreports_customreport_columnconfig", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function columnConfigAction(Request $request): JsonResponse
     {
@@ -278,9 +262,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/get-report-config", name="pimcore_bundle_customreports_customreport_getreportconfig", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function getReportConfigAction(Request $request): JsonResponse
     {
@@ -312,9 +294,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function dataAction(Request $request): JsonResponse
     {
@@ -358,9 +338,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
@@ -388,9 +366,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function chartAction(Request $request): JsonResponse
     {
@@ -431,9 +407,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function createCsvAction(Request $request): JsonResponse
     {
@@ -507,9 +481,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/download-csv", name="pimcore_bundle_customreports_customreport_downloadcsv", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return BinaryFileResponse
      */
     public function downloadCsvAction(Request $request): BinaryFileResponse
     {

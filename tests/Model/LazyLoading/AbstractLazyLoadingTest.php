@@ -79,9 +79,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     }
 
     /**
-     * @param AbstractObject $parent
      *
-     * @return LazyLoading
      *
      * @throws \Exception
      */
@@ -97,7 +95,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
     }
 
     /**
-     * @return RelationTest\Listing
      *
      * @throws \Exception
      */

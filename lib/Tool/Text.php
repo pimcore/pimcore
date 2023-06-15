@@ -233,9 +233,7 @@ class Text
     /**
      * extracts all dependencies to other elements from wysiwyg text
      *
-     * @param string|null $text
      *
-     * @return array
      */
     public static function getDependenciesOfWysiwygText(?string $text): array
     {

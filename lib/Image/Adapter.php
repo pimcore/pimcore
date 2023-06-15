@@ -231,11 +231,6 @@ abstract class Adapter
     }
 
     /**
-     * @param mixed $image
-     * @param int $x
-     * @param int $y
-     * @param int $alpha
-     * @param string $composite
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      *
      * @return $this
@@ -305,27 +300,18 @@ abstract class Adapter
     }
 
     /**
-     * @abstract
      *
-     * @param string $imagePath
-     * @param array $options
      *
      * @return $this|false
      */
     abstract public function load(string $imagePath, array $options = []): static|false;
 
     /**
-     * @param string $path
-     * @param string|null $format
-     * @param int|null $quality
      *
      * @return $this
      */
     abstract public function save(string $path, string $format = null, int $quality = null): static;
 
-    /**
-     * @abstract
-     */
     abstract protected function destroy(): void;
 
     abstract public function getContentOptimizedFormat(): string;

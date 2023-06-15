@@ -86,10 +86,7 @@ interface ElementInterface extends ModelInterface
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
      * property doesn't exists return null
      *
-     * @param string $name
-     * @param bool $asContainer
      *
-     * @return mixed
      */
     public function getProperty(string $name, bool $asContainer = false): mixed;
 
@@ -100,14 +97,12 @@ interface ElementInterface extends ModelInterface
     /**
      * returns true if the element is locked
      *
-     * @return bool
      */
     public function isLocked(): bool;
 
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
@@ -116,7 +111,6 @@ interface ElementInterface extends ModelInterface
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
     public function getLocked(): ?string;
 
@@ -167,10 +161,7 @@ interface ElementInterface extends ModelInterface
     /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
-     * @param string $type
-     * @param null|User $user
      *
-     * @return bool
      */
     public function isAllowed(string $type, ?User $user = null): bool;
 

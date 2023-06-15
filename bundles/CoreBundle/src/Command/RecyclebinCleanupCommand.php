@@ -41,9 +41,6 @@ class RecyclebinCleanupCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $daysAgo = $input->getOption('older-than-days');

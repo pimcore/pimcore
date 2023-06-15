@@ -24,9 +24,6 @@ use Pimcore\Model\Tool\TmpStore;
  */
 class LogCleanupTask implements TaskInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression

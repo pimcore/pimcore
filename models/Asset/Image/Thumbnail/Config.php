@@ -51,119 +51,101 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $medias = [];
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $group = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $format = 'SOURCE';
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $quality = 85;
 
     /**
      * @internal
      *
-     * @var float|null
      */
     protected ?float $highResolution = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveColor = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveMetaData = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $rasterizeSVG = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $downloadable = false;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $filenameSuffix = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveAnimation = false;
 
     /**
-     * @param array|string|self $config
      *
-     * @return self|null
      *
      * @internal
      */
@@ -194,9 +176,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
      * @throws \Exception
      */
@@ -258,7 +238,6 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return Config
      */
     public static function getPreviewConfig(): Config
     {
@@ -298,11 +277,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      */
     public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
@@ -325,12 +300,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param int $position
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      */
     public function addItemAt(int $position, string $name, array $parameters, ?string $media = null): bool
     {
@@ -492,9 +462,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param array $config
      *
-     * @return self
      *
      * @internal
      */
@@ -525,9 +493,7 @@ final class Config extends Model\AbstractModel
     /**
      * This is mainly here for backward compatibility
      *
-     * @param array $config
      *
-     * @return self
      *
      * @internal
      */
@@ -609,9 +575,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param Model\Asset\Image $asset
      *
-     * @return array
      *
      * @internal
      */
@@ -817,7 +781,6 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public static function getAutoFormats(): array
     {

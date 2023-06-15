@@ -53,7 +53,6 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -90,9 +89,6 @@ class LibreOffice extends Ghostscript
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {

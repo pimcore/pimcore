@@ -38,9 +38,7 @@ class SettingsController extends UserAwareController
     /**
      * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function glossaryAction(Request $request): JsonResponse
     {

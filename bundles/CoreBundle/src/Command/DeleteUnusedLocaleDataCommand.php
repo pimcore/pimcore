@@ -47,9 +47,6 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
         $this->configureDryRunOption('Just output the delete localized queries to be executed.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $db = Db::get();

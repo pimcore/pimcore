@@ -1,4 +1,3 @@
-
 # Dependency Injection Tags
 
 Please read the intro of [dependency injection tags](https://symfony.com/doc/current/reference/dic_tags.html) of Symfony first.

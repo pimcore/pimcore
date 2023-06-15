@@ -27,10 +27,6 @@ final class FileObject
 
     protected string $data;
 
-    /**
-     * @param string $data
-     * @param string|null $filename
-     */
     public function __construct(string $data, string $filename = null)
     {
         $this->data = $data;

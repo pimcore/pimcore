@@ -45,16 +45,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
      *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
      */
     public function __construct(string $name, string $type, mixed $data)
     {
@@ -141,7 +137,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
              * @param object $object
              * @param string $property
              *
-             * @return bool
              */
             public function matches($object, $property): bool
             {
@@ -171,7 +166,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @return bool
      */
     public function getNeedsRenewReferences(): bool
     {
@@ -181,7 +175,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @param bool $needsRenewReferences
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {

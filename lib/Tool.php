@@ -28,7 +28,6 @@ final class Tool
      * Sets the current request to use when resolving request at early
      * stages (before container is loaded)
      *
-     * @var Request|null
      */
     private static ?Request $currentRequest = null;
 
@@ -39,7 +38,6 @@ final class Tool
     /**
      * Sets the current request to operate on
      *
-     * @param Request|null $request
      *
      * @internal
      */
@@ -58,7 +56,6 @@ final class Tool
      *
      * @param ?string $language
      *
-     * @return bool
      */
     public static function isValidLanguage(?string $language): bool
     {
@@ -133,7 +130,6 @@ final class Tool
      * returns the first language, or null, if no languages are configured
      * at all.
      *
-     * @return null|string
      */
     public static function getDefaultLanguage(): ?string
     {
@@ -204,11 +200,6 @@ final class Tool
         return $request;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
     public static function isFrontend(Request $request = null): bool
     {
         if (null === $request) {
@@ -227,9 +218,7 @@ final class Tool
     /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      *
-     * @param Request|null $request
      *
-     * @return bool
      */
     public static function isFrontendRequestByAdmin(Request $request = null): bool
     {
@@ -247,10 +236,7 @@ final class Tool
     /**
      * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
      *
-     * @param Request $request
-     * @param Element\ElementInterface $element
      *
-     * @return bool
      */
     public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element): bool
     {
@@ -266,9 +252,7 @@ final class Tool
     /**
      * @internal
      *
-     * @param Request|null $request
      *
-     * @return bool
      */
     public static function useFrontendOutputFilters(Request $request = null): bool
     {
@@ -302,9 +286,7 @@ final class Tool
     /**
      * @internal
      *
-     * @param Request|null $request
      *
-     * @return null|string
      */
     public static function getHostname(Request $request = null): ?string
     {
@@ -339,9 +321,7 @@ final class Tool
      * Returns the host URL
      *
      * @param string|null $useProtocol use a specific protocol
-     * @param Request|null $request
      *
-     * @return string
      */
     public static function getHostUrl(string $useProtocol = null, Request $request = null): string
     {
@@ -382,9 +362,7 @@ final class Tool
     /**
      * @internal
      *
-     * @param Request|null $request
      *
-     * @return string|null
      */
     public static function getClientIp(Request $request = null): ?string
     {
@@ -413,9 +391,7 @@ final class Tool
     /**
      * @internal
      *
-     * @param Request|null $request
      *
-     * @return null|string
      */
     public static function getAnonymizedClientIp(Request $request = null): ?string
     {
@@ -431,10 +407,7 @@ final class Tool
     }
 
     /**
-     * @param array|string|null $recipients
-     * @param string|null $subject
      *
-     * @return Mail
      *
      * @throws \Exception
      */
@@ -503,9 +476,7 @@ final class Tool
     }
 
     /**
-     * @param string $class
      *
-     * @return bool
      *
      * @internal
      */
@@ -515,9 +486,7 @@ final class Tool
     }
 
     /**
-     * @param string $class
      *
-     * @return bool
      *
      * @internal
      */
@@ -527,9 +496,7 @@ final class Tool
     }
 
     /**
-     * @param string $class
      *
-     * @return bool
      *
      * @internal
      */

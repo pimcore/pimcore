@@ -30,7 +30,6 @@ class Service
     /**
      * @internal
      *
-     * @return bool
      */
     public static function doRemoveDynamicOptions(): bool
     {
@@ -40,7 +39,6 @@ class Service
     /**
      * @internal
      *
-     * @param bool $doRemoveDynamicOptions
      */
     public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
     {
@@ -284,9 +282,6 @@ class Service
     }
 
     /**
-     * @param array $array
-     * @param bool $throwException
-     * @param bool $insideLocalizedField
      *
      * @return EncryptedField|bool|Data|Layout
      *
@@ -375,8 +370,6 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param array $tableNames
      *
      * @internal
      */
@@ -402,14 +395,7 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param string $table
-     * @param string $colName
-     * @param string $type
-     * @param string $default
-     * @param string $null
      *
-     * @return bool
      *
      * @internal
      */
@@ -435,10 +421,7 @@ class Service
     }
 
     /**
-     * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
-     *
-     * @return string
      *
      * @throws \Exception
      *
@@ -466,10 +449,7 @@ class Service
     }
 
     /**
-     * @param array $useParts
-     * @param string|null $newTraits
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -493,9 +473,7 @@ class Service
     }
 
     /**
-     * @param array $useParts
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -506,7 +484,7 @@ class Service
         if ($useParts) {
             $result = '';
             foreach ($useParts as $part) {
-                $result .= 'use ' . $part . ";\r\n";
+                $result .= 'use ' . $part . ";\n";
             }
             $result .= "\n";
 

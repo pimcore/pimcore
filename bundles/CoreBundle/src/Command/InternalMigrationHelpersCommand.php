@@ -47,9 +47,6 @@ class InternalMigrationHelpersCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('is-installed')) {

@@ -31,9 +31,7 @@ class MiscController extends UserAwareController
     /**
      * @Route("/http-error-log", name="pimcore_bundle_seo_misc_httperrorlog", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function httpErrorLogAction(Request $request): JsonResponse
     {
@@ -84,10 +82,7 @@ class MiscController extends UserAwareController
     /**
      * @Route("/http-error-log-detail", name="pimcore_bundle_seo_misc_httperrorlogdetail", methods={"GET"})
      *
-     * @param Request $request
-     * @param Profiler|null $profiler
      *
-     * @return Response
      */
     public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler): Response
     {
@@ -112,9 +107,7 @@ class MiscController extends UserAwareController
     /**
      * @Route("/http-error-log-flush", name="pimcore_bundle_seo_misc_httperrorlogflush", methods={"DELETE"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function httpErrorLogFlushAction(Request $request): JsonResponse
     {

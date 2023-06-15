@@ -27,7 +27,6 @@ class Dao extends Model\Document\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */

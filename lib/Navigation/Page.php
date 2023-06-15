@@ -95,7 +95,6 @@ abstract class Page extends Container
      *
      * @link http://www.w3.org/TR/html4/struct/links.html#h-12.3.1
      *
-     * @var array
      */
     protected array $_rel = [];
 
@@ -104,7 +103,6 @@ abstract class Page extends Container
      *
      * @link http://www.w3.org/TR/html4/struct/links.html#h-12.3.1
      *
-     * @var array
      */
     protected array $_rev = [];
 
@@ -141,7 +139,6 @@ abstract class Page extends Container
     /**
      * The type of page to use when it wasn't set
      *
-     * @var string
      */
     protected static string $_defaultPageType;
 
@@ -229,7 +226,6 @@ abstract class Page extends Container
     /**
      * Initializes page (used by subclasses)
      *
-     * @return void
      */
     protected function _init(): void
     {
@@ -1061,9 +1057,6 @@ abstract class Page extends Container
         return \spl_object_id($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return array_merge(

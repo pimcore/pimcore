@@ -1,0 +1,16 @@
+---
+custom_report_chart_settings: "R\xE9glages du graphique"
+custom_report_charttype: Type de graphique
+custom_report_charttype_none: Aucun
+custom_report_charttype_pie: Graphe Camembert
+custom_report_charttype_line: Graphes lignes
+custom_report_charttype_bar: Histogramme
+custom_report_chart_options: "Taper les Options de Graphique sp\xE9cifiques"
+custom_report_x_axis: Axe X
+custom_report_y_axis: Axe Y
+custom_report_datacolumn: "Colonne de donn\xE9e"
+custom_report_labelcolumn: "Colonne d'\xE9tiquette"
+custom_report_only_filter: Filtre seulement
+custom_report_filter_and_show: Filtrer et voir
+custom_report_filter_drilldown: Filtre Approfondi
+...

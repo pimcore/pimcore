@@ -46,14 +46,12 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var array|null
      */
     public ?array $options = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $defaultValue = null;
 
@@ -62,7 +60,6 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $optionsProviderClass = null;
 
@@ -71,7 +68,6 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $optionsProviderData = null;
 
@@ -80,7 +76,6 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var int
      */
     public int $columnLength = 190;
 
@@ -138,11 +133,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -154,11 +145,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -168,11 +155,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -182,11 +165,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see Data::getDataForEditmode
      *
@@ -197,11 +176,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see Data::getDataFromEditmode
      *
@@ -212,11 +187,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -226,20 +197,13 @@ class Select extends Data implements
         return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -269,9 +233,6 @@ class Select extends Data implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -330,9 +291,6 @@ class Select extends Data implements
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -341,9 +299,6 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
@@ -353,11 +308,8 @@ class Select extends Data implements
     }
 
     /**
-     * @param string|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string|null
      */
     public function getDataForGrid(?string $data, Concrete $object = null, array $params = []): array|string|null
     {
@@ -392,11 +344,8 @@ class Select extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -419,9 +368,6 @@ class Select extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -458,9 +404,6 @@ class Select extends Data implements
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

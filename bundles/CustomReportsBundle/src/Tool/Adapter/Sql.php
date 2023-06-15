@@ -23,9 +23,6 @@ use Pimcore\Db;
  */
 class Sql extends AbstractAdapter
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
@@ -54,9 +51,6 @@ class Sql extends AbstractAdapter
         return ['data' => $data, 'total' => $total];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns(?\stdClass $configuration): array
     {
         $sql = '';
@@ -78,14 +72,6 @@ class Sql extends AbstractAdapter
         throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    /**
-     * @param \stdClass $config
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return string
-     */
     protected function buildQueryString(\stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
     {
         $config = (array)$config;
@@ -139,15 +125,6 @@ class Sql extends AbstractAdapter
         return $sql;
     }
 
-    /**
-     * @param array $filters
-     * @param array $fields
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return array|null
-     */
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
     {
         $db = Db::get();
@@ -222,9 +199,6 @@ class Sql extends AbstractAdapter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $db = Db::get();

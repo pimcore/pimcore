@@ -39,8 +39,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     protected array $data = [];
 
     /**
-     * @param string|null $fieldname
-     * @param array $columns
      * @param Concrete|null $object
      */
     public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
@@ -69,8 +67,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param string $method
-     * @param array $args
      *
      * @return mixed|void
      *

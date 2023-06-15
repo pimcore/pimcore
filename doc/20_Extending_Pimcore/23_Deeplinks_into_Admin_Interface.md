@@ -1,4 +1,4 @@
-# Deeplinks into Admin-Interface 
+# Deeplinks Into Admin-Interface 
 
 Pimcore offers the possibility to deeplink elements inside the admin-interface from an external application. 
   

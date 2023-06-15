@@ -39,8 +39,8 @@ don't need any custom code in our controller, so the action stays empty for the 
 
 ### Create a Template
 Now we create a template for our page:
-* Create a new folder in `/templates` and name it like the controller (snake_case) (in this case `content`). 
-* Put a new Twig template into this folder and name it like our action in snake_case (`default.html.twig`).
+* Create a new folder in `/templates` and name it like the controller (using the snake_case typo) (in the `content` case). 
+* Put a new Twig template into this folder and name it like our action  (using the snake_case typo) (`default.html.twig`).
 
 Then we can put some template code into it, for example:
 ```twig
@@ -61,7 +61,7 @@ Pimcore uses by default Symfony Twig engine, so you have the full power of Symfo
 For details concerning editables (like `pimcore_input`, `pimcore_block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/current/templates.html#template-inheritance-and-layouts) functionality 
+We can use Symfony's [template inheritance and layout](https://symfony.com/doc/current/templates.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```twig
@@ -185,7 +185,7 @@ Then we can also put some HTML and template code into it:
 
 The code `{{ block('content') }}` is the placeholder where the content of the page will be inserted.
 
-### Putting it all together with Pimcore Documents
+### Putting It All Together With Pimcore Documents
 Now we need to connect the action to a page in the Pimcore backend, so that the page knows which action 
 (and therefore also which template) needs to be executed/processed.
 First, click right on *Home* in the *Documents* panel and Select *Add Page* > *Blank* to add a new page. 

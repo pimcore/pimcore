@@ -36,11 +36,6 @@ final class Thumbnail
      */
     protected static array $hasListenersCache = [];
 
-    /**
-     * @param Image $asset
-     * @param string|array|Thumbnail\Config|null $config
-     * @param bool $deferred
-     */
     public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -210,7 +205,6 @@ final class Thumbnail
      *
      * @param array $options Custom configuration
      *
-     * @return string
      */
     public function getHtml(array $options = []): string
     {
@@ -370,10 +364,7 @@ final class Thumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Thumbnail
      *
      * @throws \Exception
      */

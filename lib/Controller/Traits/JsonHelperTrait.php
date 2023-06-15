@@ -18,7 +18,6 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @internal
@@ -27,28 +26,15 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 trait JsonHelperTrait
 {
-    protected SerializerInterface $serializer;
-
     protected PimcoreSerializer $pimcoreSerializer;
 
     /**
      * @required
      *
-     * @param PimcoreSerializer $pimcoreSerializer
      */
     public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
     {
         $this->pimcoreSerializer = $pimcoreSerializer;
-    }
-
-    /**
-     * @required
-     *
-     * @param SerializerInterface $serializer
-     */
-    public function setSerializer(SerializerInterface $serializer): void
-    {
-        $this->serializer = $serializer;
     }
 
     /**
@@ -79,7 +65,7 @@ trait JsonHelperTrait
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
         return $serializer->serialize($data, 'json', array_merge([
@@ -99,7 +85,7 @@ trait JsonHelperTrait
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
         if ($associative) {

@@ -27,10 +27,6 @@ class Geobounds implements OwnerAwareFieldInterface
 
     protected ?GeoCoordinates $southWest = null;
 
-    /**
-     * @param GeoCoordinates|null $northEast
-     * @param GeoCoordinates|null $southWest
-     */
     public function __construct(GeoCoordinates $northEast = null, GeoCoordinates $southWest = null)
     {
         if ($northEast) {

@@ -38,9 +38,6 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     protected array $data = [];
 
     /**
-     * @param string|null $fieldname
-     * @param array $columns
-     * @param Model\Element\ElementInterface|null $element
      *
      * @throws \Exception
      */
@@ -59,8 +56,6 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param string $method
-     * @param array $args
      *
      * @return mixed|void
      *

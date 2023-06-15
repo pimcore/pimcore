@@ -1,4 +1,5 @@
-# How to configure Pimcore to use a Primary/Replica Database Connection 
+# How to Configure Pimcore To Use a Primary/Replica Database Connection 
+
 **IMPORTANT**: Please be aware that the primary/replica connection can only be used for a clustered MariaDB/MySQL environment, **NOT** 
 for a primary/replica server setup! Due to the extensive multi-layered, consistent and tagged caching of Pimcore
 it is necessary that Pimcore always has access to the latest data in the database. Due to the asynchronous nature 

@@ -27,7 +27,6 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
     /**
      * Hasher class name to build
      *
-     * @var string
      */
     protected string $className;
 

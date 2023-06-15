@@ -28,10 +28,7 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     * @param string $type
-     * @param MailClient $mail
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -92,7 +89,6 @@ class Mail
      *
      * @static
      *
-     * @return string
      */
     public static function getDebugInformationCssStyle(): string
     {
@@ -131,9 +127,7 @@ CSS;
      *
      * Helper to format the receivers for the debug email and logging
      *
-     * @param array $receivers
      *
-     * @return string
      */
     public static function formatDebugReceivers(array $receivers): string
     {
@@ -154,13 +148,6 @@ CSS;
         return implode(', ', $formatedReceiversArray);
     }
 
-    /**
-     * @param MailClient $mail
-     * @param array $recipients
-     * @param string|null $error
-     *
-     * @return Model\Tool\Email\Log
-     */
     public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
@@ -218,11 +205,7 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
-     * @param string|null $hostUrl
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -296,10 +279,7 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -355,10 +335,7 @@ CSS;
      *
      * @static
      *
-     * @param string $content
-     * @param array $fileInfo
      *
-     * @return string
      */
     public static function normalizeCssContent(string $content, array $fileInfo): string
     {
@@ -386,10 +363,7 @@ CSS;
     }
 
     /**
-     * @param string $path
-     * @param Model\Document|null $document
      *
-     * @return array
      *
      * @throws \Exception
      */

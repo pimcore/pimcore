@@ -271,9 +271,7 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @param bool $renewReferences
      *
-     * @return mixed
      *
      * @internal
      */

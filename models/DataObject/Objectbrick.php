@@ -37,7 +37,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
@@ -271,9 +270,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param string $brick
-     * @param string $brickField
-     * @param string $field
      *
      * @throws \Exception
      *

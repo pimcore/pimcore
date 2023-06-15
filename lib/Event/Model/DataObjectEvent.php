@@ -29,8 +29,6 @@ class DataObjectEvent extends Event implements ElementEventInterface
     /**
      * DataObjectEvent constructor.
      *
-     * @param AbstractObject $object
-     * @param array $arguments
      */
     public function __construct(AbstractObject $object, array $arguments = [])
     {

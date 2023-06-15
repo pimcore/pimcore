@@ -47,7 +47,6 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * @return unittestLink
      *
      * @throws \Exception
      */

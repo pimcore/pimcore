@@ -57,9 +57,7 @@ class Csv
     private ?OptionsResolver $importResolver = null;
 
     /**
-     * @param Redirect\Listing $list
      *
-     * @return Writer
      *
      * @throws \League\Csv\CannotInsertRecord
      * @throws \League\Csv\Exception
@@ -114,9 +112,7 @@ class Csv
     }
 
     /**
-     * @param string $filename
      *
-     * @return array
      *
      * @throws \League\Csv\Exception
      */

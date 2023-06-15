@@ -65,9 +65,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return Definition|null
      *
      * @throws \Exception
      */
@@ -89,9 +87,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return self|static
      *
      * @throws \Exception
      */
