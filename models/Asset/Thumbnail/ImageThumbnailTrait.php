@@ -31,63 +31,54 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @var Asset|null
      */
     protected ?Asset $asset = null;
 
     /**
      * @internal
      *
-     * @var Config|null
      */
     protected ?Config $config = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $pathReference = [];
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $width = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $height = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realHeight = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $mimetype = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $deferred = true;
 
@@ -332,8 +323,6 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @return string|null
-     *
      * @throws \Exception
      */
     public function getLocalFile(): ?string
@@ -372,10 +361,6 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
-     *
-     * @param array|null $pathReference
-     *
-     * @return bool
      *
      * @throws \League\Flysystem\FilesystemException
      */
@@ -429,9 +414,7 @@ trait ImageThumbnailTrait
     /**
      * Returns path for thumbnail image in a given file format
      *
-     * @param string $format
      *
-     * @return static
      */
     public function getAsFormat(string $format): static
     {

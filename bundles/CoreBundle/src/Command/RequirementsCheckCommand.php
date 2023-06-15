@@ -31,9 +31,6 @@ class RequirementsCheckCommand extends AbstractCommand
     /** @var int[] $levelsToDisplay */
     protected array $levelsToDisplay = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -43,9 +40,6 @@ class RequirementsCheckCommand extends AbstractCommand
             ->addOption('min-level', 'l', InputOption::VALUE_OPTIONAL, "Minimum status level to report: 'warning' or 'error'");
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         switch ($input->getOption('min-level')) {

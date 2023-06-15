@@ -36,7 +36,6 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     /**
      * If true, the user password hash will be updated if necessary.
      *
-     * @var bool
      */
     protected bool $updateHash = true;
 
@@ -74,7 +73,6 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     }
 
     /**
-     * @return Password
      *
      * @throws RuntimeException
      */

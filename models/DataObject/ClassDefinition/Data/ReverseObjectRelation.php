@@ -35,14 +35,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $ownerClassId = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $ownerFieldName;
 
@@ -115,10 +113,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function allowObjectRelation($object): bool
+    protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
@@ -132,9 +127,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
@@ -186,17 +178,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);

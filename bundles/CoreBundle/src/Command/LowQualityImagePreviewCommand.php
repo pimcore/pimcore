@@ -62,9 +62,6 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             ->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'Force a generator, either `svg` or `imagick`');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];

@@ -39,9 +39,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         parent::__construct($engines);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
@@ -52,7 +49,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws \Exception
      */
@@ -65,9 +62,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
@@ -109,11 +103,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @param string $view
-     * @param array $parameters
-     * @param Response|null $response
      *
-     * @return Response
      *
      * @throws \Exception
      */

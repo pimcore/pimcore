@@ -34,10 +34,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * RgbaColor constructor.
      *
-     * @param int|null $r
-     * @param int|null $g
-     * @param int|null $b
-     * @param int|null $a
      */
     public function __construct(int $r = null, int $g = null, int $b = null, int $a = null)
     {
@@ -100,7 +96,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      *  Return R 0-255, G 0-255, B 0-255, A 0-255
      *
-     * @return array
      */
     public function getRgba(): array
     {
@@ -110,7 +105,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      *  Return R 0-255, G 0-255, B 0-255, A 0-1 (1 == full opacity)
      *
-     * @return array
      */
     public function getCssRgba(): array
     {
@@ -132,7 +126,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $hexValue
      *
      * @throws \Exception
      */
@@ -157,12 +150,6 @@ class RgbaColor implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @param int|null $r
-     * @param int|null $g
-     * @param int|null $b
-     * @param int|null $a
-     */
     public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null): void
     {
         $this->setR($r);

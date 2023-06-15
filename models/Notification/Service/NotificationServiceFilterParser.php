@@ -53,7 +53,6 @@ class NotificationServiceFilterParser
     /**
      * ExtJSFilterParser constructor.
      *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {

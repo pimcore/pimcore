@@ -29,21 +29,14 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var Carbon|null
      */
     protected ?\Carbon\Carbon $date = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'date';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->date;
@@ -54,9 +47,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?int
     {
         if ($this->date) {
@@ -66,9 +56,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         if ($this->date instanceof Carbon) {
@@ -95,9 +82,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if ($data) {
@@ -107,9 +91,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (strlen((string) $data) > 5) {

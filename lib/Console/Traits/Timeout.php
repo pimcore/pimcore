@@ -38,7 +38,6 @@ trait Timeout
     /**
      * Add timeout option to command.
      *
-     * @param Command $command
      */
     protected static function configureTimeout(Command $command): void
     {
@@ -48,7 +47,6 @@ trait Timeout
     /**
      * Init the timeout. Should be called in the beginning of a command or process.
      *
-     * @param InputInterface $input
      */
     protected function initTimeout(InputInterface $input): void
     {
@@ -101,7 +99,6 @@ trait Timeout
     /**
      * Get the timeout in minutes. If <= 0 then no timeout is given.
      *
-     * @return int
      */
     public function getTimeout(): int
     {
@@ -111,7 +108,6 @@ trait Timeout
     /**
      * Set the timeout in minutes. If not set, no timeout happens
      *
-     * @param int $timeout
      *
      * @return $this
      */
@@ -125,7 +121,6 @@ trait Timeout
     /**
      * Get the start time of the current step in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTimeCurrentStep(): ?int
     {
@@ -135,7 +130,6 @@ trait Timeout
     /**
      * Get the start time of the current (overall) process in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTime(): ?int
     {

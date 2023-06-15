@@ -34,8 +34,6 @@ class Dao extends Model\Dao\AbstractDao
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
      *
      * @throws \Exception
      */

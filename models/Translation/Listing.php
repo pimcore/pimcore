@@ -41,7 +41,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @internal
      *
-     * @var string
      */
     protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 

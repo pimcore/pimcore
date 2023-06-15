@@ -39,7 +39,6 @@ final class Serialize
      *
      * Shortcut to access the admin serializer
      *
-     * @return \Symfony\Component\Serializer\Serializer
      */
     public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
@@ -52,9 +51,7 @@ final class Serialize
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
      *
-     * @param mixed $data
      *
-     * @return mixed
      */
     public static function removeReferenceLoops(mixed $data): mixed
     {

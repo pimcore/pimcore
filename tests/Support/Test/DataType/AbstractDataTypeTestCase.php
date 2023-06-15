@@ -91,9 +91,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;

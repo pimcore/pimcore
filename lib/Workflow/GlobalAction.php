@@ -36,14 +36,6 @@ class GlobalAction implements NotesAwareInterface
 
     private string $workflowName;
 
-    /**
-     * @param string $name
-     * @param array $options
-     * @param ExpressionService $expressionService
-     * @param string $workflowName
-     * @param CustomHtmlServiceInterface|null $customHtmlService
-     *
-     */
     public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;

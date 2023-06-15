@@ -29,16 +29,12 @@ class Localizedfields implements MarshallerInterface
     /**
      * Localizedfields constructor.
      *
-     * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
     {
         $this->marshallerService = $marshallerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;
@@ -70,9 +66,6 @@ class Localizedfields implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;

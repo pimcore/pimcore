@@ -28,9 +28,6 @@ trait CompositeIndexTrait
     /**
      * @internal
      *
-     * @param string $table
-     * @param string $type
-     * @param array $compositeIndices
      *
      */
     public function updateCompositeIndices(string $table, string $type, array $compositeIndices): void

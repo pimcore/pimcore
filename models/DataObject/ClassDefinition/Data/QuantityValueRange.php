@@ -109,7 +109,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -131,7 +130,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -157,7 +155,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -167,7 +164,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see Data::getDataForEditmode
      *
@@ -186,11 +182,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return DataObject\Data\QuantityValueRange|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -213,7 +205,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see Data::getVersionPreview
      *
@@ -228,7 +219,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws Exception
      */
@@ -290,9 +281,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fieldName = $this->getName();

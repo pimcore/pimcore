@@ -37,7 +37,6 @@ class Folder extends DAV\Collection
     /**
      * Returns the children of the asset if the asset is a folder
      *
-     * @return array
      */
     public function getChildren(): array
     {

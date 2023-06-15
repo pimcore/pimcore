@@ -41,12 +41,7 @@ class IncludeRenderer
     /**
      * Renders a document include
      *
-     * @param mixed $include
-     * @param array $params
-     * @param bool $editmode
-     * @param bool $cacheEnabled
      *
-     * @return string
      */
     public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
@@ -141,10 +136,7 @@ class IncludeRenderer
      * add a class and the pimcore id / type so that it can be opened in editmode using the context menu
      * if there's no first level HTML container => add one (wrapper)
      *
-     * @param PageSnippet $include
-     * @param string $content
      *
-     * @return string
      */
     protected function modifyEditmodeContent(PageSnippet $include, string $content): string
     {

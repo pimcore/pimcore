@@ -54,11 +54,7 @@ class Processor
     protected int $status;
 
     /**
-     * @param Model\Asset\Video $asset
-     * @param Config $config
-     * @param array $onlyFormats
      *
-     * @return Processor|null
      *
      * @throws \Exception
      */
@@ -307,11 +303,6 @@ class Processor
         return true;
     }
 
-    /**
-     * @param string|null $processId
-     *
-     * @return string
-     */
     protected function getJobStoreId(string $processId = null): string
     {
         if (!$processId) {

@@ -28,14 +28,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Name of the db table
      *
-     * @var string
      */
     protected static string $dbTable = 'email_log';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int|null $id
      */
     public function getById(int $id = null): void
     {
@@ -126,10 +124,7 @@ class Dao extends Model\Dao\AbstractDao
      * Creates the basic logging for the treeGrid in the backend
      * Data will be enhanced with live-data in the backend
      *
-     * @param string $key
-     * @param mixed $value
      *
-     * @return \stdClass
      */
     protected function prepareLoggingData(string $key, mixed $value): \stdClass
     {

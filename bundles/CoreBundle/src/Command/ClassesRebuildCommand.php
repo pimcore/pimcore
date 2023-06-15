@@ -58,9 +58,6 @@ class ClassesRebuildCommand extends AbstractCommand
         $this->classDefinitionManager = $classDefinitionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('delete-classes')) {

@@ -36,11 +36,7 @@ class RgbaColor extends Data implements
     use DataObject\Traits\DataWidthTrait;
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -64,11 +60,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -95,11 +87,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -109,11 +97,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -130,11 +114,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -152,20 +132,14 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param string|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -206,11 +180,8 @@ class RgbaColor extends Data implements
     /**
      * display the quantity value field data in the grid
      *
-     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
     {
@@ -218,11 +189,8 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -266,9 +234,6 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -279,11 +244,7 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -300,11 +261,8 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -330,13 +288,11 @@ class RgbaColor extends Data implements
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /** { @inheritdoc } */
     public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
     public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);

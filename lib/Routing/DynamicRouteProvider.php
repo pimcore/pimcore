@@ -38,7 +38,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
     protected array $handlers = [];
 
     /**
-     * @param SiteResolver $siteResolver
      * @param DynamicRouteHandlerInterface[] $handlers
      */
     public function __construct(SiteResolver $siteResolver, array $handlers = [])
@@ -57,9 +56,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
@@ -82,9 +78,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
         return $collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteByName(string $name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
@@ -98,9 +91,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoutesByNames(array $names = null): array
     {
         // TODO needs performance optimizations

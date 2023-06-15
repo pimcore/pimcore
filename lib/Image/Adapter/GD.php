@@ -27,9 +27,6 @@ class GD extends Adapter
      */
     protected mixed $resource = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(string $imagePath, array $options = []): static|false
     {
         $this->path = $imagePath;
@@ -66,9 +63,6 @@ class GD extends Adapter
         return $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format || $format == 'png32') {
@@ -131,9 +125,6 @@ class GD extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function destroy(): void
     {
         if ($this->resource) {
@@ -293,9 +284,6 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
@@ -364,9 +352,6 @@ class GD extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsFormat(string $format, bool $force = false): bool
     {
         if (!isset(self::$supportedFormatsCache[$format]) || $force) {

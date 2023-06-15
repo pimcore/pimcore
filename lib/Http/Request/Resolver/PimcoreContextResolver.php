@@ -44,9 +44,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Get pimcore context from request
      *
-     * @param Request|null $request
      *
-     * @return string|null
      */
     public function getPimcoreContext(Request $request = null): ?string
     {
@@ -67,8 +65,6 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Sets the pimcore context on the request
      *
-     * @param Request $request
-     * @param string $context
      */
     public function setPimcoreContext(Request $request, string $context): void
     {
@@ -79,10 +75,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * Tests if the request matches a given contect. $context can also be an array of contexts. If one
      * of the contexts matches, the method will return true.
      *
-     * @param Request $request
-     * @param array|string $context
      *
-     * @return bool
      */
     public function matchesPimcoreContext(Request $request, array|string $context): bool
     {

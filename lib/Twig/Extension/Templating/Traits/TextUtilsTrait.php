@@ -23,13 +23,6 @@ use Pimcore\Tool\Text;
  */
 trait TextUtilsTrait
 {
-    /**
-     * @param string $string
-     * @param int|null $length
-     * @param string $suffix
-     *
-     * @return string
-     */
     public function normalizeString(string $string, int $length = null, string $suffix = ''): string
     {
         $string = strip_tags($string);

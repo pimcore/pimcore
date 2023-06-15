@@ -68,11 +68,7 @@ class Input extends Data implements
     public bool $showCharCount = false;
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -84,11 +80,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -98,11 +90,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -112,11 +100,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -139,11 +123,8 @@ class Input extends Data implements
     }
 
     /**
-     * @param string $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?string
     {
@@ -214,9 +195,6 @@ class Input extends Data implements
         return $this->getColumnType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if(is_string($data)) {
@@ -254,9 +232,6 @@ class Input extends Data implements
         $this->columnLength = $mainDefinition->columnLength;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

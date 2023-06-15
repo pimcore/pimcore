@@ -155,7 +155,7 @@ parameters:
 
 		-
 			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:getConfigForHelperDefinition\\(\\) has invalid return type Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
-			count: 2
+			count: 1
 			path: models/DataObject/Service.php
 
 		-

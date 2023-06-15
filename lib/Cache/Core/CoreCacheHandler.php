@@ -53,14 +53,12 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Actually write/load to/from cache?
      *
-     * @var bool
      */
     protected bool $enabled = true;
 
     /**
      * Is the cache handled in CLI mode?
      *
-     * @var bool
      */
     protected bool $handleCli = false;
 
@@ -74,28 +72,24 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Tags which were already cleared
      *
-     * @var array
      */
     protected array $clearedTags = [];
 
     /**
      * Items having one of the tags in this list are not saved
      *
-     * @var array
      */
     protected array $tagsIgnoredOnSave = [];
 
     /**
      * Items having one of the tags in this list are not cleared when calling clearTags
      *
-     * @var array
      */
     protected array $tagsIgnoredOnClear = [];
 
     /**
      * Items having tags which are in this array are cleared on shutdown. This is especially for the output-cache.
      *
-     * @var array
      */
     protected array $tagsClearedOnShutdown = [];
 
@@ -103,7 +97,6 @@ class CoreCacheHandler implements LoggerAwareInterface
      * State variable which is set to true after the cache was cleared - prevent new items being
      * written to cache after a clear.
      *
-     * @var bool
      */
     protected bool $cacheCleared = false;
 
@@ -111,21 +104,18 @@ class CoreCacheHandler implements LoggerAwareInterface
      * Tags in this list are shifted to the clearTagsOnShutdown list when scheduled via clearTags. See comment on normalizeClearTags
      * method why this exists.
      *
-     * @var array
      */
     protected array $shutdownTags = ['output'];
 
     /**
      * If set to true items are directly written into the cache, and do not get into the queue
      *
-     * @var bool
      */
     protected bool $forceImmediateWrite = false;
 
     /**
      * How many items should stored to the cache within one process
      *
-     * @var int
      */
     protected int $maxWriteToCacheItems = 50;
 
@@ -143,7 +133,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @internal
      *
-     * @param TagAwareAdapterInterface $pool
      */
     public function setPool(TagAwareAdapterInterface $pool): void
     {
@@ -158,7 +147,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @codeCoverageIgnore
      *
-     * @return LoggerInterface
      */
     public function getLogger(): LoggerInterface
     {
@@ -198,7 +186,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @codeCoverageIgnore
      *
-     * @return bool
      */
     public function getHandleCli(): bool
     {
@@ -207,8 +194,6 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @codeCoverageIgnore
-     *
-     * @param bool $handleCli
      *
      * @return $this
      */
@@ -222,7 +207,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @codeCoverageIgnore
      *
-     * @return bool
      */
     public function getForceImmediateWrite(): bool
     {
@@ -231,8 +215,6 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @codeCoverageIgnore
-     *
-     * @param bool $forceImmediateWrite
      *
      * @return $this
      */
@@ -253,9 +235,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Load data from cache (retrieves data from cache item)
      *
-     * @param string $key
      *
-     * @return mixed
      */
     public function load(string $key): mixed
     {
@@ -279,9 +259,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Get PSR-6 cache item
      *
-     * @param string $key
      *
-     * @return CacheItem
      */
     public function getItem(string $key): CacheItem
     {
@@ -298,14 +276,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Save data to cache
      *
-     * @param string $key
-     * @param mixed $data
-     * @param array $tags
-     * @param \DateInterval|int|null $lifetime
-     * @param int|null $priority
-     * @param bool $force
      *
-     * @return bool
      */
     public function save(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false): bool
     {
@@ -356,9 +327,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Add item to save queue, respecting maxWriteToCacheItems setting
      *
-     * @param CacheQueueItem $item
      *
-     * @return bool
      */
     protected function addToSaveQueue(CacheQueueItem $item): bool
     {
@@ -393,9 +362,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Prepare data for cache item and handle items we don't want to save (e.g. hardlinks)
      *
-     * @param mixed $data
      *
-     * @return mixed
      */
     protected function prepareCacheData(mixed $data): mixed
     {
@@ -469,15 +436,6 @@ class CoreCacheHandler implements LoggerAwareInterface
         return $tags;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $data
-     * @param array $tags
-     * @param \DateInterval|int|null $lifetime
-     * @param bool $force
-     *
-     * @return bool
-     */
     protected function storeCacheData(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, bool $force = false): bool
     {
         if ($this->writeInProgress) {
@@ -576,9 +534,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Remove a cache item
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function remove(string $key): bool
     {
@@ -592,7 +548,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Empty the cache
      *
-     * @return bool
      */
     public function clearAll(): bool
     {
@@ -619,7 +574,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @param string[] $tags
      *
-     * @return bool
      */
     public function clearTags(array $tags): bool
     {
@@ -654,7 +608,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Clears all tags stored in tagsClearedOnShutdown, this function is executed during Pimcore shutdown
      *
-     * @return bool
      */
     public function clearTagsOnShutdown(): bool
     {
@@ -708,7 +661,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Add tag to list of cleared tags (internal use only)
      *
-     * @param array|string $tags
      *
      * @return $this
      */
@@ -728,7 +680,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
      *
-     * @param string $tag
      *
      * @return $this
      *
@@ -745,7 +696,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $tag
      *
      * @return $this
      *
@@ -760,7 +710,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $tag
      *
      * @return $this
      *
@@ -776,7 +725,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $tag
      *
      * @return $this
      *
@@ -791,7 +739,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $tag
      *
      * @return $this
      *
@@ -809,8 +756,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @internal
      *
-     * @param array $tags
-     *
      * @return $this
      */
     public function removeClearedTags(array $tags): static
@@ -827,7 +772,6 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @internal
      *
-     * @return bool
      */
     public function writeSaveQueue(): bool
     {
@@ -878,7 +822,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Shut down pimcore - write cache entries and clean up
      *
-     * @param bool $forceWrite
      *
      * @return $this
      *
@@ -922,7 +865,6 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @codeCoverageIgnore
      *
-     * @return bool
      */
     protected function isCli(): bool
     {

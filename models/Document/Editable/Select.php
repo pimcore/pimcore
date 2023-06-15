@@ -30,17 +30,11 @@ class Select extends Model\Document\Editable
      */
     protected ?string $text = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'select';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return (string) $this->text;
@@ -51,17 +45,11 @@ class Select extends Model\Document\Editable
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return $this->text;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->text = (string)$data;
@@ -69,9 +57,6 @@ class Select extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->text = (string)$data;

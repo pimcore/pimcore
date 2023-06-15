@@ -41,9 +41,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');

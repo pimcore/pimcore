@@ -357,7 +357,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Returns only the properties which should be serialized
      *
-     * @return array
      */
     public function __sleep(): array
     {
@@ -380,9 +379,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->document = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function render(): mixed
     {
         if ($this->editmode) {
