@@ -20,6 +20,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -189,7 +190,7 @@ final class Thumbnail
         return $path;
     }
 
-    private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
+    private function getSourceTagHtml(Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
         $sourceTagAttributes = [];
         $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
@@ -246,7 +247,7 @@ final class Thumbnail
             $options['previewDataUri'] =  $image->getLowQualityPreviewDataUri() ?: $emptyGif;
         }
 
-        $isAutoFormat = $thumbConfig instanceof Image\Thumbnail\Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
+        $isAutoFormat = $thumbConfig instanceof Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
@@ -260,7 +261,7 @@ final class Thumbnail
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
-        if ($thumbConfig instanceof Image\Thumbnail\Config) {
+        if ($thumbConfig instanceof Config) {
             $thumbConfigRes = clone $thumbConfig;
             $html.= $this->getMediaConfigsHtml($thumbConfigRes, $image, $options, $isAutoFormat);
         }
@@ -278,7 +279,7 @@ final class Thumbnail
         return $html;
     }
 
-    protected function getMediaConfigsHtml(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
+    protected function getMediaConfigsHtml(Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
     {
         $html = '';
         $mediaConfigs = $thumbConfig->getMedias();
@@ -450,14 +451,14 @@ final class Thumbnail
     /**
      * Get value that can be directly used ina srcset HTML attribute for images.
      *
-     * @param Image\Thumbnail\Config $thumbConfig
+     * @param Config $thumbConfig
      * @param Image $image
      * @param array $options
      * @param string|null $mediaQuery Can be empty string if no media queries are defined.
      *
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution
      */
-    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
+    private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
         foreach ([1, 2] as $highRes) {
