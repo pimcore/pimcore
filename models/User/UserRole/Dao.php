@@ -26,7 +26,6 @@ use Pimcore\Model\Element;
 class Dao extends Model\User\AbstractUser\Dao
 {
     /**
-     * @param int $id
      *
      * @throws \Exception
      */
@@ -40,7 +39,6 @@ class Dao extends Model\User\AbstractUser\Dao
     }
 
     /**
-     * @param string $name
      *
      * @throws \Exception
      */
@@ -64,6 +62,19 @@ class Dao extends Model\User\AbstractUser\Dao
             $result = $this->db->fetchAllAssociative('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
             foreach ($result as $row) {
                 $workspace = new $className();
+                $row['list'] = (bool)$row['list'];
+                $row['view'] = (bool)$row['view'];
+                $row['publish'] = (bool)$row['publish'];
+                $row['delete'] = (bool)$row['delete'];
+                $row['rename'] = (bool)$row['rename'];
+                $row['create'] = (bool)$row['create'];
+                $row['settings'] = (bool)$row['settings'];
+                $row['versions'] = (bool)$row['versions'];
+                $row['properties'] = (bool)$row['properties'];
+                if ($type === 'document' || $type === 'object') {
+                    $row['save'] = (bool)$row['save'];
+                    $row['unpublish'] = (bool)$row['unpublish'];
+                }
                 $workspace->setValues($row, true);
                 $workspaces[] = $workspace;
             }

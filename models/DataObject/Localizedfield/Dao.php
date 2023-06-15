@@ -76,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -413,7 +412,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '/' . $context['containerKey'] . '/localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
@@ -440,8 +439,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $deleteQuery
-     * @param bool $isUpdate
      *
      * @return bool force update
      */
@@ -549,7 +546,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
-            $index = $context['index'] ?? null;
+            $index = $context['index'] ?? $context['containerKey'] ?? null;
             $containerName = $context['fieldname'];
             if (!$context['containerType']) {
                 throw new \Exception('no container type set');
@@ -781,7 +778,6 @@ QUERY;
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */

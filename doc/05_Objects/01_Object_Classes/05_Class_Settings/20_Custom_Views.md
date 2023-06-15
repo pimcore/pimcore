@@ -112,8 +112,6 @@ pimcore:
                                     upload: true
                                     uploadCompatibility: true
                                     uploadZip: true
-                                    importFromServer: true
-                                    uploadFromUrl: true
                             addFolder: true
                             rename: true
                             copy: true
@@ -221,8 +219,6 @@ pimcore:
                                     upload: true
                                     uploadCompatibility: true
                                     uploadZip: true
-                                    importFromServer: false     #deny importFromServer
-                                    uploadFromUrl: true
                             addFolder: false
                             rename: true
                             copy: false                         #deny copy

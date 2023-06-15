@@ -34,9 +34,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $this->translationItemResolver = $translationItemResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function extractElement(string $importId, int $stepId): ?AttributeSet
     {
         $xliff = $this->loadFile($importId);
@@ -54,7 +51,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
             throw new \Exception(sprintf('invalid language %s', $file['target-language']));
         }
 
-        list($type, $id) = explode('-', (string)$file['original']);
+        [$type, $id] = explode('-', (string)$file['original']);
 
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
@@ -69,7 +66,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         }
 
         foreach ($file->body->{'trans-unit'} as $transUnit) {
-            list($type, $name) = explode(Xliff12Exporter::DELIMITER, (string)$transUnit['id']);
+            [$type, $name] = explode(Xliff12Exporter::DELIMITER, (string)$transUnit['id']);
 
             if (!isset($transUnit->target)) {
                 continue;
@@ -89,9 +86,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $importId . '.xliff';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function countSteps(string $importId): int
     {
         $xliff = $this->loadFile($importId);

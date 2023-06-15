@@ -43,9 +43,6 @@ class LogArchiveTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = $this->db;
@@ -89,12 +86,6 @@ class LogArchiveTask implements TaskInterface
                 if ($filePath !== null) {
                     if ($storage->fileExists($filePath)) {
                         $storage->delete($filePath);
-                    } else {
-                        // Fallback, if is not found and deleted in the flysystem, tries to delete from local
-                        $fileRealPath = realpath($filePath);
-                        if (str_starts_with(realpath($fileRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
-                            @unlink($fileRealPath);
-                        }
                     }
                 }
             }
@@ -121,12 +112,6 @@ class LogArchiveTask implements TaskInterface
 
                 if ($storage->directoryExists($folderName)) {
                     $storage->deleteDirectory($folderName);
-                } else {
-                    // Fallback, if is not found and deleted in the flysystem, tries to delete from local
-                    $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY . DIRECTORY_SEPARATOR . $folderName);
-                    if (str_starts_with(realpath($folderRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
-                        @unlink($folderRealPath);
-                    }
                 }
             }
 

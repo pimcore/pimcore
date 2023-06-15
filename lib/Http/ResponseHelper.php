@@ -28,8 +28,6 @@ class ResponseHelper
     /**
      * Disable cache
      *
-     * @param Response $response
-     * @param bool $force
      */
     public function disableCache(Response $response, bool $force = false): void
     {

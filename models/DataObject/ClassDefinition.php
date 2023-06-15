@@ -382,9 +382,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         $this->generateClassFiles($saveDefinitionFile);
 
         foreach ($fieldDefinitions as $fd) {
-            // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-            //TODO Pimcore 11 remove method_exists call
-            if (!$fd instanceof ClassDefinition\Data\DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+            if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\ClassSavedInterface) {
                 $fd->classSaved($this);
             }
         }
@@ -1197,6 +1195,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         try {
             $class = new self();
             $name = $class->getDao()->getNameByIdIgnoreCase($id);
+            if ($name === null) {
+                throw new \Exception('Class definition with ID ' . $id . ' does not exist');
+            }
             $definitionFile = $class->getDefinitionFile($name);
             $class = @include $definitionFile;
 

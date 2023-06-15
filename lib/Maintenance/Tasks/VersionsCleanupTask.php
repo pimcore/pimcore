@@ -40,9 +40,6 @@ class VersionsCleanupTask implements TaskInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $this->doVersionCleanup();

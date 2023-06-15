@@ -30,7 +30,6 @@ trait ImageTrait
     /**
      * @internal
      *
-     * @var string
      */
     public string $uploadPath;
 

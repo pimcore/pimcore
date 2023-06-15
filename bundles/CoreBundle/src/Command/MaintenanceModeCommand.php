@@ -28,9 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MaintenanceModeCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -41,9 +38,6 @@ class MaintenanceModeCommand extends AbstractCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $input->setOption('ignore-maintenance-mode', true);
@@ -51,7 +45,7 @@ class MaintenanceModeCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws Exception
      */

@@ -51,9 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $name
      *
-     * @return string
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -78,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $isUpdate
      *
      * @throws \Exception
      */
@@ -231,7 +228,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return void
      */
     public function create(): void
     {
@@ -296,7 +292,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @param string $newName
      */
     public function updateClassNameInObjects(string $newName): void
     {
@@ -306,17 +301,14 @@ class Dao extends Model\Dao\AbstractDao
         ' set oo_classname = :className', ['className' => $newName]);
     }
 
-    public function getNameByIdIgnoreCase(string $id): string|null
+    public function getNameByIdIgnoreCase(string $id): ?string
     {
-        $name = null;
-
-        try {
-            if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)]);
+        if ($id !== '') {
+            if ($name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)])) {
+                return $name;
             }
-        } catch (\Exception $e) {
         }
 
-        return $name;
+        return null;
     }
 }

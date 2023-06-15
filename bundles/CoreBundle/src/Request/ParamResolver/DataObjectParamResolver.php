@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DataObjectParamResolver implements ValueResolverInterface
 {
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws NotFoundHttpException When invalid data object ID given
      */
@@ -54,7 +54,7 @@ class DataObjectParamResolver implements ValueResolverInterface
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
 
-            return [];
+            return [null];
         }
 
         /** @var Concrete|null $object */

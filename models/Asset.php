@@ -70,21 +70,18 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type = '';
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $filename = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $mimetype = null;
 
@@ -98,14 +95,12 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $metadata = [];
 
@@ -115,34 +110,27 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      *
-     * @var array
      */
     protected array $customSettings = [];
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $hasMetaData = false;
 
     /**
      * @internal
      *
-     * @var Listing|null
      */
     protected ?Listing $siblings = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $dataChanged = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
@@ -168,10 +156,7 @@ class Asset extends Element\AbstractElement
     /**
      * Static helper to get an asset by the passed path
      *
-     * @param string $path
-     * @param array $params
      *
-     * @return static|null
      */
     public static function getByPath(string $path, array $params = []): static|null
     {
@@ -194,9 +179,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param Asset $asset
      *
-     * @return bool
      */
     protected static function typeMatch(Asset $asset): bool
     {
@@ -280,6 +263,7 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $type = 'unknown';
+        $tmpFile = null;
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
@@ -289,7 +273,6 @@ class Asset extends Element\AbstractElement
                 if (array_key_exists('data', $data)) {
                     $filesystem = new Filesystem();
                     $filesystem->dumpFile($tmpFile, $data['data']);
-                    unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
@@ -345,6 +328,10 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
+        if ($tmpFile) {
+            unlink($tmpFile);
+        }
+
         return $asset;
     }
 
@@ -375,9 +362,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $config
      *
-     * @return Listing
      *
      * @throws Exception
      */
@@ -397,10 +382,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $mimeType
-     * @param string $filename
      *
-     * @return string
      *
      * @internal
      */
@@ -435,9 +417,6 @@ class Asset extends Element\AbstractElement
         return $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -774,11 +753,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
      * @param string|null $versionNote version note
-     *
-     * @return null|Version
      *
      * @throws Exception
      */
@@ -849,7 +824,6 @@ class Asset extends Element\AbstractElement
     /**
      * Returns the full path of the asset (listener aware)
      *
-     * @return string
      *
      * @internal
      */
@@ -1171,9 +1145,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         if ($this->versions === null) {
@@ -1200,8 +1171,6 @@ class Asset extends Element\AbstractElement
      *
      * @param bool $keep whether to delete this file on shutdown or not
      *
-     * @return string
-     *
      * @throws Exception
      */
     public function getTemporaryFile(bool $keep = false): string
@@ -1211,8 +1180,6 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @return string
      *
      * @throws Exception
      */
@@ -1333,10 +1300,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $name
      * @param string $type can be "asset", "checkbox", "date", "document", "input", "object", "select" or "textarea"
      * @param mixed $data
-     * @param string|null $language
      *
      * @return $this
      */
@@ -1404,7 +1369,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1466,7 +1431,7 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
     {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
@@ -1552,9 +1517,6 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];

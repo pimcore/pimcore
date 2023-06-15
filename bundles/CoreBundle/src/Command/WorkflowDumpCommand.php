@@ -32,9 +32,6 @@ class WorkflowDumpCommand extends AbstractCommand
 {
     protected static $defaultName = 'pimcore:workflow:dump';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -54,9 +51,6 @@ EOF
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $container = $this->getApplication()->getKernel()->getContainer();

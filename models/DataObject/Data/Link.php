@@ -292,7 +292,6 @@ class Link implements OwnerAwareFieldInterface
     /**
      * Returns the plain text path of the link
      *
-     * @return string
      */
     public function getHref(): string
     {

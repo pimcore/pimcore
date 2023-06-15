@@ -1,4 +1,4 @@
-# Asset Document Thumbnails (PDF, docx, odf, ...)
+# Asset Document Thumbnails (PDF, DOCX, ODF, ...)
 
 This feature allows you to create an image thumbnail of nearly any document format, like doc(x), ppt(x), pdf, xls(x), 
 odt, ods, odp and many others. 
@@ -30,29 +30,7 @@ if($asset instanceof Asset\Document) {
 }
 ```
 
-> This feature requires Ghostscript and at least Gotenberg or LibreOffice be installed on the server.
->
-> Installation on Linux:
->
-> `sudo apt-get install ghostscript`
->
-> `sudo apt-get install libreoffice`
->
-> You also have the possibility to install Gotenberg with a Docker image. To make it available, simply add the following config to your `docker-compose.yaml` file:
->
-> ```yaml
->  services:
->     gotenberg:
->        image: gotenberg/gotenberg:7
->  ```
->
-> 
-> Installation on Mac:
->
-> `brew install ghostscript`
->
-> `brew install --cask libreoffice`
-
+This feature requires Ghostscript and at least [Gotenberg](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-) to be installed on the server.
 
 ##### To build the function generating thumbnail for List of assets:
 It is recommended to use named thumbnails for caching sake:

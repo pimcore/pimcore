@@ -33,10 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations for the given sourceId and type
      *
-     * @param int|null $id
-     * @param string|null $type
      *
-     * @return void
      */
     public function getBySourceId(int $id = null, string $type = null): void
     {
@@ -65,9 +62,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Clear all relations in the database
      *
-     * @param Element\ElementInterface $element
      *
-     * @return void
      */
     public function cleanAllForElement(Element\ElementInterface $element): void
     {
@@ -94,7 +89,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Clear all relations in the database for current source id
      *
-     * @return void
      */
     public function clear(): void
     {
@@ -108,7 +102,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save to database
      *
-     * @return void
      */
     public function save(): void
     {
@@ -176,10 +169,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations that need the given source element
      *
-     * @param int|null $offset
-     * @param int|null $limit
      *
-     * @return array
      */
     public function getRequiredBy(int $offset = null, int $limit = null): array
     {
@@ -212,14 +202,6 @@ class Dao extends Model\Dao\AbstractDao
         return $requiredBy;
     }
 
-    /**
-     * @param string|null $orderBy
-     * @param string|null $orderDirection
-     * @param int|null $offset
-     * @param int|null $limit
-     *
-     * @return array
-     */
     public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
         $targetId = $this->model->getSourceId();
@@ -274,7 +256,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * get total count of required by records
      *
-     * @return int
      */
     public function getRequiredByTotalCount(): int
     {

@@ -164,7 +164,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
     protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output): void
     {
-        list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
+        [$assetId, $thumbnailConfigName] = explode('~~~', $item, 2);
 
         $image = Image::getById((int) $assetId);
         if (!$image) {

@@ -50,9 +50,6 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

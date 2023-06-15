@@ -54,14 +54,12 @@ class Video extends Data implements
     /**
      * @internal
      *
-     * @var array|null
      */
     public ?array $allowedTypes = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $supportedTypes = [
         self::TYPE_ASSET,
@@ -103,11 +101,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -133,11 +127,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\Video|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -169,8 +159,8 @@ class Video extends Data implements
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
                 $video->setPoster($raw['poster']);
-                $video->setTitle($raw['title']);
-                $video->setDescription($raw['description']);
+                $video->setTitle($raw['title'] ?? null);
+                $video->setDescription($raw['description'] ?? null);
 
                 return $video;
             }
@@ -180,11 +170,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -194,11 +180,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -221,11 +203,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Video|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -254,19 +232,16 @@ class Video extends Data implements
             $video->setData($data['data']);
             $video->setType($data['type']);
             $video->setPoster($data['poster']);
-            $video->setTitle($data['title']);
-            $video->setDescription($data['description']);
+            $video->setTitle($data['title'] ?? null);
+            $video->setDescription($data['description'] ?? null);
         }
 
         return $video;
     }
 
     /**
-     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Video|null
      */
     public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
@@ -274,11 +249,8 @@ class Video extends Data implements
     }
 
     /**
-     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForGrid(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array
     {
@@ -295,11 +267,7 @@ class Video extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -313,9 +281,6 @@ class Video extends Data implements
         return parent::getVersionPreview($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -360,9 +325,6 @@ class Video extends Data implements
         return $tags;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
@@ -372,9 +334,6 @@ class Video extends Data implements
         return $this;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         return $this->enrichFieldDefinition($context);
@@ -401,9 +360,6 @@ class Video extends Data implements
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return false;
@@ -412,11 +368,8 @@ class Video extends Data implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array|string
     {
@@ -437,9 +390,6 @@ class Video extends Data implements
         return '';
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);

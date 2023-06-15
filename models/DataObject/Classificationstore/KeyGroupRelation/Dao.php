@@ -31,8 +31,6 @@ class Dao extends AbstractDao
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
-     * @param int $keyId
-     * @param int $groupId
      *
      * @throws NotFoundException
      */
@@ -51,6 +49,8 @@ class Dao extends AbstractDao
         );
 
         if (!empty($data['keyId'])) {
+            $data['enabled'] = (bool)$data['enabled'];
+            $data['mandatory'] = (bool)$data['mandatory'];
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException(sprintf(

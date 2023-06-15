@@ -63,7 +63,6 @@ class EncryptedField implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array
      *
      * @throws \Exception
      */

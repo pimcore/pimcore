@@ -54,7 +54,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -65,6 +64,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 WHERE objects.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
@@ -182,7 +182,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save changes to database, it's an good idea to use save() instead
      *
-     * @param bool|null $isUpdate
      */
     public function update(bool $isUpdate = null): void
     {

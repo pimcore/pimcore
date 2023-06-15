@@ -28,7 +28,7 @@ class UserTest extends TestCase
         'tooltip' => '',
         'mandatory' => false,
         'noteditable' => false,
-        'index' => false,
+        'index' => 0,
         'locked' => false,
         'style' => '',
         'permissions' => null,

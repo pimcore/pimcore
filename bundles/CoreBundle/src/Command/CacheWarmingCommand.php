@@ -100,9 +100,6 @@ class CacheWarmingCommand extends AbstractCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('maintenance-mode')) {
@@ -112,11 +109,11 @@ class CacheWarmingCommand extends AbstractCommand
         }
 
         try {
-            $types = $this->getArrayOption('types', 'validTypes', 'type', true);
-            $documentTypes = $this->getArrayOption('documentTypes', 'validDocumentTypes', 'document type');
-            $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type');
-            $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
-            $objectClasses = $this->input->getOption('classes');
+            $types = $this->getArrayOption('types', 'validTypes', 'type', true) ?? [];
+            $documentTypes = $this->getArrayOption('documentTypes', 'validDocumentTypes', 'document type') ?? [];
+            $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type') ?? [];
+            $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type') ?? [];
+            $objectClasses = $this->input->getOption('classes') ?? [];
         } catch (\InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
@@ -162,11 +159,7 @@ class CacheWarmingCommand extends AbstractCommand
     /**
      * A,B,C -> A, B or C (with an optional template for each item)
      *
-     * @param array $list
-     * @param string $glue
-     * @param string|null $template
      *
-     * @return string
      */
     protected function humanList(array $list, string $glue = 'or', string $template = null): string
     {
@@ -189,12 +182,7 @@ class CacheWarmingCommand extends AbstractCommand
      * Get one of types, document, asset or object types, handle "all" value
      * and list input validation.
      *
-     * @param string $option
-     * @param string $property
-     * @param string $singular
-     * @param bool $fallback
      *
-     * @return mixed
      */
     protected function getArrayOption(string $option, string $property, string $singular, bool $fallback = false): mixed
     {

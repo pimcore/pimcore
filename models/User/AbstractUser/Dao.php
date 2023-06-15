@@ -26,7 +26,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -39,6 +38,12 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($data) {
+            $data['admin'] = (bool)$data['admin'];
+            $data['active'] = (bool)$data['active'];
+            $data['welcomescreen'] = (bool)$data['welcomescreen'];
+            $data['closeWarning'] = (bool)$data['closeWarning'];
+            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("user doesn't exist");
@@ -46,7 +51,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $name
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -55,6 +59,12 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
         if ($data) {
+            $data['admin'] = (bool)$data['admin'];
+            $data['active'] = (bool)$data['active'];
+            $data['welcomescreen'] = (bool)$data['welcomescreen'];
+            $data['closeWarning'] = (bool)$data['closeWarning'];
+            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('User with name "%s" does not exist', $name));
@@ -74,7 +84,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Quick test if there are children
      *
-     * @return bool
      */
     public function hasChildren(): bool
     {

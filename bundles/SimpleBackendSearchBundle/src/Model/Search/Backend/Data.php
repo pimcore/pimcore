@@ -53,56 +53,48 @@ class Data extends AbstractModel
     /**
      * document | object | asset
      *
-     * @var string
      */
     protected string $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
-     * @var string
      */
     protected string $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
-     * @var string
      */
     protected string $subtype;
 
     /**
      * published or not
      *
-     * @var bool
      */
     protected bool $published;
 
     /**
      * timestamp of creation date
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * timestamp of modification date
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * User-ID of the owner
      *
-     * @var int
      */
     protected int $userOwner;
 
     /**
      * User-ID of the user last modified the element
      *
-     * @var int|null
      */
     protected ?int $userModification = null;
 
@@ -110,9 +102,6 @@ class Data extends AbstractModel
 
     protected string $properties;
 
-    /**
-     * @param Element\ElementInterface|null $element
-     */
     public function __construct(Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {

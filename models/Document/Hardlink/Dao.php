@@ -27,7 +27,6 @@ class Dao extends Model\Document\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -43,6 +42,7 @@ class Dao extends Model\Document\Dao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Hardlink with the ID ' . $this->model->getId() . " doesn't exists");

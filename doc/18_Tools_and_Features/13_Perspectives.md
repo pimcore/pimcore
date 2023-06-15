@@ -5,7 +5,7 @@
 Perspectives allow to create different views in the backend UI and even customize the standard perspective.
 This feature could be combined with the configuration options already available for the [Custom Views](../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md).
 
-You can create or edit perspectives and custom views within the Pimcore backend UI using the [perspective editor](https://github.com/pimcore/perspective-editor) bundle.
+You can create or edit perspectives and custom views within the Pimcore backend UI using the [perspective editor](https://pimcore.com/docs/platform/Perspective_Editor/) bundle.
 
 > **Security Note**    
 > Perspectives and Custom Views are not intended to be used to restrict access to data
@@ -140,8 +140,6 @@ demo:
                                 upload: true
                                 uploadCompatibility: true
                                 uploadZip: true
-                                importFromServer: true
-                                uploadFromUrl: true
                         addFolder: true
                         rename: true
                         copy: true

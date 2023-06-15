@@ -41,9 +41,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
@@ -133,8 +130,8 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image-thumbnails',
-            'video_thumbnails' => '/var/config/video-thumbnails',
+            'image_thumbnails' => '/var/config/image_thumbnails',
+            'video_thumbnails' => '/var/config/video_thumbnails',
             'document_types' => '/var/config/document_types',
             'predefined_properties' => '/var/config/predefined_properties',
             'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',

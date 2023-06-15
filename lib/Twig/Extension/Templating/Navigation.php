@@ -52,9 +52,7 @@ class Navigation implements RuntimeExtensionInterface
      * Builds a navigation container by passing params
      * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'cacheLifetime', 'maxDepth', 'active', 'markActiveTrail'
      *
-     * @param array $params
      *
-     * @return Container
      *
      * @throws \Exception
      */
@@ -66,9 +64,7 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Get a named renderer
      *
-     * @param string $alias
      *
-     * @return RendererInterface
      */
     public function getRenderer(string $alias): RendererInterface
     {
@@ -88,12 +84,9 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Renders a navigation with the given renderer
      *
-     * @param Container $container
-     * @param string $rendererName
      * @param string $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
      * @param array<int, mixed> $rendererArguments      Option arguments to pass to the render method after the container
      *
-     * @return string
      */
     public function render(
         Container $container,
@@ -115,10 +108,7 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Magic overload is an alias to getRenderer()
      *
-     * @param string $method
-     * @param array $arguments
      *
-     * @return RendererInterface
      */
     public function __call(string $method, array $arguments = []): RendererInterface
     {

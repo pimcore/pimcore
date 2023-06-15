@@ -46,11 +46,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public ?array $disabledFields = null;
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -84,11 +80,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Link|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -118,11 +110,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -132,11 +120,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -153,11 +137,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?array
     {
@@ -165,11 +146,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Link|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -186,11 +163,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Link|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
@@ -198,11 +172,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -212,9 +182,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return (string) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Data\Link) {
@@ -278,9 +245,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -301,9 +265,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -312,11 +273,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param DataObject\Data\Link|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDiffVersionPreview(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?string
     {
@@ -331,9 +289,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);

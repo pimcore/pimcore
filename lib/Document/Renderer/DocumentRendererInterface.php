@@ -24,12 +24,7 @@ interface DocumentRendererInterface
     /**
      * Renders document and returns rendered result as string
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param array $query
-     * @param array $options
      *
-     * @return string
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string;
 }

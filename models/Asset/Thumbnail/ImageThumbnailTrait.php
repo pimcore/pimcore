@@ -31,63 +31,54 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @var Asset|null
      */
     protected ?Asset $asset = null;
 
     /**
      * @internal
      *
-     * @var Config|null
      */
     protected ?Config $config = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $pathReference = [];
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $width = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $height = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realHeight = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $mimetype = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $deferred = true;
 
@@ -231,16 +222,18 @@ trait ImageThumbnailTrait
                 $dimensions = $this->readDimensionsFromFile();
             }
 
-            $this->width = $dimensions['width'] ?? null;
-            $this->height = $dimensions['height'] ?? null;
-
-            // the following is only relevant if using high-res option (retina, ...)
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = (int)floor($this->width * $config->getHighResolution());
-                $this->realHeight = (int)floor($this->height * $config->getHighResolution());
+            // realWidth / realHeight is only relevant if using high-res option (retina, ...)
+            $width = $dimensions['width'] ?? null;
+            $this->width = $this->realWidth = ($width !== null ? (int) $width : null);
+            $height = $dimensions['height'] ?? null;
+            $this->height = $this->realHeight = ($height !== null ? (int) $height : null);
+            if ($config && $config->getHighResolution() > 1) {
+                if ($this->width) {
+                    $this->width = (int)floor($this->realWidth / $config->getHighResolution());
+                }
+                if ($this->height) {
+                    $this->height = (int)floor($this->realHeight / $config->getHighResolution());
+                }
             }
         }
 
@@ -325,8 +318,6 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @return string|null
-     *
      * @throws \Exception
      */
     public function getLocalFile(): ?string
@@ -362,10 +353,6 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
-     *
-     * @param array|null $pathReference
-     *
-     * @return bool
      *
      * @throws \League\Flysystem\FilesystemException
      */
@@ -419,9 +406,7 @@ trait ImageThumbnailTrait
     /**
      * Returns path for thumbnail image in a given file format
      *
-     * @param string $format
      *
-     * @return static
      */
     public function getAsFormat(string $format): static
     {

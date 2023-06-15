@@ -26,17 +26,11 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  */
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isOptional(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warmUp(string $cacheDir): array
     {
         $classes = [];

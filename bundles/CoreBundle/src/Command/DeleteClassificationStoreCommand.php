@@ -38,9 +38,6 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $storeId = $input->getArgument('storeId');

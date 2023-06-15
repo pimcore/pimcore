@@ -34,7 +34,6 @@ class ControllerDataProvider
     /**
      * id -> class mapping array of controllers defined as services
      *
-     * @var array
      */
     private array $serviceControllers;
 
@@ -74,7 +73,6 @@ class ControllerDataProvider
     }
 
     /**
-     * @return array
      *
      * @throws \ReflectionException
      */
@@ -137,7 +135,6 @@ class ControllerDataProvider
     /**
      * Builds a list of all available templates in bundles, in app/Resources/views, and Symfony locations
      *
-     * @return array
      */
     public function getTemplates(): array
     {
@@ -193,9 +190,7 @@ class ControllerDataProvider
     /**
      * Checks if bundle/controller namespace is not excluded (all core bundles should be excluded here)
      *
-     * @param string $namespace
      *
-     * @return bool
      */
     protected function isValidNamespace(string $namespace): bool
     {

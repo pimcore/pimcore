@@ -44,8 +44,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setDataFromEditmode(mixed $data): static
@@ -73,8 +71,6 @@ final class Property extends AbstractModel
 
     /**
      * @internal
-     *
-     * @param mixed $data
      *
      * @return $this
      */
@@ -146,7 +142,6 @@ final class Property extends AbstractModel
     /**
      * enum('document','asset','object')
      *
-     * @param string $ctype
      *
      * @return $this
      */
@@ -185,7 +180,6 @@ final class Property extends AbstractModel
     /**
      * enum('text','document','asset','object','bool','select')
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -209,7 +203,6 @@ final class Property extends AbstractModel
     /**
      * Alias for getInherited()
      *
-     * @return bool
      */
     public function isInherited(): bool
     {
@@ -254,7 +247,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function resolveDependencies(): array
     {
@@ -283,7 +275,6 @@ final class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
-     * @param array $idMapping
      *
      * @internal
      */
@@ -303,7 +294,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function serialize(): array
     {
