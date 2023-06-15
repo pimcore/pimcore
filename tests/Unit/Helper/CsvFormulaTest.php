@@ -46,5 +46,15 @@ class CsvFormulaTest extends TestCase
         $escapedRow = $formatter->escapeRecord(["test"]);
         $this->assertEquals("test", $escapedRow[0]);
         $this->assertEquals("test", $formatter->unEscapeField($escapedRow[0]));
+
+        $testString = "test=test";
+        $escapedRow = $formatter->escapeRecord([$testString]);
+        $this->assertEquals($testString, $escapedRow[0]);
+        $this->assertEquals($testString, $formatter->unEscapeField($escapedRow[0]));
+
+        $testString = "test+test";
+        $escapedRow = $formatter->escapeRecord([$testString]);
+        $this->assertEquals($testString, $escapedRow[0]);
+        $this->assertEquals($testString, $formatter->unEscapeField($escapedRow[0]));
     }
 }
