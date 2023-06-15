@@ -279,9 +279,6 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id, 'id must not be empty');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -299,9 +296,6 @@ class VersionTest extends TestCase
         $db->executeStatement('DROP TABLE versionsData');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;

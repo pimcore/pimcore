@@ -72,9 +72,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->objectTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
@@ -85,8 +82,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function addDistinct(): bool
     {

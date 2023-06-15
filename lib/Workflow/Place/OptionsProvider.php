@@ -38,10 +38,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
      *
-     * @return array
      *
      * @throws \Exception
      */

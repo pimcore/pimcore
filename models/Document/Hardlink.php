@@ -26,29 +26,23 @@ class Hardlink extends Document
 {
     use Model\Element\Traits\ScheduledTasksTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'hardlink';
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $sourceId;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $propertiesFromSource;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $childrenFromSource;
 
@@ -61,9 +55,6 @@ class Hardlink extends Document
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -130,9 +121,6 @@ class Hardlink extends Document
         return $this->propertiesFromSource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperties(): array
     {
         if ($this->properties === null) {
@@ -163,9 +151,6 @@ class Hardlink extends Document
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -195,9 +180,6 @@ class Hardlink extends Document
         return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);

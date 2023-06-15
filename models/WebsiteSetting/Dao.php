@@ -26,7 +26,6 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
@@ -47,9 +46,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string|null $name
-     * @param int|null $siteId
-     * @param string|null $language
      *
      * @throws NotFoundException
      */

@@ -23,9 +23,6 @@ use Pimcore\Model\DataObject;
  */
 class Folder extends DataObject
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 
     public static function create(array $values): Folder
@@ -39,18 +36,12 @@ class Folder extends DataObject
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(bool $isUpdate = null, array $params = []): void
     {
         parent::update($isUpdate, $params);
         $this->getDao()->update($isUpdate);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(): void
     {
         if ($this->getId() == 1) {

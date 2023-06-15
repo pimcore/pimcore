@@ -27,7 +27,6 @@ interface LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return bool
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool;
 }

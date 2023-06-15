@@ -50,9 +50,6 @@ class ResetPasswordCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userArgument = $input->getArgument('user');

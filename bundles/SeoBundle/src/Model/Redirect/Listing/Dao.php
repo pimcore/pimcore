@@ -29,7 +29,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Redirect elements
      *
-     * @return array
      */
     public function load(): array
     {

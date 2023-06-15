@@ -76,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -440,8 +439,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $deleteQuery
-     * @param bool $isUpdate
      *
      * @return bool force update
      */
@@ -781,7 +778,6 @@ QUERY;
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */

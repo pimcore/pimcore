@@ -34,9 +34,6 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UUIDListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

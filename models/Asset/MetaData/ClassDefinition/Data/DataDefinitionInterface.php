@@ -21,8 +21,6 @@ interface DataDefinitionInterface
     public function isEmpty(mixed $data, array $params = []): bool;
 
     /**
-     * @param mixed $data
-     * @param array $params
      *
      * @throws \Exception
      */

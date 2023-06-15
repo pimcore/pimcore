@@ -25,9 +25,6 @@ use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
  */
 final class Factory extends ImplementationLoader implements FactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getClassMap(): array
     {
         $map = [];

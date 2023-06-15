@@ -24,9 +24,6 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class VersionsCleanupStackTraceDbTask implements TaskInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         Db::get()->executeStatement(

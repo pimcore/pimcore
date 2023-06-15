@@ -21,10 +21,7 @@ use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 interface ImportDataExtractorInterface
 {
     /**
-     * @param string $importId
-     * @param int $stepId
      *
-     * @return AttributeSet|null
      *
      * @throws \Exception
      */
@@ -33,9 +30,7 @@ interface ImportDataExtractorInterface
     public function getImportFilePath(string $importId): string;
 
     /**
-     * @param string $importId
      *
-     * @return int
      *
      * @throws \Exception
      */

@@ -56,7 +56,6 @@ class Gotenberg extends Ghostscript
     }
 
     /**
-     * @return bool
      *
      * @throws \Exception
      */
@@ -111,7 +110,7 @@ class Gotenberg extends Ghostscript
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws \Exception
      */

@@ -37,9 +37,6 @@ class Xliff12Exporter implements ExporterInterface
         $this->xliffEscaper = $xliffEscaper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function export(AttributeSet $attributeSet, string $exportId = null): string
     {
         $exportId = $exportId ?: uniqid();

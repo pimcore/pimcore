@@ -31,9 +31,6 @@ class LocaleListener implements EventSubscriberInterface
 
     protected ?string $lastLocale = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

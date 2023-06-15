@@ -21,7 +21,6 @@ namespace Pimcore\DataObject\FielddefinitionMarshaller\Traits;
  */
 trait RgbaColorTrait
 {
-    /** @inheritDoc */
     public function marshal(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
@@ -37,7 +36,6 @@ trait RgbaColorTrait
         return null;
     }
 
-    /** @inheritDoc */
     public function unmarshal(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {

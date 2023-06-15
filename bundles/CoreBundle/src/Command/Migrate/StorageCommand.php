@@ -46,9 +46,6 @@ class StorageCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $storages = $input->getArgument('storage');

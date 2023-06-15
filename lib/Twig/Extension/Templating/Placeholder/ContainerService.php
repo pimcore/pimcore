@@ -50,7 +50,6 @@ class ContainerService
     /**
      * Placeholder containers
      *
-     * @var array
      */
     protected array $_items = [];
 
@@ -86,10 +85,7 @@ class ContainerService
     /**
      * createContainer
      *
-     * @param string $key
-     * @param  array $value
      *
-     * @return Container
      */
     public function createContainer(string $key, array $value = []): Container
     {
@@ -99,9 +95,7 @@ class ContainerService
     /**
      * Retrieve a placeholder container
      *
-     * @param string $key
      *
-     * @return Container
      */
     public function getContainer(string $key): Container
     {
@@ -111,9 +105,7 @@ class ContainerService
     /**
      * Does a particular container exist?
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function containerExists(string $key): bool
     {
@@ -123,8 +115,6 @@ class ContainerService
     /**
      * Set the container for an item in the registry
      *
-     * @param string $key
-     * @param  Container $container
      *
      * @return $this
      */
@@ -138,9 +128,7 @@ class ContainerService
     /**
      * Delete a container
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function deleteContainer(string $key): bool
     {

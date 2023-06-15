@@ -34,9 +34,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $this->translationItemResolver = $translationItemResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function extractElement(string $importId, int $stepId): ?AttributeSet
     {
         $xliff = $this->loadFile($importId);
@@ -89,9 +86,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $importId . '.xliff';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function countSteps(string $importId): int
     {
         $xliff = $this->loadFile($importId);

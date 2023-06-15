@@ -26,7 +26,6 @@ class ConsoleEvent extends Event
     /**
      * ConsoleEvent constructor.
      *
-     * @param Application $application
      */
     public function __construct(Application $application)
     {

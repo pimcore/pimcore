@@ -45,9 +45,6 @@ class InstallCommand extends AbstractBundleCommand
         PostStateChange::configureStateChangeCommandOptions($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $bundle = $this->getBundle();
