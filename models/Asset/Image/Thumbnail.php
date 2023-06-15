@@ -263,7 +263,7 @@ final class Thumbnail
 
         if ($thumbConfig instanceof Config) {
             $thumbConfigRes = clone $thumbConfig;
-            $html.= $this->getMediaConfigsHtml($thumbConfigRes, $image, $options, $isAutoFormat);
+            $html.= $this->getMediaConfigHtml($thumbConfigRes, $image, $options, $isAutoFormat);
         }
 
         if (!($options['disableImgTag'] ?? null)) {
@@ -279,7 +279,7 @@ final class Thumbnail
         return $html;
     }
 
-    protected function getMediaConfigsHtml(Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
+    protected function getMediaConfigHtml(Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
     {
         $html = '';
         $mediaConfigs = $thumbConfig->getMedias();
