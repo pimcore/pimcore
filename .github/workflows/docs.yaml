@@ -42,11 +42,6 @@ jobs:
                   node-version: 19.x
                   registry-url: 'https://registry.npmjs.org'
 
-#            - uses: actions/setup-node@v3
-#              with:
-#                  node-version: 19
-#                  cache: 'npm'
-
             - name: Prepare Docs
               working-directory: "./docs-generator"
               run: |
