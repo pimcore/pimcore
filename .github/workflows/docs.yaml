@@ -64,5 +64,5 @@ jobs:
               working-directory: "./docs-generator"
               run: |
                   npm install
-                  npm build
+                  npm run build
                   
