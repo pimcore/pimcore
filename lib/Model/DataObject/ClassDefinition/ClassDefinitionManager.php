@@ -78,10 +78,10 @@ class ClassDefinitionManager
 
                     if ($existingClass instanceof ClassDefinition) {
                         $classSaved = $this->saveClass($existingClass, false);
-                    $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
+                        $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
                         $classSaved = $this->saveClass($class, false);
-                    $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
+                        $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }
             }
@@ -99,7 +99,12 @@ class ClassDefinitionManager
 
         if (!$force) {
             $db = Db::get();
-            $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', $class->getId());
+
+            $lastRebuildDate = null;
+
+            if ($classId = $class->getId()) {
+                $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', $classId);
+            }
 
             if (!$lastRebuildDate || $lastRebuildDate !== $class->getModificationDate()) {
                 $shouldSave = true;
