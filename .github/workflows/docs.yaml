@@ -32,7 +32,7 @@ jobs:
               uses: "actions/checkout@v3"
               with:
                   repository: "pimcore/docs-generator"
-                  ref: "prepare-repos-test"
+                  ref: "main"
                   path: "./docs-generator"
                   token: ${{ secrets.DOCS_GENERATOR_ACCESS_TOKEN }}
 
