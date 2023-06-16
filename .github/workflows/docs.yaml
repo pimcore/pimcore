@@ -8,6 +8,7 @@ on:
             - "[0-9]+.x"
         paths:
             - 'doc/**'
+            - '.github/workflows/docs.yaml'
     push:
         branches:
             - "[0-9]+.[0-9]+"
