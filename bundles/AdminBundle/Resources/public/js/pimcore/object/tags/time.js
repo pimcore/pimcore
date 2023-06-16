@@ -26,7 +26,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-        let options = { 
+        const options = { 
             fieldLabel: this.fieldConfig.title,
             format: "H:i",
             emptyText: "",
