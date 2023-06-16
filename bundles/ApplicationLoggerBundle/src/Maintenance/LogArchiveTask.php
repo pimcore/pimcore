@@ -59,14 +59,13 @@ class LogArchiveTask implements TaskInterface
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
         }
 
-        $archive_threshold = (int)($this->config['applicationlog']['archive_treshold'] ?? 30);
+        $archive_threshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
 
         $timestamp = time();
         $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
-            $db->executeQuery(
-                'CREATE TABLE IF NOT EXISTS '.$tablename." (
+            $db->executeQuery('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
@@ -116,7 +115,7 @@ class LogArchiveTask implements TaskInterface
 
                     $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                    if ($storage->fileExists($folderName)) {
+                    if ($storage->directoryExists($folderName)) {
                         $storage->deleteDirectory($folderName);
                     }
                 }

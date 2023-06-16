@@ -289,6 +289,9 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->executeQuery('DROP TABLE `'.$brickTable.'`');
         }
 
+        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());
+        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_groups_'.$this->model->getId());
+
         // clean slug table
         DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
     }

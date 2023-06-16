@@ -276,7 +276,7 @@ abstract class Kernel extends SymfonyKernel
         // pimcore bundles
         $collection->addBundles([
             new PimcoreCoreBundle(),
-        ], 60);
+        ], -10);
 
         // load development bundles only in matching environments
         if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {

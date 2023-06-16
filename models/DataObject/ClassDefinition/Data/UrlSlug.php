@@ -144,15 +144,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
+                $matches = [];
                 $slug = htmlspecialchars($item->getSlug());
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
-                    $slugToCompare = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $item->getSlug());
-                    if ($item->getSlug() !== $slugToCompare) {
-                        throw new Model\Element\ValidationException('Slug contains forbidden characters!');
-                    }
-
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
                         throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
@@ -162,8 +158,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
 
-                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
-                        throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
+                    if(preg_match_all('([?#])', $item->getSlug(), $matches)) {
+                        throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
                     }
                 }
             }

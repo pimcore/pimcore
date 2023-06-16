@@ -176,8 +176,10 @@ class Processor
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
-            if ($storage->fileExists($storagePath)) {
+            try {
                 $modificationDate = $storage->lastModified($storagePath);
+            } catch (FilesystemException $e) {
+                // nothing to do
             }
         }
 

@@ -495,6 +495,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return $this;
         }
 
+        if (!isset($context['purpose'])) {
+            $context['purpose'] = 'layout';
+        }
+
         $this->visibleFieldDefinitions = [];
 
         $translator = \Pimcore::getContainer()->get('translator');

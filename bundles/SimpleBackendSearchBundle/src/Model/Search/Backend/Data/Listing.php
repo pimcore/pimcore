@@ -54,4 +54,27 @@ class Listing extends AbstractListing
     {
         $this->initDao(__CLASS__);
     }
+
+    public function isValidOrderKey(string $key): bool
+    {
+        return in_array(
+            $key,
+            [
+                'type',
+                'id',
+                'key',
+                'index',
+                'fullpath',
+                'maintype',
+                'subtype',
+                'published',
+                'creationDate',
+                'modificationDate',
+                'userOwner',
+                'userModification',
+                'data',
+                'properties',
+            ]
+        );
+    }
 }
