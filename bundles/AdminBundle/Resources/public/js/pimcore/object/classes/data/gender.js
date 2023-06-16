@@ -67,7 +67,7 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
         var nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
 
-        var mandatoryField = this.layout.getComponent("standardSettings").getComponent("mandatory");
+        let mandatoryField = this.layout.getComponent("standardSettings").getComponent("mandatory");
         mandatoryField.disable();
 
         this.specificPanel.removeAll();
