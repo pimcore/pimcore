@@ -40,6 +40,7 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
         initData.fieldtype = "gender";
         initData.datatype = "data";
         initData.name = "gender";
+
         treeNode.set("text", "gender");
 
         this.initData(initData);
@@ -65,6 +66,9 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
 
         var nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
+
+        var mandatoryField = this.layout.getComponent("standardSettings").getComponent("mandatory");
+        mandatoryField.disable();
 
         this.specificPanel.removeAll();
         return this.layout;
