@@ -103,7 +103,7 @@ class ClassDefinitionManager
             $lastRebuildDate = null;
 
             if ($classId = $class->getId()) {
-                $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', $classId);
+                $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', [$classId]);
             }
 
             if (!$lastRebuildDate || $lastRebuildDate !== $class->getModificationDate()) {
