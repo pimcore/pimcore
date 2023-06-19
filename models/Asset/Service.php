@@ -555,6 +555,10 @@ class Service extends Model\Element\Service
                             throw new NotFoundHttpException('Requested thumbnail format is disabled');
                         }
                     }
+
+                    if(!empty($thumbnailFormats[$config['file_extension']]['quality'] ?? null)) {
+                        $thumbnailConfig->setQuality($thumbnailFormats[$config['file_extension']]['quality']);
+                    }
                 }
 
                 //check if high res image is called
