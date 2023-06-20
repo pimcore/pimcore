@@ -638,7 +638,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             // refresh the inherited properties and update dependencies of each children
             if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
                 foreach ($updatedChildren as $updatedObject) {
-                    $updatedObject = self::getById($updatedObject['id'], true);
+                    $updatedObject = self::getById($updatedObject['id'], ['force' => true]);
                     $updatedObject->renewInheritedProperties();
                     self::updateDependendencies($updatedObject);
                 }
