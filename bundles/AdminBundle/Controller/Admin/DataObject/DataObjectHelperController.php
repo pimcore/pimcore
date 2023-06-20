@@ -17,8 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;

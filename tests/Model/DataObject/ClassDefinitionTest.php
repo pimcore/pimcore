@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tests\Model\DataObject;
 
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Tests\Test\ModelTestCase;
 

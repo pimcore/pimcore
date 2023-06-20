@@ -23,7 +23,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
-use Pimcore\Config;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
