@@ -22,11 +22,11 @@ use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Helper\CsvFormulaFormatter;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -53,10 +53,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    /**
-     * @var EscapeFormula|null
-     */
-    private static ?EscapeFormula $formatter = null;
+    private static ?CsvFormulaFormatter $formatter = null;
 
     /**
      * @internal
@@ -1650,11 +1647,24 @@ class Service extends Model\AbstractModel
     public static function escapeCsvRecord(array $rowData): array
     {
         if (self::$formatter === null) {
-            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
+            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
         }
         $rowData = self::$formatter->escapeRecord($rowData);
 
         return $rowData;
+    }
+
+    /**
+     * @internal
+     */
+    public static function unEscapeCsvField(string $value): string
+    {
+        if (self::$formatter === null) {
+            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+        }
+        $value = self::$formatter->unEscapeField($value);
+
+        return $value;
     }
 
     /**
