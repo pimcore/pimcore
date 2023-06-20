@@ -48,7 +48,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var Asset\Image|ElementDescriptor|null
      */
-    protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
+    protected Asset\Image|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
@@ -436,13 +436,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @param int|null $id
      *
      * @return $this
      */
-    public function setId(int $id): static
+    public function setId(?int $id): static
     {
-        $this->id = $id ? (int)$id : null;
+        $this->id = $id;
 
         return $this;
     }
