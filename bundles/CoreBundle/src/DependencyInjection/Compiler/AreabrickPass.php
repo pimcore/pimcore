@@ -105,7 +105,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *
      */
-    protected function autoloadAreabricks(
+    private function autoloadAreabricks(
         ContainerBuilder $container,
         Definition $areaManagerDefinition,
         array $locatorMapping,
@@ -167,7 +167,7 @@ final class AreabrickPass implements CompilerPassInterface
      * Adds setContainer() call to bricks implementing ContainerAwareInterface
      *
      */
-    protected function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null): void
+    private function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null): void
     {
         if (null === $reflector) {
             $reflector = new \ReflectionClass($definition->getClass());
@@ -183,7 +183,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *
      */
-    protected function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
+    private function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
         $sourcePath = is_dir($metadata['path'].'/src') ? $metadata['path'].'/src' : $metadata['path'];
         $directory = $sourcePath.DIRECTORY_SEPARATOR.'Document'.DIRECTORY_SEPARATOR.'Areabrick';
@@ -250,7 +250,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *
      */
-    protected function generateBrickId(\ReflectionClass $reflector): string
+    private function generateBrickId(\ReflectionClass $reflector): string
     {
         if ($attribute = $reflector->getAttributes(AsAreabrick::class)[0] ?? null) {
             return $attribute->newInstance()->id;
@@ -267,7 +267,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *
      */
-    protected function generateServiceId(string $bundleName, string $subNamespace, string $className): string
+    private function generateServiceId(string $bundleName, string $subNamespace, string $className): string
     {
         $bundleName = str_replace('Bundle', '', $bundleName);
         $bundleName = $this->inflector->tableize($bundleName);
