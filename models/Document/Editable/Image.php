@@ -19,7 +19,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
 /**
