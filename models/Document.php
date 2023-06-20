@@ -382,6 +382,21 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            // if the path changed, refresh the inherited properties before updating dependencies
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+            self::updateDependendencies($this);
+
+            // refresh the inherited properties and update dependencies of each children
+            if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $updatedDocument) {
+                    $updatedDocument = self::getById($updatedDocument['id'], true);
+                    $updatedDocument->renewInheritedProperties();
+                    self::updateDependendencies($updatedDocument);
+                }
+            }
+
             $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -493,21 +508,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('document');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                // dont't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement((int) $requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 
@@ -705,7 +705,10 @@ class Document extends Element\AbstractElement
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
-    public function getFullPath(bool $force = false): string
+    /**
+     * {@inheritdoc}
+     */
+    public function getFullPath(bool $force = false)
     {
         $link = $force ? null : $this->fullPathCache;
 
