@@ -20,6 +20,7 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
+use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\Config\Resource\DirectoryResource;
@@ -30,6 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\String\UnicodeString;
 
 /**
  * @internal
@@ -250,10 +252,11 @@ final class AreabrickPass implements CompilerPassInterface
      */
     protected function generateBrickId(\ReflectionClass $reflector): string
     {
-        $id = $this->inflector->tableize($reflector->getShortName());
-        $id = str_replace('_', '-', $id);
+        if ($attribute = $reflector->getAttributes(AsAreabrick::class)[0] ?? null) {
+            return $attribute->newInstance()->id;
+        }
 
-        return $id;
+        return str_replace('_', '-', $this->inflector->tableize($reflector->getShortName()));
     }
 
     /**
