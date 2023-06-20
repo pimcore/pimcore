@@ -50,7 +50,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementDescriptor|ElementInterface|null
+     * @var Asset\Image|ElementDescriptor|null
      */
     protected $image;
 
@@ -451,19 +451,19 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @return Asset\Image|ElementDescriptor|ElementInterface|null
+     * @return Asset\Image|null
      */
     public function getImage()
     {
-        if (!$this->image) {
-            $this->image = Asset\Image::getById($this->getId());
+        if (!$this->image instanceof Asset\Image) {
+            $this->image = $this->getId() ? Asset\Image::getById($this->getId()) : null;
         }
 
         return $this->image;
     }
 
     /**
-     * @param Asset\Image|ElementDescriptor|ElementInterface|null $image
+     * @param Asset\Image|ElementDescriptor|null $image
      *
      * @return $this
      */
@@ -471,7 +471,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     {
         $this->image = $image;
 
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $this->setId($image->getId());
         }
 
@@ -479,23 +479,23 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = $id ? (int)$id : null;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**
