@@ -26,7 +26,6 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Helper\CsvFormulaFormatter;
 use Pimcore\Logger;
 use Pimcore\Model;
