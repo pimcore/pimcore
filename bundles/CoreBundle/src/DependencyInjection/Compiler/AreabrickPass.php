@@ -96,14 +96,12 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *  - implement AreabrickInterface
      *  - be situated in a bundle in the sub-namespace Document\Areabrick (can be nested into a deeper namespace)
-     *  - the class is not already defined as areabrick through manual config (not included in the tagged results above)
+     *  - the class is not yet defined as areabrick through manual config (not included in the tagged results above)
      *
      * Valid examples:
      *
      *  - MyBundle\Document\Areabrick\Foo
      *  - MyBundle\Document\Areabrick\Foo\Bar\Baz
-     *
-     *
      */
     private function autoloadAreabricks(
         ContainerBuilder $container,
@@ -165,7 +163,6 @@ final class AreabrickPass implements CompilerPassInterface
 
     /**
      * Adds setContainer() call to bricks implementing ContainerAwareInterface
-     *
      */
     private function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null): void
     {
@@ -180,8 +177,6 @@ final class AreabrickPass implements CompilerPassInterface
 
     /**
      * Look for classes implementing AreabrickInterface in each bundle's Document\Areabrick sub-namespace
-     *
-     *
      */
     private function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
@@ -247,8 +242,6 @@ final class AreabrickPass implements CompilerPassInterface
 
     /**
      * GalleryTeaserRow -> gallery-teaser-row
-     *
-     *
      */
     private function generateBrickId(\ReflectionClass $reflector): string
     {
@@ -264,8 +257,6 @@ final class AreabrickPass implements CompilerPassInterface
      *
      *  - MyBundle\Document\Areabrick\Foo         -> my.area.brick.foo
      *  - MyBundle\Document\Areabrick\Foo\Bar\Baz -> my.area.brick.foo.bar.baz
-     *
-     *
      */
     private function generateServiceId(string $bundleName, string $subNamespace, string $className): string
     {
