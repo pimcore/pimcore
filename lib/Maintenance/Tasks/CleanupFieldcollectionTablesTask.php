@@ -26,11 +26,21 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupFieldcollectionTablesTask implements TaskInterface
 {
+    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY = PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
+
     private LoggerInterface $logger;
+
+    private array $mapLowerToCamelCase = [];
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
+        $files = array_diff(scandir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY), ['..', '.']);
+        foreach ($files as $file) {
+            $classname = str_replace('.php', '', $file);
+            $this->mapLowerToCamelCase[strtolower($classname)] = $classname;
+        }
     }
 
     public function execute(): void
@@ -55,6 +65,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $fcType = substr($fieldDescriptor, 0, $idx);
+                $fcType = $this->mapLowerToCamelCase[$fcType] ?? $fcType;
 
                 $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 if (!$fcDef) {

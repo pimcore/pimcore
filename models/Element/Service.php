@@ -25,7 +25,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
 use Pimcore;
-use Pimcore\Bundle\AdminBundle\CustomView\Config;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;

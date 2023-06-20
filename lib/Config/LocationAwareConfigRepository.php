@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Config;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
-use Pimcore\Config;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\Config\FileLocator;
