@@ -21,7 +21,6 @@ use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Targeting\Storage\CookieStorage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Removes cookie storage cookies from cached response (only from the response object, not

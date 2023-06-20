@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data;
-
 interface FieldDefinitionEnrichmentInterface
 {
     /**

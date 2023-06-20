@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
-use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;

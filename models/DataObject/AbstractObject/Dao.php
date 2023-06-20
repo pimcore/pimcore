@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
