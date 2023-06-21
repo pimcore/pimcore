@@ -15,26 +15,26 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Traits;
 
-use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Service\ElementService;
 use Pimcore\Model\Element\ElementInterface;
 
-if (trait_exists(DocumentTreeConfigTrait::class)) {
-    /**
-     * @internal
-     */
-    trait DocumentTreeConfigWrapperTrait
-    {
-        use DocumentTreeConfigTrait;
+
+/**
+ * @internal
+ */
+trait DocumentTreeConfigWrapperTrait
+{
+    public function __construct(
+        private ElementService $elementService
+    ) {
     }
-} else {
-    /**
-     * @internal
-     */
-    trait DocumentTreeConfigWrapperTrait
+
+    public function getTreeNodeConfig(ElementInterface $element): array
     {
-        public function getTreeNodeConfig(ElementInterface $element): array
-        {
-            return [];
+        if(class_exists(ElementService::class)) {
+            return $this->elementService->getElementTreeNodeConfig($element);
         }
+        return [];
     }
+
 }
