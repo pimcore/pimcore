@@ -37,6 +37,4 @@ class ObjectbrickDefinitionEvent extends Event
     {
         $this->objectbrickDefinition = $objectbrickDefinition;
     }
-
-
 }
