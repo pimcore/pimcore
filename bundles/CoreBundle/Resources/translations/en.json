@@ -1005,7 +1005,7 @@
     "url-slug-invalid-chars": "Provided invalid character in URL slug",
     "delete_data_from_it": "This will also delete all data from it.",
     "preview_generator_site": "Site",
-    "preview_generator_locale": "Locale"
+    "preview_generator_locale": "Locale",
     "male": "Male",
     "female": "Female"
 }
