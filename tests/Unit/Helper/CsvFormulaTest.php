@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Helper;
 
 use Pimcore\Helper\CsvFormulaFormatter;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class CsvFormulaTest extends TestCase
 {
