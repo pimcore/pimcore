@@ -33,9 +33,6 @@ class ObjectbrickDefinitionEvent extends Event
         return $this->objectbrickDefinition;
     }
 
-    /**
-     * @param Definition $objectbrickDefinition
-     */
     public function setObjectbrickDefinition(Definition $objectbrickDefinition): void
     {
         $this->objectbrickDefinition = $objectbrickDefinition;
