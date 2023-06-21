@@ -28,9 +28,6 @@ class ObjectbrickDefinitionEvent extends Event
         $this->objectbrickDefinition = $objectbrickDefinition;
     }
 
-    /**
-     * @return Definition
-     */
     public function getObjectbrickDefinition(): Definition
     {
         return $this->objectbrickDefinition;
