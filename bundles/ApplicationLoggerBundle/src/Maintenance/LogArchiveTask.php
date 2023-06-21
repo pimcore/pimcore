@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
+use Carbon\Carbon;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
@@ -78,7 +79,7 @@ class LogArchiveTask implements TaskInterface
 
             $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
 
-            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
+            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '.$archive_threshold.' days');
 
             $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $objectPath) {
@@ -93,29 +94,29 @@ class LogArchiveTask implements TaskInterface
             $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
-        do {
-            $applicationLogArchiveTable = 'application_logs_archive_' . $deleteArchiveLogDate->format('m_Y');
-            $archiveTableExists = $db->fetchOne('SELECT 1
+        $archiveTables = $db->fetchFirstColumn(
+            'SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = ?
-                AND table_name = ?',
-                [
-                    $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
-                    $applicationLogArchiveTable,
-                ]);
+                AND table_name LIKE ?',
+            [
+                $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
+                ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%',
+            ]
+        );
+        foreach ($archiveTables as $archiveTable) {
+            if (preg_match('/^'.ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_(\d{4})_(\d{2})$/', $archiveTable, $matches)) {
+                $deleteArchiveLogDate = Carbon::createFromFormat('Y/m', $matches[1].'/'.$matches[2]);
+                if ($deleteArchiveLogDate->add(new DateInterval('P'.($this->config['applicationlog']['delete_archive_threshold'] ?? 6).'M')) < new DateTimeImmutable()) {
+                    $db->executeStatement('DROP TABLE IF EXISTS `'.($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()).'`.'.$archiveTable);
 
-            if ($archiveTableExists) {
-                $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
+                    $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                $folderName = $deleteArchiveLogDate->format('Y/m');
-
-                if ($storage->directoryExists($folderName)) {
-                    $storage->deleteDirectory($folderName);
+                    if ($storage->directoryExists($folderName)) {
+                        $storage->deleteDirectory($folderName);
+                    }
                 }
             }
-
-            $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
-        } while ($archiveTableExists);
+        }
     }
 }

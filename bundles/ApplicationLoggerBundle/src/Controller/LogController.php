@@ -71,7 +71,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
             ));
 
             if ($sortingSettings['orderKey']) {
-                $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
+                $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
             }
         }
 

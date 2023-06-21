@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 
 /**
@@ -403,11 +404,20 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_'.$asset->getId();
+                        $key = 'asset_' . $asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
                             'type' => 'asset',
+                        ];
+                    }
+                } elseif ($this->data['internalType'] == 'object') {
+                    if ($object = DataObject\Concrete::getById($this->data['internalId'])) {
+                        $key = 'object_' . $object->getId();
+
+                        $dependencies[$key] = [
+                            'id' => $object->getId(),
+                            'type' => 'object',
                         ];
                     }
                 }

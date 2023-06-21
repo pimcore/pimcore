@@ -152,8 +152,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
-        $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'];
-        $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+        $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? null;
+        $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? null;
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
