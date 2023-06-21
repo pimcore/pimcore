@@ -23,9 +23,6 @@ class ObjectbrickDefinitionEvent extends Event
 {
     protected Definition $objectbrickDefinition;
 
-    /**
-     * @param Definition $objectbrickDefinition
-     */
     public function __construct(Definition $objectbrickDefinition)
     {
         $this->objectbrickDefinition = $objectbrickDefinition;
