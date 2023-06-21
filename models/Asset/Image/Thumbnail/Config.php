@@ -950,7 +950,7 @@ final class Config extends Model\AbstractModel
         $autoFormatThumbnails = [];
 
         foreach ($this->getAutoFormats() as $autoFormat => $autoFormatConfig) {
-            if (Model\Asset\Image\Thumbnail::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
+            if ($autoFormatConfig['enabled'] && Model\Asset\Image\Thumbnail::supportsFormat($autoFormat)) {
                 $autoFormatThumbnail = clone $this;
                 $autoFormatThumbnail->setFormat($autoFormat);
                 if (!empty($autoFormatConfig['quality'])) {

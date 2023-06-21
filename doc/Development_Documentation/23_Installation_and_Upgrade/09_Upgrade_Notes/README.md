@@ -85,6 +85,9 @@
   - `pimcore_admin.serializer` service has been deprecated and will be removed in Pimcore 11. Please use `pimcore.serializer` instead.
 - [DataObjects] - Deprecated Button control for DataObjects layout definition. It will be removed in Pimcore 11. You can define your own custom layout component to replace this element like described [here](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/12_Adding_Object_%20Layout_types.md)
 
+## 10.5.24
+- [Gender] The option to mark gender as a mandatory field is disabled.
+
 ## 10.5.21
 - [Assets] The Asset `Import from Server` feature is now only available for admins. It will be removed in Pimcore 11
 - [Editable] Removed all `on*` attributes from the `$allowedAttributes` list due to security reasons. These attributes are not allowed anymore in the "attributes" field.
