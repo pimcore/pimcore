@@ -56,9 +56,6 @@ class Listing extends Model\Listing\AbstractListing
         return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
     }
 
-    /**
-     * @return string
-     */
     public function getDomain(): string
     {
         return $this->domain;
