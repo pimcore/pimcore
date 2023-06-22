@@ -1,0 +1,34 @@
+
+name: "Composer outdated dependencies"
+
+on:
+    workflow_dispatch:
+    schedule:
+        -   cron: '0 3 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+    composer-outdated-dependencies:
+        name: "Composer outdated dependencies"
+        runs-on: "ubuntu-20.04"
+
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "8.2"
+
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v2"
+              with:
+                  dependency-versions: "highest"
+
+            - name: "Check for outdated dependencies"
+              run: "composer outdated -D --strict"
