@@ -870,7 +870,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
-    protected static function updateDependendencies(object $element): void
+    protected static function updateDependendencies(ElementInterface $element): void
     {
         $type = Service::getElementType($element);
         $d = new Dependency();
