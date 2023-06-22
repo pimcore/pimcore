@@ -597,8 +597,10 @@ class Asset extends Element\AbstractElement
             if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
                 foreach ($updatedChildren as $updatedAsset) {
                     $updatedAsset = Asset::getById($updatedAsset, ['force' => true]);
-                    $updatedAsset->renewInheritedProperties();
-                    self::updateDependendencies($updatedAsset);
+                    if ($updatedAsset instanceof Asset){
+                        $updatedAsset->renewInheritedProperties();
+                        self::updateDependendencies($updatedAsset);
+                    }
                 }
             }
 

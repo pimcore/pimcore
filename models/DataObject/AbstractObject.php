@@ -834,8 +834,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
                 foreach ($updatedChildren as $updatedObject) {
                     $updatedObject = DataObject::getById($updatedObject, ['force' => true]);
-                    $updatedObject->renewInheritedProperties();
-                    self::updateDependendencies($updatedObject);
+                    if ($updatedObject instanceof DataObject){
+                        $updatedObject->renewInheritedProperties();
+                        self::updateDependendencies($updatedObject);
+                    }
                 }
             }
 
