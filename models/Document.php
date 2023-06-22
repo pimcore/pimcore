@@ -455,21 +455,6 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            // if the path changed, refresh the inherited properties before updating dependencies
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
-            self::updateDependendencies($this);
-
-            // refresh the inherited properties and update dependencies of each children
-            if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $updatedDocument) {
-                    $updatedDocument = self::getById($updatedDocument['id'], true);
-                    $updatedDocument->renewInheritedProperties();
-                    self::updateDependendencies($updatedDocument);
-                }
-            }
-
             $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -583,6 +568,21 @@ class Document extends Element\AbstractElement
                 }
             }
         }
+
+        // save dependencies
+        $d = new Dependency();
+        $d->setSourceType('document');
+        $d->setSourceId($this->getId());
+
+        foreach ($this->resolveDependencies() as $requirement) {
+            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
+                // dont't add a reference to yourself
+                continue;
+            } else {
+                $d->addRequirement($requirement['id'], $requirement['type']);
+            }
+        }
+        $d->save();
 
         $this->getDao()->update();
 
