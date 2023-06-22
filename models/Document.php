@@ -464,7 +464,7 @@ class Document extends Element\AbstractElement
             // refresh the inherited properties and update dependencies of each children
             if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
                 foreach ($updatedChildren as $updatedDocument) {
-                    $updatedDocument = Document::getById($updatedDocument['id'], true);
+                    $updatedDocument = Document::getById($updatedDocument['id'], ['force' => true]);
                     $updatedDocument->renewInheritedProperties();
                     self::updateDependendencies($updatedDocument);
                 }
