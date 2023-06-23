@@ -491,7 +491,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().' File: ' . $e->getFile().' Line: '. $e->getLine().'</b><br/>'.$e->getTraceAsString();
 
-                return $result;
+                return '<pre class="pimcore_editable_error">' . $result . '</pre>';
             }
 
             Logger::error('toString() returned an exception: {exception}', [
