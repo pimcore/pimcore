@@ -22,7 +22,6 @@ use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
-use Pimcore\Model\Dependency;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 
@@ -739,29 +738,5 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
-    }
-
-    protected static function updateDependendencies(object $element): void
-    {
-        $type = match (true) {
-            $element instanceof Model\Asset => 'asset',
-            $element instanceof Model\Document => 'document',
-            $element instanceof Model\DataObject\AbstractObject => 'object',
-            default => throw new \InvalidArgumentException('Unexpected element, expected Asset, Document, or AbstractObject')
-        };
-
-        $d = new Dependency();
-        $d->setSourceType($type);
-        $d->setSourceId($element->getId());
-
-        foreach ($element->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $element->getId() && $requirement['type'] == $type) {
-                // dont't add a reference to yourself
-                continue;
-            }
-
-            $d->addRequirement($requirement['id'], $requirement['type']);
-        }
-        $d->save();
     }
 }

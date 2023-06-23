@@ -629,21 +629,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            // if the path changed, refresh the inherited properties before updating dependencies
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
-            self::updateDependendencies($this);
-
-            // refresh the inherited properties and update dependencies of each children
-            if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $updatedObject) {
-                    $updatedObject = self::getById($updatedObject['id'], ['force' => true]);
-                    $updatedObject->renewInheritedProperties();
-                    self::updateDependendencies($updatedObject);
-                }
-            }
-
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -751,6 +736,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
         }
+
+        // save dependencies
+        $d = new Model\Dependency();
+        $d->setSourceType('object');
+        $d->setSourceId($this->getId());
+
+        foreach ($this->resolveDependencies() as $requirement) {
+            if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
+                // dont't add a reference to yourself
+                continue;
+            }
+
+            $d->addRequirement($requirement['id'], $requirement['type']);
+        }
+
+        $d->save();
 
         //set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
