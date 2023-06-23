@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -50,7 +51,7 @@ class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute()
     {
-        $isLowQualityPreviewEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        $isLowQualityPreviewEnabled = Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
         if (!$isLowQualityPreviewEnabled) {
             return;
         }

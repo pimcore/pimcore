@@ -367,7 +367,7 @@ class Asset extends Element\AbstractElement
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
-        $maxPixels = (int) Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        $maxPixels = (int) Config::getSystemConfiguration('assets')['image']['max_pixels'];
         if ($size = @getimagesize($localPath)) {
             $imagePixels = (int) ($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
@@ -903,7 +903,7 @@ class Asset extends Element\AbstractElement
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
 
-        $prefix = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [

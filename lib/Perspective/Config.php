@@ -44,7 +44,7 @@ final class Config
     private static function getRepository()
     {
         if (!self::$locationAwareConfigRepository) {
-            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+            $containerConfig = \Pimcore\Config::getSystemConfiguration();
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
             $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(

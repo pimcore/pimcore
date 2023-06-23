@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Config;
 
+use Pimcore\Config;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 
@@ -29,7 +30,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
             $config,

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -246,7 +247,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function calculateHash($data)
     {
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+            $config = Config::getSystemConfiguration()['security']['password'];
 
             $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
@@ -293,7 +294,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+                $config = Config::getSystemConfiguration()['security']['password'];
 
                 if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);

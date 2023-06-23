@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Staticroute;
 
+use Pimcore\Config;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
             $config,

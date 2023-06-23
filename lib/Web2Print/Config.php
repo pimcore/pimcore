@@ -42,7 +42,7 @@ final class Config
     {
         if (!self::$locationAwareConfigRepository) {
             $config = [];
-            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+            $containerConfig = \Pimcore\Config::getSystemConfiguration();
             if ($containerConfig['documents']['web_to_print']['generalTool']) {
                 $config = [
                     self::CONFIG_ID => $containerConfig['documents']['web_to_print'],

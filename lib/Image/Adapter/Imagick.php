@@ -137,7 +137,7 @@ class Imagick extends Adapter
                 $this->resource = $this->resource->coalesceImages();
             }
 
-            $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
+            $isClipAutoSupport = Config::getSystemConfiguration('assets')['image']['thumbnails']['clip_auto_support'];
             if ($isClipAutoSupport && !$this->reinitializing && $this->has8BIMClippingPath()) {
                 // the following way of determining a clipping path is very resource intensive (using Imagick),
                 // so we try with the approach in has8BIMClippingPath() instead

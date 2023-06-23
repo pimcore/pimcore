@@ -271,7 +271,7 @@ final class Config extends Model\AbstractModel
      */
     public static function getPreviewConfig()
     {
-        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $customPreviewImageThumbnail = \Pimcore\Config::getSystemConfiguration('assets')['preview_image_thumbnail'];
         $thumbnail = null;
 
         if ($customPreviewImageThumbnail) {
@@ -937,7 +937,7 @@ final class Config extends Model\AbstractModel
      */
     public static function getAutoFormats(): array
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+        return \Pimcore\Config::getSystemConfiguration('assets')['image']['thumbnails']['auto_formats'];
     }
 
     /**
