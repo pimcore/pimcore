@@ -872,7 +872,6 @@ class Document extends Element\AbstractElement
         parent::setParentId($id);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
