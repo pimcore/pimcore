@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use League\Flysystem\FilesystemException;
-use Pimcore\Config;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -182,7 +181,7 @@ class Processor
         // check for existing and still valid thumbnail
 
         $modificationDate = null;
-        $statusCacheEnabled = Config::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
