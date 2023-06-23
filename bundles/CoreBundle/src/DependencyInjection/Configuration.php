@@ -447,7 +447,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => null,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
