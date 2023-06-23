@@ -522,21 +522,6 @@ class Asset extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            // if the path changed, refresh the inherited properties before updating dependencies
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
-            self::updateDependendencies($this);
-
-            // refresh the inherited properties and update dependencies of each children
-            if ($differentOldPath && isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $updatedAsset) {
-                    $updatedAsset = self::getById($updatedAsset['id'], ['force' => true]);
-                    $updatedAsset->renewInheritedProperties();
-                    self::updateDependendencies($updatedAsset);
-                }
-            }
-
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
@@ -728,6 +713,21 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
+
+        // save dependencies
+        $d = new Dependency();
+        $d->setSourceType('asset');
+        $d->setSourceId($this->getId());
+
+        foreach ($this->resolveDependencies() as $requirement) {
+            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
+                // dont't add a reference to yourself
+                continue;
+            } else {
+                $d->addRequirement($requirement['id'], $requirement['type']);
+            }
+        }
+        $d->save();
 
         $this->getDao()->update();
 

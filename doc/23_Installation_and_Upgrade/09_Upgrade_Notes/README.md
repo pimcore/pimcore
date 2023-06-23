@@ -221,6 +221,7 @@ pimcore:
 #### [CoreBundle] :
 
 -  Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
+-  Priority of `PimcoreCoreBundle` has been changed to `-10` to make sure that it is loaded after default bundles.
 
 #### [Environment] :
 
