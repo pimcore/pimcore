@@ -51,6 +51,7 @@ interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterfa
     public function generateClassFiles(bool $generateDefinitionFile = true): void;
 
     public function delete(): void;
+
     /**
      * @internal
      */
@@ -166,12 +167,14 @@ interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterfa
 
     /**
      * @internal
+     *
      * @param string[] $tables
      */
     public function addEncryptedTables(array $tables): void;
 
     /**
      * @internal
+     *
      * @param string[] $tables
      */
     public function removeEncryptedTables(array $tables): void;
@@ -185,6 +188,7 @@ interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterfa
 
     /**
      * @internal
+     *
      * @return $this
      */
     public function setEncryptedTables(array $encryptedTables): static;
@@ -213,6 +217,7 @@ interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterfa
 
     /**
      * @param array<string, array<string, bool>> $propertyVisibility
+     *
      * @return $this
      */
     public function setPropertyVisibility(array $propertyVisibility): static;
