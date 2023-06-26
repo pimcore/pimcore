@@ -28,6 +28,11 @@ interface VarExportInterface
     public function getBlockedVarsForExport(): array;
 
     /**
+     * @param string[] $vars
+     */
+    public function setBlockedVarsForExport(array $vars): static;
+
+    /**
      * @return string[]
      */
     public function resolveBlockedVars(): array;
