@@ -2,7 +2,7 @@
 
 :::info
 
-Please be aware that because we are updating this part of the documentation, some information is only valid for previous versions of Pimcore.
+Please note that due to the updating of this part of the documentation, some information is only valid for previous versions of Pimcore.
 
 :::
 
