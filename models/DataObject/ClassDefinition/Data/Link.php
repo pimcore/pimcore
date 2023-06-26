@@ -66,12 +66,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 }
             }
 
-            try {
-                $this->checkValidity($data, true, $params);
-            } catch (\Exception $e) {
-                $data->setInternalType(null);
-                $data->setInternal(null);
-            }
+            $params['resetInvalidFields'] = true;
+            $this->checkValidity($data, true, $params);
 
             return Serialize::serialize($data);
         }
@@ -96,12 +92,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 $link->_setOwnerLanguage($params['language'] ?? null);
             }
 
-            try {
-                $this->checkValidity($link, true, $params);
-            } catch (\Exception) {
-                $link->setInternalType(null);
-                $link->setInternal(null);
-            }
+            $params['resetInvalidFields'] = true;
+            $this->checkValidity($link, true, $params);
 
             return $link;
         }
@@ -189,12 +181,22 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 if ($data->getInternalType() == 'document') {
                     $doc = Document::getById($data->getInternal());
                     if (!$doc instanceof Document) {
-                        throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                        if (isset($params['resetInvalidFields']) && $params['resetInvalidFields']) {
+                            $data->setInternalType(null);
+                            $data->setInternal(null);
+                        } else {
+                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                        }
                     }
                 } elseif ($data->getInternalType() == 'asset') {
                     $asset = Asset::getById($data->getInternal());
                     if (!$asset instanceof Asset) {
-                        throw new Element\ValidationException('invalid internal link, referenced asset with id [' . $data->getInternal() . '] does not exist');
+                        if (isset($params['resetInvalidFields']) && $params['resetInvalidFields']) {
+                            $data->setInternalType(null);
+                            $data->setInternal(null);
+                        } else {
+                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                        }
                     }
                 }
             }
@@ -224,6 +226,15 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
                             'type' => 'asset',
+                        ];
+                    }
+                } elseif ($data->getInternalType() == 'object') {
+                    if ($object = DataObject\Concrete::getById($data->getInternal())) {
+                        $key = 'object_' . $object->getId();
+
+                        $dependencies[$key] = [
+                            'id' => $object->getId(),
+                            'type' => 'object',
                         ];
                     }
                 }

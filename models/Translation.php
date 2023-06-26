@@ -23,6 +23,7 @@ use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
@@ -424,6 +425,7 @@ final class Translation extends AbstractModel
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
+                            $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
                                 $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
                                 if ($replaceExistingTranslations) {

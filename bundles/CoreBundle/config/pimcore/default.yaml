@@ -303,4 +303,4 @@ pimcore:
                 functions: ['path', 'asset']
 
     gotenberg:
-        base_url: 'gotenberg:3000'
+        base_url: 'http://gotenberg:3000'

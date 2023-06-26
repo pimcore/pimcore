@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,17 +15,19 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Asset\Metadata\Loader;
+namespace Pimcore\Helper;
 
-use Pimcore\Loader\ImplementationLoader\LoaderInterface;
-use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
-
-interface DataLoaderInterface extends LoaderInterface
+class CsvFormulaFormatter extends \League\Csv\EscapeFormula
 {
-    /**
-     * Builds a asset metadata data instance
-     *
-     *
-     */
-    public function build(string $name, array $params = []): DataDefinitionInterface;
+    public function unEscapeField(string $field): string
+    {
+        if (isset($field[0], $field[1])
+            && $field[0] === $this->getEscape()
+            && in_array($field[1], $this->getSpecialCharacters())
+        ) {
+            return ltrim($field, $field[0]);
+        }
+
+        return $field;
+    }
 }

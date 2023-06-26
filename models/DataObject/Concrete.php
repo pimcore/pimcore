@@ -24,6 +24,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -133,6 +134,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     //check throws Exception
                     try {
+                        if ($fd instanceof Link) {
+                            $params['resetInvalidFields'] = true;
+                        }
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
