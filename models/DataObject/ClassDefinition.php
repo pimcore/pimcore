@@ -29,13 +29,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
+final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
