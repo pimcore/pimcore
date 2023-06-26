@@ -2,20 +2,20 @@
 
 Pimcore uses [Codeception](https://codeception.com/) for testing its core features. 
 
-To execute core tests, Pimcore provides a `docker-compose` file to create a setup for running the tests. 
+To execute core tests, Pimcore provides a `docker-compose.yaml` file to create a setup for running the tests. 
 
 > The docker images are based on the debug images, thus it is also possible to debug the tests using xdebug. 
 > Make sure, that path mappings are applied correctly though
 
 ## Requirements
-- `docker` and `docker-compose` installed on your system.
+- `docker` and `docker compose` installed on your system.
 - Pimcore git repository cloned locally 
 
 
 ## Preparations
 - Change to `tests\bin` directory of the Pimcore repository
 - Execute `./init-tests.sh`, this does:  
-  - Running `docker-compose up -d` and setting up all necessary services (like db and redis). Pimcore source code files 
+  - Running `docker compose up -d` and setting up all necessary services (like db and redis). Pimcore source code files 
     are mounted into docker container, so you can change files and test the changes right away.
   - Copying some files from `.github\ci\file` to prepare system for executing the tests (actually same as for github actions)
   - Executing `composer install` to install all dependencies
@@ -23,7 +23,7 @@ To execute core tests, Pimcore provides a `docker-compose` file to create a setu
 
 Now the system is ready and tests can be executed inside the docker containers (see also commands below). 
 
-After finishing, shutdown docker containers and cleanup volumes with `docker-compose down -v --remove-orphans`.
+After finishing, shutdown docker containers and cleanup volumes with `docker compose down -v --remove-orphans`.
 
 
 ## Executing tests
@@ -32,7 +32,7 @@ After finishing, shutdown docker containers and cleanup volumes with `docker-com
 
 This will run all tests.
 ```
-docker-compose exec php vendor/bin/codecept run -c . -vvv
+docker compose exec php vendor/bin/codecept run -c . -vvv
 ```
 
 #### Only run a specific suite
@@ -40,7 +40,7 @@ docker-compose exec php vendor/bin/codecept run -c . -vvv
 Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-docker-compose exec php vendor/bin/codecept run -c . Model -vvv
+docker compose exec php vendor/bin/codecept run -c . Model -vvv
 ```
 
 #### Only run a specific test group
@@ -49,17 +49,17 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below.
 
 ```
-docker-compose exec php vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
+docker compose exec php vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
 ```
 
 
 ##### Redis Cache tests
 
-For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. If not using the Redis provided by the docker-compose, set it 
+For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. If not using the Redis provided by the `docker-compose.yaml`, set it 
 to a value that does not conflict to any other Redis DBs on your system.
 
 ```
-docker-compose exec php vendor/bin/codecept run -c . Cache
+docker compose exec php vendor/bin/codecept run -c . Cache
 ```
 
 
