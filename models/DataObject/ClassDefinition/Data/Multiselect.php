@@ -397,7 +397,7 @@ class Multiselect extends Data implements
 
             $html = '<ul>';
 
-            foreach ($this->options as $option) {
+            foreach ((array)$this->options as $option) {
                 if ($map[$option['value']] ?? false) {
                     $value = $option['key'];
                     $html .= '<li>' . $value . '</li>';

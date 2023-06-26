@@ -82,7 +82,7 @@ class LogArchiveTask implements TaskInterface
 
             $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
 
-            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
+            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '.$archive_threshold.' days');
 
             $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $objectPath) {
@@ -97,7 +97,8 @@ class LogArchiveTask implements TaskInterface
             $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        $archiveTables = $db->fetchFirstColumn('SELECT table_name
+        $archiveTables = $db->fetchFirstColumn(
+            'SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = ?
                 AND table_name LIKE ?',
@@ -106,12 +107,11 @@ class LogArchiveTask implements TaskInterface
                 ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_%',
             ]
         );
-
-        foreach($archiveTables as $archiveTable) {
-            if (preg_match('/^' . ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_(\d{2})_(\d{4})$/', $archiveTable, $matches)) {
-                $deleteArchiveLogDate = Carbon::createFromFormat('m/Y', $matches[1] . '/' . $matches[2]);
-                if ($deleteArchiveLogDate->add(new DateInterval('P' . ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) . 'M')) < new DateTimeImmutable()) {
-                    $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $archiveTable);
+        foreach ($archiveTables as $archiveTable) {
+            if (preg_match('/^'.ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_(\d{4})_(\d{2})$/', $archiveTable, $matches)) {
+                $deleteArchiveLogDate = Carbon::createFromFormat('Y/m', $matches[1].'/'.$matches[2]);
+                if ($deleteArchiveLogDate->add(new DateInterval('P'.($this->config['applicationlog']['delete_archive_threshold'] ?? 6).'M')) < new DateTimeImmutable()) {
+                    $db->executeStatement('DROP TABLE IF EXISTS `'.($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()).'`.'.$archiveTable);
 
                     $folderName = $deleteArchiveLogDate->format('Y/m');
 

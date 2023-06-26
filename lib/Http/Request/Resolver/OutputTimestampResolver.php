@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
