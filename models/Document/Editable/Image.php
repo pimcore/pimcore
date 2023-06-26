@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -48,7 +47,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * @internal
      *
      */
-    protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
+    protected Asset\Image|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
@@ -386,20 +385,20 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
+    public function getImage(): Asset\Image|null
     {
-        if (!$this->image && $this->id) {
-            $this->image = Asset\Image::getById($this->getId());
+        if (!$this->image instanceof Asset\Image) {
+            $this->image = $this->getId() ? Asset\Image::getById($this->getId()) : null;
         }
 
         return $this->image;
     }
 
-    public function setImage(Asset\Image|ElementDescriptor|ElementInterface|null $image): static
+    public function setImage(Asset\Image|ElementDescriptor|null $image): static
     {
         $this->image = $image;
 
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $this->setId($image->getId());
         }
 
@@ -410,7 +409,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setId(int $id): static
+    public function setId(?int $id): static
     {
         $this->id = $id;
 

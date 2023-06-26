@@ -1876,7 +1876,7 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('base_url')
-                            ->defaultValue('gotenberg:3000')
+                            ->defaultValue('http://gotenberg:3000')
                         ->end()
                     ->end()
                 ->end()

@@ -160,29 +160,24 @@ trait ImageThumbnailTrait
         return $this->realHeight;
     }
 
-    private function readDimensionsFromFile(): array
+    /**
+     * @internal
+     *
+     * @return array{width?: int, height?: int}
+     */
+    public function readDimensionsFromFile(): array
     {
         $dimensions = [];
         $pathReference = $this->getPathReference();
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile) {
-                    if ($imageInfo = @getimagesize($localFile)) {
-                        $dimensions = [
-                            'width' => $imageInfo[0],
-                            'height' => $imageInfo[1],
-                        ];
-                        if ($config = $this->getConfig()) {
-                            $this->getAsset()->getDao()->addToThumbnailCache(
-                                $config->getName(),
-                                basename($pathReference['storagePath']),
-                                filesize($localFile),
-                                $dimensions['width'],
-                                $dimensions['height']
-                            );
-                        }
-                    }
+                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
+                    $this->getAsset()->addThumbnailFileToCache(
+                        $localFile,
+                        basename($pathReference['storagePath']),
+                        $config
+                    );
                 }
             } catch (\Exception $e) {
                 // noting to do

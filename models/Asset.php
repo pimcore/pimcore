@@ -38,6 +38,7 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Asset\Folder;
+use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -1662,5 +1663,40 @@ class Asset extends Element\AbstractElement
         }
 
         return $path;
+    }
+
+    /**
+     * @internal
+     *
+     * @throws Exception
+     */
+    public function addThumbnailFileToCache(string $localFile, string $filename, ThumbnailConfig $config): void
+    {
+        //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
+        if ($imageSize = @getimagesize($localFile)) {
+            $dimensions = [
+                'width' => $imageSize[0],
+                'height' => $imageSize[1],
+            ];
+        } else {
+            //fallback to Default Adapter
+            $image = \Pimcore\Image::getInstance();
+            if ($image->load($localFile)) {
+                $dimensions = [
+                    'width' => $image->getWidth(),
+                    'height' => $image->getHeight(),
+                ];
+            }
+        }
+
+        if (!empty($dimensions)) {
+            $this->getDao()->addToThumbnailCache(
+                $config->getName(),
+                $filename,
+                filesize($localFile),
+                $dimensions['width'],
+                $dimensions['height']
+            );
+        }
     }
 }

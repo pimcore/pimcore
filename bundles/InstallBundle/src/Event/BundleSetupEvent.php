@@ -23,9 +23,9 @@ class BundleSetupEvent extends Event
 
     private array $recommendations;
 
-    private array $required;
+    private array $required = [];
 
-    private array $excludeFromBundlesPhp;
+    private array $excludeFromBundlesPhp = [];
 
     public function __construct(array $bundles, array $recommendations)
     {
@@ -46,7 +46,7 @@ class BundleSetupEvent extends Event
     public function addInstallableBundle(string $key, string $class, bool $recommend = false): void
     {
         $this->bundles[$key] = $class;
-        if($recommend) {
+        if ($recommend) {
             $this->recommendations[] = $key;
         }
     }
@@ -62,7 +62,7 @@ class BundleSetupEvent extends Event
     public function addRequiredBundle(string $key, string $class, bool $excludeFromBundlesPhp = false): void
     {
         $this->required[$key] = $class;
-        if($excludeFromBundlesPhp) {
+        if ($excludeFromBundlesPhp) {
             $this->excludeFromBundlesPhp[$key] = $class;
         }
     }
