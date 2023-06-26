@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;

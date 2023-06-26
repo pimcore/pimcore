@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\AbstractObject;
 
 use Doctrine\DBAL\Exception;
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;

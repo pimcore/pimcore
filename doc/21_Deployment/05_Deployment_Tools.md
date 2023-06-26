@@ -29,6 +29,9 @@ Regarding the class modification, there is also an optional env variable `PIMCOR
 - `1` To allow the modification, including the classes in `config/pimcore/classes` that normally are read-only.
 - when `not set` classes in `config/pimcore/classes` are read-only, but new classes are allowed and will be created in `var/classes`. 
 
+With the env variable `PIMCORE_CLASS_DEFINITION_DIRECTORY` you can specify the directory to search for your class definitions
+if you do not want pimcore to search in `var/classes` or `config/pimcore/classes`.
+
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database.
 > If deploying changes between different deployment stages also database changes need to be deployed. This can be done
 > with the `pimcore:deployment:classes-rebuild` command.
@@ -40,10 +43,10 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 ./bin/console pimcore:deployment:classes-rebuild
 ```
 
-To create new classes from your configuration files in the database you can use the create-classes option. With the env variable `PIMCORE_CLASS_DEFINITION_DIRECTORY` you can specify the directory to search for your class definitions if you do not want pimcore to search in `var/classes` or `config/pimcore/classes`.
+To create new classes from your configuration files in the database you can use the `create-classes` option. 
 
 ```bash
-./bin/console pimcore:deployment:classes-rebuild  --create-classes
+./bin/console pimcore:deployment:classes-rebuild --create-classes
 ```
 
 As an alternative also class export to json-files and the class import commands can be used.
@@ -68,13 +71,13 @@ To get a list of all available commands use `./bin/console list`.
 #### Potentially useful commands:
 
 | Command                                              | Description                                                                                                                       |
-|------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | pimcore:mysql-tools                                  | Optimize and warm up mysql database                                                                                               |
 | pimcore:search-backend-reindex                       | Re-indexes the backend search of Pimcore (only available if you have installed the simpleBackendSearchBundle)                     |
 | pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                                         |
 | cache:clear                                          | Clear Symfony caches                                                                                                              |
 | pimcore:cache:warming                                | Warm up caches                                                                                                                    |
-| pimcore:classificationstore:delete-store                     | Delete Classification Store                                                                                                       |
+| pimcore:classificationstore:delete-store             | Delete Classification Store                                                                                                       |
 | pimcore:definition:import:class                      | Import Class definition from a JSON export                                                                                        |
 | pimcore:definition:import:customlayout               | Import Customlayout definition from a JSON export                                                                                 |
 | pimcore:definition:import:fieldcollection            | Import FieldCollection definition from a JSON export                                                                              |
