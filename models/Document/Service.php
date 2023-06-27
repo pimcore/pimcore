@@ -165,7 +165,7 @@ class Service extends Model\Element\Service
      * @param Document $source
      * @param bool $enableInheritance
      * @param bool $resetIndex
-     * @param string $language
+     * @param string|null $language
      *
      * @return Document
      *
