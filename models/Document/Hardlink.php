@@ -34,7 +34,7 @@ class Hardlink extends Document
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $sourceId;
 
@@ -121,19 +121,19 @@ class Hardlink extends Document
     }
 
     /**
-     * @param int $sourceId
+     * @param int|null $sourceId
      *
      * @return $this
      */
     public function setSourceId($sourceId)
     {
-        $this->sourceId = (int) $sourceId;
+        $this->sourceId = $sourceId ? (int)$sourceId : null;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSourceId()
     {

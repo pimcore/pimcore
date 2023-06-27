@@ -165,12 +165,13 @@ class Service extends Model\Element\Service
      * @param Document $source
      * @param bool $enableInheritance
      * @param bool $resetIndex
+     * @param string $language
      *
      * @return Document
      *
      * @throws \Exception
      */
-    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
+    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = null)
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
