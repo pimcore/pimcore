@@ -146,12 +146,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
-     *
      * @throws ValidationException
      */
-    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, bool $language = false): Page|Document|PageSnippet
+    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, ?string $language = null): Page|Document|PageSnippet
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
