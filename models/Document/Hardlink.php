@@ -34,7 +34,6 @@ class Hardlink extends Document
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $sourceId = null;
 
