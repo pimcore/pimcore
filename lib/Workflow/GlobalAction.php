@@ -125,4 +125,9 @@ class GlobalAction implements NotesAwareInterface
     {
         return $this->workflowName;
     }
+
+    public function getSaveSubject() : bool
+    {
+        return $this->options['saveSubject'] ?? false;
+    }
 }

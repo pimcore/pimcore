@@ -174,8 +174,10 @@ class WorkflowController extends AdminAbstractController implements KernelContro
         $workflowOptions = $request->get('workflow', []);
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
+        $saveSubject = $workflowManager->getGlobalAction( 'product_status_workflow', $request->get('transition') )->getSaveSubject();
+
         try {
-            $workflowManager->applyGlobalAction($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
+            $workflowManager->applyGlobalAction($workflow, $this->element, $request->get('transition'), $workflowOptions, $saveSubject);
 
             $data = [
                 'success' => true,
