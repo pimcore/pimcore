@@ -108,10 +108,17 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
             let panelComponent = this.component.up('panel');
+            let timeoutId;
             do{
                 if(panelComponent?.scrollable){
                     panelComponent.body.dom.onscroll = function () {
-                        CKEDITOR.document.getWindow().fire('scroll');
+                        if (typeof timeoutId === "number") {
+                            clearTimeout(timeoutId);
+                        }
+
+                        timeoutId = setTimeout(function(){
+                            CKEDITOR.document.getWindow().fire('scroll');
+                        }, 100);
                     }
                 }
                 panelComponent = panelComponent.up('panel');

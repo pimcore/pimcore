@@ -218,10 +218,17 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
             let panelComponent = this.component.up('panel');
+            let timeoutId;
             do{
                 if(panelComponent?.scrollable){
                     panelComponent.body.dom.onscroll = function () {
-                        CKEDITOR.document.getWindow().fire('scroll');
+                        if (typeof timeoutId === "number") {
+                            clearTimeout(timeoutId);
+                        }
+
+                        timeoutId = setTimeout(function(){
+                            CKEDITOR.document.getWindow().fire('scroll');
+                        }, 100);
                     }
                 }
                 panelComponent = panelComponent.up('panel');
