@@ -7,7 +7,7 @@ namespace Pimcore\Extension\Document\Areabrick\Attribute;
 final class AsAreabrick
 {
     public function __construct(
-        public readonly string $id,
+        public readonly ?string $id = null,
     ) {
     }
 }

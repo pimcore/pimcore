@@ -62,28 +62,29 @@ final class AreabrickPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             $definition = $container->getDefinition($id);
-            $taggedAreas[] = $definition->getClass();
+            $class = $definition->getClass();
+            $reflector = new \ReflectionClass($class);
+            $taggedAreas[] = $class;
 
-            // tags must define the id attribute which will be used to register the brick
-            // e.g. { name: pimcore.area.brick, id: blockquote }
             foreach ($tags as $tag) {
-                if (!array_key_exists('id', $tag)) {
-                    throw new ConfigurationException(sprintf('Missing "id" attribute on areabrick DI tag for service %s', $id));
-                }
+                // tags may define the id which will be used to register the brick
+                // e.g. { name: pimcore.area.brick, id: blockquote }
+                // if they don't, it will be auto-generated from the class name
+                $brickId = $tag['id'] ?? $this->generateBrickId($reflector);
 
                 // add the service to the locator
-                $locatorMapping[$tag['id']] = new Reference($id);
+                $locatorMapping[$brickId] = new Reference($id);
 
                 // register the brick with its ID on the areabrick manager
-                $areabrickManager->addMethodCall('registerService', [$tag['id'], $id]);
+                $areabrickManager->addMethodCall('registerService', [$brickId, $id]);
             }
 
             // handle bricks implementing ContainerAwareInterface
-            $this->handleContainerAwareDefinition($definition);
-            $this->handleEditableRendererCall($definition);
+            $this->handleContainerAwareDefinition($definition, $reflector);
+            $this->handleEditableRendererCall($definition, $reflector);
         }
 
-        // autoload areas from bundles if not yet defined via service config
+        // autoload areas if not yet defined via service config
         if ($config['documents']['areas']['autoload']) {
             $locatorMapping = $this->autoloadAreabricks($container, $areabrickManager, $locatorMapping, $taggedAreas);
         }
@@ -95,12 +96,12 @@ final class AreabrickPass implements CompilerPassInterface
      * To be autoloaded, an area must fulfill the following conditions:
      *
      *  - implement AreabrickInterface
-     *  - be situated in a bundle in the sub-namespace Document\Areabrick (can be nested into a deeper namespace)
-     *  - the class is not yet defined as areabrick through manual config (not included in the tagged results above)
+     *  - be in the sub-namespace Document\Areabrick (can be nested into a deeper namespace)
+     *  - the class is not yet defined as an areabrick through manual config (not included in the tagged results above)
      *
      * Valid examples:
      *
-     *  - MyBundle\Document\Areabrick\Foo
+     *  - App\Document\Areabrick\Foo
      *  - MyBundle\Document\Areabrick\Foo\Bar\Baz
      */
     private function autoloadAreabricks(
@@ -143,19 +144,15 @@ final class AreabrickPass implements CompilerPassInterface
 
                 // handle bricks implementing ContainerAwareInterface
                 $this->handleContainerAwareDefinition($definition, $reflector);
-                $this->handleEditableRendererCall($definition);
+                $this->handleEditableRendererCall($definition, $reflector);
             }
         }
 
         return $locatorMapping;
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    private function handleEditableRendererCall(Definition $definition): void
+    private function handleEditableRendererCall(Definition $definition, \ReflectionClass $reflector): void
     {
-        $reflector = new \ReflectionClass($definition->getClass());
         if ($reflector->hasMethod('setEditableRenderer')) {
             $definition->addMethodCall('setEditableRenderer', [new Reference(EditableRenderer::class)]);
         }
@@ -164,10 +161,8 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * Adds setContainer() call to bricks implementing ContainerAwareInterface
      */
-    private function handleContainerAwareDefinition(Definition $definition, \ReflectionClass $reflector = null): void
+    private function handleContainerAwareDefinition(Definition $definition, \ReflectionClass $reflector): void
     {
-        $reflector ??= new \ReflectionClass($definition->getClass());
-
         if ($reflector->implementsInterface(ContainerAwareInterface::class)) {
             $definition->addMethodCall('setContainer', [new Reference('service_container')]);
         }
@@ -239,15 +234,15 @@ final class AreabrickPass implements CompilerPassInterface
     }
 
     /**
+     * Tries to read the ID from the `AsAreabrick` attribute and falls back to auto-generation if not defined:
      * GalleryTeaserRow -> gallery-teaser-row
      */
     private function generateBrickId(\ReflectionClass $reflector): string
     {
-        if ($attribute = $reflector->getAttributes(AsAreabrick::class)[0] ?? null) {
-            return $attribute->newInstance()->id;
-        }
+        $attribute = $reflector->getAttributes(AsAreabrick::class)[0] ?? null;
 
-        return str_replace('_', '-', $this->inflector->tableize($reflector->getShortName()));
+        return $attribute?->newInstance()->id
+            ?? str_replace('_', '-', $this->inflector->tableize($reflector->getShortName()));
     }
 
     /**
