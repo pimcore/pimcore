@@ -67,7 +67,7 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0];
+        $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0] ?? null;
 
         if (!$attribute instanceof Template) {
             return;
