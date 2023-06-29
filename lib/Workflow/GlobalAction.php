@@ -128,6 +128,6 @@ class GlobalAction implements NotesAwareInterface
 
     public function getSaveSubject() : bool
     {
-        return $this->options['saveSubject'] ?? false;
+        return $this->options['saveSubject'] ?? true;
     }
 }
