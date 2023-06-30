@@ -80,17 +80,17 @@ However, there are a few general rules on element permissions that need to be re
 
 The user permissions on element basis are summed up as follows:
 
-* **list**: elements can be listed in tree
-* **view**: elements can be opened
-* **save**: elements can be saved (save button visible)
-* **publish**: elements can be published (publish button visible)
-* **unpublish**: elements can be unpublished (unpublish button visible); does not exist for assets
+* **list**: this element can be listed in tree
+* **view**: this element can be opened
+* **save**: this element can be saved (save button visible)
+* **publish**: this element can be published (publish button visible)
+* **unpublish**: this element can be unpublished (unpublish button visible); does not exist for assets
 * **create**: new child elements can be created (does not exist for assets)
-* **delete**: elements can be deleted
-* **rename**: elements name can be changed
-* **settings**: elements' settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby the right to move the element in tree
-* **versions**: versions tab available
-* **properties**: properties tab available and can be managed
+* **delete**: this element can be deleted
+* **rename**: this element name can be changed
+* **settings**: this element's settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby the right to move the element in tree
+* **versions**: the `versions` tab is available
+* **properties**: the `properties` tab is available and can be managed
 
 Individual users are granted access to all defined workspaces for any role they incorporate. In addition to that, users can have their own workspaces. These are added to the permissions granted by roles.
 
