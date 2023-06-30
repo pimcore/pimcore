@@ -2,7 +2,7 @@
 name: "Documentation"
 
 on:
-    pull_request:
+    pull_request_target:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
@@ -16,6 +16,7 @@ on:
             - "*_actions"
         paths:
             - 'doc/**'
+            - '.github/workflows/docs.yaml'
 
 permissions:
   contents: read
@@ -27,6 +28,8 @@ jobs:
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v3"
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}  
 
             - name: "Checkout Docs Generator"
               uses: "actions/checkout@v3"
