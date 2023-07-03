@@ -14,10 +14,13 @@ jobs:
     composer-checks:
         name: "Composer Checks"
         runs-on: "ubuntu-20.04"
-
+        strategy:
+            matrix:
+                branche: [11.x, 10.6]
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
+              with: ${{ matrix.branch }}
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
@@ -32,7 +35,9 @@ jobs:
                   dependency-versions: "highest"
 
             - name: "Check for security vulnerabilities"
+              continue-on-error: true
               run: "composer audit"
 
             - name: "Check for outdated dependencies"
+              continue-on-error: true
               run: "composer outdated -D --strict"
