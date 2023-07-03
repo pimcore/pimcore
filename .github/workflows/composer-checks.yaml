@@ -1,5 +1,5 @@
 
-name: "Composer outdated dependencies"
+name: "Composer Audit & Outdated"
 
 on:
     workflow_dispatch:
@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-    composer-outdated-dependencies:
-        name: "Composer outdated dependencies"
+    composer-checks:
+        name: "Composer Checks"
         runs-on: "ubuntu-20.04"
 
         steps:
@@ -29,6 +29,9 @@ jobs:
               uses: "ramsey/composer-install@v2"
               with:
                   dependency-versions: "highest"
+
+            - name: "Check for security vulnerabilities"
+              run: "composer audit"
 
             - name: "Check for outdated dependencies"
               run: "composer outdated -D --strict"
