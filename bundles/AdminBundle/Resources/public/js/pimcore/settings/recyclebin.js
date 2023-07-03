@@ -187,34 +187,72 @@ pimcore.settings.recyclebin = Class.create({
     },
 
     updateButtonStates: function() {
-        var selectedRows = this.grid.getSelectionModel().getSelection();
+        let selectedRows = this.grid.getSelectionModel().getSelection();
+        let selectedCount = selectedRows.length;
+        let deleteButton = true;
+        let publishButton = true;
 
-        if (selectedRows.length >= 1) {
-            Ext.getCmp("pimcore_recyclebin_button_restore").enable();
+        Ext.getCmp("pimcore_recyclebin_button_restore").disable();
+        Ext.getCmp("pimcore_recyclebin_button_delete").disable();
+
+        for (let i = 0; i < selectedCount; i++) {
+            //it only takes one element not deletable to disable the delete button
+            if (selectedRows[i].data.permissions.delete == 0) {
+                //it only takes one not deleteable element among selected to disable the delete button
+                deleteButton = false;
+                break;
+            }
+        }
+        if (deleteButton && selectedCount > 0){
             Ext.getCmp("pimcore_recyclebin_button_delete").enable();
-        } else {
-            Ext.getCmp("pimcore_recyclebin_button_restore").disable();
-            Ext.getCmp("pimcore_recyclebin_button_delete").disable();
+        }
+
+        for (let i = 0; i < selectedCount; i++) {
+            //it only takes one not publishable element among selected to disable the publish button
+            if (selectedRows[i].data.permissions.publish == 0) {
+                publishButton = false;
+                break;
+            }
+        }
+        if (publishButton && selectedCount > 0){
+            Ext.getCmp("pimcore_recyclebin_button_restore").enable();
         }
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
-        var menu = new Ext.menu.Menu();
-        var selModel = grid.getSelectionModel();
-        var selectedRows = selModel.getSelection();
+        let menu = new Ext.menu.Menu();
+        let selModel = grid.getSelectionModel();
+
+        let canDelete = true;
+        let canPublish = true;
+
+        for (let i = 0; i < selModel.selected.items.length; i++) {
+            //it only takes one not deleteable element among selected to disable the delete button
+            if (selModel.selected.items[i].data.permissions.delete == 0) {
+                canDelete = false;
+                break;
+            }
+        }
+        for (let i = 0; i < selModel.selected.items.length; i++) {
+            //it only takes one not publishable element among selected to disable the publish button
+            if (selModel.selected.items[i].data.permissions.publish == 0) {
+                canPublish = false;
+                break;
+            }
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('restore'),
             iconCls: "pimcore_icon_restore",
             handler: this.restoreSelected.bind(this),
-            disabled: !selectedRows.length
+            disabled: !canPublish
         }));
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
             handler: this.deleteSelected.bind(this),
-            disabled: !selectedRows.length
+            disabled: !canDelete
         }));
 
 

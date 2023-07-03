@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\Recyclebin;
+use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -124,22 +125,113 @@ class RecyclebinController extends AdminAbstractController implements KernelCont
                 }
             }
 
+            if (!$this->getAdminUser()->isAdmin()) {
+                $conditionFilters[] = $this->getPermittedPaths();
+            }
+
             if (!empty($conditionFilters)) {
                 $condition = implode(' AND ', $conditionFilters);
                 $list->setCondition($condition);
             }
 
+
             $items = $list->load();
             $data = [];
             if (is_array($items)) {
+
+                $knownParents = [];
+
                 /** @var Recyclebin\Item $item */
                 foreach ($items as $item) {
-                    $data[] = $item->getObjectVars();
+                    $dataRow = $item->getObjectVars();
+
+                    $path = $item->getPath();
+                    $explodedPath = explode('/', $path);
+                    $obj = Service::getElementByPath($item->getType(), $path);
+
+                    // TODO: this is always false for the moment, due cascade deletion of permissions
+                    if (!$obj) {
+                        // searching for any existing parent element from the given path and take those permissions as valid
+                        while (!$obj) {
+                            array_pop($explodedPath);
+                            $path = implode('/', $explodedPath);
+                            if (!array_key_exists($path, $knownParents)) {
+                                $obj = Service::getElementByPath($item->getType(), $path);
+                                if ($obj) {
+                                    $knownParents[$path] = $obj->getUserPermissions();
+                                }
+                            }
+                            if (isset($knownParents[$path])){
+                                $dataRow['permissions'] = $knownParents[$path];
+                                break;
+                            }
+                        }
+                    }
+
+
+                    $data[] = $dataRow;
                 }
             }
 
             return $this->adminJson(['data' => $data, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+    }
+    protected function getPermittedPaths($types = ['asset', 'document', 'object'])
+    {
+        $user = $this->getAdminUser();
+        $db = \Pimcore\Db::get();
+
+        $allowedTypes = [];
+
+        foreach ($types as $type) {
+            if ($user->isAllowed($type . 's')) { //the permissions are just plural
+                $elementPaths = Service::findForbiddenPaths($type, $user);
+
+                $forbiddenPathSql = [];
+                $allowedPathSql = [];
+                foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                    $exceptions = '';
+                    $folderSuffix = '';
+                    if ($allowedPaths) {
+                        $exceptionsConcat = implode("%' OR path LIKE '", $allowedPaths);
+                        $exceptions = " OR (path LIKE '" . $exceptionsConcat . "%')";
+                        $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                    }
+                    $forbiddenPathSql[] = ' (path NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
+                }
+                foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    $allowedPathSql[] = ' path LIKE ' . $db->quote($allowedPaths  . '%');
+                }
+
+                // this is to avoid query error when implode is empty.
+                // the result would be like `(type = type AND ((path1 OR path2) AND (not_path3 AND not_path4)))`
+                $forbiddenAndAllowedSql = '(type = \'' . $type . '\'';
+
+                if ($allowedPathSql || $forbiddenPathSql) {
+                    $forbiddenAndAllowedSql .= ' AND (';
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? '( ' . implode(' OR ', $allowedPathSql) . ' )' : '';
+
+                    if ($forbiddenPathSql) {
+                        //if $allowedPathSql "implosion" is present, we need `AND` in between
+                        $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                        $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                    }
+                    $forbiddenAndAllowedSql .= ' )';
+                }
+
+                $forbiddenAndAllowedSql.= ' )';
+
+                $allowedTypes[] = $forbiddenAndAllowedSql;
+            }
+        }
+
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any main permissions set
+        // by setting a `false` condition in the query makes sure that nothing would be displayed.
+        if (!$allowedTypes) {
+            $allowedTypes = ['false'];
+        }
+
+        return '('.implode(' OR ', $allowedTypes) .')';
     }
 
     /**
@@ -183,7 +275,7 @@ class RecyclebinController extends AdminAbstractController implements KernelCont
     public function addAction(Request $request)
     {
         try {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+            $element = Service::getElementById($request->get('type'), $request->get('id'));
 
             if ($element) {
                 $list = $element::getList(['unpublished' => true]);
