@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -157,7 +158,7 @@ class RecyclebinController extends AdminAbstractController implements KernelCont
                             $path = implode('/', $explodedPath);
                             if (!array_key_exists($path, $knownParents)) {
                                 $obj = Service::getElementByPath($item->getType(), $path);
-                                if ($obj) {
+                                if ($obj instanceof AbstractElement) {
                                     $knownParents[$path] = $obj->getUserPermissions();
                                 }
                             }
