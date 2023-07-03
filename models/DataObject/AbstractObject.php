@@ -407,8 +407,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $list->addConditionParam('id != ?', $this->getId());
                 }
                 $list->setObjectTypes($objectTypes);
-                $list->setOrderKey($this->getChildrenSortBy());
-                $list->setOrder($this->getChildrenSortOrder());
+                $list->setOrderKey($this->getParent()->getChildrenSortBy());
+                $list->setOrder($this->getParent()->getChildrenSortOrder());
                 $this->siblings[$cacheKey] = $list;
             } else {
                 $list = new Listing();
