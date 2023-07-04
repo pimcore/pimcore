@@ -34,6 +34,7 @@ jobs:
               uses: "ramsey/composer-install@v2"
               with:
                   dependency-versions: "highest"
+                  composer-options: "--no-scripts"
 
             - name: "Check for security vulnerabilities"
               continue-on-error: true
