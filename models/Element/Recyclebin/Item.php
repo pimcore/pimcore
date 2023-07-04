@@ -119,10 +119,11 @@ class Item extends Model\AbstractModel
      * When restoring or checking for permissions on deleted files, cannot be guaranteed that the direct parent path
      * still exists, therefore, we need to find the closest existing parent and use that path for the permissions.
      */
-    public function getClosestExistingParent(): ElementInterface
+    public function getClosestExistingParent(): AbstractElement
     {
         $path = $this->getPath();
         $explodedPath = explode('/', $path);
+        /** @var AbstractElement $obj */
         $obj = Service::getElementByPath($this->getType(), $path);
 
         // TODO: this is always false for the moment, due cascade deletion of permissions
