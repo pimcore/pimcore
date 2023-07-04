@@ -123,7 +123,7 @@ class Item extends Model\AbstractModel
     {
         $path = $this->getPath();
         $explodedPath = explode('/', $path);
-        /** @var AbstractElement $obj */
+        /** @var AbstractElement|null $obj */
         $obj = Service::getElementByPath($this->getType(), $path);
 
         // TODO: this is always false for the moment, due cascade deletion of permissions
