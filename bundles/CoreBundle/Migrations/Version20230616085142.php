@@ -28,7 +28,7 @@ final class Version20230616085142 extends AbstractMigration
     private const PK_COLUMNS = [
         self::ID_COLUMN, 'dest_id', 'type', 'fieldname', 'column', 'ownertype', 'ownername', 'position', 'index'];
     private const UNIQUE_INDEX_NAME = 'metadata_un';
-    private const AUTO_ID = 'auto_id';
+    private const AUTO_ID = 'id';
 
     public function getDescription(): string
     {
