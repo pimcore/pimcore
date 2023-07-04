@@ -1,5 +1,5 @@
 
-name: "Composer Audit & Outdated"
+name: "Reusable Composer Audit & Outdated"
 
 on:
     workflow_call:
