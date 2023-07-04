@@ -31,6 +31,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
@@ -68,7 +69,7 @@ class Item extends Model\AbstractModel
     protected $amount = 0;
 
     /**
-     * @var Element\ElementInterface
+     * @var ElementInterface
      */
     protected $element;
 
@@ -85,10 +86,10 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param Element\ElementInterface $element
+     * @param ElementInterface $element
      * @param Model\User|null $user
      */
-    public static function create(Element\ElementInterface $element, Model\User $user = null)
+    public static function create(ElementInterface $element, Model\User $user = null)
     {
         $item = new self();
         $item->setElement($element);
@@ -118,7 +119,7 @@ class Item extends Model\AbstractModel
      * When restoring or checking for permissions on deleted files, cannot be guaranteed that the direct parent path
      * still exists, therefore, we need to find the closest existing parent and use that path for the permissions.
      */
-    public function getClosestExistingParent(): AbstractElement
+    public function getClosestExistingParent(): ElementInterface
     {
         $path = $this->getPath();
         $explodedPath = explode('/', $path);
@@ -192,7 +193,7 @@ class Item extends Model\AbstractModel
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $this->getClosestExistingParent();
-            if ($parent && !$parent->isAllowed('publish')) {
+            if (!$parent->isAllowed('publish')) {
                 throw new \Exception('Not sufficient permissions');
             }
         }
@@ -273,10 +274,8 @@ class Item extends Model\AbstractModel
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $this->getClosestExistingParent();
-            if ($parent) {
-                if ((!$byRestore && !$parent->isAllowed('delete')) || ($byRestore && !$parent->isAllowed('publish'))){
-                    throw new \Exception('Not sufficient permissions');
-                }
+            if ((!$byRestore && !$parent->isAllowed('delete')) || ($byRestore && !$parent->isAllowed('publish'))){
+                throw new \Exception('Not sufficient permissions');
             }
         }
 
@@ -296,9 +295,9 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param ElementInterface $element
      */
-    public function loadChildren(Element\ElementInterface $element)
+    public function loadChildren(ElementInterface $element)
     {
         $this->amount++;
 
@@ -333,14 +332,14 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param ElementInterface $element
      *
      * @throws \Exception
      */
-    protected function doRecursiveRestore(Element\ElementInterface $element)
+    protected function doRecursiveRestore(ElementInterface $element)
     {
         $storage = Storage::get('recycle_bin');
-        $restoreBinaryData = function (Element\ElementInterface $element, self $scope) use ($storage) {
+        $restoreBinaryData = function (ElementInterface $element, self $scope) use ($storage) {
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
@@ -377,7 +376,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $data
+     * @param ElementInterface $data
      *
      * @return mixed
      */
@@ -408,7 +407,7 @@ class Item extends Model\AbstractModel
                 public function matches($element)
                 {
                     //compress only elements with full_dump_state = false
-                    return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
+                    return $element instanceof ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
                 }
             }
         );
@@ -433,9 +432,9 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $data
+     * @param ElementInterface $data
      *
-     * @return Element\ElementInterface
+     * @return ElementInterface
      */
     public function unmarshalData($data)
     {
@@ -472,7 +471,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param ElementInterface $element
      *
      * @return string
      */
@@ -602,7 +601,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @return Element\ElementInterface
+     * @return ElementInterface
      */
     public function getElement()
     {
@@ -610,7 +609,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param ElementInterface $element
      *
      * @return $this
      */
