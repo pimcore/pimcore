@@ -2,7 +2,6 @@
 name: "Composer Audit & Outdated"
 
 on:
-    workflow_call:
     workflow_dispatch:
     schedule:
         -   cron: '0 3 * * *'
@@ -12,8 +11,7 @@ permissions:
 
 jobs:
     composer-checks:
-        name: "Composer Checks"
-        runs-on: "ubuntu-20.04"
+        uses: ./.github/workflows/composer-checks.yaml@11.x
         strategy:
             matrix:
                 include:
@@ -22,37 +20,3 @@ jobs:
         with:
             php-version: ${{ matrix.php-version }}
             branch: ${{ matrix.branch }}
-        steps:
-            - name: "Checkout code"
-              uses: "actions/checkout@v2"
-              with:
-                  ref: ${{ inputs.branch }}
-
-            - name: "Install PHP"
-              uses: "shivammathur/setup-php@v2"
-              with:
-                  coverage: "none"
-                  php-version: ${{ inputs.php-version }}
-
-
-            - name: "Install dependencies with Composer"
-              uses: "ramsey/composer-install@v2"
-              with:
-                  dependency-versions: "highest"
-                  composer-options: "--no-scripts"
-
-            - name: "Check for security vulnerabilities"
-              id: vulnerabilities
-              continue-on-error: true
-              run: "composer audit"
-
-            - name: "Check for outdated dependencies"
-              id: dependencies
-              continue-on-error: true
-              run: "composer outdated -D --strict"
-
-            - name: "Check results of previous checks"
-              if: steps.vulnerabilities.outcome == 'failure' || steps.dependencies.outcome == 'failure'
-              run: exit 255
-
-
