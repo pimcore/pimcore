@@ -118,7 +118,7 @@ class Dao extends Model\Dao\AbstractDao
         $table = 'object_metadata_' . $classId;
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
-              `auto_id` int(11) NOT NULL AUTO_INCREMENT,
+              `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
               `o_id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',
