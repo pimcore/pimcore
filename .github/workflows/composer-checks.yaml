@@ -11,7 +11,7 @@ permissions:
 
 jobs:
     composer-checks:
-        uses: ./.github/workflows/reusable-composer-checks.yaml@11.x
+        uses: ./.github/workflows/reusable-composer-checks.yaml
         strategy:
             matrix:
                 include:
