@@ -11,7 +11,7 @@ permissions:
 
 jobs:
     composer-checks:
-        uses: pimcore/workflows-collection/.github/workflows/reusable-composer-checks.yaml
+        uses: pimcore/workflows-collection/.github/workflows/reusable-composer-checks.yaml@main
         strategy:
             matrix:
                 include:
