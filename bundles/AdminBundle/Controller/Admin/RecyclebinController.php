@@ -140,36 +140,10 @@ class RecyclebinController extends AdminAbstractController implements KernelCont
             $data = [];
             if (is_array($items)) {
 
-                $knownParents = [];
-
                 /** @var Recyclebin\Item $item */
                 foreach ($items as $item) {
                     $dataRow = $item->getObjectVars();
-
-                    $path = $item->getPath();
-                    $explodedPath = explode('/', $path);
-                    $obj = Service::getElementByPath($item->getType(), $path);
-
-                    // TODO: this is always false for the moment, due cascade deletion of permissions
-                    if (!$obj) {
-                        // searching for any existing parent element from the given path and take those permissions as valid
-                        while (!$obj) {
-                            array_pop($explodedPath);
-                            $path = implode('/', $explodedPath);
-                            if (!array_key_exists($path, $knownParents)) {
-                                $obj = Service::getElementByPath($item->getType(), $path);
-                                if ($obj instanceof AbstractElement) {
-                                    $knownParents[$path] = $obj->getUserPermissions();
-                                }
-                            }
-                            if (isset($knownParents[$path])){
-                                $dataRow['permissions'] = $knownParents[$path];
-                                break;
-                            }
-                        }
-                    }
-
-
+                    $dataRow['permissions'] = $item->getClosestExistingParent()->getUserPermissions();
                     $data[] = $dataRow;
                 }
             }

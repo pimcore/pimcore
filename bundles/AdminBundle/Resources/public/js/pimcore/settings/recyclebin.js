@@ -123,7 +123,13 @@ pimcore.settings.recyclebin = Class.create({
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
-                }]
+                }],
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    // when not allowed to delete, hide the delete icon
+                    if (record.data.permissions.delete == 0) {
+                        this.items = [];
+                    }
+                },
             }
         ];
 

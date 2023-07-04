@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Cache;
 use Pimcore\Logger;
@@ -27,8 +28,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 
@@ -112,6 +115,38 @@ class Item extends Model\AbstractModel
     }
 
     /**
+     * When restoring or checking for permissions on deleted files, cannot be guaranteed that the direct parent path
+     * still exists, therefore, we need to find the closest existing parent and use that path for the permissions.
+     */
+    public function getClosestExistingParent(): AbstractElement
+    {
+        $path = $this->getPath();
+        $explodedPath = explode('/', $path);
+        $obj = Service::getElementByPath($this->getType(), $path);
+
+        // TODO: this is always false for the moment, due cascade deletion of permissions
+        if (!$obj) {
+            // searching for any existing parent element from the given path and take those permissions as valid
+            while (!$obj) {
+                array_pop($explodedPath);
+                $path = implode('/', $explodedPath);
+
+                // if path is empty, we reached the root, this is necessary for existing the while loop
+                if (empty($path)) {
+                    $path = '/';
+                }
+
+                $obj = Service::getElementByPath($this->getType(), $path);
+                if ($obj instanceof AbstractElement) {
+                    break;
+                }
+            }
+        }
+
+        return $obj;
+    }
+
+    /**
      * @param Model\User|null $user
      *
      * @throws \Exception
@@ -156,7 +191,7 @@ class Item extends Model\AbstractModel
         }
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
-            $parent = $element->getParent();
+            $parent = $this->getClosestExistingParent();
             if ($parent && !$parent->isAllowed('publish')) {
                 throw new \Exception('Not sufficient permissions');
             }
@@ -178,7 +213,7 @@ class Item extends Model\AbstractModel
             throw $e;
         }
 
-        $this->delete();
+        $this->delete(true);
     }
 
     /**
@@ -227,8 +262,24 @@ class Item extends Model\AbstractModel
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
     }
 
-    public function delete()
+    /**
+     * @param $byRestore used to tell this item is deleted by restore or flush
+     *
+     * @return void
+     * @throws FilesystemException
+     */
+    public function delete($byRestore = false)
     {
+
+        if (\Pimcore\Tool\Admin::getCurrentUser()) {
+            $parent = $this->getClosestExistingParent();
+            if ($parent) {
+                if ((!$byRestore && !$parent->isAllowed('delete')) || ($byRestore && !$parent->isAllowed('publish'))){
+                    throw new \Exception('Not sufficient permissions');
+                }
+            }
+        }
+
         $storage = Storage::get('recycle_bin');
         $storage->delete($this->getStoreageFile());
 
