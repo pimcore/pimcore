@@ -20,7 +20,8 @@ jobs:
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
-              with: ${{ matrix.branch }}
+              with:
+                  ref: ${{ matrix.branch }}
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
