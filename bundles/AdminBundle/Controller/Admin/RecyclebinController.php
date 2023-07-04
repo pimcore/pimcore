@@ -143,7 +143,10 @@ class RecyclebinController extends AdminAbstractController implements KernelCont
                 /** @var Recyclebin\Item $item */
                 foreach ($items as $item) {
                     $dataRow = $item->getObjectVars();
-                    $dataRow['permissions'] = $item->getClosestExistingParent()->getUserPermissions();
+                    $closestParent = $item->getClosestExistingParent();
+                    if ($closestParent instanceof AbstractElement) {
+                        $dataRow['permissions'] = $closestParent->getUserPermissions();
+                    }
                     $data[] = $dataRow;
                 }
             }
