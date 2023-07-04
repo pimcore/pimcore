@@ -1,0 +1,55 @@
+
+name: "Composer Audit & Outdated"
+
+on:
+    workflow_call:
+        inputs:
+            php-version:
+                required: false
+                default: 8.2
+                type: string
+            branch:
+                required: true
+                type: string
+
+permissions:
+  contents: read
+
+jobs:
+    composer-checks:
+        name: "Composer Checks"
+        runs-on: "ubuntu-20.04"
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+              with:
+                  ref: ${{ inputs.branch }}
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: ${{ inputs.php-version }}
+
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v2"
+              with:
+                  dependency-versions: "highest"
+                  composer-options: "--no-scripts"
+
+            - name: "Check for security vulnerabilities"
+              id: vulnerabilities
+              continue-on-error: true
+              run: "composer audit"
+
+            - name: "Check for outdated dependencies"
+              id: dependencies
+              continue-on-error: true
+              run: "composer outdated -D --strict"
+
+            - name: "Check results of previous checks"
+              if: steps.vulnerabilities.outcome == 'failure' || steps.dependencies.outcome == 'failure'
+              run: exit 255
+
+
