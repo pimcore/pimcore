@@ -39,9 +39,7 @@ jobs:
                   composer-options: "--no-scripts"
 
             - name: "Check for security vulnerabilities"
-              continue-on-error: true
               run: "composer audit"
 
             - name: "Check for outdated dependencies"
-              continue-on-error: true
               run: "composer outdated -D --strict"
