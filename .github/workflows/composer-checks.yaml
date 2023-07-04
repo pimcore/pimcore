@@ -16,7 +16,7 @@ jobs:
         runs-on: "ubuntu-20.04"
         strategy:
             matrix:
-                branche: [11.x, 10.6]
+                branch: [11.x, 10.6]
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
