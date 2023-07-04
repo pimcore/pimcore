@@ -19,17 +19,20 @@ jobs:
                 include:
                     - { php-version: 8.1, branch: 10.6 }
                     - { php-version: 8.2, branch: 11.x }
+        with:
+            php-version: ${{ matrix.php-version }}
+            branch: ${{ matrix.branch }}
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
               with:
-                  ref: ${{ matrix.branch }}
+                  ref: ${{ inputs.branch }}
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
               with:
                   coverage: "none"
-                  php-version: ${{ matrix.php-version }}
+                  php-version: ${{ inputs.php-version }}
 
 
             - name: "Install dependencies with Composer"
