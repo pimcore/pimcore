@@ -122,14 +122,13 @@ pimcore.settings.recyclebin = Class.create({
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
-                    }.bind(this)
-                }],
-                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                    // when not allowed to delete, hide the delete icon
-                    if (record.data.permissions.delete == 0) {
-                        this.items = [];
+                    }.bind(this),
+                    getClass: function(v, meta, rec) {
+                        if (rec.data.permissions.delete == 0) {
+                            return "pimcore_hidden";
+                        }
                     }
-                },
+                }],
             }
         ];
 
