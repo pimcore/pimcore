@@ -12,8 +12,8 @@ permissions:
 jobs:
     composer-checks:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-checks.yaml@main
-        fail-fast: false
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - { php-version: 8.1, branch: 10.6 }
