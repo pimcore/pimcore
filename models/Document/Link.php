@@ -230,7 +230,7 @@ class Link extends Model\Document
         return $this->linktype;
     }
 
-    public function setInternal(int $internal): static
+    public function setInternal(?int $internal): static
     {
         if (!empty($internal)) {
             $this->internal = $internal;
