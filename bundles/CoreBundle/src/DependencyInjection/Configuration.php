@@ -159,14 +159,21 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('housekeeping')
                 ->addDefaultsIfNotSet()
                 ->children()
-                    ->integerNode('cleanup_tmp_files_atime_older_than')
-                        ->info('Integer value in seconds.')
-                        ->defaultValue(7_776_000) // 90 days
-                    ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->info('Integer value in seconds.')
                         ->defaultValue(1800)
                     ->end()
+                ->arrayNode('cleanup_directory')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('cleanup_tmp_files_atime_older_than')
+                        ->info('Integer value in seconds.')
+                        ->defaultValue(7_776_000) // 90 days
+                    ->end()
+                    ->arrayNode('cleanup_directories')
+                        ->defaultValue([])
+                        ->info('Directories to cleanup.')
+                ->end()
         ;
     }
 
