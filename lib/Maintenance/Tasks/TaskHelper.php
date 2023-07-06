@@ -5,12 +5,21 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Psr\Log\LoggerInterface;
 
 final class TaskHelper
 {
-    public static function create(): self
+    private static ?TaskHelper $instance = null;
+
+    private LoggerInterface $logger;
+    public static function create(LoggerInterface $logger): self
     {
-        return new self();
+        if(!self::$instance) {
+            self::$instance = new self();
+        }
+        self::$instance->logger = $logger;
+
+        return self::$instance;
     }
     public function getDataStructureNamesMapLowerToCamelCase(string $dir): array
     {

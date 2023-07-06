@@ -37,7 +37,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-        $this->helper = TaskHelper::create();
+        $this->helper = TaskHelper::create($logger);
     }
 
     public function execute(): void
