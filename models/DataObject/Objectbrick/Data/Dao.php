@@ -101,7 +101,8 @@ class Dao extends Model\Dao\AbstractDao
             $isBrickUpdate = false; // used to indicate whether we want to consider the default value
         } else {
             // or brick has been added
-            $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', [$object->getId()]);
+            $sql = 'SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? AND fieldname = ? LIMIT 1';
+            $existsResult = $this->db->fetchOne($sql, [$object->getId(), $params["fieldname"]]);
             $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
         }
 
@@ -158,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($isBrickUpdate) {
-            $this->db->update($storetable, $data, ['o_id'=> $object->getId()]);
+            $this->db->update($storetable, $data, ['o_id'=> $object->getId(), 'fieldname' => $params["fieldname"]]);
         } else {
             $this->db->insert($storetable, $data);
         }
