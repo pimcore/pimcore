@@ -20,8 +20,6 @@ use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 
 /**
- * @internal
- *
  * @property ContainerInterface $container
  */
 trait JsonHelperTrait
