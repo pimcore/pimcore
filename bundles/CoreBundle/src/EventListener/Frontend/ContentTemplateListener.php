@@ -68,14 +68,18 @@ class ContentTemplateListener implements EventSubscriberInterface
         }
 
         $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0] ?? null;
-
-        if (!$attribute instanceof Template) {
-            return;
-        }
-
         $resolvedTemplate = $this->templateResolver->getTemplate($request);
         if (null === $resolvedTemplate) {
             // no contentTemplate on the request -> nothing to do
+            return;
+        }
+
+        if (!$attribute instanceof Template) {
+            $event->setResponse(
+                new Response(
+                    $this->twig->render($resolvedTemplate, $event->controllerArgumentsEvent->getNamedArguments())
+                )
+            );
             return;
         }
 
