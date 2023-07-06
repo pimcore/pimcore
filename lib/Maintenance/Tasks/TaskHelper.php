@@ -14,13 +14,14 @@ final class TaskHelper
     private LoggerInterface $logger;
     public static function create(LoggerInterface $logger): self
     {
-        if(!self::$instance) {
+        if (!self::$instance) {
             self::$instance = new self();
         }
         self::$instance->logger = $logger;
 
         return self::$instance;
     }
+    
     public function getDataStructureNamesMapLowerToCamelCase(string $dir): array
     {
         $mapLowerToCamelCase = [];
