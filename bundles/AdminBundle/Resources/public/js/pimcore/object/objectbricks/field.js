@@ -237,6 +237,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             store: fieldComboStore,
             displayField: 'key',
             valueField: 'key',
+            multiSelect: true,
             name: 'fieldname',
             disableKeyFilter: "true",
             valueNotFoundText: "",

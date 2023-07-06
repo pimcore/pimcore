@@ -182,6 +182,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $fd->preSave($this);
             }
         }
+        
+        $this->classDefinitions = $this->normalizeClassDefinitions($this->classDefinitions);
 
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
@@ -210,6 +212,43 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $fd->postSave($this);
             }
         }
+    }
+    
+    private function normalizeClassDefinitions(array $definition)
+    {
+        $definition = array_reduce(
+            $definition,
+            function ($collection, $item) {
+                if (empty($item['fieldname'])) {
+                    return $collection;
+                }
+                
+                if (!is_array($item['fieldname'])) {
+                    $item['fieldname'] = [$item['fieldname']];
+                }
+                
+                return array_reduce(
+                    $item['fieldname'],
+                    function ($c, $i) use ($item) {
+                        $key = sprintf('%s:%s', $item['classname'], $i);
+                        $c[$key] = [
+                            'classname' => $item['classname'],
+                            'fieldname' => $i
+                        ];
+                        
+                        if (!empty($item['deleted'])) {
+                            $c[$key]['deleted'] = true;
+                        }
+
+                        return $c;
+                    },
+                    $collection
+                );
+            },
+            []
+        );
+        
+        return array_values($definition);
     }
 
     /**
