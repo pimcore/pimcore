@@ -31,21 +31,23 @@ class CleanupBrickTablesTask implements TaskInterface
 
     private LoggerInterface $logger;
 
-    private array $mapLowerToCamelCase = [];
+    private TaskHelper $helper;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        $files = array_diff(scandir(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY), ['..', '.']);
-        foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
-            $this->mapLowerToCamelCase[strtolower($classname)] = $classname ;
-        }
+        $this->helper = TaskHelper::create();
     }
 
     public function execute(): void
     {
+        if (!is_dir(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY)) {
+            return;
+        }
+
+        $mapLowerToCamelCase =
+            $this->helper->getDataStructureNamesMapLowerToCamelCase(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY);
+
         $db = Db::get();
         $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
@@ -55,49 +57,37 @@ class CleanupBrickTablesTask implements TaskInterface
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
 
-                if (strpos($tableName, 'object_brick_localized_query_') === 0) {
+                if (str_starts_with($tableName, 'object_brick_localized_query_')) {
                     continue;
                 }
 
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $brickType = substr($fieldDescriptor, 0, $idx);
-                $brickType = $this->mapLowerToCamelCase[$brickType] ?? $brickType;
+                $brickType = $mapLowerToCamelCase[$brickType] ?? $brickType;
 
-                $brickDef = Definition::getByKey($brickType);
-                if (!$brickDef) {
-                    $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
-
+                if (!$this->checkIfBrickExists($brickType, $tableName)) {
                     continue;
                 }
 
                 $classId = substr($fieldDescriptor, $idx + 1);
-
-                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
+                $classDefinition = $this->helper->getClassDefintionByClassId($classId, $tableName);
                 if (!$classDefinition) {
-                    $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
                     continue;
                 }
 
-                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
-
-                foreach ($fieldNames as $fieldName) {
-                    $fieldDef = $classDefinition->getFieldDefinition($fieldName);
-                    if (!$fieldDef) {
-                        $lfDef = $classDefinition->getFieldDefinition('localizedfields');
-                        if ($lfDef instanceof ClassDefinition\Data\Localizedfields) {
-                            $fieldDef = $lfDef->getFieldDefinition($fieldName);
-                        }
-                    }
-
-                    if (!$fieldDef) {
-                        $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->delete($tableName, ['fieldname' => $fieldName]);
-                    }
-                }
+                $this->helper->cleaningTable($tableName, $classDefinition, $classId);
             }
         }
+    }
+
+    private function checkIfBrickExists(string $brickType, string $tableName): bool
+    {
+        $brickDef = Definition::getByKey($brickType);
+        if (!$brickDef) {
+            $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
+            return false;
+        }
+        return true;
     }
 }

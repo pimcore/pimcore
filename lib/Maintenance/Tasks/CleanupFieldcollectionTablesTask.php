@@ -19,6 +19,7 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -26,25 +27,28 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupFieldcollectionTablesTask implements TaskInterface
 {
-    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY = PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
+    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY =
+        PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
 
     private LoggerInterface $logger;
 
-    private array $mapLowerToCamelCase = [];
+    private TaskHelper $helper;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        $files = array_diff(scandir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY), ['..', '.']);
-        foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
-            $this->mapLowerToCamelCase[strtolower($classname)] = $classname;
-        }
+        $this->helper = TaskHelper::create();
     }
 
     public function execute(): void
     {
+        if (!is_dir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY)) {
+            return;
+        }
+
+        $mapLowerToCamelCase =
+            $this->helper->getDataStructureNamesMapLowerToCamelCase(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
+
         $db = Db::get();
         $tasks = [
             [
@@ -65,12 +69,9 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $fcType = substr($fieldDescriptor, 0, $idx);
-                $fcType = $this->mapLowerToCamelCase[$fcType] ?? $fcType;
+                $fcType = $mapLowerToCamelCase[$fcType] ?? $fcType;
 
-                $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
-                if (!$fcDef) {
-                    $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
-
+                if (!$this->checkIfFcExists($fcType, $tableName)) {
                     continue;
                 }
 
@@ -78,36 +79,28 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
 
                 $isLocalized = false;
 
-                if (strpos($classId, 'localized_') === 0) {
+                if (str_starts_with($classId, 'localized_')) {
                     $isLocalized = true;
                     $classId = substr($classId, strlen('localized_'));
                 }
 
-                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
+                $classDefinition = $this->helper->getClassDefintionByClassId($classId, $tableName);
                 if (!$classDefinition) {
-                    $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
                     continue;
                 }
 
-                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
-
-                foreach ($fieldNames as $fieldName) {
-                    $fieldDef = $classDefinition->getFieldDefinition($fieldName);
-                    if (!$fieldDef && $isLocalized) {
-                        $lfDef = $classDefinition->getFieldDefinition('localizedfields');
-                        if ($lfDef instanceof ClassDefinition\Data\Localizedfields) {
-                            $fieldDef = $lfDef->getFieldDefinition($fieldName);
-                        }
-                    }
-
-                    if (!$fieldDef) {
-                        $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->delete($tableName, ['fieldname' => $fieldName]);
-                    }
-                }
+                $this->helper->cleaningTable($tableName, $classDefinition, $classId, $isLocalized);
             }
         }
+    }
+
+    private function checkIfFcExists(string $fcType, string $tableName): bool
+    {
+        $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
+        if (!$fcDef) {
+            $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
+            return false;
+        }
+        return true;
     }
 }
