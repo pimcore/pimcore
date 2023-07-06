@@ -72,7 +72,7 @@ services:
     Pimcore\Maintenance\Tasks\CleanupDirectoryTask:
         arguments:
             - '%pimcore.maintenance.cleanup_directory.cleanup_files_atime_older_than%'
-            - '%pimcore.maintenance.cleanup_directory.cleanup_directories%'
+            - '%pimcore.maintenance.cleanup_directory.directories%'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupDirectory }
 
