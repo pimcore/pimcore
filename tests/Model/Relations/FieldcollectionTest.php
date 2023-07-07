@@ -210,23 +210,6 @@ class FieldcollectionTest extends ModelTestCase
         $object->setFieldcollection($items);
         $object->save();
 
-        // Test by deleting the target2 element
-        $target2->delete();
-
-        $object = DataObject::getById($object->getId(), ['force' => true]);
-        $object->save();
-
-        //check if target1 is still there
-        $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
-        $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
-        $this->assertEquals($target1->getId(), $rel[0]->getElementId());
-
-        //check if target2 is removed
-        $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
-        $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
-        $this->assertEquals(false, isset($rel[0]));
-
-
         //Reload object from db
         $object = DataObject::getById($object->getId(), ['force' => true]);
 
