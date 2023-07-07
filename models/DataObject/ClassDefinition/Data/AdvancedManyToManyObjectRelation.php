@@ -473,7 +473,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function save($object, $params = [])
     {
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
+//        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
             if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
@@ -489,7 +489,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                     }
                 }
             }
-        }
+//        }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 

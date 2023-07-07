@@ -739,6 +739,18 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
+            $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedFieldRelation')
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
+                ]));
+
+
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
