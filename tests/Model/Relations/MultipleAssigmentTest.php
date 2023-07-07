@@ -149,6 +149,23 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
+    protected function checkMultipleAssignmentsOnMultipleManyToManyAfterDelete(array $metaDataList, $positionMessage = '')
+    {
+        $this->assertEquals(8, count($metaDataList), "Relation count $positionMessage.");
+        $number = 0;
+        foreach ($metaDataList as $i => $metadata) {
+            if ($number == 2){
+                continue;
+            }
+            if ($i % 2) {
+                $this->assertEquals("multiple-some-more-metadata $number", $metadata->getMeta(), "Metadata $positionMessage.");
+                $number++;
+            } else {
+                $this->assertEquals("multiple-some-metadata $number", $metadata->getMeta(), "Metadata $positionMessage.");
+            }
+        }
+    }
+
     public function testMultipleAssignmentsMultipleManyToMany()
     {
         $listing = new RelationTest\Listing();
@@ -194,6 +211,17 @@ class MultipleAssigmentTest extends ModelTestCase
         $deserializedObject = unserialize($serializedData);
         $metaDataList = $deserializedObject->getMultipleManyToMany();
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after serialize/unserialize');
+
+
+        //delete relationTest element 2
+        $listing[2]->delete();
+
+        //reload data object from database without element 2
+        $object = MultipleAssignments::getById($id, ['force' => true]);
+
+        $metaDataList = $object->getMultipleManyToMany();
+        $this->checkMultipleAssignmentsOnMultipleManyToManyAfterDelete($metaDataList, 'after loading without metadata 2');
+
     }
 
     public function testMultipleAssignmentsMultipleManyToManyObject()
