@@ -214,7 +214,7 @@ class MultipleAssigmentTest extends ModelTestCase
 
 
         //delete relationTest element 2
-        $listing[2]->delete();
+        $listing->getItems(2, 1)->delete();
 
         //reload data object from database without element 2
         $object = MultipleAssignments::getById($id, ['force' => true]);
