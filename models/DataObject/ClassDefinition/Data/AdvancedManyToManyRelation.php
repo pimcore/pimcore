@@ -549,7 +549,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function save($object, $params = [])
     {
-//        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
+        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
             if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
@@ -565,7 +565,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     }
                 }
             }
-//        }
+        }
 
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
