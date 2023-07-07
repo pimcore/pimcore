@@ -142,7 +142,7 @@ pimcore.object.helpers.classTree = Class.create({
                     if (data[keys[i]].nodeType == "objectbricks") {
                         brickDescriptor = {
                             insideBrick: true,
-                            brickType: data[keys[i]].nodeLabel,
+                            brickType: data[keys[i]].brickType,
                             brickField: data[keys[i]].brickField
                         };
 
@@ -250,9 +250,9 @@ pimcore.object.helpers.classTree = Class.create({
                         fieldname: brickDescriptor.brickField,
                         brickfield: key
                     }
-                    key = "?" + Ext.encode(parts) + "~" + key;
+                    key = "?" + Ext.encode(parts) + "~" + brickDescriptor.brickField + '.' + key;
                 } else {
-                    key = brickDescriptor.brickType + "~" + key;
+                    key = brickDescriptor.brickType + "~" + brickDescriptor.brickField + '.' + key;
                 }
             }
 

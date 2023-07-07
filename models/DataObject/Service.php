@@ -377,6 +377,12 @@ class Service extends Model\Element\Service
 
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
+                    if (strpos($brickKey, '.')) {
+                        $p = explode('.', $brickKey);
+                        $brickKey = $p[1];
+                        $key = $p[0];
+                    }
+
                     $brickClass = Objectbrick\Definition::getByKey($brickType);
                     $context['outerFieldname'] = $key;
 

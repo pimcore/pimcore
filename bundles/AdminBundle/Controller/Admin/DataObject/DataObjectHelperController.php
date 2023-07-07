@@ -446,6 +446,13 @@ class DataObjectHelperController extends AdminAbstractController
                             }
 
                             $fieldname = $keyParts[1];
+                            $brickName = null;
+                            if (strpos($fieldname, '.')) {
+                                $p = explode('.', $fieldname);
+                                $fieldname = $p[1];
+                                $brickName = $p[0];
+                                $keyPrefix .= $brickName . '.';
+                            }
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 

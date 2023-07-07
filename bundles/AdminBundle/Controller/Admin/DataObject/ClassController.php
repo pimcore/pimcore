@@ -1105,7 +1105,7 @@ class ClassController extends AdminAbstractController implements KernelControlle
                             continue;
                         }
 
-                        $key = $brickDefinition->getKey();
+                        $key = sprintf("%s@%s", $brickDefinition->getKey(), $fieldName);
 
                         $brickLayoutDefinitions = $brickDefinition->getLayoutDefinitions();
                         $context = [
@@ -1116,11 +1116,10 @@ class ClassController extends AdminAbstractController implements KernelControlle
                         DataObject\Service::enrichLayoutDefinition($brickLayoutDefinitions, null, $context);
 
                         $result[$key]['nodeLabel'] = $key;
+                        $result[$key]['brickType'] = $brickDefinition->getKey();
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['children'] = $brickLayoutDefinitions->getChildren();
-
-                        break;
                     }
                 }
             }
