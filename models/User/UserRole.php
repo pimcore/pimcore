@@ -20,7 +20,9 @@ use Pimcore\Model\User\Workspace\Asset;
 use Pimcore\Model\User\Workspace\DataObject;
 use Pimcore\Model\User\Workspace\Document;
 
-
+/**
+ * @method \Pimcore\Model\User\UserRole\Dao getDao()
+ */
 abstract class UserRole extends AbstractUser implements UserRoleInterface
 {
     /**
