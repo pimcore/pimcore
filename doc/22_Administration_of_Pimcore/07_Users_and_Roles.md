@@ -81,7 +81,7 @@ However, there are a few general rules on element permissions that need to be re
 The user permissions on element basis are summed up as follows:
 
 * **list**: this element (and potential child elements) can be listed in tree
-* **view**: this element can be opened
+* **view**: this element (and potential child elements) can be opened
 * **save**: this element (and potential child elements) can be saved (save button visible)
 * **publish**: this element can be published (publish button visible)
 * **unpublish**: this element (and potential child elements) can be unpublished (unpublish button visible); does not exist for assets
