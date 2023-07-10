@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -83,36 +82,6 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
-     * 
-     * @param object $container
-     * @param $params
-     * @return bool
-     */
-    protected function skipSaveCheck(object $object, $params = []): bool
-    {
-        $skipSave = false;
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
-                if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$object->hasDirtyFields()) {
-                            $skipSave = true;
-                        }
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$object->isFieldDirty($this->getName())) {
-                            $skipSave = true;
-                        }
-                    }
-                }
-            }
-        }
-        return $skipSave;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function save($object, $params = [])
@@ -126,8 +95,16 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if ($this->skipSaveCheck($object, $context)) {
-            return;
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+            if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
+                if ($object instanceof DataObject\Localizedfield) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                        return;
+                    }
+                } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                    return;
+                }
+            }
         }
 
         $data = $this->getDataFromObjectParam($object, $params);

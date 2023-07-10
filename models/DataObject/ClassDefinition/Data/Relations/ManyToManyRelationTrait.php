@@ -21,6 +21,36 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 trait ManyToManyRelationTrait
 {
     /**
+     * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
+     *
+     * @param object $container
+     * @param $params
+     * @return bool
+     */
+    protected function skipSaveCheck(object $object, $params = []): bool
+    {
+        $skipSave = false;
+        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
+            if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
+                if ($object instanceof DataObject\Localizedfield) {
+                    if ($object->getObject() instanceof DirtyIndicatorInterface) {
+                        if (!$object->hasDirtyFields()) {
+                            $skipSave = true;
+                        }
+                    }
+                } else {
+                    if ($this->supportsDirtyDetection()) {
+                        if (!$object->isFieldDirty($this->getName())) {
+                            $skipSave = true;
+                        }
+                    }
+                }
+            }
+        }
+        return $skipSave;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save($container, $params = [])
@@ -28,8 +58,6 @@ trait ManyToManyRelationTrait
         if ($this->skipSaveCheck($container, $params)) {
             return;
         }
-
-        $data = $this->getDataFromObjectParam($container, $params);
 
         parent::save($container, $params);
     }

@@ -473,10 +473,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function save($object, $params = [])
     {
-        if ($this->skipSaveCheck($object, $params)) {
-            return;
-        }
-
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
         $objectId = null;
