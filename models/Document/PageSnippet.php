@@ -419,7 +419,7 @@ abstract class PageSnippet extends Model\Document
 
         // check for content main document (inherit data)
         if ($contentMainDocument = $this->getContentMainDocument()) {
-            if ($contentMainDocument instanceof self) {
+            if ($contentMainDocument instanceof self && $contentMainDocument->getId() != $this->getId()) {
                 $inheritedEditable = $contentMainDocument->getEditable($name);
                 if ($inheritedEditable) {
                     $inheritedEditable = clone $inheritedEditable;
