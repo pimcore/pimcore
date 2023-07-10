@@ -211,6 +211,7 @@ class Service extends Model\Element\Service
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
+            $new->setMissingRequiredEditable([]);
             $new->setContentMainDocumentId($source->getId(), true);
         }
 
