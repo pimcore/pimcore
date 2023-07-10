@@ -25,22 +25,8 @@ trait ManyToManyRelationTrait
      */
     public function save($container, $params = [])
     {
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
-                if ($container instanceof DataObject\Localizedfield) {
-                    if ($container->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$container->hasDirtyFields()) {
-                            return;
-                        }
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$container->isFieldDirty($this->getName())) {
-                            return;
-                        }
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($container, $params)) {
+            return;
         }
 
         $data = $this->getDataFromObjectParam($container, $params);
