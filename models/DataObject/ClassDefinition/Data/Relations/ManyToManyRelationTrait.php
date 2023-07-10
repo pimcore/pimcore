@@ -23,8 +23,8 @@ trait ManyToManyRelationTrait
     /**
      * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
      *
-     * @param object $container
-     * @param $params
+     * @param object $object
+     * @param array $params
      * @return bool
      */
     protected function skipSaveCheck(object $object, $params = []): bool
