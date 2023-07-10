@@ -84,7 +84,7 @@ The user permissions on element basis are summed up as follows:
 * **view**: this element can be opened
 * **save**: this element (and potential child elements) can be saved (save button visible)
 * **publish**: this element can be published (publish button visible)
-* **unpublish**: this element can be unpublished (unpublish button visible); does not exist for assets
+* **unpublish**: this element (and potential child elements) can be unpublished (unpublish button visible); does not exist for assets
 * **create**: new child elements can be created (does not exist for assets)
 * **delete**: this element can be deleted
 * **rename**: this element name can be changed
