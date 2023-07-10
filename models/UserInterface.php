@@ -20,9 +20,6 @@ namespace Pimcore\Model;
 
 use Pimcore\Model\User\UserRoleInterface;
 
-/**
- * @method User\Dao getDao()
- */
 interface UserInterface extends UserRoleInterface
 {
     public function getPassword(): ?string;
