@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
-
 use Pimcore\Model\ModelInterface;
 
 /**

@@ -17,16 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
-
 use Pimcore\Model\User\Workspace\Asset;
 use Pimcore\Model\User\Workspace\DataObject;
 use Pimcore\Model\User\Workspace\Document;
-
 
 interface UserRoleInterface extends AbstractUserInterface
 {
     /**
      * @return $this
+     *
      * @internal
      *
      */

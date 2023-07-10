@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
-
 use Pimcore\Model\User\UserRoleInterface;
 
 interface UserInterface extends UserRoleInterface
@@ -168,6 +167,7 @@ interface UserInterface extends UserRoleInterface
      * If only edit languages are empty (but view languages not) empty array is returned.
      *
      * @return string[]|null
+     *
      * @internal
      *
      */
@@ -177,6 +177,7 @@ interface UserInterface extends UserRoleInterface
      * Returns array of languages allowed for viewing. If view languages are empty all languages are allowed.
      *
      * @return string[]|null
+     *
      * @internal
      *
      */
