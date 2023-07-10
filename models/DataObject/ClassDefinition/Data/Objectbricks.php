@@ -238,7 +238,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $refKey = $key;
             $refId = null;
 
-            $relations = $item->getRelationData($refKey, true, $refId);
+            $relations = $item->getRelationData($refKey, true, $refId, $params["fieldname"]);
             if (empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}();
                 if (!empty($parentItem)) {

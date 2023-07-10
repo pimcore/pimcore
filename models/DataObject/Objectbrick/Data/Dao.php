@@ -373,7 +373,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getRelationData($field, $forOwner, $remoteClassId)
+    public function getRelationData($field, $forOwner, $remoteClassId, $brickField)
     {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {
@@ -382,7 +382,7 @@ class Dao extends Model\Dao\AbstractDao
             $classId = $this->model->getObject()->getClassId();
         }
 
-        $params = [$field, $id, $field, $id, $field, $id];
+        $params = [$brickField, $field, $id, $brickField, $field, $id, $brickField, $field, $id];
 
         $dest = 'dest_id';
         $src = 'src_id';
@@ -393,7 +393,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index, o.o_published as published
             FROM objects o, object_relations_' . $classId . " r
-            WHERE r.fieldname= ?
+            WHERE r.ownername= ?
+            AND r.fieldname= ?
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND o.o_id = r.' . $dest . "
@@ -402,7 +403,8 @@ class Dao extends Model\Dao\AbstractDao
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index, "null" as published
             FROM assets a, object_relations_' . $classId . " r
-            WHERE r.fieldname= ?
+            WHERE r.ownername= ?
+            AND r.fieldname= ?
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
@@ -411,7 +413,8 @@ class Dao extends Model\Dao\AbstractDao
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index, d.published as published
             FROM documents d, object_relations_' . $classId . " r
-            WHERE r.fieldname= ?
+            WHERE r.ownername= ?
+            AND r.fieldname= ?
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND d.id = r.' . $dest . "
