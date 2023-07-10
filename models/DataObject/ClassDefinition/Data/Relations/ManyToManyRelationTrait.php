@@ -37,10 +37,11 @@ trait ManyToManyRelationTrait
                     if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return true;
                     }
-                }
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return true;
+                } else {
+                    if ($this->supportsDirtyDetection()) {
+                        if (!$object->isFieldDirty($this->getName())) {
+                            return true;
+                        }
                     }
                 }
             }
