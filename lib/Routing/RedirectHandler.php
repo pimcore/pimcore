@@ -171,7 +171,7 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param Request $request
      * @param array $matches
      *
-     * @return Response|RedirectResponse|null
+     * @return Response|null
      *
      * @throws \Exception
      */
