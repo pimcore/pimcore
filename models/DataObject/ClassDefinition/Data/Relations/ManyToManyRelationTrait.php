@@ -29,25 +29,25 @@ trait ManyToManyRelationTrait
      */
     protected function skipSaveCheck(object $object, $params = []): bool
     {
-        $skipSave = false;
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
+        $forceSave = $params['forceSave'] ?? false;
+
+        if ($forceSave === false) {
             if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
                 if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DirtyIndicatorInterface) {
+                    if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         if (!$object->hasDirtyFields()) {
-                            $skipSave = true;
+                            return true;
                         }
                     }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$object->isFieldDirty($this->getName())) {
-                            $skipSave = true;
-                        }
+                }
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
+                        return true;
                     }
                 }
             }
         }
-        return $skipSave;
+        return false;
     }
 
     /**
