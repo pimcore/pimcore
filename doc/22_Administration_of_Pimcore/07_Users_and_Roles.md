@@ -88,7 +88,7 @@ The user permissions on element basis are summed up as follows:
 * **create**: new child elements can be created (does not exist for assets)
 * **delete**: this element can be deleted
 * **rename**: this element's (and potential child elements') name can be changed
-* **settings**: this element's settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby the right to move the element in tree
+* **settings**: this element's (and potential child elements') settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby the right to move the element in tree
 * **versions**: the `versions` tab is available
 * **properties**: the `properties` tab is available and can be managed
 
