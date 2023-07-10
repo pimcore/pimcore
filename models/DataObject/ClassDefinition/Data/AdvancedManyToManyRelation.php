@@ -549,6 +549,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function save($object, $params = [])
     {
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
+        }
+
+
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
 
         $objectId = null;
