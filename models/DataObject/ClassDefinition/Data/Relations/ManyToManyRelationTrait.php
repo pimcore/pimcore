@@ -33,15 +33,14 @@ trait ManyToManyRelationTrait
 
         if ($forceSave === false) {
             if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
-                if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                if ($object instanceof DataObject\Localizedfield
+                    && $object->getObject() instanceof DirtyIndicatorInterface
+                    && !$object->hasDirtyFields()
+                ) {
+                    return true;
+                } elseif ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
                         return true;
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$object->isFieldDirty($this->getName())) {
-                            return true;
-                        }
                     }
                 }
             }
