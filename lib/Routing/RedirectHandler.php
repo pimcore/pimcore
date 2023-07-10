@@ -127,7 +127,7 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param RedirectUrlPartResolver $partResolver
      * @param Site|null $sourceSite
      *
-     * @return Response|RedirectResponse|null
+     * @return Response|null
      *
      * @throws \Exception
      */
