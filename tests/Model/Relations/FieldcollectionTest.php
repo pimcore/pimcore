@@ -120,7 +120,7 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals([], $rel);
     }
 
-    public function testAdvancedRelationFieldInsideFieldCollection()
+    public function testAdvancedRelationFieldInsideFieldCollection(): void
     {
         $object = TestHelper::createEmptyObject();
         $items = new Fieldcollection();
