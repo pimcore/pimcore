@@ -89,7 +89,7 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param bool $override
      * @param Site|null $sourceSite
      *
-     * @return RedirectResponse|null
+     * @return Response|RedirectResponse|null
      *
      * @throws \Exception
      */
@@ -127,7 +127,7 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param RedirectUrlPartResolver $partResolver
      * @param Site|null $sourceSite
      *
-     * @return RedirectResponse|null
+     * @return Response|RedirectResponse|null
      *
      * @throws \Exception
      */
