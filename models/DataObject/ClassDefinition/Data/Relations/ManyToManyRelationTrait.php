@@ -21,29 +21,41 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 trait ManyToManyRelationTrait
 {
     /**
+     * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
+     *
+     * @param object $object
+     * @param array $params
+     * @return bool
+     */
+    protected function skipSaveCheck(object $object, array $params = []): bool
+    {
+        $forceSave = $params['forceSave'] ?? false;
+
+        if (
+            $forceSave === false &&
+            !DataObject::isDirtyDetectionDisabled() &&
+            $object instanceof DirtyIndicatorInterface
+        ) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    return true;
+                }
+            } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save($container, $params = [])
     {
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
-                if ($container instanceof DataObject\Localizedfield) {
-                    if ($container->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$container->hasDirtyFields()) {
-                            return;
-                        }
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$container->isFieldDirty($this->getName())) {
-                            return;
-                        }
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($container, $params)) {
+            return;
         }
-
-        $data = $this->getDataFromObjectParam($container, $params);
 
         parent::save($container, $params);
     }
