@@ -31,19 +31,20 @@ trait ManyToManyRelationTrait
     {
         $forceSave = $params['forceSave'] ?? false;
 
-        if ($forceSave === false) {
-            if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
-                if ($object instanceof DataObject\Localizedfield){
-                    if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
-                        return true;
-                    }
-                } elseif ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return true;
-                    }
+        if (
+            $forceSave === false &&
+            !DataObject::isDirtyDetectionDisabled() &&
+            $object instanceof DirtyIndicatorInterface
+        ) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    return true;
                 }
+            } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                return true;
             }
         }
+
         return false;
     }
 
