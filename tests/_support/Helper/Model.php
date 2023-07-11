@@ -750,7 +750,6 @@ class Model extends AbstractDefinitionHelper
                 ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
-
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));

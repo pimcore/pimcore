@@ -162,14 +162,13 @@ class FieldcollectionTest extends ModelTestCase
         //check if target1 is still there
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
-        $this->assertEquals($target1->getId(), isset($rel[0])? $rel[0]->getElementId() : false);
+        $this->assertEquals($target1->getId(), isset($rel[0]) ? $rel[0]->getElementId() : false);
 
         //check if target2 is removed
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
         $this->assertEquals(false, isset($rel[0]));
     }
-
 
     public function testLocalizedFieldInsideFieldCollection()
     {

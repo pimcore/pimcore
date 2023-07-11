@@ -25,6 +25,7 @@ trait ManyToManyRelationTrait
      *
      * @param object $object
      * @param array $params
+     *
      * @return bool
      */
     protected function skipSaveCheck(object $object, array $params = []): bool
