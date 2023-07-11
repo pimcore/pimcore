@@ -25,9 +25,12 @@ use Pimcore\Model\Dao\AbstractDao;
 final class Version20230616085142 extends AbstractMigration
 {
     private const ID_COLUMN = 'o_id';
+
     private const PK_COLUMNS = [
         self::ID_COLUMN, 'dest_id', 'type', 'fieldname', 'column', 'ownertype', 'ownername', 'position', 'index'];
+
     private const UNIQUE_INDEX_NAME = 'metadata_un';
+
     private const AUTO_ID = 'id';
 
     public function getDescription(): string
@@ -40,9 +43,9 @@ final class Version20230616085142 extends AbstractMigration
         $db = Db::get();
 
         $metaDataTables = $db->fetchAllAssociative(
-                "SHOW FULL TABLES
+            "SHOW FULL TABLES
                        WHERE `Tables_in_{$db->getDatabase()}` LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
-            );
+        );
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
@@ -62,7 +65,7 @@ final class Version20230616085142 extends AbstractMigration
                     'objects',
                     [self::ID_COLUMN],
                     [self::ID_COLUMN],
-                    ["onDelete" => "CASCADE"],
+                    ['onDelete' => 'CASCADE'],
                     $fkName
                 );
             }
