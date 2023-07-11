@@ -122,6 +122,10 @@ class PreviewGenerator implements PreviewGeneratorInterface
         $sites = new Site\Listing();
         $sites->setOrderKey('mainDomain')->setOrder('ASC');
 
+        if (empty($sites)) {
+            return [];
+        }
+
         $sitesOptions = [
             $this->translator->trans('main_site', [], Translation::DOMAIN_ADMIN) => '0'
         ];
@@ -131,9 +135,6 @@ class PreviewGenerator implements PreviewGeneratorInterface
             $sitesOptions[$label] = $site->getId();
         }
 
-        if (empty($sites)) {
-            return [];
-        }
 
         return [
             'name' => PreviewGeneratorInterface::PARAMETER_SITE,
