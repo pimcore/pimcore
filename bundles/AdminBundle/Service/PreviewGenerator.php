@@ -122,14 +122,16 @@ class PreviewGenerator implements PreviewGeneratorInterface
         $sites = new Site\Listing();
         $sites->setOrderKey('mainDomain')->setOrder('ASC');
 
-        $sitesOptions = [];
+        $sitesOptions = [
+            $this->translator->trans('main_site', [], Translation::DOMAIN_ADMIN) => '0'
+        ];
 
         foreach ($sites as $site) {
             $label = $site->getRootDocument()?->getKey();
             $sitesOptions[$label] = $site->getId();
         }
 
-        if (empty($sitesOptions)) {
+        if (empty($sites)) {
             return [];
         }
 
@@ -137,7 +139,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
             'name' => PreviewGeneratorInterface::PARAMETER_SITE,
             'label' => $this->translator->trans('preview_generator_site', [], Translation::DOMAIN_ADMIN),
             'values' => $sitesOptions,
-            'defaultValue' => current($sitesOptions),
+            'defaultValue' => reset($sitesOptions),
         ];
     }
 
