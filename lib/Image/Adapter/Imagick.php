@@ -86,11 +86,7 @@ class Imagick extends Adapter
                 $i->setResolution($options['resolution']['x'], $options['resolution']['y']);
             }
 
-            $imagePathLoad = $imagePath;
-
-            $imagePathLoad = $imagePathLoad . '[0]';
-
-            if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
+            if (!$i->readImage($imagePath) || !@filesize($imagePath)) {
                 return false;
             }
 
