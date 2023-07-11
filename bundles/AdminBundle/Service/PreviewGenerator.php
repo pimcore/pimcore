@@ -122,7 +122,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
         $sites = new Site\Listing();
         $sites->setOrderKey('mainDomain')->setOrder('ASC');
 
-        if ($sites->getTotalCount() == 0) {
+        if ($sites->count() == 0) {
             return [];
         }
 
