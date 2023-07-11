@@ -405,7 +405,7 @@ CSS;
         $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
 
-        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-[\d]+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));
+        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-\d+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));
 
         return $fileInfo;
     }
