@@ -51,9 +51,9 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var Model\Element\ElementInterface|null
+     * @var Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
      */
-    protected ?Model\Element\ElementInterface $object = null;
+    protected Model\Element\ElementInterface|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * Contains the direct link as plain text
