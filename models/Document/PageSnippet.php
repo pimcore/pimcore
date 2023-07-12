@@ -413,25 +413,25 @@ abstract class PageSnippet extends Model\Document
             return $editables[$name];
         }
 
+        $inheritedEditable = null;
         if (array_key_exists($name, $this->inheritedEditables)) {
-            return $this->inheritedEditables[$name];
+            $inheritedEditable = $this->inheritedEditables[$name];
         }
 
-        // check for content main document (inherit data)
-        if ($contentMainDocument = $this->getContentMainDocument()) {
-            if ($contentMainDocument instanceof self) {
+        if (!$inheritedEditable) {
+            // check for content main document (inherit data)
+            $contentMainDocument = $this->getContentMainDocument();
+            if ($contentMainDocument instanceof self && $contentMainDocument->getId() != $this->getId()) {
                 $inheritedEditable = $contentMainDocument->getEditable($name);
                 if ($inheritedEditable) {
                     $inheritedEditable = clone $inheritedEditable;
                     $inheritedEditable->setInherited(true);
                     $this->inheritedEditables[$name] = $inheritedEditable;
-
-                    return $inheritedEditable;
                 }
             }
         }
 
-        return null;
+        return $inheritedEditable;
     }
 
     /**
