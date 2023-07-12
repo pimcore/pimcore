@@ -203,7 +203,7 @@ class Geobounds extends AbstractGeo implements
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data && $data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
+        if (is_array($data) && $data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
             $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
             $sw = new DataObject\Data\GeoCoordinates($data['SWlatitude'], $data['SWlongitude']);
 
