@@ -29,8 +29,18 @@ class SessionBagListener implements EventSubscriberInterface
         if (!$event->isMainRequest()) {
             return;
         }
+        
+        if ($event->getRequest()->attributes->get('_stateless', false)) {
+            return;
+        }
 
         $session = $event->getRequest()->getSession();
+        
+        //do not register bags, if session is already started
+        if ($session->isStarted()) {
+            return;
+        }
+
         $bag = new AttributeBag('_session_cart');
         $bag->setName('session_cart');
  
