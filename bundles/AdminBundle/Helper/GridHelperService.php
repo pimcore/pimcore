@@ -575,7 +575,7 @@ class GridHelperService
                         $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
                         $doNotQuote = true;
                     } elseif (count($orderKeyParts) === 2) {
-                        $orderKey = $orderKeyParts[0].'.'.$orderKeyParts[1];
+                        $orderKey = $list->quoteIdentifier($orderKeyParts[0]).'.'.$list->quoteIdentifier($orderKeyParts[1]);
                         $doNotQuote = true;
                     }
                 } else {
