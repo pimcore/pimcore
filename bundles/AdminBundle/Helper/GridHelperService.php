@@ -580,7 +580,7 @@ class GridHelperService
                         $doNotQuote = true;
                     }
                 } else {
-                    $orderKey = $list->getDao()->getTableName().'.'.$list->quoteIdentifier($orderKey);
+                    $orderKey = $list->getDao()->getTableName() . '.' . $list->quoteIdentifier($orderKey);
                     $doNotQuote = true;
                 }
             }
