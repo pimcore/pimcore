@@ -268,7 +268,7 @@ class Link extends Model\Document
         return $this;
     }
 
-    public function getElement(): ?Model\Element\ElementInterface
+    public function getElement(): Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
     {
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
@@ -287,7 +287,7 @@ class Link extends Model\Document
         return $this;
     }
 
-    private function setObjectFromId(): ?Model\Element\ElementInterface
+    private function setObjectFromId(): Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
     {
         try {
             if ($this->internal) {
