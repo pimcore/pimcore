@@ -23,7 +23,6 @@ use League\Flysystem\FilesystemOperator;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
