@@ -571,11 +571,11 @@ class GridHelperService
                     if (strpos($orderKey, '?') !== false) {
                         $brickDescriptor = substr($orderKeyParts[0], 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $orderKey = $list->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') 
+                        $orderKey = $list->quoteIdentifier($brickDescriptor['containerKey'] . '_localized')
                             . '.' . $list->quoteIdentifier($brickDescriptor['brickfield']);
                         $doNotQuote = true;
                     } elseif (count($orderKeyParts) === 2) {
-                        $orderKey = $list->quoteIdentifier($orderKeyParts[0]) 
+                        $orderKey = $list->quoteIdentifier($orderKeyParts[0])
                             . '.' . $list->quoteIdentifier($orderKeyParts[1]);
                         $doNotQuote = true;
                     }
