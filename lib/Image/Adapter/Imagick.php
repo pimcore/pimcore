@@ -25,9 +25,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Imagick extends Adapter
 {
-    protected static string $RGBColorProfile;
+    protected static ?string $RGBColorProfile = null;
 
-    protected static string $CMYKColorProfile;
+    protected static ?string $CMYKColorProfile = null;
 
     /**
      * @var \Imagick|null
