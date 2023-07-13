@@ -127,14 +127,13 @@ class PreviewGenerator implements PreviewGeneratorInterface
         }
 
         $sitesOptions = [
-            $this->translator->trans('main_site', [], Translation::DOMAIN_ADMIN) => '0'
+            $this->translator->trans('main_site', [], Translation::DOMAIN_ADMIN) => '0',
         ];
 
         foreach ($sites as $site) {
             $label = $site->getRootDocument()?->getKey();
             $sitesOptions[$label] = $site->getId();
         }
-
 
         return [
             'name' => PreviewGeneratorInterface::PARAMETER_SITE,
