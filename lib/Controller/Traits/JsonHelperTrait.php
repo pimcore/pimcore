@@ -20,8 +20,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * @internal
- *
  * @property ContainerInterface $container
  */
 trait JsonHelperTrait

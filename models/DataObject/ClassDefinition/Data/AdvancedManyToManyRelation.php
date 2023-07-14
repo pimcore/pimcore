@@ -533,25 +533,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
-                        return;
-                    }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
 
-        $classId = null;
         $objectId = null;
 
         if ($object instanceof DataObject\Concrete) {
