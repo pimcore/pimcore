@@ -91,6 +91,8 @@ class ClassController extends AdminAbstractController implements KernelControlle
      */
     public function getTreeAction(Request $request)
     {
+        $this->checkPermission('classes');
+
         $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
         $classesList = new DataObject\ClassDefinition\Listing();

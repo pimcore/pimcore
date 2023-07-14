@@ -136,8 +136,10 @@ class IndexController extends AdminAbstractController implements KernelResponseE
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel, CsrfProtectionHandler $csrfProtection)
     {
+        $csrfProtection->checkCsrfToken($request);
+
         // DB
         try {
             $tables = $db->fetchAllAssociative('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES

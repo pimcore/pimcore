@@ -62,6 +62,7 @@ class SettingsController extends AdminAbstractController
     use StopMessengerWorkersTrait;
 
     private const CUSTOM_LOGO_PATH = 'custom-logo.image';
+    private const WEBSITE_SETTINGS = 'website_settings';
 
     public function __construct(protected TranslatorInterface $translator)
     {
@@ -1069,6 +1070,8 @@ class SettingsController extends AdminAbstractController
      */
     public function getAvailableSitesAction(Request $request)
     {
+        $this->checkPermission(self::WEBSITE_SETTINGS);
+
         $excludeMainSite = $request->get('excludeMainSite');
 
         $sitesList = new Model\Site\Listing();
@@ -1623,7 +1626,7 @@ class SettingsController extends AdminAbstractController
      */
     public function websiteSettingsAction(Request $request)
     {
-        $this->checkPermission('website_settings');
+        $this->checkPermission(self::WEBSITE_SETTINGS);
 
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
