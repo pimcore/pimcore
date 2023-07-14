@@ -573,7 +573,6 @@ Ext.onReady(function () {
                 if (data.pushStatistics) {
                     const request = new XMLHttpRequest();
                     request.open('GET', Routing.generate('pimcore_admin_index_statistics'));
-                    request.setRequestHeader('X-pimcore-csrf-token', pimcore.settings["csrfToken"]);
 
                     request.onload = function () {
                         if (this.status >= 200 && this.status < 400) {
