@@ -28,6 +28,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     use DataObject\ClassDefinition\Helper\Dao;
 
     protected ?array $tableDefinitions = null;
+    const TYPE_QUERY = " AND (`type` = 'object' or `type` = '')";
 
     public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
     {
@@ -46,9 +47,37 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $getter = 'get' . ucfirst($column);
             $data = $dataTemplate;
             $data['column'] = $column;
+            $data['id'] = $this->getTableIdFromData($data, $table);
             $data['data'] = $this->model->$getter();
             Helper::upsert($this->db, $table, $data, $this->getPrimaryKey($table));
         }
+    }
+
+    private function getTableIdFromData(array $data, string $table): int
+    {
+        $id= $this->db->fetchOne(
+            'SELECT id FROM ' . $table .
+            ' WHERE o_id = ? AND '.
+            'dest_id = ? AND '.
+            'fieldname = ? AND '.
+            $this->db->quote('column') . ' = ? AND '.
+            'ownertype = ? AND '.
+            'ownername = ? AND '.
+            'position = ? AND '.
+            '`index` = ? ' .
+            self::TYPE_QUERY,
+            [
+                $data['o_id'],
+                $data['dest_id'],
+                $data['fieldname'],
+                $data['column'],
+                $data['ownertype'],
+                $data['ownername'],
+                $data['position'],
+                $data['index'],
+            ]
+        );
+        return (int) $id;
     }
 
     protected function getTablename(DataObject\Concrete $object): string
@@ -58,9 +87,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
 
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
     {
-        $typeQuery = " AND (`type` = 'object' or `type` = '')";
-
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
+        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . self::TYPE_QUERY;
         $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
