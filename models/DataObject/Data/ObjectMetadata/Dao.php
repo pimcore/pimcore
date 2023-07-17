@@ -60,7 +60,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     {
         $typeQuery = " AND (`type` = 'object' or `type` = '')";
 
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
+        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
         $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
@@ -108,7 +108,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
               INDEX `position` (`position`),
               INDEX `index` (`index`),
               CONSTRAINT `".self::getForeignKeyName($table, 'o_id').'` FOREIGN KEY (`o_id`)
-              REFERENCES objects (`o_id`) ON DELETE CASCADE
+              REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($class, [$table]);
