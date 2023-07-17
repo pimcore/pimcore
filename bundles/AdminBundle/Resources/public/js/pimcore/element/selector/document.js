@@ -199,7 +199,16 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
                 {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-                {text: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
+                {
+                    text: t("title"),
+                    flex: 200,
+                    sortable: false,
+                    dataIndex: 'title',
+                    hidden: false,
+                    renderer: function (value) {
+                        return Ext.util.Format.htmlEncode(value);
+                    }
+                },
                 {text: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
                 {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true}
             ];
