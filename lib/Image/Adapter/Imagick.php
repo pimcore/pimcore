@@ -25,12 +25,12 @@ use Pimcore\Model\Asset;
 class Imagick extends Adapter
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected static $RGBColorProfile;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected static $CMYKColorProfile;
 
@@ -45,7 +45,7 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
-     * @var array
+     * @var array<string, bool>
      */
     protected static $supportedFormatsCache = [];
 
