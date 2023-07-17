@@ -45,7 +45,7 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
-     * @var array
+     * @var array<string, bool>
      */
     protected static $supportedFormatsCache = [];
 
