@@ -217,6 +217,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
+            let panelComponent = this.component.up('panel');
+            let timeoutId;
+            do{
+                if(panelComponent?.scrollable){
+                    panelComponent.body.dom.onscroll = function () {
+                        if (typeof timeoutId === "number") {
+                            clearTimeout(timeoutId);
+                        }
+
+                        timeoutId = setTimeout(function(){
+                            CKEDITOR.document.getWindow().fire('scroll');
+                        }, 100);
+                    }
+                }
+                panelComponent = panelComponent.up('panel');
+            } while(panelComponent)
+
             // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
                 var urlField = e.data.getElement().findOne("input");
