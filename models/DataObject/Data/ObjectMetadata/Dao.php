@@ -39,22 +39,23 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = ['o_id' => $object->getId(),
+        $dataTemplate = [
+            'o_id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
-            'ownername' => $ownername ? $ownername : '',
-            'index' => $index ? $index : '0',
-            'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object', ];
+            'ownername' => $ownername ?: '',
+            'index' => $index ?: '0',
+            'position' => $position ?: '0',
+            'type' => $type ?: 'object'
+        ];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
             $data = $dataTemplate;
             $data['column'] = $column;
-            $data['id'] = $this->getTableIdFromData($data, $table);
             $data['data'] = $this->model->$getter();
-            Helper::upsert($this->db, $table, $data, $this->getPrimaryKey($table));
+            Helper::upsert($this->db, $table, $data, array_keys(array_diff_key($data, ['data' => null])));
         }
     }
 

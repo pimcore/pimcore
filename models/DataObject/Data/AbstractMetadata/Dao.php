@@ -79,30 +79,4 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->handleEncryption($class, [$table]);
     }
-
-    protected function getTableIdFromData(array $data, string $table): int
-    {
-        $id = $this->db->fetchOne(
-            'SELECT id FROM ' . $table .
-            ' WHERE o_id = ? AND '.
-            'dest_id = ? AND '.
-            'fieldname = ? AND '.
-            $this->db->quote('column') . ' = ? AND '.
-            'ownertype = ? AND '.
-            'ownername = ? AND '.
-            'position = ? AND '.
-            '`index` = ? ',
-            [
-                $data['o_id'],
-                $data['dest_id'],
-                $data['fieldname'],
-                $data['column'],
-                $data['ownertype'],
-                $data['ownername'],
-                $data['position'],
-                $data['index'],
-            ]
-        );
-        return (int) $id;
-    }
 }
