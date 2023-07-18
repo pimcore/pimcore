@@ -531,7 +531,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    public function save(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): void
     {
         if ($this->skipSaveCheck($object, $params)) {
             return;
@@ -553,7 +555,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         if ($object instanceof DataObject\Localizedfield) {
             $classId = $object->getClass()->getId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData || $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData ||
+            $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $classId = $object->getObject()->getClassId();
         } else {
             $classId = $object->getClassId();
@@ -583,7 +586,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' .
+                Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -602,7 +606,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
 
         if (!empty($multihrefMetadata)) {
-            if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
+            if ($object instanceof DataObject\Localizedfield
+                || $object instanceof DataObject\Objectbrick\Data\AbstractData
                 || $object instanceof DataObject\Fieldcollection\Data\AbstractData
             ) {
                 $objectConcrete = $object->getObject();
@@ -614,7 +619,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($multihrefMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+                $meta->save($objectConcrete, $ownerType, $ownerName, (string) $position, $counter);
                 $counter++;
             }
         }
