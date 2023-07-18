@@ -112,7 +112,7 @@ pimcore:
 
     security:
         encoder_factories:
-            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
+            Pimcore\Security\User\User: pimcore_admin.security.password_encoder_factory
 
     bundles:
         search_paths:
