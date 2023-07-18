@@ -44,9 +44,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var Model\DataObject\Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected ?Concrete $object = null;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * @internal
@@ -195,8 +195,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->object;
     }
 
-    public function setObject(?Concrete $object): static
+    public function setObject(Concrete|Model\Element\ElementDescriptor|null $object): static
     {
+        if ($object instanceof Model\Element\ElementDescriptor) {
+            $object = Service::getElementById($object->getType(), $object->getId());
+        }
+
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
 
