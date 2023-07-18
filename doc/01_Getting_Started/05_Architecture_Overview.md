@@ -17,8 +17,7 @@ API client (REST, SOAP, ...).
 
 The Core extensions can be installed via Composer, extending the Core functionalities with additional functions. Some of them are only provided by the Enterprise Edition.
  
-Plugins and other custom modules/bundles can also be added via Composer and use the Pimcore Core functionalities 
-via its API or be used by the MVC component. 
+Plugins and other custom modules/bundles can also be added via Composer and use the Pimcore Core functionalities via its API, or be used by the MVC component. 
 
 When implementing solutions with Pimcore, your custom parts should be in one of the following locations within the architecture: 
 
