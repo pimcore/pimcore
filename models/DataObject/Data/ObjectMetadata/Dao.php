@@ -28,9 +28,14 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     use DataObject\ClassDefinition\Helper\Dao;
 
     protected ?array $tableDefinitions = null;
-    const TYPE_QUERY = " AND (`type` = 'object' or `type` = '')";
 
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
+    public function save(
+        DataObject\Concrete $object,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $type = 'object'): void
     {
         $table = $this->getTablename($object);
 
@@ -53,42 +58,35 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         }
     }
 
-    private function getTableIdFromData(array $data, string $table): int
-    {
-        $id= $this->db->fetchOne(
-            'SELECT id FROM ' . $table .
-            ' WHERE o_id = ? AND '.
-            'dest_id = ? AND '.
-            'fieldname = ? AND '.
-            $this->db->quote('column') . ' = ? AND '.
-            'ownertype = ? AND '.
-            'ownername = ? AND '.
-            'position = ? AND '.
-            '`index` = ? ' .
-            self::TYPE_QUERY,
-            [
-                $data['o_id'],
-                $data['dest_id'],
-                $data['fieldname'],
-                $data['column'],
-                $data['ownertype'],
-                $data['ownername'],
-                $data['position'],
-                $data['index'],
-            ]
-        );
-        return (int) $id;
-    }
-
     protected function getTablename(DataObject\Concrete $object): string
     {
         return 'object_metadata_' . $object->getClassId();
     }
 
-    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
+    public function load(
+        DataObject\Concrete $source,
+        int $destinationId,
+        string $fieldname,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
     {
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . self::TYPE_QUERY;
-        $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+        $query = 'SELECT * FROM ' . $this->getTablename($source) .
+            ' WHERE o_id = ? AND ' .
+            'dest_id = ? AND ' .
+            'fieldname = ? AND' .
+            ' ownertype = ? AND ' .
+            'ownername = ? AND ' .
+            'position = ? AND ' .
+            '`index` = ? ' . self::TYPE_QUERY;
+
+        $dataRaw = $this->db->fetchAllAssociative(
+            $query,
+            [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]
+        );
+
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
