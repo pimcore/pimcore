@@ -218,7 +218,7 @@ class Text
 
                 if ($id && $type) {
                     $elements[] = [
-                        'id' => $id,
+                        'id' => (int) $id,
                         'type' => $type,
                     ];
                 }
