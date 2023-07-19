@@ -43,7 +43,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             'ownername' => $ownername ?: '',
             'index' => $index ?: '0',
             'position' => $position ?: '0',
-            'type' => $type ?: 'object'
+            'type' => $type ?: 'object',
         ];
 
         foreach ($this->model->getColumns() as $column) {
