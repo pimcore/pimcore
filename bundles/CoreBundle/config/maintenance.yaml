@@ -19,9 +19,19 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
 
-    Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
+    Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper:
         arguments:
             - '@logger'
+
+    Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
+
+
+    Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
+        arguments:
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupBrickTables }
 
@@ -31,9 +41,14 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanupClassificationstoreTables }
 
-    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+    Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper:
         arguments:
             - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
+
+    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+        arguments:
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupFieldcollectionTables }
 

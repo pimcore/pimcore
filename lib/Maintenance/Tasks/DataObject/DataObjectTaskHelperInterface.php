@@ -14,24 +14,19 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
-
-use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Maintenance\Tasks\DataObject\ConcreteTaskHelperInterface;
+namespace Pimcore\Maintenance\Tasks\DataObject;
 
 /**
  * @internal
  */
-class CleanupBrickTablesTask implements TaskInterface
+interface DataObjectTaskHelperInterface
 {
+    function getCollectionNames(string $dir): array;
 
-    public function __construct(private ConcreteTaskHelperInterface $helper)
-    {
-    }
-
-    public function execute(): void
-    {
-      $this->helper->cleanupCollectionTable();
-    }
+    function cleanupTable(
+        string $tableName,
+        string $classId,
+        bool $isLocalized = true
+    ): void;
 
 }
