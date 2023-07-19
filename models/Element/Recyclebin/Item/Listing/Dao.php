@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -45,7 +44,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return int
      *
      * @todo: $amount could not be defined, so this could cause an issue
      */

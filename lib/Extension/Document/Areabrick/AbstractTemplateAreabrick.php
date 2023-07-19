@@ -30,26 +30,17 @@ namespace Pimcore\Extension\Document\Areabrick;
  */
 abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getTemplate(): ?string
     {
         // return null by default = auto-discover
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTemplateLocation(): string
     {
         return static::TEMPLATE_LOCATION_GLOBAL;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTemplateSuffix(): string
     {
         return static::TEMPLATE_SUFFIX_TWIG;

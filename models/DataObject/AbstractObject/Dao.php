@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\AbstractObject;
 
 use Doctrine\DBAL\Exception;
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -34,7 +33,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -55,7 +53,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -88,7 +85,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -138,7 +134,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes object from database
      *
-     * @return void
      */
     public function delete(): void
     {
@@ -157,9 +152,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
-     * @param string $oldPath
      *
-     * @return null|array
      *
      * @internal
      */
@@ -193,7 +186,6 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      *
-     * @return void
      */
     public function deleteAllProperties(): void
     {
@@ -231,9 +223,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
      *
-     * @return array
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -383,10 +373,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param array|null $objectTypes
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
     {
@@ -418,9 +406,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param int $id
      *
-     * @return array
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -506,10 +492,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -553,8 +536,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
      *
      * @return array<string, int>
      *

@@ -27,7 +27,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -53,7 +52,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $name
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -87,7 +85,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Quick test if there are children
      *
-     * @return bool
      */
     public function hasChildren(): bool
     {

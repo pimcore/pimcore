@@ -49,8 +49,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Document $document
-     * @param string $task
      *
      * @return int[]
      */
@@ -89,11 +87,6 @@ class Dao extends Model\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @param Document $document
-     * @param Document $translation
-     * @param string|null $language
-     */
     public function addTranslation(Document $document, Document $translation, string $language = null): void
     {
         $sourceId = $this->getTranslationSourceId($document);

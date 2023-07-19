@@ -25,11 +25,4 @@ use Pimcore\Model;
  */
 class Dao extends Model\Document\Dao
 {
-    /**
-     * Deletes the folder
-     */
-    public function delete(): void
-    {
-        parent::delete();
-    }
 }

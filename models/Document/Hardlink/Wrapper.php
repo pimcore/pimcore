@@ -41,7 +41,6 @@ trait Wrapper
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */

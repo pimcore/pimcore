@@ -27,16 +27,12 @@ abstract class TestCase extends Unit
     /**
      * Determine if the test needs a DB connection (will be skipped if no DB is present)
      *
-     * @return bool
      */
     protected function needsDb(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

@@ -55,7 +55,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -184,7 +183,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save changes to database, it's an good idea to use save() instead
      *
-     * @param bool|null $isUpdate
      */
     public function update(bool $isUpdate = null): void
     {

@@ -34,7 +34,6 @@ class Dao extends AbstractDao
     const DB_TABLE_NAME = 'notifications';
 
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */

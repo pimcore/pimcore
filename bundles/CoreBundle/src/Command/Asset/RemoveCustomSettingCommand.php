@@ -54,9 +54,6 @@ class RemoveCustomSettingCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditions = ['customSettings LIKE ?'];

@@ -29,9 +29,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     * @param bool|array $saveRelationalData
      *
      * @throws \Exception
      */

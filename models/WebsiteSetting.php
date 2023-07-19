@@ -19,7 +19,6 @@ namespace Pimcore\Model;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
@@ -50,13 +49,6 @@ final class WebsiteSetting extends AbstractModel
      */
     protected static array $nameIdMappingCache = [];
 
-    /**
-     * @param string $name
-     * @param int|null $siteId
-     * @param string|null $language
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
@@ -89,8 +81,6 @@ final class WebsiteSetting extends AbstractModel
      * @param int|null $siteId site ID
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
-     *
-     * @return WebsiteSetting|null
      *
      * @throws \Exception
      */
@@ -149,7 +139,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -184,7 +174,7 @@ final class WebsiteSetting extends AbstractModel
             $data = $data->getId();
         }
 
-        $this->data = SecurityHelper::convertHtmlSpecialChars($data);
+        $this->data = $data;
 
         return $this;
     }
@@ -232,7 +222,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -246,7 +235,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @return string
      */
     public function getType(): string
     {

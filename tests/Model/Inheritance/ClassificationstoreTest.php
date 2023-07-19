@@ -39,9 +39,6 @@ class ClassificationstoreTest extends ModelTestCase
         \Pimcore::setAdminMode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUpTestClasses(): void
     {
         $class = ClassDefinition::getByName('inheritance');

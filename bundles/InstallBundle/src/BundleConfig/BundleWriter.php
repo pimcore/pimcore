@@ -16,13 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 
-use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\File;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class BundleWriter
 {
-    public function addBundlesToConfig(array $bundles): void
+    public function addBundlesToConfig(array $bundles, array $availableBundles): void
     {
         $bundlesPhpFile = PIMCORE_PROJECT_ROOT . '/config/bundles.php';
 
@@ -31,7 +30,8 @@ class BundleWriter
         }
         $bundlesToInstall = [];
         foreach ($bundles as $bundle) {
-            if (in_array($bundle, Installer::INSTALLABLE_BUNDLES)) {
+            // check against available bundles since they can change
+            if (in_array($bundle, $availableBundles)) {
                 $bundlesToInstall[$bundle] = ['all' => true];
             }
         }

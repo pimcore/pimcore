@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Tool\Email\Blocklist elements
      *
-     * @return array
      */
     public function load(): array
     {

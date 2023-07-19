@@ -41,7 +41,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @internal
      *
-     * @var string
      */
     protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 
@@ -51,6 +50,11 @@ class Listing extends Model\Listing\AbstractListing
      * @var string[]|null
      */
     protected ?array $languages = null;
+
+    public function isValidOrderKey(string $key): bool
+    {
+        return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
+    }
 
     public function getDomain(): string
     {

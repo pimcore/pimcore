@@ -29,7 +29,6 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
@@ -50,7 +49,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return int
      *
      * @todo: $data could be undefined
      */

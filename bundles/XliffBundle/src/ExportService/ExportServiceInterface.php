@@ -22,12 +22,7 @@ use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItemCollecti
 interface ExportServiceInterface
 {
     /**
-     * @param TranslationItemCollection $translationItems
-     * @param string $sourceLanguage
-     * @param array $targetLanguages
-     * @param string|null $exportId
      *
-     * @return string
      *
      * @throws \Exception
      */

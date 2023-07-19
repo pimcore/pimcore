@@ -256,8 +256,6 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @internal
      *
-     * @param array $data
-     *
      * @throws \Exception
      */
     protected static function checkCreateData(array $data): void

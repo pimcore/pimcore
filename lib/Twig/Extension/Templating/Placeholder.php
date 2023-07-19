@@ -54,7 +54,6 @@ class Placeholder extends AbstractExtension
     /**
      * Registry key under which container registers itself
      *
-     * @var string
      */
     protected string $_regKey = 'Placeholder';
 
@@ -66,9 +65,7 @@ class Placeholder extends AbstractExtension
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param string|null $containerName
      *
-     * @return Container
      */
     public function __invoke(string $containerName = null): Container
     {

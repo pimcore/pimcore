@@ -28,7 +28,6 @@ use Pimcore\Model\Element\Tag;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -44,7 +43,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @throws \Exception
      *
@@ -120,8 +118,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
      *
      * @return Model\Element\Tag[]
      */
@@ -167,9 +163,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
-     * @param array $tags
      *
      * @throws \Exception
      */
@@ -218,7 +211,6 @@ class Dao extends Model\Dao\AbstractDao
      * @param array  $classNames        For objects only: filter by classnames
      * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public function getElementsForTag(
         Tag $tag,
@@ -282,7 +274,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $tagPath separated by "/"
      *
-     * @return null|Tag
      */
     public function getByPath(string $tagPath): ?Tag
     {

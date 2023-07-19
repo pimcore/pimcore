@@ -42,7 +42,6 @@ class Dao extends \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Dao
     }
 
     /**
-     * @param Model\User $user
      *
      * @return Config[]
      */

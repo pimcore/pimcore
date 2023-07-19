@@ -33,9 +33,9 @@ class Video implements OwnerAwareFieldInterface
 
     protected string|int|Asset|\Pimcore\Model\Element\ElementDescriptor|null $poster = null;
 
-    protected string $title;
+    protected ?string $title = null;
 
-    protected string $description;
+    protected ?string $description = null;
 
     public function setData(Asset|int|string $data): void
     {
@@ -59,13 +59,13 @@ class Video implements OwnerAwareFieldInterface
         return $this->type;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
         $this->markMeDirty();
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -81,13 +81,13 @@ class Video implements OwnerAwareFieldInterface
         return $this->poster;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
         $this->markMeDirty();
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }

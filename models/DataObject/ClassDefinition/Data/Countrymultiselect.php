@@ -26,7 +26,6 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $restrictTo = null;
 

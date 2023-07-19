@@ -122,10 +122,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {

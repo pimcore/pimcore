@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of thumanils for the specicifies parameters, returns an array of Schedule\Task elements
      *
-     * @return array
      */
     public function load(): array
     {

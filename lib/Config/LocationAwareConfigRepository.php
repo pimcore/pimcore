@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Config;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
-use Pimcore\Config;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\Config\FileLocator;
@@ -114,10 +113,7 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string|null $key
-     * @param string|null $dataSource
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -171,9 +167,6 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string $key
-     * @param mixed $data
-     * @param callable|null $yamlStructureCallback
      *
      * @throws \Exception
      */
@@ -244,8 +237,6 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string $key
-     * @param string|null $dataSource
      *
      * @throws \Exception
      */

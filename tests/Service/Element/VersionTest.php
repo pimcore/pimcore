@@ -116,7 +116,7 @@ class VersionTest extends TestCase
         /** @var Unittest $savedObject */
 
         // create target object
-        $randomText = TestHelper::generateRandomString(10000);
+        $randomText = TestHelper::generateRandomString(190);
 
         /** @var Unittest $targetObject */
         $targetObject = TestHelper::createEmptyObject();
@@ -279,9 +279,6 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id, 'id must not be empty');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -299,9 +296,6 @@ class VersionTest extends TestCase
         $db->executeStatement('DROP TABLE versionsData');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;

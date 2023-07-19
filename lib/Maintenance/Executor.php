@@ -66,9 +66,6 @@ final class Executor implements ExecutorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void
     {
         $this->setLastExecution();

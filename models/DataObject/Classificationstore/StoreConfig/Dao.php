@@ -30,7 +30,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -50,7 +49,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string|null $name
      *
      * @throws Model\Exception\NotFoundException
      */

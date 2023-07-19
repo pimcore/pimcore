@@ -25,14 +25,8 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'document';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -47,7 +41,6 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param string|null $path
      *
      * @internal
      */
@@ -75,7 +68,6 @@ class Document extends Model\Asset
     /**
      * returns null when page count wasn't processed yet (done asynchronously)
      *
-     * @return int|null
      */
     public function getPageCount(): ?int
     {
@@ -88,11 +80,8 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param string|array|Image\Thumbnail\Config $thumbnailName
-     * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
-     * @return Document\ImageThumbnail
      */
     public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $page = 1, bool $deferred = false): Document\ImageThumbnail
     {
@@ -110,11 +99,6 @@ class Document extends Model\Asset
         return new Document\ImageThumbnail($this, $thumbnailName, $page, $deferred);
     }
 
-    /**
-     * @param int|null $page
-     *
-     * @return string|null
-     */
     public function getText(int $page = null): ?string
     {
         if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {

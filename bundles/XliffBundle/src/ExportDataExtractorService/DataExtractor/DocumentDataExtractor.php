@@ -35,11 +35,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */
@@ -61,10 +57,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param Document $document
-     * @param AttributeSet $result
      *
-     * @return DocumentDataExtractor
      *
      * @throws \Exception
      */

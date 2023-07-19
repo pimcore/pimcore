@@ -27,7 +27,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param string $address
      *
      * @throws Model\Exception\NotFoundException(
      */

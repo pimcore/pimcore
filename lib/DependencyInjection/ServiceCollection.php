@@ -34,9 +34,6 @@ class ServiceCollection implements \IteratorAggregate
         $this->ids = $ids;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         foreach ($this->ids as $id) {

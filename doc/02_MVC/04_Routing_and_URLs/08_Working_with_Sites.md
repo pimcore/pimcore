@@ -1,4 +1,4 @@
-# Working with Sites
+# Working With Sites
 
 ## Introduction
 With Sites, it is possible to create multi domain web applications within Pimcore. 

@@ -42,9 +42,7 @@ class ArrayNormalizer
 
     /**
      * @param int|string|int[]|string[] $properties
-     * @param callable $normalizer
      *
-     * @return void
      */
     public function addNormalizer(array|int|string $properties, callable $normalizer): void
     {

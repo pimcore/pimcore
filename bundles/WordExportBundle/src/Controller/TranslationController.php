@@ -45,9 +45,7 @@ class TranslationController extends UserAwareController
     /**
      * @Route("/word-export", name="pimcore_bundle_wordexport_translation_wordexport", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function wordExportAction(Request $request, Filesystem $filesystem): JsonResponse
     {
@@ -238,8 +236,7 @@ class TranslationController extends UserAwareController
                     fclose($f);
                 }
             } catch (\Exception $e) {
-                Logger::error('Word Export: ' . $e->getMessage());
-                Logger::error((string) $e);
+                Logger::error('Word Export: ' . $e);
 
                 throw $e;
             }
@@ -253,9 +250,7 @@ class TranslationController extends UserAwareController
     /**
      * @Route("/word-export-download", name="pimcore_bundle_wordexport_translation_wordexportdownload", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return Response
      */
     public function wordExportDownloadAction(Request $request): Response
     {

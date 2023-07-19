@@ -102,9 +102,6 @@ final class BlockState implements \JsonSerializable
         $this->indexes = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

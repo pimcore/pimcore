@@ -33,9 +33,6 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
 {
     use CheckPasswordLengthTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     public function hash(string $plainPassword, string $salt = null): string
     {
         if ($this->isPasswordTooLong($plainPassword)) {
@@ -45,9 +42,6 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
         return Authentication::getPasswordHash($this->getUser()->getUserIdentifier(), $plainPassword);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function verify(string $hashedPassword, string $plainPassword, string $salt = null): bool
     {
         if ($this->isPasswordTooLong($hashedPassword)) {

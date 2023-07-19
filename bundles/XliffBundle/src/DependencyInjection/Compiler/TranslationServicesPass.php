@@ -32,7 +32,6 @@ final class TranslationServicesPass implements CompilerPassInterface
      * Registers each service with tag pimcore.translation.data-extractor as data extractor for the translations export data extractor service.
      * Registers each service with tag pimcore.translation.importer as importer for the translations importer service.
      *
-     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container): void
     {

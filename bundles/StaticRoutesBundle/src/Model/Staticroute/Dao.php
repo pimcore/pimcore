@@ -55,7 +55,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param string|null $id
      *
      * @throws NotFoundException
      */
@@ -82,8 +81,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $name
-     * @param int|null $siteId
      *
      * @throws NotFoundException
      */
@@ -126,9 +123,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

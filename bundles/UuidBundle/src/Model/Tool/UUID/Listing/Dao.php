@@ -31,7 +31,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of UUID for the specified parameters, returns an array of UUID elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -47,7 +46,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Returns the total amount of UUID entries
      *
-     * @return int
      */
     public function getTotalCount(): int
     {

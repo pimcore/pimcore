@@ -57,7 +57,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return int
      *
      * @todo: $amount could not be defined, so this could cause an issue
      */

@@ -19,8 +19,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -32,21 +32,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      * @internal
      *
-     * @var array|null
      */
     protected ?array $data = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'link';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         // update path if internal link
@@ -55,9 +48,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         // update path if internal link
@@ -66,9 +56,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
@@ -81,9 +68,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $classes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $url = $this->getHref();
@@ -162,9 +146,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                         strpos($key, 'aria-') === 0 ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. SecurityHelper::sanitizeHtmlAttributes($this->data[$key]) .' '. SecurityHelper::sanitizeHtmlAttributes($this->config[$key]) .'"';
+                        $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
                     } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.SecurityHelper::sanitizeHtmlAttributes($value).'"';
+                        $attribs[] = $key.'="'.htmlspecialchars($value).'"';
                     }
                 }
             }
@@ -224,11 +208,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $anchor = str_replace('"', urlencode('"'), $this->getAnchor());
+            $anchor = str_replace('"', urlencode('"'), htmlspecialchars($this->getAnchor()));
             $url .= '#' . str_replace('#', '', $anchor);
         }
 
@@ -304,12 +288,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function getParameters(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['parameters']) ?? '';
+        return $this->data['parameters'] ?? '';
     }
 
     public function getAnchor(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['anchor']) ?? '';
+        return $this->data['anchor'] ?? '';
     }
 
     public function getTitle(): string
@@ -319,27 +303,24 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function getRel(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['rel']) ?? '';
+        return $this->data['rel'] ?? '';
     }
 
     public function getTabindex(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['tabindex']) ?? '';
+        return $this->data['tabindex'] ?? '';
     }
 
     public function getAccesskey(): string
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['accesskey']) ?? '';
+        return $this->data['accesskey'] ?? '';
     }
 
     public function getClass(): mixed
     {
-        return SecurityHelper::sanitizeHtmlAttributes($this->data['class']) ?? '';
+        return $this->data['class'] ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -347,20 +328,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $this->data = [];
         }
 
-        //sanitize fields
-        $fieldsToExclude = ['path'];
-        foreach($this->data as $key => $value) {
-            if(!in_array($key, $fieldsToExclude)) {
-                $this->data[$key] = SecurityHelper::sanitizeHtmlAttributes((string) $value);
-            }
-        }
-
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
@@ -416,9 +386,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return strlen($this->getHref()) < 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -437,11 +404,20 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_'.$asset->getId();
+                        $key = 'asset_' . $asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
                             'type' => 'asset',
+                        ];
+                    }
+                } elseif ($this->data['internalType'] == 'object') {
+                    if ($object = DataObject\Concrete::getById($this->data['internalId'])) {
+                        $key = 'object_' . $object->getId();
+
+                        $dependencies[$key] = [
+                            'id' => $object->getId(),
+                            'type' => 'object',
                         ];
                     }
                 }
@@ -451,9 +427,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {

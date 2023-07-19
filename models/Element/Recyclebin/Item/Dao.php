@@ -27,7 +27,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws \Exception
      */
@@ -45,7 +44,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */

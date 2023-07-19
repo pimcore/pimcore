@@ -32,8 +32,6 @@ class Dao extends Model\Dao\AbstractDao
     public const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
-     * @param int $colId
-     * @param int $groupId
      *
      * @throws NotFoundException
      */

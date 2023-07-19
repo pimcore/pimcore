@@ -68,9 +68,6 @@ class DocumentRenderer implements DocumentRendererInterface
         // placeholder service/templating helper is used during the rendering process
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
