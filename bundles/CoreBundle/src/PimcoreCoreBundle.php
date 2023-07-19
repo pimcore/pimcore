@@ -33,6 +33,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -42,27 +43,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class PimcoreCoreBundle extends Bundle
 {
-    public function getContainerExtension(): ?ExtensionInterface
+    public function getContainerExtension(): ExtensionInterface
     {
-        if (null === $this->extension) {
-            $extension = $this->createContainerExtension();
-
-            if (null !== $extension) {
-                if (!$extension instanceof ExtensionInterface) {
-                    throw new \LogicException(sprintf('Extension %s must implement Symfony\Component\DependencyInjection\Extension\ExtensionInterface.', get_class($extension)));
-                }
-
-                $this->extension = $extension;
-            } else {
-                $this->extension = false;
-            }
-        }
-
-        if ($this->extension) {
-            return $this->extension;
-        }
-
-        return null;
+        return new PimcoreCoreExtension();
     }
 
     public function build(ContainerBuilder $container): void

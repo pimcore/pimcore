@@ -37,10 +37,10 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
  * @method int[] getTranslations(Document $document, string $task = 'open')
- * @method addTranslation(Document $document, Document $translation, $language = null)
- * @method removeTranslation(Document $document)
+ * @method void addTranslation(Document $document, Document $translation, string $language = null)
+ * @method void removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
- * @method removeTranslationLink(Document $document, Document $targetDocument)
+ * @method void removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
@@ -146,12 +146,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
-     *
      * @throws ValidationException
      */
-    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, bool $language = false): Page|Document|PageSnippet
+    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, ?string $language = null): Page|Document|PageSnippet
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();

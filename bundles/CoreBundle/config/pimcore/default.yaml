@@ -74,6 +74,7 @@ framework:
                     ul: ['class', 'style', 'id']
                     li: ['class', 'style', 'id']
                     ol: ['class', 'style', 'id']
+                    br: ''
             pimcore.translation_sanitizer:
                 allow_elements:
                     span: [ 'class', 'style', 'id' ]
@@ -87,6 +88,7 @@ framework:
                     h5: [ 'class', 'id' ]
                     h6: [ 'class', 'id' ]
                     a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
+                    br: ''
 
 # Twig Configuration
 twig:

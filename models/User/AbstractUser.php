@@ -25,7 +25,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
  */
-abstract class AbstractUser extends Model\AbstractModel
+abstract class AbstractUser extends Model\AbstractModel implements AbstractUserInterface
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
