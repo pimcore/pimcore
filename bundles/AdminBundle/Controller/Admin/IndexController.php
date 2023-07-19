@@ -138,6 +138,10 @@ class IndexController extends AdminAbstractController implements KernelResponseE
      */
     public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
     {
+        if (!$request->isXmlHttpRequest()) {
+            throw $this->createAccessDeniedHttpException();
+        }
+
         // DB
         try {
             $tables = $db->fetchAllAssociative('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES

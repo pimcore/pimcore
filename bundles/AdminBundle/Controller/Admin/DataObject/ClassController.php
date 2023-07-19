@@ -91,6 +91,9 @@ class ClassController extends AdminAbstractController implements KernelControlle
      */
     public function getTreeAction(Request $request)
     {
+        // we need to check objects permission for listing in pimcore.model.objecttypes ext model
+        $this->checkPermission('objects');
+
         $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
         $classesList = new DataObject\ClassDefinition\Listing();

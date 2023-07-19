@@ -571,8 +571,9 @@ Ext.onReady(function () {
                 }
 
                 if (data.pushStatistics) {
-                    var request = new XMLHttpRequest();
+                    const request = new XMLHttpRequest();
                     request.open('GET', Routing.generate('pimcore_admin_index_statistics'));
+                    request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
                     request.onload = function () {
                         if (this.status >= 200 && this.status < 400) {
