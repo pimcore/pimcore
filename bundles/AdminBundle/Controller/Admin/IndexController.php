@@ -136,7 +136,7 @@ class IndexController extends AdminAbstractController implements KernelResponseE
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel, CsrfProtectionHandler $csrfProtection)
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
     {
         if (!$request->isXmlHttpRequest()) {
             throw $this->createAccessDeniedHttpException();
