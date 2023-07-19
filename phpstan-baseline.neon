@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Anonymous function with return type void returns \\*NEVER\\* but should not return anything\\.$#"
+			count: 1
+			path: bundles/CoreBundle/src/Command/Bundle/ListCommand.php
+
+		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: bundles/CoreBundle/src/Command/Document/CleanupCommand.php
@@ -334,6 +339,11 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: lib/Tool/Requirements.php
 
 		-
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
