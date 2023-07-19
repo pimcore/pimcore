@@ -195,13 +195,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->object;
     }
 
-    public function setObject(Concrete|Model\Element\ElementDescriptor|null $object): static
+    public function setObject(?Concrete $object): static
     {
-        if ($object instanceof Model\Element\ElementDescriptor) {
-            $object = Service::getElementById($object->getType(), $object->getId());
-        }
-
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
 
         // update all items with the new $object
