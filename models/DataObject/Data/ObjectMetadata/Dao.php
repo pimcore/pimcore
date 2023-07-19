@@ -29,25 +29,33 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
 
     protected ?array $tableDefinitions = null;
 
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
+    public function save(
+        DataObject\Concrete $object,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $type = 'object'): void
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = ['o_id' => $object->getId(),
+        $dataTemplate = [
+            'o_id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
-            'ownername' => $ownername ? $ownername : '',
-            'index' => $index ? $index : '0',
-            'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object', ];
+            'ownername' => $ownername ?: '',
+            'index' => $index ?: '0',
+            'position' => $position ?: '0',
+            'type' => $type ?: 'object'
+        ];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            Helper::upsert($this->db, $table, $data, $this->getPrimaryKey($table));
+            Helper::upsert($this->db, $table, $data, array_keys(array_diff_key($data, ['data' => null])));
         }
     }
 
@@ -56,12 +64,30 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         return 'object_metadata_' . $object->getClassId();
     }
 
-    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
+    public function load(
+        DataObject\Concrete $source,
+        int $destinationId,
+        string $fieldname,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
     {
-        $typeQuery = " AND (`type` = 'object' or `type` = '')";
+        $query = 'SELECT * FROM ' . $this->getTablename($source) .
+            ' WHERE o_id = ? AND ' .
+            'dest_id = ? AND ' .
+            'fieldname = ? AND' .
+            ' ownertype = ? AND ' .
+            'ownername = ? AND ' .
+            'position = ? AND ' .
+            '`index` = ? ' . self::TYPE_QUERY;
 
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
-        $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+        $dataRaw = $this->db->fetchAllAssociative(
+            $query,
+            [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]
+        );
+
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
@@ -108,7 +134,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
               INDEX `position` (`position`),
               INDEX `index` (`index`),
               CONSTRAINT `".self::getForeignKeyName($table, 'o_id').'` FOREIGN KEY (`o_id`)
-              REFERENCES objects (`o_id`) ON DELETE CASCADE
+              REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($class, [$table]);

@@ -26,13 +26,10 @@ trait ManyToManyRelationTrait
 {
     /**
      * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
-     *
-     * @param object $object
-     * @param array $params
-     *
-     * @return bool
      */
-    protected function skipSaveCheck(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): bool
+    protected function skipSaveCheck(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): bool
     {
         $forceSave = $params['forceSave'] ?? false;
 
