@@ -31,35 +31,30 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int|string
      */
     protected int|string $itemId;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $uuid;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $instanceIdentifier;
 
     /**
      * @internal
      *
-     * @var mixed
      */
     protected mixed $item = null;
 
@@ -129,8 +124,6 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
-     *
      * @throws Exception
      */
     public function createUuid(): string
@@ -180,9 +173,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $item
      *
-     * @return UUID
      *
      * @throws Exception
      */
@@ -203,9 +194,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $item
      *
-     * @return static
      *
      * @throws Exception
      */

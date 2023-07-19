@@ -22,14 +22,17 @@
 
 #### [Installer] :
 
+-  Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete. See [preparing guide](../07_Updating_Pimcore/12_V10_to_V11.md)
 -  Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
+-  Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
+  - Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
 
 
 #### [Logging] :
 
--  Change logging from the redirects of the `SeoBundle` to the channel `routing`
 -  Removed constant `PIMCORE_PHP_ERROR_LOG`
 -  Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly, eg. log records are now `LogRecord` Objects instead of array.
+-  Removed the ability to use the `pimcore_log` GET parameter.
 
 #### [Miscellaneous] :
 
@@ -196,15 +199,15 @@
     $web2printConfig = $web2printConfig['chromiumSettings'];
     ```
 -  Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
--  Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+-  Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/12_V10_to_V11.md)
 -  Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 -  Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
--  Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+-  Rename config files from `*.yml` to `*.yaml`. Note that we now use `system_settings.yaml` as config file and not `system.yml`
 -  System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 -  The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 -  The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 -  Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
--  Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
+-  Recommended and default format for storing the valid languages in `system_settings.yaml` is now an array, for example:
    - en
    - de
 ```yaml
@@ -218,6 +221,7 @@ pimcore:
 #### [CoreBundle] :
 
 -  Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
+-  Priority of `PimcoreCoreBundle` has been changed to `-10` to make sure that it is loaded after default bundles.
 
 #### [Environment] :
 
@@ -360,7 +364,7 @@ pimcore:
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue;
     ```
 -  Added global language switcher for localized fields
--  Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
+-  Added new helper inheritance helper function `DataObject\Service::useInheritedValues`
 -  It's now possible to drop a video asset directly into an video editable in class
 -  Removed Button control for DataObjects layout definition.
 
@@ -491,6 +495,7 @@ pimcore_seo:
 ## Tools
 #### [Application Logger] :
 
+-  Removed deprecated `PIMCORE_LOG_FILEOBJECT_DIRECTORY` constant, since flysystem is used to save/get fileobjects. Please make sure to adapt your code and migrate your fileobjects manually.
 -  Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
 
 

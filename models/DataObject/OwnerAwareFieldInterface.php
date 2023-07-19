@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject;
 interface OwnerAwareFieldInterface
 {
     /**
-     * @param mixed $owner
      *
      * @return $this;
      */

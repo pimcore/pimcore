@@ -51,9 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $name
      *
-     * @return string
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -78,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $isUpdate
      *
      * @throws \Exception
      */
@@ -231,7 +228,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return void
      */
     public function create(): void
     {
@@ -289,6 +285,9 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->executeQuery('DROP TABLE `'.$brickTable.'`');
         }
 
+        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());
+        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_groups_'.$this->model->getId());
+
         // clean slug table
         DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
     }
@@ -296,7 +295,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @param string $newName
      */
     public function updateClassNameInObjects(string $newName): void
     {

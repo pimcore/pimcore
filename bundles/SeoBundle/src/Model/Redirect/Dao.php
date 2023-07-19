@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
@@ -49,9 +48,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Request $request
-     * @param Site|null $site
-     * @param bool $override
      *
      * @throws NotFoundException
      */
@@ -65,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
                 (source = :sourcePath AND (`type` = :typePath OR `type` = :typeAuto)) OR
                 (source = :sourcePathQuery AND `type` = :typePathQuery) OR
                 (source = :sourceEntireUri AND `type` = :typeEntireUri)
-            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
+            ) AND active = 1 AND (regex IS NULL OR regex = 0) AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
         if ($siteId) {
             $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);

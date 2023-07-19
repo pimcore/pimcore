@@ -49,7 +49,6 @@ abstract class Adapter
     abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed;
 
     /**
-     * @param Asset\Document|null $asset
      *
      * @return resource
      */
@@ -58,7 +57,6 @@ abstract class Adapter
     abstract public function isFileTypeSupported(string $fileType): bool;
 
     /**
-     * @return int
      *
      * @throws \Exception
      */

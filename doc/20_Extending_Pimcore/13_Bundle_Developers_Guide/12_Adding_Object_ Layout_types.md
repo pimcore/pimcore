@@ -1,4 +1,4 @@
-# Adding Object Layout types
+# Adding Object Layout Types
 
 > Note: This feature is available since v6.6.1 
 

@@ -28,11 +28,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     private array $dataExtractors;
 
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
-     * @param array $targetLanguages
      *
-     * @return AttributeSet
      *
      * @throws \Exception
      */
@@ -42,8 +38,6 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     }
 
     /**
-     * @param string $type
-     * @param DataExtractorInterface $dataExtractor
      *
      * @return $this
      */
@@ -55,9 +49,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     }
 
     /**
-     * @param string $type
      *
-     * @return DataExtractorInterface
      *
      * @throws \Exception
      */

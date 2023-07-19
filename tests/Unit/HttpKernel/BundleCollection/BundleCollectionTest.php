@@ -33,9 +33,6 @@ class BundleCollectionTest extends TestCase
      */
     private array $bundles;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

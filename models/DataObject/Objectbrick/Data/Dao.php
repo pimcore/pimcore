@@ -34,8 +34,6 @@ class Dao extends Model\Dao\AbstractDao
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -360,7 +358,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper->resetFieldsToCheck();
     }
 
-    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {

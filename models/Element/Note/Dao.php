@@ -29,7 +29,6 @@ use Pimcore\Model\Document;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -85,7 +84,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Saves note to database.
-     * @return bool
      *
      * @throws \Exception
      */

@@ -35,7 +35,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
      */
     public static function documents(array $types = null): void
     {
@@ -52,8 +51,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
-     * @param array|null $classes
      */
     public static function objects(array $types = null, array $classes = null): void
     {
@@ -75,7 +72,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
      */
     public static function assets(array $types = null): void
     {
@@ -92,7 +88,6 @@ class Warming
     /**
      * Adds a Pimcore Object/Asset/Document to the cache
      *
-     * @param Element\ElementInterface $element
      */
     public static function loadElementToCache(Element\ElementInterface $element): void
     {

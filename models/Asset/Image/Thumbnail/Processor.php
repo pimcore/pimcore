@@ -80,13 +80,8 @@ class Processor
     }
 
     /**
-     * @param Asset $asset
-     * @param Config $config
      * @param string|resource|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
-     * @param bool $generated
-     *
-     * @return array
      *
      * @throws \Exception
      */
@@ -176,8 +171,10 @@ class Processor
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
-            if ($storage->fileExists($storagePath)) {
+            try {
                 $modificationDate = $storage->lastModified($storagePath);
+            } catch (FilesystemException $e) {
+                // nothing to do
             }
         }
 
@@ -194,6 +191,11 @@ class Processor
                     // the local tmp-file to the real storage a bit further down doesn't work, as it has a
                     // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
                     $storage->delete($storagePath);
+
+                    // refresh the thumbnail cache, if the asset modification date is modified
+                    // this is necessary because the thumbnail cache is not cleared automatically
+                    // when the original asset is modified
+                    $asset->getDao()->deleteFromThumbnailCache($config->getName());
                 }
             } catch (FilesystemException $e) {
                 // nothing to do
@@ -207,7 +209,8 @@ class Processor
         if ($deferred) {
             // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
             if (!Config::exists($config->getName())) {
-                $configId = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
+                $pathInfo = trim($asset->getRealPath(), '/').'/'.$asset->getId() . '/';
+                $configId = 'thumb_' . $asset->getId() . '__' . md5($pathInfo);
                 TmpStore::add($configId, $config, 'thumbnail_deferred');
             }
 
@@ -416,10 +419,9 @@ class Processor
                     fclose($stream);
                 }
 
-                if ($statusCacheEnabled) {
-                    if ($imageInfo = @getimagesize($tmpFsPath)) {
-                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, filesize($tmpFsPath), $imageInfo[0], $imageInfo[1]);
-                    }
+                if ($statusCacheEnabled && $asset instanceof Asset\Image) {
+                    //update thumbnail dimensions to cache
+                    $asset->addThumbnailFileToCache($tmpFsPath, $filename, $config);
                 }
 
                 $generated = true;

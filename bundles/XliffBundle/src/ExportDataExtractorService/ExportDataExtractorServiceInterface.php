@@ -23,11 +23,7 @@ use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 interface ExportDataExtractorServiceInterface
 {
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */
@@ -36,9 +32,7 @@ interface ExportDataExtractorServiceInterface
     public function registerDataExtractor(string $type, DataExtractorInterface $dataExtractor): ExportDataExtractorServiceInterface;
 
     /**
-     * @param string $type
      *
-     * @return DataExtractorInterface
      *
      * @throws \Exception
      */

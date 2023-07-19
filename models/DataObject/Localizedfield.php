@@ -65,7 +65,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -123,9 +122,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return self::$getFallbackValues;
     }
 
-    /**
-     * @param array|null $items
-     */
     public function __construct(array $items = null)
     {
         if ($items) {
@@ -165,7 +161,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param bool $mark
      *
      * @internal
      */
@@ -179,9 +174,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @internal
      *
-     * @param bool $loadLazyFields
      *
-     * @return array
      */
     public function getInternalData(bool $loadLazyFields = false): array
     {
@@ -214,7 +207,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|Model\Element\ElementDescriptor|null $object
      *
      * @return $this
      *
@@ -262,9 +254,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @throws \Exception
      *
-     * @param string|null $language
      *
-     * @return string
      */
     public function getLanguage(string $language = null): string
     {
@@ -328,8 +318,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param array $context
-     * @param array $params
      *
      * @return ClassDefinition\Data[]
      *
@@ -389,11 +377,7 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param string|null $language
-     * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
      *
      * @throws \Exception
      * @throws Model\Exception\NotFoundException
@@ -507,10 +491,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param string|null $language
-     * @param bool $markFieldAsDirty
      *
      * @return $this
      *
@@ -600,9 +580,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();
@@ -647,7 +624,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function hasDirtyLanguages(): bool
     {
@@ -661,9 +637,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
      *
-     * @return bool
      */
     public function isLanguageDirty(string $language): bool
     {
@@ -694,7 +668,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getDirtyLanguages(): ?array
     {
@@ -712,7 +685,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function allLanguagesAreDirty(): bool
     {
@@ -726,8 +698,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
-     * @param bool $dirty
      */
     public function markLanguageAsDirty(string $language, bool $dirty = true): void
     {
@@ -757,8 +727,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
-     *
-     * @return array
      *
      * @throws \Exception
      */

@@ -43,9 +43,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -85,7 +82,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      * Cleanup status information on element delete
      *
-     * @param ElementEventInterface $e
      */
     public function onElementPostDelete(ElementEventInterface $e): void
     {

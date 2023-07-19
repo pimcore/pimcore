@@ -50,7 +50,6 @@ class ContainerService
     /**
      * Placeholder containers
      *
-     * @var array
      */
     protected array $_items = [];
 
@@ -86,59 +85,36 @@ class ContainerService
     /**
      * createContainer
      *
-     * @param string $key
-     * @param  array $value
      *
-     * @return Container
      */
     public function createContainer(string $key, array $value = []): Container
     {
-        $key = $key;
-
-        $this->_items[$this->currentIndex][$key] = new Container($value);
-
-        return $this->_items[$this->currentIndex][$key];
+        return $this->_items[$this->currentIndex][$key] = new Container($value);
     }
 
     /**
      * Retrieve a placeholder container
      *
-     * @param string $key
      *
-     * @return Container
      */
     public function getContainer(string $key): Container
     {
-        $key = $key;
-        if (isset($this->_items[$this->currentIndex][$key])) {
-            return $this->_items[$this->currentIndex][$key];
-        }
-
-        $container = $this->createContainer($key);
-
-        return $container;
+        return $this->_items[$this->currentIndex][$key] ?? $this->createContainer($key);
     }
 
     /**
      * Does a particular container exist?
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function containerExists(string $key): bool
     {
-
-        $return = array_key_exists($key, $this->_items[$this->currentIndex]);
-
-        return $return;
+        return array_key_exists($key, $this->_items[$this->currentIndex]);
     }
 
     /**
      * Set the container for an item in the registry
      *
-     * @param string $key
-     * @param  Container $container
      *
      * @return $this
      */
@@ -152,13 +128,10 @@ class ContainerService
     /**
      * Delete a container
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function deleteContainer(string $key): bool
     {
-
         if (isset($this->_items[$this->currentIndex][$key])) {
             unset($this->_items[$this->currentIndex][$key]);
 

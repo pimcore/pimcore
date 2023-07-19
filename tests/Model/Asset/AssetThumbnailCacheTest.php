@@ -46,9 +46,6 @@ class AssetThumbnailCacheTest extends TestCase
         TestHelper::clearThumbnailConfigurations();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;

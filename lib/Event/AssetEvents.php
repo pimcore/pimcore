@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-use Pimcore\Model\Asset;
-
 final class AssetEvents
 {
     /**

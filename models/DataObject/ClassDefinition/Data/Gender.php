@@ -27,7 +27,7 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
             ['key' => 'male', 'value' => 'male'],
             ['key' => 'female', 'value' => 'female'],
             ['key' => 'other', 'value' => 'other'],
-            ['key' => '', 'value' => 'unknown'],
+            ['key' => 'unknown', 'value' => 'unknown'],
         ];
 
         $this->setOptions($options);
@@ -50,9 +50,6 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

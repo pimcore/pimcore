@@ -27,7 +27,6 @@ trait ObjectVarTrait
     /**
      * returns object values without the dao
      *
-     * @return array
      */
     public function getObjectVars(): array
     {
@@ -54,9 +53,6 @@ trait ObjectVarTrait
     }
 
     /**
-     * @param string $var
-     * @param mixed $value
-     * @param bool $silent
      *
      * @return $this
      *

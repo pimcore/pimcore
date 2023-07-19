@@ -86,9 +86,6 @@ class Document extends Element\AbstractElement
      */
     protected array $siblings = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
@@ -125,9 +122,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param string $path
      *
-     * @return string
      */
     protected static function getPathCacheKey(string $path): string
     {
@@ -167,9 +162,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param Document $document
      *
-     * @return bool
      */
     protected static function typeMatch(Document $document): bool
     {
@@ -271,9 +264,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param array $config
      *
-     * @return Listing
      *
      * @throws \Exception
      */
@@ -286,9 +277,6 @@ class Document extends Element\AbstractElement
         return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -504,7 +492,7 @@ class Document extends Element\AbstractElement
                 // dont't add a reference to yourself
                 continue;
             } else {
-                $d->addRequirement((int) $requirement['id'], $requirement['type']);
+                $d->addRequirement($requirement['id'], $requirement['type']);
             }
         }
         $d->save();
@@ -516,7 +504,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param int $index
      *
      * @internal
      */
@@ -541,8 +528,6 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param Listing|null $children
-     * @param bool $includingUnpublished
      *
      * @return $this
      */
@@ -863,7 +848,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent id of the document.
      *
-     * @param int|null $id
      *
      * @return $this
      */
@@ -879,7 +863,6 @@ class Document extends Element\AbstractElement
     /**
      * Returns the document index.
      *
-     * @return int|null
      */
     public function getIndex(): ?int
     {
@@ -889,7 +872,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the document index.
      *
-     * @param int $index
      *
      * @return $this
      */
@@ -908,7 +890,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the document type.
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -946,7 +927,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent document instance.
      *
-     * @param ElementInterface|null $parent
      *
      * @return $this
      */
@@ -964,7 +944,6 @@ class Document extends Element\AbstractElement
     /**
      * Set true if want to hide documents.
      *
-     * @param bool $hideUnpublished
      */
     public static function setHideUnpublished(bool $hideUnpublished): void
     {
@@ -974,7 +953,6 @@ class Document extends Element\AbstractElement
     /**
      * Checks if unpublished documents should be hidden.
      *
-     * @return bool
      */
     public static function doHideUnpublished(): bool
     {
@@ -984,9 +962,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param array $args
      *
-     * @return string
      */
     protected function getListingCacheKey(array $args = []): string
     {

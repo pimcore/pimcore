@@ -1,0 +1,16 @@
+---
+xliff_export_documents: Se vuoi tradurre es. l'intero albero /en in una lingua diversa,
+  crea prima una copia di /en, es. /de poi esporta /de per la traduzione. Nell'importazione
+  del XLIFF tradotto i contenuti in Inglese in /de saranno sovrascritti dalla traduzione
+  dalla traduzione in Tedesco del file XLIFF.
+xliff_export_objects: "Solo campi all'interno di contenitori Localized Fields sono
+  riconosciuti. Durante l'importazione del XLIFF tradotto la lingua sorgente rimarr\xE0
+  intatta, solo i campi della lingua di destinazione saranno sovrascritti."
+xliff_export_notice: Qui puoi selezionare i Documenti e gli Oggetti da esportare per
+  tradurli off-line.
+xliff_import_notice: "Scegli un file XLIFF esportato in precedenza da pimcore e tradotto
+  successivamente sa un servizio di traduzione (LSP) o attraverso un'applicazione
+  CAT. Prendi nota che l'importazione sovrascriver\xE0 gli elementi che erano stati
+  selezionati dall'importazione (lettura vale come esportazione)."
+xliff_import_export: Xliff Import/Export
+...

@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\Cache;
+namespace Pimcore\Tests\Unit\Mail;
 
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;

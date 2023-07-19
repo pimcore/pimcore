@@ -36,7 +36,16 @@ class DateRange extends Data implements
     use DataObject\Traits\DataWidthTrait;
 
     /**
-     * @param DataObject\Concrete|null $object
+     * @internal
+     *
+     * @var string[] $columnType
+     */
+    public array $columnType = [
+        'start_date' => 'bigint(20)',
+        'end_date' => 'bigint(20)',
+    ];
+
+    /**
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -50,7 +59,7 @@ class DateRange extends Data implements
             $endDate = $data->getEndDate();
 
             $result = [
-                $startDateKey => $startDate->getTimestamp(),
+                $startDateKey =>  $startDate->getTimestamp(),
                 $endDateKey => $endDate instanceof CarbonInterface ? $endDate->getTimestamp() : null,
             ];
 
@@ -64,7 +73,6 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param null|DataObject\Concrete $object
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -89,11 +97,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -103,11 +107,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -127,11 +127,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return CarbonPeriod|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -166,11 +162,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -185,7 +177,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws Exception
      */
@@ -207,9 +199,6 @@ class DateRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -234,8 +223,17 @@ class DateRange extends Data implements
     }
 
     /**
-     * {@inheritDoc}
+     * overwrite default implementation to consider columnType & queryColumnType from class config
      */
+    public function resolveBlockedVars(): array
+    {
+        $defaultBlockedVars = [
+            'fieldDefinitionsCache',
+        ];
+
+        return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
+    }
+
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -333,12 +331,12 @@ class DateRange extends Data implements
         return $date;
     }
 
+    /**
+     * @return string[]
+     */
     public function getColumnType(): array
     {
-        return [
-            'start_date' => 'bigint(20)',
-            'end_date' => 'bigint(20)',
-        ];
+        return $this->columnType;
     }
 
     public function getQueryColumnType(): array
@@ -349,5 +347,20 @@ class DateRange extends Data implements
     public function getFieldType(): string
     {
         return 'dateRange';
+    }
+
+    /**
+     * @param string|string[] $columnType
+     */
+    public function setColumnType(string|array $columnType): void
+    {
+        if(is_array($columnType)) {
+            $this->columnType = $columnType;
+        } else {
+            $this->columnType = [
+                'start_date' => $columnType,
+                'end_date' => $columnType,
+            ];
+        }
     }
 }

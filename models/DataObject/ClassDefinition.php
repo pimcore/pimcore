@@ -29,13 +29,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
+final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
@@ -382,9 +381,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         $this->generateClassFiles($saveDefinitionFile);
 
         foreach ($fieldDefinitions as $fd) {
-            // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-            //TODO Pimcore 11 remove method_exists call
-            if (!$fd instanceof ClassDefinition\Data\DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+            if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\ClassSavedInterface) {
                 $fd->classSaved($this);
             }
         }

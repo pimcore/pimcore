@@ -27,10 +27,7 @@ trait VersionDaoTrait
     /**
      * Get latest available version, using $includingPublished to also consider the published one
      *
-     * @param int|null $userId
-     * @param bool $includingPublished
      *
-     * @return Version|null
      */
     public function getLatestVersion(int $userId = null, bool $includingPublished = false): ?Version
     {

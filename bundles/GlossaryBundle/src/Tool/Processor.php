@@ -53,10 +53,7 @@ class Processor
     /**
      * Process glossary entries in content string
      *
-     * @param string $content
-     * @param array $options
      *
-     * @return string
      */
     public function process(string $content, array $options): string
     {

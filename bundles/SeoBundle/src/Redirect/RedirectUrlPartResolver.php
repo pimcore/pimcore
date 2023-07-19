@@ -32,7 +32,6 @@ class RedirectUrlPartResolver
     /**
      * RedirectUrlPartResolver constructor.
      *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {

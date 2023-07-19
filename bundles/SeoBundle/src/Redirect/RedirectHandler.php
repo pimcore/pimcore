@@ -27,8 +27,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,12 +37,15 @@ use Symfony\Component\Lock\LockInterface;
 /**
  * @internal
  */
-final class RedirectHandler implements LoggerAwareInterface
+final class RedirectHandler
 {
-    use LoggerAwareTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
+
+    private LoggerInterface $logger;
+
+    private LoggerInterface $redirectLogger;
 
     private RequestHelper $requestHelper;
 
@@ -58,20 +60,18 @@ final class RedirectHandler implements LoggerAwareInterface
 
     private ?LockInterface $lock = null;
 
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory, LoggerInterface $routingLogger, LoggerInterface $redirectLogger)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
         $this->config = $config;
         $this->lock = $lockFactory->createLock(self::class);
+        $this->logger = $routingLogger;
+        $this->redirectLogger = $redirectLogger;
     }
 
     /**
-     * @param Request $request
-     * @param bool $override
-     * @param Site|null $sourceSite
      *
-     * @return RedirectResponse|null
      *
      * @throws \Exception
      */
@@ -142,11 +142,7 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param array $matches
      *
-     * @return RedirectResponse|null
      *
      * @throws \Exception
      */
@@ -222,7 +218,7 @@ final class RedirectHandler implements LoggerAwareInterface
         $response = new RedirectResponse($url, $statusCode);
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
-        $this->logger->info(Tool::getAnonymizedClientIp(), ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
+        $this->redirectLogger->info(Tool::getAnonymizedClientIp(), ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
 
         return $response;
     }

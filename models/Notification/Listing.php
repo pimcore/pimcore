@@ -23,7 +23,6 @@ use Pimcore\Model\Listing\AbstractListing;
 /**
  * @method Listing\Dao getDao()
  * @method Model\Notification[] load()
- * @method int count()
  */
 class Listing extends AbstractListing
 {
@@ -33,8 +32,6 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      *
      * @return Model\Notification[]
      */

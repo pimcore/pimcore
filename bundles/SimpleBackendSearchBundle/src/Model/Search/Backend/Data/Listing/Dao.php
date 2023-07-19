@@ -32,7 +32,6 @@ class Dao extends AbstractDao
     /**
      * Loads a list of entries for the specicifies parameters, returns an array of Search\Backend\Data
      *
-     * @return array
      */
     public function load(): array
     {

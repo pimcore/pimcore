@@ -37,9 +37,6 @@ class LowQualityImagePreviewTask implements TaskInterface
         $this->lock = $lockFactory->createLock(self::class, 86400 * 2);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $isLowQualityPreviewEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
