@@ -86,6 +86,16 @@ parameters:
 			path: bundles/InstallBundle/src/BundleConfig/BundleWriter.php
 
 		-
+			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			count: 1
+			path: bundles/InstallBundle/src/Event/BundleSetupEvent.php
+
+		-
+			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			count: 1
+			path: bundles/InstallBundle/src/Event/InstallEvents.php
+
+		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SeoBundle\\\\Controller\\\\Document\\\\DocumentController\\:\\:getTreeNodeConfig\\(\\)\\.$#"
 			count: 1
 			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
@@ -279,11 +289,6 @@ parameters:
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: lib/Security/Hasher/PimcoreUserPasswordHasher.php
-
-		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
-			count: 1
-			path: lib/Security/SecurityHelper.php
 
 		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
