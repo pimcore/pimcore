@@ -297,7 +297,7 @@ class QuantityValue extends AbstractQuantityValue
                 throw new Model\Element\ValidationException('Value exceeds PHP_INT_MAX please use an input data type instead of numeric!');
             }
 
-            if ($this->getInteger() && strpos((string) $value, '.') !== false) {
+            if ($this->getInteger() && str_contains((string)$value, '.')) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
             }
 
@@ -323,7 +323,7 @@ class QuantityValue extends AbstractQuantityValue
             return $value;
         }
 
-        if (strpos($value, '.') === false) {
+        if (!str_contains($value, '.')) {
             return (int) $value;
         }
 

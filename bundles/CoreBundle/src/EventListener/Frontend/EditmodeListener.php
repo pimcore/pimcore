@@ -127,7 +127,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // check for substring as the content type could define attributes (e.g. charset)
         foreach ($this->contentTypes as $ct) {
-            if (false !== strpos($contentType, $ct)) {
+            if (str_contains($contentType, $ct)) {
                 return true;
             }
         }

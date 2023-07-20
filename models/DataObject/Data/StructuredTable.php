@@ -54,7 +54,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      */
     public function __call(string $name, array $arguments)
     {
-        if (substr($name, 0, 3) == 'get') {
+        if (str_starts_with($name, 'get')) {
             $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             $parts = explode('__', $key);
@@ -75,7 +75,7 @@ class StructuredTable implements OwnerAwareFieldInterface
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
+        if (str_starts_with($name, 'set')) {
             $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             $parts = explode('__', $key);

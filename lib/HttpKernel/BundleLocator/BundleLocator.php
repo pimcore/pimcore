@@ -69,7 +69,7 @@ class BundleLocator implements BundleLocatorInterface
             $namespace = $reflectionClass->getNamespaceName();
 
             foreach ($bundles as $bundle) {
-                if (0 === strpos($namespace, $bundle->getNamespace())) {
+                if (str_starts_with($namespace, $bundle->getNamespace())) {
                     return $bundle;
                 }
             }

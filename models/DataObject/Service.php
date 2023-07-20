@@ -275,7 +275,7 @@ class Service extends Model\Element\Service
      */
     public static function isHelperGridColumnConfig(string $field): bool
     {
-        return strpos($field, '#') === 0;
+        return str_starts_with($field, '#');
     }
 
     /**
@@ -318,7 +318,7 @@ class Service extends Model\Element\Service
 
                 $def = $object->getClass()->getFieldDefinition($key, $context);
 
-                if (strpos($key, '#') === 0) {
+                if (str_starts_with($key, '#')) {
                     if (!$haveHelperDefinition) {
                         $helperDefinitions = self::getHelperDefinitions();
                         $haveHelperDefinition = true;
@@ -327,7 +327,7 @@ class Service extends Model\Element\Service
                         $context['fieldname'] = $key;
                         $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
                     }
-                } elseif (strpos($key, '~') === 0) {
+                } elseif (str_starts_with($key, '~')) {
                     $type = $keyParts[1];
                     if ($type === 'classificationstore') {
                         $data[$key] = self::getStoreValueForObject($object, $key, $requestedLanguage);
@@ -335,7 +335,7 @@ class Service extends Model\Element\Service
                 } elseif (count($keyParts) > 1) {
                     // brick
                     $brickType = $keyParts[0];
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $brickType = $brickDescriptor['containerKey'];
@@ -423,7 +423,7 @@ class Service extends Model\Element\Service
                     }
 
                     // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
-                    if (strpos($key, '~') === 0 && empty($data[$key])) {
+                    if (str_starts_with($key, '~') && empty($data[$key])) {
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
@@ -679,7 +679,7 @@ class Service extends Model\Element\Service
     {
         $keyParts = explode('~', $key);
 
-        if (strpos($key, '~') === 0) {
+        if (str_starts_with($key, '~')) {
             $type = $keyParts[1];
             if ($type === 'classificationstore') {
                 $field = $keyParts[2];
@@ -1708,7 +1708,7 @@ class Service extends Model\Element\Service
 
         $key = $field['key'];
         $title = $field['label'];
-        if (strpos($key, '#') === 0) {
+        if (str_starts_with($key, '#')) {
             if (isset($helperDefinitions[$key])) {
                 if ($helperDefinitions[$key]->attributes) {
                     return $helperDefinitions[$key]->attributes->label ? $helperDefinitions[$key]->attributes->label : $title;
@@ -1716,7 +1716,7 @@ class Service extends Model\Element\Service
 
                 return $title;
             }
-        } elseif (substr($key, 0, 1) == '~') {
+        } elseif (str_starts_with($key, '~')) {
             $fieldParts = explode('~', $key);
             $type = $fieldParts[1];
 
@@ -1780,7 +1780,7 @@ class Service extends Model\Element\Service
 
                         return (string) $cellValue;
                     }
-                } elseif (substr($field, 0, 1) == '~') {
+                } elseif (str_starts_with($field, '~')) {
                     $type = $fieldParts[1];
 
                     if ($type == 'classificationstore') {
@@ -1821,7 +1821,7 @@ class Service extends Model\Element\Service
                     $brickDescriptor = null;
                     $innerContainer = null;
 
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';

@@ -276,7 +276,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // only do redirecting with GET requests
         if ($context->getRequest()->getMethod() === 'GET') {
             if (($this->config['documents']['allow_trailing_slash'] ?? null) === 'no') {
-                if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
+                if ($redirectTargetUrl !== '/' && str_ends_with($redirectTargetUrl, '/')) {
                     $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
                 }
             }
