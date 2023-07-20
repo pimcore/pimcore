@@ -569,7 +569,7 @@ class Service extends Model\Element\Service
                 }
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
-                if (preg_match("|~\-~page\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                if (preg_match("|~\-~page\-(\d+)(@[0-9.]+x)?\.|", $config['filename'], $matchesThumbs)) {
                     $page = (int)$matchesThumbs[1];
                 }
 
