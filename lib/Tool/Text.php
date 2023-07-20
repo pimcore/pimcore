@@ -68,7 +68,7 @@ class Text
                         } elseif ($element instanceof Document) {
                             // get parameters
                             preg_match('/href="([^"]+)*"/', $oldTag, $oldHref);
-                            if ($oldHref[1] && (str_contains($oldHref[1], '?') || str_contains($oldHref[1], '#'))) {
+                            if (isset($oldHref[1]) && (str_contains($oldHref[1], '?') || str_contains($oldHref[1], '#'))) {
                                 $urlParts = parse_url($oldHref[1]);
                                 if (array_key_exists('query', $urlParts) && !empty($urlParts['query'])) {
                                     $path .= '?' . $urlParts['query'];

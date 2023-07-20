@@ -63,19 +63,14 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0];
-
-        if (!$attribute instanceof Template) {
-            return;
-        }
-
+        $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0] ?? null;
         $resolvedTemplate = $this->templateResolver->getTemplate($request);
         if (null === $resolvedTemplate) {
             // no contentTemplate on the request -> nothing to do
             return;
         }
 
-        $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute->vars);
+        $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute?->vars);
         $status = 200;
 
         if (interface_exists('Symfony\\Component\\Form\\FormInterface')) {
@@ -90,7 +85,7 @@ class ContentTemplateListener implements EventSubscriberInterface
             }
         }
 
-        $event->setResponse($attribute->stream
+        $event->setResponse(($attribute instanceof Template && $attribute->stream)
             ? new StreamedResponse(fn () => $this->twig->display($resolvedTemplate, $parameters), $status)
             : new Response($this->twig->render($resolvedTemplate, $parameters), $status)
         );
@@ -98,10 +93,6 @@ class ContentTemplateListener implements EventSubscriberInterface
 
     private function resolveParameters(ControllerArgumentsEvent $event, ?array $vars): array
     {
-        if ([] === $vars) {
-            return [];
-        }
-
         $parameters = $event->getNamedArguments();
 
         if (null !== $vars) {

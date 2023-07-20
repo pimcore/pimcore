@@ -10,16 +10,16 @@ log_detailinformation: Detailinformation
 log_pid: PID
 log_refresh_label: Alle aktualisieren
 log_applicationlog: Anwendungslogger
-log_search_component: Component
+log_search_component: Komponente
 log_search_pid: PID
 log_refresh_seconds: Sekunden
-keybinding_application_logger: Application logger
-log_search_from: From
-log_search_to: To
-log_type: Type
-log_source: Source
-log_message: Message
+keybinding_application_logger: Anwendungslogger
+log_search_from: Von
+log_search_to: An
+log_type: Typ
+log_source: Quelle
+log_message: Nachricht
 log_reset_search: "Zur\xFCcksetzen"
-log_search: Search
-log_search_message: Message
+log_search: Suche
+log_search_message: Nachricht
 ...

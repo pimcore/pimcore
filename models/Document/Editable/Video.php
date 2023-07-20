@@ -908,7 +908,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 $attributesString .= ' ' . $key;
                 if (!empty($value)) {
                     $quoteChar = '"';
-                    if (strpos($value, '"')) {
+                    if (is_string($value) && strpos($value, '"')) {
                         $quoteChar = "'";
                     }
                     $attributesString .= '=' . $quoteChar . $value . $quoteChar;

@@ -25,29 +25,45 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends DataObject\Data\AbstractMetadata\Dao
 {
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
+    public function save(
+        DataObject\Concrete $object,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $type = 'object'): void
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = ['id' => $object->getId(),
+        $dataTemplate = [
+            'o_id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
-            'ownername' => $ownername ? $ownername : '',
-            'index' => $index ? $index : '0',
-            'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object', ];
+            'ownername' => $ownername ?: '',
+            'index' => $index ?: '0',
+            'position' => $position ?: '0',
+            'type' => $type ?: 'object',
+        ];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            Helper::upsert($this->db, $table, $data, $this->getPrimaryKey($table));
+            Helper::upsert($this->db, $table, $data, array_keys(array_diff_key($data, ['data' => null])));
         }
     }
 
-    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ElementMetadata
+    public function load(
+        DataObject\Concrete $source,
+        int $destinationId,
+        string $fieldname,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $destinationType = 'object'): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (`type` = 'object' or `type` = '')";
@@ -56,7 +72,16 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         }
 
         $dataRaw = $this->db->fetchAllAssociative('SELECT * FROM ' .
-            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+            $this->getTablename($source) .
+            ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND ' .
+            'dest_id = ? AND ' .
+            'fieldname = ? AND ' .
+            'ownertype = ? AND ' .
+            'ownername = ? AND ' .
+            'position = ? AND ' .
+            '`index` = ? ' . $typeQuery,
+            [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+
         if (!empty($dataRaw)) {
             $this->model->setElementTypeAndId($destinationType, $destinationId);
             $this->model->setFieldname($fieldname);
