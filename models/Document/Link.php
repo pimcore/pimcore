@@ -280,6 +280,7 @@ class Link extends Model\Document
         if ($this->setObjectFromId()) {
             return $this->object;
         }
+
         return null;
     }
 
