@@ -77,7 +77,7 @@ class Url extends Page
 
         $fragment = $this->getFragment();
         if (null !== $fragment) {
-            if ('#' === substr($uri, -1)) {
+            if (str_ends_with($uri, '#')) {
                 return $uri . $fragment;
             }
 

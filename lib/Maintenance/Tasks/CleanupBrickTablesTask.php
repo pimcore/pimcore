@@ -55,7 +55,7 @@ class CleanupBrickTablesTask implements TaskInterface
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
 
-                if (strpos($tableName, 'object_brick_localized_query_') === 0) {
+                if (str_starts_with($tableName, 'object_brick_localized_query_')) {
                     continue;
                 }
 
