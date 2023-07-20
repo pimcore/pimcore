@@ -31,7 +31,7 @@ class Link implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    protected string $text;
+    protected ?string $text = null;
 
     protected ?string $internalType = null;
 
@@ -59,7 +59,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $attributes = null;
 
-    public function getText(): string
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -67,7 +67,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setText(string $text): static
+    public function setText(?string $text): static
     {
         $this->text = $text;
         $this->markMeDirty();
@@ -414,11 +414,13 @@ class Link implements OwnerAwareFieldInterface
             $attribs[] = $this->getAttributes();
         }
 
-        if (empty($this->text)) {
+        $text = $this->getText();
+
+        if (empty($text)) {
             return '';
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getText()) . '</a>';
+        return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
     }
 
     public function isEmpty(): bool
