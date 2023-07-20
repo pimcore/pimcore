@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Link\Dao getDao()
@@ -268,15 +269,17 @@ class Link extends Model\Document
         return $this;
     }
 
-    public function getElement(): Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
+    public function getElement(): ?Model\Element\ElementInterface
     {
+        if ($this->object instanceof Model\Element\ElementDescriptor) {
+            return Element\Service::getElementById($this->object->getType(), $this->object->getId());
+        }
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
         }
         if ($this->setObjectFromId()) {
             return $this->object;
         }
-
         return null;
     }
 
@@ -287,7 +290,7 @@ class Link extends Model\Document
         return $this;
     }
 
-    private function setObjectFromId(): Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
+    private function setObjectFromId(): ?Model\Element\ElementInterface
     {
         try {
             if ($this->internal) {
