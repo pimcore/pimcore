@@ -76,6 +76,9 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    limit: 0
                 }
             },
             // disable client pagination, default: 25
