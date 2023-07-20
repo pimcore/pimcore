@@ -272,7 +272,7 @@ class Link extends Model\Document
     public function getElement(): ?Model\Element\ElementInterface
     {
         if ($this->object instanceof Model\Element\ElementDescriptor) {
-            return Element\Service::getElementById($this->object->getType(), $this->object->getId());
+            $this->object = Element\Service::getElementById($this->object->getType(), $this->object->getId());
         }
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
