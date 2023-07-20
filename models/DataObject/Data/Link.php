@@ -203,9 +203,6 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     public function getAccesskey(): ?string
     {
         return $this->accesskey;
