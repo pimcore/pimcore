@@ -41,29 +41,32 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $linktype = null;
 
-    protected string $target;
+    protected ?string $target = null;
 
-    protected string $parameters;
+    protected ?string $parameters = null;
 
-    protected string $anchor;
+    protected ?string $anchor = null;
 
-    protected string $title;
+    protected ?string $title = null;
 
-    protected string $accesskey;
+    protected ?string $accesskey = null;
 
-    protected string $rel;
+    protected ?string $rel = null;
 
-    protected string $tabindex;
+    protected ?string $tabindex = null;
 
-    protected string $class;
+    protected ?string $class = null;
 
-    protected string $attributes;
+    protected ?string $attributes = null;
 
     public function getText(): string
     {
         return $this->text;
     }
 
+    /**
+     * @return $this
+     */
     public function setText(string $text): static
     {
         $this->text = $text;
@@ -77,6 +80,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->internalType;
     }
 
+    /**
+     * @return $this
+     */
     public function setInternalType(?string $internalType): static
     {
         $this->internalType = $internalType;
@@ -90,6 +96,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->internal;
     }
 
+    /**
+     * @return $this
+     */
     public function setInternal(?int $internal): static
     {
         $this->internal = $internal;
@@ -103,6 +112,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->direct;
     }
 
+    /**
+     * @return $this
+     */
     public function setDirect(?string $direct): static
     {
         $this->direct = $direct;
@@ -116,6 +128,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->linktype;
     }
 
+    /**
+     * @return $this
+     */
     public function setLinktype(?string $linktype): static
     {
         $this->linktype = $linktype;
@@ -124,12 +139,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTarget(): string
+    public function getTarget(): ?string
     {
         return $this->target;
     }
 
-    public function setTarget(string $target): static
+    /**
+     * @return $this
+     */
+    public function setTarget(?string $target): static
     {
         $this->target = $target;
         $this->markMeDirty();
@@ -137,12 +155,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getParameters(): string
+    public function getParameters(): ?string
     {
         return $this->parameters;
     }
 
-    public function setParameters(string $parameters): static
+    /**
+     * @return $this
+     */
+    public function setParameters(?string $parameters): static
     {
         $this->parameters = $parameters;
         $this->markMeDirty();
@@ -150,12 +171,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getAnchor(): string
+    public function getAnchor(): ?string
     {
         return $this->anchor;
     }
 
-    public function setAnchor(string $anchor): static
+    /**
+     * @return $this
+     */
+    public function setAnchor(?string $anchor): static
     {
         $this->anchor = $anchor;
         $this->markMeDirty();
@@ -163,12 +187,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    /**
+     * @return $this
+     */
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         $this->markMeDirty();
@@ -176,12 +203,18 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getAccesskey(): string
+    /**
+     * @return $this
+     */
+    public function getAccesskey(): ?string
     {
         return $this->accesskey;
     }
 
-    public function setAccesskey(string $accesskey): static
+    /**
+     * @return $this
+     */
+    public function setAccesskey(?string $accesskey): static
     {
         $this->accesskey = $accesskey;
         $this->markMeDirty();
@@ -189,12 +222,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getRel(): string
+    public function getRel(): ?string
     {
         return $this->rel;
     }
 
-    public function setRel(string $rel): static
+    /**
+     * @return $this
+     */
+    public function setRel(?string $rel): static
     {
         $this->rel = $rel;
         $this->markMeDirty();
@@ -202,12 +238,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTabindex(): string
+    public function getTabindex(): ?string
     {
         return $this->tabindex;
     }
 
-    public function setTabindex(string $tabindex): static
+    /**
+     * @return $this
+     */
+    public function setTabindex(?string $tabindex): static
     {
         $this->tabindex = $tabindex;
         $this->markMeDirty();
@@ -215,28 +254,41 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function setAttributes(string $attributes): void
+    /**
+     * @return $this
+     */
+    public function setAttributes(?string $attributes): static
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
+
+        return $this;
     }
 
-    public function getAttributes(): string
+    public function getAttributes(): ?string
     {
         return $this->attributes;
     }
 
-    public function setClass(string $class): void
+    /**
+     * @return $this
+     */
+    public function setClass(?string $class): static
     {
         $this->class = $class;
         $this->markMeDirty();
+
+        return $this;
     }
 
-    public function getClass(): string
+    public function getClass(): ?string
     {
         return $this->class;
     }
 
+    /**
+     * @return $this
+     */
     public function setPath(string $path): static
     {
         if (!empty($path)) {
@@ -311,10 +363,10 @@ class Link implements OwnerAwareFieldInterface
             $path = $this->getDirect();
         }
 
-        if (strlen($this->getParameters()) > 0) {
+        if (strlen($this->getParameters() ?? '') > 0) {
             $path .= '?' . str_replace('?', '', $this->getParameters());
         }
-        if (strlen($this->getAnchor()) > 0) {
+        if (strlen($this->getAnchor() ?? '') > 0) {
             $path .= '#' . str_replace('#', '', $this->getAnchor());
         }
 
@@ -336,13 +388,13 @@ class Link implements OwnerAwareFieldInterface
         return $element;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(ElementInterface $object): static
     {
-        if ($object instanceof ElementInterface) {
-            $this->internal = $object->getId();
-            $this->internalType = Service::getElementType($object);
-        }
-
+        $this->internal = $object->getId();
+        $this->internalType = Service::getElementType($object);
         $this->markMeDirty();
 
         return $this;
@@ -372,7 +424,7 @@ class Link implements OwnerAwareFieldInterface
     public function isEmpty(): bool
     {
         $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+        foreach ($vars as $value) {
             if (!empty($value)) {
                 return false;
             }
@@ -381,6 +433,9 @@ class Link implements OwnerAwareFieldInterface
         return true;
     }
 
+    /**
+     * @return $this
+     */
     public function setValues(array $data = []): static
     {
         if (is_array($data) && count($data) > 0) {
