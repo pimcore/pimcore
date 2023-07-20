@@ -555,7 +555,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = (string) $description;
 
         return $this;
     }

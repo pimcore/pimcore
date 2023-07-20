@@ -1045,7 +1045,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function setParentClass($parentClass)
     {
-        $this->parentClass = $parentClass;
+        $this->parentClass = (string) $parentClass;
 
         return $this;
     }
@@ -1253,7 +1253,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = (string) $description;
 
         return $this;
     }
