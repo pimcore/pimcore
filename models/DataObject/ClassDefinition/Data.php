@@ -954,12 +954,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $dataParamDoc = 'mixed $data';
         $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
-        if (preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        $docComment = $reflectionMethod->getDocComment();
+        if ($docComment && preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $docComment, $dataParam)) {
             $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
         }
 
         $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
-        if (preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        if ($docComment && preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $docComment, $dataParam)) {
             $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
         }
 
