@@ -93,13 +93,17 @@ class Dao extends Model\Dao\AbstractDao
             Logger::warning('Error during removing old relations: ' . $e);
         }
 
-        if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
+        if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
             // if this is a fresh object, then we don't need the check
             $isBrickUpdate = false; // used to indicate whether we want to consider the default value
         } else {
             // or brick has been added
-            $existsResult = $this->db->fetchOne('SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1', [$object->getId()]);
-            $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
+            $existsResult = $this->db->fetchOne(
+                'SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1',
+                [$object->getId()]
+            );
+
+            $isBrickUpdate = (bool)$existsResult; // used to indicate whether we want to consider the default value
         }
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
