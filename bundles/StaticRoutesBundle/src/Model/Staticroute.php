@@ -404,7 +404,7 @@ final class Staticroute extends AbstractModel
         $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
             if (strpos($tmpReversePattern, '%' . $key) !== false) {
-                $parametersInReversePattern[$key] = $param;
+                $parametersInReversePattern[$key] = (string) $param;
 
                 // we need to replace the found variable to that it cannot match again a placeholder
                 // eg. %abcd prior %ab if %abcd matches already %ab shouldn't match again on the same placeholder
