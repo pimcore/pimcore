@@ -30,7 +30,7 @@ final class WebsiteSetting extends AbstractModel
 
     protected string $name;
 
-    protected string $language;
+    protected ?string $language = null;
 
     protected string $type;
 
@@ -216,7 +216,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @return $this
      */
-    public function setSiteId(int $siteId): static
+    public function setSiteId(?int $siteId): static
     {
         $this->siteId = $siteId;
 
@@ -252,14 +252,19 @@ final class WebsiteSetting extends AbstractModel
         return $this->type;
     }
 
-    public function getLanguage(): string
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
-    public function setLanguage(string $language): void
+    /**
+     * @return $this
+     */
+    public function setLanguage(?string $language): static
     {
         $this->language = $language;
+
+        return $this;
     }
 
     /**
