@@ -333,6 +333,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         if ($data && isset($data['id']) && (int)$data['id'] > 0) {
             return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
         }
+
         return null;
     }
 
