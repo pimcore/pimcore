@@ -78,7 +78,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
 
                 $isLocalized = false;
 
-                if (strpos($classId, 'localized_') === 0) {
+                if (str_starts_with($classId, 'localized_')) {
                     $isLocalized = true;
                     $classId = substr($classId, strlen('localized_'));
                 }

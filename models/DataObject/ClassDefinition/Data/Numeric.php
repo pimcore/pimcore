@@ -359,7 +359,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 throw new Model\Element\ValidationException('Value exceeds PHP_INT_MAX please use an input data type instead of numeric!');
             }
 
-            if ($this->getInteger() && strpos((string) $data, '.') !== false) {
+            if ($this->getInteger() && str_contains((string)$data, '.')) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
             }
 
@@ -432,7 +432,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $value;
         }
 
-        if (strpos($value, '.') === false) {
+        if (!str_contains($value, '.')) {
             return (int) $value;
         }
 

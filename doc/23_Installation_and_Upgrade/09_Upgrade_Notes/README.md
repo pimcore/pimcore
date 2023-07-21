@@ -155,7 +155,6 @@
             $collection->addBundle(new \Pimcore\Bundle\AdminBundle\PimcoreAdminBundle\PimcoreAdminBundle(), 60);
         }
         ```
-		- Moved `BundleManagerEvents` to AdminBundle. Please use `Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents` instead of `Pimcore\Event\BundleManagerEvents`.
         -  Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     - [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.

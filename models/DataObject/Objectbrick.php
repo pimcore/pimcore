@@ -43,9 +43,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var Model\DataObject\Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * @internal
@@ -196,7 +195,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function setObject(?Concrete $object): static
     {
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
 
         // update all items with the new $object

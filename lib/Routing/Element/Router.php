@@ -79,7 +79,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $path = $element->getFullPath();
             $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
 
-            if (strpos($path, '://') !== false) {
+            if (str_contains($path, '://')) {
                 $host = parse_url($path, PHP_URL_HOST);
                 $scheme = parse_url($path, PHP_URL_SCHEME);
                 $path = parse_url($path, PHP_URL_PATH);

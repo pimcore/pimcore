@@ -317,7 +317,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
                     continue;
                 }
                 if ('media' == $key) {
-                    if (false === strpos($value, ',')) {
+                    if (!str_contains($value, ',')) {
                         if (!in_array($value, $this->_mediaTypes)) {
                             continue;
                         }

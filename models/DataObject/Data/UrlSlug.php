@@ -257,7 +257,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $fd = $classDefinition->getFieldDefinition($this->getFieldname());
             } elseif ($this->getOwnertype() === 'localizedfield') {
                 $ownerName = $this->getOwnername();
-                if (strpos($ownerName, '~') !== false) {
+                if (str_contains($ownerName, '~')) {
                     // this is a localized field inside a field collection or objectbrick
                     $parts = explode('~', $this->getOwnername());
                     $type = trim($parts[0], '/');

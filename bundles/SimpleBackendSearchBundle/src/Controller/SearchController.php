@@ -119,7 +119,7 @@ class SearchController extends UserAwareController
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
+                if (str_starts_with($f, '~')) {
                     //                    $type = $parts[1];
                     //                    $field = $parts[2];
                     //                    $keyid = $parts[3];
