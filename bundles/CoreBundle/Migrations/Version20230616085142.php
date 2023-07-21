@@ -40,6 +40,8 @@ final class Version20230616085142 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('SET foreign_key_checks = 0');
+
         $db = Db::get();
 
         $metaDataTables = $db->fetchAllAssociative(
@@ -55,25 +57,21 @@ final class Version20230616085142 extends AbstractMigration
                     'autoincrement' => true,
                 ]);
 
-                $fkName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
-                $metaDataTable->removeForeignKey($fkName);
                 $metaDataTable->dropPrimaryKey();
                 $metaDataTable->setPrimaryKey([self::AUTO_ID]);
-                $metaDataTable->addUniqueIndex(self::PK_COLUMNS, self::UNIQUE_INDEX_NAME);
-
-                $metaDataTable->addForeignKeyConstraint(
-                    'objects',
-                    [self::ID_COLUMN],
-                    [self::ID_COLUMN],
-                    ['onDelete' => 'CASCADE'],
-                    $fkName
-                );
+                if (!$metaDataTable->hasIndex(self::UNIQUE_INDEX_NAME)) {
+                    $metaDataTable->addUniqueIndex(self::PK_COLUMNS, self::UNIQUE_INDEX_NAME);
+                }
             }
         }
+
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('SET foreign_key_checks = 0');
+
         $db = Db::get();
 
         $metaDataTables = $db->fetchAllAssociative(
@@ -87,9 +85,12 @@ final class Version20230616085142 extends AbstractMigration
                 $metaDataTable->dropPrimaryKey();
                 $metaDataTable->dropColumn(self::AUTO_ID);
                 $metaDataTable->setPrimaryKey(self::PK_COLUMNS);
-                $metaDataTable->dropIndex(self::UNIQUE_INDEX_NAME);
+                if ($metaDataTable->hasIndex(self::UNIQUE_INDEX_NAME)) {
+                    $metaDataTable->dropIndex(self::UNIQUE_INDEX_NAME);
+                }
             }
         }
 
+        $this->addSql('SET foreign_key_checks = 1');
     }
 }
