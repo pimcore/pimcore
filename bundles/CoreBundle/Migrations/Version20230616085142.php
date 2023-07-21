@@ -53,7 +53,7 @@ final class Version20230616085142 extends AbstractMigration
                 ]);
 
                 $fkName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
-                $metaDataTable->removeForeignKey($fkName);
+                $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `' . $fkName . '`');
                 $metaDataTable->dropPrimaryKey();
                 $metaDataTable->setPrimaryKey([self::AUTO_ID]);
                 $metaDataTable->addUniqueIndex(self::PK_COLUMNS, self::UNIQUE_INDEX_NAME);
