@@ -597,7 +597,7 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.(.*)\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;
