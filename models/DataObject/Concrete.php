@@ -805,7 +805,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $actualValue = $row[$column];
                 if (isset($likes[$column])) {
                     $expectedValue = $likes[$column];
-                    if (strpos($actualValue, $expectedValue) !== 0) {
+                    if (!str_starts_with($actualValue, $expectedValue)) {
                         return false;
                     }
                 } elseif ($actualValue != $expectedValue) {

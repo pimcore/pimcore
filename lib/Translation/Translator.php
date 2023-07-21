@@ -222,7 +222,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $normalizedId = $id;
 
         //translate only plural form(seperated by pipe "|") with count param
-        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
+        if (isset($parameters['%count%']) && $translated && str_contains($normalizedId, '|')) {
             $normalizedId = $id = $translated;
             $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }

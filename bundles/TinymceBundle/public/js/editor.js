@@ -46,7 +46,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             language = {};
         }
 
-        const toolbar1 = 'undo redo | formatselect | ' +
+        const toolbar1 = 'undo redo | blocks | ' +
             'bold italic | alignleft aligncenter ' +
             'alignright alignjustify | link';
 

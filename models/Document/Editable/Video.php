@@ -537,7 +537,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
             if ($youtubeId = $this->id) {
-                if (strpos($youtubeId, '//') !== false) {
+                if (str_contains($youtubeId, '//')) {
                     $parts = parse_url($this->id);
                     if (array_key_exists('query', $parts)) {
                         parse_str($parts['query'], $vars);
@@ -548,7 +548,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-                    if (strpos($this->id, 'embed') !== false) {
+                    if (str_contains($this->id, 'embed')) {
                         $explodedPath = explode('/', $parts['path']);
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
@@ -595,7 +595,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $wmode = '?wmode=transparent';
         $seriesPrefix = '';
-        if (strpos($youtubeId, 'PL') === 0) {
+        if (str_starts_with($youtubeId, 'PL')) {
             $wmode = '';
             $seriesPrefix = 'videoseries?list=';
         }
@@ -908,7 +908,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 $attributesString .= ' ' . $key;
                 if (!empty($value)) {
                     $quoteChar = '"';
-                    if (strpos($value, '"')) {
+                    if (is_string($value) && strpos($value, '"')) {
                         $quoteChar = "'";
                     }
                     $attributesString .= '=' . $quoteChar . $value . $quoteChar;

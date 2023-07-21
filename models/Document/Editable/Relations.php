@@ -253,10 +253,12 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
 
         $el = $this->current();
-        if (Element\Service::doHideUnpublished($el)) {
-            if (!Element\Service::isPublished($el)) {
-                $this->next();
-            }
+        if (
+            $el instanceof Element\ElementInterface &&
+            Element\Service::doHideUnpublished($el) &&
+            !Element\Service::isPublished($el)
+        ) {
+            $this->next();
         }
 
         return $this->current() !== false;

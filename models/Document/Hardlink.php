@@ -32,19 +32,19 @@ class Hardlink extends Document
      * @internal
      *
      */
-    protected int $sourceId;
+    protected ?int $sourceId = null;
 
     /**
      * @internal
      *
      */
-    protected bool $propertiesFromSource;
+    protected bool $propertiesFromSource = false;
 
     /**
      * @internal
      *
      */
-    protected bool $childrenFromSource;
+    protected bool $childrenFromSource = false;
 
     public function getSourceDocument(): ?Document
     {
@@ -97,14 +97,14 @@ class Hardlink extends Document
         return $this->childrenFromSource;
     }
 
-    public function setSourceId(int $sourceId): static
+    public function setSourceId(?int $sourceId): static
     {
         $this->sourceId = $sourceId;
 
         return $this;
     }
 
-    public function getSourceId(): int
+    public function getSourceId(): ?int
     {
         return $this->sourceId;
     }

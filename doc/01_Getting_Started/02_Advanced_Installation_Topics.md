@@ -126,7 +126,7 @@ services:
 You can preconfigure the values used by the installer by adding a config file which sets values for the database
 credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
 instead of having direct access to them. To preconfigure the installer, add a config file in `config/installer.yaml` 
-(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as the format), then configure the `pimcore_installer` tree:
+(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as the format), then configure the `pimcore_install` tree:
 
 ```yaml
 # config/installer.yaml
