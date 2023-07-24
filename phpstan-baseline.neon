@@ -124,7 +124,7 @@ parameters:
 			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogProduct.php
-
+FV
 		-
 			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\EnvironmentInterface\\:\\:setProduct\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface, null given\\.$#"
 			count: 1
@@ -196,42 +196,42 @@ parameters:
 			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Email.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Folder.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Hardlink.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Link.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Page.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Printcontainer.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Printpage.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Snippet.php
 
