@@ -81,7 +81,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\>\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int<0, max>, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\>\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
@@ -116,12 +116,12 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
 
 		-
-			message: "#^Parameter \\#1 \\$categories of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogCategory\\:\\:setCategories\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractCategory\\>, array\\<int, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$categories of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogCategory\\:\\:setCategories\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractCategory\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogCategory.php
 
 		-
-			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogProduct.php
 
