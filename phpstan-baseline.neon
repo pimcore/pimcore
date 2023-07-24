@@ -124,7 +124,7 @@ parameters:
 			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogProduct.php
-FV
+
 		-
 			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\EnvironmentInterface\\:\\:setProduct\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface, null given\\.$#"
 			count: 1
@@ -174,6 +174,11 @@ FV
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: lib/Tool/Requirements.php
 
 		-
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
