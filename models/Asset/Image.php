@@ -405,7 +405,7 @@ EOT;
              * @see http://foone.org/apng/
              */
             $posIDAT = strpos($fileContent, 'IDAT');
-            $isAnimated = $posIDAT !== false ? strpos(substr($fileContent, 0, $posIDAT), 'acTL') !== false : false;
+            $isAnimated = $posIDAT !== false ? str_contains(substr($fileContent, 0, $posIDAT), 'acTL') : false;
         }
 
         return $isAnimated;
