@@ -95,7 +95,7 @@ The user permissions on element basis are summed up as follows:
 Individual users are granted access to all defined workspaces for any role they incorporate. In addition to that, users can have their own workspaces. These are added to the permissions granted by roles.
 
 For example, a role `myRole` has been granted list and view access to `/home/myPath`. The user editor incorporates the role `myRole` and thereby inherits all workspace settings from the role. 
-In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any role they incorporate. A permission granted by any role can not be canceled for a single user.
+In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any role they incorporate.
 
 :::caution
 
