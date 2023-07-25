@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Anonymous function with return type void returns \\*NEVER\\* but should not return anything\\.$#"
-			count: 1
-			path: bundles/CoreBundle/src/Command/Bundle/ListCommand.php
-
-		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: bundles/CoreBundle/src/Command/Document/CleanupCommand.php
