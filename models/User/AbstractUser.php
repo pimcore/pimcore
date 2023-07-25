@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
@@ -64,8 +65,8 @@ class AbstractUser extends Model\AbstractModel
         $cacheKey = 'user_' . $id;
 
         try {
-            if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-                $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                $user = RuntimeCache::get($cacheKey);
             } else {
                 $user = new static();
                 $user->getDao()->getById($id);
@@ -76,7 +77,7 @@ class AbstractUser extends Model\AbstractModel
                     $user = $className::getById($user->getId());
                 }
 
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $user);
+                RuntimeCache::set($cacheKey, $user);
             }
         } catch (Model\Exception\NotFoundException $e) {
             return null;
@@ -262,8 +263,8 @@ class AbstractUser extends Model\AbstractModel
         $this->getDao()->delete();
         
         $cacheKey = 'user_' . $this->getId();
-        if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-            Cache\RuntimeCache::set($cacheKey, null);
+        if (::isRegistered($cacheKey)) {
+            RuntimeCache::set($cacheKey, null);
         }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
