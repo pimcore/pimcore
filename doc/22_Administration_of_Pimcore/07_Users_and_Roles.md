@@ -99,7 +99,7 @@ In case the editor has his own workspace settings on `/home/myPath`, these permi
 
 :::caution
 
-Be aware that if different permissions are granted for the same workspace to a user and to a role he incorporates, individual permissions allowed to the user wins over the ones allowed to the role. This implies that if the user has fewer permissions granted as an individual than through its role, the role's permissions will also be blocked.
+Be aware that if different permissions are granted for the same workspace to a user and to a role he incorporates, individual permissions allowed to the user win over the ones allowed to the role. This implies that if the user has fewer permissions granted as an individual than through its role, the role's permissions will also be blocked.
 
 For example, a user has only `List` permissions on a workspace, but its role defines `List`, `View`, `Save`, and `Publish` permissions for the same workspace. Because its individual permissions are restricted, this user will only have the possibility to see the workspace tree allowed by its `List` permissions.
 
