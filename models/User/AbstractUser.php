@@ -260,7 +260,11 @@ class AbstractUser extends Model\AbstractModel
 
         // now delete the current user
         $this->getDao()->delete();
-        \Pimcore\Cache::clearAll();
+        
+        $cacheKey = 'user_' . $this->getId();
+        if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
+            Cache\RuntimeCache::set($cacheKey, null);
+        }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
     }
