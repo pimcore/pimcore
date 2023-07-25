@@ -55,7 +55,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         $this->setVersion(Version::getVersion());
 
         // we set locale to EN.UTF8 to not getting into UTF-8 issues, eg. when dealing with umlauts & escapeshellarg()
-        setlocale(LC_ALL, ['en.utf8', 'en_US.utf8', 'en_GB.utf8']);
+        setlocale(LC_ALL, ['en.utf8', 'en_US.utf8', 'en_GB.utf8']) ?: setlocale(LC_ALL, ['en.UTF-8', 'en_US.UTF-8', 'en_GB.UTF-8']);
 
         // allow to register commands here (e.g. through plugins)
         $dispatcher = \Pimcore::getEventDispatcher();
