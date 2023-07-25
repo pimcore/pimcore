@@ -27,7 +27,6 @@ framework:
         pools:
             pimcore.cache.pool:
                 public: true
-                tags: true
                 default_lifetime: 31536000  # 1 year
                 #adapter: pimcore.cache.adapter.doctrine_dbal
                 #provider: 'doctrine.dbal.default_connection'
