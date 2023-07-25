@@ -609,10 +609,18 @@ final class Requirements
             ]);
         }
 
+        $utfLocaleState = Check::STATE_ERROR;
+        if (
+            setlocale(LC_ALL, ['en.utf8', 'en_US.utf8', 'en_GB.utf8'])
+            || setlocale(LC_ALL, ['en.UTF-8', 'en_US.UTF-8', 'en_GB.UTF-8']) // MacOS format
+        ) {
+            $utfLocaleState = Check::STATE_OK;
+        }
+        
         $checks[] = new Check([
             'name' => 'locales-utf8',
             'link' => 'https://packages.debian.org/en/stable/locales-all',
-            'state' => setlocale(LC_ALL, ['en.utf8', 'en_US.utf8', 'en_GB.utf8']) === false ? Check::STATE_ERROR : Check::STATE_OK,
+            'state' => $utfLocaleState,
             'message' => 'It is recommended to install UTF-8 locale, otherwise all CLI calls which use escapeshellarg() will strip multibyte characters',
         ]);
 
