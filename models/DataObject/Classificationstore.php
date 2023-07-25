@@ -62,14 +62,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var array
+     * @var array<int, bool>
      */
     protected $activeGroups = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<int, int>
      */
     protected $groupCollectionMapping = [];
 
@@ -298,7 +298,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @return array
+     * @return array<int, bool>
      */
     public function getActiveGroups()
     {
@@ -326,7 +326,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param array $activeGroups
+     * @param array<int, bool> $activeGroups
      */
     public function setActiveGroups($activeGroups)
     {
@@ -473,7 +473,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @return array
+     * @return array<int, int>
      */
     public function getGroupCollectionMappings(): array
     {
@@ -486,7 +486,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param array $groupCollectionMapping
+     * @param array<int, int> $groupCollectionMapping
      */
     public function setGroupCollectionMappings(array $groupCollectionMapping): void
     {
@@ -535,13 +535,17 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $fieldsArray;
     }
 
+    /**
+     * @return Model\DataObject\Classificationstore\Group[]
+     */
     private static function getActiveGroupsWithConfig(Classificationstore $classificationStore): array
     {
         $groups = [];
         $activeGroups = $classificationStore->getActiveGroups();
         foreach (array_keys($activeGroups) as $groupId) {
-            $groupConfig = $classificationStore->getGroupConfigById($groupId);
-            $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
+            if ($groupConfig = $classificationStore->getGroupConfigById($groupId)) {
+                $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
+            }
         }
 
         return $groups;
