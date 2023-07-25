@@ -174,9 +174,18 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 $attribs[] = $this->data['attributes'];
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
+            $html =  '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
+            $dom = new \DOMDocument();
+            $dom->loadHTML($html);
+            // get DOM Node list of the <a> tag
+            $nodeList = $dom->getElementsByTagName('a')->item(0);
+            foreach ($nodeList->attributes as $name => $attrNode) {
+                if(!in_array($name, $allowedAttributes) && $name != 'href'){
+                    $nodeList->removeAttribute($name);
+                }
+            }
+            return $dom->saveHTML($nodeList);
         }
-
         return '';
     }
 
