@@ -107,7 +107,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
-            let panelComponent = this.component.up('panel');
+            let panelComponent = this.component?.up('panel');
             let timeoutId;
             do{
                 if(panelComponent?.scrollable){
@@ -121,7 +121,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
                         }, 100);
                     }
                 }
-                panelComponent = panelComponent.up('panel');
+                panelComponent = panelComponent?.up('panel');
             } while(panelComponent)
 
             this.ckeditor.on('change', this.checkValue.bind(this, true));
