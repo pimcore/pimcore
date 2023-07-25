@@ -263,7 +263,7 @@ class AbstractUser extends Model\AbstractModel
         $this->getDao()->delete();
         
         $cacheKey = 'user_' . $this->getId();
-        if (::isRegistered($cacheKey)) {
+        if (RuntimeCache::isRegistered($cacheKey)) {
             RuntimeCache::set($cacheKey, null);
         }
 
