@@ -47,6 +47,7 @@ class QuantityValue extends AbstractQuantityValue
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
+            $value = (float)$value;
             $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($locale) {
