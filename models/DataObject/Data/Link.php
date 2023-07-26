@@ -332,7 +332,7 @@ class Link implements OwnerAwareFieldInterface
                 $path = $this->getElement()->getFullPath();
             }
         } else {
-            $path = $this->getDirect();
+            $path = $this->getDirect() ?? '';
         }
 
         return $path;
