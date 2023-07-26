@@ -59,9 +59,7 @@ All temporary files can be deleted at any time.
 **WARNING: Deleting all files in `public/var/tmp/` can have a huge impact on performance until all needed thumbnails are generated again.**
 
 ## Recycle Bin
-Deleting items in Pimcore moves them to the recycle bin first. 
-
-The recycle bin works quite similar to the versioning, 
+Deleting items in Pimcore moves them to the recycle bin first. The recycle bin works quite similar to the versioning, 
 so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
 You can review items in the bin in the admin user-interface under *Tools* > *Recycle Bin*, there it's also possible to 
 flush the entire contents. 
