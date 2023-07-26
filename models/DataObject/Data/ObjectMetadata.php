@@ -71,7 +71,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function __call(string $method, array $args)
     {
-        if (substr($method, 0, 3) == 'get') {
+        if (str_starts_with($method, 'get')) {
             $key = substr($method, 3, strlen($method) - 3);
 
             $idx = array_searchi($key, $this->columns);
@@ -84,7 +84,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($method, 0, 3) == 'set') {
+        if (str_starts_with($method, 'set')) {
             $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 

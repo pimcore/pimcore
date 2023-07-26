@@ -99,7 +99,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      */
     public function addFilterByField(string $field, string $operator, float|array|int|string $data): static
     {
-        if (strpos($operator, '?') === false) {
+        if (!str_contains($operator, '?')) {
             $operator .= ' ?';
         }
 

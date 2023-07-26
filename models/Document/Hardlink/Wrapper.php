@@ -107,7 +107,7 @@ trait Wrapper
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {
             $hardLink = $this->getHardLinkSource();
-            if (strpos($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/') === 0
+            if (str_starts_with($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/')
                 || $hardLink->getSourceDocument()->getRealFullPath() === $result->getRealFullPath()
             ) {
                 $c = Service::wrap($result);
