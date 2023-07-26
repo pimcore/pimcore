@@ -133,7 +133,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getWidth()
     {
@@ -145,7 +145,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getHeight()
     {
@@ -157,7 +157,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getRealWidth()
     {
@@ -169,7 +169,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getRealHeight()
     {
@@ -193,11 +193,18 @@ trait ImageThumbnailTrait
             try {
                 $localFile = $this->getLocalFile();
                 if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
-                    $this->getAsset()->addThumbnailFileToCache(
+                    $asset = $this->getAsset();
+                    $filename = basename($pathReference['storagePath']);
+                    $asset->addThumbnailFileToCache(
                         $localFile,
-                        basename($pathReference['storagePath']),
+                        $filename,
                         $config
                     );
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $filename);
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
+                    }
                 }
             } catch (\Exception $e) {
                 // noting to do
@@ -208,7 +215,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return array
+     * @return array{width: ?int, height: ?int}
      */
     public function getDimensions()
     {
