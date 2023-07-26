@@ -2,7 +2,7 @@
 
 ## General
 
-User permissions in Pimcore are based on a users and roles concept. Each user can have serveral roles and both - users
+User permissions in Pimcore are based on a users and roles concept. Each user can have several roles and both - users
  and roles - can have permissions. 
  
 Users and roles are configured in Pimcore backend UI at *Settings* > *Users & Roles* > *Users* and
@@ -42,7 +42,7 @@ The following list outlines what the different system permissions (available for
 * **Notes & Events**: Notes & Events are visible 
 * **Objects**: objects tree is visible 
 * **Predefined Properties**: User can create and modify predefined properties
-* **Recycle Bin**: User has access to recycle bin
+* **Recycle Bin**: User has access to recycle bin and see all deleted elements by anyone
 * **Redirects**: User can create and modify redirects
 * **Reports**: User has access to reports module
 * **Seemode**: Seemode available/not available for user
