@@ -31,7 +31,7 @@ framework:
                 default_lifetime: 31536000  # 1 year
                 #adapter: pimcore.cache.adapter.doctrine_dbal
                 #provider: 'doctrine.dbal.default_connection'
-                adapter: pimcore.cache.adapter.redis_tag_aware
+                adapter: cache.adapter.redis_tag_aware
                 provider: 'redis://localhost'
 ```
 
