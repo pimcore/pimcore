@@ -1030,7 +1030,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private static function getDurationString(float $duration): string
     {
-        $duration = (int) ceil($duration);
+        $duration = ceil($duration);
         $durationParts = ['PT'];
 
         // hours
