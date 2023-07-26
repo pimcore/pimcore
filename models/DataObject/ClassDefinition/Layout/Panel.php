@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,56 +29,36 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      * Static type of this element
      *
      * @internal
-     *
-     * @var string
      */
-    public $fieldtype = 'panel';
+    public string $fieldtype = 'panel';
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public $layout;
+    public ?string $layout = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
-    /**
-     * @param string $layout
-     *
-     * @return $this
-     */
-    public function setLayout($layout)
+    public function setLayout(string $layout): static
     {
         $this->layout = $layout;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLayout()
+    public function getLayout(): string
     {
         return $this->layout;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;

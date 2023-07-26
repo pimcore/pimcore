@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,39 +24,20 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
- *
- * @abstract Will be natively abstract in Pimcore 11
  */
-class AbstractUser extends Model\AbstractModel
+abstract class AbstractUser extends Model\AbstractModel implements AbstractUserInterface
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var int|null
-     */
-    protected $parentId;
+    protected ?int $parentId = null;
 
-    /**
-     * @var string|null
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type = '';
 
-    /**
-     * @param int $id
-     *
-     * @return static|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): static|null
     {
         if (!is_numeric($id) || $id < 0) {
             return null;
@@ -67,7 +49,13 @@ class AbstractUser extends Model\AbstractModel
             if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
                 $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             } else {
-                $user = new static();
+                $reflectionClass = new \ReflectionClass(static::class);
+                if ($reflectionClass->isAbstract()) {
+                    $user = new Model\User();
+                    $user->setType('');
+                } else {
+                    $user = new static();
+                }
                 $user->getDao()->getById($id);
                 $className = Service::getClassNameForType($user->getType());
 
@@ -89,12 +77,7 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return static
-     */
-    public static function create($values = [])
+    public static function create(array $values = []): static
     {
         $user = new static();
         self::checkCreateData($values);
@@ -104,12 +87,7 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return static|null
-     */
-    public static function getByName($name)
+    public static function getByName(string $name): ?static
     {
         try {
             $user = new static();
@@ -121,70 +99,52 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
     /**
-     * @param int $parentId
-     *
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId): static
     {
-        $this->parentId = (int)$parentId;
+        $this->parentId = $parentId;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -194,7 +154,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): static
     {
         $isUpdate = false;
         if ($this->getId()) {
@@ -236,7 +196,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
@@ -270,7 +230,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    private function cleanupUserRoleRelations()
+    private function cleanupUserRoleRelations(): void
     {
         $userRoleListing = new Listing();
         $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
@@ -291,11 +251,9 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -305,17 +263,13 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
     }
 
     /**
      * @internal
-     *
-     * @param AbstractUser $user
-     *
-     * @return bool
      */
     protected static function typeMatch(AbstractUser $user): bool
     {

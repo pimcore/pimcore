@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,48 +20,19 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
 use Pimcore\Logger;
 use Pimcore\Model\User;
-use Pimcore\Tool;
+use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class Authentication
 {
-    /**
-     * @deprecated
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @return null|User
-     */
-    public static function authenticatePlaintext($username, $password)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
-        );
-
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
-        if (self::isValidUser($user)) {
-            if (self::verifyPassword($user, $password)) {
-                $user->setLastLoginDate(); //set user current login date
-
-                return $user;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param Request|null $request
      *
      * @return User|null
      */
-    public static function authenticateSession(Request $request = null)
+    public static function authenticateSession(Request $request = null): ?User
     {
         if (null === $request) {
             $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
@@ -70,69 +42,82 @@ class Authentication
             }
         }
 
-        if (!Session::requestHasSessionId($request, true)) {
-            // if no session cookie / ID no authentication possible, we don't need to start a session
+        $session = $request->hasPreviousSession() ? $request->getSession() : null;
+
+        if (null === $session) {
             return null;
         }
 
-        $session = Session::getReadOnly();
-        $user = $session->get('user');
+        $token = $session->get('_security_pimcore_admin');
+        $token = $token ? static::safelyUnserialize($token) : null;
 
-        if ($user instanceof User) {
-            // renew user
-            $user = User::getById($user->getId());
+        if ($token instanceof TokenInterface) {
+            $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
+            $user = $token->getUser();
 
-            if (self::isValidUser($user)) {
-                return $user;
+            if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
+                return $user->getUser();
             }
         }
 
         return null;
     }
 
-    /**
-     * @deprecated
-     *
-     * @throws \Exception
-     *
-     * @return User
-     */
-    public static function authenticateHttpBasic()
+    protected static function safelyUnserialize(string $serializedToken): mixed
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
-        );
-
-        // we're using Sabre\HTTP for basic auth
-        $request = \Sabre\HTTP\Sapi::getRequest();
-        $response = new \Sabre\HTTP\Response();
-        $auth = new \Sabre\HTTP\Auth\Basic(Tool::getHostname(), $request, $response);
-        $result = $auth->getCredentials();
-
-        if (is_array($result)) {
-            list($username, $password) = $result;
-            $user = self::authenticatePlaintext($username, $password);
-            if ($user) {
-                return $user;
+        $token = null;
+        $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
+        $prevErrorHandler = set_error_handler(static function (int $type, string $msg, string $file, int $line, array $context = []) use (&$prevErrorHandler) {
+            if (__FILE__ === $file) {
+                throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
             }
+
+            return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
+        });
+
+        try {
+            $token = unserialize($serializedToken);
+        } catch (\ErrorException $e) {
+            if (0x37313BC !== $e->getCode()) {
+                throw $e;
+            }
+            Logger::warning('Failed to unserialize the security token from the session.', ['key' => 'pimcore_admin', 'received' => $serializedToken, 'exception' => $e]);
+        } finally {
+            restore_error_handler();
+            ini_set('unserialize_callback_func', $prevUnserializeHandler);
         }
 
-        $auth->requireLogin();
-        $response->setBody('Authentication required');
-        Logger::error('Authentication Basic (WebDAV) required');
-        \Sabre\HTTP\Sapi::sendResponse($response);
-        die();
+        return $token;
     }
 
     /**
-     * @param string $token
-     * @param bool $adminRequired
-     *
-     * @return null|User
+     * @internal
      */
-    public static function authenticateToken($token, $adminRequired = false)
+    public static function handleUnserializeCallback(string $class): never
+    {
+        throw new \ErrorException('Class not found: '.$class, 0x37313BC);
+    }
+
+    protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
+    {
+        $user = $token->getUser();
+
+        if (!$provider->supportsClass($user::class)) {
+            return null;
+        }
+
+        try {
+            $token->setUser($provider->refreshUser($user));
+
+            return $token;
+        } catch (UserNotFoundException $e) {
+            Logger::warning('Username could not be found in the selected user provider.', ['username' => $e->getUserIdentifier(), 'provider' => $provider::class]);
+
+            return null;
+        }
+    }
+
+    public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
         $username = null;
         $timestamp = null;
@@ -167,13 +152,7 @@ class Authentication
         return null;
     }
 
-    /**
-     * @param User $user
-     * @param string $password
-     *
-     * @return bool
-     */
-    public static function verifyPassword($user, $password)
+    public static function verifyPassword(User $user, string $password): bool
     {
         if (!$user->getPassword()) {
             // do not allow logins for users without a password
@@ -196,31 +175,22 @@ class Authentication
         return true;
     }
 
-    /**
-     * @param User|null $user
-     *
-     * @return bool
-     */
-    public static function isValidUser($user)
+    public static function isValidUser(?User $user): bool
     {
-        if ($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
-            return true;
-        }
-
-        return false;
+        return $user instanceof User && $user->isActive() && $user->getId() && $user->getPassword();
     }
 
     /**
-     * @internal
-     *
      * @param string $username
      * @param string $plainTextPassword
      *
      * @return string
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public static function getPasswordHash($username, $plainTextPassword)
+    public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
         $password = self::preparePlainTextPassword($username, $plainTextPassword);
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
@@ -232,13 +202,7 @@ class Authentication
         throw new \Exception('Unable to create password hash for user: ' . $username);
     }
 
-    /**
-     * @param string $username
-     * @param string $plainTextPassword
-     *
-     * @return string
-     */
-    private static function preparePlainTextPassword($username, $plainTextPassword)
+    private static function preparePlainTextPassword(string $username, string $plainTextPassword): string
     {
         // plaintext password is prepared as digest A1 hash, this is to be backward compatible because this was
         // the former hashing algorithm in pimcore (< version 2.1.1)
@@ -246,13 +210,13 @@ class Authentication
     }
 
     /**
-     * @internal
-     *
      * @param string $username
      *
      * @return string
+     *
+     * @internal
      */
-    public static function generateToken($username)
+    public static function generateToken(string $username): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 
@@ -262,12 +226,7 @@ class Authentication
         return $token;
     }
 
-    /**
-     * @param string $token
-     *
-     * @return array
-     */
-    private static function tokenDecrypt($token)
+    private static function tokenDecrypt(string $token): array
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);

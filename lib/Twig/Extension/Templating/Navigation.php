@@ -37,20 +37,10 @@ class Navigation implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var Builder
-     */
-    private $builder;
+    private Builder $builder;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $rendererLocator;
+    private ContainerInterface $rendererLocator;
 
-    /**
-     * @param Builder $builder
-     * @param ContainerInterface $rendererLocator
-     */
     public function __construct(Builder $builder, ContainerInterface $rendererLocator)
     {
         $this->builder = $builder;
@@ -109,7 +99,7 @@ class Navigation implements RuntimeExtensionInterface
         string $rendererName = 'menu',
         string $renderMethod = 'render',
         ...$rendererArguments
-    ) {
+    ): string {
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {
@@ -129,7 +119,7 @@ class Navigation implements RuntimeExtensionInterface
      *
      * @return RendererInterface
      */
-    public function __call($method, array $arguments = []): RendererInterface
+    public function __call(string $method, array $arguments = []): RendererInterface
     {
         return $this->getRenderer($method);
     }

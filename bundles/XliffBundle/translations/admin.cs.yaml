@@ -1,0 +1,17 @@
+---
+xliff_export_documents: "Pokud chcete p\u0159elo\u017Eit nap\u0159. cel\xFD strom
+  /en do jin\xE9ho jazyka, vytvo\u0159te kopii /en, nap\u0159. /de, a pak exportujte
+  /de k p\u0159ekladu. P\u0159i importov\xE1n\xED p\u0159elo\u017Een\xE9ho XLIFF souboru
+  bude anglick\xFD obsah v /de strom\u011B p\u0159eps\xE1n n\u011Bmeck\xFDmi p\u0159eklady
+  z XLIFF souboru."
+xliff_export_objects: "Jen prvky uvnit\u0159 kontejneru lokalizovan\xFDch hodnot (Localized
+  fields) jsou rozpozn\xE1ny. P\u0159i importu p\u0159elo\u017Een\xE9ho XLIFF souboru
+  z\u016Fstane zdrojov\xFD jazyk nezm\u011Bn\u011Bn, p\u0159eps\xE1n bude jen obsah
+  prvk\u016F c\xEDlov\xE9ho jazyka."
+xliff_export_notice: "Zde m\u016F\u017Eete vybrat dokumenty a z\xE1znamy, kter\xE9
+  chcete exportovat k extern\xEDmu p\u0159ekladu do jin\xFDch jazyk\u016F."
+xliff_import_notice: "Vyberte p\u0159elo\u017Een\xFD XLIFF soubor, kter\xFD byl exportov\xE1n
+  a p\u0159elo\u017Een lokaliza\u010Dn\xED slu\u017Ebou (LSP) nebo v CAT aplikaci.
+  Obsah element\u016F, kter\xE9 byly p\u0159i importu/exportu zvoleny, bude p\u0159eps\xE1n."
+xliff_import_export: Xliff Import/Export
+...

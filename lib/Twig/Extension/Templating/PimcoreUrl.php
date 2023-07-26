@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\LinkGeneratorAwareInterface;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
@@ -26,20 +26,10 @@ class PimcoreUrl implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $generator;
+    protected UrlGeneratorInterface $generator;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param UrlGeneratorInterface $generator
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(UrlGeneratorInterface $generator, RequestHelper $requestHelper)
     {
         $this->generator = $generator;
@@ -55,7 +45,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      * @return string
      */
-    public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
+    public function __invoke(array $urlOptions = [], string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
         // merge all parameters from request to parameters
         if (!$reset && $this->requestHelper->hasMainRequest()) {
@@ -68,14 +58,14 @@ class PimcoreUrl implements RuntimeExtensionInterface
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param string|array|null $name
+     * @param array|string|null $name
      * @param array|null $parameters
      * @param int $referenceType
      * @param bool $encode
      *
      * @return string
      */
-    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
+    protected function generateUrl(array|string $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
     {
         if ($encode !== true) {
             // encoding is default anyway, so we only set it when really necessary, to minimize the risk of
@@ -99,13 +89,16 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $name = $this->getCurrentRoute();
         }
 
+        /** @var Concrete | null $object */
         $object = $parameters['object'] ?? null;
         $linkGenerator = null;
 
-        if ($object instanceof LinkGeneratorAwareInterface) { //e.g. Mockup
-            $linkGenerator = $object->getLinkGenerator();
-        } elseif ($object instanceof Concrete) {
-            $linkGenerator = $object->getClass()->getLinkGenerator();
+        if ($object) {
+            if (method_exists($object, 'getClass') && method_exists($object->getClass(), 'getLinkGenerator')) {
+                $linkGenerator = $object->getClass()->getLinkGenerator();
+            } elseif (method_exists($object, 'getLinkGenerator')) { // useful for ecommerce LinkGeneratorAwareInterface
+                $linkGenerator = $object->getLinkGenerator();
+            }
         }
 
         if ($linkGenerator) {
@@ -134,7 +127,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      * @return string|null
      */
-    protected function getCurrentRoute()
+    protected function getCurrentRoute(): ?string
     {
         $route = null;
 

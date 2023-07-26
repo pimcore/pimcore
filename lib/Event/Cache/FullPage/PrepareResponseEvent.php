@@ -23,15 +23,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PrepareResponseEvent extends Event
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var Response
-     */
-    private $response;
+    private Response $response;
 
     public function __construct(Request $request, Response $response)
     {

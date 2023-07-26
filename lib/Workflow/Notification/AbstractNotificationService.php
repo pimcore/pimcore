@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,10 +22,7 @@ use Pimcore\Model\User;
 
 class AbstractNotificationService
 {
-    /**
-     * @param int $id
-     */
-    protected function getNoteInfo($id): string
+    protected function getNoteInfo(int $id): string
     {
         $noteList = new Note\Listing();
         $noteList->addConditionParam('(cid = ?)', [$id]);
@@ -51,7 +49,7 @@ class AbstractNotificationService
      *
      * @return User[][]
      */
-    protected function getNotificationUsersByName($users, $roles, $includeAllUsers = false): array
+    protected function getNotificationUsersByName(array $users, array $roles, bool $includeAllUsers = false): array
     {
         $notifyUsers = [];
 

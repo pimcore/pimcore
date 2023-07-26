@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,6 +26,12 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     use NotesAwareTrait;
     use NotificationTrait;
 
+    public const UNSAVED_CHANGES_BEHAVIOUR_SAVE = 'save';
+
+    public const UNSAVED_CHANGES_BEHAVIOUR_IGNORE = 'ignore';
+
+    public const UNSAVED_CHANGES_BEHAVIOUR_WARN = 'warn';
+
     /**
      * @var array
      */
@@ -38,16 +45,13 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
      * @param string|string[] $tos
      * @param array $options
      */
-    public function __construct($name, $froms, $tos, $options = [])
+    public function __construct(string $name, $froms, $tos, array $options = [])
     {
         parent::__construct($name, $froms, $tos);
         $this->options = $options;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -65,7 +69,7 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     /**
      * @return string|int|false
      */
-    public function getObjectLayout()
+    public function getObjectLayout(): bool|int|string
     {
         return $this->options['objectLayout'] ?: false;
     }

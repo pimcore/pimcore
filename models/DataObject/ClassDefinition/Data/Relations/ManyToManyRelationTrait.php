@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,19 +17,19 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
     /**
      * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
-     *
-     * @param object $object
-     * @param array $params
-     *
-     * @return bool
      */
-    protected function skipSaveCheck(object $object, array $params = []): bool
+    protected function skipSaveCheck(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): bool
     {
         $forceSave = $params['forceSave'] ?? false;
 
@@ -49,15 +50,12 @@ trait ManyToManyRelationTrait
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($container, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if ($this->skipSaveCheck($container, $params)) {
+        if ($this->skipSaveCheck($object, $params)) {
             return;
         }
 
-        parent::save($container, $params);
+        parent::save($object, $params);
     }
 }

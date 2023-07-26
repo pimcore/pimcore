@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Types\Type;
 use Pimcore\Model\Element\ValidationException;
@@ -29,7 +31,7 @@ class Helper
      * Typically, these are the primary key columns.
      * The values for the specified keys are read from the $data parameter.
      */
-    public static function upsert(ConnectionInterface|\Doctrine\DBAL\Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
+    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
@@ -46,63 +48,7 @@ class Helper
         }
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert instead.
-     *
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $connection
-     * @param string $table
-     * @param array $data
-     *
-     * @return int|string
-     */
-    public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert() instead.', __METHOD__)
-        );
-
-        // extract and quote col names from the array keys
-        $i = 0;
-        $bind = [];
-        $cols = [];
-        $vals = [];
-        foreach ($data as $col => $val) {
-            $cols[] = $connection->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
-            $vals[] = ':col' . $i;
-            $i++;
-        }
-
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
-        }
-
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
-            $connection->quoteIdentifier($table),
-            implode(', ', $cols),
-            implode(', ', $vals),
-            implode(', ', $set)
-        );
-
-        $bind = array_merge($bind, $bind);
-
-        return $connection->executeStatement($sql, $bind);
-    }
-
-    /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
-     * @param string $sql
-     * @param array $params
-     * @param array $types
-     *
-     * @return array
-     */
-    public static function fetchPairs(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
+    public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
@@ -115,15 +61,7 @@ class Helper
         return $data;
     }
 
-    /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
-     * @param string $table
-     * @param string $idColumn
-     * @param string $where
-     *
-     * @return void
-     */
-    public static function selectAndDeleteWhere(ConnectionInterface|\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
+    public static function selectAndDeleteWhere(Connection $db, string $table, string $idColumn = 'id', string $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -142,16 +80,7 @@ class Helper
         }
     }
 
-    /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
-     * @param string $sql
-     * @param array $exclusions
-     *
-     * @return \Doctrine\DBAL\Result|\Doctrine\DBAL\Driver\ResultStatement|null
-     *
-     * @throws ValidationException
-     */
-    public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
+    public static function queryIgnoreError(Connection $db, string $sql, array $exclusions = []): ?\Doctrine\DBAL\Result
     {
         try {
             return $db->executeQuery($sql);
@@ -167,16 +96,7 @@ class Helper
         return null;
     }
 
-    /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
-     * @param string $text
-     * @param mixed $value
-     * @param int|string|Type|null $type
-     * @param int|null $count
-     *
-     * @return array|string
-     */
-    public static function quoteInto(ConnectionInterface|\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
+    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);
@@ -190,7 +110,7 @@ class Helper
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
 
-    public static function quoteDataIdentifiers(ConnectionInterface|\Doctrine\DBAL\Connection $db, array $data): array
+    public static function quoteDataIdentifiers(Connection $db, array $data): array
     {
         $newData = [];
         foreach ($data as $key => $value) {

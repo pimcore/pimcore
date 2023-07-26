@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,14 +16,15 @@
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PHPClassDumper implements PHPClassDumperInterface
 {
     public function __construct(
         protected ClassBuilderInterface $classBuilder,
-        protected ListingClassBuilderInterface $listingClassBuilder
+        protected ListingClassBuilderInterface $listingClassBuilder,
+        protected Filesystem $filesystem
     ) {
     }
 
@@ -31,14 +33,16 @@ class PHPClassDumper implements PHPClassDumperInterface
         $classFilePath = $classDefinition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($classDefinition);
 
-        if (File::put($classFilePath, $phpClass) === false) {
+        $this->filesystem->dumpFile($classFilePath, $phpClass);
+        if (!file_exists($classFilePath)) {
             throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $classFilePath));
         }
 
         $listingClassFilePath = $classDefinition->getPhpListingClassFile();
         $listingPhpClass = $this->listingClassBuilder->buildListingClass($classDefinition);
 
-        if (File::put($listingClassFilePath, $listingPhpClass) === false) {
+        $this->filesystem->dumpFile($listingClassFilePath, $listingPhpClass);
+        if (!file_exists($listingClassFilePath)) {
             throw new \Exception(
                 sprintf('Cannot write class file in %s please check the rights on this directory', $listingClassFilePath)
             );

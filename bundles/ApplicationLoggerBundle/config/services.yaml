@@ -1,0 +1,75 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreApplicationLoggerBundle')"
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    #
+    # APPLICATION LOGGER
+    #
+
+    # Monolog processors for the application logger. Autoconfigure is set to false as we don't
+    # want Symfony to auto-register them for all handlers (this isn't the case at the moment as
+    # there is no interface for a processor, but in case support for autoconfiguration is added
+    # we want to keep those processors only for the application logger.
+
+    # ApplicationLoggerProcessor prepares data for the DB handler. This basically
+    # mimics functionality from the ApplicationLogger itself to be used from any
+    # monolog handler.
+    Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor: ~
+
+    # IntrospectionProcessor adds data regarding called function/line. The skipClassesPartials makes sure
+    # we skip the stack frame when called through ApplicationLogger.
+    pimcore.app_logger.introspection_processor:
+        class: Monolog\Processor\IntrospectionProcessor
+        autoconfigure: false
+        arguments:
+            $level: 'DEBUG'
+            $skipClassesPartials:
+                - 'Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger'
+
+    # the DB write handler
+    Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb:
+        public: true
+        calls:
+            - [ pushProcessor, [ '@monolog.processor.psr_log_message' ] ]
+            - [ pushProcessor, [ '@Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor' ] ]
+            - [ pushProcessor, [ '@pimcore.app_logger.introspection_processor' ] ]
+
+    Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger:
+        public: true
+        calls:
+            - [ addWriter, [ '@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb' ] ]
+
+    Pimcore\Log\ApplicationLogger:
+        public: true
+        alias: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+
+    pimcore.app_logger:
+        public: true
+        alias: pimcore.app_logger.default
+
+    pimcore.app_logger.default:
+        public: true
+        alias: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: archiveLogEntries }
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogMailMaintenanceTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: logmaintenance }

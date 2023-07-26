@@ -1,0 +1,16 @@
+---
+xliff_export_documents: "Ak chcete prelo\u017Ei\u0165 napr. cel\xFD strom /en do in\xE9ho
+  jazyka, vytvorte najsk\xF4r k\xF3piu /en, napr. s n\xE1zvom /de a potom exportujte
+  /de na preklad. Pri importovan\xED prelo\u017Een\xE9ho XLIFF s\xFAboru bude anglick\xFD
+  obsah v /de strome prep\xEDsan\xFD nemeck\xFDmi prekladmi z XLIFF s\xFAboru."
+xliff_export_objects: "Len prvky vo vn\xFAtri kontajn\xE9ru lokalizovan\xFDch pol\xED
+  (Localized fields) s\xFA rozpoznan\xE9. Pri importovan\xED prelo\u017Een\xE9ho XLIFF
+  ostane zdrojov\xFD jazyk nezmenen\xFD, prep\xEDsan\xFD bude len obsah prvkov cie\u013Eov\xE9ho
+  jazyka."
+xliff_export_notice: "Tu m\xF4\u017Eete vybra\u0165 dokumenty a z\xE1znamy, ktor\xE9
+  chcete exportova\u0165 k extern\xE9mu prekladu do in\xFDch jazykov."
+xliff_import_notice: "Vyberte prelo\u017Een\xFD XLIFF s\xFAbor, ktor\xFD bol exportovan\xFD
+  a prelo\u017Een\xFD lokaliza\u010Dnou slu\u017Ebou (LSP) alebo v CAT aplik\xE1cii.
+  Obsah elementov, ktor\xE9 boli pri importe/exporte zvolen\xE9, bude prep\xEDsan\xFD."
+xliff_import_export: Xliff Import/Export
+...

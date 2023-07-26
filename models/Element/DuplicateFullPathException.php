@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,8 @@ namespace Pimcore\Model\Element;
 
 class DuplicateFullPathException extends \Exception
 {
+    private ?ElementInterface $causeElement = null;
+
     private ?ElementInterface $duplicateElement = null;
 
     public function setDuplicateElement(?ElementInterface $duplicateElement): void
@@ -27,5 +30,15 @@ class DuplicateFullPathException extends \Exception
     public function getDuplicateElement(): ?ElementInterface
     {
         return $this->duplicateElement;
+    }
+
+    public function setCauseElement(?ElementInterface $causeElement): void
+    {
+        $this->causeElement = $causeElement;
+    }
+
+    public function getCauseElement(): ?ElementInterface
+    {
+        return $this->causeElement;
     }
 }

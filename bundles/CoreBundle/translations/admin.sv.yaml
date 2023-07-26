@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: "F\xF6r %s med ID %s utl\xF6stes \xE5tg\xE4rden
+  \"%s\" i arbetsfl\xF6det '%s'."
+workflow_change_email_notification_deeplink: "Djupl\xE4nk till elementet."
+workflow_change_email_notification_note: 'Anteckning lades till:'
+...

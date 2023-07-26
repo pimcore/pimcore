@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,6 +23,9 @@ use Pimcore\Model\Version;
  */
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
+    /**
+     * @var array<string, VersionStorageAdapterInterface>
+     */
     private array $adapters = [];
 
     public function __construct(protected int $byteThreshold,

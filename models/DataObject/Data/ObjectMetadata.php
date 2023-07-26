@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,49 +28,29 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /**
-     * @var DataObject\AbstractObject|null
-     */
-    protected $object;
+    protected ?DataObject\AbstractObject $object = null;
 
-    /**
-     * @var int|null
-     */
-    protected $objectId;
+    protected ?int $objectId = null;
 
-    /**
-     * @var string|null
-     */
-    protected $fieldname;
+    protected ?string $fieldname = null;
 
-    /**
-     * @var array
-     */
-    protected $columns = [];
+    protected array $columns = [];
 
-    /**
-     * @var array
-     */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string|null $fieldname
      * @param array $columns
      * @param Concrete|null $object
      */
-    public function __construct($fieldname, $columns = [], $object = null)
+    public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
         $this->setObject($object);
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
-    public function setObject(?Concrete $object)
+    public function setObject(?DataObject\Concrete $object): static
     {
         $this->markMeDirty();
 
@@ -85,17 +66,17 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
+     * @param string $method
+     * @param array $args
      *
      * @return mixed|void
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $method, array $args)
     {
-        if (substr($name, 0, 3) == 'get') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (substr($method, 0, 3) == 'get') {
+            $key = substr($method, 3, strlen($method) - 3);
 
             $idx = array_searchi($key, $this->columns);
             if ($idx !== false) {
@@ -107,13 +88,13 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (substr($method, 0, 3) == 'set') {
+            $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
-                $this->data[$correctedKey] = $arguments[0];
+                $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
@@ -121,30 +102,12 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     */
-    public function save($object, $ownertype, $ownername, $position, $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index): void
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
 
-    /**
-     * @param Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     *
-     * @return ObjectMetadata|null
-     */
-    public function load(Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?ObjectMetadata
     {
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
         $this->markMeDirty(false);
@@ -152,12 +115,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $return;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
@@ -165,21 +123,15 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFieldname()
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @return Concrete|null
-     */
-    public function getObject()
+    public function getObject(): ?DataObject\Concrete
     {
         if ($this->getObjectId()) {
-            $object = Concrete::getById($this->getObjectId());
+            $object = DataObject\Concrete::getById($this->getObjectId());
             if (!$object) {
                 Logger::info('object ' . $this->getObjectId() . ' does not exist anymore');
             }
@@ -190,32 +142,19 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return null;
     }
 
-    /**
-     * @param Concrete $element
-     *
-     * @return $this
-     */
-    public function setElement($element)
+    public function setElement(DataObject\Concrete $element): static
     {
         $this->markMeDirty();
 
         return $this->setObject($element);
     }
 
-    /**
-     * @return Concrete|null
-     */
-    public function getElement()
+    public function getElement(): ?DataObject\Concrete
     {
         return $this->getObject();
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return $this
-     */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         $this->markMeDirty();
@@ -223,66 +162,45 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getObject()->__toString();
     }
 
-    /**
-     * @return int
-     */
-    public function getObjectId()
+    public function getObjectId(): int
     {
         return (int) $this->objectId;
     }
 
-    /**
-     * @param int|null $objectId
-     */
-    public function setObjectId($objectId)
+    public function setObjectId(?int $objectId): void
     {
         $this->objectId = $objectId;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();
         }
     }
 
-    /**
-     * @return array
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $blockedVars = ['object'];

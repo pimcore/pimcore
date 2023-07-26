@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver: ~
+
+    Pimcore\Controller\ArgumentValueResolver\EditmodeValueResolver: ~
+
+    Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver: ~

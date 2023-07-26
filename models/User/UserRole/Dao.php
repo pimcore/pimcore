@@ -30,7 +30,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         parent::getById($id);
 
@@ -44,7 +44,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getByName($name)
+    public function getByName(string $name): void
     {
         parent::getByName($name);
 
@@ -53,7 +53,7 @@ class Dao extends Model\User\AbstractUser\Dao
         }
     }
 
-    public function loadWorkspaces()
+    public function loadWorkspaces(): void
     {
         $types = ['asset', 'document', 'object'];
 
@@ -64,7 +64,20 @@ class Dao extends Model\User\AbstractUser\Dao
             $result = $this->db->fetchAllAssociative('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
             foreach ($result as $row) {
                 $workspace = new $className();
-                $workspace->setValues($row);
+                $row['list'] = (bool)$row['list'];
+                $row['view'] = (bool)$row['view'];
+                $row['publish'] = (bool)$row['publish'];
+                $row['delete'] = (bool)$row['delete'];
+                $row['rename'] = (bool)$row['rename'];
+                $row['create'] = (bool)$row['create'];
+                $row['settings'] = (bool)$row['settings'];
+                $row['versions'] = (bool)$row['versions'];
+                $row['properties'] = (bool)$row['properties'];
+                if ($type === 'document' || $type === 'object') {
+                    $row['save'] = (bool)$row['save'];
+                    $row['unpublish'] = (bool)$row['unpublish'];
+                }
+                $workspace->setValues($row, true);
                 $workspaces[] = $workspace;
             }
 
@@ -72,7 +85,7 @@ class Dao extends Model\User\AbstractUser\Dao
         }
     }
 
-    public function emptyWorkspaces()
+    public function emptyWorkspaces(): void
     {
         $this->db->delete('users_workspaces_asset', ['userId' => $this->model->getId()]);
         $this->db->delete('users_workspaces_document', ['userId' => $this->model->getId()]);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
- * @method array loadRaw()
+ * @method list<array<string,mixed>> loadRaw()
  * @method Model\Translation|false current()
  * @method int getTotalCount()
  * @method void onCreateQueryBuilder(?callable $callback)
@@ -35,14 +36,14 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @var int maximum number of cacheable items
      */
-    protected static $cacheLimit = 5000;
+    protected static int $cacheLimit = 5000;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $domain = Model\Translation::DOMAIN_DEFAULT;
+    protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 
     /**
      * @internal
@@ -51,10 +52,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected ?array $languages = null;
 
-    /**
-     * @inheritdoc
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
     }
@@ -67,9 +65,6 @@ class Listing extends Model\Listing\AbstractListing
         return $this->domain;
     }
 
-    /**
-     * @param string $domain
-     */
     public function setDomain(string $domain): void
     {
         if (!Model\Translation::isAValidDomain($domain)) {
@@ -98,33 +93,22 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return \Pimcore\Model\Translation[]
      */
-    public function getTranslations()
+    public function getTranslations(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $translations
-     *
-     * @return \Pimcore\Model\Translation\Listing
-     */
-    public function setTranslations($translations)
+    public function setTranslations(array $translations): Listing
     {
         return $this->setData($translations);
     }
 
-    /**
-     * @return int
-     */
-    public static function getCacheLimit()
+    public static function getCacheLimit(): int
     {
         return self::$cacheLimit;
     }
 
-    /**
-     * @param int $cacheLimit
-     */
-    public static function setCacheLimit($cacheLimit)
+    public static function setCacheLimit(int $cacheLimit): void
     {
         self::$cacheLimit = $cacheLimit;
     }

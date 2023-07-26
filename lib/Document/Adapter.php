@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,17 +23,11 @@ use Pimcore\Model\Asset;
  */
 abstract class Adapter
 {
-    /**
-     * @var null|Asset\Document
-     */
-    protected $asset;
+    protected ?Asset\Document $asset = null;
 
-    /**
-     * @var array
-     */
-    protected $tmpFiles = [];
+    protected array $tmpFiles = [];
 
-    protected function removeTmpFiles()
+    protected function removeTmpFiles(): void
     {
         // remove tmp files
         if (!empty($this->tmpFiles)) {
@@ -49,21 +44,9 @@ abstract class Adapter
         $this->removeTmpFiles();
     }
 
-    /**
-     * @param Asset\Document $asset
-     *
-     * @return $this
-     */
-    abstract public function load(Asset\Document $asset);
+    abstract public function load(Asset\Document $asset): static;
 
-    /**
-     * @param string $imageTargetPath
-     * @param int $page
-     * @param int $resolution
-     *
-     * @return mixed
-     */
-    abstract public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200);
+    abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed;
 
     /**
      * @param Asset\Document|null $asset
@@ -72,25 +55,14 @@ abstract class Adapter
      */
     abstract public function getPdf(?Asset\Document $asset = null);
 
-    /**
-     * @param string $fileType
-     *
-     * @return bool
-     */
-    abstract public function isFileTypeSupported($fileType);
+    abstract public function isFileTypeSupported(string $fileType): bool;
 
     /**
      * @return int
      *
      * @throws \Exception
      */
-    abstract public function getPageCount();
+    abstract public function getPageCount(): int;
 
-    /**
-     * @param null|int $page
-     * @param Asset\Document|null $asset
-     *
-     * @return mixed
-     */
-    abstract public function getText(?int $page = null, ?Asset\Document $asset = null);
+    abstract public function getText(?int $page = null, ?Asset\Document $asset = null): mixed;
 }

@@ -34,17 +34,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    /**
-     * @var mixed
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @param string $id
-     *
-     * @return string|null
-     */
-    public function getNameById($id)
+    public function getNameById(string $id): ?string
     {
         try {
             if (!empty($id)) {
@@ -65,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getIdByName($name)
+    public function getIdByName(string $name): string
     {
         $id = null;
 
@@ -90,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save($isUpdate = true)
+    public function save(bool $isUpdate = true): void
     {
         if (!$this->model->getId() || !$isUpdate) {
             $this->create();
@@ -102,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $class = $this->model->getObjectVars();
         $data = [];
@@ -130,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
 			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
 			) DEFAULT CHARSET=utf8mb4;');
 
         // update default value of classname columns
@@ -139,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
 			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
 			) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
@@ -155,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
               INDEX `reverse_lookup` (`dest_id`, `type`),
               INDEX `fieldname` (`fieldname`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
@@ -171,7 +163,8 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
@@ -188,7 +181,8 @@ class Dao extends Model\Dao\AbstractDao
                     $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     // if a datafield requires more than one column in the query table
                     if (is_array($value->getQueryColumnType())) {
                         foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
@@ -222,8 +216,8 @@ class Dao extends Model\Dao\AbstractDao
 
         // create view
         try {
-            //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
-            $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
+            //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
+            $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
         } catch (\Exception $e) {
             Logger::debug((string) $e);
         }
@@ -231,7 +225,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
         $this->updateCompositeIndices($objectTable, 'query', $this->model->getCompositeIndices());
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
     /**
@@ -239,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
     }
@@ -247,7 +241,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('classes', ['id' => $this->model->getId()]);
 
@@ -264,7 +258,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP VIEW `object_' . $this->model->getId() . '`');
 
         // delete data
-        $this->db->delete('objects', ['o_classId' => $this->model->getId()]);
+        $this->db->delete('objects', ['classId' => $this->model->getId()]);
 
         // remove fieldcollection tables
         $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
@@ -307,25 +301,22 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param string $newName
      */
-    public function updateClassNameInObjects($newName)
+    public function updateClassNameInObjects(string $newName): void
     {
-        $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
+        $this->db->update('objects', ['className' => $newName], ['classId' => $this->model->getId()]);
 
         $this->db->executeStatement('update ' . $this->db->quoteIdentifier('object_query_' . $this->model->getId()) .
         ' set oo_classname = :className', ['className' => $newName]);
     }
 
-    public function getNameByIdIgnoreCase(string $id): string|null
+    public function getNameByIdIgnoreCase(string $id): ?string
     {
-        $name = null;
-
-        try {
-            if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)]);
+        if ($id !== '') {
+            if ($name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)])) {
+                return $name;
             }
-        } catch (\Exception $e) {
         }
 
-        return $name;
+        return null;
     }
 }

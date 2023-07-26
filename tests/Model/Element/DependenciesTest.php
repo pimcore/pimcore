@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,8 +24,8 @@ use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class DependenciesTest
@@ -41,7 +42,7 @@ class DependenciesTest extends ModelTestCase
         TestHelper::cleanUp();
     }
 
-    public function testRelation()
+    public function testRelation(): void
     {
         /** @var Unittest $source */
         $db = Db::get();
@@ -86,14 +87,13 @@ class DependenciesTest extends ModelTestCase
      * Verifies that an object requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testObjectDependencies()
+    public function testObjectDependencies(): void
     {
-        /** @var DataObject $source */
         $source = TestHelper::createEmptyObject();
 
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -114,12 +114,12 @@ class DependenciesTest extends ModelTestCase
      * Verifies that a document requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testDocumentDependencies()
+    public function testDocumentDependencies(): void
     {
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -140,13 +140,13 @@ class DependenciesTest extends ModelTestCase
      * Verifies that an asset requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testAssetDependencies()
+    public function testAssetDependencies(): void
     {
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */
         $targets = [];
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
 
         $this->saveElementDependencies($source, $targets);
@@ -165,10 +165,9 @@ class DependenciesTest extends ModelTestCase
     }
 
     /**
-     * @param ElementInterface $source
      * @param Concrete[] $targets
      */
-    private function saveElementDependencies($source, $targets)
+    private function saveElementDependencies(ElementInterface $source, array $targets): void
     {
         $properties = [];
         foreach ($targets as $idx => $target) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Mail\Plugins;
 
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
+use Pimcore\SystemSettingsConfig;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 
 /**
@@ -29,7 +31,7 @@ final class RedirectingPlugin
      *
      * @var array
      */
-    private $recipient;
+    private array $recipient;
 
     /**
      * Create a new RedirectingPlugin.
@@ -38,7 +40,7 @@ final class RedirectingPlugin
      */
     public function __construct(array $recipient = [])
     {
-        $config = \Pimcore\Config::getSystemConfiguration('email');
+        $config = SystemSettingsConfig::get()['email'];
         if (!empty($config['debug']['email_addresses'])) {
             $recipient = array_merge($recipient, array_filter(explode(',', $config['debug']['email_addresses'])));
         }
@@ -51,7 +53,7 @@ final class RedirectingPlugin
      *
      * @param array $recipient
      */
-    public function setRecipient($recipient)
+    public function setRecipient(array $recipient): void
     {
         $this->recipient = $recipient;
     }
@@ -61,7 +63,7 @@ final class RedirectingPlugin
      *
      * @return array
      */
-    public function getRecipient()
+    public function getRecipient(): array
     {
         return $this->recipient;
     }
@@ -72,7 +74,7 @@ final class RedirectingPlugin
      * @param Mail $message
      *
      */
-    public function beforeSendPerformed(Mail $message)
+    public function beforeSendPerformed(Mail $message): void
     {
         // additional checks if message is Pimcore\Mail
         if ($message->doRedirectMailsToDebugMailAddresses()) {
@@ -101,10 +103,8 @@ final class RedirectingPlugin
 
     /**
      * Invoked immediately after the Message is sent.
-     *
-     * @param Mail $message
      */
-    public function sendPerformed(Mail $message)
+    public function sendPerformed(Mail $message): void
     {
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
             $this->setSenderAndReceiversParams($message);
@@ -114,10 +114,8 @@ final class RedirectingPlugin
 
     /**
      * Appends debug information to message
-     *
-     * @param Mail $message
      */
-    private function appendDebugInformation(Mail $message)
+    private function appendDebugInformation(Mail $message): void
     {
         if ($message->isPreventingDebugInformationAppending() != true) {
             $originalData = [];
@@ -163,10 +161,8 @@ final class RedirectingPlugin
 
     /**
      * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
-     *
-     * @param Mail $message
      */
-    private function setSenderAndReceiversParams($message)
+    private function setSenderAndReceiversParams(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 
@@ -179,10 +175,8 @@ final class RedirectingPlugin
 
     /**
      * removes debug information from message and resets it
-     *
-     * @param Mail $message
      */
-    private function removeDebugInformation(Mail $message)
+    private function removeDebugInformation(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 

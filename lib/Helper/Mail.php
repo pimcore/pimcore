@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class Mail
      *
      * @throws \Exception
      */
-    public static function getDebugInformation($type, MailClient $mail)
+    public static function getDebugInformation(string $type, MailClient $mail): string
     {
         $type = strtolower($type);
 
@@ -93,7 +94,7 @@ class Mail
      *
      * @return string
      */
-    public static function getDebugInformationCssStyle()
+    public static function getDebugInformationCssStyle(): string
     {
         $style = <<<'CSS'
 <style type="text/css">
@@ -134,7 +135,7 @@ CSS;
      *
      * @return string
      */
-    public static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers): string
     {
         $formatedReceiversArray = [];
 
@@ -160,7 +161,7 @@ CSS;
      *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail, $recipients, $error = null)
+    public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
 
@@ -225,12 +226,12 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function setAbsolutePaths($string, ?Model\Document $document = null, $hostUrl = null)
+    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
     {
         $replacePrefix = '';
 
         if (!$hostUrl && $document) {
-            // try to determine if the newsletter is within a site
+            // try to determine if the document is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
                 $hostUrl = \Pimcore\Tool::getRequestScheme() . '://' . $site->getMainDomain();
@@ -271,7 +272,7 @@ CSS;
         }
 
         preg_match_all("@srcset\s*=[\"'](.*?)[\"']@is", $string, $matches);
-        foreach ((array)$matches[1] as $i => $value) {
+        foreach ($matches[1] as $i => $value) {
             $parts = explode(',', $value);
             foreach ($parts as $key => $v) {
                 $v = trim($v);
@@ -302,7 +303,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function embedAndModifyCss($string, ?Model\Document $document = null)
+    public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
     {
         $css = null;
 
@@ -319,10 +320,8 @@ CSS;
                 $fileInfo = [];
                 if (stream_is_local($path)) {
                     $fileInfo = self::getNormalizedFileInfo($path, $document);
-                    if ($fileInfo['fileExtension'] == 'css' && is_readable($fileInfo['filePathNormalized'])) {
-                        if ($fileInfo['fileExtension'] == 'css') {
-                            $fileContent = file_get_contents($fileInfo['filePathNormalized']);
-                        }
+                    if ($fileInfo['fileExtension'] === 'css' && is_readable($fileInfo['filePathNormalized'])) {
+                        $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                     }
                 } elseif (strpos($path, 'http') === 0) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
@@ -359,7 +358,7 @@ CSS;
      *
      * @return string
      */
-    public static function normalizeCssContent($content, array $fileInfo)
+    public static function normalizeCssContent(string $content, array $fileInfo): string
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
@@ -392,7 +391,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function getNormalizedFileInfo($path, ?Model\Document $document = null)
+    public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
     {
         $fileInfo = [];
         $hostUrl = Tool::getHostUrl();
@@ -405,7 +404,8 @@ CSS;
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
         $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
-        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
+
+        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-\d+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));
 
         return $fileInfo;
     }
@@ -413,14 +413,12 @@ CSS;
     /**
      * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
      *
-     * @param string $emailString
-     *
-     * @return array
+     * @return list<array{email: string, name: string}>
      */
-    public static function parseEmailAddressField($emailString)
+    public static function parseEmailAddressField(?string $emailString): array
     {
         $cleanedEmails = [];
-        $emailArray = preg_split('/,|;/', $emailString);
+        $emailArray = preg_split('/,|;/', ($emailString ?? ''));
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,14 +29,11 @@ use Symfony\Component\Console\Input\InputOption;
  */
 trait Timeout
 {
-    /** @var int */
-    private $timeout = -1;
+    private int $timeout = -1;
 
-    /** @var int|null */
-    private $startTimeCurrentStep = null;
+    private ?int $startTimeCurrentStep = null;
 
-    /** @var int|null */
-    private $startTime = null;
+    private ?int $startTime = null;
 
     /**
      * Add timeout option to command.
@@ -52,7 +50,7 @@ trait Timeout
      *
      * @param InputInterface $input
      */
-    protected function initTimeout(InputInterface $input)
+    protected function initTimeout(InputInterface $input): void
     {
         $timeout = (int)$input->getOption('timeout');
         $timeout = $timeout > 0 ? $timeout : -1;
@@ -64,7 +62,7 @@ trait Timeout
      *
      * @param int $minutes the timeout in minutes.
      */
-    protected function initTimeoutInMinutes(int $minutes)
+    protected function initTimeoutInMinutes(int $minutes): void
     {
         $this->setTimeout($minutes);
         $this->startTime = time();
@@ -80,7 +78,7 @@ trait Timeout
      *
      * @throws \Exception is thrown in the default implementation when the timeout happens
      */
-    protected function handleTimeout(?\Closure $abortClosure = null)
+    protected function handleTimeout(?\Closure $abortClosure = null): void
     {
         $oldStartTime = $this->startTimeCurrentStep;
         $this->startTimeCurrentStep = time();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
@@ -24,39 +26,30 @@ use Pimcore\Model\Listing\Traits\FilterListingTrait;
  * @internal
  *
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing\Dao getDao()
- * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  * @method Model\DataObject\ClassDefinition\CustomLayout|false current()
+ * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  */
-class Listing extends Model\Listing\AbstractListing implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
 
+    /**
+     * @var Model\DataObject\ClassDefinition\CustomLayout[]|null
+     */
     protected ?array $layoutDefinitions = null;
 
     /**
-     * @return array|string|callable|null
+     * @var callable|null
      */
-    public function getOrder()
+    protected $order;
+
+    public function getOrder(): ?callable
     {
         return $this->order;
     }
 
-    /**
-     * @param array|string|callable|null $order
-     */
-    public function setOrder($order)
+    public function setOrder(?callable $order): static
     {
-        if (is_array($order) || is_string($order)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.5',
-                sprintf('Passing array or string to %s is deprecated,
-                please pass callable function instead.', __METHOD__)
-            );
-
-            return parent::setOrder($order);
-        }
-
         $this->order = $order;
 
         return $this;
@@ -67,7 +60,7 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
      *
      * @return $this
      */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions(?array $layoutDefinitions): static
     {
         $this->layoutDefinitions = $layoutDefinitions;
 
@@ -77,7 +70,7 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
     /**
      * @return Model\DataObject\ClassDefinition\CustomLayout[]
      */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): array
     {
         if ($this->layoutDefinitions === null) {
             $this->layoutDefinitions = $this->load();

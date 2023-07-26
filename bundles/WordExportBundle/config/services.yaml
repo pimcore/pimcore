@@ -1,0 +1,22 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\WordExportBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreWordExportBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\WordExportBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]

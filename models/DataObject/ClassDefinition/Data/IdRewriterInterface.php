@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,5 +37,5 @@ interface IdRewriterInterface
      *
      * @return mixed rewritten data based on data type
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */;
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed;
 }

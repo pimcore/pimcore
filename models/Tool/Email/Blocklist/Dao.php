@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException(
      */
-    public function getByAddress($address)
+    public function getByAddress(string $address): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM email_blocklist WHERE address = ?', [$address]);
 
@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         $this->model->setModificationDate(time());
         if (!$this->model->getCreationDate()) {
@@ -64,13 +64,13 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'email_blocklist', $data);
+        Helper::upsert($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blocklist'));
     }
 
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('email_blocklist', ['address' => $this->model->getAddress()]);
     }

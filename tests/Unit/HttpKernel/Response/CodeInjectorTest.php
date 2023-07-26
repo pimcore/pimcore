@@ -19,25 +19,16 @@ namespace Pimcore\Tests\Unit\HttpKernel\Response;
 
 use Pimcore\Http\Response\CodeInjector;
 use Pimcore\Http\ResponseHelper;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjectorTest extends TestCase
 {
-    /**
-     * @var ResponseHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $responseHelper;
+    private ResponseHelper|\PHPUnit_Framework_MockObject_MockObject $responseHelper;
 
-    /**
-     * @var CodeInjector
-     */
-    private $injector;
+    private CodeInjector $injector;
 
-    /**
-     * @var string
-     */
-    private $codePart = '<!-- INJECTED -->';
+    private string $codePart = '<!-- INJECTED -->';
 
     protected function setUp(): void
     {
@@ -47,7 +38,7 @@ class CodeInjectorTest extends TestCase
         $this->injector = new CodeInjector($this->responseHelper);
     }
 
-    public function testNotChangedIfNoMatch()
+    public function testNotChangedIfNoMatch(): void
     {
         $html = '<html><body></body></html>';
         $result = $this->injector->injectIntoHtml($html, $this->codePart, CodeInjector::SELECTOR_HEAD, CodeInjector::POSITION_BEGINNING);
@@ -55,7 +46,7 @@ class CodeInjectorTest extends TestCase
         $this->assertEquals($html, $result);
     }
 
-    public function testResponseNotChangedIfResponseHelperDoesNotClassifyAsHtml()
+    public function testResponseNotChangedIfResponseHelperDoesNotClassifyAsHtml(): void
     {
         $this->responseHelper
             ->method('isHtmlResponse')
@@ -73,7 +64,7 @@ class CodeInjectorTest extends TestCase
     /**
      * @dataProvider injectPresetProvider
      */
-    public function testInjectPreset(string $selector, string $position, string $source, string $expected)
+    public function testInjectPreset(string $selector, string $position, string $source, string $expected): void
     {
         $this->testInject($selector, $position, $source, $expected);
     }
@@ -83,12 +74,12 @@ class CodeInjectorTest extends TestCase
      *
      * @dataProvider injectDOMProvider
      */
-    public function testInjectDOM(string $selector, string $position, string $source, string $expected)
+    public function testInjectDOM(string $selector, string $position, string $source, string $expected): void
     {
         $this->testInject($selector, $position, $source, $expected);
     }
 
-    private function testInject(string $selector, string $position, string $source, string $expected)
+    private function testInject(string $selector, string $position, string $source, string $expected): void
     {
         $result = $this->injector->injectIntoHtml($source, $this->codePart, $selector, $position);
 
@@ -98,7 +89,7 @@ class CodeInjectorTest extends TestCase
     /**
      * @dataProvider invalidTypeProvider
      */
-    public function testInvalidPosition(string $position)
+    public function testInvalidPosition(string $position): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -110,7 +101,6 @@ class CodeInjectorTest extends TestCase
         $reflector = new \ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('presetSelectors');
-        $property->setAccessible(true);
 
         $data = [];
         foreach ($property->getValue() as $value) {
@@ -125,7 +115,6 @@ class CodeInjectorTest extends TestCase
         $reflector = new \ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('validPositions');
-        $property->setAccessible(true);
 
         $data = [];
         foreach ($property->getValue() as $value) {

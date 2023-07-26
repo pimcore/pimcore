@@ -1,154 +1,104 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$target of method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:copyContents\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\|null given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
-
-		-
-			message: "#^Offset 'object' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
+			count: 2
+			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
+
+		-
+			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			count: 1
+			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
+
+		-
+			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\CustomReportsBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			count: 1
+			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SeoBundle\\\\Controller\\\\Document\\\\DocumentController\\:\\:getTreeNodeConfig\\(\\)\\.$#"
+			count: 1
+			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
+
+		-
+			message: "#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Access to constant RESOLVE_ELEMENT_ADMIN_STYLE on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Call to method getAdminStyle\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Call to method getFilterCondition\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			count: 2
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Instantiated class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent not found\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Parameter \\$gridHelperService of method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\Controller\\\\SearchController\\:\\:findAction\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			count: 1
+			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:\\$config\\.$#"
+			count: 2
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\Assets\\:\\:prepareQueryString\\(\\)\\.$#"
 			count: 3
-			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
 
 		-
-			message: "#^If condition is always false\\.$#"
+			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
 			count: 1
-			path: bundles/CoreBundle/EventListener/Frontend/RoutingListener.php
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php
-
-		-
-			message: "#^Parameter \\#1 \\$provider of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CheckoutManager\\\\V7\\\\CheckoutManager\\:\\:verifyRecurringPayment\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\RecurringPaymentInterface, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\PaymentInterface given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
-
-		-
-			message: "#^Parameter \\#1 \\$fieldname of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:getGroupByValues\\(\\) expects string, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectCategory.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/ListHelper.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/ListHelper.php
-
-		-
-			message: "#^Parameter \\#1 \\$condition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:addCondition\\(\\) expects array\\|string, int given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Config/ElasticSearch.php
-
-		-
-			message: "#^Comparison operation \"\\<\\=\" between int\\<1, max\\> and 0 is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int<0, max>, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
-
-		-
-			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OfferTool\\\\AbstractOfferItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:\\$config\\.$#"
 			count: 2
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
 
 		-
-			message: "#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#"
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\DataProvider\\\\GDPR\\\\DataObjects\\:\\:prepareQueryString\\(\\)\\.$#"
+			count: 3
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
+		-
+			message: "#^Call to static method extractSortingSettings\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\QueryParams\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
+			path: bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:addCondition\\(\\) expects string\\|null, int\\|null given\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Filter/CustomerObject.php
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^Parameter \\#4 \\$orderId of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\V7\\\\OrderManager\\:\\:getRecurringPaymentSourceOrderList\\(\\) expects string, int\\|null given\\.$#"
+			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^Parameter \\#1 \\$categories of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogCategory\\:\\:setCategories\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractCategory\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
+			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\StaticRoutesBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogCategory.php
-
-		-
-			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int<0, max>, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogProduct.php
-
-		-
-			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\EnvironmentInterface\\:\\:setProduct\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface, null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
-
-		-
-			message: "#^Parameter \\#1 \\$id of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Tracking\\\\AbstractData\\:\\:setId\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingItemBuilder.php
-
-		-
-			message: "#^Parameter \\#1 \\$amount of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal\\:\\:validateIntegerBounds\\(\\) expects int, float given\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
-			message: "#^Parameter \\#3 \\$mode of function round expects 1\\|2\\|3\\|4, int given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
+			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -159,26 +109,10 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Mail.php
-
-		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: lib/Targeting/ConditionMatcher.php
-
-		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: lib/Targeting/ConditionMatcher.php
-
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: lib/Tool/Requirements.php
 
 		-
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
@@ -191,132 +125,56 @@ parameters:
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
+			message: "#^Call to method expandLocales\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to method getLabeledValue\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to method getRenderer\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
 			count: 2
-			path: models/DataObject/ClassDefinition/Data/ManyToManyRelation.php
+			path: models/DataObject/Service.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
+			message: "#^Call to method getValidLanguages\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\Service not found\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:getConfigForHelperDefinition\\(\\) has invalid return type Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
 			count: 2
-			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+			path: models/DataObject/Service.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface not found\\.$#"
 			count: 1
-			path: models/Document/Hardlink/Wrapper/Email.php
+			path: models/Document/Editable/Renderlet.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
 			count: 1
-			path: models/Document/Hardlink/Wrapper/Folder.php
+			path: models/Document/Editable/Renderlet.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
 			count: 1
-			path: models/Document/Hardlink/Wrapper/Hardlink.php
+			path: models/Document/Editable/Snippet.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Call to static method get\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
 			count: 1
-			path: models/Document/Hardlink/Wrapper/Link.php
+			path: models/User.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			message: "#^Call to static method getAvailablePerspectives\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
 			count: 1
-			path: models/Document/Hardlink/Wrapper/Page.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Printcontainer.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Printpage.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int<0, max>, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Snippet.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\|Pimcore\\\\Model\\\\Document\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
-			count: 1
-			path: models/Element/Service.php
-
-		-
-			message: "#^Class Elasticsearch\\\\Client not found\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\\\\Client\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Call to method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Property (.*) has unknown class Elasticsearch\\\\Client as its type\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^(.*) Elasticsearch\\\\Common\\\\Exceptions\\\\Missing404Exception not found\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Method (.*) has invalid return type Elasticsearch\\\\Client\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Call to method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
-			count: 26
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Call to static method (.*) on an unknown class Elasticsearch\\\\ClientBuilder\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^PHPDoc tag \\@throws with type Elasticsearch\\\\Common\\\\Exceptions\\\\BadRequest400Exception\\|Elasticsearch\\\\Common\\\\Exceptions\\\\NoNodesAvailableException is not subtype of Throwable$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\DefaultElasticSearch8\\:\\:\\$elasticSearchClient is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:\\$elasticSearchClient\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php
-
-		-
-			message: "#^PHPDoc tag \\@param references unknown parameter\\: \\$params$#"
-			paths:
-			    - models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
-			    - models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
-			    - models/DataObject/ClassDefinition/Data/Classificationstore.php
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SanityCheckHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SearchBackendHandler.php
-
-		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SearchBackendHandler.php
+			path: models/User.php

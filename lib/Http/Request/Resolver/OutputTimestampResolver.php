@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,14 +28,8 @@ class OutputTimestampResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP = '_pimcore_output_timestamp';
 
-    /**
-     * @var bool
-     */
-    protected $timestampWasQueried = false;
+    protected bool $timestampWasQueried = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(RequestStack $requestStack)
     {
         parent::__construct($requestStack);
@@ -45,7 +40,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      *
      * @return int
      */
-    public function getOutputTimestamp()
+    public function getOutputTimestamp(): int
     {
         $request = $this->getMainRequest();
         $timestamp = $request->attributes->get(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP);
@@ -66,7 +61,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      *
      * @param int $timestamp
      */
-    public function setOutputTimestamp(int $timestamp)
+    public function setOutputTimestamp(int $timestamp): void
     {
         $this->getMainRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
     }
@@ -76,7 +71,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      *
      * @return bool
      */
-    public function timestampWasQueried()
+    public function timestampWasQueried(): bool
     {
         return $this->timestampWasQueried;
     }

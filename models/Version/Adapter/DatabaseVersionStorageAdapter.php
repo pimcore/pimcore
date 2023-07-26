@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -61,7 +62,6 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
      *
      * @return mixed
      *
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
     protected function loadData(int $id,
@@ -84,11 +84,6 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->loadData($version->getId(), $version->getCid(), $version->getCtype());
     }
 
-    /**
-     * @param string $data
-     *
-     * @return mixed
-     */
     protected function getStream(string $data): mixed
     {
         if ($data) {

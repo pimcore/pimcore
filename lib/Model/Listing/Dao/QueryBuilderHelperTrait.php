@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,15 +60,15 @@ trait QueryBuilderHelperTrait
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+                $condition .= ' ' . $tableName . ".type IN ('" . implode("','", $objectTypes) . "')";
             }
 
             if ($condition) {
                 if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                    $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
+                    $condition = '(' . $condition . ') AND ' . $tableName . '.published = 1';
                 }
             } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = $tableName . '.o_published = 1';
+                $condition = $tableName . '.published = 1';
             }
         }
 
@@ -113,7 +114,7 @@ trait QueryBuilderHelperTrait
             }
 
             if (!empty($parts)) {
-                $queryBuilder->orderBy((string) implode(', ', $parts), ' ');
+                $queryBuilder->orderBy(implode(', ', $parts), ' ');
             }
         }
     }

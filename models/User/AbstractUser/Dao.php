@@ -25,14 +25,12 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         if ($this->model->getType()) {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
@@ -41,6 +39,12 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($data) {
+            $data['admin'] = (bool)$data['admin'];
+            $data['active'] = (bool)$data['active'];
+            $data['welcomescreen'] = (bool)$data['welcomescreen'];
+            $data['closeWarning'] = (bool)$data['closeWarning'];
+            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("user doesn't exist");
@@ -52,18 +56,24 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName($name)
+    public function getByName(string $name): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
         if ($data) {
+            $data['admin'] = (bool)$data['admin'];
+            $data['active'] = (bool)$data['active'];
+            $data['welcomescreen'] = (bool)$data['welcomescreen'];
+            $data['closeWarning'] = (bool)$data['closeWarning'];
+            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('User with name "%s" does not exist', $name));
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('users', [
             'name' => $this->model->getName(),
@@ -78,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -92,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         if (strlen($this->model->getName()) < 2) {
             throw new \Exception('Name of user/role must be at least 2 characters long');
@@ -122,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $userId = $this->model->getId();
         Logger::debug('delete user with ID: ' . $userId);
@@ -133,7 +143,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function setLastLoginDate()
+    public function setLastLoginDate(): void
     {
         $data['lastLogin'] = (new \DateTime())->getTimestamp();
         $this->db->update('users', $data, ['id' => $this->model->getId()]);

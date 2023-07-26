@@ -33,37 +33,25 @@ class CodeInjector
 
     public const REPLACE = 'replace';
 
-    private static $presetSelectors = [
+    private static array $presetSelectors = [
         self::SELECTOR_HEAD,
         self::SELECTOR_BODY,
     ];
 
-    private static $validPositions = [
+    private static array $validPositions = [
         self::POSITION_BEGINNING,
         self::POSITION_END,
         self::REPLACE,
     ];
 
-    /**
-     * @var ResponseHelper
-     */
-    private $responseHelper;
+    private ResponseHelper $responseHelper;
 
-    /**
-     * @param ResponseHelper $responseHelper
-     */
     public function __construct(ResponseHelper $responseHelper)
     {
         $this->responseHelper = $responseHelper;
     }
 
-    /**
-     * @param Response $response
-     * @param string $code
-     * @param string $selector
-     * @param string $position
-     */
-    public function inject(Response $response, string $code, string $selector = self::SELECTOR_BODY, string $position = self::POSITION_END)
+    public function inject(Response $response, string $code, string $selector = self::SELECTOR_BODY, string $position = self::POSITION_END): void
     {
         if (empty($code)) {
             return;

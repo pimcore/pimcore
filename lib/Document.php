@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Document
      *
      * @throws \Exception
      */
-    public static function getInstance($adapter = null)
+    public static function getInstance(string $adapter = null): ?Document\Adapter
     {
         try {
             if ($adapter) {
@@ -58,7 +59,7 @@ class Document
      *
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         if (self::getDefaultAdapter()) {
             return true;
@@ -74,7 +75,7 @@ class Document
      *
      * @return bool
      */
-    public static function isFileTypeSupported($filetype)
+    public static function isFileTypeSupported(string $filetype): bool
     {
         if ($adapter = self::getDefaultAdapter()) {
             return $adapter->isFileTypeSupported($filetype);
@@ -88,9 +89,9 @@ class Document
      *
      * @return Document\Adapter|null
      */
-    public static function getDefaultAdapter()
+    public static function getDefaultAdapter(): ?Document\Adapter
     {
-        $adapters = ['LibreOffice', 'Ghostscript'];
+        $adapters = ['Gotenberg', 'LibreOffice', 'Ghostscript'];
 
         foreach ($adapters as $adapter) {
             $adapterClass = '\\Pimcore\\Document\\Adapter\\' . $adapter;

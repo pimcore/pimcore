@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,7 +19,6 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()
@@ -27,50 +27,31 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /**
-     * @var string|null
-     */
-    protected $elementType;
+    protected ?string $elementType = null;
 
-    /**
-     * @var int|null
-     */
-    protected $elementId;
+    protected ?int $elementId = null;
 
-    /**
-     * @var string|null
-     */
-    protected $fieldname;
+    protected ?string $fieldname = null;
 
-    /**
-     * @var array
-     */
-    protected $columns = [];
+    protected array $columns = [];
 
-    /**
-     * @var array
-     */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string|null $fieldname
      * @param array $columns
-     * @param ElementInterface|null $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = [], $element = null)
+    public function __construct(?string $fieldname = null, array $columns = [], Model\Element\ElementInterface $element = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
         $this->setElement($element);
     }
 
-    /**
-     * @param string|null $elementType
-     * @param int|null $elementId
-     */
-    public function setElementTypeAndId($elementType, $elementId)
+    public function setElementTypeAndId(?string $elementType, ?int $elementId): void
     {
         $this->elementType = $elementType;
         $this->elementId = $elementId;
@@ -78,17 +59,17 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
+     * @param string $method
+     * @param array $args
      *
      * @return mixed|void
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $method, array $args)
     {
-        if (str_starts_with($name, 'get')) {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (str_starts_with($method, 'get')) {
+            $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
@@ -100,13 +81,13 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             throw new \Exception("Requested data $key not available");
         }
 
-        if (str_starts_with($name, 'set')) {
-            $key = substr($name, 3);
+        if (str_starts_with($method, 'set')) {
+            $key = substr($method, 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
-                $this->data[$correctedKey] = $arguments[0];
+                $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
@@ -114,33 +95,14 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     */
-    public function save($object, $ownertype, $ownername, $position, $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index): void
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index, $type);
     }
 
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     * @param string $destinationType
-     *
-     * @return DataObject\Data\ElementMetadata|null
-     */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType): ?ElementMetadata
     {
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
         $this->markMeDirty(false);
@@ -148,12 +110,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $return;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
@@ -161,20 +118,12 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param Model\Element\ElementInterface|null $element
-     *
-     * @return $this
-     */
-    public function setElement($element)
+    public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->markMeDirty();
         if (!$element) {
@@ -190,10 +139,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this;
     }
 
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getElement()
+    public function getElement(): ?Model\Element\ElementInterface
     {
         if ($this->getElementType() && $this->getElementId()) {
             $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
@@ -207,28 +153,17 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return null;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getElementType()
+    public function getElementType(): ?string
     {
         return $this->elementType;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getElementId()
+    public function getElementId(): ?int
     {
         return $this->elementId;
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return $this
-     */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         $this->markMeDirty();
@@ -236,35 +171,23 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getElement()->__toString();
     }

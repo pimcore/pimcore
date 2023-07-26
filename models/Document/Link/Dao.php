@@ -27,11 +27,11 @@ class Dao extends Model\Document\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -43,6 +43,7 @@ class Dao extends Model\Document\Dao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->model->getHref();
         } else {
@@ -50,7 +51,7 @@ class Dao extends Model\Document\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 

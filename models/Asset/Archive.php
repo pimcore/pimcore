@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,5 +26,5 @@ class Archive extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'archive';
+    protected string $type = 'archive';
 }

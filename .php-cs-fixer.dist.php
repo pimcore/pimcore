@@ -11,7 +11,7 @@ $finder = PhpCsFixer\Finder::create()
 
     ->exclude([
         __DIR__ . '/tests/_output',
-        __DIR__ . '/tests/_support/_generated',
+        __DIR__ . '/tests/Support/_generated',
     ])
 
     // do not fix views

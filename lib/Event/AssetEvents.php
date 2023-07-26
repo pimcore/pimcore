@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -84,7 +85,7 @@ final class AssetEvents
     const POST_UPDATE_FAILURE = 'pimcore.asset.postUpdateFailure';
 
     /**
-     * @Event("Pimcore\Event\Model\AssetDeleteInfoEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent")
      *
      * @var string
      */

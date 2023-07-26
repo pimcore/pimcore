@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ trait DryRun
      *
      * @return $this
      */
-    protected function configureDryRunOption($description = null)
+    protected function configureDryRunOption(string $description = null): static
     {
         /** @var Command $command */
         $command = $this;
@@ -50,10 +51,7 @@ trait DryRun
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    protected function isDryRun()
+    protected function isDryRun(): bool
     {
         /** @var Input $input */
         $input = $this->input;
@@ -69,7 +67,7 @@ trait DryRun
      *
      * @return string
      */
-    protected function prefixDryRun($message, $prefix = 'DRY-RUN')
+    protected function prefixDryRun(string $message, string $prefix = 'DRY-RUN'): string
     {
         return sprintf(
             '<bg=cyan;fg=white>%s</> %s',
@@ -86,7 +84,7 @@ trait DryRun
      *
      * @return string
      */
-    protected function dryRunMessage($message, $prefix = 'DRY-RUN')
+    protected function dryRunMessage(string $message, string $prefix = 'DRY-RUN'): string
     {
         if ($this->isDryRun()) {
             $message = $this->prefixDryRun($message, $prefix);

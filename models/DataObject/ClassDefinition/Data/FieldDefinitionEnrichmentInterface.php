@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,5 +28,5 @@ interface FieldDefinitionEnrichmentInterface
      *
      * @return $this
      */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : static */;
+    public function enrichFieldDefinition(array $context = []): static;
 }

@@ -27,12 +27,7 @@ use Pimcore\Model\Listing\AbstractListing;
  */
 class Listing extends AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return true;
     }
@@ -60,11 +55,11 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @param array $notifications
+     * @param Model\Notification[]|null $notifications
      *
-     * @return Listing
+     * @return $this
      */
-    public function setNotifications(array $notifications): self
+    public function setNotifications(?array $notifications): static
     {
         return $this->setData($notifications);
     }

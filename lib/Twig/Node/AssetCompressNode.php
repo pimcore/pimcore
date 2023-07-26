@@ -25,12 +25,12 @@ use Twig\Node\Node;
  */
 class AssetCompressNode extends Node
 {
-    public function __construct(Node $body, $lineno, $tag = 'pimcoreassetcompress')
+    public function __construct(Node $body, int $lineno, ?string $tag = 'pimcoreassetcompress')
     {
         parent::__construct(['body' => $body], [], $lineno, $tag);
     }
 
-    public function compile(Compiler $compiler)
+    public function compile(Compiler $compiler): void
     {
         $compiler
             ->addDebugInfo($this)

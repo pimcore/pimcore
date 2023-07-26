@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ use Pimcore\Model\Asset\Video\Thumbnail\Processor;
  */
 class VideoConvertHandler
 {
-    public function __invoke(VideoConvertMessage $message)
+    public function __invoke(VideoConvertMessage $message): void
     {
         Processor::execute($message->getProcessId());
     }

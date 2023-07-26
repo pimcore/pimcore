@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -26,47 +28,33 @@ use Pimcore\Tool\Serialize;
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\ObjectVarTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public $fieldtype = 'link';
+    public ?array $allowedTypes = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public $queryColumnType = 'text';
+    public ?array $allowedTargets = null;
 
     /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public $columnType = 'text';
+    public ?array $disabledFields = null;
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\Link|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
@@ -92,15 +80,16 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Link|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = Serialize::unserialize($data);
 
@@ -121,29 +110,30 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\Link $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\Link|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!$data instanceof DataObject\Data\Link) {
             return null;
@@ -157,25 +147,25 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Link|null
+     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = new DataObject\Data\Link();
         $link->setValues($data);
@@ -190,25 +180,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Link|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\Link|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string) $data;
     }
@@ -216,7 +207,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Data\Link) {
             if ((int)$data->getInternal() > 0) {
@@ -247,12 +238,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
     }
 
-    /**
-     * @param DataObject\Data\Link|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -291,10 +277,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
@@ -309,7 +292,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
@@ -319,10 +302,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
@@ -335,7 +315,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -345,11 +325,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @param DataObject\Data\Link|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Link) {
             if ($data->getText()) {
@@ -365,7 +345,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\Link && $data->getLinktype() == 'internal') {
@@ -380,14 +360,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /**
-     *
-     * @param DataObject\Data\Link|null $oldValue
-     * @param DataObject\Data\Link|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -412,42 +385,27 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\Link) {
             return $value->getObjectVars();
@@ -456,10 +414,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $link = new DataObject\Data\Link();
@@ -471,5 +426,80 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return null;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'text';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'link';
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTypes(): ?array
+    {
+        return $this->allowedTypes;
+    }
+
+    /**
+     * @param null|string[] $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes(?array $allowedTypes): static
+    {
+        $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTargets(): ?array
+    {
+        return $this->allowedTargets;
+    }
+
+    /**
+     * @param null|string[] $allowedTargets
+     *
+     * @return $this
+     */
+    public function setAllowedTargets(?array $allowedTargets): static
+    {
+        $this->allowedTargets = $allowedTargets;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getDisabledFields(): ?array
+    {
+        return $this->disabledFields;
+    }
+
+    /**
+     * @param null|string[] $disabledFields
+     *
+     * @return $this
+     */
+    public function setDisabledFields(?array $disabledFields): static
+    {
+        $this->disabledFields = $disabledFields;
+
+        return $this;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,239 +19,103 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'slider';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $height = 0;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $vertical = false;
+    public bool $vertical = false;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $increment;
+    public ?float $increment = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'double';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'double';
-
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getMinValue()
+    public function getMinValue(): ?float
     {
         return $this->minValue;
     }
 
-    /**
-     * @param float|null $minValue
-     *
-     * @return $this
-     */
-    public function setMinValue($minValue)
+    public function setMinValue(?float $minValue): static
     {
         $this->minValue = $this->getAsFloatCast($minValue);
 
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getMaxValue()
+    public function getMaxValue(): ?float
     {
         return $this->maxValue;
     }
 
-    /**
-     * @param float|null $maxValue
-     *
-     * @return $this
-     */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(?float $maxValue): static
     {
         $this->maxValue = $this->getAsFloatCast($maxValue);
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getVertical()
+    public function getVertical(): bool
     {
         return $this->vertical;
     }
 
-    /**
-     * @return null
-     */
-    public function getDefaultValue()
+    public function setVertical(bool $vertical): static
     {
-        return null;
-    }
-
-    /**
-     * @param bool $vertical
-     *
-     * @return $this
-     */
-    public function setVertical($vertical)
-    {
-        $this->vertical = (bool) $vertical;
+        $this->vertical = $vertical;
 
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getIncrement()
+    public function getIncrement(): ?float
     {
         return $this->increment;
     }
 
-    /**
-     * @param float|null $increment
-     *
-     * @return $this
-     */
-    public function setIncrement($increment)
+    public function setIncrement(?float $increment): static
     {
         $this->increment = $this->getAsFloatCast($increment);
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimalPrecision()
+    public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @param int|null $decimalPrecision
-     *
-     * @return $this
-     */
-    public function setDecimalPrecision($decimalPrecision)
+    public function setDecimalPrecision(?int $decimalPrecision): static
     {
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
 
@@ -258,15 +123,15 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param float|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|null
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         if ($data != null) {
             $data = (float) $data;
@@ -276,15 +141,15 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param float|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|null
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         if ($data != null) {
             $data = (float) $data;
@@ -294,69 +159,72 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param float|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return float|null
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $data;
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|null
+     *
      * @see Data::getDataForEditmode
      *
-     * @param float|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|null
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param float|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return float|null
+     *
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
      * @param float|null $data
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param Model\DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return float|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(?float $data, Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param float|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$data;
     }
@@ -364,7 +232,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data);
@@ -378,7 +246,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -386,29 +254,13 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @param DataObject\ClassDefinition\Data\Slider $mainDefinition
      */
-    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $this->minValue = $mainDefinition->minValue;
         $this->maxValue = $mainDefinition->maxValue;
         $this->vertical = $mainDefinition->vertical;
         $this->increment = $mainDefinition->increment;
         $this->decimalPrecision = $mainDefinition->decimalPrecision;
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param DataObject\ClassDefinition\Data\Slider $masterDefinition
-     */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
-        );
-
-        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**
@@ -419,13 +271,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return true;
     }
 
-    /**
-     * @param float|null $oldValue
-     * @param float|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldValue = (float) $oldValue;
         $newValue = (float) $newValue;
@@ -441,35 +287,38 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return !is_numeric($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?float';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?float';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'float|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'float|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'double';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'slider';
     }
 }

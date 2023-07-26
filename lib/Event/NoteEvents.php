@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,6 @@ final class NoteEvents
      * @Event("Pimcore\Event\Model\ModelEvent")
      *
      * @var string
-     *
      */
     const POST_ADD = 'pimcore.note.postAdd';
 }
