@@ -231,7 +231,6 @@ framework:
         pools:
             pimcore.cache.pool:
                 public: true
-                tags: true
                 default_lifetime: 31536000  # 1 year
                 adapter: cache.adapter.redis_tag_aware
                 provider: 'redis://localhost'
