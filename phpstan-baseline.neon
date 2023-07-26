@@ -113,7 +113,7 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
-        -
+		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: lib/Tool/Requirements.php
