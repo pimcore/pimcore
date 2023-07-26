@@ -143,7 +143,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Returns a array containing all available domains
+     * Returns a array containing all available (registered) domains
      *
      * @return array
      */
@@ -153,7 +153,10 @@ class Dao extends Model\Dao\AbstractDao
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
-            $domains[] = str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            $domain =  str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            if ($this->isAValidDomain($domain)) {
+                $domains[] = $domain;
+            }
         }
 
         return $domains;
