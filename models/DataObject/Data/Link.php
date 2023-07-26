@@ -357,7 +357,7 @@ class Link implements OwnerAwareFieldInterface
                 }
             }
         } else {
-            $path = $this->getDirect();
+            $path = $this->getDirect() ?? '';
         }
 
         if (strlen($this->getParameters() ?? '') > 0) {
