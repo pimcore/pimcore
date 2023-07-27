@@ -1,6 +1,10 @@
-# Upgrade Notes - Pimcore 11.0.0
+# Upgrade Notes
 
-## API
+## Pimcore 11.0.6
+- Properties of `Pimcore\Model\DataObject\Data\Link` and their getter/setter typehints are nullable now. 
+
+## Pimcore 11.0.0
+### API
 #### [General] :
 
 -  **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. Double check your classes which are extending from Pimcore classes and adapt if necessary. 
@@ -66,7 +70,7 @@
 -  Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`.
 
 -----------------
-## Admin UI
+### Admin UI
 #### [General] :
 
 -  Removed `adminer` as built-in database management tool.
@@ -99,7 +103,7 @@
 
 
 -----------------
-## Bundles
+### Bundles
 #### [Bundles General] :
 
 - Removed support for loading bundles through `extensions.php`.
@@ -182,7 +186,7 @@
         - Service ids changed from `pimcore.newsletter` to `pimcore_newsletter` e.g. `pimcore_newsletter.document.newsletter.factory.default`
 
 
-## Core
+### Core
 
 #### [Commands] :
 
@@ -263,7 +267,7 @@ pimcore:
 - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 
 -----------------
-## Ecommerce
+### Ecommerce
 #### [Ecommerce General] :
 
 - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
@@ -288,7 +292,7 @@ pimcore:
 -  Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 
 -----------------
-## Elements
+### Elements
 
 #### [All] :
 
@@ -477,7 +481,7 @@ pimcore_seo:
 -  Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 
 -----------------
-## Infrastructure
+### Infrastructure
 #### [PHP Options] :
 
 -  Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
@@ -492,7 +496,7 @@ pimcore_seo:
 -  Replace deprecated `Symfony\Component\HttpFoundation\RequestMatcher` with `Symfony\Component\HttpFoundation\ChainRequestMatcher`
 
 -----------------
-## Tools
+### Tools
 #### [Application Logger] :
 
 -  Removed deprecated `PIMCORE_LOG_FILEOBJECT_DIRECTORY` constant, since flysystem is used to save/get fileobjects. Please make sure to adapt your code and migrate your fileobjects manually.
