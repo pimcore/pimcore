@@ -109,8 +109,8 @@ If you would like to know more about the installation process or if you are havi
 
 ## 7. Further Reading
 
-- [Symfony Messenger](../01_Symfony_Messenger.md)
-- [Advanced Installation Topics](../02_Advanced_Installation_Topics.md)
+- [Symfony Messenger](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md)
+- [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md)
 - [Apache Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
 - [Nginx Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 - [Database Setup](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
