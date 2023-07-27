@@ -460,7 +460,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $invisible
+     * @param bool $invisible
      *
      * @return $this
      */
@@ -480,7 +480,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $visibleGridView
+     * @param bool $visibleGridView
      *
      * @return $this
      */
@@ -500,7 +500,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $visibleSearch
+     * @param bool $visibleSearch
      *
      * @return $this
      */
