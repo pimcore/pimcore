@@ -240,6 +240,13 @@ class Service extends Model\Element\Service
             throw new \Exception('Source and target have to be the same type');
         }
 
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */
             $target->setEditables($source->getEditables());
