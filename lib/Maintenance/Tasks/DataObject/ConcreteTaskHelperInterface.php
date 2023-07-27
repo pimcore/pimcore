@@ -21,6 +21,6 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
  */
 interface ConcreteTaskHelperInterface
 {
-    function cleanupCollectionTable(): void;
+    public function cleanupCollectionTable(): void;
 
 }

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Psr\Log\LoggerInterface;
 
@@ -27,20 +28,22 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
     private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY =
         PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
 
-    public function __construct(private LoggerInterface $logger, private DataObjectTaskHelperInterface $helper)
-    {
-    }
+    public function __construct(
+        private LoggerInterface $logger,
+        private DataObjectTaskHelperInterface $helper,
+        private Connection $db
+    )
+    { }
 
     public function cleanupCollectionTable(): void
     {
-        if (!is_dir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY)) {
-            return;
-        }
-
         $collectionNames =
             $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
 
-        $db = Db::get();
+        if(empty($collectionNames)) {
+            return;
+        }
+
         $tasks = [
             [
                 'localized' => false,
@@ -51,7 +54,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];
             $pattern = $task['pattern'];
-            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
+            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);

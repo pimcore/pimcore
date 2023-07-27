@@ -21,9 +21,9 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
  */
 interface DataObjectTaskHelperInterface
 {
-    function getCollectionNames(string $dir): array;
+    public function getCollectionNames(string $dir): array;
 
-    function cleanupTable(
+    public function cleanupTable(
         string $tableName,
         string $classId,
         bool $isLocalized = true

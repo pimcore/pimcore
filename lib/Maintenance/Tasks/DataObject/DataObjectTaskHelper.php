@@ -12,12 +12,16 @@ use Psr\Log\LoggerInterface;
  */
 class DataObjectTaskHelper implements DataObjectTaskHelperInterface
 {
-    public function __construct(protected LoggerInterface $logger)
+    public function __construct(private LoggerInterface $logger)
     {
     }
 
     public function getCollectionNames(string $dir): array
     {
+        if (!is_dir($dir)) {
+            return [];
+        }
+
         $mapLowerToCamelCase = [];
         $files = array_diff(scandir($dir), ['..', '.']);
         foreach ($files as $file) {
