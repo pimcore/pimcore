@@ -98,7 +98,7 @@ messages to the bus and run them afterward immediately from the queue. However, 
 
 Keep in mind that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
-For information about how to handle failed jobs, see this [section](../01_Symfony_Messenger.md).
+For information about how to handle failed jobs, see this [section](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md).
 
 ## Caching
 Make sure to use any sort of [caching](https://pimcore.com/docs/platform/Pimcore/Development_Tools_and_Details/Cache/) to improve performance. We recommend Redis cache storage.
