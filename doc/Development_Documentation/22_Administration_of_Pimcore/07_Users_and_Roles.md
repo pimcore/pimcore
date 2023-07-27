@@ -42,7 +42,7 @@ The following list outlines what the different system permissions (available for
 * **Notes & Events**: Notes & Events are visible 
 * **Objects**: objects tree is visible 
 * **Predefined Properties**: User can create and modify predefined properties
-* **Recycle Bin**: User has access to recycle bin and see all deleted elements by anyone
+* **Recycle Bin**: User has access to the recycle bin and see all the deleted elements (even by other users).
 * **Redirects**: User can create and modify redirects
 * **Reports**: User has access to reports module
 * **Seemode**: Seemode available/not available for user
