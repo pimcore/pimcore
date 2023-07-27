@@ -65,7 +65,7 @@ This launches the interactive installer with a few questions. Make sure that you
 
 :::info
 
- Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../02_Advanced_Installation_Topics.md)
+ Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md)
 
 :::
 
