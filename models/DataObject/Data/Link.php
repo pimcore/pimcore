@@ -437,12 +437,10 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setValues(array $data = []): static
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (method_exists($this, $method)) {
+                $this->$method($value);
             }
         }
         $this->markMeDirty();
