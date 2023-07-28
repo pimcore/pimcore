@@ -306,7 +306,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
-            return $data->getText() ?? '';
+            return $data->getText();
         }
 
         return '';

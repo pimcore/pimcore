@@ -31,7 +31,7 @@ class Link implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    protected ?string $text = null;
+    protected ?string $text = '';
 
     protected ?string $internalType = null;
 
@@ -41,33 +41,33 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $linktype = null;
 
-    protected ?string $target = null;
+    protected ?string $target = '';
 
-    protected ?string $parameters = null;
+    protected ?string $parameters = '';
 
-    protected ?string $anchor = null;
+    protected ?string $anchor = '';
 
-    protected ?string $title = null;
+    protected ?string $title = '';
 
-    protected ?string $accesskey = null;
+    protected ?string $accesskey = '';
 
-    protected ?string $rel = null;
+    protected ?string $rel = '';
 
-    protected ?string $tabindex = null;
+    protected ?string $tabindex = '';
 
-    protected ?string $class = null;
+    protected ?string $class = '';
 
-    protected ?string $attributes = null;
+    protected ?string $attributes = '';
 
-    public function getText(): ?string
+    public function getText(): string
     {
-        return $this->text;
+        return $this->text ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setText(?string $text): static
+    public function setText(string $text): static
     {
         $this->text = $text;
         $this->markMeDirty();
@@ -139,15 +139,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTarget(): ?string
+    public function getTarget(): string
     {
-        return $this->target;
+        return $this->target ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setTarget(?string $target): static
+    public function setTarget(string $target): static
     {
         $this->target = $target;
         $this->markMeDirty();
@@ -155,15 +155,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getParameters(): ?string
+    public function getParameters(): string
     {
-        return $this->parameters;
+        return $this->parameters ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setParameters(?string $parameters): static
+    public function setParameters(string $parameters): static
     {
         $this->parameters = $parameters;
         $this->markMeDirty();
@@ -171,15 +171,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getAnchor(): ?string
+    public function getAnchor(): string
     {
-        return $this->anchor;
+        return $this->anchor ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setAnchor(?string $anchor): static
+    public function setAnchor(string $anchor): static
     {
         $this->anchor = $anchor;
         $this->markMeDirty();
@@ -187,15 +187,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setTitle(?string $title): static
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         $this->markMeDirty();
@@ -203,15 +203,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getAccesskey(): ?string
+    public function getAccesskey(): string
     {
-        return $this->accesskey;
+        return $this->accesskey ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setAccesskey(?string $accesskey): static
+    public function setAccesskey(string $accesskey): static
     {
         $this->accesskey = $accesskey;
         $this->markMeDirty();
@@ -219,15 +219,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getRel(): ?string
+    public function getRel(): string
     {
-        return $this->rel;
+        return $this->rel ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setRel(?string $rel): static
+    public function setRel(string $rel): static
     {
         $this->rel = $rel;
         $this->markMeDirty();
@@ -235,15 +235,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTabindex(): ?string
+    public function getTabindex(): string
     {
-        return $this->tabindex;
+        return $this->tabindex ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setTabindex(?string $tabindex): static
+    public function setTabindex(string $tabindex): static
     {
         $this->tabindex = $tabindex;
         $this->markMeDirty();
@@ -254,7 +254,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setAttributes(?string $attributes): static
+    public function setAttributes(string $attributes): static
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
@@ -262,15 +262,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getAttributes(): ?string
+    public function getAttributes(): string
     {
-        return $this->attributes;
+        return $this->attributes ?? '';
     }
 
     /**
      * @return $this
      */
-    public function setClass(?string $class): static
+    public function setClass(string $class): static
     {
         $this->class = $class;
         $this->markMeDirty();
@@ -278,9 +278,9 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getClass(): ?string
+    public function getClass(): string
     {
-        return $this->class;
+        return $this->class ?? '';
     }
 
     /**
@@ -360,10 +360,10 @@ class Link implements OwnerAwareFieldInterface
             $path = $this->getDirect() ?? '';
         }
 
-        if (strlen($this->getParameters() ?? '') > 0) {
+        if (strlen($this->getParameters()) > 0) {
             $path .= '?' . str_replace('?', '', $this->getParameters());
         }
-        if (strlen($this->getAnchor() ?? '') > 0) {
+        if (strlen($this->getAnchor()) > 0) {
             $path .= '#' . str_replace('#', '', $this->getAnchor());
         }
 

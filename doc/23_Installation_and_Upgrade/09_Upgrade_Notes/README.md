@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## Pimcore 11.0.6
-- Properties of `Pimcore\Model\DataObject\Data\Link` and their getter/setter typehints are nullable now. 
+- Properties of `Pimcore\Model\DataObject\Data\Link` are nullable now. 
 
 ## Pimcore 11.0.0
 ### API
