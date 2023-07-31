@@ -221,7 +221,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return int|null
+     * @return float|null
      */
     public function getDuration()
     {

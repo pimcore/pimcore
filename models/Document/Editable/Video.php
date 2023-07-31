@@ -927,27 +927,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $code = '';
         $video = $this->getVideoAsset();
         if ($video) {
-            $duration = ceil($video->getDuration());
-
-            $durationParts = ['PT'];
-
-            // hours
-            if ($duration / 3600 >= 1) {
-                $hours = floor($duration / 3600);
-                $durationParts[] = $hours . 'H';
-                $duration = $duration - $hours * 3600;
-            }
-
-            // minutes
-            if ($duration / 60 >= 1) {
-                $minutes = floor($duration / 60);
-                $durationParts[] = $minutes . 'M';
-                $duration = $duration - $minutes * 60;
-            }
-
-            $durationParts[] = $duration . 'S';
-            $durationString = implode('', $durationParts);
-
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">' . "\n";
 
             $uploadDate = new \DateTime();
@@ -959,11 +938,15 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
-                'duration' => $durationString,
                 //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
+            $duration = $video->getDuration();
+
+            if ($duration !== null) {
+                $jsonLd['duration'] = $this->getDurationString($duration);
+            }
 
             if (!$thumbnail) {
                 $thumbnail = $video->getImageThumbnail([]);
@@ -1043,6 +1026,30 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         return $code;
+    }
+
+    private function getDurationString(float $duration): string
+    {
+        $duration = ceil($duration);
+        $durationParts = ['PT'];
+
+        // hours
+        if ($duration / 3600 >= 1) {
+            $hours = floor($duration / 3600);
+            $durationParts[] = $hours . 'H';
+            $duration = $duration - $hours * 3600;
+        }
+
+        // minutes
+        if ($duration / 60 >= 1) {
+            $minutes = floor($duration / 60);
+            $durationParts[] = $minutes . 'M';
+            $duration = $duration - $minutes * 60;
+        }
+
+        $durationParts[] = $duration . 'S';
+
+        return implode('', $durationParts);
     }
 
     /**
