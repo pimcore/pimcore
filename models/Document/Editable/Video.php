@@ -945,7 +945,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $duration = $video->getDuration();
 
             if ($duration !== null) {
-                $jsonLd['duration'] = self::getDurationString($duration);
+                $jsonLd['duration'] = $this->getDurationString($duration);
             }
 
             if (!$thumbnail) {
@@ -1028,7 +1028,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    private static function getDurationString(float $duration): string
+    private function getDurationString(float $duration): string
     {
         $duration = ceil($duration);
         $durationParts = ['PT'];
