@@ -21,7 +21,7 @@ In Pimcore, there are two levels of user permissions:
 1) Permissions on system components,
 2) Permissions on data elements (Assets, Data Objects, and Documents). 
 
-Permissions can be granted to roles or individual users. 
+Permissions can be granted to individual users or groups of users (called "roles" in Pimcore). 
 The following paragraphs describe how and where permissions can be set and how they will or will not affect each other.
 
 It is not mandatory to use roles, permissions can be granted to users directly. However, it is advised to use roles if there is a larger user group to manage. In the `Users/Roles` settings tab it can be decided which permissions are granted to that user or role. An individual user has a few more general settings than the role.
@@ -95,7 +95,15 @@ The user permissions on element basis are summed up as follows:
 Individual users are granted access to all defined workspaces for any role they incorporate. In addition to that, users can have their own workspaces. These are added to the permissions granted by roles.
 
 For example, a role `myRole` has been granted list and view access to `/home/myPath`. The user editor incorporates the role `myRole` and thereby inherits all workspace settings from the role. 
-In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any role they incorporate. A permission granted by any role can not be rescinded for a single user.
+In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any role they incorporate.
+
+:::caution
+
+Be aware that if individual permissions granted to a user are different from the ones granted by its role for the same workspace, user permissions win over the ones attributed to the role. This implies that if the user has fewer permissions granted as an individual than through its role, the role's permissions will also be overruled.
+
+For example, a user has only `List` permissions on a workspace, but its role defines `List`, `View`, `Save`, and `Publish` permissions for the same workspace. Because its individual permissions are restricted, this user will only have the possibility to see the workspace tree allowed by its `List` permissions.
+
+:::
 
 It is also possible to restrict access to localized fields on a language level. By default, users can view and edit (as long as they also have sufficient object permissions) all localized fields. This can now be restricted to a subset of languages. 
 
