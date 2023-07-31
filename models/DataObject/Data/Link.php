@@ -41,7 +41,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $linktype = null;
 
-    protected ?string $target = '';
+    protected ?string $target = null;
 
     protected ?string $parameters = '';
 
@@ -139,15 +139,15 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getTarget(): string
+    public function getTarget(): ?string
     {
-        return $this->target ?? '';
+        return $this->target;
     }
 
     /**
      * @return $this
      */
-    public function setTarget(string $target): static
+    public function setTarget(?string $target): static
     {
         $this->target = $target;
         $this->markMeDirty();
