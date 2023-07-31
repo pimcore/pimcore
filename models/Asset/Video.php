@@ -213,7 +213,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return float|null
+     * @return float|int|null
      *
      * @throws \Exception
      */
