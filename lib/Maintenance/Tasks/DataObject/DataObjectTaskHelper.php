@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Psr\Log\LoggerInterface;
@@ -12,9 +13,11 @@ use Psr\Log\LoggerInterface;
  */
 class DataObjectTaskHelper implements DataObjectTaskHelperInterface
 {
-    public function __construct(private LoggerInterface $logger)
-    {
-    }
+    public function __construct(
+        private LoggerInterface $logger,
+        private Connection $db
+    )
+    { }
 
     public function getCollectionNames(string $dir): array
     {
@@ -44,9 +47,8 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
             return;
         }
 
-        $db = Db::get();
         $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-        $fieldNames = $db->fetchFirstColumn($fieldsQuery);
+        $fieldNames = $this->db->fetchFirstColumn($fieldsQuery);
 
         foreach ($fieldNames as $fieldName) {
             $fieldDef = $classDefinition->getFieldDefinition($fieldName);
@@ -62,7 +64,7 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
                     "Field '" . $fieldName . "' of class '" . $classId .
                     "' does not exist anymore. Cleaning " . $tableName
                 );
-                $db->delete($tableName, ['fieldname' => $fieldName]);
+                $this->db->delete($tableName, ['fieldname' => $fieldName]);
             }
         }
     }
