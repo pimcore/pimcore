@@ -372,13 +372,19 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $key = $params['brickPrefix'].$key;
         }
 
+        if ($operator === 'in') {
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
+        }
+
         if ($value === 'NULL') {
             if ($operator === '=') {
                 $operator = 'IS';
             } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
-        } elseif (!is_array($value) && !is_object($value) && $operator !== 'in') {
+        } elseif (!is_array($value) && !is_object($value)) {
             if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
@@ -386,7 +392,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators) && $operator !== 'in') {
+        if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             $trailer = '';
             //the db interprets 0 as NULL -> if empty (0) is selected in the filter, we must also filter for NULL
             if ($value === '\'0\'' || is_array($value) && in_array(0, $value)) {
@@ -402,12 +408,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
 
             return $key . ' ' . $operator . ' ' . $value . ' ' . $trailer;
-        }
-
-        if ($operator === 'in') {
-            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
-
-            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
         return '';
