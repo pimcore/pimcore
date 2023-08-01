@@ -2477,7 +2477,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $files = explode('::', $request->get('files'));
 
-        // prevent directory traversal (e.g. parentId=261&serverPath=/var/log&files=/../../../../../etc/passwd)
+        // prevent directory traversal
         foreach ($files as $file) {
             $absolutePath = realpath($serverPath.$file);
             if (!str_starts_with($absolutePath, rtrim(str_replace('../', '', $serverPath), './'))) {
