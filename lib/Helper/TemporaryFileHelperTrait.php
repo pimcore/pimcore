@@ -39,7 +39,6 @@ trait TemporaryFileHelperTrait
 
         if (is_resource($stream)) {
             $streamMeta = stream_get_meta_data($stream);
-            fclose($stream);
             $stream = $streamMeta['uri'];
         }
 
