@@ -404,7 +404,7 @@ trait ImageThumbnailTrait
         }
 
         $localFile = self::getLocalFileFromStream($stream);
-        fclose($stream);
+        @fclose($stream);
 
         return $localFile;
     }

@@ -568,7 +568,7 @@ final class User extends User\UserRole
             if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
                 $originalImageStream = $storage->readStream($this->getOriginalImageStoragePath());
                 $localFile = self::getLocalFileFromStream($originalImageStream);
-                fclose($originalImageStream);
+                @fclose($originalImageStream);
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
