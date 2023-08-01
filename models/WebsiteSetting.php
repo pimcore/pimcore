@@ -32,7 +32,7 @@ final class WebsiteSetting extends AbstractModel
 
     protected string $language = '';
 
-    protected string $type;
+    protected ?string $type = null;
 
     protected mixed $data = null;
 
@@ -231,11 +231,11 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */
-    public function setType(string $type): static
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
@@ -245,9 +245,9 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @return string
+     * @return string|null
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
