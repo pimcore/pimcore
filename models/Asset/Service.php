@@ -376,10 +376,6 @@ class Service extends Model\Element\Service
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -411,10 +407,6 @@ class Service extends Model\Element\Service
      */
     public static function expandMetadataForEditmode(array $metadata): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');

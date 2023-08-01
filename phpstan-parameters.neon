@@ -27,6 +27,7 @@ parameters:
 
     checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
+    checkAlwaysTrueCheckTypeFunctionCall: true
 
     ergebnis:
         final:

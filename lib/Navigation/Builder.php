@@ -341,10 +341,6 @@ class Builder
         $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 
-        if (!is_array($children)) {
-            return $pages;
-        }
-
         foreach ($children as $child) {
             $classes = '';
 

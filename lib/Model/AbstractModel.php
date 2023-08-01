@@ -166,10 +166,8 @@ abstract class AbstractModel implements ModelInterface
      */
     public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key, $value, $ignoreEmptyValues);
-            }
+        foreach ($data as $key => $value) {
+            $this->setValue($key, $value, $ignoreEmptyValues);
         }
 
         return $this;

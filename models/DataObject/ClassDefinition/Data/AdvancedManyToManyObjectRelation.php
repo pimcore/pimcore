@@ -42,6 +42,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
+     * @var string[]|string|null
      */
     public array|string|null $visibleFields = null;
 
@@ -71,6 +72,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
+     * @var array<string, array<string, mixed>>
      */
     public array $visibleFieldDefinitions = [];
 
@@ -598,6 +600,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->visibleFields;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {

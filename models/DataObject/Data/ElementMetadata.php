@@ -105,6 +105,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $return;
     }
 
+    /**
+     * @return $this
+     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -118,6 +121,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->fieldname;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->markMeDirty();
@@ -158,6 +164,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->elementId;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         $this->columns = $columns;

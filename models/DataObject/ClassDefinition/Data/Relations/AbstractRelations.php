@@ -270,12 +270,10 @@ abstract class AbstractRelations extends Data implements
             $newData[] = $item;
         }
 
-        if (is_array($additionalData)) {
-            foreach ($additionalData as $item) {
-                $key = $this->buildUniqueKeyForAppending($item);
-                if (!isset($map[$key])) {
-                    $newData[] = $item;
-                }
+        foreach ($additionalData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            if (!isset($map[$key])) {
+                $newData[] = $item;
             }
         }
 
