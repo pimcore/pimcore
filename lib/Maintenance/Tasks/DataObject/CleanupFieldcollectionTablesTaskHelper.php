@@ -58,7 +58,6 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
-                $this->logger->info($tableName . "\n");
 
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
