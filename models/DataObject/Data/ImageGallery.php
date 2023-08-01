@@ -75,9 +75,6 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      */
     public function setItems(array $items): void
     {
-        if (!is_array($items)) {
-            $items = [];
-        }
         $this->items = $items;
         $this->rewind();
         $this->markMeDirty();

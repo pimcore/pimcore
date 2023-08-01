@@ -64,6 +64,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->text;
     }
 
+    /**
+     * @return $this
+     */
     public function setText(string $text): static
     {
         $this->text = $text;
@@ -77,6 +80,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->internalType;
     }
 
+    /**
+     * @return $this
+     */
     public function setInternalType(?string $internalType): static
     {
         $this->internalType = $internalType;
@@ -90,6 +96,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->internal;
     }
 
+    /**
+     * @return $this
+     */
     public function setInternal(?int $internal): static
     {
         $this->internal = $internal;
@@ -103,6 +112,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->direct;
     }
 
+    /**
+     * @return $this
+     */
     public function setDirect(?string $direct): static
     {
         $this->direct = $direct;
@@ -116,6 +128,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->linktype;
     }
 
+    /**
+     * @return $this
+     */
     public function setLinktype(?string $linktype): static
     {
         $this->linktype = $linktype;
@@ -129,6 +144,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->target;
     }
 
+    /**
+     * @return $this
+     */
     public function setTarget(string $target): static
     {
         $this->target = $target;
@@ -142,6 +160,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->parameters;
     }
 
+    /**
+     * @return $this
+     */
     public function setParameters(string $parameters): static
     {
         $this->parameters = $parameters;
@@ -155,6 +176,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->anchor;
     }
 
+    /**
+     * @return $this
+     */
     public function setAnchor(string $anchor): static
     {
         $this->anchor = $anchor;
@@ -168,6 +192,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->title;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -181,6 +208,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->accesskey;
     }
 
+    /**
+     * @return $this
+     */
     public function setAccesskey(string $accesskey): static
     {
         $this->accesskey = $accesskey;
@@ -194,6 +224,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->rel;
     }
 
+    /**
+     * @return $this
+     */
     public function setRel(string $rel): static
     {
         $this->rel = $rel;
@@ -207,6 +240,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->tabindex;
     }
 
+    /**
+     * @return $this
+     */
     public function setTabindex(string $tabindex): static
     {
         $this->tabindex = $tabindex;
@@ -237,6 +273,9 @@ class Link implements OwnerAwareFieldInterface
         return $this->class;
     }
 
+    /**
+     * @return $this
+     */
     public function setPath(string $path): static
     {
         if (!empty($path)) {
@@ -335,6 +374,9 @@ class Link implements OwnerAwareFieldInterface
         return $element;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(ElementInterface $object): static
     {
         if ($object instanceof ElementInterface) {
@@ -380,14 +422,15 @@ class Link implements OwnerAwareFieldInterface
         return true;
     }
 
+    /**
+     * @return $this
+     */
     public function setValues(array $data = []): static
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
+        foreach ($data as $key => $value) {
+            $method = 'set' . $key;
+            if (method_exists($this, $method)) {
+                $this->$method($value);
             }
         }
         $this->markMeDirty();

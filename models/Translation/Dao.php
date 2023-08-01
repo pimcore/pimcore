@@ -91,26 +91,24 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($this->model->getKey() !== '') {
-            if (is_array($this->model->getTranslations())) {
-                foreach ($this->model->getTranslations() as $language => $text) {
-                    if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
-                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
+            foreach ($this->model->getTranslations() as $language => $text) {
+                if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
+                    Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
 
-                        continue;
-                    }
-
-                    $data = [
-                        'key' => $this->model->getKey(),
-                        'type' => $this->model->getType(),
-                        'language' => $language,
-                        'text' => $sanitizer->sanitize($text),
-                        'modificationDate' => $this->model->getModificationDate(),
-                        'creationDate' => $this->model->getCreationDate(),
-                        'userOwner' => $this->model->getUserOwner(),
-                        'userModification' => $this->model->getUserModification(),
-                    ];
-                    Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
+                    continue;
                 }
+
+                $data = [
+                    'key' => $this->model->getKey(),
+                    'type' => $this->model->getType(),
+                    'language' => $language,
+                    'text' => $sanitizer->sanitize($text),
+                    'modificationDate' => $this->model->getModificationDate(),
+                    'creationDate' => $this->model->getCreationDate(),
+                    'userOwner' => $this->model->getUserOwner(),
+                    'userModification' => $this->model->getUserModification(),
+                ];
+                Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }
         }
     }

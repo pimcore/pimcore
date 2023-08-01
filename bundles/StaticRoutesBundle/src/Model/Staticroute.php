@@ -481,13 +481,11 @@ final class Staticroute extends AbstractModel
 
             preg_match_all($this->getPattern(), $path, $matches);
 
-            if (is_array($matches) && count($matches) > 1) {
-                foreach ($matches as $index => $match) {
-                    if (isset($variables[$index - 1]) && $variables[$index - 1]) {
-                        $paramValue = urldecode($match[0]);
-                        if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
-                            $params[$variables[$index - 1]] = $paramValue;
-                        }
+            foreach ($matches as $index => $match) {
+                if (isset($variables[$index - 1]) && $variables[$index - 1]) {
+                    $paramValue = urldecode($match[0]);
+                    if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                        $params[$variables[$index - 1]] = $paramValue;
                     }
                 }
             }

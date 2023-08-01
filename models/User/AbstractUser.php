@@ -39,7 +39,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
 
     public static function getById(int $id): static|null
     {
-        if (!is_numeric($id) || $id < 0) {
+        if ($id < 0) {
             return null;
         }
 
@@ -238,13 +238,11 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
         if (count($userRoleListing)) {
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
-                if (is_array($userRoles)) {
-                    $key = array_search($this->getId(), $userRoles);
-                    if (false !== $key) {
-                        unset($userRoles[$key]);
-                        $relatedUser->setRoles($userRoles);
-                        $relatedUser->save();
-                    }
+                $key = array_search($this->getId(), $userRoles);
+                if (false !== $key) {
+                    unset($userRoles[$key]);
+                    $relatedUser->setRoles($userRoles);
+                    $relatedUser->save();
                 }
             }
         }

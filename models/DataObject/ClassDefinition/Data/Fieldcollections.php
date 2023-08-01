@@ -576,24 +576,22 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
-        if (is_array($this->allowedTypes)) {
-            foreach ($this->allowedTypes as $i => $allowedType) {
-                if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
-                    $definition->getDao()->createUpdateTable($class);
-                    $fieldDefinition = $definition->getFieldDefinitions();
+        foreach ($this->allowedTypes as $i => $allowedType) {
+            if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
+                $definition->getDao()->createUpdateTable($class);
+                $fieldDefinition = $definition->getFieldDefinitions();
 
-                    foreach ($fieldDefinition as $fd) {
-                        if ($fd instanceof ClassSavedInterface) {
-                            // defer creation
-                            $fd->classSaved($class, $params);
-                        }
+                foreach ($fieldDefinition as $fd) {
+                    if ($fd instanceof ClassSavedInterface) {
+                        // defer creation
+                        $fd->classSaved($class, $params);
                     }
-
-                    $definition->getDao()->classSaved($class);
-                } else {
-                    Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
-                    unset($this->allowedTypes[$i]);
                 }
+
+                $definition->getDao()->classSaved($class);
+            } else {
+                Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
+                unset($this->allowedTypes[$i]);
             }
         }
     }
@@ -654,14 +652,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
-        if (is_array($container)) {
-            foreach ($container as $childDef) {
-                if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-                    $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
+        foreach ($container as $childDef) {
+            if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+                $list[] = $childDef;
+            } else {
+                if (method_exists($childDef, 'getFieldDefinitions')) {
+                    self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
                 }
             }
         }

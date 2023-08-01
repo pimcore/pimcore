@@ -86,9 +86,7 @@ class Imagick extends Adapter
             $this->resource = $i;
 
             if (!$this->reinitializing && !$this->isPreserveColor()) {
-                if (method_exists($i, 'setColorspace')) {
-                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
-                }
+                $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
                     // only for vector graphics

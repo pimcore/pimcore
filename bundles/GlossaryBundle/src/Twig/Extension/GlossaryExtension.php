@@ -42,7 +42,7 @@ class GlossaryExtension extends AbstractExtension
 
     public function applyGlossary(string $string, array $options = []): string
     {
-        if (empty($string) || !is_string($string)) {
+        if (!$string) {
             return $string;
         }
 

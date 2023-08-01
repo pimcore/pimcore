@@ -181,7 +181,7 @@ class Text
 
     private static function getElementsTagsInWysiwyg(string $text): array
     {
-        if (!is_string($text) || strlen($text) < 1) {
+        if (strlen($text) < 1) {
             return [];
         }
 

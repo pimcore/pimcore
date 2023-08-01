@@ -25,8 +25,6 @@ trait RelationFilterConditionParser
 {
     /**
      * Parses filter value of a relation field and creates the filter condition
-     *
-     *
      */
     public function getRelationFilterCondition(?string $value, string $operator, string $name): string
     {
@@ -38,13 +36,11 @@ trait RelationFilterConditionParser
             return '`' . $name . '` = ' . "'" . $value . "'";
         }
         $values = explode(',', $value);
-        if (is_array($values)) {
-            $fieldConditions = array_map(function ($value) use ($name) {
-                return '`' . $name . "` LIKE '%," . $value . ",%' ";
-            }, array_filter($values));
-            if (!empty($fieldConditions)) {
-                $result = '(' . implode(' AND ', $fieldConditions) . ')';
-            }
+        $fieldConditions = array_map(function ($value) use ($name) {
+            return '`' . $name . "` LIKE '%," . $value . ",%' ";
+        }, array_filter($values));
+        if (!empty($fieldConditions)) {
+            $result = '(' . implode(' AND ', $fieldConditions) . ')';
         }
 
         return $result;

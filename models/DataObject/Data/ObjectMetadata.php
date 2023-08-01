@@ -48,6 +48,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->setObject($object);
     }
 
+    /**
+     * @return $this
+     */
     public function setObject(?DataObject\Concrete $object): static
     {
         $this->markMeDirty();
@@ -111,6 +114,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $return;
     }
 
+    /**
+     * @return $this
+     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -138,6 +144,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(DataObject\Concrete $element): static
     {
         $this->markMeDirty();
@@ -150,6 +159,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this->getObject();
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         $this->columns = $columns;

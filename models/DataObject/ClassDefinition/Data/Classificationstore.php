@@ -341,11 +341,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         // cleanup
         $existingGroupIds = $classificationStore->getGroupIdsWithData();
-        if (is_array($existingGroupIds)) {
-            foreach ($existingGroupIds as $existingGroupId) {
-                if (!in_array($existingGroupId, $activeGroupIds)) {
-                    $classificationStore->removeGroupData($existingGroupId);
-                }
+        foreach ($existingGroupIds as $existingGroupId) {
+            if (!in_array($existingGroupId, $activeGroupIds)) {
+                $classificationStore->removeGroupData($existingGroupId);
             }
         }
 
@@ -436,11 +434,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
-            return true;
-        }
-
-        return false;
+        return count($this->children) > 0;
     }
 
     /**
@@ -777,11 +771,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
-        if (is_array($mapping)) {
-            foreach ($mapping as $groupId => $collectionId) {
-                if (!isset($mergedMapping[$groupId]) && $collectionId) {
-                    $mergedMapping[$groupId] = $collectionId;
-                }
+        foreach ($mapping as $groupId => $collectionId) {
+            if (!isset($mergedMapping[$groupId]) && $collectionId) {
+                $mergedMapping[$groupId] = $collectionId;
             }
         }
 

@@ -45,10 +45,6 @@ class IncludeRenderer
      */
     public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
-        if (!is_array($params)) {
-            $params = [];
-        }
-
         $originalInclude = $include;
 
         // this is if $this->inc is called eg. with $this->relation() as argument

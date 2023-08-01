@@ -241,6 +241,11 @@ parameters:
 			path: bundles/XliffBundle/src/Event/Model/TranslationXliffEvent.php
 
 		-
+			message: "#^Call to function is_subclass_of\\(\\) with '\\\\\\\\App\\\\\\\\Kernel' and 'Pimcore\\\\\\\\Kernel' will always evaluate to true\\.$#"
+			count: 1
+			path: lib/Bootstrap.php
+
+		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: lib/Controller/Traits/JsonHelperTrait.php
@@ -269,11 +274,6 @@ parameters:
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: lib/Mail.php
 
 		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
@@ -334,6 +334,11 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: lib/Tool/Requirements.php
 
 		-
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
@@ -549,6 +554,11 @@ parameters:
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: models/DataObject/Listing/Concrete/Dao.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
+			count: 1
+			path: models/DataObject/Listing/Dao.php
 
 		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"

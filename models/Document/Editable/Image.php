@@ -211,10 +211,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function frontend()
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $image = $this->getImage();
 
         if ($image instanceof Asset\Image) {
