@@ -31,7 +31,7 @@ abstract class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getParentIds()
+    public function getParentIds(): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -54,12 +54,7 @@ abstract class Dao extends Model\Dao\AbstractDao
         return $parentIds;
     }
 
-    /**
-     * @param string $fullpath
-     *
-     * @return array
-     */
-    protected function extractKeyAndPath($fullpath)
+    protected function extractKeyAndPath(string $fullpath): array
     {
         $key = '';
         $path = $fullpath;
@@ -75,17 +70,10 @@ abstract class Dao extends Model\Dao\AbstractDao
         ];
     }
 
-    /**
-     * @return int
-     */
     abstract public function getVersionCountForUpdate(): int;
 
     /**
-     * @param string $type
-     * @param array $userIds
-     * @param string $tableSuffix
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -106,15 +94,13 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
-     * @param string $tableSuffix
+     * @param string[] $columns
      *
      * @return array<string, int>
      *
      * @internal
      */
-    protected function permissionByTypes(array $columns, User $user, string $tableSuffix)
+    protected function permissionByTypes(array $columns, User $user, string $tableSuffix): array
     {
         $permissions = [];
         foreach ($columns as $type) {
@@ -186,15 +172,8 @@ abstract class Dao extends Model\Dao\AbstractDao
 
     /**
      * for "path traversal" intending the list=1 on parent folder (with list=0) when there are nested children allowed
-     *
-     * @param string $tableSuffix
-     * @param array $userIds
-     *
-     * @return int
-     *
-     * @internal
      */
-    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds)
+    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds): int
     {
         $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
 

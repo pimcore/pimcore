@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,23 +23,20 @@ abstract class AbstractBlockItem
     /**
      * @internal
      *
-     * @var Document\PageSnippet
      */
-    protected $document;
+    protected Document\PageSnippet $document;
 
     /**
      * @internal
      *
-     * @var array
      */
-    protected $parentBlockNames;
+    protected array $parentBlockNames;
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $index;
+    protected int $index;
 
     public function __construct(Document\PageSnippet $document, array $parentBlockNames, int $index)
     {
@@ -49,12 +47,7 @@ abstract class AbstractBlockItem
 
     abstract protected function getItemType(): string;
 
-    /**
-     * @param string $name
-     *
-     * @return Document\Editable|null
-     */
-    public function getEditable(string $name)
+    public function getEditable(string $name): ?Document\Editable
     {
         $id = Document\Editable::buildChildEditableName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
         $editable = $this->document->getEditable($id);
@@ -66,13 +59,7 @@ abstract class AbstractBlockItem
         return $editable;
     }
 
-    /**
-     * @param string $func
-     * @param array $args
-     *
-     * @return Document\Editable|null
-     */
-    public function __call($func, $args)
+    public function __call(string $func, array $args): ?Document\Editable
     {
         $element = $this->getEditable($args[0]);
         $class = 'Pimcore\\Model\\Document\\Editable\\' . str_replace('get', '', $func);

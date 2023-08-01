@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ abstract class FrontendController extends Controller
     /**
      * @return string[]
      */
-    public static function getSubscribedServices()// : array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
@@ -47,11 +48,10 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * @param string $name
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if ('document' === $name) {
             return $this->container->get(DocumentResolver::class)->getDocument();
@@ -64,11 +64,7 @@ abstract class FrontendController extends Controller
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
@@ -85,12 +81,8 @@ abstract class FrontendController extends Controller
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
-     * @param string $key
-     * @param array|string $values
-     * @param bool $replace
-     * @param Request|null $request
      */
-    protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
     {
         if (null === $request) {
             $request = $this->container->get('request_stack')->getCurrentRequest();
@@ -104,16 +96,11 @@ abstract class FrontendController extends Controller
      *
      * e.g. `$this->getDocumentEditable('input', 'foobar')`
      *
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param Document\PageSnippet|null $document
      *
-     * @return Document\Editable\EditableInterface
      *
      * @throws \Exception
      */
-    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {
         if (null === $document) {
             $document = $this->document;
@@ -122,14 +109,7 @@ abstract class FrontendController extends Controller
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
-    /**
-     * @param string $view
-     * @param array $parameters
-     * @param Response|null $response
-     *
-     * @return Response
-     */
-    public function renderTemplate($view, array $parameters = [], Response $response = null)
+    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

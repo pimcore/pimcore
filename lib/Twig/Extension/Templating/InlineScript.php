@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -53,7 +54,6 @@ class InlineScript extends HeadScript implements RuntimeExtensionInterface
     /**
      * Registry key for placeholder
      *
-     * @var string
      */
-    protected $_regKey = 'InlineScript';
+    protected string $_regKey = 'InlineScript';
 }

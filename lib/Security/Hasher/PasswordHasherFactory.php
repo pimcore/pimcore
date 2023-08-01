@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,49 +16,33 @@
 
 namespace Pimcore\Security\Hasher;
 
-use Pimcore\Security\Encoder\EncoderFactoryAwareInterface;
 use Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @internal
  *
- * Password encoding and verification for Pimcore objects and admin users is implemented on the user object itself.
- * Therefore the encoder needs the user object when encoding or verifying a password. This factory decorates the core
- * factory and allows to delegate building the encoder to a type specific factory which then is able to create a
- * dedicated encoder for a user object.
+ * Password hashing and verification for Pimcore objects and admin users is implemented on the user object itself.
+ * Therefore the password hasher needs the user object when encoding or verifying a password. This factory decorates the core
+ * factory and allows to delegate building the password hasher to a type specific factory which then is able to create a
+ * dedicated password hasher for a user object.
  *
- * If the given user is not configured to be handled by one of the encoder factories, the normal framework encoder
+ * If the given user is not configured to be handled by one of the password hasher factories, the normal framework password hasher
  * logic applies.
  */
 class PasswordHasherFactory implements PasswordHasherFactoryInterface
 {
     /**
-     * @var PasswordHasherFactoryInterface
+     * @param PasswordHasherFactoryInterface[] $passwordHasherFactories
      */
-    protected $frameworkFactory;
-
-    /**
-     * @var PasswordHasherFactoryInterface[]
-     */
-    protected $encoderFactories = [];
-
-    /**
-     * @param PasswordHasherFactoryInterface $frameworkFactory
-     * @param array $encoderFactories
-     */
-    public function __construct(PasswordHasherFactoryInterface $frameworkFactory, array $encoderFactories = [])
+    public function __construct(protected PasswordHasherFactoryInterface $frameworkFactory, protected array $passwordHasherFactories = [])
     {
-        $this->frameworkFactory = $frameworkFactory;
-        $this->encoderFactories = $encoderFactories;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPasswordHasher($user): PasswordHasherInterface
+    public function getPasswordHasher(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): PasswordHasherInterface
     {
         if ($hasher = $this->getPasswordHasherFromFactory($user)) {
             return $hasher;
@@ -69,31 +54,20 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
 
     /**
      * Returns the password hasher factory to use for the given account.
-     *
-     * @param UserInterface|string $user A UserInterface instance or a class name
-     *
-     * @return PasswordHasherInterface|null
      */
-    private function getPasswordHasherFromFactory($user)
+    private function getPasswordHasherFromFactory(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): ?PasswordHasherInterface
     {
         $factoryKey = null;
 
-        if ($user instanceof EncoderFactoryAwareInterface && (null !== $factoryName = $user->getEncoderFactoryName())) {
-            if (!array_key_exists($factoryName, $this->encoderFactories)) {
-                throw new \RuntimeException(sprintf('The encoder factory "%s" was not configured.', $factoryName));
-            }
-
-            $factoryKey = $factoryName;
-        }
         if ($user instanceof PasswordHasherFactoryAwareInterface && (null !== $factoryName = $user->getHasherFactoryName())) {
-            if (!array_key_exists($factoryName, $this->encoderFactories)) {
+            if (!array_key_exists($factoryName, $this->passwordHasherFactories)) {
                 throw new \RuntimeException(sprintf('The hasher factory "%s" was not configured.', $factoryName));
             }
 
             $factoryKey = $factoryName;
         } else {
-            foreach ($this->encoderFactories as $class => $factory) {
-                if ((is_object($user) && $user instanceof $class) || (!is_object($user) && (is_subclass_of($user, $class) || $user == $class))) {
+            foreach ($this->passwordHasherFactories as $class => $factory) {
+                if (($user instanceof $class) || (!is_object($user) && (is_subclass_of($user, $class) || $user == $class))) {
                     $factoryKey = $class;
 
                     break;
@@ -102,7 +76,7 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
         }
 
         if (null !== $factoryKey) {
-            $factory = $this->encoderFactories[$factoryKey];
+            $factory = $this->passwordHasherFactories[$factoryKey];
 
             if ($factory instanceof UserAwarePasswordHasherFactory) {
                 return $factory->getPasswordHasher($user);

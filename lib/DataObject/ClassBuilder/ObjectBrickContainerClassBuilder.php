@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,7 +42,7 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
         $cd .= "\n\n";
 
         foreach ($brickKeys as $brickKey) {
-            $cd .= 'protected $' . $brickKey . " = null;\n\n";
+            $cd .= 'protected \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . '|null $' . $brickKey . " = null;\n\n";
 
             $cd .= '/**' . "\n";
             $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "|null\n";
@@ -78,11 +79,12 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
 
             $cd .= "}\n\n";
 
+            $typeDeclaration = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey);
             $cd .= '/**' . "\n";
-            $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
-            $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
+            $cd .= '* @param ' . $typeDeclaration . '|null $' . $brickKey . "\n";
+            $cd .= '* @return $this' . "\n";
             $cd .= '*/' . "\n";
-            $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . ')' . "\n";
+            $cd .= 'public function set' . ucfirst($brickKey) . '(?' . $typeDeclaration . ' $' . $brickKey . '): static' . "\n";
             $cd .= '{' . "\n";
             $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
             $cd .= "\t" . 'return $this' . ";\n";

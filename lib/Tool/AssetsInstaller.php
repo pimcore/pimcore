@@ -28,22 +28,14 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstaller
 {
-    /**
-     * @var \Closure|null
-     */
-    private $runCallback;
+    private ?\Closure $runCallback = null;
 
-    /**
-     * @var string|null
-     */
-    private $composerJsonSetting;
+    private ?string $composerJsonSetting = null;
 
     /**
      * Runs this assets:install command
      *
-     * @param array $options
      *
-     * @return Process
      */
     public function install(array $options = []): Process
     {
@@ -61,9 +53,7 @@ class AssetsInstaller
     /**
      * Builds the process instance
      *
-     * @param array $options
      *
-     * @return Process
      */
     protected function buildProcess(array $options = []): Process
     {
@@ -96,11 +86,9 @@ class AssetsInstaller
      * Takes a set of options as defined in configureOptions and validates and merges them
      * with values from composer.json
      *
-     * @param array $options
      *
-     * @return array
      */
-    public function resolveOptions(array $options = [])
+    public function resolveOptions(array $options = []): array
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -108,19 +96,16 @@ class AssetsInstaller
         return $resolver->resolve($options);
     }
 
-    /**
-     * @param \Closure|null $runCallback
-     */
-    public function setRunCallback(\Closure $runCallback = null)
+    public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }
 
-    private function configureOptions(OptionsResolver $resolver)
+    private function configureOptions(OptionsResolver $resolver): void
     {
         $defaults = [
-            'symlink' => true,
-            'relative' => true,
+            'symlink' => false,
+            'relative' => false,
             'env' => false,
             'ansi' => false,
             'no-ansi' => false,
@@ -129,16 +114,30 @@ class AssetsInstaller
         $composerJsonSetting = $this->readComposerJsonSetting();
         if (null !== $composerJsonSetting) {
             if ('symlink' === $composerJsonSetting) {
-                $defaults = array_merge([
-                    'symlink' => true,
-                    'relative' => false,
-                ], $defaults);
+                $defaults = array_merge(
+                    $defaults,
+                    [
+                        'symlink' => true,
+                        'relative' => false,
+                    ]
+                );
             } elseif ('relative' === $composerJsonSetting) {
-                $defaults = array_merge([
-                    'symlink' => true,
-                    'relative' => true,
-                ], $defaults);
+                $defaults = array_merge(
+                    $defaults,
+                    [
+                        'symlink' => true,
+                        'relative' => true,
+                    ]
+                );
             }
+        }
+
+        if(in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
+            $defaults['symlink'] = true;
+        }
+
+        if(($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
+            $defaults['relative'] = true;
         }
 
         $resolver->setDefaults($defaults);
@@ -148,10 +147,7 @@ class AssetsInstaller
         }
     }
 
-    /**
-     * @return string|null
-     */
-    private function readComposerJsonSetting()
+    private function readComposerJsonSetting(): ?string
     {
         if (null !== $this->composerJsonSetting) {
             return $this->composerJsonSetting;

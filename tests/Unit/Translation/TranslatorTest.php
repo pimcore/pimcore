@@ -18,27 +18,25 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Translation;
 
 use Pimcore\Model\Translation;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
 {
-    /** @var Translator */
-    protected $translator;
+    protected Translator $translator;
 
     /**
      * ['locale' => 'fallback']
      *
-     * @var array
      */
-    protected $locales = [
+    protected array $locales = [
         'en' => '',
         'de' => 'en',
         'fr' => '',
     ];
 
-    protected $translations = [
+    protected array $translations = [
         'en' => [
             'simple_key' => 'EN Text',
             'fallback_key' => 'EN Fallback',
@@ -64,9 +62,6 @@ class TranslatorTest extends TestCase
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -81,7 +76,7 @@ class TranslatorTest extends TestCase
         parent::tearDown();
     }
 
-    private function addTranslations()
+    private function addTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
@@ -92,7 +87,7 @@ class TranslatorTest extends TestCase
         }
     }
 
-    private function removeTranslations()
+    private function removeTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
@@ -104,7 +99,7 @@ class TranslatorTest extends TestCase
         }
     }
 
-    public function testTranslateSimpleText()
+    public function testTranslateSimpleText(): void
     {
         //Translate en
         $this->translator->setLocale('en');
@@ -123,7 +118,7 @@ class TranslatorTest extends TestCase
         $this->assertEquals($this->translations['en']['fallback_key'], $this->translator->trans('fallback_key'));
     }
 
-    public function testTranslateTextAsKey()
+    public function testTranslateTextAsKey(): void
     {
         //Returns Translated value
         $this->translator->setLocale('en');
@@ -138,7 +133,7 @@ class TranslatorTest extends TestCase
         //        $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
     }
 
-    public function testTranslateTextWithParams()
+    public function testTranslateTextWithParams(): void
     {
         //Returns Translated value with params value
         $this->translator->setLocale('en');
@@ -171,7 +166,7 @@ class TranslatorTest extends TestCase
         );
     }
 
-    public function testTranslateWithCountParam()
+    public function testTranslateWithCountParam(): void
     {
         $this->translator->setLocale('en');
         $this->assertEquals('2 Count', $this->translator->trans('count_key', ['%count%' => 2]));
@@ -181,20 +176,20 @@ class TranslatorTest extends TestCase
         $this->assertEquals('2 Count', $this->translator->trans('count_key', ['%count%' => 2]));
     }
 
-    public function testTranslateLongerTextWithCountParam()
+    public function testTranslateLongerTextWithCountParam(): void
     {
         $this->translator->setLocale('en');
         $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190', ['%count%' => 192]));
     }
 
-    public function testTranslatePluralizationWithCountParam()
+    public function testTranslatePluralizationWithCountParam(): void
     {
         $this->translator->setLocale('en');
         $this->assertEquals($this->translations['en']['count_plural_1'], $this->translator->trans('count_plural_1|count_plural_n', ['%count%' => 1]));
         $this->assertEquals(strtr($this->translations['en']['count_plural_n'], ['%count%' => 5]), $this->translator->trans('count_plural_1|count_plural_n', ['%count%' => 5]));
     }
 
-    public function testTranslateCaseSensitive()
+    public function testTranslateCaseSensitive(): void
     {
         // Case sensitive
         $this->translator->setLocale('en');
@@ -205,7 +200,7 @@ class TranslatorTest extends TestCase
         $this->assertEquals($this->translations['en']['CASE_KEY'], $this->translator->trans('CASE_KEY'));
     }
 
-    public function testLoadingTranslationList()
+    public function testLoadingTranslationList(): void
     {
         $translations = new Translation\Listing();
         $translations->setDomain('messages');
@@ -230,7 +225,7 @@ class TranslatorTest extends TestCase
         $this->assertArrayNotHasKey('fr', $translationValues);
     }
 
-    public function testCacheGetsInvalidatedOnSave()
+    public function testCacheGetsInvalidatedOnSave(): void
     {
         $translationsListing = new Translation\Listing();
         $translationsListing->setDomain('messages');

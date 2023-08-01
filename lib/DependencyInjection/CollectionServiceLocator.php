@@ -26,14 +26,8 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
 {
-    /**
-     * @var array
-     */
-    private $ids;
+    private array $ids;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($factories)
     {
         $this->ids = array_keys($factories);
@@ -48,9 +42,6 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
         }, $this->ids);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         foreach ($this->ids as $id) {

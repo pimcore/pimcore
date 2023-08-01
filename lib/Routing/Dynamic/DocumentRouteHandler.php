@@ -24,6 +24,9 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
+use Pimcore\Tool;
+use Pimcore\Tool\Frontend;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -32,51 +35,25 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 {
-    /**
-     * @var Document\Service
-     */
-    private $documentService;
+    private Document\Service $documentService;
 
-    /**
-     * @var SiteResolver
-     */
-    private $siteResolver;
+    private SiteResolver $siteResolver;
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
     /**
      * Determines if unpublished documents should be matched, even when not in admin mode. This
      * is mainly needed for maintencance jobs/scripts.
      *
-     * @var bool
      */
-    private $forceHandleUnpublishedDocuments = false;
+    private bool $forceHandleUnpublishedDocuments = false;
 
-    /**
-     * @var array
-     */
-    private $directRouteDocumentTypes = [];
+    private array $directRouteDocumentTypes = [];
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var StaticPageResolver
-     */
     private StaticPageResolver $staticPageResolver;
 
-    /**
-     * @param Document\Service $documentService
-     * @param SiteResolver $siteResolver
-     * @param RequestHelper $requestHelper
-     * @param Config $config
-     * @param StaticPageResolver $staticPageResolver
-     */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
@@ -91,46 +68,26 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $this->staticPageResolver = $staticPageResolver;
     }
 
-    public function setForceHandleUnpublishedDocuments(bool $handle)
+    public function setForceHandleUnpublishedDocuments(bool $handle): void
     {
         $this->forceHandleUnpublishedDocuments = $handle;
     }
 
-    /**
-     * @return array
-     */
-    public function getDirectRouteDocumentTypes()
+    public function getDirectRouteDocumentTypes(): array
     {
         if (empty($this->directRouteDocumentTypes)) {
-            $routingConfig = \Pimcore\Config::getSystemConfiguration('routing');
-            $this->directRouteDocumentTypes = $routingConfig['direct_route_document_types'];
+            $documentConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            foreach ($documentConfig['type_definitions']['map'] as $type => $config) {
+                if (isset($config['direct_route']) && $config['direct_route']) {
+                    $this->directRouteDocumentTypes[] = $type;
+                }
+            }
         }
 
         return $this->directRouteDocumentTypes;
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param string $type
-     */
-    public function addDirectRouteDocumentType($type)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.1',
-            'The DocumentRouteHandler::addDirectRouteDocumentType() method is deprecated, use pimcore.routing.direct_route_document_types config instead.'
-        );
-
-        if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
-            $this->directRouteDocumentTypes[] = $type;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRouteByName(string $name)
+    public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById((int) $match[1]);
@@ -143,17 +100,23 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
+    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());
+        $site = $this->siteResolver->getSite($context->getRequest());
+
+        // If the request is not from a site and the document is part of a site
+        // or the ID of the requested site does not match the site where the document is located.
+        // Then we have to throw a NotFoundHttpException
+        if (!$site && $document && !Tool::isFrontendRequestByAdmin()) {
+            $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
+            if ($siteIdOfDocument) {
+                throw new NotFoundHttpException('The page does not exist on this configured site.');
+            }
+        }
 
         // check for a pretty url inside a site
         if (!$document && $this->siteResolver->isSiteRequest($context->getRequest())) {
-            $site = $this->siteResolver->getSite($context->getRequest());
-
             $sitePrettyDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlInSite($site, $context->getOriginalPath());
             if ($sitePrettyDocId) {
                 if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
@@ -188,12 +151,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * Build a route for a document. Context is only set from match mode, not when generating URLs.
      *
-     * @param Document $document
-     * @param DynamicRequestContext|null $context
      *
-     * @return DocumentRoute|null
      */
-    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
+    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null): ?DocumentRoute
     {
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {
@@ -228,13 +188,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle route params for link document
-     *
-     * @param Document\Link $document
-     * @param DocumentRoute $route
-     *
-     * @return DocumentRoute
      */
-    private function handleLinkDocument(Document\Link $document, DocumentRoute $route)
+    private function handleLinkDocument(Document\Link $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
         $route->setDefault('path', $document->getHref());
@@ -245,18 +200,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle direct route documents (not link)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     * @param DynamicRequestContext|null $context
-     *
-     * @return DocumentRoute|null
      */
     private function handleDirectRouteDocument(
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    ) {
+    ): ?DocumentRoute {
         // if we have a request in context, we're currently in match mode (not generating URLs) -> only match when frontend request by admin
         try {
             $request = $context ? $context->getRequest() : $this->requestHelper->getMainRequest();
@@ -304,18 +253,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle document redirects (pretty url, SEO without trailing slash)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     * @param DynamicRequestContext|null $context
-     *
-     * @return DocumentRoute|null
      */
     private function handleDirectRouteRedirect(
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    ) {
+    ): ?DocumentRoute {
         $redirectTargetUrl = $context->getOriginalPath();
 
         // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
@@ -333,7 +276,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // only do redirecting with GET requests
         if ($context->getRequest()->getMethod() === 'GET') {
             if (($this->config['documents']['allow_trailing_slash'] ?? null) === 'no') {
-                if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
+                if ($redirectTargetUrl !== '/' && str_ends_with($redirectTargetUrl, '/')) {
                     $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
                 }
             }
@@ -357,13 +300,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle page snippet route (controller, action, view)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     *
-     * @return DocumentRoute
      */
-    private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
+    private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', $document->getController());
 
@@ -376,12 +314,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Check if document is can be used to generate a route
-     *
-     * @param Document|null $document
-     *
-     * @return bool
      */
-    private function isDirectRouteDocument($document)
+    private function isDirectRouteDocument(?Document $document): bool
     {
         if ($document instanceof Document\PageSnippet) {
             if (in_array($document->getType(), $this->getDirectRouteDocumentTypes())) {

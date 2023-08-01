@@ -1,0 +1,21 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # Maintenance
+    #
+    # Configure all maintenance tasks
+
+    Pimcore\Bundle\SeoBundle\Maintenance\RedirectCleanupTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: redirectcleanup }
+
+    Pimcore\Bundle\SeoBundle\Maintenance\LogErrorCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: httperrorlog }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,28 +17,36 @@
 namespace Pimcore\Image;
 
 use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Communication\Connection;
 use HeadlessChromium\Communication\Message;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Tool\Session;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
  * @internal
  */
 class Chromium
 {
-    /**
-     * @return bool
-     */
     public static function isSupported(): bool
     {
-        return self::getChromiumBinary() && class_exists(BrowserFactory::class);
+        if (!class_exists(BrowserFactory::class)) {
+            return false;
+        }
+
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)) {
+            try {
+                return (new Connection($chromiumUri))->connect();
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+
+                return false;
+            }
+        }
+
+        return (bool) self::getChromiumBinary();
     }
 
-    /**
-     * @return string|null
-     */
     public static function getChromiumBinary(): ?string
     {
         foreach (['chromium', 'chrome'] as $app) {
@@ -51,35 +60,36 @@ class Chromium
     }
 
     /**
-     * @param string $url
-     * @param string $outputFile
-     * @param string $windowSize
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
-    public static function convert(string $url, string $outputFile, string $windowSize = '1280,1024'): bool
+    public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
-        $binary = self::getChromiumBinary();
-        if (!$binary) {
-            return false;
-        }
-        $browserFactory = new BrowserFactory($binary);
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)) {
+            try {
+                $browser = BrowserFactory::connectToBrowser($chromiumUri);
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
 
-        // starts headless chrome
-        $browser = $browserFactory->createBrowser([
-            'noSandbox' => file_exists('/.dockerenv'),
-            'startupTimeout' => 120,
-            'windowSize' => explode(',', $windowSize),
-        ]);
+                return false;
+            }
+        } else {
+            $binary = self::getChromiumBinary();
+            if (!$binary) {
+                return false;
+            }
+            $browserFactory = new BrowserFactory($binary);
+            $browser = $browserFactory->createBrowser([
+                'noSandbox' => file_exists('/.dockerenv'),
+                'startupTimeout' => 120,
+                'windowSize' => explode(',', $windowSize),
+            ]);
+        }
 
         try {
             $headers = [];
-            if (php_sapi_name() !== 'cli') {
-                $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
-                    return Session::getSessionName() . '=' . Session::getSessionId();
-                });
+            if (null !== $sessionId && null !== $sessionName) {
+                $headers['Cookie'] = $sessionName . '=' . $sessionId;
             }
 
             $page = $browser->createPage();

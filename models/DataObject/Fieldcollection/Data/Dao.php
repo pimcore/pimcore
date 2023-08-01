@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
@@ -27,17 +28,14 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     * @param bool|array $saveRelationalData
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
+    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true): void
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
-            'o_id' => $object->getId(),
+            'id' => $object->getId(),
             'index' => $this->model->getIndex(),
             'fieldname' => $this->model->getFieldname(),
         ];
@@ -45,7 +43,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
+            if ($fd instanceof CustomResourcePersistingInterface
+                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
                 if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                     continue;
                 }
@@ -71,7 +70,8 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model, $params
                 );
             }
-            if ($fd instanceof ResourcePersistenceAwareInterface) {
+            if ($fd instanceof ResourcePersistenceAwareInterface
+                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
                 $fieldDefinitionParams = [
                     'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     'fieldname' => $fd->getName(),
@@ -92,6 +92,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insert($tableName, $data);
+        $this->db->insert($tableName, Helper::quoteDataIdentifiers($this->db, $data));
     }
 }

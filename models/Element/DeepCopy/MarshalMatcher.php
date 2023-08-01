@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,21 +25,13 @@ use Pimcore\Model\Element\Service;
  */
 class MarshalMatcher extends TypeMatcher
 {
-    /**
-     * @var string|null
-     */
-    private $sourceType;
+    private ?string $sourceType = null;
 
-    /**
-     * @var int|null
-     */
-    private $sourceId;
+    private ?int $sourceId = null;
 
     /**
      * MarshalMatcher constructor.
      *
-     * @param string|null $sourceType
-     * @param int|null $sourceId
      */
     public function __construct(?string $sourceType, ?int $sourceId)
     {
@@ -49,7 +42,6 @@ class MarshalMatcher extends TypeMatcher
     /**
      * @param mixed $element
      *
-     * @return bool
      */
     public function matches($element): bool
     {

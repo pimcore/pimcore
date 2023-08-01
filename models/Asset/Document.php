@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,15 +25,9 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'document';
+    protected string $type = 'document';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
@@ -46,11 +41,10 @@ class Document extends Model\Asset
     }
 
     /**
-     * @internal
      *
-     * @param string|null $path
+     * @internal
      */
-    public function processPageCount($path = null)
+    public function processPageCount(string $path = null): void
     {
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
@@ -74,21 +68,22 @@ class Document extends Model\Asset
     /**
      * returns null when page count wasn't processed yet (done asynchronously)
      *
-     * @return int|null
      */
-    public function getPageCount()
+    public function getPageCount(): ?int
     {
-        return $this->getCustomSetting('document_page_count');
+        $pageCount = $this->getCustomSetting('document_page_count');
+        if ($pageCount === null || $pageCount === '') {
+            return null;
+        }
+
+        return (int) $this->getCustomSetting('document_page_count');
     }
 
     /**
-     * @param string|array|Image\Thumbnail\Config $thumbnailName
-     * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
-     * @return Document\ImageThumbnail
      */
-    public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $page = 1, bool $deferred = false): Document\ImageThumbnail
     {
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
@@ -104,12 +99,7 @@ class Document extends Model\Asset
         return new Document\ImageThumbnail($this, $thumbnailName, $page, $deferred);
     }
 
-    /**
-     * @param int|null $page
-     *
-     * @return string|null
-     */
-    public function getText($page = null)
+    public function getText(int $page = null): ?string
     {
         if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
             if ($this->getCustomSetting('document_page_count')) {
@@ -120,7 +110,7 @@ class Document extends Model\Asset
                     Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
                 }
 
-                return $text;
+                return (string) $text;
             } else {
                 Logger::info('Unable to fetch text of ' . $this->getRealFullPath() . ' as it was not processed yet by the maintenance script');
             }

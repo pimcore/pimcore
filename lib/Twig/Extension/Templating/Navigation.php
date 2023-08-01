@@ -20,7 +20,6 @@ namespace Pimcore\Twig\Extension\Templating;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\Breadcrumbs;
-use Pimcore\Navigation\Renderer\Menu;
 use Pimcore\Navigation\Renderer\Menu as MenuRenderer;
 use Pimcore\Navigation\Renderer\RendererInterface;
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException;
@@ -38,20 +37,10 @@ class Navigation implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var Builder
-     */
-    private $builder;
+    private Builder $builder;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $rendererLocator;
+    private ContainerInterface $rendererLocator;
 
-    /**
-     * @param Builder $builder
-     * @param ContainerInterface $rendererLocator
-     */
     public function __construct(Builder $builder, ContainerInterface $rendererLocator)
     {
         $this->builder = $builder;
@@ -62,9 +51,7 @@ class Navigation implements RuntimeExtensionInterface
      * Builds a navigation container by passing params
      * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'cacheLifetime', 'maxDepth', 'active', 'markActiveTrail'
      *
-     * @param array $params
      *
-     * @return Container
      *
      * @throws \Exception
      */
@@ -76,9 +63,7 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Get a named renderer
      *
-     * @param string $alias
      *
-     * @return RendererInterface
      */
     public function getRenderer(string $alias): RendererInterface
     {
@@ -98,19 +83,16 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Renders a navigation with the given renderer
      *
-     * @param Container $container
-     * @param string $rendererName
      * @param string $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
      * @param array<int, mixed> $rendererArguments      Option arguments to pass to the render method after the container
      *
-     * @return string
      */
     public function render(
         Container $container,
         string $rendererName = 'menu',
         string $renderMethod = 'render',
         ...$rendererArguments
-    ) {
+    ): string {
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {
@@ -125,12 +107,9 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Magic overload is an alias to getRenderer()
      *
-     * @param string $method
-     * @param array $arguments
      *
-     * @return RendererInterface
      */
-    public function __call($method, array $arguments = []): RendererInterface
+    public function __call(string $method, array $arguments = []): RendererInterface
     {
         return $this->getRenderer($method);
     }

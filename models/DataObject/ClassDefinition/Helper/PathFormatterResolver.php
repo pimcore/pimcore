@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,17 +23,15 @@ use Pimcore\Model\DataObject\ClassDefinition\PathFormatterInterface;
  */
 class PathFormatterResolver extends ClassResolver
 {
-    public static $formatterCache = [];
+    public static array $formatterCache = [];
 
-    /**
-     * @param string $formatterClass
-     *
-     * @return PathFormatterInterface|null
-     */
-    public static function resolvePathFormatter($formatterClass): ?PathFormatterInterface
+    public static function resolvePathFormatter(string $formatterClass): ?PathFormatterInterface
     {
-        return self::resolve($formatterClass, static function ($formatter) {
+        /** @var PathFormatterInterface $formatter */
+        $formatter = self::resolve($formatterClass, static function ($formatter) {
             return $formatter instanceof PathFormatterInterface;
         });
+
+        return $formatter;
     }
 }

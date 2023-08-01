@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,12 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
@@ -31,60 +36,40 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * @internal
      *
-     * @var array
      */
-    public $columns;
+    public array $columns;
 
     /**
      * @internal
      *
      * @var string[]
      */
-    public $columnKeys;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'advancedManyToManyRelation';
+    public array $columnKeys;
 
     /**
      * Type for the generated phpdoc
      *
      * @internal
      *
-     * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+    public string $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $optimizedAdminLoading = false;
+    public bool $optimizedAdminLoading = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $enableBatchEdit;
+    public bool $enableBatchEdit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $allowMultipleAssignments;
+    public bool $allowMultipleAssignments = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -113,10 +98,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function loadData(array $data, $object = null, $params = [])
+    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $list = [
             'dirty' => false,
@@ -135,7 +117,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             $db = Db::get();
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType === 'object' ? 'o_id' : 'id';
+                $identifier = 'id';
 
                 $result = $db->fetchFirstColumn(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
@@ -203,15 +185,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
      *
-     * @return string|null
      *
      * @throws \Exception
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -236,15 +214,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
+     *
+     *
      * @see Data::getDataForEditmode
      *
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|null
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -264,28 +239,23 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $db = Db::get();
 
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == 'object' ? 'o_id' : 'id';
+                $identifier = 'id';
+                $pathCol = 'path';
+                $typeCol = 'type';
+
+                $keyCol = 'key';
+                $className = '';
                 if ($targetType == 'object') {
-                    $pathCol = 'o_path';
-                    $keyCol = 'o_key';
-                    $typeCol = 'o_type';
-                    $className = ', o_ClassName className';
-                } else {
-                    $pathCol = 'path';
-                    if ($targetType == 'asset') {
-                        $keyCol = 'filename';
-                    } else {
-                        $keyCol = '`key`';
-                    }
-                    $typeCol = 'type';
-                    $className = '';
+                    $className = ', className';
+                } elseif ($targetType == 'asset') {
+                    $keyCol = 'filename';
                 }
 
                 $result = $db->fetchAllAssociative(
                     'SELECT '
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className
-                    . ' ,concat(' . $pathCol . ',' . $keyCol . ') fullpath FROM ' . $targetType . 's'
+                    . ' ,concat(' . $db->quoteIdentifier($pathCol) . ',' . $db->quoteIdentifier($keyCol) . ') fullpath FROM ' . $targetType . 's'
                     . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
 
@@ -353,9 +323,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 $return[] = $itemData;
             }
-            if (empty($return)) {
-                $return = false;
-            }
 
             return $return;
         }
@@ -364,15 +331,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
+     *
+     *
      * @see Data::getDataFromEditmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|null
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -428,28 +392,20 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $multihrefMetadata;
     }
 
-    /**
-     * @param array|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $ret = $this->getDataForEditmode($data, $object, $params);
+
+        return is_array($ret) ? $ret : null;
     }
 
     /**
+     *
+     *
      * @see Data::getVersionPreview
      *
-     * @param array|null $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -480,13 +436,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return implode('<br />', $items);
         }
 
-        return null;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -523,10 +476,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -544,30 +494,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+    public function save(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
-                        return;
-                    }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
 
-        $classId = null;
         $objectId = null;
 
         if ($object instanceof DataObject\Concrete) {
@@ -582,7 +518,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         if ($object instanceof DataObject\Localizedfield) {
             $classId = $object->getClass()->getId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData || $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData ||
+            $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $classId = $object->getObject()->getClassId();
         } else {
             $classId = $object->getClassId();
@@ -591,6 +528,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
+        $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
@@ -606,12 +544,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' .
+                Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -630,7 +569,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
 
         if (!empty($multihrefMetadata)) {
-            if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
+            if ($object instanceof DataObject\Localizedfield
+                || $object instanceof DataObject\Objectbrick\Data\AbstractData
                 || $object instanceof DataObject\Fieldcollection\Data\AbstractData
             ) {
                 $objectConcrete = $object->getObject();
@@ -640,9 +580,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             $counter = 1;
             foreach ($multihrefMetadata as $mkey => $meta) {
-                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
-                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
+                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
+                $meta->save($objectConcrete, $ownerType, $ownerName, (string) $position, $counter);
                 $counter++;
             }
         }
@@ -650,10 +590,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         parent::save($object, $params);
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -679,10 +616,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $db = Db::get();
         $context = $params['context'] ?? null;
@@ -693,7 +627,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             if ($context['containerType'] === 'objectbrick') {
                 $db->executeStatement(
                     'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                     . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
                     . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 );
@@ -702,14 +636,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 $db->executeStatement(
                     'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                     . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 );
             }
         } else {
             $deleteCondition = [
-                'o_id' => $object->getId(),
+                'id' => $object->getId(),
                 'fieldname' => $this->getName(),
             ];
 
@@ -729,12 +663,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return $this
-     */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
             $columns = [$columns];
@@ -751,18 +680,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumnKeys()
+    public function getColumnKeys(): array
     {
         $this->columnKeys = [];
         foreach ($this->columns as $c) {
@@ -772,10 +695,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->columnKeys;
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
-    public function classSaved($class/**, $params = [] **/)
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -789,10 +709,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $temp->getDao()->createOrUpdateTable($class);
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -817,34 +734,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $mainDefinition
      */
-    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         parent::synchronizeWithMainDefinition($mainDefinition);
         $this->columns = $mainDefinition->columns;
     }
 
-    /**
-     * @dprecated will be removed in Pimcore 11
-     *
-     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
-     */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
-        );
-
-        $this->synchronizeWithMainDefinition($masterDefinition);
-    }
-
-    /**
-     * @param DataObject\Data\ElementMetadata[]|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -864,10 +760,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];
@@ -894,10 +787,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];
@@ -927,10 +817,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode(?array $originalData, ?array $data, Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $data = $data[0];
@@ -978,10 +865,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = parent::getDiffDataForEditMode($data, $object, $params);
 
@@ -989,13 +873,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /** See parent class.
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
      *
-     * @return array|null
      */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];
@@ -1015,86 +896,62 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param DataObject\Data\ElementMetadata $item
-     *
-     * @return string
      */
-    protected function buildUniqueKeyForAppending($item)
+    protected function buildUniqueKeyForAppending(ElementInterface $item): string
     {
-        $element = $item->getElement();
-        $elementType = Element\Service::getElementType($element);
-        $id = $element->getId();
+        $elementType = Element\Service::getElementType($item);
+        $id = $item->getId();
 
         return $elementType . $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
-        return (bool) $this->optimizedAdminLoading;
+        return $this->optimizedAdminLoading;
     }
 
-    /**
-     * @param bool $optimizedAdminLoading
-     */
-    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAllowMultipleAssignments()
+    public function getAllowMultipleAssignments(): bool
     {
         return $this->allowMultipleAssignments;
     }
 
-    /**
-     * @param int|bool|null $allowMultipleAssignments
-     *
-     * @return $this
-     */
-    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    public function setAllowMultipleAssignments(bool|int|null $allowMultipleAssignments): static
     {
-        $this->allowMultipleAssignments = $allowMultipleAssignments;
+        $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnableBatchEdit()
+    public function getEnableBatchEdit(): bool
     {
         return $this->enableBatchEdit;
     }
 
-    /**
-     * @param bool $enableBatchEdit
-     */
-    public function setEnableBatchEdit($enableBatchEdit)
+    public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
         $this->enableBatchEdit = $enableBatchEdit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\ElementMetadata::class.'[]';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'advancedManyToManyRelation';
     }
 }

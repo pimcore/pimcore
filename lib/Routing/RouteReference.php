@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,53 +23,30 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 final class RouteReference implements RouteReferenceInterface
 {
-    /**
-     * @var string
-     */
-    protected $route;
+    protected string $route;
 
-    /**
-     * @var array
-     */
-    protected $parameters;
+    protected array $parameters;
 
-    /**
-     * @var int
-     */
-    protected $type;
+    protected int $type;
 
-    /**
-     * @param string $route
-     * @param array $parameters
-     * @param int $type
-     */
-    public function __construct($route, array $parameters = [], $type = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function __construct(string $route, array $parameters = [], int $type = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         $this->route = $route;
         $this->parameters = $parameters;
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRoute()
+    public function getRoute(): string
     {
         return $this->route;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }

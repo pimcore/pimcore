@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Config;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 
@@ -29,31 +28,24 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     private const CONFIG_KEY = 'predefined_properties';
 
-    public function configure()
+    public function configure(): void
     {
         $config = Config::getSystemConfiguration();
 
-        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-            $config,
-            self::CONFIG_KEY,
-            'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
-            'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'
-        );
+        $storageConfig = $config['config_location'][self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
-            'storageDirectory' => $storageConfig,
-            'legacyConfigFile' => 'predefined-properties.php',
+            'storageConfig' => $storageConfig,
         ]);
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -76,11 +68,10 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $key
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByKey($key = null)
+    public function getByKey(string $key = null): void
     {
         if ($key != null) {
             $this->model->setKey($key);
@@ -107,10 +98,10 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -134,15 +125,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

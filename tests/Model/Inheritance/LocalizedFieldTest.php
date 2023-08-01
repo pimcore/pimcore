@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,35 +19,56 @@ namespace Pimcore\Tests\Model\Inheritance;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool;
+use Pimcore\Version;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    /** @var array */
-    protected $originalConfig;
+    protected array $originalConfig;
+
+    protected SystemSettingsConfig $config;
 
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
         \Pimcore::setAdminMode();
-        $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
+
+        if (Version::getMajorVersion() >= 11) {
+            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+            $this->config = $pimcoreModule->grabService(SystemSettingsConfig::class);
+            $this->originalConfig = $this->config->get();
+        } else {
+            $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
+        }
+
     }
 
     public function tearDown(): void
     {
-        \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($this->originalConfig);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        }
+
         parent::tearDown();
     }
 
-    public function testFallback()
+    public function testFallback(): void
     {
         $configuration = $this->originalConfig;
         $configuration['general']['fallback_languages']['de'] = 'en';
-        \Pimcore\Config::setSystemConfiguration($configuration);
 
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($configuration);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($configuration);
+        }
         // create root -> one -> two -> three
         $one = new Inheritance();
         $one->setKey('one');
@@ -89,7 +111,7 @@ class LocalizedFieldTest extends ModelTestCase
      *
      * two is created after one, en fields inherited. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -168,14 +190,11 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
         $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
-        $getInheritedValues = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(false);
-
-        $two = DataObject::getById($id2);
-        $this->assertEquals(null, $two->getInput('en'));
-        $this->assertEquals('childtextDE', $two->getInput('de'));
-
-        DataObject::setGetInheritedValues($getInheritedValues);
+        DataObject\Service::useInheritedValues(false, function () use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals(null, $two->getInput('en'));
+            $this->assertEquals('childtextDE', $two->getInput('de'));
+        });
 
         // now move it out
 
@@ -227,7 +246,7 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    public function testInvalidLocaleList()
+    public function testInvalidLocaleList(): void
     {
         $this->expectException(\Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
@@ -240,7 +259,7 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
     }
 
-    public function testQueryTable()
+    public function testQueryTable(): void
     {
         // create root -> one -> two -> three
 

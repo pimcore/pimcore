@@ -28,27 +28,18 @@ use Pimcore\Tool;
  */
 class Dao extends Model\DataObject\Listing\Dao
 {
-    /**
-     * @var bool
-     */
-    protected $firstException = true;
+    protected bool $firstException = true;
 
-    /**
-     * @var string
-     */
-    private $tableName = null;
+    private ?string $tableName = null;
 
-    /**
-     * @var int
-     */
-    protected $totalCount = 0;
+    protected int $totalCount = 0;
 
     /**
      * @return int[]
      *
      * @throws \Exception
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         try {
             return parent::loadIdList();
@@ -58,13 +49,12 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param \Exception $e
      *
      * @return int[]
      *
      * @throws \Exception
      */
-    protected function exceptionHandler($e)
+    protected function exceptionHandler(\Exception $e): array
     {
         // create view if it doesn't exist already // HACK
         $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
@@ -84,11 +74,10 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
-    public function getLocalizedBrickLanguage()
+    public function getLocalizedBrickLanguage(): ?string
     {
         $language = null;
 
@@ -115,11 +104,10 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         if (empty($this->tableName)) {
             // default
@@ -161,13 +149,12 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
      *
      * @throws \Exception
      */
-    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder): static
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();
@@ -183,7 +170,7 @@ class Dao extends Model\DataObject\Listing\Dao
                 // set join condition
                 $condition = <<<CONDITION
 1
- AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+ AND {$this->db->quoteIdentifier($name)}.id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION;
 
                 if (!empty($fc['fieldname'])) {
@@ -214,7 +201,7 @@ CONDITION;
                 $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name),
                     <<<CONDITION
 1
-AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+AND {$this->db->quoteIdentifier($name)}.id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION
                 );
 
@@ -228,7 +215,7 @@ CONDITION
                     $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $this->db->quoteIdentifier($name),
                         <<<CONDITION
 1
-AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION
                     );
                 }

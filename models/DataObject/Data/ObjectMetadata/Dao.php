@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Data\ObjectMetadata;
 
 use Pimcore\Db\Helper;
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
@@ -24,74 +23,71 @@ use Pimcore\Model\DataObject;
  *
  * @property \Pimcore\Model\DataObject\Data\ObjectMetadata $model
  */
-class Dao extends Model\Dao\AbstractDao
+class Dao extends DataObject\Data\AbstractMetadata\Dao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     * @param string $type
-     *
-     * @throws \Exception
-     */
-    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $index, $type = 'object')
+    public function save(
+        DataObject\Concrete $object,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $type = 'object'): void
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = ['o_id' => $object->getId(),
+        $dataTemplate = [
+            'o_id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
-            'ownername' => $ownername ? $ownername : '',
-            'index' => $index ? $index : '0',
-            'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object', ];
+            'ownername' => $ownername ?: '',
+            'index' => $index ?: '0',
+            'position' => $position ?: '0',
+            'type' => $type ?: 'object',
+        ];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            Helper::insertOrUpdate($this->db, $table, $data);
+            Helper::upsert($this->db, $table, $data, array_keys(array_diff_key($data, ['data' => null])));
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @return string
-     */
-    protected function getTablename($object)
+    protected function getTablename(DataObject\Concrete $object): string
     {
         return 'object_metadata_' . $object->getClassId();
     }
 
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     *
-     * @return null|DataObject\Data\ObjectMetadata
-     */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(
+        DataObject\Concrete $source,
+        int $destinationId,
+        string $fieldname,
+        string $ownertype,
+        string $ownername,
+        string $position,
+        int $index,
+        string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
     {
-        $typeQuery = " AND (type = 'object' or type = '')";
+        $query = 'SELECT * FROM ' . $this->getTablename($source) .
+            ' WHERE o_id = ? AND ' .
+            'dest_id = ? AND ' .
+            'fieldname = ? AND' .
+            ' ownertype = ? AND ' .
+            'ownername = ? AND ' .
+            'position = ? AND ' .
+            '`index` = ? ' . self::TYPE_QUERY;
 
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
-        $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+        $dataRaw = $this->db->fetchAllAssociative(
+            $query,
+            [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]
+        );
+
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
@@ -109,15 +105,13 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
-    public function createOrUpdateTable(DataObject\ClassDefinition $class)
+    public function createOrUpdateTable(DataObject\ClassDefinition $class): void
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+              `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
               `o_id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',
@@ -128,7 +122,10 @@ class Dao extends Model\Dao\AbstractDao
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
-              PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `metadata_un` (
+                `o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`
+              ),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),
@@ -136,7 +133,8 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
               INDEX `index` (`index`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'o_id').'` FOREIGN KEY (`o_id`)
+              REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($class, [$table]);

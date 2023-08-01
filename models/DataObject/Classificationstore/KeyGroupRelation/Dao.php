@@ -31,8 +31,6 @@ class Dao extends AbstractDao
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
-     * @param int $keyId
-     * @param int $groupId
      *
      * @throws NotFoundException
      */
@@ -51,6 +49,8 @@ class Dao extends AbstractDao
         );
 
         if (!empty($data['keyId'])) {
+            $data['enabled'] = (bool)$data['enabled'];
+            $data['mandatory'] = (bool)$data['mandatory'];
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException(sprintf(
@@ -61,7 +61,7 @@ class Dao extends AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
@@ -69,7 +69,7 @@ class Dao extends AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'keyId' => $this->model->getKeyId(),
@@ -77,7 +77,7 @@ class Dao extends AbstractDao
         ]);
     }
 
-    public function update()
+    public function update(): void
     {
         $type = $this->model->getObjectVars();
         $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
@@ -96,6 +96,6 @@ class Dao extends AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
+        Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
     }
 }

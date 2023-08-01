@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,19 +21,11 @@ use Pimcore\Exception\ImageOptimizationFailedException;
 interface OptimizerInterface
 {
     /**
-     * @param string $input
-     * @param string $output
      *
-     * @return string
      *
      * @throws ImageOptimizationFailedException
      */
     public function optimizeImage(string $input, string $output): string;
 
-    /**
-     * @param string $mimeType
-     *
-     * @return bool
-     */
     public function supports(string $mimeType): bool;
 }

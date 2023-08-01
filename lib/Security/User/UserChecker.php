@@ -28,27 +28,21 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserChecker extends InMemoryUserChecker
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function checkPreAuth(UserInterface $user)
+    public function checkPreAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);
 
         parent::checkPreAuth($user);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkPostAuth(UserInterface $user)
+    public function checkPostAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);
 
         parent::checkPostAuth($user);
     }
 
-    private function checkValidUser(UserInterface $user)
+    private function checkValidUser(UserInterface $user): void
     {
         if (!($user instanceof User && Authentication::isValidUser($user->getUser()))) {
             $ex = new InvalidUserException('User is no valid Pimcore admin user');

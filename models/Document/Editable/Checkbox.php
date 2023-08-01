@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,74 +28,49 @@ class Checkbox extends Model\Document\Editable
      *
      * @internal
      *
-     * @var bool
      */
-    protected $value = false;
+    protected bool $value = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'checkbox';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return (string)$this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->value = (bool) $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->value = (bool) $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !$this->value;
     }
 
-    /**
-     * @return bool
-     */
-    public function isChecked()
+    public function isChecked(): bool
     {
         return $this->value;
     }

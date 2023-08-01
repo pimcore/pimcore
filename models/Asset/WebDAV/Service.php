@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,24 +17,19 @@
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Pimcore\Model\Asset;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
  */
 class Service
 {
-    /**
-     * @return string
-     */
-    public static function getDeleteLogFile()
+    public static function getDeleteLogFile(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-delete.dat';
     }
 
-    /**
-     * @return array
-     */
-    public static function getDeleteLog()
+    public static function getDeleteLog(): array
     {
         $log = [];
         if (file_exists(self::getDeleteLogFile())) {
@@ -56,10 +52,7 @@ class Service
         return $log;
     }
 
-    /**
-     * @param array $log
-     */
-    public static function saveDeleteLog($log)
+    public static function saveDeleteLog(array $log): void
     {
         // cleanup old entries
         $tmpLog = [];
@@ -69,6 +62,7 @@ class Service
             }
         }
 
-        \Pimcore\File::put(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
     }
 }

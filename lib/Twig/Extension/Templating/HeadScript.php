@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,6 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
@@ -77,54 +77,49 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Registry key for placeholder
      *
-     * @var string
      */
-    protected $_regKey = 'HeadScript';
+    protected string $_regKey = 'HeadScript';
 
     /**
      * Are arbitrary attributes allowed?
      *
-     * @var bool
      */
-    protected $_arbitraryAttributes = false;
+    protected bool $_arbitraryAttributes = false;
 
     /**#@+
      * Capture type and/or attributes (used for hinting during capture)
-     * @var string
+     * @var bool
      */
-    protected $_captureLock;
+    protected bool $_captureLock = false;
 
-    protected $_captureScriptType = null;
+    protected ?string $_captureScriptType = null;
 
-    protected $_captureScriptAttrs = null;
+    protected ?array $_captureScriptAttrs = null;
 
-    protected $_captureType;
+    protected string $_captureType;
 
     // #@-
 
     /**
      * Optional allowed attributes for script tag
      *
-     * @var array
      */
-    protected $_optionalAttributes = [
+    protected array $_optionalAttributes = [
         'charset', 'defer', 'language', 'src', 'type', 'async',
     ];
 
     /**
      * Required attributes for script tag
      *
-     * @var array
      */
-    protected $_requiredAttributes = ['type'];
+    protected array $_requiredAttributes = ['type'];
 
     /**
      * Whether or not to format scripts using CDATA; used only if doctype
      * helper is not accessible
      *
-     * @var bool
      */
-    public $useCdata = false;
+    public bool $useCdata = false;
 
     /**
      * Default attributes for generated WebLinks (HTTP/2 push).
@@ -138,8 +133,6 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * Set separator to PHP_EOL.
      *
-     * @param ContainerService $containerService
-     * @param WebLinkExtension $webLinkExtension
      */
     public function __construct(
         ContainerService $containerService,
@@ -157,31 +150,23 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * Returns headScript helper object; optionally, allows specifying a script
      * or script file to include.
      *
-     * @param  string $mode Script or file
-     * @param  null|string $spec Script/url
-     * @param  string $placement Append, prepend, or set
+     * @param string $mode Script or file
+     * @param string|null $spec Script/url
+     * @param string $placement Append, prepend, or set
      * @param  array $attrs Array of script attributes
-     * @param  string $type Script type and/or array of script attributes
+     * @param string $type Script type and/or array of script attributes
      *
-     * @return HeadScript
+     * @return $this
      */
-    public function __invoke($mode = self::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
+    public function __invoke(string $mode = self::FILE, string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
     {
-        if ((null !== $spec) && is_string($spec)) {
+        if (is_string($spec)) {
             $action = ucfirst(strtolower($mode));
             $placement = strtolower($placement);
-            switch ($placement) {
-                case 'set':
-                case 'prepend':
-                case 'append':
-                    $action = $placement . $action;
-
-                    break;
-                default:
-                    $action = 'append' . $action;
-
-                    break;
-            }
+            $action = match ($placement) {
+                'set', 'prepend', 'append' => $placement . $action,
+                default => 'append' . $action,
+            };
             $this->$action($spec, $type, $attrs);
         }
 
@@ -193,11 +178,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param string $captureType
      * @param string $type
-     * @param array $attrs
      *
-     * @return void
      */
-    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', $attrs = [])
+    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
@@ -213,9 +196,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
-     * @return void
      */
-    public function captureEnd()
+    public function captureEnd(): void
     {
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
@@ -252,14 +234,12 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * - prependScript($script, $type = 'text/javascript', $attrs = array())
      * - setScript($script, $type = 'text/javascript', $attrs = array())
      *
-     * @param  string $method
-     * @param  array $args
      *
      * @return HeadScript
      *
      * @throws Exception if too few arguments or invalid method
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<mode>File|Script)$/', $method, $matches)) {
             if (1 > count($args)) {
@@ -322,11 +302,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Is the file specified a duplicate?
      *
-     * @param  string $file
      *
-     * @return bool
      */
-    protected function _isDuplicate($file)
+    protected function _isDuplicate(string $file): bool
     {
         foreach ($this->getContainer() as $item) {
             if (($item->source === null)
@@ -342,11 +320,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Is the script provided valid?
      *
-     * @param mixed $value
      *
-     * @return bool
      */
-    protected function _isValid($value)
+    protected function _isValid(mixed $value): bool
     {
         if ((!$value instanceof \stdClass)
             || !isset($value->type)
@@ -362,9 +338,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param  string $value
      *
-     * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to append(); please use one of the helper methods, appendScript() or appendFile()');
@@ -378,9 +353,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param  string $value
      *
-     * @return void
      */
-    public function prepend($value)
+    public function prepend($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to prepend(); please use one of the helper methods, prependScript() or prependFile()');
@@ -394,9 +368,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param  string $value
      *
-     * @return void
      */
-    public function set($value)
+    public function set($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to set(); please use one of the helper methods, setScript() or setFile()');
@@ -408,31 +381,27 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override offsetSet
      *
-     * @param  string|int $index
-     * @param  mixed $value
+     * @param  string|int $offset
      *
-     * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)// : void
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to offsetSet(); please use one of the helper methods, offsetSetScript() or offsetSetFile()');
         }
 
-        $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
      * Set flag indicating if arbitrary attributes are allowed
      *
-     * @param  bool $flag
      *
-     * @return HeadScript
+     * @return $this
      */
-    public function setAllowArbitraryAttributes($flag)
+    public function setAllowArbitraryAttributes(bool $flag): static
     {
-        $this->_arbitraryAttributes = (bool) $flag;
+        $this->_arbitraryAttributes = $flag;
 
         return $this;
     }
@@ -440,9 +409,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Are arbitrary attributes allowed?
      *
-     * @return bool
      */
-    public function arbitraryAttributesAllowed()
+    public function arbitraryAttributesAllowed(): bool
     {
         return $this->_arbitraryAttributes;
     }
@@ -450,14 +418,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Create script HTML
      *
-     * @param \stdClass $item
-     * @param string $indent
-     * @param string $escapeStart
-     * @param string $escapeEnd
      *
-     * @return string
      */
-    public function itemToString($item, $indent, $escapeStart, $escapeEnd)
+    public function itemToString(\stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
     {
         $attrString = '';
 
@@ -483,9 +446,14 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
 
-        /** @var ContentSecurityPolicyHandler $cspHandler */
-        $cspHandler = \Pimcore::getContainer()->get(ContentSecurityPolicyHandler::class);
-        $attrString .= $cspHandler->getNonceHtmlAttribute();
+        $container = \Pimcore::getContainer();
+
+        //@phpstan-ignore-next-line
+        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+            $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
+            $attrString .= $cspHandler->getNonceHtmlAttribute();
+        }
+
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
         $html = '<script' . $attrString . '>';
@@ -524,11 +492,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Retrieve string representation
      *
-     * @param  null|string|int $indent
      *
-     * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         $this->prepareEntries();
 
@@ -555,7 +521,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         return $return;
     }
 
-    protected function prepareEntries()
+    protected function prepareEntries(): void
     {
         foreach ($this as &$item) {
             if (!$this->_isValid($item)) {
@@ -597,13 +563,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Create data item containing all necessary components of script
      *
-     * @param  string $type
-     * @param  array $attributes
-     * @param  null|string $content
      *
-     * @return \stdClass
      */
-    public function createData($type, array $attributes, $content = null)
+    public function createData(string $type, array $attributes, string $content = null): \stdClass
     {
         $data = new \stdClass();
         $data->type = $type;

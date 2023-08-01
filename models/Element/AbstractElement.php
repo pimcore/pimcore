@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
@@ -35,129 +36,89 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var Model\Dependency|null
      */
-    protected $dependencies;
+    protected ?Model\Dependency $dependencies = null;
+
+    /**
+     * @internal
+     */
+    protected ?int $__dataVersionTimestamp = null;
+
+    /**
+     * @internal
+     */
+    protected ?string $path = null;
 
     /**
      * @internal
      *
-     * @var int
-     */
-    protected $__dataVersionTimestamp = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $path;
-
-    /**
-     * @internal
-     *
-     * @var array|null
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public static $doNotRestoreKeyAndPath = false;
+    public static bool $doNotRestoreKeyAndPath = false;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
-     * @return string|null
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setPath($path)
-    {
-        $this->path = (string) $path;
-
-        return $this;
-    }
-
-    /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
-    protected $versionCount = 0;
+    protected int $versionCount = 0;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $userOwner = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $locked = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $parentId = null;
 
-    /**
-     * @return int|null
-     */
-    public function getParentId()
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
+    public function setPath(string $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return $this
-     */
-    public function setParentId($parentId)
+    public function setParentId(?int $parentId): static
     {
         $parentId = (int) $parentId;
         $this->parentId = $parentId;
@@ -166,86 +127,54 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification): static
     {
         $this->markFieldDirty('userModification');
-        $this->userModification = (int) $userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
-        if($this->modificationDate != (int)$modificationDate) {
+        if($this->modificationDate != $modificationDate) {
             $this->markFieldDirty('modificationDate');
-            $this->modificationDate = (int)$modificationDate;
+            $this->modificationDate = $modificationDate;
         }
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserOwner()
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(int $userOwner): static
     {
-        $this->userOwner = (int) $userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
@@ -253,9 +182,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
-    public function getLocked()
+    public function getLocked(): ?string
     {
         if (empty($this->locked)) {
             return null;
@@ -267,48 +195,33 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
-    public function setLocked($locked)
+    public function setLocked(?string $locked): static
     {
         $this->locked = $locked;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(?int $id): static
     {
-        $this->id = $id ? (int)$id : null;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @var self|null
-     */
-    protected $parent = null;
+    protected ?AbstractElement $parent = null;
 
-    /**
-     * @return self|null
-     */
-    public function getParent()
+    public function getParent(): ?AbstractElement
     {
-        if ($this->parent === null) {
+        if ($this->parent === null && $this->getParentId() !== null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
             $this->setParent($parent);
         }
@@ -316,10 +229,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->parent;
     }
 
-    /**
-     * @return Model\Property[]
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         $type = Service::getElementType($this);
 
@@ -340,32 +250,23 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
+    public function setProperties(?array $properties): static
     {
         $this->properties = $properties;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
+    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static
     {
         $this->getProperties();
 
+        $id = $this->getId();
         $property = new Model\Property();
         $property->setType($type);
-        $property->setCid($this->getId());
+        if (isset($id)) {
+            $property->setCid($id);
+        }
         $property->setName($name);
         $property->setCtype(Service::getElementType($this));
         $property->setData($data);
@@ -380,7 +281,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function updateModificationInfos()
+    protected function updateModificationInfos(): void
     {
         if (Model\Version::isEnabled() === true) {
             $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
@@ -416,10 +317,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $properties = $this->getProperties();
         if ($this->hasProperty($name)) {
@@ -433,50 +331,33 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasProperty($name)
+    public function hasProperty(string $name): bool
     {
         $properties = $this->getProperties();
 
         return array_key_exists($name, $properties);
     }
 
-    /**
-     * @param string $name
-     */
-    public function removeProperty($name)
+    public function removeProperty(string $name): void
     {
         $properties = $this->getProperties();
         unset($properties[$name]);
         $this->setProperties($properties);
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int
     {
         return $this->versionCount ? $this->versionCount : 0;
     }
 
-    /**
-     * @param int|null $versionCount
-     *
-     * @return $this
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
+    public function setVersionCount(int $versionCount): static
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTag()
+    public function getCacheTag(): string
     {
         $elementType = Service::getElementType($this);
 
@@ -484,22 +365,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param string|int $id
-     *
-     * @return string
      */
-    protected static function getCacheKey($id): string
+    protected static function getCacheKey(int|string $id): string
     {
         $elementType = Service::getElementTypeByClassName(static::class);
 
         return Service::getElementCacheTag($elementType, $id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags[$this->getCacheTag()] = $this->getCacheTag();
@@ -512,26 +388,20 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      *
-     * @return array
      */
     protected function resolveDependencies(): array
     {
         $dependencies = [[]];
 
         // check for properties
-        if (method_exists($this, 'getProperties')) {
-            foreach ($this->getProperties() as $property) {
-                $dependencies[] = $property->resolveDependencies();
-            }
+        foreach ($this->getProperties() as $property) {
+            $dependencies[] = $property->resolveDependencies();
         }
 
         return array_merge(...$dependencies);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isLocked()
+    public function isLocked(): bool
     {
         if ($this->getLocked()) {
             return true;
@@ -542,15 +412,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param User|null $user
      *
-     * @return array
      *
      * @throws \Exception
      *
      * @internal
      */
-    public function getUserPermissions(?User $user = null)
+    public function getUserPermissions(?User $user = null): array
     {
         $baseClass = Service::getBaseClassNameForElement($this);
         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClass;
@@ -583,7 +451,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+            \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
             $permissions[$type] = $event->getArgument('isAllowed');
         }
@@ -591,10 +459,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $permissions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAllowed($type, ?User $user = null)
+    public function isAllowed(string $type, ?User $user = null): bool
     {
         if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -619,7 +484,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+        \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }
@@ -627,7 +492,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    public function unlockPropagate()
+    public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
 
@@ -647,58 +512,42 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @throws \Exception
      */
-    protected function validatePathLength()
+    protected function validatePathLength(): void
     {
         if (mb_strlen($this->getRealFullPath()) > 765) {
             throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getFullPath();
     }
 
-    /**
-     * @return int
-     */
-    public function __getDataVersionTimestamp()
+    public function __getDataVersionTimestamp(): ?int
     {
         return $this->__dataVersionTimestamp;
     }
 
-    /**
-     * @param int $_dataVersionTimestamp
-     */
-    public function __setDataVersionTimestamp($_dataVersionTimestamp)
+    public function __setDataVersionTimestamp(int $_dataVersionTimestamp): void
     {
         $this->__dataVersionTimestamp = $_dataVersionTimestamp;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __isBasedOnLatestData()
+    public function __isBasedOnLatestData(): bool
     {
         return $this->getDao()->__isBasedOnLatestData();
     }
 
     /**
-     * @internal
      *
-     * @param string|null $versionNote
-     * @param bool $saveOnlyVersion
-     * @param bool $saveStackTrace
-     * @param bool $isAutoSave
-     *
-     * @return Model\Version
      *
      * @throws \Exception
+     *
+     * @internal
+     *
      */
-    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true, $isAutoSave = false)
+    protected function doSaveVersion(string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
     {
         $version = null;
 
@@ -719,7 +568,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setDate($this->getModificationDate());
         $version->setUserId($this->getUserModification());
         $version->setData($this);
-        $version->setNote($versionNote);
+        if ($versionNote !== null) {
+            $version->setNote($versionNote);
+        }
         $version->setGenerateStackTrace($saveStackTrace);
         $version->setAutoSave($isAutoSave);
 
@@ -736,10 +587,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): Model\Dependency
     {
         if (!$this->dependencies) {
             $this->dependencies = Model\Dependency::getBySourceId($this->getId(), Service::getElementType($this));
@@ -748,18 +596,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheduledTasks()
+    public function getScheduledTasks(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersions()
+    public function getVersions(): array
     {
         return [];
     }
@@ -774,10 +616,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return ['dependencies', 'parent'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -787,7 +626,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_diff(parent::__sleep(), $this->getBlockedVars());
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
@@ -807,18 +646,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setInDumpState(false);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->dependencies = null;
     }
 
     /**
-     * @internal
      *
-     * @param int $userId
+     * @internal
      */
-    public function deleteAutoSaveVersions($userId = null)
+    public function deleteAutoSaveVersions(int $userId = null): void
     {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);
@@ -836,7 +674,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function removeInheritedProperties()
+    protected function removeInheritedProperties(): void
     {
         $myProperties = $this->getProperties();
 
@@ -854,7 +692,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function renewInheritedProperties()
+    protected function renewInheritedProperties(): void
     {
         $this->removeInheritedProperties();
 

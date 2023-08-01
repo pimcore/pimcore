@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,52 +25,37 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
-    public $fieldtype = 'tabpanel';
+    public string $fieldtype = 'tabpanel';
 
     /**
      * @internal
      *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @internal
      *
-     * @var string|null
      */
-    public $tabPosition = 'top';
+    public ?string $tabPosition = 'top';
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
     }
 
-    /**
-     * @return string
-     */
     public function getTabPosition(): string
     {
         return $this->tabPosition ?? 'top';
     }
 
-    /**
-     * @param string|null $tabPosition
-     */
-    public function setTabPosition($tabPosition): void
+    public function setTabPosition(?string $tabPosition): void
     {
         $this->tabPosition = $tabPosition;
     }

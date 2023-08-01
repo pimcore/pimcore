@@ -25,9 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
  */
 final class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): Layout
     {
         return parent::build($name, $params);

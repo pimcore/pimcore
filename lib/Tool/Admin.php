@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,32 +30,14 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Admin
 {
     /**
-     * Finds the translation file for a given language
-     *
-     * @static
-     *
-     * @param  string $language
-     *
-     * @return string
-     */
-    public static function getLanguageFile($language)
-    {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
-        $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
-
-        return $languageFile;
-    }
-
-    /**
      * finds installed languages
      *
      * @static
      *
-     * @return array
      */
-    public static function getLanguages()
+    public static function getLanguages(): array
     {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
         $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
         $appDefaultPath = \Pimcore::getContainer()->getParameter('translator.default_path');
@@ -92,11 +75,9 @@ class Admin
     /**
      * @static
      *
-     * @param string $scriptContent
      *
-     * @return array
      */
-    public static function getMinimizedScriptPath($scriptContent)
+    public static function getMinimizedScriptPath(string $scriptContent): array
     {
         $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';
 
@@ -111,12 +92,7 @@ class Admin
         return $params;
     }
 
-    /**
-     * @param string $file
-     *
-     * @return \stdClass
-     */
-    public static function determineCsvDialect($file)
+    public static function determineCsvDialect(string $file): \stdClass
     {
         // minimum 10 lines, to be sure take more
         $sample = '';
@@ -146,30 +122,25 @@ class Admin
     /**
      * @static
      *
-     * @return string
      */
-    public static function getMaintenanceModeFile()
+    public static function getMaintenanceModeFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
-    /**
-     * @return string
-     */
-    public static function getMaintenanceModeScheduleLoginFile()
+    public static function getMaintenanceModeScheduleLoginFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
 
     /**
-     * @param string|null $sessionId
      *
      * @throws \Exception
      */
-    public static function activateMaintenanceMode($sessionId)
+    public static function activateMaintenanceMode(?string $sessionId): void
     {
         if (empty($sessionId)) {
-            $sessionId = Session::getSessionId();
+            $sessionId = \Pimcore::getContainer()->get('request_stack')->getSession()->getId();
         }
 
         if (empty($sessionId)) {
@@ -188,7 +159,7 @@ class Admin
     /**
      * @static
      */
-    public static function deactivateMaintenanceMode()
+    public static function deactivateMaintenanceMode(): void
     {
         @unlink(self::getMaintenanceModeFile());
 
@@ -198,9 +169,8 @@ class Admin
     /**
      * @static
      *
-     * @return bool
      */
-    public static function isInMaintenanceMode()
+    public static function isInMaintenanceMode(): bool
     {
         $file = self::getMaintenanceModeFile();
 
@@ -232,7 +202,7 @@ class Admin
         return false;
     }
 
-    public static function scheduleMaintenanceModeOnLogin()
+    public static function scheduleMaintenanceModeOnLogin(): void
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
             'schedule' => true,
@@ -243,7 +213,7 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
-    public static function unscheduleMaintenanceModeOnLogin()
+    public static function unscheduleMaintenanceModeOnLogin(): void
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
 
@@ -253,31 +223,15 @@ class Admin
     /**
      * @static
      *
-     * @return \Pimcore\Model\User|null
      */
-    public static function getCurrentUser()
+    public static function getCurrentUser(): ?User
     {
         return \Pimcore::getContainer()
             ->get(TokenStorageUserResolver::class)
             ->getUser();
     }
 
-    /**
-     * @return true if in EXT JS5 mode
-     */
-    public static function isExtJS6()
-    {
-        return true;
-    }
-
-    /**
-     * @param User $user
-     * @param string|array $languages
-     * @param bool $returnLanguageArray
-     *
-     * @return string|array
-     */
-    public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
+    public static function reorderWebsiteLanguages(User $user, array|string $languages, bool $returnLanguageArray = false): array|string
     {
         if (!is_array($languages)) {
             $languages = explode(',', $languages);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,13 +27,11 @@ trait AllowDocumentRelationTrait
     /**
      * Checks if a document is an allowed relation
      *
+     *
+     *
      * @internal
-     *
-     * @param Document $document
-     *
-     * @return bool
      */
-    protected function allowDocumentRelation($document)
+    protected function allowDocumentRelation(Document $document): bool
     {
         if (!$document instanceof Document || $document->getId() <= 0) {
             return false;
@@ -43,7 +42,7 @@ trait AllowDocumentRelationTrait
         $allowed = true;
         if (!$this->getDocumentsAllowed()) {
             $allowed = false;
-        } elseif ($this->getDocumentsAllowed() && is_array($allowedDocumentTypes) && count($allowedDocumentTypes) > 0) {
+        } elseif (count($allowedDocumentTypes) > 0) {
             //check for allowed asset types
             $allowedTypes = [];
             foreach ($allowedDocumentTypes as $t) {
@@ -52,7 +51,7 @@ trait AllowDocumentRelationTrait
                 }
             }
 
-            if (!in_array($document->getType(), $allowedTypes) && count($allowedTypes)) {
+            if (!in_array($document->getType(), $allowedTypes, true) && count($allowedTypes) > 0) {
                 $allowed = false;
             }
         } else {

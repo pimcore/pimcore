@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 class ClassDefinitionManager

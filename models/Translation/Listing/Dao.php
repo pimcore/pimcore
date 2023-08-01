@@ -29,18 +29,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
         $queryBuilder->resetQueryPart('orderBy');
@@ -53,10 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if (count($this->model->load()) > 0) {
             return count($this->model->load());
@@ -70,10 +61,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllTranslations()
+    public function getAllTranslations(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
@@ -110,9 +98,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return array
+     * @return list<array<string,mixed>>
      */
-    public function loadRaw()
+    public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
         $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
@@ -120,10 +108,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translationsData;
     }
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
@@ -151,10 +136,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCacheable()
+    public function isCacheable(): bool
     {
         $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
         $cacheLimit = Model\Translation\Listing::getCacheLimit();
@@ -165,13 +147,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return true;
     }
 
-    public function cleanup()
+    public function cleanup(): void
     {
         $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
-        if (is_array($keysToDelete) && !empty($keysToDelete)) {
+        if ($keysToDelete) {
             $preparedKeys = [];
             foreach ($keysToDelete as $value) {
                 $preparedKeys[] = $this->db->quote($value);
@@ -184,7 +166,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Date implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
             $result = new Carbon();
@@ -38,10 +36,7 @@ class Date implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof Carbon) {
             return $value->getTimestamp();

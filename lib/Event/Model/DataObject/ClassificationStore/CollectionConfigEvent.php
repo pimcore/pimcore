@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,33 +21,23 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CollectionConfigEvent extends Event
 {
-    /**
-     * @var CollectionConfig
-     */
-    protected $collectionConfig;
+    protected CollectionConfig $collectionConfig;
 
     /**
      * DocumentEvent constructor.
      *
-     * @param CollectionConfig $collectionConfig
      */
     public function __construct(CollectionConfig $collectionConfig)
     {
         $this->collectionConfig = $collectionConfig;
     }
 
-    /**
-     * @return CollectionConfig
-     */
-    public function getCollectionConfig()
+    public function getCollectionConfig(): CollectionConfig
     {
         return $this->collectionConfig;
     }
 
-    /**
-     * @param CollectionConfig $collectionConfig
-     */
-    public function setCollectionConfig($collectionConfig)
+    public function setCollectionConfig(CollectionConfig $collectionConfig): void
     {
         $this->collectionConfig = $collectionConfig;
     }

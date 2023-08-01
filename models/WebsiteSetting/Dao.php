@@ -26,11 +26,10 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -47,13 +46,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string|null $name
-     * @param int|null $siteId
-     * @param string|null $language
      *
      * @throws NotFoundException
      */
-    public function getByName($name = null, $siteId = null, $language = null)
+    public function getByName(string $name = null, int $siteId = null, string $language = null): void
     {
         if ($name != null) {
             $this->model->setName($name);
@@ -83,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         if ($this->model->getId()) {
             $this->update();
@@ -92,13 +88,13 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('website_settings', ['id' => $this->model->getId()]);
         $this->model->clearDependentCache();
     }
 
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -117,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->clearDependentCache();
     }
 
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,6 @@
 namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter;
-use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -31,15 +31,9 @@ class Ghostscript extends Adapter
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var string|null
-     */
-    private $version;
+    private ?string $version = null;
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         try {
             $ghostscript = self::getGhostscriptCli();
@@ -54,10 +48,7 @@ class Ghostscript extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFileTypeSupported($fileType)
+    public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
         if (preg_match("/\.?pdf$/i", $fileType)) {
@@ -68,29 +59,24 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
-    public static function getGhostscriptCli()
+    public static function getGhostscriptCli(): string
     {
         return Console::getExecutable('gs', true);
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
-    public static function getPdftotextCli()
+    public static function getPdftotextCli(): string
     {
         return Console::getExecutable('pdftotext', true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Asset\Document $asset)
+    public function load(Asset\Document $asset): static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');
@@ -110,9 +96,6 @@ class Ghostscript extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {
@@ -120,7 +103,12 @@ class Ghostscript extends Adapter
         }
 
         if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
-            return $asset->getStream();
+            $file = $asset->getStream();
+            if (!is_resource($file)) {
+                throw new \Exception(sprintf('Could not get pdf from asset with id %s', $asset->getId()));
+            }
+
+            return $file;
         }
 
         $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
@@ -129,10 +117,7 @@ class Ghostscript extends Adapter
         throw new \Exception($message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPageCount()
+    public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());
         $process->setTimeout(120);
@@ -147,11 +132,10 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
-    protected function buildPageCountCommand()
+    protected function buildPageCountCommand(): string
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
         $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -171,11 +155,10 @@ class Ghostscript extends Adapter
     /**
      * Get the version of the installed Ghostscript CLI.
      *
-     * @return string
      *
      * @throws \Exception
      */
-    protected function getVersion()
+    protected function getVersion(): string
     {
         if (is_null($this->version)) {
             $process = new Process([self::getGhostscriptCli(), '--version']);
@@ -186,10 +169,7 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -207,10 +187,7 @@ class Ghostscript extends Adapter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getText(?int $page = null, ?Asset\Document $asset = null, ?string $path = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null, ?string $path = null): mixed
     {
         try {
             if (!$asset && $this->asset) {
@@ -227,60 +204,68 @@ class Ghostscript extends Adapter
                 }
             }
 
-            try {
-                $pdftotextBin = self::getPdftotextCli();
-            } catch (\Exception $e) {
-                $pdftotextBin = false;
-            }
-
-            if ($pdftotextBin) {
-                try {
-                    // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
-                    $cmd = [$pdftotextBin];
-                    if ($page) {
-                        array_push($cmd, '-f', $page, '-l', $page);
-                    }
-                    array_push($cmd, $path, '-');
-                    Console::addLowProcessPriority($cmd);
-                    $process = new Process($cmd);
-                    $process->setTimeout(120);
-                    $process->mustRun();
-
-                    return $process->getOutput();
-                } catch (ProcessFailedException $e) {
-                    Logger::debug($e->getMessage());
-                }
-            }
-
-            // pure ghostscript way
-            $cmd = [self::getGhostscriptCli(), '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
-            if ($page) {
-                array_push($cmd, '-dFirstPage=' . $page, '-dLastPage=' . $page);
-            }
-            $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
-            array_push($cmd, '-dTextFormat=2', '-sOutputFile=' . $textFile, $path);
-
-            Console::addLowProcessPriority($cmd);
-            $process = new Process($cmd);
-            $process->setTimeout(120);
-            $process->mustRun();
-
-            if (!is_file($textFile)) {
-                throw new \Exception('File not found: ' . $textFile);
-            }
-
-            $text = file_get_contents($textFile);
-
-            // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
-            // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine
-            $text = mb_convert_encoding($text, 'UTF-8', 'UCS-2LE');
-            unlink($textFile);
-
-            return $text;
+            return $this->convertPdfToText($page, $path);
         } catch (\Exception $e) {
             Logger::error((string) $e);
 
             return false;
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function convertPdfToText(?int $page, string $assetPath): string
+    {
+        try {
+            $pdftotextBin = self::getPdftotextCli();
+        } catch (\Exception $e) {
+            $pdftotextBin = false;
+        }
+
+        if ($pdftotextBin) {
+            try {
+                // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
+                $cmd = [$pdftotextBin];
+                if ($page) {
+                    array_push($cmd, '-f', $page, '-l', $page);
+                }
+                array_push($cmd, $assetPath, '-');
+                Console::addLowProcessPriority($cmd);
+                $process = new Process($cmd);
+                $process->setTimeout(120);
+                $process->mustRun();
+
+                return $process->getOutput();
+            } catch (ProcessFailedException $e) {
+                Logger::debug($e->getMessage());
+            }
+        }
+
+        // pure ghostscript way
+        $cmd = [self::getGhostscriptCli(), '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
+        if ($page) {
+            array_push($cmd, '-dFirstPage=' . $page, '-dLastPage=' . $page);
+        }
+        $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
+        array_push($cmd, '-dTextFormat=2', '-sOutputFile=' . $textFile, $assetPath);
+
+        Console::addLowProcessPriority($cmd);
+        $process = new Process($cmd);
+        $process->setTimeout(120);
+        $process->mustRun();
+
+        if (!is_file($textFile)) {
+            throw new \Exception('File not found: ' . $textFile);
+        }
+
+        $text = file_get_contents($textFile);
+
+        // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
+        // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine
+        $text = mb_convert_encoding($text, 'UTF-8', 'UCS-2LE');
+        unlink($textFile);
+
+        return $text;
     }
 }

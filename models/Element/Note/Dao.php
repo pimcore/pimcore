@@ -29,11 +29,10 @@ use Pimcore\Model\Document;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', [$id]);
 
@@ -41,6 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');
         }
 
+        $data['locked'] = (bool)$data['locked'];
         $this->assignVariablesToModel($data);
 
         // get key-value data
@@ -84,11 +84,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Saves note to database.
-     * @return bool
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): bool
     {
         $version = $this->model->getObjectVars();
 
@@ -101,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'notes', $data);
+        Helper::upsert($this->db, 'notes', $data, $this->getPrimaryKey('notes'));
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
@@ -148,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
     /** Deletes note from database.
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('notes', ['id' => $this->model->getId()]);
         $this->deleteData();
@@ -157,7 +156,7 @@ class Dao extends Model\Dao\AbstractDao
     /** Deletes note data from database.
      * @throws \Exception
      */
-    protected function deleteData()
+    protected function deleteData(): void
     {
         $this->db->delete('notes_data', ['id' => $this->model->getId()]);
     }

@@ -26,43 +26,29 @@ class EditableNameEvent extends Event
     /**
      * Editable type (e.g. "input")
      *
-     * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * Editable name (e.g. "headline")
      *
-     * @var string
      */
-    private $inputName;
+    private string $inputName;
 
     /**
      * The current block state
      *
-     * @var BlockState
      */
-    private $blockState;
+    private BlockState $blockState;
 
     /**
      * The built editable name
      *
-     * @var string
      */
-    private $editableName;
+    private string $editableName;
 
-    /**
-     * @var Document
-     */
-    private $document;
+    private Document $document;
 
-    /**
-     * @param string $type
-     * @param string $inputName
-     * @param BlockState $blockState
-     * @param string $editableName
-     * @param Document $document
-     */
     public function __construct(
         string $type,
         string $inputName,
@@ -77,50 +63,32 @@ class EditableNameEvent extends Event
         $this->document = $document;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getInputName(): string
     {
         return $this->inputName;
     }
 
-    /**
-     * @return BlockState
-     */
     public function getBlockState(): BlockState
     {
         return $this->blockState;
     }
 
-    /**
-     * @return Document
-     */
     public function getDocument(): Document
     {
         return $this->document;
     }
 
-    /**
-     * @return string
-     */
     public function getEditableName(): string
     {
         return $this->editableName;
     }
 
-    /**
-     * @param string $editableName
-     */
-    public function setEditableName(string $editableName)
+    public function setEditableName(string $editableName): void
     {
         $this->editableName = $editableName;
     }

@@ -1,5 +1,5 @@
 parameters:
-    level: 5
+    level: 6
 
     paths:
         - bundles
@@ -9,15 +9,13 @@ parameters:
     bootstrapFiles:
         - phpstan-bootstrap.php
 
+    excludePaths:
+        - bundles/SeoBundle/src/Controller/Traits/DocumentTreeConfigWrapperTrait.php
+        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
+        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+
     symfony:
         container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
-
-    excludePaths:
-        - '**/External/AdminerController.php'
-        - '**/Processor/PdfReactor.php'
-        - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
-        - '**/bundles/AdminBundle/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
@@ -26,3 +24,39 @@ parameters:
     universalObjectCratesClasses:
         - Pimcore\Config\Config
         - Pimcore\Templating\Model\ViewModel
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    checkAlwaysTrueCheckTypeFunctionCall: true
+
+    ergebnis:
+        final:
+            enabled: false
+        finalInAbstractClass:
+            enabled: false
+        noCompact:
+            enabled: false
+        noConstructorParameterWithDefaultValue:
+            enabled: false
+        noErrorSuppression:
+            enabled: false
+        noEval:
+            enabled: false
+        noExtends:
+            enabled: false
+        noIsset:
+            enabled: false
+        noNullableReturnTypeDeclaration:
+            enabled: false
+        noParameterWithContainerTypeDeclaration:
+            enabled: false
+        noParameterWithNullableTypeDeclaration:
+            enabled: false
+        noParameterWithNullDefaultValue:
+            enabled: false
+        noSwitch:
+            enabled: false
+        privateInFinalClass:
+            enabled: false
+        testCaseWithSuffix:
+            enabled: false

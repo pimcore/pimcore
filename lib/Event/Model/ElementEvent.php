@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,42 +17,31 @@
 namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ElementEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var AbstractModel
-     */
-    protected $element;
+    protected ElementInterface $element;
 
     /**
      * ElementEvent constructor.
      *
-     * @param AbstractModel $element
-     * @param array $arguments
      */
-    public function __construct(AbstractModel $element, array $arguments = [])
+    public function __construct(ElementInterface $element, array $arguments = [])
     {
         $this->element = $element;
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return AbstractModel
-     */
-    public function getElement()
+    public function getElement(): ElementInterface
     {
         return $this->element;
     }
 
-    /**
-     * @param AbstractModel $element
-     */
-    public function setElement($element)
+    public function setElement(ElementInterface $element): void
     {
         $this->element = $element;
     }

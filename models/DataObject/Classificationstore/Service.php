@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,8 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 
 /**
  * @internal
@@ -25,22 +28,23 @@ class Service
     /**
      * @var array Used for storing definitions
      */
-    protected static $definitionsCache = [];
+    protected static array $definitionsCache = [];
 
     /**
      * Clears the cache for the definitions
      */
-    public static function clearDefinitionsCache()
+    public static function clearDefinitionsCache(): void
     {
         self::$definitionsCache = [];
     }
 
     /**
-     * @param KeyConfig|KeyGroupRelation $keyConfig
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return EncryptedField|Data|null
+     *
+     * @throws \Exception
      */
-    public static function getFieldDefinitionFromKeyConfig($keyConfig)
+    public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
     {
         if ($keyConfig instanceof KeyConfig) {
             $cacheId = $keyConfig->getId();
@@ -63,13 +67,7 @@ class Service
         return $fd;
     }
 
-    /**
-     * @param array $definition
-     * @param string $type
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    public static function getFieldDefinitionFromJson($definition, $type)
+    public static function getFieldDefinitionFromJson(array $definition, string $type): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
     {
         if (!$definition) {
             return null;
@@ -87,9 +85,7 @@ class Service
         $dataDefinition->setValues($definition);
         $className = get_class($dataDefinition);
 
-        if (method_exists($className, '__set_state')) {
-            $dataDefinition = $className::__set_state((array) $dataDefinition);
-        }
+        $dataDefinition = $className::__set_state((array) $dataDefinition);
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();

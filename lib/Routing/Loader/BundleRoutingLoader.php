@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,23 +25,14 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class BundleRoutingLoader extends Loader
 {
-    /**
-     * @var BundleConfigLocator
-     */
-    private $locator;
+    private BundleConfigLocator $locator;
 
-    /**
-     * @param BundleConfigLocator $locator
-     */
     public function __construct(BundleConfigLocator $locator)
     {
         $this->locator = $locator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($resource, $type = null): mixed
+    public function load(mixed $resource, string $type = null): mixed
     {
         $collection = new RouteCollection();
         $files = $this->locator->locate('routing');
@@ -57,10 +49,7 @@ class BundleRoutingLoader extends Loader
         return $collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null): bool
+    public function supports(mixed $resource, string $type = null): bool
     {
         return 'pimcore_bundle' === $type;
     }

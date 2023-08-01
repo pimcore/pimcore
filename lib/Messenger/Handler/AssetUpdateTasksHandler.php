@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class AssetUpdateTasksHandler
     {
     }
 
-    public function __invoke(AssetUpdateTasksMessage $message)
+    public function __invoke(AssetUpdateTasksMessage $message): void
     {
         $asset = Asset::getById($message->getId());
         if (!$asset) {
@@ -51,7 +52,7 @@ class AssetUpdateTasksHandler
         $this->longRunningHelper->deleteTemporaryFiles();
     }
 
-    private function saveAsset(Asset $asset)
+    private function saveAsset(Asset $asset): void
     {
         Version::disable();
         $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
@@ -59,7 +60,7 @@ class AssetUpdateTasksHandler
         Version::enable();
     }
 
-    private function processDocument(Asset\Document $asset)
+    private function processDocument(Asset\Document $asset): void
     {
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
@@ -119,14 +120,6 @@ class AssetUpdateTasksHandler
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
 
         $customSettings = $image->getCustomSettings();
-
-        if (!isset($customSettings['disableImageFeatureAutoDetection'])) {
-            $image->detectFaces();
-        }
-
-        if (!isset($customSettings['disableFocalPointDetection'])) {
-            $image->detectFocalPoint();
-        }
 
         try {
             $image->handleEmbeddedMetaData(true);

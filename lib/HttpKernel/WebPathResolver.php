@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,7 +36,7 @@ class WebPathResolver
      *
      * @return string Prefix
      */
-    public function getPrefix(BundleInterface $bundle)
+    public function getPrefix(BundleInterface $bundle): string
     {
         if (!is_dir($bundle->getPath() . '/Resources/public') && !is_dir($bundle->getPath() . '/public')) {
             throw new \InvalidArgumentException(sprintf(
@@ -59,7 +60,7 @@ class WebPathResolver
      *
      * @return string Resolved path
      */
-    public function getPath(BundleInterface $bundle, $type, $resource)
+    public function getPath(BundleInterface $bundle, string $type, string $resource): string
     {
         $prefix = $this->getPrefix($bundle);
 

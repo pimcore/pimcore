@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        public: true
+
+    # aliases enabling autowiring for type hints to our own implementations
+    Pimcore\Kernel: '@kernel'
+
+    Symfony\Bridge\Twig\Extension\WebLinkExtension: '@twig.extension.weblink'
+    Doctrine\Persistence\ConnectionRegistry: '@doctrine'
+    Symfony\Contracts\Translation\TranslatorInterface: '@Pimcore\Translation\Translator'
+    Pimcore\Localization\LocaleService: '@Pimcore\Localization\LocaleServiceInterface'
+    GuzzleHttp\ClientInterface: '@pimcore.http_client'
+    Symfony\Component\HttpKernel\EventListener\SessionListener: '@session_listener'
+
+    pimcore.locale: '@Pimcore\Localization\LocaleServiceInterface'

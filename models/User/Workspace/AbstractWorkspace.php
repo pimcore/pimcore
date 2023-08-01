@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,323 +29,251 @@ abstract class AbstractWorkspace extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
      */
-    protected $userId;
+    protected int $userId;
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $cid;
+    protected int $cid;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $cpath;
+    protected string $cpath;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $list = false;
+    protected bool $list = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $view = false;
+    protected bool $view = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $publish = false;
+    protected bool $publish = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $delete = false;
+    protected bool $delete = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $rename = false;
+    protected bool $rename = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $create = false;
+    protected bool $create = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $settings = false;
+    protected bool $settings = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $versions = false;
+    protected bool $versions = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $properties = false;
+    protected bool $properties = false;
 
     /**
-     * @param bool $create
-     *
      * @return $this
      */
-    public function setCreate($create)
+    public function setCreate(bool $create): static
     {
         $this->create = $create;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getCreate()
+    public function getCreate(): bool
     {
         return $this->create;
     }
 
     /**
-     * @param bool $delete
-     *
      * @return $this
      */
-    public function setDelete($delete)
+    public function setDelete(bool $delete): static
     {
         $this->delete = $delete;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getDelete()
+    public function getDelete(): bool
     {
         return $this->delete;
     }
 
     /**
-     * @param bool $list
-     *
      * @return $this
      */
-    public function setList($list)
+    public function setList(bool $list): static
     {
         $this->list = $list;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getList()
+    public function getList(): bool
     {
         return $this->list;
     }
 
     /**
-     * @param bool $properties
-     *
      * @return $this
      */
-    public function setProperties($properties)
+    public function setProperties(bool $properties): static
     {
         $this->properties = $properties;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getProperties()
+    public function getProperties(): bool
     {
         return $this->properties;
     }
 
     /**
-     * @param bool $publish
-     *
      * @return $this
      */
-    public function setPublish($publish)
+    public function setPublish(bool $publish): static
     {
         $this->publish = $publish;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublish()
+    public function getPublish(): bool
     {
         return $this->publish;
     }
 
     /**
-     * @param bool $rename
-     *
      * @return $this
      */
-    public function setRename($rename)
+    public function setRename(bool $rename): static
     {
         $this->rename = $rename;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRename()
+    public function getRename(): bool
     {
         return $this->rename;
     }
 
     /**
-     * @param bool $settings
-     *
      * @return $this
      */
-    public function setSettings($settings)
+    public function setSettings(bool $settings): static
     {
         $this->settings = $settings;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSettings()
+    public function getSettings(): bool
     {
         return $this->settings;
     }
 
     /**
-     * @param bool $versions
-     *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(bool $versions): static
     {
         $this->versions = $versions;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getVersions()
+    public function getVersions(): bool
     {
         return $this->versions;
     }
 
     /**
-     * @param bool $view
-     *
      * @return $this
      */
-    public function setView($view)
+    public function setView(bool $view): static
     {
         $this->view = $view;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getView()
+    public function getView(): bool
     {
         return $this->view;
     }
 
     /**
-     * @param int $cid
-     *
      * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = $cid;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
     /**
-     * @param int $userId
-     *
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId): static
     {
         $this->userId = $userId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
     /**
-     * @param string $cpath
-     *
      * @return $this
      */
-    public function setCpath($cpath)
+    public function setCpath(string $cpath): static
     {
         $this->cpath = $cpath;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCpath()
+    public function getCpath(): string
     {
         return $this->cpath;
     }

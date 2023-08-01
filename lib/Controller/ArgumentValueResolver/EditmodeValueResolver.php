@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,33 +26,18 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  */
 final class EditmodeValueResolver implements ArgumentValueResolverInterface
 {
-    /**
-     * @var EditmodeResolver
-     */
-    private $editmodeResolver;
+    private EditmodeResolver $editmodeResolver;
 
     public function __construct(EditmodeResolver $editmodeResolver)
     {
         $this->editmodeResolver = $editmodeResolver;
     }
 
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return bool
-     */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $argument->getType() === 'bool' && $argument->getName() === 'editmode';
     }
 
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return iterable
-     */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->editmodeResolver->isEditmode($request);

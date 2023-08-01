@@ -1,0 +1,6 @@
+framework:
+    messenger:
+        transports:
+            pimcore_search_backend_message: "doctrine://default?queue_name=pimcore_search_backend_message"
+        routing:
+            Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage: pimcore_search_backend_message

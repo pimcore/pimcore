@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,110 +36,60 @@ class Select extends Data implements
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'select';
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * Available options to select
      *
      * @internal
      *
-     * @var array|null
      */
-    public $options;
+    public ?array $options = null;
 
     /**
      * @internal
      *
-     * @var string|int
      */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    public $defaultValue;
+    public ?string $defaultValue = null;
 
     /**
      * Options provider class
      *
      * @internal
      *
-     * @var string|null
      */
-    public $optionsProviderClass;
+    public ?string $optionsProviderClass = null;
 
     /**
      * Options provider data
      *
      * @internal
      *
-     * @var string|null
      */
-    public $optionsProviderData;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
+    public ?string $optionsProviderData = null;
 
     /**
      * Column length
      *
      * @internal
      *
-     * @var int
      */
-    public $columnLength = 190;
+    public int $columnLength = 190;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $dynamicOptions = false;
+    public bool $dynamicOptions = false;
 
-    /**
-     * @return int
-     */
-    public function getColumnLength()
+    public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
-    /**
-     * @param int $columnLength
-     *
-     * @return $this
-     */
-    public function setColumnLength($columnLength)
+    public function setColumnLength(int $columnLength): static
     {
         if ($columnLength) {
             $this->columnLength = $columnLength;
@@ -147,56 +98,22 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * Correct old column definitions (e.g varchar(255)) to the new format
-     *
-     * @param string $type
-     */
-    private function correctColumnDefinition($type)
+    public function getColumnType(): string
     {
-        if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
-            $this->{'set' . ucfirst($type)}($matches[1]);
-            if ($matches[2] > 190) {
-                $matches[2] = 190;
-            }
-            $this->setColumnLength($matches[2] <= 190 ? $matches[2] : 190);
-        }
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getColumnType()
+    public function getQueryColumnType(): string
     {
-        $this->correctColumnDefinition('columnType');
-
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
+        return $this->getColumnType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueryColumnType()
-    {
-        $this->correctColumnDefinition('queryColumnType');
-
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): ?array
     {
         return $this->options;
     }
 
-    /**
-     * @param array|null $options
-     *
-     * @return $this
-     */
-    public function setOptions(?array $options)
+    public function setOptions(?array $options): static
     {
         if (is_array($options)) {
             $this->options = [];
@@ -216,38 +133,11 @@ class Select extends Data implements
     }
 
     /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
      *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|string|int
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -255,91 +145,67 @@ class Select extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
      *
-     * @return null|string|int
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): null|string|int
     {
         return $data;
     }
 
     /**
+     *
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getDataForEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|string|int
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|string|int
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
      *
-     * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -367,22 +233,14 @@ class Select extends Data implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
     }
 
-    /**
-     * @param array|string|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         if (is_array($data)) {
             return count($data) < 1;
@@ -394,7 +252,7 @@ class Select extends Data implements
     /**
      * @param DataObject\ClassDefinition\Data\Select $mainDefinition
      */
-    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $this->options = $mainDefinition->options;
         $this->columnLength = $mainDefinition->columnLength;
@@ -403,74 +261,37 @@ class Select extends Data implements
         $this->optionsProviderData = $mainDefinition->optionsProviderData;
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param DataObject\ClassDefinition\Data\Select $masterDefinition
-     */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
-        );
-
-        $this->synchronizeWithMainDefinition($masterDefinition);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?string
     {
         return $this->defaultValue;
     }
 
-    /**
-     * @param string|null $defaultValue
-     */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(?string $defaultValue): void
     {
         $this->defaultValue = $defaultValue;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getOptionsProviderClass()
+    public function getOptionsProviderClass(): ?string
     {
         return $this->optionsProviderClass;
     }
 
-    /**
-     * @param string|null $optionsProviderClass
-     */
-    public function setOptionsProviderClass($optionsProviderClass)
+    public function setOptionsProviderClass(?string $optionsProviderClass): void
     {
         $this->optionsProviderClass = $optionsProviderClass;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getOptionsProviderData()
+    public function getOptionsProviderData(): ?string
     {
         return $this->optionsProviderData;
     }
 
-    /**
-     * @param string|null $optionsProviderData
-     */
-    public function setOptionsProviderData($optionsProviderData)
+    public function setOptionsProviderData(?string $optionsProviderData): void
     {
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
+    public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
             'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
@@ -478,10 +299,7 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
@@ -490,13 +308,10 @@ class Select extends Data implements
     }
 
     /**
-     * @param string|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?string $data, Concrete $object = null, array $params = []): array|string|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -529,13 +344,10 @@ class Select extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string|null
      */
-    public function getFilterConditionExt($value, $operator, $params = [])
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $value = is_array($value) ? current($value) : $value;
         $name = $params['name'] ?: $this->name;
@@ -553,21 +365,15 @@ class Select extends Data implements
             return $key.' LIKE '."\"%$value%\"".' ';
         }
 
-        return null;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetDefaultValue($object, $context = [])
+    protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
@@ -576,9 +382,7 @@ class Select extends Data implements
         );
         if ($optionsProvider) {
             $context['object'] = $object;
-            if ($object) {
-                $context['class'] = $object->getClass();
-            }
+            $context['class'] = $object->getClass();
 
             $context['fieldname'] = $this->getName();
             if (!isset($context['purpose'])) {
@@ -591,22 +395,15 @@ class Select extends Data implements
         return $this->getDefaultValue();
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): mixed
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
@@ -618,46 +415,33 @@ class Select extends Data implements
         return $blockedVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue == $newValue;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'select';
     }
 }

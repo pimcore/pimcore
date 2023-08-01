@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,8 +18,5 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 interface PathFormatterAwareInterface
 {
-    /**
-     * @return string|null
-     */
     public function getPathFormatterClass(): ?string;
 }

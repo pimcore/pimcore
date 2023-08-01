@@ -24,18 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     const TABLE_NAME_GROUPS = 'classificationstore_groups';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -51,11 +48,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string|null $name
      *
      * @throws \Exception
      */
-    public function getByName($name = null)
+    public function getByName(string $name = null): void
     {
         if ($name != null) {
             $this->model->setName($name);
@@ -73,10 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -88,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -100,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_GROUPS, ['id' => $this->model->getId()]);
     }
@@ -108,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -132,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
     }
 
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);

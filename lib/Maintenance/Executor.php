@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,7 +19,6 @@ namespace Pimcore\Maintenance;
 use Pimcore\Messenger\MaintenanceTaskMessage;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -26,53 +26,28 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class Executor implements ExecutorInterface
 {
-    /**
-     * @var array
-     */
-    private $tasks = [];
+    private array $tasks = [];
 
-    /**
-     * @var string
-     */
-    private $pidFileName;
+    private string $pidFileName;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var LockFactory|null
-     */
-    private $lockFactory = null;
+    private LoggerInterface $logger;
 
     public function __construct(
         string $pidFileName,
         LoggerInterface $logger,
-        LockFactory $lockFactory,
         private MessageBusInterface $messengerBusPimcoreCore
     ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
-        $this->lockFactory = $lockFactory;
     }
 
-    public function executeTask(string $name, bool $force = false)
+    public function executeTask(string $name): void
     {
         if (!in_array($name, $this->getTaskNames(), true)) {
             throw new \Exception(sprintf('Task with name "%s" not found', $name));
         }
 
-        $task = $this->tasks[$name];
-        $lock = $this->lockFactory->createLock('maintenance-' . $name, 86400);
-
-        if (!$lock->acquire() && !$force) {
-            $this->logger->info('Skipped job with ID {id} because it already being executed', [
-                'id' => $name,
-            ]);
-
-            return;
-        }
+        $task = $this->tasks[$name]['taskClass'];
 
         try {
             $this->logger->info('Starting job with ID {id}', [
@@ -89,14 +64,9 @@ final class Executor implements ExecutorInterface
                 'exception' => $e,
             ]);
         }
-
-        $lock->release();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false)
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void
     {
         $this->setLastExecution();
 
@@ -117,16 +87,14 @@ final class Executor implements ExecutorInterface
                 continue;
             }
 
+            $className = $task['messengerMessageClass'] ?? MaintenanceTaskMessage::class;
             $this->messengerBusPimcoreCore->dispatch(
-                new MaintenanceTaskMessage($name, $force)
+                new $className($name)
             );
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTaskNames()
+    public function getTaskNames(): array
     {
         return array_keys($this->tasks);
     }
@@ -139,18 +107,12 @@ final class Executor implements ExecutorInterface
         return $this->tasks;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setLastExecution()
+    public function setLastExecution(): void
     {
         TmpStore::set($this->pidFileName, time());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLastExecution()
+    public function getLastExecution(): int
     {
         $item = TmpStore::get($this->pidFileName);
 
@@ -161,15 +123,12 @@ final class Executor implements ExecutorInterface
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerTask($name, TaskInterface $task)
+    public function registerTask(string $name, TaskInterface $task, ?string $messengerMessageClass = null): void
     {
         if (array_key_exists($name, $this->tasks)) {
             throw new \InvalidArgumentException(sprintf('Task with name %s has already been registered', $name));
         }
 
-        $this->tasks[$name] = $task;
+        $this->tasks[$name] = ['taskClass' => $task, 'messengerMessageClass' => $messengerMessageClass];
     }
 }

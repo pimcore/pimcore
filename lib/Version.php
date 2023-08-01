@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,25 +25,19 @@ final class Version
 {
     const PACKAGE_NAME = 'pimcore/pimcore';
 
-    private const MAJOR_VERSION = 10;
+    private const MAJOR_VERSION = 11;
 
     public static function getMajorVersion(): int
     {
         return self::MAJOR_VERSION;
     }
 
-    /**
-     * @return string
-     */
-    public static function getVersion()
+    public static function getVersion(): string
     {
         return InstalledVersions::getPrettyVersion(self::PACKAGE_NAME);
     }
 
-    /**
-     * @return string
-     */
-    public static function getRevision()
+    public static function getRevision(): string
     {
         return InstalledVersions::getReference(self::PACKAGE_NAME);
     }

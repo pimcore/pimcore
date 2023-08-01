@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,32 +17,20 @@
 namespace Pimcore\Http\Context;
 
 use Pimcore\Http\RequestMatcherFactory;
+use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * @internal
  */
 class PimcoreContextGuesser
 {
-    /**
-     * @var array
-     */
-    private $routes = [];
+    private array $routes = [];
 
-    /**
-     * @var RequestMatcherInterface[][]
-     */
-    private $matchers;
+    private ?array $matchers = null;
 
-    /**
-     * @var RequestMatcherFactory
-     */
-    private $requestMatcherFactory;
+    private RequestMatcherFactory $requestMatcherFactory;
 
-    /**
-     * @param RequestMatcherFactory $factory
-     */
     public function __construct(RequestMatcherFactory $factory)
     {
         $this->requestMatcherFactory = $factory;
@@ -50,10 +39,8 @@ class PimcoreContextGuesser
     /**
      * Add context specific routes
      *
-     * @param string $context
-     * @param array $routes
      */
-    public function addContextRoutes(string $context, array $routes)
+    public function addContextRoutes(string $context, array $routes): void
     {
         $this->routes[$context] = $routes;
     }
@@ -61,16 +48,14 @@ class PimcoreContextGuesser
     /**
      * Guess the pimcore context
      *
-     * @param Request $request
-     * @param string $default
-     *
-     * @return string
      */
     public function guess(Request $request, string $default): string
     {
         foreach ($this->getMatchers() as $context => $matchers) {
+            /** @var array $matcher */
             foreach ($matchers as $matcher) {
-                if ($matcher->matches($request)) {
+                $chainRequestMatcher = new ChainRequestMatcher($matcher);
+                if ($chainRequestMatcher->matches($request)) {
                     return $context;
                 }
             }
@@ -82,7 +67,6 @@ class PimcoreContextGuesser
     /**
      * Get request matchers to query admin pimcore context from
      *
-     * @return RequestMatcherInterface[][]
      */
     private function getMatchers(): array
     {

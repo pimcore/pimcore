@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 
 /**
@@ -30,22 +32,15 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      * @internal
      *
-     * @var array|null
      */
-    protected $data;
+    protected ?array $data = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'link';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         // update path if internal link
         $this->updatePathFromInternal(true);
@@ -53,10 +48,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -64,10 +56,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEditmodeElementClasses($options = []): array
+    protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
         // the default behavior of the parent method is to include the "class" attribute
@@ -79,21 +68,15 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $classes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-            if (!is_array($this->config)) {
-                $this->config = [];
-            }
-
             $prefix = '';
             $suffix = '';
             $noText = false;
+            $disabledText = false;
 
             if (array_key_exists('textPrefix', $this->config)) {
                 $prefix = $this->config['textPrefix'];
@@ -108,6 +91,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             if (isset($this->config['noText']) && $this->config['noText'] == true) {
                 $noText = true;
                 unset($this->config['noText']);
+            }
+
+            if (array_key_exists('disabledFields', $this->config) && is_array($this->config['disabledFields'])) {
+                $disabledText = in_array('text', $this->config['disabledFields'], true);
+                unset($this->config['disabledFields']);
             }
 
             // add attributes to link
@@ -150,8 +138,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value))
-                    && (strpos($key, 'data-') === 0 ||
-                        strpos($key, 'aria-') === 0 ||
+                    && (str_starts_with($key, 'data-') ||
+                        str_starts_with($key, 'aria-') ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
                         $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
@@ -163,26 +151,13 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $attribs = array_unique($attribs);
 
-            if (array_key_exists('attributes', $this->data) && !empty($this->data['attributes'])) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6',
-                    'Using the "attributes" field in the link editable is deprecated. The field will be removed in Pimcore 11.0.'
-                );
-
-                $attribs[] = $this->data['attributes'];
-            }
-
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
         }
 
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
@@ -222,17 +197,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $sane;
     }
 
-    /**
-     * @return string
-     */
-    public function getHref()
+    public function getHref(): string
     {
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
+            $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
@@ -243,11 +215,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $url;
     }
 
-    /**
-     * @param bool $realPath
-     * @param bool $editmode
-     */
-    private function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -292,16 +260,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
-        // sanitize attributes
-        if ($this->getEditmode() === false && isset($this->data['attributes'])) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.6',
-                'Using the "attributes" field in the link editable is deprecated. The field will be removed in Pimcore 11.0.'
-            );
-            $this->data['attributes'] = htmlspecialchars($this->data['attributes'], HTML_ENTITIES);
-        }
-
         // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
         // https://github.com/pimcore/pimcore/issues/7394
         if (isset($this->data['type'])) {
@@ -309,100 +267,57 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->data['text'] ?? '';
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text): void
     {
         $this->data['text'] = $text;
     }
 
-    /**
-     * @return string
-     */
-    public function getTarget()
+    public function getTarget(): string
     {
         return $this->data['target'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getParameters()
+    public function getParameters(): string
     {
         return $this->data['parameters'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getAnchor()
+    public function getAnchor(): string
     {
         return $this->data['anchor'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->data['title'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getRel()
+    public function getRel(): string
     {
         return $this->data['rel'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getTabindex()
+    public function getTabindex(): string
     {
         return $this->data['tabindex'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getAccesskey()
+    public function getAccesskey(): string
     {
         return $this->data['accesskey'] ?? '';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClass()
+    public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
     }
 
-    /**
-     * @return mixed
-     *
-     * @deprecated This method is deprecated and will be removed in Pimcore 11.
-     */
-    public function getAttributes()
-    {
-        return $this->data['attributes'] ?? '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
@@ -412,10 +327,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
             $data = [];
@@ -465,18 +377,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return strlen($this->getHref()) < 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $isInternal = $this->data['internal'] ?? false;
@@ -494,11 +400,20 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_'.$asset->getId();
+                        $key = 'asset_' . $asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
                             'type' => 'asset',
+                        ];
+                    }
+                } elseif ($this->data['internalType'] == 'object') {
+                    if ($object = DataObject\Concrete::getById($this->data['internalId'])) {
+                        $key = 'object_' . $object->getId();
+
+                        $dependencies[$key] = [
+                            'id' => $object->getId(),
+                            'type' => 'object',
                         ];
                     }
                 }
@@ -508,10 +423,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

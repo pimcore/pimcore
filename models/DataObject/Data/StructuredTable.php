@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,15 +23,9 @@ class StructuredTable implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var array
-     */
-    protected $data = [];
+    protected array $data = [];
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if ($data) {
             $this->data = $data;
@@ -38,12 +33,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(array $data): static
     {
         $this->data = $data;
         $this->markMeDirty();
@@ -51,25 +41,20 @@ class StructuredTable implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
      *
-     * @return mixed
+     * @return mixed|void
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
-        if (substr($name, 0, 3) == 'get') {
+        if (str_starts_with($name, 'get')) {
             $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             $parts = explode('__', $key);
@@ -90,7 +75,7 @@ class StructuredTable implements OwnerAwareFieldInterface
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
+        if (str_starts_with($name, 'set')) {
             $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             $parts = explode('__', $key);
@@ -115,10 +100,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         foreach ($this->data as $dataRow) {
             foreach ($dataRow as $col) {
@@ -131,10 +113,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '<table>';
 
@@ -153,13 +132,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         return $string;
     }
 
-    /**
-     * @param array $rowDefs
-     * @param array $colDefs
-     *
-     * @return string
-     */
-    public function getHtmlTable($rowDefs, $colDefs)
+    public function getHtmlTable(array $rowDefs, array $colDefs): string
     {
         $string = '<table>';
 

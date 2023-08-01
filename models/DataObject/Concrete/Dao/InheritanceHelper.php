@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,6 @@
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 /**
@@ -34,90 +34,37 @@ class InheritanceHelper
 
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
-    /**
-     * @var ConnectionInterface|Connection
-     */
-    protected $db;
+    protected Connection $db;
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
+    protected array $fields = [];
 
-    /**
-     * @var array
-     */
-    protected $relations = [];
+    protected array $relations = [];
 
-    /**
-     * @var array
-     */
-    protected $fieldIds = [];
+    protected array $fieldIds = [];
 
-    /**
-     * @var array
-     */
-    protected $deletionFieldIds = [];
+    protected array $deletionFieldIds = [];
 
-    /**
-     * @var array
-     */
-    protected $fieldDefinitions = [];
+    protected array $fieldDefinitions = [];
 
-    /**
-     * @var string
-     */
-    protected $classId;
+    protected string $classId;
 
-    /**
-     * @var bool
-     */
-    protected static $useRuntimeCache = false;
+    protected static bool $useRuntimeCache = false;
 
-    /**
-     * @var bool
-     */
-    protected $childFound;
+    protected bool $childFound = false;
 
-    /**
-     * @var array
-     */
-    protected static $runtimeCache = [];
+    protected static array $runtimeCache = [];
 
-    /**
-     * @var string|null
-     */
-    protected $storetable;
+    protected ?string $storetable = null;
 
-    /**
-     * @var string|null
-     */
-    protected $querytable;
+    protected ?string $querytable = null;
 
-    /**
-     * @var null|string
-     */
-    protected $relationtable;
+    protected ?string $relationtable = null;
 
-    /**
-     * @var null|string
-     */
-    protected $idField;
+    protected ?string $idField = null;
 
-    /**
-     * @var null|string
-     */
-    protected $queryIdField;
+    protected ?string $queryIdField = null;
 
-    /**
-     * @param string $classId
-     * @param string|null $idField
-     * @param string|null $storetable
-     * @param string|null $querytable
-     * @param string|null $relationtable
-     * @param string|null $queryIdField
-     */
-    public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null, $queryIdField = null)
+    public function __construct(string $classId, string $idField = null, string $storetable = null, string $querytable = null, string $relationtable = null, string $queryIdField = null)
     {
         $this->db = \Pimcore\Db::get();
         $this->classId = $classId;
@@ -156,9 +103,8 @@ class InheritanceHelper
     /**
      * Enable or disable the runtime cache. Default value is off.
      *
-     * @param bool $value
      */
-    public static function setUseRuntimeCache($value)
+    public static function setUseRuntimeCache(bool $value): void
     {
         self::$useRuntimeCache = $value;
     }
@@ -166,12 +112,12 @@ class InheritanceHelper
     /**
      * clear the runtime cache
      */
-    public static function clearRuntimeCache()
+    public static function clearRuntimeCache(): void
     {
         self::$runtimeCache = [];
     }
 
-    public function resetFieldsToCheck()
+    public function resetFieldsToCheck(): void
     {
         $this->fields = [];
         $this->relations = [];
@@ -181,23 +127,14 @@ class InheritanceHelper
         $this->childFound = false;
     }
 
-    /**
-     * @param string $fieldname
-     * @param DataObject\ClassDefinition\Data $fieldDefinition
-     */
-    public function addFieldToCheck($fieldname, $fieldDefinition)
+    public function addFieldToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition): void
     {
         $this->fields[$fieldname] = $fieldname;
         $this->fieldIds[$fieldname] = [];
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
-    /**
-     * @param string $fieldname
-     * @param DataObject\ClassDefinition\Data $fieldDefinition
-     * @param array|null $queryfields
-     */
-    public function addRelationToCheck($fieldname, $fieldDefinition, $queryfields = null)
+    public function addRelationToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition, array $queryfields = null): void
     {
         if ($queryfields === null) {
             $this->relations[$fieldname] = $fieldname;
@@ -210,13 +147,10 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param bool $createMissingChildrenRows
-     * @param array $params
      *
      * @throws \Exception
      */
-    public function doUpdate($oo_id, $createMissingChildrenRows = false, $params = [])
+    public function doUpdate(int $oo_id, bool $createMissingChildrenRows = false, array $params = []): void
     {
         if (empty($this->fields) && empty($this->relations) && !$createMissingChildrenRows) {
             return;
@@ -282,13 +216,13 @@ class InheritanceHelper
 
                 $query = "
                     WITH RECURSIVE cte(id, classId) as (
-                        SELECT c.o_id AS id, c.o_classId AS classId
+                        SELECT c.id AS id, c.classId AS classId
                         FROM objects c
-                        WHERE c.o_parentId = {$object->getId()}
+                        WHERE c.parentid = {$object->getId()}
                         UNION ALL
-                        SELECT p.o_id AS id, p.o_classId AS classId
+                        SELECT p.id AS id, p.classId AS classId
                         FROM objects p
-                        INNER JOIN cte on (p.o_parentId = cte.id)
+                        INNER JOIN cte on (p.parentid = cte.id)
                     ) select x.id
                     FROM cte x
                     LEFT JOIN {$this->querytable} l on (x.id = l.{$this->idField})
@@ -312,10 +246,8 @@ class InheritanceHelper
      * Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
      * child elements.
      *
-     * @param int $objectId
-     * @param array $params
      */
-    public function doDelete($objectId, $params = [])
+    public function doDelete(int $objectId, array $params = []): void
     {
         // NOT FINISHED - NEEDS TO BE COMPLETED !!!
 
@@ -362,7 +294,7 @@ class InheritanceHelper
             }
         }
 
-        $systemFields = ['o_id', 'fieldname'];
+        $systemFields = ['id', 'fieldname'];
 
         $toBeRemovedItemIds = [];
 
@@ -389,8 +321,8 @@ class InheritanceHelper
                     }
                 }
                 if ($toBeRemoved) {
-                    if (!in_array($queryItem['o_id'], $objectsWithBrickIds)) {
-                        $toBeRemovedItemIds[] = $queryItem['o_id'];
+                    if (!in_array($queryItem['id'], $objectsWithBrickIds)) {
+                        $toBeRemovedItemIds[] = $queryItem['id'];
                     }
                 }
             }
@@ -401,14 +333,7 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param array $result
-     * @param string $language
-     * @param string $column
-     *
-     * @return array
-     */
-    protected function filterResultByLanguage($result, $language, $column)
+    protected function filterResultByLanguage(array $result, string $language, string $column): array
     {
         $filteredResult = [];
         foreach ($result as $row) {
@@ -421,15 +346,7 @@ class InheritanceHelper
         return array_values($filteredResult);
     }
 
-    /**
-     * @param int $currentParentId
-     * @param string $fields
-     * @param array|null $parentIdGroups
-     * @param array $params
-     *
-     * @return array
-     */
-    protected function buildTree($currentParentId, $fields = '', $parentIdGroups = null, $params = [])
+    protected function buildTree(int $currentParentId, string $fields = '', array $parentIdGroups = null, array $params = []): array
     {
         $objects = [];
         $storeTable = $this->storetable;
@@ -441,14 +358,14 @@ class InheritanceHelper
                 $language = $params['language'];
 
                 $query = "
-                WITH RECURSIVE cte(id, classId, parentId, o_path) as (
-                    SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                WITH RECURSIVE cte(id, classId, parentId, path) as (
+                    SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                     FROM objects c
-                    WHERE c.o_parentId = $currentParentId
+                    WHERE c.parentid = $currentParentId
                     UNION ALL
-                    SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                    SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                     FROM objects p
-                    INNER JOIN cte on (p.o_parentId = cte.id)
+                    INNER JOIN cte on (p.parentid = cte.id)
                 ) SELECT l.language AS `language`,
                          x.id AS id,
                          x.classId AS classId,
@@ -457,17 +374,17 @@ class InheritanceHelper
                     FROM cte x
                     LEFT JOIN $storeTable l ON x.id = l.$idfield
                    WHERE COALESCE(`language`, " . $this->db->quote($language) . ') = ' . $this->db->quote($language) .
-                   ' ORDER BY x.o_path ASC';
+                   ' ORDER BY x.path ASC';
             } else {
                 $query = "
-                    WITH RECURSIVE cte(id, classId, parentId, o_path) as (
-                        SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                    WITH RECURSIVE cte(id, classId, parentId, path) as (
+                        SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                         FROM objects c
-                        WHERE c.o_parentId = $currentParentId
+                        WHERE c.parentid = $currentParentId
                         UNION ALL
-                        SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                        SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                         FROM objects p
-                        INNER JOIN cte on (p.o_parentId = cte.id)
+                        INNER JOIN cte on (p.parentid = cte.id)
                     )	SELECT x.id AS id,
                                x.classId AS classId,
                                x.parentId AS parentId
@@ -475,7 +392,7 @@ class InheritanceHelper
                         FROM cte x
                         LEFT JOIN $storeTable a ON x.id = a.$idfield
                         GROUP BY x.id
-                        ORDER BY x.o_path ASC";
+                        ORDER BY x.path ASC";
             }
             $queryCacheKey = 'tree_'.md5($query);
 
@@ -534,12 +451,7 @@ class InheritanceHelper
         return $objects;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
-    protected function getRelationCondition($params = [])
+    protected function getRelationCondition(array $params = []): string
     {
         $condition = '';
         $parts = [];
@@ -557,13 +469,7 @@ class InheritanceHelper
         return $condition;
     }
 
-    /**
-     * @param array $node
-     * @param array $params
-     *
-     * @return array
-     */
-    protected function getRelationsForNode(&$node, $params = [])
+    protected function getRelationsForNode(array &$node, array $params = []): array
     {
         // if the relations are already set, skip here
         if (isset($node['relations'])) {
@@ -596,12 +502,7 @@ class InheritanceHelper
         return $node;
     }
 
-    /**
-     * @param array $currentNode
-     * @param string $fieldname
-     * @param array $params
-     */
-    protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname, $params = [])
+    protected function getIdsToCheckForDeletionForValuefields(array $currentNode, string $fieldname, array $params = []): void
     {
         $value = $currentNode['values'][$fieldname] ?? null;
 
@@ -618,11 +519,7 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param array $currentNode
-     * @param string $fieldname
-     */
-    protected function getIdsToUpdateForValuefields($currentNode, $fieldname)
+    protected function getIdsToUpdateForValuefields(array $currentNode, string $fieldname): void
     {
         $value = $currentNode['values'][$fieldname] ?? null;
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
@@ -635,11 +532,7 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param array $currentNode
-     * @param string $fieldname
-     */
-    protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname)
+    protected function getIdsToCheckForDeletionForRelationfields(array $currentNode, string $fieldname): void
     {
         $this->getRelationsForNode($currentNode);
         if (isset($currentNode['relations'][$fieldname])) {
@@ -659,12 +552,7 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param array $currentNode
-     * @param string $fieldname
-     * @param array $params
-     */
-    protected function getIdsToUpdateForRelationfields($currentNode, $fieldname, $params = [])
+    protected function getIdsToUpdateForRelationfields(array $currentNode, string $fieldname, array $params = []): void
     {
         $this->getRelationsForNode($currentNode, $params);
         if (isset($currentNode['relations'][$fieldname])) {
@@ -683,13 +571,10 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param array $ids
-     * @param string $fieldname
      *
      * @throws \Exception
      */
-    protected function updateQueryTable($oo_id, $ids, $fieldname)
+    protected function updateQueryTable(int $oo_id, array $ids, string $fieldname): void
     {
         if (!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
@@ -697,12 +582,7 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param int $oo_id
-     * @param array $ids
-     * @param string $fieldname
-     */
-    protected function updateQueryTableOnDelete($oo_id, $ids, $fieldname)
+    protected function updateQueryTableOnDelete(int $oo_id, array $ids, string $fieldname): void
     {
         if (!empty($ids)) {
             $value = null;

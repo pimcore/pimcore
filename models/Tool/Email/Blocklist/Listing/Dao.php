@@ -27,9 +27,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Tool\Email\Blocklist elements
      *
-     * @return array
      */
-    public function load()
+    public function load(): array
     {
         $addressData = $this->db->fetchFirstColumn('SELECT address FROM email_blocklist' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -45,10 +44,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $addresses;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM email_blocklist ' . $this->getCondition(), $this->model->getConditionVariables());

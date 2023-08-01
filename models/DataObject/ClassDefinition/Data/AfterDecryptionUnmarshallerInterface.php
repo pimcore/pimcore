@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,12 +20,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface AfterDecryptionUnmarshallerInterface
 {
-    /**
-     * @param mixed $value
-     * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;
+    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed;
 }

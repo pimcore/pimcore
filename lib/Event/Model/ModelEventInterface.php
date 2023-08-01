@@ -31,7 +31,7 @@ interface ModelEventInterface
      *
      * @throws \InvalidArgumentException If key is not found.
      */
-    public function getArgument($key);
+    public function getArgument(string $key): mixed;
 
     /**
      * Add argument to event.
@@ -41,14 +41,13 @@ interface ModelEventInterface
      *
      * @return $this
      */
-    public function setArgument($key, $value);
+    public function setArgument(string $key, mixed $value): static;
 
     /**
      * Getter for all arguments.
      *
-     * @return array
      */
-    public function getArguments();
+    public function getArguments(): array;
 
     /**
      * Set args property.
@@ -57,14 +56,13 @@ interface ModelEventInterface
      *
      * @return $this
      */
-    public function setArguments(array $args = []);
+    public function setArguments(array $args = []): static;
 
     /**
      * Has argument.
      *
      * @param string $key Key of arguments array
      *
-     * @return bool
      */
-    public function hasArgument($key);
+    public function hasArgument(string $key): bool;
 }

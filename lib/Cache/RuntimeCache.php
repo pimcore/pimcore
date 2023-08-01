@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,20 +20,13 @@ class RuntimeCache extends \ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 
-    /**
-     * @var self|null
-     */
-    protected static $tempInstance;
+    protected static ?RuntimeCache $tempInstance = null;
 
-    /**
-     * @var self|null
-     */
-    protected static $instance;
+    protected static ?RuntimeCache $instance = null;
 
     /**
      * Retrieves the default registry instance.
      *
-     * @return self
      */
     public static function getInstance(): self
     {
@@ -85,11 +79,9 @@ class RuntimeCache extends \ArrayObject
      *
      * @param string $index - get the value associated with $index
      *
-     * @return mixed
-     *
      * @throws \Exception if no entry is registered for $index.
      */
-    public static function get($index)
+    public static function get(string $index): mixed
     {
         $instance = self::getInstance();
 
@@ -111,9 +103,8 @@ class RuntimeCache extends \ArrayObject
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
      *
-     * @return void
      */
-    public static function set($index, $value)
+    public static function set(string $index, mixed $value): void
     {
         $instance = self::getInstance();
         $instance->offsetSet($index, $value);
@@ -123,11 +114,9 @@ class RuntimeCache extends \ArrayObject
      * Returns TRUE if the $index is a named value in the registry,
      * or FALSE if $index was not found in the registry.
      *
-     * @param  string $index
      *
-     * @return bool
      */
-    public static function isRegistered($index)
+    public static function isRegistered(string $index): bool
     {
         $instance = self::getInstance();
 
@@ -141,14 +130,11 @@ class RuntimeCache extends \ArrayObject
      * @param array $array data array
      * @param int $flags ArrayObject flags
      */
-    public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
+    public function __construct($array = [], int $flags = parent::ARRAY_AS_PROPS)
     {
         parent::__construct($array, $flags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($index, $value): void
     {
         parent::offsetSet($index, $value);
@@ -157,10 +143,8 @@ class RuntimeCache extends \ArrayObject
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
      *
-     * @param mixed $data
-     * @param string $id
      */
-    public static function save($data, $id)
+    public static function save(mixed $data, string $id): void
     {
         self::set($id, $data);
     }
@@ -168,19 +152,14 @@ class RuntimeCache extends \ArrayObject
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
      *
-     * @param string $id
      *
-     * @return mixed
      */
-    public static function load($id)
+    public static function load(string $id): mixed
     {
         return self::get($id);
     }
 
-    /**
-     * @param array $keepItems
-     */
-    public static function clear($keepItems = [])
+    public static function clear(array $keepItems = []): void
     {
         self::$instance = null;
         $newInstance = new self();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,78 +22,73 @@ use Pimcore\Model\User\Workspace\Document;
 
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
- *
- * @abstract Will be natively abstract in Pimcore 11
  */
-class UserRole extends AbstractUser
+abstract class UserRole extends AbstractUser implements UserRoleInterface
 {
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $permissions = [];
+    protected array $permissions = [];
 
     /**
      * @internal
      *
      * @var Asset[]
      */
-    protected $workspacesAsset = [];
+    protected array $workspacesAsset = [];
 
     /**
      * @internal
      *
      * @var DataObject[]
      */
-    protected $workspacesObject = [];
+    protected array $workspacesObject = [];
 
     /**
      * @internal
      *
      * @var Document[]
      */
-    protected $workspacesDocument = [];
+    protected array $workspacesDocument = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $classes = [];
+    protected array $classes = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $docTypes = [];
+    protected array $docTypes = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $perspectives = [];
+    protected array $perspectives = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $websiteTranslationLanguagesView = [];
+    protected array $websiteTranslationLanguagesView = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    protected $websiteTranslationLanguagesEdit = [];
+    protected array $websiteTranslationLanguagesEdit = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
 
@@ -118,7 +114,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setAllAclToFalse()
+    public function setAllAclToFalse(): static
     {
         $this->permissions = [];
 
@@ -126,12 +122,10 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param string $permissionName
-     * @param bool|null $value
      *
      * @return $this
      */
-    public function setPermission($permissionName, $value = null)
+    public function setPermission(string $permissionName, bool $value = null): static
     {
         if (!in_array($permissionName, $this->permissions) && $value) {
             $this->permissions[] = $permissionName;
@@ -144,19 +138,14 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param string $permissionName
-     *
-     * @return bool
-     */
-    public function getPermission($permissionName)
+    public function getPermission(string $permissionName): bool
     {
         if (in_array($permissionName, $this->permissions)) {
             return true;
@@ -170,11 +159,11 @@ class UserRole extends AbstractUser
      *
      * @internal
      *
-     * @return array
+     * @return array<string, bool>
      *
      * @todo: $permissionInfo should be array, but is declared as null
      */
-    public function generatePermissionList()
+    public function generatePermissionList(): array
     {
         $permissionInfo = null;
 
@@ -189,11 +178,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param string|array $permissions
+     * @param string[]|string $permissions
      *
      * @return $this
      */
-    public function setPermissions($permissions)
+    public function setPermissions(array|string $permissions): static
     {
         if (is_string($permissions)) {
             $this->permissions = explode(',', $permissions);
@@ -209,7 +198,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesAsset($workspacesAsset)
+    public function setWorkspacesAsset(array $workspacesAsset): static
     {
         $this->workspacesAsset = $workspacesAsset;
 
@@ -219,7 +208,7 @@ class UserRole extends AbstractUser
     /**
      * @return Asset[]
      */
-    public function getWorkspacesAsset()
+    public function getWorkspacesAsset(): array
     {
         return $this->workspacesAsset;
     }
@@ -229,7 +218,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesDocument($workspacesDocument)
+    public function setWorkspacesDocument(array $workspacesDocument): static
     {
         $this->workspacesDocument = $workspacesDocument;
 
@@ -239,7 +228,7 @@ class UserRole extends AbstractUser
     /**
      * @return Document[]
      */
-    public function getWorkspacesDocument()
+    public function getWorkspacesDocument(): array
     {
         return $this->workspacesDocument;
     }
@@ -249,7 +238,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesObject($workspacesObject)
+    public function setWorkspacesObject(array $workspacesObject): static
     {
         $this->workspacesObject = $workspacesObject;
 
@@ -259,17 +248,17 @@ class UserRole extends AbstractUser
     /**
      * @return DataObject[]
      */
-    public function getWorkspacesObject()
+    public function getWorkspacesObject(): array
     {
         return $this->workspacesObject;
     }
 
     /**
-     * @param array|string $classes
+     * @param string[]|string $classes
      *
      * @return $this
      */
-    public function setClasses($classes)
+    public function setClasses(array|string $classes): static
     {
         $classes = $this->prepareArray($classes);
 
@@ -279,19 +268,19 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes;
     }
 
     /**
-     * @param array|string $docTypes
+     * @param string[]|string $docTypes
      *
      * @return $this
      */
-    public function setDocTypes($docTypes)
+    public function setDocTypes(array|string $docTypes): static
     {
         $docTypes = $this->prepareArray($docTypes);
 
@@ -301,27 +290,27 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getDocTypes()
+    public function getDocTypes(): array
     {
         return $this->docTypes;
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getPerspectives()
+    public function getPerspectives(): array
     {
         return $this->perspectives;
     }
 
     /**
-     * @param array|string $perspectives
+     * @param string[]|string $perspectives
      *
      * @return $this
      */
-    public function setPerspectives($perspectives)
+    public function setPerspectives(array|string $perspectives): static
     {
         $perspectives = $this->prepareArray($perspectives);
 
@@ -331,19 +320,19 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getWebsiteTranslationLanguagesView()
+    public function getWebsiteTranslationLanguagesView(): array
     {
         return $this->websiteTranslationLanguagesView;
     }
 
     /**
-     * @param array|string $websiteTranslationLanguagesView
+     * @param string[]|string $websiteTranslationLanguagesView
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesView($websiteTranslationLanguagesView)
+    public function setWebsiteTranslationLanguagesView(array|string $websiteTranslationLanguagesView): static
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
 
@@ -353,19 +342,19 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getWebsiteTranslationLanguagesEdit()
+    public function getWebsiteTranslationLanguagesEdit(): array
     {
         return $this->websiteTranslationLanguagesEdit;
     }
 
     /**
-     * @param array|string $websiteTranslationLanguagesEdit
+     * @param string[]|string $websiteTranslationLanguagesEdit
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesEdit($websiteTranslationLanguagesEdit)
+    public function setWebsiteTranslationLanguagesEdit(array|string $websiteTranslationLanguagesEdit): static
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
 
@@ -378,13 +367,13 @@ class UserRole extends AbstractUser
      * checks if given parameter is string and if so splits it creates array
      * returns empty array if empty parameter is given
      *
+     * @param string[]|string $array
+     *
+     * @return string[]
+     *
      * @internal
-     *
-     * @param array|string $array
-     *
-     * @return array
      */
-    protected function prepareArray($array)
+    protected function prepareArray(array|string $array): array
     {
         if (is_string($array) && strlen($array)) {
             $array = explode(',', $array);

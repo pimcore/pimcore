@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,21 +16,11 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Model\DataObject\Concrete;
-
 interface LinkGeneratorInterface
 {
     /**
      *
-     * If you want to support mockups or arbitrary objects you can change the typehint to
-     * public function generate(object $object, array $params = []): string
-     *
-     * TODO: Change type of `$object` parameter to `object` in Pimcore 11
-     *
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * To support mockups or arbitrary objects
      */
-    public function generate(Concrete $object, array $params = []): string;
+    public function generate(object $object, array $params = []): string;
 }

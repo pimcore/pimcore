@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,33 +21,19 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'gender';
-
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $options = [
             ['key' => 'male', 'value' => 'male'],
             ['key' => 'female', 'value' => 'female'],
             ['key' => 'other', 'value' => 'other'],
-            ['key' => '', 'value' => 'unknown'],
+            ['key' => 'unknown', 'value' => 'unknown'],
         ];
 
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
@@ -54,27 +41,25 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'gender';
     }
 }

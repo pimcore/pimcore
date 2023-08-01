@@ -1,0 +1,19 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+
+    Pimcore\Bundle\UuidBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreUuidBundle')"
+
+    #
+    # EVENT LISTENER
+    #
+
+    Pimcore\Bundle\UuidBundle\EventListener\UUIDListener: ~

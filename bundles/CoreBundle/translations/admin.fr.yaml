@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: "Pour %s avec l'ID %s, l'action \"%s\" a
+  \xE9t\xE9 d\xE9clench\xE9e dans le workflow \"%s\"."
+workflow_change_email_notification_deeplink: "Lien profond vers l'\xE9l\xE9ment."
+workflow_change_email_notification_note: "Note ajout\xE9e :"
+...

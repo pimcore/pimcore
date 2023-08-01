@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,50 +32,40 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Type of the source object (document, asset, object)
      *
      * @internal
      *
-     * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * Subtype of the source object (eg. page, link, video, news, ...)
      *
      * @internal
      *
-     * @var string|null
      */
-    protected $subtype;
+    protected ?string $subtype = null;
 
     /**
      * Contains the source object
      *
      * @internal
      *
-     * @var mixed
      */
-    protected $element;
+    protected mixed $element = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         //TODO: getType != $type ... that might be dangerous
         return 'relation';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -83,10 +74,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         $this->setElement();
 
@@ -102,9 +90,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $this->setElement();
@@ -121,10 +106,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -139,10 +121,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->id = $data['id'] ?? null;
         $this->type = $data['type'] ?? null;
@@ -158,9 +137,9 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return $this
      */
-    private function setElement()
+    private function setElement(): static
     {
-        if (!$this->element) {
+        if (!$this->element && $this->type && $this->id) {
             $this->element = Element\Service::getElementById($this->type, $this->id);
         }
 
@@ -172,7 +151,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return Element\ElementInterface|false|null
      */
-    public function getElement()
+    public function getElement(): bool|Element\ElementInterface|null
     {
         $this->setElement();
 
@@ -189,7 +168,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return string|false|null
      */
-    public function getFullPath()
+    public function getFullPath(): bool|string|null
     {
         $this->setElement();
 
@@ -204,10 +183,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->setElement();
 
@@ -218,10 +194,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $this->setElement();
@@ -238,10 +211,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if ($this->id) {
@@ -259,10 +229,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -276,60 +243,38 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load() /** : void */
+    public function load(): void
     {
         if (!$this->element) {
             $this->setElement();
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return $this
-     */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubtype()
+    public function getSubtype(): ?string
     {
         return $this->subtype;
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->id = $idMapping[$this->type][$this->getId()];

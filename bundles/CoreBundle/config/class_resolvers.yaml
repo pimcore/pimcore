@@ -1,0 +1,19 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Class resolver for all types
+    Pimcore\Resolver\ClassResolver: ~
+
+    pimcore.class.resolver.document:
+        public: true
+        class: Pimcore\Resolver\ClassResolver
+        arguments:
+            $map: '%pimcore.documents.classes.map%'
+
+    pimcore.class.resolver.asset:
+        public: true
+        class: Pimcore\Resolver\ClassResolver
+        arguments:
+            $map: '%pimcore.assets.classes.map%'

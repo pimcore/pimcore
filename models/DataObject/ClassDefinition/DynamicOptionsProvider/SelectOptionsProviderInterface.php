@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,11 +20,5 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return string|null
-     */
-    public function getDefaultValue($context, $fieldDefinition);
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
 }

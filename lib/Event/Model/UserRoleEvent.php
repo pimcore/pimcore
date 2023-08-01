@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,33 +21,23 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class UserRoleEvent extends Event
 {
-    /**
-     * @var AbstractUser
-     */
-    protected $userRole;
+    protected AbstractUser $userRole;
 
     /**
      * DocumentEvent constructor.
      *
-     * @param AbstractUser $userRole
      */
     public function __construct(AbstractUser $userRole)
     {
         $this->userRole = $userRole;
     }
 
-    /**
-     * @return AbstractUser
-     */
-    public function getUserRole()
+    public function getUserRole(): AbstractUser
     {
         return $this->userRole;
     }
 
-    /**
-     * @param AbstractUser $userRole
-     */
-    public function setUserRole($userRole)
+    public function setUserRole(AbstractUser $userRole): void
     {
         $this->userRole = $userRole;
     }

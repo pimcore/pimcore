@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,28 +17,24 @@
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class DataObject extends Data
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('object', $value);
-        if ($element) {
+        $element = $value;
+        if (is_string($value)) {
+            $element = Service::getElementByPath('object', $value);
+        }
+        if ($element instanceof AbstractObject) {
             return $element->getId();
         }
 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         $element = null;
         if (is_numeric($value)) {
@@ -47,57 +44,16 @@ class DataObject extends Data
         return $element;
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     *
-     * @return string
-     */
-    public function unmarshal($value, $params = [])
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('object', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformGetterData($data, $params = [])
+    public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\DataObject\Service::getElementById('object', $data);
+            return \Pimcore\Model\DataObject\Service::getElementById('object', (int) $data);
         }
 
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformSetterData($data, $params = [])
+    public function transformSetterData(mixed $data, array $params = []): mixed
     {
         if ($data instanceof AbstractObject) {
             return $data->getId();
@@ -106,59 +62,41 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|string|null
-     */
-    public function getDataFromEditMode($data, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('object', $data);
-        if ($element) {
+        $element = $data;
+        if (is_string($data)) {
+            $element = Service::getElementByPath('object', $data);
+        }
+        if ($element instanceof AbstractObject) {
             return $element->getId();
         }
 
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForResource($data, $params = [])
+    public function getDataForResource(mixed $data, array $params = []): mixed
     {
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof AbstractObject) {
             return $data->getId();
         }
 
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForEditMode($data, $params = [])
+    public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = Service::getElementById('object', $data);
         }
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof AbstractObject) {
             return $data->getRealFullPath();
         } else {
             return '';
         }
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForListfolderGrid($data, $params = [])
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = \Pimcore\Model\DataObject::getById($data);
@@ -171,13 +109,7 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
-    public function resolveDependencies($data, $params = [])
+    public function resolveDependencies(mixed $data, array $params = []): array
     {
         if ($data instanceof AbstractObject && isset($params['type'])) {
             $elementId = $data->getId();
@@ -195,16 +127,10 @@ class DataObject extends Data
         return [];
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|null
-     */
-    public function getDataFromListfolderGrid($data, $params = [])
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\DataObject::getByPath($data);
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof AbstractObject) {
             return $data->getId();
         }
 

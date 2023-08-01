@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,7 +41,6 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
     /**
      * Constructor.
      *
-     * @param KernelInterface $kernel
      *
      * @internal param string $name The name of the application
      * @internal param string $version The version of the application
@@ -96,9 +96,8 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
     /**
      * Gets the default input definition.
      *
-     * @return InputDefinition An InputDefinition instance
      */
-    protected function getDefaultInputDefinition()
+    protected function getDefaultInputDefinition(): InputDefinition
     {
         $inputDefinition = parent::getDefaultInputDefinition();
         $inputDefinition->addOption(new InputOption('ignore-maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force execution in maintenance mode'));

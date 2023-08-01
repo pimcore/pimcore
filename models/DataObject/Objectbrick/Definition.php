@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,10 @@ use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Tool;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
@@ -37,32 +40,18 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
-    /**
-     * @var array
-     */
-    public $classDefinitions = [];
+    public array $classDefinitions = [];
 
-    /**
-     * @var array
-     */
-    private $oldClassDefinitions = [];
+    private array $oldClassDefinitions = [];
 
-    /**
-     * @param array $classDefinitions
-     *
-     * @return $this
-     */
-    public function setClassDefinitions($classDefinitions)
+    public function setClassDefinitions(array $classDefinitions): static
     {
         $this->classDefinitions = $classDefinitions;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getClassDefinitions()
+    public function getClassDefinitions(): array
     {
         return $this->classDefinitions;
     }
@@ -70,11 +59,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @param string $key
      *
-     * @return self|null
      */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Definition
     {
         $brick = null;
         $cacheKey = 'objectbrick_' . $key;
@@ -105,7 +92,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
-    private function checkTablenames()
+    private function checkTablenames(): void
     {
         $tables = [];
         $key = $this->getKey();
@@ -150,11 +137,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
-    public function save($saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
@@ -214,11 +200,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param DataObject\ClassDefinition\Data[] $fds
-     * @param array $found
      *
      * @throws \Exception
      */
-    private function enforceBlockRules($fds, $found = [])
+    private function enforceBlockRules(array $fds, array $found = []): void
     {
         foreach ($fds as $fd) {
             $childParams = $found;
@@ -235,16 +220,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
-    private function checkContainerRestrictions()
+    private function checkContainerRestrictions(): void
     {
         $fds = $this->getFieldDefinitions();
         $this->enforceBlockRules($fds);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -272,18 +254,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($definitionFile, $data);
         }
 
         \Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
     }
 
-    /**
-     * @param array $definitions
-     *
-     * @return array
-     */
-    private function buildClassList($definitions)
+    private function buildClassList(array $definitions): array
     {
         $result = [];
         foreach ($definitions as $definition) {
@@ -295,12 +273,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Returns a list of classes which need to be "rebuild" because they are affected of changes.
-     *
-     * @param self $oldObject
-     *
-     * @return array
      */
-    private function getClassesToCleanup($oldObject)
+    private function getClassesToCleanup(Definition $oldObject): array
     {
         $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
         $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
@@ -321,10 +295,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $result;
     }
 
-    /**
-     * @param string $serializedFilename
-     */
-    private function cleanupOldFiles($serializedFilename)
+    private function cleanupOldFiles(string $serializedFilename): void
     {
         $oldObject = null;
         $this->oldClassDefinitions = [];
@@ -362,7 +333,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * Update Database according to class-definition
      */
-    private function updateDatabase()
+    private function updateDatabase(): void
     {
         $processedClasses = [];
         if (!empty($this->classDefinitions)) {
@@ -401,13 +372,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param DataObject\ClassDefinition $class
      *
      * @internal
      *
-     * @return array
      */
-    public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class)
+    public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
     {
         $result = [];
         $fieldDefinitions = $class->getFieldDefinitions();
@@ -428,7 +397,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
-    private function createContainerClasses()
+    private function createContainerClasses(): void
     {
         $containerDefinition = [];
 
@@ -469,39 +438,31 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param string $classname
-     * @param string $fieldname
+     *
      *
      * @internal
-     *
-     * @return string
      */
-    public function getContainerClassName($classname, $fieldname)
+    public function getContainerClassName(string $classname, string $fieldname): string
     {
         return ucfirst($fieldname);
     }
 
     /**
-     * @param string $classname
-     * @param string $fieldname
+     *
      *
      * @internal
-     *
-     * @return string
      */
-    public function getContainerNamespace($classname, $fieldname)
+    public function getContainerNamespace(string $classname, string $fieldname): string
     {
         return 'Pimcore\\Model\\DataObject\\' . ucfirst($classname);
     }
 
     /**
-     * @param string $classname
+     *
      *
      * @internal
-     *
-     * @return string
      */
-    public function getContainerClassFolder($classname)
+    public function getContainerClassFolder(string $classname): string
     {
         return PIMCORE_CLASS_DIRECTORY . '/DataObject/' . ucfirst($classname);
     }
@@ -509,7 +470,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * Delete Brick Definition
      */
-    public function delete()
+    public function delete(): void
     {
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -545,31 +506,20 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            break;
-                        }
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        break;
                     }
                 }
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'objectbrick';
             $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -580,22 +530,18 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param string|null $key
-     *
-     * @return string
      */
-    public function getDefinitionFile($key = null)
+    public function getDefinitionFile(string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'objectbricks/%s.php');
     }
@@ -603,9 +549,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @internal
      *
-     * @return string
      */
-    public function getPhpClassFile()
+    public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
     }

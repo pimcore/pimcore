@@ -1,0 +1,34 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\GlossaryBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreGlossaryBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\GlossaryBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+
+    # TEMPLATING
+
+    Pimcore\Bundle\GlossaryBundle\Tool\Processor:
+        arguments:
+            $blockedTags: '%pimcore_glossary.blocked_tags%'
+
+
+    # TWIG TEMPLATING
+    Pimcore\Bundle\GlossaryBundle\Twig\Extension\GlossaryExtension: ~

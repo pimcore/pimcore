@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,5 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 interface LazyLoadingSupportInterface
 {
-    /**
-     * @return bool
-     */
-    public function getLazyLoading();
+    public function getLazyLoading(): bool;
 }

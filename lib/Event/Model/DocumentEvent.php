@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,16 +24,11 @@ class DocumentEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Document
-     */
-    protected $document;
+    protected Document $document;
 
     /**
      * DocumentEvent constructor.
      *
-     * @param Document $document
-     * @param array $arguments
      */
     public function __construct(Document $document, array $arguments = [])
     {
@@ -40,26 +36,17 @@ class DocumentEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Document
-     */
-    public function getDocument()
+    public function getDocument(): Document
     {
         return $this->document;
     }
 
-    /**
-     * @param Document $document
-     */
-    public function setDocument($document)
+    public function setDocument(Document $document): void
     {
         $this->document = $document;
     }
 
-    /**
-     * @return Document
-     */
-    public function getElement()
+    public function getElement(): Document
     {
         return $this->getDocument();
     }
