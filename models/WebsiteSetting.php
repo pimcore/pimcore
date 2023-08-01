@@ -257,7 +257,10 @@ final class WebsiteSetting extends AbstractModel
         return $this->language;
     }
 
-    public function setLanguage(string $language): self
+    /**
+     * @return $this
+     */
+    public function setLanguage(string $language): static
     {
         $this->language = $language;
         return $this;
