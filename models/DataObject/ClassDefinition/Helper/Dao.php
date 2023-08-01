@@ -169,7 +169,7 @@ trait Dao
      */
     protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
-        if (count($columnsToRemove) > 0) {
+        if ($columnsToRemove) {
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns)) {

@@ -95,7 +95,7 @@ class Service extends Model\Element\Service
                     $dataKeys[] = $tag->getName();
                 }
             }
-            if (count($dataKeys) > 0) {
+            if ($dataKeys) {
                 $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
