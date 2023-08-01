@@ -2475,6 +2475,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw $this->createAccessDeniedException('Please do not navigate out of the web root directory!');
         }
 
+        // prevent directory traversal (e.g. parentId=261&serverPath=/var/log&files=/../../../../../etc/passwd)
+        foreach ($files as $file) {
+            $absolutePath = realpath($serverPath.$file);
+            if (!str_starts_with($absolutePath, rtrim(str_replace('../', '', $serverPath), './'))) {
+                throw $this->createAccessDeniedException('Please do not navigate out of the web root directory!');
+            }
+        }
+
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
