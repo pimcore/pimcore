@@ -28,5 +28,4 @@ interface DataObjectTaskHelperInterface
         string $classId,
         bool $isLocalized = true
     ): void;
-
 }

@@ -24,14 +24,12 @@ use Pimcore\Maintenance\Tasks\DataObject\ConcreteTaskHelperInterface;
  */
 class CleanupBrickTablesTask implements TaskInterface
 {
-
     public function __construct(private ConcreteTaskHelperInterface $helper)
     {
     }
 
     public function execute(): void
     {
-      $this->helper->cleanupCollectionTable();
+        $this->helper->cleanupCollectionTable();
     }
-
 }

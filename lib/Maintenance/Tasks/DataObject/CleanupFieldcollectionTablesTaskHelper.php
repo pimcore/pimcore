@@ -10,14 +10,13 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -32,8 +31,8 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         private LoggerInterface $logger,
         private DataObjectTaskHelperInterface $helper,
         private Connection $db
-    )
-    { }
+    ) {
+    }
 
     public function cleanupCollectionTable(): void
     {
@@ -87,8 +86,10 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
         if (!$fcDef) {
             $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
+
             return false;
         }
+
         return true;
     }
 }
