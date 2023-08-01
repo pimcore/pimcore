@@ -19,13 +19,11 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Maintenance\Tasks\DataObject\ConcreteTaskHelperInterface;
 
-
 /**
  * @internal
  */
 class CleanupFieldcollectionTablesTask implements TaskInterface
 {
-
     public function __construct(private ConcreteTaskHelperInterface $helper)
     {
     }
@@ -34,5 +32,4 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
     {
         $this->helper->cleanupCollectionTable();
     }
-
 }
