@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension\Templating;
 
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
