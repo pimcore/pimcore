@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -91,8 +92,14 @@ class ClassController extends AdminAbstractController implements KernelControlle
      */
     public function getTreeAction(Request $request)
     {
-        // we need to check objects permission for listing in pimcore.model.objecttypes ext model
-        $this->checkPermission('objects');
+        try {
+            // we need to check objects permission for listing in pimcore.model.objecttypes ext model
+            $this->checkPermission('objects');
+        } catch (AccessDeniedHttpException $e) {
+            Logger::log('[Startup] Object types are not loaded as "objects" permission is missing');
+            //return empty string to avoid error on startup
+            return $this->adminJson([]);
+        }
 
         $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
