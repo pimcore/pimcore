@@ -1633,7 +1633,7 @@ class Service extends Model\Element\Service
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
                     $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-                    if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                    if (!$calculator instanceof ClassDefinition\CalculatorClassInterface) {
                         Logger::error('Class does not exist or is not valid: ' . $className);
 
                         return null;
