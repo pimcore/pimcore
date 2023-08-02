@@ -216,7 +216,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @return $this
      */
-    public function setSiteId(int $siteId): static
+    public function setSiteId(?int $siteId): static
     {
         $this->siteId = $siteId;
 
