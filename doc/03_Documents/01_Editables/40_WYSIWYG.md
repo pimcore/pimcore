@@ -11,7 +11,7 @@ if(!parent.pimcore.wysiwyg) {
     parent.pimcore.wysiwyg = {};
     parent.pimcore.wysiwyg.editors = [];
 }
-parent.pimcore.wysiwyg.editors.push('Custom_Ediotor');
+parent.pimcore.wysiwyg.editors.push('Custom_Editor');
 ```
 
 The Editor als needs to dispatch the `pimcore.events.changeWysiwyg` to set the value from the WYSIWYG-Field in the core.
