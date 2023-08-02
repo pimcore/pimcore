@@ -2480,7 +2480,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         // prevent directory traversal
         foreach ($files as $file) {
             $absolutePath = realpath($serverPath.$file);
-            if (!str_starts_with($absolutePath, rtrim(str_replace('../', '', $serverPath), './'))) {
+            if (!str_starts_with($absolutePath, $serverPath)) {
                 throw $this->createAccessDeniedException('Please do not navigate out of the web root directory!');
             }
         }
