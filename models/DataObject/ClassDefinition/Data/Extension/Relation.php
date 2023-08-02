@@ -41,7 +41,7 @@ trait Relation
                 $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.document');
                 foreach ($documentTypes as $item) {
                     if ($className = $this->resolveClassName($factory, $resolver, $item['documentTypes'])) {
-                        $types[] = $className;
+                        $types[] = '\\' . $className;
                     }
                 }
             } else {
@@ -57,7 +57,7 @@ trait Relation
                 $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.asset');
                 foreach ($assetTypes as $item) {
                     if ($className = $this->resolveClassName($factory, $resolver, $item['assetTypes'])) {
-                        $types[] = $className;
+                        $types[] = '\\' . $className;
                     }
                 }
             } else {
