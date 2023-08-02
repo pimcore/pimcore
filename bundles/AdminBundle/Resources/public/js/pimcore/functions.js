@@ -72,7 +72,7 @@ function t(key, defaultValue, placeholders) {
         }
     }
 
-    if(parent.pimcore.settings.debug_admin_translations){ // use parent here, because it's also used in the editmode iframe
+    if(parent.pimcore && parent.pimcore.settings.debug_admin_translations){ // use parent here, because it's also used in the editmode iframe
         return "+" + key + "+";
     }  else if (defaultValue) {
         return defaultValue;
