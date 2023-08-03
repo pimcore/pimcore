@@ -257,7 +257,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $fd = $classDefinition->getFieldDefinition($this->getFieldname());
             } elseif ($this->getOwnertype() === 'localizedfield') {
                 $ownerName = $this->getOwnername();
-                if (strpos($ownerName, '~') !== false) {
+                if (str_contains($ownerName, '~')) {
                     // this is a localized field inside a field collection or objectbrick
                     $parts = explode('~', $this->getOwnername());
                     $type = trim($parts[0], '/');
@@ -271,16 +271,14 @@ class UrlSlug implements OwnerAwareFieldInterface
                         $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
                         if ($objectFieldDef instanceof Objectbricks) {
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
-                            if (is_array($allowedBricks)) {
-                                foreach ($allowedBricks as $allowedBrick) {
-                                    $brickDef = Definition::getByKey($allowedBrick);
-                                    if ($brickDef instanceof Definition) {
-                                        $lfDef = $brickDef->getFieldDefinition('localizedfields');
-                                        if ($lfDef instanceof Localizedfields) {
-                                            $fd = $lfDef->getFieldDefinition($this->getFieldname());
+                            foreach ($allowedBricks as $allowedBrick) {
+                                $brickDef = Definition::getByKey($allowedBrick);
+                                if ($brickDef instanceof Definition) {
+                                    $lfDef = $brickDef->getFieldDefinition('localizedfields');
+                                    if ($lfDef instanceof Localizedfields) {
+                                        $fd = $lfDef->getFieldDefinition($this->getFieldname());
 
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
                             }

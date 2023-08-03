@@ -96,9 +96,7 @@ class ListCommand extends AbstractBundleCommand
         }
 
         if ($input->getOption('json')) {
-            $jsonData = array_map(static function ($row) use ($returnData) {
-                return array_combine($returnData['headers'], $row);
-            }, $returnData['rows']);
+            $jsonData = array_map(fn ($row) => array_combine($returnData['headers'], $row), $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
         } else {
             $table = new Table($output);

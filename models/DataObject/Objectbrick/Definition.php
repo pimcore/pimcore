@@ -506,13 +506,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            break;
-                        }
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        break;
                     }
                 }
             }

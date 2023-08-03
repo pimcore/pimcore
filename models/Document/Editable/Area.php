@@ -95,7 +95,7 @@ class Area extends Model\Document\Editable
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->render());
-        } elseif (is_array($config) && isset($config[0])) {
+        } else {
             foreach ($config as $item) {
                 $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
             }

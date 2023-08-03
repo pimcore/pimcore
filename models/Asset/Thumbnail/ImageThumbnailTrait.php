@@ -173,11 +173,18 @@ trait ImageThumbnailTrait
             try {
                 $localFile = $this->getLocalFile();
                 if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
-                    $this->getAsset()->addThumbnailFileToCache(
+                    $asset = $this->getAsset();
+                    $filename = basename($pathReference['storagePath']);
+                    $asset->addThumbnailFileToCache(
                         $localFile,
-                        basename($pathReference['storagePath']),
+                        $filename,
                         $config
                     );
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $filename);
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
+                    }
                 }
             } catch (\Exception $e) {
                 // noting to do
@@ -187,6 +194,9 @@ trait ImageThumbnailTrait
         return $dimensions;
     }
 
+    /**
+     * @return array{width: ?int, height: ?int}
+     */
     public function getDimensions(): array
     {
         if (!$this->width || !$this->height) {
@@ -323,7 +333,10 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        return self::getLocalFileFromStream($stream);
+        $localFile = self::getLocalFileFromStream($stream);
+        @fclose($stream);
+
+        return $localFile;
     }
 
     public function exists(): bool

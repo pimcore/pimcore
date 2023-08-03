@@ -132,55 +132,50 @@ class Sql extends AbstractAdapter
 
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
-        $data = '';
         $extractAllFields = empty($fields);
-        if ($filters) {
-            if (is_array($filters)) {
-                foreach ($filters as $filter) {
-                    $value = $filter['value'] ?? null;
-                    $type = $filter['type'];
-                    $operator = $filter['operator'];
-                    $maxValue = null;
+        foreach ($filters as $filter) {
+            $value = $filter['value'] ?? null;
+            $type = $filter['type'];
+            $operator = $filter['operator'];
+            $maxValue = null;
+            if ($type == 'date') {
+                if ($operator == 'eq') {
+                    $maxValue = strtotime($value . '+23 hours 59 minutes');
+                }
+                $value = strtotime($value);
+            }
+
+            switch ($operator) {
+                case 'like':
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+
+                    break;
+                case 'lt':
+                case 'gt':
+                case 'eq':
+                    $compMapping = [
+                        'lt' => '<',
+                        'gt' => '>',
+                        'eq' => '=',
+                    ];
+
                     if ($type == 'date') {
                         if ($operator == 'eq') {
-                            $maxValue = strtotime($value . '+23 hours 59 minutes');
+                            $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+
+                            break;
                         }
-                        $value = strtotime($value);
                     }
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
 
-                    switch ($operator) {
-                        case 'like':
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+                    break;
+                case '=':
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
 
-                            break;
-                        case 'lt':
-                        case 'gt':
-                        case 'eq':
-                            $compMapping = [
-                                'lt' => '<',
-                                'gt' => '>',
-                                'eq' => '=',
-                            ];
-
-                            if ($type == 'date') {
-                                if ($operator == 'eq') {
-                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
-
-                                    break;
-                                }
-                            }
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
-
-                            break;
-                        case '=':
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
-
-                            break;
-                    }
-                }
+                    break;
             }
         }
 

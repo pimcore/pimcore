@@ -341,10 +341,8 @@ class Service extends Model\AbstractModel
     {
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-        } elseif (is_string($element)) {
-            $elementType = $element;
         } else {
-            throw new \Exception('Wrong type given for getBaseClassNameForElement(), ElementInterface and string are allowed');
+            $elementType = $element;
         }
 
         $baseClass = ucfirst($elementType);
@@ -942,7 +940,8 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '. ');
         }
 
-        return mb_substr($key, 0, 255);
+        // key should not end (or start) with space after cut
+        return trim(mb_substr($key, 0, 255));
     }
 
     public static function isValidKey(string $key, string $type): bool
@@ -994,7 +993,7 @@ class Service extends Model\AbstractModel
     public static function fixAllowedTypes(array $data, string $type): array
     {
         // this is the new method with Ext.form.MultiSelect
-        if (is_array($data) && count($data)) {
+        if (count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;
@@ -1022,7 +1021,7 @@ class Service extends Model\AbstractModel
             }
         }
 
-        return $data ? $data : [];
+        return $data;
     }
 
     /**
@@ -1035,36 +1034,34 @@ class Service extends Model\AbstractModel
         $indexMap = [];
         $result = [];
 
-        if (is_array($versions)) {
-            foreach ($versions as $versionObj) {
-                $version = [
-                    'id' => $versionObj->getId(),
-                    'cid' => $versionObj->getCid(),
-                    'ctype' => $versionObj->getCtype(),
-                    'note' => $versionObj->getNote(),
-                    'date' => $versionObj->getDate(),
-                    'public' => $versionObj->getPublic(),
-                    'versionCount' => $versionObj->getVersionCount(),
-                    'autoSave' => $versionObj->isAutoSave(),
+        foreach ($versions as $versionObj) {
+            $version = [
+                'id' => $versionObj->getId(),
+                'cid' => $versionObj->getCid(),
+                'ctype' => $versionObj->getCtype(),
+                'note' => $versionObj->getNote(),
+                'date' => $versionObj->getDate(),
+                'public' => $versionObj->getPublic(),
+                'versionCount' => $versionObj->getVersionCount(),
+                'autoSave' => $versionObj->isAutoSave(),
+            ];
+
+            $version['user'] = ['name' => '', 'id' => ''];
+            if ($user = $versionObj->getUser()) {
+                $version['user'] = [
+                    'name' => $user->getName(),
+                    'id' => $user->getId(),
                 ];
-
-                $version['user'] = ['name' => '', 'id' => ''];
-                if ($user = $versionObj->getUser()) {
-                    $version['user'] = [
-                        'name' => $user->getName(),
-                        'id' => $user->getId(),
-                    ];
-                }
-
-                $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
-                if (!isset($indexMap[$versionKey])) {
-                    $indexMap[$versionKey] = 0;
-                }
-                $version['index'] = $indexMap[$versionKey];
-                $indexMap[$versionKey] = $indexMap[$versionKey] + 1;
-
-                $result[] = $version;
             }
+
+            $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
+            if (!isset($indexMap[$versionKey])) {
+                $indexMap[$versionKey] = 0;
+            }
+            $version['index'] = $indexMap[$versionKey];
+            $indexMap[$versionKey] = $indexMap[$versionKey] + 1;
+
+            $result[] = $version;
         }
 
         return $result;
@@ -1165,33 +1162,31 @@ class Service extends Model\AbstractModel
 
         // prepare key-values
         $keyValues = [];
-        if (is_array($note->getData())) {
-            foreach ($note->getData() as $name => $d) {
-                $type = $d['type'];
-                $data = $d['data'];
+        foreach ($note->getData() as $name => $d) {
+            $type = $d['type'];
+            $data = $d['data'];
 
-                if ($type == 'document' || $type == 'object' || $type == 'asset') {
-                    if ($d['data'] instanceof ElementInterface) {
-                        $data = [
-                            'id' => $d['data']->getId(),
-                            'path' => $d['data']->getRealFullPath(),
-                            'type' => $d['data']->getType(),
-                        ];
-                    }
-                } elseif ($type == 'date') {
-                    if (is_object($d['data'])) {
-                        $data = $d['data']->getTimestamp();
-                    }
+            if ($type == 'document' || $type == 'object' || $type == 'asset') {
+                if ($d['data'] instanceof ElementInterface) {
+                    $data = [
+                        'id' => $d['data']->getId(),
+                        'path' => $d['data']->getRealFullPath(),
+                        'type' => $d['data']->getType(),
+                    ];
                 }
-
-                $keyValue = [
-                    'type' => $type,
-                    'name' => $name,
-                    'data' => $data,
-                ];
-
-                $keyValues[] = $keyValue;
+            } elseif ($type == 'date') {
+                if (is_object($d['data'])) {
+                    $data = $d['data']->getTimestamp();
+                }
             }
+
+            $keyValue = [
+                'type' => $type,
+                'name' => $name,
+                'data' => $data,
+            ];
+
+            $keyValues[] = $keyValue;
         }
 
         $e['data'] = $keyValues;

@@ -223,9 +223,6 @@ class CustomReportController extends UserAwareController
             throw $this->createNotFoundException();
         }
         $columnConfiguration = $report->getColumnConfiguration();
-        if (!is_array($columnConfiguration)) {
-            $columnConfiguration = [];
-        }
 
         $configuration = json_decode($request->get('configuration'));
         $configuration = $configuration[0] ?? null;
@@ -238,9 +235,6 @@ class CustomReportController extends UserAwareController
         try {
             $adapter = Tool\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
-            if (!is_array($columns)) {
-                $columns = [];
-            }
 
             foreach ($columnConfiguration as $item) {
                 $name = $item['name'];

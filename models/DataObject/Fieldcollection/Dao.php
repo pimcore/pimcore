@@ -162,8 +162,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE
-         `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
                 if ($dataExists) {
                     $this->db->delete($tableName, [
                         'id' => $object->getId(),
@@ -194,29 +193,27 @@ class Dao extends Model\Dao\AbstractDao
 
             $childDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
 
-            if (is_array($childDefinitions)) {
-                foreach ($childDefinitions as $fd) {
-                    if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                            '_self'
-                        )) {
-                            continue;
-                        }
+            foreach ($childDefinitions as $fd) {
+                if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
+                        '_self'
+                    )) {
+                        continue;
                     }
+                }
 
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        $fd->delete(
-                            $object,
-                            [
-                                'isUpdate' => $saveMode,
-                                'context' => [
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $type,
-                                    'fieldname' => $this->model->getFieldname(),
-                                ],
-                            ]
-                        );
-                    }
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $fd->delete(
+                        $object,
+                        [
+                            'isUpdate' => $saveMode,
+                            'context' => [
+                                'containerType' => 'fieldcollection',
+                                'containerKey' => $type,
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                        ]
+                    );
                 }
             }
         }

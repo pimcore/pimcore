@@ -28,11 +28,11 @@ final class WebsiteSetting extends AbstractModel
 {
     protected ?int $id = null;
 
-    protected string $name;
+    protected string $name = '';
 
-    protected string $language;
+    protected string $language = '';
 
-    protected string $type;
+    protected ?string $type = null;
 
     protected mixed $data = null;
 
@@ -207,7 +207,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @return $this
      */
-    public function setSiteId(int $siteId): static
+    public function setSiteId(?int $siteId): static
     {
         $this->siteId = $siteId;
 
@@ -225,7 +225,7 @@ final class WebsiteSetting extends AbstractModel
      *
      * @return $this
      */
-    public function setType(string $type): static
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
@@ -236,7 +236,7 @@ final class WebsiteSetting extends AbstractModel
      * enum('text','document','asset','object','bool')
      *
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -246,9 +246,14 @@ final class WebsiteSetting extends AbstractModel
         return $this->language;
     }
 
-    public function setLanguage(string $language): void
+    /**
+     * @return $this
+     */
+    public function setLanguage(string $language): static
     {
         $this->language = $language;
+
+        return $this;
     }
 
     /**

@@ -358,7 +358,7 @@ class Document extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $updatedDocument) {
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
@@ -470,15 +470,13 @@ class Document extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
-                if (!$property->getInherited()) {
-                    $property->setDao(null);
-                    $property->setCid($this->getId());
-                    $property->setCtype('document');
-                    $property->setCpath($this->getRealFullPath());
-                    $property->save();
-                }
+        foreach ($this->getProperties() as $property) {
+            if (!$property->getInherited()) {
+                $property->setDao(null);
+                $property->setCid($this->getId());
+                $property->setCtype('document');
+                $property->setCpath($this->getRealFullPath());
+                $property->save();
             }
         }
 
@@ -492,7 +490,7 @@ class Document extends Element\AbstractElement
                 // dont't add a reference to yourself
                 continue;
             } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
+                $d->addRequirement((int)$requirement['id'], $requirement['type']);
             }
         }
         $d->save();
@@ -730,11 +728,10 @@ class Document extends Element\AbstractElement
                     if ($hardlinkTarget) {
                         $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
 
-                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
-                            $hardlinkPath, $this->getRealFullPath());
+                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
                     }
 
-                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                    if (!str_contains($link, $hardlinkPath) && !str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
                         $link = null;
                     }
                 }

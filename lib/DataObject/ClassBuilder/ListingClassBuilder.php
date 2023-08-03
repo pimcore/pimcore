@@ -61,10 +61,8 @@ class ListingClassBuilder implements ListingClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (\is_array($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $def) {
-                $cd .= $this->fieldDefinitionBuilder->buildListingClassFieldDefinition($classDefinition, $def);
-            }
+        foreach ($classDefinition->getFieldDefinitions() as $def) {
+            $cd .= $this->fieldDefinitionBuilder->buildListingClassFieldDefinition($classDefinition, $def);
         }
 
         $cd .= "\n\n";

@@ -25,9 +25,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Imagick extends Adapter
 {
-    protected static string $RGBColorProfile;
+    protected static ?string $RGBColorProfile = null;
 
-    protected static string $CMYKColorProfile;
+    protected static ?string $CMYKColorProfile = null;
 
     /**
      * @var \Imagick|null
@@ -86,9 +86,7 @@ class Imagick extends Adapter
             $this->resource = $i;
 
             if (!$this->reinitializing && !$this->isPreserveColor()) {
-                if (method_exists($i, 'setColorspace')) {
-                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
-                }
+                $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
                     // only for vector graphics
@@ -344,15 +342,15 @@ class Imagick extends Adapter
         $profiles = $this->resource->getImageProfiles('icc', true);
 
         if (isset($profiles['icc'])) {
-            if (strpos($profiles['icc'], 'RGB') !== false) {
+            if (str_contains($profiles['icc'], 'RGB')) {
                 // no need to process (s)RGB images
                 return $this;
             }
 
-            // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+            // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that lets it crash immediately if the tagged colorspace is
             // different from the colorspace of the embedded icc color profile
             // If that is the case we just ignore the color profiles
-            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+            if (str_contains($profiles['icc'], 'CMYK') && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
                 return $this;
             }
         }
