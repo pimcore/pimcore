@@ -145,6 +145,11 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
+
+        if ($optimizedFormat && isset(Config::getAutoFormats()['webp'])) {
+            $format = 'webp';
+        }
+
         $thumbDir = rtrim($asset->getRealPath(), '/').'/'.$asset->getId().'/image-thumb__'.$asset->getId().'__'.$config->getName();
         $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '$/i', '', $asset->getFilename());
 
