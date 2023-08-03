@@ -239,6 +239,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function delete()
     {
+        $parentUserId = $this->getParentId();
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
         }
@@ -261,10 +262,17 @@ class AbstractUser extends Model\AbstractModel
 
         // now delete the current user
         $this->getDao()->delete();
-        
+
         $cacheKey = 'user_' . $this->getId();
         if (RuntimeCache::isRegistered($cacheKey)) {
             RuntimeCache::set($cacheKey, null);
+        }
+
+        if ($parentUserId && $parentUserId > 1) {
+            $parentCacheKey = 'user_' . $parentUserId;
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
+                RuntimeCache::set($parentCacheKey, null);
+            }
         }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
