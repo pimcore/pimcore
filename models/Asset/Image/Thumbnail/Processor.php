@@ -417,7 +417,7 @@ class Processor
                     }
                 }
 
-                if ($optimizedFormat) {
+                if ($optimizedFormat && !isset(Config::getAutoFormats()['webp'])) {
                     $format = $image->getContentOptimizedFormat();
                 }
 
