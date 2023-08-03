@@ -56,6 +56,17 @@ For bundles, translations should be stored in the `Resources/translations/` dire
 
 Example: admin.en.yml or messages.en.yml
 
+#### Translations Domain
+A translation domain is only considered valid when it is registered as follows:
+```yaml
+pimcore:
+    translations:
+        domains:
+            - site_1
+            - site_2
+````
+
+Then only translations stored in a dedicated domain table e.g. `translations_DOMAIN` are used by the Pimcore translation service.
 
 ### Security / Authentication
 

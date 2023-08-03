@@ -57,4 +57,4 @@ If you would like to know more about the installation process or if you are havi
 
 ## Automating the Installation Process
 
-For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](../02_Advanced_Installation_Topics.md).
+For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md).
