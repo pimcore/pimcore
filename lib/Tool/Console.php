@@ -266,7 +266,7 @@ final class Console
         /**
          * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
          */
-        if (strpos(php_sapi_name(), 'apache') !== false) {
+        if (str_contains(php_sapi_name(), 'apache')) {
             foreach (['APP_ENV'] as $envVarName) {
                 if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
                     putenv($envVarName . '='.$envValue);

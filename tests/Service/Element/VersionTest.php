@@ -133,17 +133,17 @@ class VersionTest extends TestCase
         $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), ['force' => true]);
 
         $targetObjects = $sourceObject->getMultihref();
-        $this->assertEquals(1, count($targetObjects), 'expected one target');
+        $this->assertCount(1, $targetObjects, 'expected one target');
 
         $targetObject = $targetObjects[0];
         $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
         $content = stream_get_contents($latestVersion1->getFileStream());
-        $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
+        $this->assertStringNotContainsString($randomText, $content, "random text shouldn't be there");
 
         $multihref = $sourceObjectFromDb->getMultihref();
-        $this->assertEquals(1, count($multihref), 'expected 1 target element');
+        $this->assertCount(1, $multihref, 'expected 1 target element');
     }
 
     // Save a new object and check if the storagetype is set to fs

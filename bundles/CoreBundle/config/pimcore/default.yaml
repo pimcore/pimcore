@@ -57,6 +57,11 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_relative_medias: true
                 allow_elements:
                     span : [ 'class', 'style', 'id' ]
                     div : [ 'class', 'style', 'id' ]
@@ -75,7 +80,12 @@ framework:
                     li: ['class', 'style', 'id']
                     ol: ['class', 'style', 'id']
                     br: ''
+                    img: ['alt', 'style', 'src']
             pimcore.translation_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
                 allow_elements:
                     span: [ 'class', 'style', 'id' ]
                     p: [ 'class', 'style', 'id' ]

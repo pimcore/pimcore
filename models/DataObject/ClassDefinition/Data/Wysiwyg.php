@@ -181,12 +181,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
-        if (is_array($dependencies)) {
-            foreach ($dependencies as $key => $value) {
-                $el = Element\Service::getElementById($value['type'], $value['id']);
-                if (!$el) {
-                    throw new Element\ValidationException('Invalid dependency in wysiwyg text');
-                }
+        foreach ($dependencies as $key => $value) {
+            $el = Element\Service::getElementById($value['type'], $value['id']);
+            if (!$el) {
+                throw new Element\ValidationException('Invalid dependency in wysiwyg text');
             }
         }
     }

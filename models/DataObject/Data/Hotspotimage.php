@@ -51,23 +51,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $this->image = Asset\Image::getById($image);
         }
 
-        if (is_array($hotspots)) {
-            $this->hotspots = [];
-            foreach ($hotspots as $h) {
-                $this->hotspots[] = $h;
-            }
+        $this->hotspots = [];
+        foreach ($hotspots as $h) {
+            $this->hotspots[] = $h;
         }
 
-        if (is_array($marker)) {
-            $this->marker = [];
-            foreach ($marker as $m) {
-                $this->marker[] = $m;
-            }
+        $this->marker = [];
+        foreach ($marker as $m) {
+            $this->marker[] = $m;
         }
 
-        if (is_array($crop)) {
-            $this->crop = $crop;
-        }
+        $this->crop = $crop;
         $this->markMeDirty();
     }
 

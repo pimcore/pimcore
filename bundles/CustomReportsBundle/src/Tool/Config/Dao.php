@@ -104,11 +104,9 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
-            'pimcore' => [
-                'custom_report' => [
-                    'definitions' => [
-                        $id => $data,
-                    ],
+            'pimcore_custom_reports' => [
+                'definitions' => [
+                    $id => $data,
                 ],
             ],
         ];

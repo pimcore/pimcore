@@ -185,6 +185,13 @@ class Service extends Model\Element\Service
             throw new \Exception('Source and target have to be the same type');
         }
 
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         if (!$source instanceof Asset\Folder) {
             $target->setStream($source->getStream());
             $target->setCustomSettings($source->getCustomSettings());
@@ -369,10 +376,6 @@ class Service extends Model\Element\Service
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -404,10 +407,6 @@ class Service extends Model\Element\Service
      */
     public static function expandMetadataForEditmode(array $metadata): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -535,7 +534,7 @@ class Service extends Model\Element\Service
                 }
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
-                if (preg_match("|~\-~page\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                if (preg_match("|~\-~page\-(\d+)(@[0-9.]+x)?\.|", $config['filename'], $matchesThumbs)) {
                     $page = (int)$matchesThumbs[1];
                 }
 
@@ -563,7 +562,7 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([^\.]+)\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;

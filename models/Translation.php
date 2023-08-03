@@ -185,7 +185,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      *
-     *
+     * @return string[]
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
@@ -360,6 +360,7 @@ final class Translation extends AbstractModel
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
      * @param string $file - path to the csv file
+     * @param string[]|null $languages
      *
      * @throws \Exception
      *
@@ -370,7 +371,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || !is_array($languages)) {
+            if (!$languages) {
                 $languages = static::getValidLanguages($domain);
             }
 
@@ -406,7 +407,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) && count($data) > 1) {
+            if (count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {

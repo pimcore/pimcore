@@ -230,9 +230,7 @@ class Processor
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
 
-                    if (is_resource($source)) {
-                        fclose($source);
-                    }
+                    fclose($source);
 
                     unlink($converter->getDestinationFile());
 

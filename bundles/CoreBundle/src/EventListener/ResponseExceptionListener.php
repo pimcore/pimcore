@@ -18,13 +18,13 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +44,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     public function __construct(
         protected DocumentRenderer $documentRenderer,
         protected Connection $db,
-        protected Config $config,
+        protected SystemSettingsConfig $config,
         protected Document\Service $documentService,
         protected SiteResolver $siteResolver
     ) {
@@ -152,8 +152,9 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
-        $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? null;
-        $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? null;
+        $config = $this->config->getSystemSettingsConfig();
+        $localizedErrorDocumentsPaths = $config['documents']['error_pages']['localized'] ?? null;
+        $defaultErrorDocumentPath = $config['documents']['error_pages']['default'] ?? null;
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();

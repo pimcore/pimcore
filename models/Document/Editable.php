@@ -325,10 +325,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function addConfig(string $name, mixed $value): static
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $this->config[$name] = $value;
 
         return $this;
@@ -561,10 +557,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             array_pop($tmpBlocks);
             array_pop($tmpIndexes);
 
-            $tmpName = $name;
-            if (is_array($tmpBlocks)) {
-                $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
-            }
+            $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
 
             $previousBlockName = $blocks[count($blocks) - 1]->getName();
             if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {

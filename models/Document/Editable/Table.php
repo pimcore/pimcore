@@ -45,7 +45,7 @@ class Table extends Model\Document\Editable
     {
         $html = '';
 
-        if (is_array($this->data) && count($this->data) > 0) {
+        if (count($this->data) > 0) {
             $html .= '<table border="0" cellpadding="0" cellspacing="0">';
 
             foreach ($this->data as $row) {

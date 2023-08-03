@@ -153,7 +153,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
-        if (is_array($keysToDelete) && !empty($keysToDelete)) {
+        if ($keysToDelete) {
             $preparedKeys = [];
             foreach ($keysToDelete as $value) {
                 $preparedKeys[] = $this->db->quote($value);

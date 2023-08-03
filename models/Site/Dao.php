@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
                     $siteDomains = unserialize($site['domains']);
                     if (is_array($siteDomains) && count($siteDomains) > 0) {
                         foreach ($siteDomains as $siteDomain) {
-                            if (strpos($siteDomain, '*') !== false) {
+                            if (str_contains($siteDomain, '*')) {
                                 $siteDomain = str_replace('.*', '*', $siteDomain); // backward compatibility
                                 $wildcardDomains[$siteDomain] = $site['id'];
                             }

@@ -337,15 +337,13 @@ class Data extends AbstractModel
 
         $this->properties = '';
         $properties = $element->getProperties();
-        if (is_array($properties)) {
-            foreach ($properties as $nextProperty) {
-                $pData = (string) $nextProperty->getData();
-                if ($nextProperty->getName() === 'bool') {
-                    $pData = $pData ? 'true' : 'false';
-                }
-
-                $this->properties .= $nextProperty->getName() . ':' . $pData .' ';
+        foreach ($properties as $nextProperty) {
+            $pData = (string) $nextProperty->getData();
+            if ($nextProperty->getName() === 'bool') {
+                $pData = $pData ? 'true' : 'false';
             }
+
+            $this->properties .= $nextProperty->getName() . ':' . $pData .' ';
         }
 
         $this->data = '';
@@ -359,18 +357,16 @@ class Data extends AbstractModel
             } elseif ($element instanceof Document\PageSnippet) {
                 $this->published = $element->isPublished();
                 $editables = $element->getEditables();
-                if (is_array($editables) && !empty($editables)) {
-                    foreach ($editables as $editable) {
-                        if ($editable instanceof Document\Editable\EditableInterface) {
-                            // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
-                            if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
-                                continue;
-                            }
-
-                            ob_start();
-                            $this->data .= strip_tags((string) $editable->frontend()).' ';
-                            $this->data .= ob_get_clean();
+                foreach ($editables as $editable) {
+                    if ($editable instanceof Document\Editable\EditableInterface) {
+                        // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
+                        if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
+                            continue;
                         }
+
+                        ob_start();
+                        $this->data .= strip_tags((string) $editable->frontend()).' ';
+                        $this->data .= ob_get_clean();
                     }
                 }
                 if ($element instanceof Document\Page) {
