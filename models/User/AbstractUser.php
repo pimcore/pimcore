@@ -239,10 +239,10 @@ class AbstractUser extends Model\AbstractModel
      */
     public function delete()
     {
-        $parentUserId = $this->getParentId();
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
         }
+        $parentUserId = $this->getParentId();
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
 
