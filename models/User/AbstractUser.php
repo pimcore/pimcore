@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
@@ -46,8 +47,8 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
         $cacheKey = 'user_' . $id;
 
         try {
-            if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-                $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                $user = RuntimeCache::get($cacheKey);
             } else {
                 $reflectionClass = new \ReflectionClass(static::class);
                 if ($reflectionClass->isAbstract()) {
@@ -64,7 +65,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
                     $user = $className::getById($user->getId());
                 }
 
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $user);
+                RuntimeCache::set($cacheKey, $user);
             }
         } catch (Model\Exception\NotFoundException $e) {
             return null;
@@ -201,6 +202,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
         }
+        $parentUserId = $this->getParentId();
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
 
@@ -220,7 +222,18 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
 
         // now delete the current user
         $this->getDao()->delete();
-        \Pimcore\Cache::clearAll();
+
+        $cacheKey = 'user_' . $this->getId();
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::set($cacheKey, null);
+        }
+
+        if ($parentUserId && $parentUserId > 1) {
+            $parentCacheKey = 'user_' . $parentUserId;
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
+                RuntimeCache::set($parentCacheKey, null);
+            }
+        }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
     }

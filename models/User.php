@@ -443,7 +443,9 @@ final class User extends User\UserRole implements UserInterface
         $storage = Tool\Storage::get('admin');
         if ($storage->fileExists($this->getOriginalImageStoragePath())) {
             if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
-                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
+                $originalImageStream = $storage->readStream($this->getOriginalImageStoragePath());
+                $localFile = self::getLocalFileFromStream($originalImageStream);
+                @fclose($originalImageStream);
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();

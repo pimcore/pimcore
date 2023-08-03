@@ -61,14 +61,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var array
+     * @var array<int, bool>
      */
     protected array $activeGroups = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<int, int>
      */
     protected array $groupCollectionMapping = [];
 
@@ -263,6 +263,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->fieldname = $fieldname;
     }
 
+    /**
+     * @return array<int, bool>
+     */
     public function getActiveGroups(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
@@ -288,6 +291,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $newList;
     }
 
+    /**
+     * @param array<int, bool> $activeGroups
+     */
     public function setActiveGroups(array $activeGroups): void
     {
         $activeGroups = $this->sanitizeActiveGroups($activeGroups);
@@ -414,6 +420,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return true;
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getGroupCollectionMappings(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
@@ -424,6 +433,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
+    /**
+     * @param array<int, int> $groupCollectionMapping
+     */
     public function setGroupCollectionMappings(array $groupCollectionMapping): void
     {
         $this->groupCollectionMapping = $groupCollectionMapping;
@@ -466,13 +478,17 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $fieldsArray;
     }
 
+    /**
+     * @return Model\DataObject\Classificationstore\Group[]
+     */
     private static function getActiveGroupsWithConfig(Classificationstore $classificationStore): array
     {
         $groups = [];
         $activeGroups = $classificationStore->getActiveGroups();
         foreach (array_keys($activeGroups) as $groupId) {
-            $groupConfig = $classificationStore->getGroupConfigById($groupId);
-            $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
+            if ($groupConfig = $classificationStore->getGroupConfigById($groupId)) {
+                $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
+            }
         }
 
         return $groups;
