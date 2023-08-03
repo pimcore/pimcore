@@ -30,16 +30,10 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -62,9 +56,7 @@ class Image extends Model\Asset
     }
 
     /**
-     * @param string|null $generator
      *
-     * @return bool|string
      *
      * @throws \Exception
      *
@@ -170,7 +162,6 @@ EOT;
      *
      * @internal
      *
-     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
@@ -192,7 +183,6 @@ EOT;
      *
      * @throws \Exception
      *
-     * @return null|\Pimcore\Image\Adapter
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
@@ -350,7 +340,6 @@ EOT;
     /**
      * Checks if this file represents an animated image (png or gif)
      *
-     * @return bool
      */
     public function isAnimated(): bool
     {
