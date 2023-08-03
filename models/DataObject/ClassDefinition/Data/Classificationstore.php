@@ -304,9 +304,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $classificationStore = new DataObject\Classificationstore();
         }
 
-        $data = $data['data'];
         $activeGroups = $data['activeGroups'] ?? [];
         $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
+        $data = $data['data'];
 
         $correctedMapping = [];
 
