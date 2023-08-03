@@ -242,7 +242,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 this.inheritedCount++;
             }
 
-            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems + this.inheritedCount) {
+            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return;
             }
