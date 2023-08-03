@@ -3,6 +3,20 @@
 ## Upgrade to Pimcore 10.6
 - Upgrade to version 10.6.x, if you are using a lower version.
 
+## Migrate PHP Templates to Twig
+
+With Pimcore 11, it is required to update your PHP templates to Twig.
+
+:::caution
+
+Be aware that Pimcore 11 does not support `installing pimcore/php-templating-engine-bundle` anymore. The migration to Twig is then required even for enterprise customers.
+
+:::
+
+You can use the following RegEx to replace strings in your Template Files.
+For example Rewrite {% extends ':Layout:default.html.twig' %} to {% extends 'Layout/default.html.twig' %} and so on
+Use this not as a Batch process try with your IDE to replace it manually.
+
 ## Code Changes
 - [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
   The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
