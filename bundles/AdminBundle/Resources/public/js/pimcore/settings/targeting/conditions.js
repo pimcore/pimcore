@@ -254,18 +254,20 @@ pimcore.settings.targeting.conditions = (function () {
                         var leafletMap, marker, circle;
 
                         var searchHandler = function() {
-                            var address = searchfield.getValue();
-                            Ext.Ajax.request({
-                                url: pimcore.settings.targeting.conditions.getSearchUrl(address),
-                                method: "GET",
-                                success: function (response, opts) {
-                                    var data = Ext.decode(response.responseText);
-                                    if (data[0].lat !== null && data[0].lon !== null) {
-                                        marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
-                                        leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
-                                    }
-                                }.bind(this),
-                            });
+                            const address = searchfield.getValue();
+                            pimcore.helpers.sendRequestWithoutDefaultHeaders(function () {
+                                Ext.Ajax.request({
+                                    url: pimcore.settings.targeting.conditions.getSearchUrl(address),
+                                    method: "GET",
+                                    success: function (response, opts) {
+                                        const data = Ext.decode(response.responseText);
+                                        if (data[0].lat !== null && data[0].lon !== null) {
+                                            marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
+                                            leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
+                                        }
+                                    }.bind(this),
+                                });
+                            }.bind(this));
                         };
 
                         var searchfield = new Ext.form.TextField({
@@ -736,8 +738,7 @@ pimcore.settings.targeting.conditions = (function () {
         },
 
         getSearchUrl: function (query) {
-            var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
-            return url;
+            return pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
         },
 
         get: function (name) {

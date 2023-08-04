@@ -3288,3 +3288,12 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
 
     return true;
 };
+
+pimcore.helpers.sendRequestWithoutDefaultHeaders = function (requestFunction) {
+    const defHeaders = Ext.Ajax.getDefaultHeaders();
+    Ext.Ajax.setDefaultHeaders(null);
+
+    requestFunction();
+
+    Ext.Ajax.setDefaultHeaders(defHeaders);
+};
