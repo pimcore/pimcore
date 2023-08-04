@@ -13,7 +13,7 @@ Be aware that Pimcore 11 does not support `installing pimcore/php-templating-eng
 
 :::
 
-You can use RegEx to replace strings in your template files. For example, rewrite `{% extends ':Layout:default.html.twig' %}` to `{% extends 'Layout/default.html.twig' %}`.
+You can use a [RegEx](https://gist.github.com/putzflorian/219f582377b20d64d97ea9d8751dbb89) to replace strings in your template files. For example, rewrite `{% extends ':Layout:default.html.twig' %}` to `{% extends 'Layout/default.html.twig' %}`.
 
 :::tip 
 
