@@ -197,42 +197,38 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     geocode: function () {
         const address = this.searchfield.getValue();
-        pimcore.helpers.sendRequestWithoutDefaultHeaders(function () {
-            Ext.Ajax.request({
-                url: this.getSearchUrl(address),
-                method: "GET",
-                success: function (response, opts) {
-                    const data = Ext.decode(response.responseText);
-                    if (!Array.isArray(data) || data.length === 0) {
-                        Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
-                            t('possible_causes') + ':' +
-                            `<p>${t('postal_code_format_error')}</p>`);
+        pimcore.helpers.sendRequestWithoutDefaultHeaders(
+            "GET",
+            this.getSearchUrl(address),
+            function (response) {
+                const data = Ext.decode(response);
+                if (!Array.isArray(data) || data.length === 0) {
+                    Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
+                        t('possible_causes') + ':' +
+                        `<p>${t('postal_code_format_error')}</p>`);
 
-                        return;
-                    }
-                    this.latitude.setValue(data[0].lat);
-                    this.longitude.setValue(data[0].lon);
-                    this.updateMap();
-                }.bind(this),
-            });
-        }.bind(this));
+                    return;
+                }
+                this.latitude.setValue(data[0].lat);
+                this.longitude.setValue(data[0].lon);
+                this.updateMap();
+            }.bind(this)
+        );
     },
 
     reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             const url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
-            pimcore.helpers.sendRequestWithoutDefaultHeaders(function () {
-                Ext.Ajax.request({
-                    url: url,
-                    method: "GET",
-                    success: function (response, opts) {
-                        const data = Ext.decode(response.responseText);
-                        this.currentLocationText = data.display_name;
-                        layerObj.bindTooltip(this.currentLocationText);
-                        layerObj.openTooltip();
-                    }.bind(this),
-                });
-            }.bind(this));
+            pimcore.helpers.sendRequestWithoutDefaultHeaders(
+                "GET",
+                url,
+                function (response) {
+                    const data = Ext.decode(response);
+                    this.currentLocationText = data.display_name;
+                    layerObj.bindTooltip(this.currentLocationText);
+                    layerObj.openTooltip();
+                }.bind(this)
+            );
         }
     },
 

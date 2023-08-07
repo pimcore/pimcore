@@ -255,19 +255,17 @@ pimcore.settings.targeting.conditions = (function () {
 
                         var searchHandler = function() {
                             const address = searchfield.getValue();
-                            pimcore.helpers.sendRequestWithoutDefaultHeaders(function () {
-                                Ext.Ajax.request({
-                                    url: pimcore.settings.targeting.conditions.getSearchUrl(address),
-                                    method: "GET",
-                                    success: function (response, opts) {
-                                        const data = Ext.decode(response.responseText);
-                                        if (data[0].lat !== null && data[0].lon !== null) {
-                                            marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
-                                            leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
-                                        }
-                                    }.bind(this),
-                                });
-                            }.bind(this));
+                            pimcore.helpers.sendRequestWithoutDefaultHeaders(
+                                "GET",
+                                pimcore.settings.targeting.conditions.getSearchUrl(address),
+                                function (response) {
+                                    const data = Ext.decode(response);
+                                    if (data[0].lat !== null && data[0].lon !== null) {
+                                        marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
+                                        leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
+                                    }
+                                }.bind(this)
+                            );
                         };
 
                         var searchfield = new Ext.form.TextField({

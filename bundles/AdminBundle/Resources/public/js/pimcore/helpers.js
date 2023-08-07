@@ -3289,13 +3289,15 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
     return true;
 };
 
-pimcore.helpers.sendRequestWithoutDefaultHeaders = function (requestFunction) {
-    const defHeaders = Ext.Ajax.getDefaultHeaders();
-    Ext.Ajax.setDefaultHeaders(null);
+pimcore.helpers.sendRequestWithoutDefaultHeaders = function (method, url, succesCallback) {
+    const request = new XMLHttpRequest();
 
-    try {
-        requestFunction();
-    } finally {
-        Ext.Ajax.setDefaultHeaders(defHeaders);
-    }
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            succesCallback(this.response);
+        }
+    };
+
+    request.open(method, url);
+    request.send();
 };
