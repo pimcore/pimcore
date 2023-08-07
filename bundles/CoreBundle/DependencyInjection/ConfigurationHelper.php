@@ -18,10 +18,17 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Finder\Finder;
 
 final class ConfigurationHelper
 {
-    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): NodeBuilder
+    public static function addConfigLocationWithWriteTargetNodes(
+        ArrayNodeDefinition $rootNode,
+        array $nodes,
+        array $additionalNodes = []
+    ): NodeBuilder
     {
         $storageNode = $rootNode
             ->children()
@@ -36,7 +43,12 @@ final class ConfigurationHelper
         return $storageNode;
     }
 
-    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
+    public static function addConfigLocationTargetNode(
+        NodeBuilder $node,
+        string $name,
+        string $folder,
+        array $additionalNodes = []
+    ): void
     {
         if (in_array('read_target', $additionalNodes)) {
             $node->
@@ -89,5 +101,57 @@ final class ConfigurationHelper
                     ->end()
                 ->end();
         }
+    }
+
+    public static function getSymfonyConfigFiles(string $configPath, array $params = []): array
+    {
+        $result = [];
+        $dirs = [];
+        $finder = new Finder();
+
+        if (is_dir($configPath)) {
+            $dirs[]= $configPath;
+        }
+
+        if (empty($dirs)) {
+            return [];
+        }
+
+        $finder
+            ->files()
+            ->in($dirs);
+
+        foreach (['*.yml', '*.yaml'] as $namePattern) {
+            $finder->name($namePattern);
+        }
+
+        foreach ($finder as $file) {
+            $path = $file->getRealPath();
+            if ($params['relativePath'] ?? false) {
+                $path = $file->getRelativePathname();
+            }
+
+            $result[] = $path;
+        }
+
+        return $result;
+    }
+
+    public static function getConfigNodeFromSymfonyTree(
+        ContainerBuilder $container,
+        string $nodeName
+    ): array
+    {
+        $containerConfig = $container->getExtensionConfig($nodeName);
+        $containerConfig = array_merge(...$containerConfig);
+
+        $processor = new Processor();
+        // @phpstan-ignore-next-line
+        $configuration = $container->getExtension($nodeName)->getConfiguration($containerConfig, $container);
+        $containerConfig = $processor->processConfiguration($configuration, [$nodeName => $containerConfig]);
+
+        $resolvingBag = $container->getParameterBag();
+
+        return $resolvingBag->resolveValue($containerConfig);
     }
 }
