@@ -21,7 +21,6 @@ use Doctrine\Inflector\InflectorFactory;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
-use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\Config\Resource\FileExistenceResource;
@@ -31,7 +30,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\String\UnicodeString;
 
 /**
  * @internal
