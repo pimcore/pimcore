@@ -3293,7 +3293,9 @@ pimcore.helpers.sendRequestWithoutDefaultHeaders = function (requestFunction) {
     const defHeaders = Ext.Ajax.getDefaultHeaders();
     Ext.Ajax.setDefaultHeaders(null);
 
-    requestFunction();
-
-    Ext.Ajax.setDefaultHeaders(defHeaders);
+    try {
+        requestFunction();
+    } finally {
+        Ext.Ajax.setDefaultHeaders(defHeaders);
+    }
 };
