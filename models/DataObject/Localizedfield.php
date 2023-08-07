@@ -28,10 +28,10 @@ use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method void delete($deleteQuery = true, $isUpdate = true)
- * @method void load($object, $params = [])
- * @method void save($params = [])
- * @method void createUpdateTable($params = [])
+ * @method bool delete(bool $deleteQuery = true, bool $isUpdate = true)
+ * @method void load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+ * @method void save(array $params = [])
+ * @method void createUpdateTable(array $params = [])
  */
 final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
