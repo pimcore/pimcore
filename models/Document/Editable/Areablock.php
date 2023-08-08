@@ -51,7 +51,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     protected $currentIndex;
 
