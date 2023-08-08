@@ -3309,6 +3309,7 @@ pimcore.helpers.sendRequestWithoutDefaultHeaders = function (
 
     request.onerror = function () {
         failureCallback(this);
+        alwaysCallback(this);
     }
 
     request.open(method, url);
