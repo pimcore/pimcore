@@ -637,40 +637,6 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             });
         }
     },
-
-    deleteGridConfig: function () {
-        Ext.MessageBox.show({
-            title: t('delete'),
-            msg: t('delete_gridconfig_dblcheck'),
-            buttons: Ext.Msg.OKCANCEL,
-            icon: Ext.MessageBox.INFO,
-            fn: this.deleteGridConfigConfirmed.bind(this)
-        });
-    },
-
-    deleteGridConfigConfirmed: function (btn) {
-        if (btn == 'ok') {
-            Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig'),
-                params: {
-                    id: this.classId,
-                    objectId:
-                    this.object.id,
-                    gridtype: "search",
-                    gridConfigId: this.settings.gridConfigId,
-                    searchType: this.searchType
-                },
-                success: function (response) {
-                    const decodedResponse = Ext.decode(response.responseText);
-                    if (decodedResponse.deleteSuccess) {
-                        pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
-                    } else {
-                        pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
-                    }
-                }.bind(this)
-            });
-        }
-    },
 });
 
 pimcore.bundle.search.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);
