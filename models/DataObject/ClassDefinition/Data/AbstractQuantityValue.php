@@ -278,7 +278,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
                     $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
                     $convertedValues[] = $convertedQuantityValue->getValue();
                 }
-                /** @var \Pimcore\Model\DataObject\Data\QuantityValue $convertedQuantityValue*/
+                /** @var \Pimcore\Model\DataObject\Data\QuantityValue $convertedQuantityValue */
                 $convertedQuantityValue->setValue(implode(',', $convertedValues));
             } else {
                 $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
