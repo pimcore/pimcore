@@ -330,7 +330,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    public function getRealName(): ?string
+    public function getRealName(): string
     {
         return $this->realName ?? '';
     }
