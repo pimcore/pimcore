@@ -104,7 +104,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
             "GET",
             this.getSearchUrl(address),
             function (response) {
-                const data = Ext.decode(response);
+                const data = Ext.decode(response.responseText);
                 if (data[0].lat !== null && data[0].lon !== null) {
                     const map = this.getLeafletMap(data[0].lat, data[0].lon, 15);
                     this.getLeafletToolbar(map);

@@ -201,7 +201,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             "GET",
             this.getSearchUrl(address),
             function (response) {
-                const data = Ext.decode(response);
+                const data = Ext.decode(response.responseText);
                 if (!Array.isArray(data) || data.length === 0) {
                     Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
                         t('possible_causes') + ':' +
@@ -223,7 +223,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 "GET",
                 url,
                 function (response) {
-                    const data = Ext.decode(response);
+                    const data = Ext.decode(response.responseText);
                     this.currentLocationText = data.display_name;
                     layerObj.bindTooltip(this.currentLocationText);
                     layerObj.openTooltip();

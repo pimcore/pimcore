@@ -3289,14 +3289,27 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
     return true;
 };
 
-pimcore.helpers.sendRequestWithoutDefaultHeaders = function (method, url, succesCallback) {
+pimcore.helpers.sendRequestWithoutDefaultHeaders = function (
+    method,
+    url,
+    successCallback = function (response) {},
+    failureCallback = function (response) {},
+    alwaysCallback = function (response) {}
+) {
     const request = new XMLHttpRequest();
 
     request.onload = function() {
         if (this.status >= 200 && this.status < 400) {
-            succesCallback(this.response);
+            successCallback(this);
+        } else {
+            failureCallback(this);
         }
+        alwaysCallback(this);
     };
+
+    request.onerror = function () {
+        failureCallback(this);
+    }
 
     request.open(method, url);
     request.send();

@@ -259,7 +259,7 @@ pimcore.settings.targeting.conditions = (function () {
                                 "GET",
                                 pimcore.settings.targeting.conditions.getSearchUrl(address),
                                 function (response) {
-                                    const data = Ext.decode(response);
+                                    const data = Ext.decode(response.responseText);
                                     if (data[0].lat !== null && data[0].lon !== null) {
                                         marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
                                         leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
