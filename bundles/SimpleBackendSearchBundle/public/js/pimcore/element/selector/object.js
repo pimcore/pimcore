@@ -100,8 +100,8 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             value: selectedValue,
             listeners: {
                 select: function(e) {
-                    if(e.value == 'folder') {
-                        defaultRecord = this.classChangeCombo.getStore().getAt(0);
+                    if (e.value === 'folder') {
+                        const defaultRecord = this.classChangeCombo.getStore().getAt(0);
                         this.classChangeCombo.setValue(defaultRecord.get(this.classChangeCombo.valueField));
                         this.classChangeCombo.fireEvent('select', this.classChangeCombo, defaultRecord);
 
@@ -661,13 +661,12 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
                     searchType: this.searchType
                 },
                 success: function (response) {
-                    decodedResponse = Ext.decode(response.responseText);
+                    const decodedResponse = Ext.decode(response.responseText);
                     if (decodedResponse.deleteSuccess) {
                         pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
                     }
-                    success: this.initClassStore.bind(this, selectedClass)
                 }.bind(this)
             });
         }
