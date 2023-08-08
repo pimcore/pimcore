@@ -351,6 +351,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $key = $params['brickPrefix'].$key;
         }
 
+        if ($operator === 'in') {
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
+        }
+
         if ($value === 'NULL') {
             if ($operator === '=') {
                 $operator = 'IS';
