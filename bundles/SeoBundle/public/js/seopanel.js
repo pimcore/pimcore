@@ -247,7 +247,7 @@ pimcore.bundle.seo.seopanel = Class.create({
         var values = this.formPanel.getForm().getFieldValues();
         var data = Ext.clone(values);
 
-        for(value in values) {
+        for (const value in values) {
            if (value.indexOf('_length') > 0) {
                delete values[value];
            }
