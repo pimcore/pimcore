@@ -28,8 +28,7 @@ final class ConfigurationHelper
         ArrayNodeDefinition $rootNode,
         array $nodes,
         array $additionalNodes = []
-    ): NodeBuilder
-    {
+    ): NodeBuilder {
         $storageNode = $rootNode
             ->children()
                 ->arrayNode('config_location')
@@ -48,8 +47,7 @@ final class ConfigurationHelper
         string $name,
         string $folder,
         array $additionalNodes = []
-    ): void
-    {
+    ): void {
         if (in_array('read_target', $additionalNodes)) {
             $node->
             arrayNode($name)
@@ -140,8 +138,7 @@ final class ConfigurationHelper
     public static function getConfigNodeFromSymfonyTree(
         ContainerBuilder $container,
         string $nodeName
-    ): array
-    {
+    ): array {
         $containerConfig = $container->getExtensionConfig($nodeName);
         $containerConfig = array_merge(...$containerConfig);
 
