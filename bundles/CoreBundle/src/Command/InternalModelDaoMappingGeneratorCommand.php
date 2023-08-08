@@ -36,9 +36,6 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
             ->setDescription('For internal use only');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $finder = new Finder();

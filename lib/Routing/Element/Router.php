@@ -45,25 +45,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $this->requestHelper = $requestHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContext(): RequestContext
     {
         return $this->context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
@@ -74,9 +65,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return 'pimcore_element (No element)';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if ($name !== 'pimcore_element') {
@@ -91,7 +79,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $path = $element->getFullPath();
             $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
 
-            if (strpos($path, '://') !== false) {
+            if (str_contains($path, '://')) {
                 $host = parse_url($path, PHP_URL_HOST);
                 $scheme = parse_url($path, PHP_URL_SCHEME);
                 $path = parse_url($path, PHP_URL_PATH);
@@ -162,25 +150,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $route;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(Request $request): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function match(string $pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();

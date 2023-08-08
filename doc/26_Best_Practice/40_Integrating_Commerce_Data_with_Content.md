@@ -1,4 +1,4 @@
-# Integrating Commerce Data with Content
+# Integrating Commerce Data With Content
 
 Content commerce, shop everywhere, vanish separation of content and commerce - these are key phrases that popup with 
 every state-of-the-art e-commerce project. With its integrated approach Pimcore does exactly that and provides several
@@ -22,9 +22,6 @@ namespace App\Document\Areabrick;
 
 class MyProductTeaser extends AbstractAreabrick
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'My Product Teaser';

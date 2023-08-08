@@ -24,7 +24,6 @@ use Pimcore\Tool\Serialize;
 class Service
 {
     /**
-     * @param Document $doc
      *
      * @return WrapperInterface|Hardlink|null
      *
@@ -60,8 +59,6 @@ class Service
      *
      * @static
      *
-     * @param Document $doc
-     *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
@@ -84,8 +81,6 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
      * @return WrapperInterface|Hardlink|null
      *
@@ -120,8 +115,6 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
      * @return WrapperInterface|Hardlink|null
      *

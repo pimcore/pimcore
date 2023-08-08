@@ -76,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -413,7 +412,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '/' . $context['containerKey'] . '/localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
@@ -440,8 +439,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $deleteQuery
-     * @param bool $isUpdate
      *
      * @return bool force update
      */
@@ -487,19 +484,17 @@ class Dao extends Model\Dao\AbstractDao
             $fieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
             $childDefinitions = $fieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]);
 
-            if (is_array($childDefinitions)) {
-                foreach ($childDefinitions as $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        $params = [
-                            'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate,
-                        ];
-                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
-                            $params['context']['subContainerType'] = 'localizedfield';
-                        }
-
-                        $fd->delete($object, $params);
+            foreach ($childDefinitions as $fd) {
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $params = [
+                        'context' => $this->model->getContext() ? $this->model->getContext() : [],
+                        'isUpdate' => $isUpdate,
+                    ];
+                    if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
+                        $params['context']['subContainerType'] = 'localizedfield';
                     }
+
+                    $fd->delete($object, $params);
                 }
             }
         } catch (\Exception $e) {
@@ -549,7 +544,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
-            $index = $context['index'] ?? null;
+            $index = $context['index'] ?? $context['containerKey'] ?? null;
             $containerName = $context['fieldname'];
             if (!$context['containerType']) {
                 throw new \Exception('no container type set');
@@ -781,7 +776,6 @@ QUERY;
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -910,25 +904,23 @@ QUERY;
                 }
 
                 // add non existing columns in the table
-                if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $value) {
-                        if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
-                            $key = $value->getName();
+                foreach ($fieldDefinitions as $value) {
+                    if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                        $key = $value->getName();
 
-                            // if a datafield requires more than one column in the query table
-                            if (is_array($value->getQueryColumnType())) {
-                                foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                    $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
-                                    $protectedColumns[] = $key.'__'.$fkey;
-                                }
-                            } elseif ($value->getQueryColumnType()) {
-                                $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                                $protectedColumns[] = $key;
+                        // if a datafield requires more than one column in the query table
+                        if (is_array($value->getQueryColumnType())) {
+                            foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                $protectedColumns[] = $key.'__'.$fkey;
                             }
-
-                            // add indices
-                            $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
+                        } elseif ($value->getQueryColumnType()) {
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                            $protectedColumns[] = $key;
                         }
+
+                        // add indices
+                        $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
                     }
                 }
 

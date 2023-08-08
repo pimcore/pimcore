@@ -43,7 +43,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -100,9 +99,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

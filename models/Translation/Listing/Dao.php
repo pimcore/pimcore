@@ -110,18 +110,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function load(): array
     {
-        //$allTranslations = $this->getAllTranslations();
-        $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
 
-        foreach ($translationsData as $t) {
-            $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+            $translations = [];
+            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+            foreach ($translationsData as $t) {
+                $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
 
-            if ($transObj) {
-                $translations[] = $transObj;
+                if ($transObj) {
+                    $translations[] = $transObj;
+                }
+            }
+
+            if (empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
 
@@ -147,7 +153,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
-        if (is_array($keysToDelete) && !empty($keysToDelete)) {
+        if ($keysToDelete) {
             $preparedKeys = [];
             foreach ($keysToDelete as $value) {
                 $preparedKeys[] = $this->db->quote($value);
@@ -160,7 +166,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {

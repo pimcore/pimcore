@@ -154,7 +154,6 @@ class GeneralTest extends AbstractClassificationStoreTest
     }
 
     /**
-     * @return \Pimcore\Model\DataObject\Csstore
      *
      * @throws \Exception
      */

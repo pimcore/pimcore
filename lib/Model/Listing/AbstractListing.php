@@ -282,7 +282,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $condition
      * @param array|scalar|null $conditionVariables
      *
      * @return $this
@@ -354,12 +353,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $db->quoteIdentifier($value);
     }
 
-    /**
-     * @param mixed $value
-     * @param int|null $type
-     *
-     * @return string
-     */
     public function quote(mixed $value, int $type = null): string
     {
         $db = Db::get();

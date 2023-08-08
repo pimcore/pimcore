@@ -89,7 +89,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -99,7 +98,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string|int|null
      */
     public function offsetGet($offset): string|int|null
     {

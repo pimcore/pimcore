@@ -42,12 +42,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     * @param array|null $exportAttributes
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */
@@ -108,11 +103,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param AttributeSet $result
-     * @param array|null $exportAttributes
      *
-     * @return DataObjectDataExtractor
      *
      * @throws \Exception
      */
@@ -155,11 +146,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         return $this;
     }
 
-    /**
-     * @param Data $definition
-     * @param DataObject\Concrete $object
-     * @param AttributeSet $result
-     */
     protected function addBlocksInLocalizedfields(Data $definition, DataObject\Concrete $object, AttributeSet $result): void
     {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
@@ -203,13 +189,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         }
     }
 
-    /**
-     * @param Data $definition
-     * @param DataObject\Localizedfield $localizedField
-     * @param Data $fieldCollectionDefinition
-     * @param mixed $fieldCollectionItem
-     * @param AttributeSet $result
-     */
     protected function addBlocksInLocalizedFieldCollections(
         Data $definition,
         DataObject\Localizedfield $localizedField,
@@ -259,11 +238,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param AttributeSet $result
-     * @param array|null $exportAttributes
      *
-     * @return DataObjectDataExtractor
      *
      * @throws \Exception
      */
@@ -341,11 +316,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param AttributeSet $result
-     * @param array|null $exportAttributes
      *
-     * @return DataObjectDataExtractor
      *
      * @throws \Exception
      */
@@ -423,13 +394,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         return $this;
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param AttributeSet $result
-     * @param array|null $exportAttributes
-     *
-     * @return DataObjectDataExtractor
-     */
     protected function addLocalizedFieldsInFieldCollections(
         DataObject\Concrete $object,
         AttributeSet $result,

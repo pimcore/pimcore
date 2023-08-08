@@ -41,7 +41,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -85,7 +84,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the asset from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -196,9 +194,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $oldPath
      *
-     * @return array
      *
      * @internal
      */
@@ -228,9 +224,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
      *
-     * @return array
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -327,7 +321,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return bool
      */
     public function hasChildren(User $user = null): bool
     {
@@ -360,7 +353,6 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @return bool
      */
     public function hasSiblings(): bool
     {
@@ -388,7 +380,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(User $user = null): int
     {
@@ -443,10 +434,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -502,11 +490,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {

@@ -41,9 +41,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
@@ -133,8 +130,8 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image-thumbnails',
-            'video_thumbnails' => '/var/config/video-thumbnails',
+            'image_thumbnails' => '/var/config/image_thumbnails',
+            'video_thumbnails' => '/var/config/video_thumbnails',
             'document_types' => '/var/config/document_types',
             'predefined_properties' => '/var/config/predefined_properties',
             'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
@@ -997,7 +994,12 @@ final class Configuration implements ConfigurationInterface
                                 ->enumNode('algorithm')
                                     ->info('The hashing algorithm to use for backend users and objects containing a "password" field.')
                                     ->example('!php/const PASSWORD_BCRYPT')
-                                    ->values([PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
+                                    ->values(array_filter([
+                                        PASSWORD_DEFAULT,
+                                        PASSWORD_BCRYPT,
+                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                    ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
                                 ->arrayNode('options')
@@ -1601,6 +1603,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
+                                            ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
                                                     ->ifString()
@@ -1879,7 +1886,7 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('base_url')
-                            ->defaultValue('gotenberg:3000')
+                            ->defaultValue('http://gotenberg:3000')
                         ->end()
                     ->end()
                 ->end()

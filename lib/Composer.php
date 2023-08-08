@@ -73,7 +73,6 @@ class Composer
     }
 
     /**
-     * @param string $rootPath
      *
      * @internal
      */
@@ -160,13 +159,8 @@ class Composer
      */
     protected static function getPhpArguments(): array
     {
-        $ini = null;
-        $arguments = [];
-
         $phpFinder = new PhpExecutableFinder();
-        if (method_exists($phpFinder, 'findArguments')) {
-            $arguments = $phpFinder->findArguments();
-        }
+        $arguments = $phpFinder->findArguments();
 
         if(!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
             $paths = explode(PATH_SEPARATOR, $_SERVER['COMPOSER_ORIGINAL_INIS']);
@@ -197,7 +191,6 @@ class Composer
             $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'];
         }
 
-        $options['process-timeout'] = $event->getComposer()->getConfig()->get('process-timeout');
         $options['vendor-dir'] = $event->getComposer()->getConfig()->get('vendor-dir');
 
         return $options;
@@ -242,7 +235,6 @@ class Composer
      * strict user permission checks (which can be done on Windows 7 but not on Windows
      * Vista).
      *
-     * @param Event $event
      */
     public static function installAssets(Event $event): void
     {
@@ -270,7 +262,7 @@ class Composer
 
         $command[] = $webDir;
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 
     /**
@@ -278,7 +270,6 @@ class Composer
      *
      * Clears the Symfony cache.
      *
-     * @param Event $event
      */
     public static function clearCache(Event $event): void
     {
@@ -295,6 +286,6 @@ class Composer
             $command[] = '--ignore-maintenance-mode';
         }
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 }

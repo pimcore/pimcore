@@ -59,8 +59,6 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param Element\ElementInterface $element
-     * @param Model\User|null $user
      */
     public static function create(Element\ElementInterface $element, Model\User $user = null): void
     {
@@ -72,9 +70,7 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return self|null
      */
     public static function getById(int $id): ?Item
     {
@@ -89,7 +85,6 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Model\User|null $user
      *
      * @throws \Exception
      */
@@ -158,9 +153,6 @@ class Item extends Model\AbstractModel
         $this->delete();
     }
 
-    /**
-     * @param Model\User|null $user
-     */
     public function save(Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
@@ -192,11 +184,9 @@ class Item extends Model\AbstractModel
                     $storage->writeStream($scope->getStorageFileBinary($element), $element->getStream());
                 }
 
-                if (method_exists($element, 'getChildren')) {
-                    $children = $element->getChildren();
-                    foreach ($children as $child) {
-                        $rec($child, $rec, $scope);
-                    }
+                $children = $element->getChildren();
+                foreach ($children as $child) {
+                    $rec($child, $rec, $scope);
                 }
             }
         };
@@ -256,7 +246,6 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
      *
      * @throws \Exception
      */

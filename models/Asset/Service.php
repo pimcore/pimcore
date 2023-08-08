@@ -50,28 +50,21 @@ class Service extends Model\Element\Service
     /**
      * @internal
      *
-     * @var Model\User|null
      */
     protected ?Model\User $_user;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $_copyRecursiveIds;
 
-    /**
-     * @param Model\User|null $user
-     */
     public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
     }
 
     /**
-     * @param Asset $target
-     * @param Asset $source
      *
      * @return Asset|Folder|null copied asset
      *
@@ -134,8 +127,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Asset $target
-     * @param Asset $source
      *
      * @return Asset|Folder copied asset
      *
@@ -183,10 +174,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Asset $target
-     * @param Asset $source
      *
-     * @return Asset
      *
      * @throws \Exception
      */
@@ -196,6 +184,13 @@ class Service extends Model\Element\Service
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
         }
+
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         if (!$source instanceof Asset\Folder) {
             $target->setStream($source->getStream());
@@ -210,12 +205,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Asset $asset
-     * @param array|null $fields
-     * @param string|null $requestedLanguage
-     * @param array $params
      *
-     * @return array
      *
      * @internal
      */
@@ -282,11 +272,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Asset $asset
-     * @param array $params
-     * @param bool $onlyMethod
      *
-     * @return string|null
      *
      * @internal
      */
@@ -320,10 +306,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string $path
-     * @param string|null $type
      *
-     * @return bool
      */
     public static function pathExists(string $path, string $type = null): bool
     {
@@ -350,9 +333,7 @@ class Service extends Model\Element\Service
     /**
      * @internal
      *
-     * @param Element\ElementInterface $element
      *
-     * @return Element\ElementInterface
      */
     public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
@@ -372,10 +353,7 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param Asset $asset
-     * @param array $rewriteConfig
      *
-     * @return Asset
      *
      * @internal
      */
@@ -392,19 +370,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $metadata
-     * @param string $mode
      *
-     * @return array
      *
      * @internal
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -430,18 +401,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $metadata
      *
-     * @return array
      *
      * @internal
      */
     public static function expandMetadataForEditmode(array $metadata): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -569,7 +534,7 @@ class Service extends Model\Element\Service
                 }
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
-                if (preg_match("|~\-~page\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                if (preg_match("|~\-~page\-(\d+)(@[0-9.]+x)?\.|", $config['filename'], $matchesThumbs)) {
                     $page = (int)$matchesThumbs[1];
                 }
 
@@ -589,11 +554,15 @@ class Service extends Model\Element\Service
                             throw new NotFoundHttpException('Requested thumbnail format is disabled');
                         }
                     }
+
+                    if(!empty($thumbnailFormats[$config['file_extension']]['quality'] ?? null)) {
+                        $thumbnailConfig->setQuality($thumbnailFormats[$config['file_extension']]['quality']);
+                    }
                 }
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([^\.]+)\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;

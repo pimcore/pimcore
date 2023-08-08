@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -36,14 +38,5 @@ class SecurityHelper
                 $array[$key] = self::convertHtmlSpecialChars($array[$key]);
             }
         }
-    }
-
-    public static function sanitizeHtmlAttributes(?string $text): ?string
-    {
-        if(is_string($text)) {
-            return preg_replace('/[\/"\'\\\]/', '', $text);
-        }
-
-        return null;
     }
 }

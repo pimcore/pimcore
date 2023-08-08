@@ -1,4 +1,4 @@
-# Add your own Dependencies and Packages
+# Add Your Own Dependencies and Packages
 
 Pimcore manages itself all dependencies using composer and therefore you can add your own dependencies by using 
  standard composer functionalities. 

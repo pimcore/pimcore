@@ -60,7 +60,7 @@ class NewsController extends FrontendController
 {
     public function detailAction(Request $request): Response
     {
-        $id = $request->get('id');
+        $id = $request->get('news');
         $text = $request->get('text');
         
         // ...

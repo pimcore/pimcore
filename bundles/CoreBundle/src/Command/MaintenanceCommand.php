@@ -63,9 +63,6 @@ class MaintenanceCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $validJobs = $this->getArrayOptionValue($input, 'job');

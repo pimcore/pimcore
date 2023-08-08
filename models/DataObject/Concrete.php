@@ -24,6 +24,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -41,7 +42,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $__rawRelationData = null;
 
@@ -50,7 +50,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * Necessary for assigning object reference to corresponding fields while wakeup
      *
-     * @var array
      */
     public array $__objectAwareFields = [];
 
@@ -64,7 +63,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $published = false;
 
@@ -90,28 +88,24 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var bool|null
      */
     protected ?bool $omitMandatoryCheck = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $allLazyKeysMarkedAsLoaded = false;
 
     /**
      * returns the class ID of the current object class
      *
-     * @return string
      */
     public static function classId(): string
     {
@@ -120,9 +114,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $v['classId'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(bool $isUpdate = null, array $params = []): void
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
@@ -143,6 +134,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     //check throws Exception
                     try {
+                        if ($fd instanceof Link) {
+                            $params['resetInvalidFields'] = true;
+                        }
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
@@ -227,9 +221,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
@@ -246,12 +237,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * $callPluginHook is true when the method is called from outside (eg. directly in the controller "save only version")
      * it is false when the method is called by $this->update()
      *
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
      * @param string|null $versionNote version note
-     * @param bool $isAutoSave
      *
-     * @return Model\Version|null
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
@@ -362,9 +349,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
@@ -478,10 +462,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param string $key
      * @param mixed $params
-     *
-     * @return mixed
      *
      * @throws InheritanceParentNotFoundException
      */
@@ -503,7 +484,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return Concrete|null
      */
     public function getNextParentForInheritance(): ?Concrete
     {
@@ -532,11 +512,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * get object relation data as array for a specific field
      *
-     * @param string $fieldName
-     * @param bool $forOwner
-     * @param string|null $remoteClassId
      *
-     * @return array
      */
     public function getRelationData(string $fieldName, bool $forOwner, ?string $remoteClassId = null): array
     {
@@ -546,8 +522,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
      *
      * @return Model\Listing\AbstractListing|Concrete|null
      *
@@ -698,7 +672,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return array
      */
     public function getLazyLoadedFieldNames(): array
     {
@@ -715,9 +688,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $lazyLoadedFieldNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         if (!$this->getId()) {
@@ -784,10 +754,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param array $descriptor
-     * @param string $table
      *
-     * @return array
      */
     protected function doRetrieveData(array $descriptor, string $table): array
     {
@@ -801,9 +768,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param array $descriptor
      *
-     * @return array
      *
      * @internal
      */
@@ -815,9 +780,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param array $descriptor
      *
-     * @return array
      *
      * @internal
      */
@@ -842,7 +805,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $actualValue = $row[$column];
                 if (isset($likes[$column])) {
                     $expectedValue = $likes[$column];
-                    if (strpos($actualValue, $expectedValue) !== 0) {
+                    if (!str_starts_with($actualValue, $expectedValue)) {
                         return false;
                     }
                 } elseif ($actualValue != $expectedValue) {
@@ -861,7 +824,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return array
      */
     public function __getRawRelationData(): array
     {

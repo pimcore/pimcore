@@ -33,23 +33,26 @@ apt-get install libreoffice libreoffice-script-provider-python libreoffice-math 
 
 ### Chromium (Chrome Headless)
 
-It's possible to directly install and use the Chromium binary locally or in Docker Container and access to it via WebSocket connection 
+First of all, you need to add and install the required library via composer:
+```bash
+composer require chrome-php/chrome
+```
+
+You can then directly install and use the Chromium binary locally or use it in Docker Container, accessing it via WebSocket connection.
 
 #### Locally
-Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
+Please follow the steps on [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium) for installing Chromium locally.
+
 
 #### Docker
-Add a new service as 
+Add a new service as:
 ```dockerfile
     chrome:
         image: browserless/chrome
-        ports:
-            - "3000:3000"
 ```
-and set accordingly
-- config `pimcore.chromium.uri` value , eg. `ws://chrome:3000/` 
-- web2print settings hostUrl as the Docker web server service eg. `http://nginx:80` 
-
+and set accordingly:
+- config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`) 
+- web2print settings hostUrl as the Docker web server service (e.g. `http://nginx:80`)
 
 ### Gotenberg
 
@@ -57,9 +60,13 @@ To install it, please add it in your Docker Compose services stack as [https://g
 
 Configure the Docker services accordingly:
 
-- `pimcore.gotenberg.base_url` which by default to `gotenberg:3000`
+- `pimcore.gotenberg.base_url` which by default to `http://gotenberg:3000`
 - `pimcore.documents.preview_url_prefix` for example to `nginx:80`
 
+Make sure to add and install the required library via composer:
+```bash
+composer require gotenberg/gotenberg-php
+```
 
 ## Image Optimizers
 

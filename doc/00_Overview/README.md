@@ -54,10 +54,22 @@ In addition to that, Pimcore can also be executed in a headless way and therefor
 Pimcore provides lots of functionality on top of its basic data elements that already cover lots of use cases. 
 But being a platform, Pimcore can be used for pretty much any use case and can be easily extended if necessary. 
 
+## Pimcore Ecosystem
+
+The following list of resources should show you where to get information about Pimcore and whats going on in the whole ecosystem. 
+
+* [Pimcore Documentation](../README.md)
+* [Pimcore at Github](https://github.com/pimcore/pimcore)
+* [Pimcore Community Forums](https://github.com/pimcore/pimcore/discussions)
+* [Pimcore at Gitter](https://gitter.im/pimcore/pimcore)
+* [Pimcore at Stackoverflow](http://stackoverflow.com/questions/tagged/pimcore)
+* [Pimcore at Packagist](https://packagist.org/search/?q=pimcore)
+* [Pimcore Blog](https://pimcore.com/en/resources/blog)
+* [Pimcore Support / Professional Services](https://pimcore.com/en/services/support)
+
+
+## Contributions
+As Pimcore is an open-source project, any contributions are highly appreciated. For details, see our [Contributing guide](https://github.com/pimcore/pimcore/blob/11.x/CONTRIBUTING.md).
 
 -----
-Wanna see more - [Let's get started](../01_Getting_Started/00_Installation.md)
-
-#### Also Have a Look at 
-* [Pimcore Ecosystem](./00_Pimcore_Ecosystem.md)
-* [Develop for Pimcore](./01_Develop_for_Pimcore.md)
+Wanna see more - [Let's get started](../01_Getting_Started/README.md)

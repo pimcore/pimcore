@@ -1,7 +1,7 @@
 # System Setup & Hosting/Infrastructure Topics
 
 ## General Topics
-- [Installation Guide](../../01_Getting_Started/00_Installation.md)
+- [Installation Guide](../../01_Getting_Started/README.md)
 - [Apache Configuration](01_Apache_Configuration.md)
 - [Nginx Configuration](02_Nginx_Configuration.md)
 - [Database Setup](05_DB_Setup.md)

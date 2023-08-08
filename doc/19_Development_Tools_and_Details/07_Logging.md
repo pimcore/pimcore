@@ -62,7 +62,7 @@ Of course, the corresponding monolog handler configuration can be adapted as nee
 
 :::
 
-## Writing your own log files
+## Writing Your Own Log Files
 To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
 
 ```yaml

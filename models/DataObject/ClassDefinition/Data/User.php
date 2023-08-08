@@ -47,11 +47,8 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
@@ -69,11 +66,8 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return null|string
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -100,28 +94,23 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $users = $list->load();
 
         $options = [];
-        if (is_array($users) && count($users) > 0) {
-            foreach ($users as $user) {
-                if ($user instanceof Model\User) {
-                    $value = $user->getName();
-                    $first = $user->getFirstname();
-                    $last = $user->getLastname();
-                    if (!empty($first) || !empty($last)) {
-                        $value .= ' (' . $first . ' ' . $last . ')';
-                    }
-                    $options[] = [
-                        'value' => $user->getId(),
-                        'key' => $value,
-                    ];
+        foreach ($users as $user) {
+            if ($user instanceof Model\User) {
+                $value = $user->getName();
+                $first = $user->getFirstname();
+                $last = $user->getLastname();
+                if (!empty($first) || !empty($last)) {
+                    $value .= ' (' . $first . ' ' . $last . ')';
                 }
+                $options[] = [
+                    'value' => $user->getId(),
+                    'key' => $value,
+                ];
             }
         }
         $this->setOptions($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -175,9 +164,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();

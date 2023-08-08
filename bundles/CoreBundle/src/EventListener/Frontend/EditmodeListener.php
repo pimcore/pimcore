@@ -57,9 +57,6 @@ class EditmodeListener implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -130,7 +127,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // check for substring as the content type could define attributes (e.g. charset)
         foreach ($this->contentTypes as $ct) {
-            if (false !== strpos($contentType, $ct)) {
+            if (str_contains($contentType, $ct)) {
                 return true;
             }
         }
@@ -141,8 +138,6 @@ class EditmodeListener implements EventSubscriberInterface
     /**
      * Inject editmode assets into response HTML
      *
-     * @param Document $document
-     * @param Response $response
      */
     protected function addEditmodeAssets(Document $document, Response $response): void
     {

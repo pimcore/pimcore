@@ -58,8 +58,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * UrlSlug constructor.
      *
-     * @param string|null $slug
-     * @param int|null $siteId
      */
     public function __construct(?string $slug, ?int $siteId = 0)
     {
@@ -94,7 +92,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * @return string|null
      */
     public function getPreviousSlug(): ?string
     {
@@ -104,7 +101,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * @param string|null $previousSlug
      */
     public function setPreviousSlug(?string $previousSlug): void
     {
@@ -198,10 +194,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $path
-     * @param int $siteId
      *
-     * @return UrlSlug|null
      *
      * @internal
      */
@@ -249,8 +242,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * @return string
-     *
      * @throws \Exception
      */
     public function getAction(): string
@@ -266,7 +257,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $fd = $classDefinition->getFieldDefinition($this->getFieldname());
             } elseif ($this->getOwnertype() === 'localizedfield') {
                 $ownerName = $this->getOwnername();
-                if (strpos($ownerName, '~') !== false) {
+                if (str_contains($ownerName, '~')) {
                     // this is a localized field inside a field collection or objectbrick
                     $parts = explode('~', $this->getOwnername());
                     $type = trim($parts[0], '/');
@@ -280,16 +271,14 @@ class UrlSlug implements OwnerAwareFieldInterface
                         $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
                         if ($objectFieldDef instanceof Objectbricks) {
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
-                            if (is_array($allowedBricks)) {
-                                foreach ($allowedBricks as $allowedBrick) {
-                                    $brickDef = Definition::getByKey($allowedBrick);
-                                    if ($brickDef instanceof Definition) {
-                                        $lfDef = $brickDef->getFieldDefinition('localizedfields');
-                                        if ($lfDef instanceof Localizedfields) {
-                                            $fd = $lfDef->getFieldDefinition($this->getFieldname());
+                            foreach ($allowedBricks as $allowedBrick) {
+                                $brickDef = Definition::getByKey($allowedBrick);
+                                if ($brickDef instanceof Definition) {
+                                    $lfDef = $brickDef->getFieldDefinition('localizedfields');
+                                    if ($lfDef instanceof Localizedfields) {
+                                        $fd = $lfDef->getFieldDefinition($this->getFieldname());
 
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
                             }
@@ -371,7 +360,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $siteId
      *
      * @throws \Exception
      */
@@ -382,7 +370,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $classId
      *
      * @throws \Exception
      */
@@ -393,10 +380,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $path
-     * @param int $siteId
      *
-     * @return string
      *
      * @internal
      */

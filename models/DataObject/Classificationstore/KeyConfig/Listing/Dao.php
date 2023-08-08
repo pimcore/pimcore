@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of Classificationstore key configs for the specified parameters, returns an array of config elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -38,6 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $configList = [];
         foreach ($configsData as $keyConfigData) {
             $keyConfig = new DataObject\Classificationstore\KeyConfig();
+            $keyConfigData['enabled'] = (bool)$keyConfigData['enabled'];
             $keyConfig->setValues($keyConfigData);
             $configList[] = $keyConfig;
         }

@@ -427,10 +427,8 @@ class DefinitionModifierTest extends ModelTestCase
     private static function getMethod(object|string $class, string $name): \ReflectionMethod
     {
         $class = new \ReflectionClass($class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
 
-        return $method;
+        return $class->getMethod($name);
     }
 
     public function testGetByIdIgnoreCaseWithoutValidId(): void

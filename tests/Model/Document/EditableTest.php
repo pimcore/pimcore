@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -170,9 +169,6 @@ class EditableTest extends ModelTestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Page $document
-     * @param array|string $fields
-     * @param array $returnData
      */
     protected function fillPage(Page $document, array|string $fields = [], array &$returnData = []): void
     {

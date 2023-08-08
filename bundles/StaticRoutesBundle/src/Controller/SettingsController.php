@@ -31,9 +31,7 @@ class SettingsController extends UserAwareController
     /**
      * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function staticroutesAction(Request $request): JsonResponse
     {
@@ -113,9 +111,7 @@ class SettingsController extends UserAwareController
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
                 $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
+                $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 $routes[] = $route;
             }
 

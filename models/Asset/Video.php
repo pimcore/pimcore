@@ -29,14 +29,8 @@ class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'video';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -64,13 +58,9 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|Video\Thumbnail\Config $config
-     *
-     * @return Video\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig(string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
+    public function getThumbnailConfig(null|string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 
@@ -90,10 +80,7 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param string|Video\Thumbnail\Config $thumbnailName
-     * @param array $onlyFormats
      *
-     * @return array|null
      */
     public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
     {
@@ -121,8 +108,7 @@ class Video extends Model\Asset
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
-                Logger::error((string) $e);
+                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath() . ': ' . $e);
             }
         }
 
@@ -148,13 +134,6 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $thumbnailName
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     *
-     * @return Video\ImageThumbnail
-     */
     public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
     {
         if (!\Pimcore\Video::isAvailable()) {
@@ -176,9 +155,7 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|null $filePath
      *
-     * @return float|null
      */
     public function getDurationFromBackend(?string $filePath = null): ?float
     {
@@ -199,7 +176,6 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getDimensionsFromBackend(): ?array
     {
@@ -214,7 +190,6 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return float|int|null
      *
      * @throws \Exception
      */
@@ -283,7 +258,6 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array
      */
     public function getSphericalMetaData(): array
     {

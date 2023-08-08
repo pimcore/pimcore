@@ -1,0 +1,4 @@
+---
+static_routes: Routes statiques
+routes: Routes
+...

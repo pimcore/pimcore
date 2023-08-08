@@ -30,9 +30,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
- * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getTableName(DataObject\ClassDefinition $class, bool $query = false)
  * @method void createUpdateTable(DataObject\ClassDefinition $class)
- * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en')
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
@@ -59,9 +59,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @param string $key
      *
-     * @return self|null
      */
     public static function getByKey(string $key): ?Definition
     {
@@ -139,7 +137,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
@@ -229,9 +226,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->enforceBlockRules($fds);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
@@ -378,11 +372,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param DataObject\ClassDefinition $class
      *
      * @internal
      *
-     * @return array
      */
     public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
     {
@@ -446,10 +438,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param string $classname
-     * @param string $fieldname
      *
-     * @return string
      *
      * @internal
      */
@@ -459,10 +448,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param string $classname
-     * @param string $fieldname
      *
-     * @return string
      *
      * @internal
      */
@@ -472,9 +458,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param string $classname
      *
-     * @return string
      *
      * @internal
      */
@@ -522,22 +506,17 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            break;
-                        }
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        break;
                     }
                 }
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
@@ -558,9 +537,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param string|null $key
      *
-     * @return string
      *
      * @internal
      */
@@ -572,7 +549,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @internal
      *
-     * @return string
      */
     public function getPhpClassFile(): string
     {

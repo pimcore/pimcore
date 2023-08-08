@@ -33,9 +33,6 @@ class GlossaryExtension extends AbstractExtension
         $this->glossaryProcessor = $glossaryProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(): array
     {
         return [
@@ -45,7 +42,7 @@ class GlossaryExtension extends AbstractExtension
 
     public function applyGlossary(string $string, array $options = []): string
     {
-        if (empty($string) || !is_string($string)) {
+        if (!$string) {
             return $string;
         }
 

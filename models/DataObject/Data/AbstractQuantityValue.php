@@ -33,9 +33,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     protected ?Unit $unit = null;
 
-    /**
-     * @param string|Unit|null $unit
-     */
     public function __construct(Unit|string $unit = null)
     {
         if ($unit instanceof Unit) {
@@ -70,8 +67,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     /**
      * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
-     *
-     * @return self
      *
      * @throws \Exception
      */

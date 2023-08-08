@@ -29,14 +29,12 @@ final class RedirectingPlugin
     /**
      * The recipient who will receive all messages.
      *
-     * @var array
      */
     private array $recipient;
 
     /**
      * Create a new RedirectingPlugin.
      *
-     * @param array $recipient
      */
     public function __construct(array $recipient = [])
     {
@@ -51,7 +49,6 @@ final class RedirectingPlugin
     /**
      * Set the recipient of all messages.
      *
-     * @param array $recipient
      */
     public function setRecipient(array $recipient): void
     {
@@ -61,7 +58,6 @@ final class RedirectingPlugin
     /**
      * Get the recipient of all messages.
      *
-     * @return array
      */
     public function getRecipient(): array
     {
@@ -71,7 +67,6 @@ final class RedirectingPlugin
     /**
      * Invoked immediately before the Message is sent.
      *
-     * @param Mail $message
      *
      */
     public function beforeSendPerformed(Mail $message): void

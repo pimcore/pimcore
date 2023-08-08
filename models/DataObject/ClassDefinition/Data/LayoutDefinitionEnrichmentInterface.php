@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
 interface LayoutDefinitionEnrichmentInterface
@@ -26,7 +25,6 @@ interface LayoutDefinitionEnrichmentInterface
      * An example would the select datatype with a dynamic options provider.
      *
      *
-     * @param Concrete|null $object
      * @param array<string, mixed> $context additional contextual data like fieldname etc.
      *
      * @return $this

@@ -33,7 +33,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -44,6 +43,7 @@ class Dao extends Model\Element\Dao
                 WHERE documents.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('document with id ' . $id . ' not found');
@@ -53,7 +53,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -190,9 +189,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
-     * @param string $oldPath
      *
-     * @return array
      *
      * @internal
      */
@@ -222,7 +219,6 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the current full document path from the database.
      *
-     * @return string|null
      */
     public function getCurrentFullPath(): ?string
     {
@@ -256,10 +252,7 @@ class Dao extends Model\Element\Dao
     /**
      * Returns properties for the object from the database and assigns these.
      *
-     * @param bool $onlyInherited
-     * @param bool $onlyDirect
      *
-     * @return array
      */
     public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
@@ -366,7 +359,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?User $user = null): int
     {
@@ -394,9 +386,7 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
-     * @param bool|null $includingUnpublished
      *
-     * @return bool
      */
     public function hasSiblings(?bool $includingUnpublished = null): bool
     {
@@ -426,7 +416,6 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document is locked.
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -471,7 +460,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes locks from the document and its children.
      *
-     * @return array
      */
     public function unlockPropagate(): array
     {
@@ -482,10 +470,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -497,10 +482,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param string $type
      * @param Model\User $user
      *
-     * @return bool
      */
     public function isAllowed(string $type, User $user): bool
     {
@@ -549,11 +532,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -563,7 +544,6 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param int $index
      */
     public function saveIndex(int $index): void
     {
@@ -577,7 +557,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return int
      */
     public function getNextIndex(): int
     {

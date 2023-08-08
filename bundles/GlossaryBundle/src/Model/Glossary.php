@@ -31,70 +31,60 @@ class Glossary extends AbstractModel
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $text = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $link = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $abbr = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $language = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $casesensitive = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $exactmatch = false;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $site = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 

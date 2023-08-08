@@ -28,12 +28,13 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 | Version  | Supported | LTS** | CE End of life*** |
 |----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
-| `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
-| `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
-| `10.5`   |     ✅     |   ❌   |                   |
-| `10.6`   |     ✅     |   ☑   |                   |
-| `11.x`   |     ✅     |   ☑   |                   |
+| `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
+| `5.x`    |     ❌     |   ❌   |   `2019-12-09`    |
+| `6.x`    |     ❌     |   ❌   |   `2021-06-23`    |
+| `10.5`   |     ❌     |   ❌   |    `2023-06-21`    |
+| `10.6`   |     ✅     |   ☑   |    `2023-08-16`    |
+| `11.0`   |     ✅     |   ☑   |                    |
+| `11.x`   |     ✅     |   ☑   |                    |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
 *** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
@@ -91,7 +92,7 @@ cd ./my-project
 
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Getting_Started/Installation.html)
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/platform/Pimcore/Getting_Started/)
 
 ## Copyright and License 
 Copyright: [Pimcore](https://www.pimcore.org) GmbH

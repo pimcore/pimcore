@@ -24,9 +24,6 @@ use Pimcore\Tool\Serialize;
  */
 class Table implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (!is_null($value)) {
@@ -36,9 +33,6 @@ class Table implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {

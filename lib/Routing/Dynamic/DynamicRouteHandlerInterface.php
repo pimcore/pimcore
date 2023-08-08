@@ -31,8 +31,6 @@ interface DynamicRouteHandlerInterface
      *
      * @param string $name The route name to fetch
      *
-     * @return Route|null
-     *
      * @throws RouteNotFoundException If there is no route with that name in
      *                                this repository
      */
@@ -41,8 +39,6 @@ interface DynamicRouteHandlerInterface
     /**
      * Add matching routes to the route collection
      *
-     * @param RouteCollection $collection
-     * @param DynamicRequestContext $context
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void;
 }
