@@ -58,7 +58,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @var bool
+     * @var bool|null
      */
     protected $blockStarted;
 
