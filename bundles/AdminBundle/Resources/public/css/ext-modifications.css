@@ -665,6 +665,7 @@ body > .x-mask {
     z-index: 1;
 }
 
+/* Ext override for making the text in disabled fields selectable */
 .x-item-disabled *:not(.x-mask) {
     cursor: default;
     pointer-events: auto!important;
