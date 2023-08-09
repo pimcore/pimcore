@@ -665,12 +665,10 @@ body > .x-mask {
     z-index: 1;
 }
 
-/* Ext override for making disabled fields show tooltip on mouseover - should be fixed in 6.2.0 */
-.x-item-disabled, .x-item-disabled * {
+.x-item-disabled *:not(.x-mask) {
     cursor: default;
-    pointer-events: all !important; /* enables tooltip for disabled elements */
+    pointer-events: auto!important;
 }
-
 
 /** ExtJS7 changes starting from here */
 /* base color is #5fa2dd */
