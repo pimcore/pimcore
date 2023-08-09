@@ -592,10 +592,15 @@ final class User extends User\UserRole
     {
         if (null === $this->mergedWebsiteTranslationLanguagesView) {
             $this->mergedWebsiteTranslationLanguagesView = $this->getWebsiteTranslationLanguagesView();
-            foreach ($this->getRoles() as $role) {
-                /** @var User\UserRole $userRole */
-                $userRole = User\UserRole::getById($role);
-                $this->mergedWebsiteTranslationLanguagesView = array_merge($this->mergedWebsiteTranslationLanguagesView, $userRole->getWebsiteTranslationLanguagesView());
+
+            if(!$this->isAdmin()) {
+                foreach ($this->getRoles() as $role) {
+                    /** @var User\UserRole $userRole */
+                    $userRole = User\UserRole::getById($role);
+                    $this->mergedWebsiteTranslationLanguagesView = array_merge($this->mergedWebsiteTranslationLanguagesView, $userRole->getWebsiteTranslationLanguagesView());
+                }
+            } else {
+                $this->mergedWebsiteTranslationLanguagesView = Tool::getValidLanguages();
             }
 
             $this->mergedWebsiteTranslationLanguagesView = array_values(array_unique($this->mergedWebsiteTranslationLanguagesView));
