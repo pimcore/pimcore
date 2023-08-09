@@ -31,6 +31,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class AdminSessionAuthenticator extends AdminAbstractAuthenticator
 {
+    public const REQUEST_ATTRIBUTE_SESSION_AUTHENTICATED = '_pimcore_admin_session_authenticated';
+
     /**
      * @var User|null
      */
@@ -63,6 +65,10 @@ class AdminSessionAuthenticator extends AdminAbstractAuthenticator
         $badges = [
             new PreAuthenticatedUserBadge(),
         ];
+
+        // Mark request as "session authenticated" to prevent login throttling
+        /** @see \Pimcore\Bundle\AdminBundle\RateLimiter\AdminRequestRateLimiter */
+        $request->attributes->set(static::REQUEST_ATTRIBUTE_SESSION_AUTHENTICATED, true);
 
         return new SelfValidatingPassport(
             new UserBadge($this->user->getUsername()),
