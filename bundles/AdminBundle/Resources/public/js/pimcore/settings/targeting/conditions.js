@@ -264,7 +264,7 @@ pimcore.settings.targeting.conditions = (function () {
                                         marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
                                         leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
                                     }
-                                }.bind(this)
+                                }
                             );
                         };
 
