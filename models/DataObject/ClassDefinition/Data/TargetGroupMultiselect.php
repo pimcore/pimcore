@@ -30,6 +30,26 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
      */
     public $fieldtype = 'targetGroupMultiselect';
 
+    public function __wakeup()
+    {
+        $this->init();
+    }
+
+    /**
+     * @internal
+     *
+     * @return TargetGroup
+     */
+    protected function init(): static
+    {
+        $options = $this->getOptions();
+        if (\Pimcore::inAdmin() || empty($options)) {
+            $this->configureOptions();
+        }
+
+        return $this;
+    }
+
     /**
      * @internal
      */
@@ -61,12 +81,20 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
-        $options = $obj->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (\Pimcore::inAdmin()) {
             $obj->configureOptions();
         }
 
         return $obj;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataForResource($data, $object = null, $params = [])
+    {
+        $this->init();
+        return parent::getDataForResource($data, $object, $params);
     }
 
     /**

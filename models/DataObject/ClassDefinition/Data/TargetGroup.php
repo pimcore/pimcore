@@ -30,6 +30,26 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      */
     public $fieldtype = 'targetGroup';
 
+    public function __wakeup()
+    {
+        $this->init();
+    }
+
+    /**
+     * @internal
+     *
+     * @return TargetGroup
+     */
+    protected function init(): static
+    {
+        $options = $this->getOptions();
+        if (\Pimcore::inAdmin() || empty($options)) {
+            $this->configureOptions();
+        }
+
+        return $this;
+    }
+
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -63,6 +83,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $this->init();
         if (!empty($data)) {
             try {
                 $this->checkValidity($data, true, $params);
@@ -123,8 +144,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
-        $options = $obj->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (\Pimcore::inAdmin()) {
             $obj->configureOptions();
         }
 

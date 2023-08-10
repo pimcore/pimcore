@@ -169,6 +169,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'unit' => 'varchar(64)',
     ];
 
+    public function __wakeup()
+    {
+        $this->init();
+    }
+
+    /**
+     * @internal
+     *
+     * @return TargetGroup
+     */
+    protected function init(): static
+    {
+        $options = $this->getValidUnits();
+        if (\Pimcore::inAdmin() || empty($options)) {
+            $this->configureOptions();
+        }
+
+        return $this;
+    }
+
     /**
      * @return string|int
      */
@@ -505,6 +525,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $this->init();
+
         $data = $this->handleDefaultValue($data, $object, $params);
 
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
@@ -827,7 +849,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $obj = parent::__set_state($data);
 
-        $obj->configureOptions();
+        if (\Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }
