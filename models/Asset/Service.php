@@ -22,11 +22,9 @@ use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
-use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
+use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
-use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
@@ -472,7 +470,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getImageThumbnailByArrayConfig(array $config): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
+    public static function getImageThumbnailByArrayConfig(array $config): null|ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array
     {
         $asset = Asset::getById($config['asset_id']);
 
@@ -588,8 +586,11 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array $thumbnail, array $config): ?StreamedResponse
-    {
+
+    public static function getStreamedResponseFromImageThumbnail(
+        ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array $thumbnail,
+        array $config
+    ): ?StreamedResponse {
         $thumbnailStream = null;
 
         $storage = Storage::get('thumbnail');
