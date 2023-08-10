@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video;
 
-use Pimcore\Model\Asset\Thumbnail\ThumbnailMediaInterface;
 use Pimcore\Model\Asset\Thumbnail\ThumbnailInterface;
+use Pimcore\Model\Asset\Thumbnail\ThumbnailMediaInterface;
 use Pimcore\Model\Asset\Thumbnail\ThumbnailPathInterface;
 
 interface ImageThumbnailInterface extends ThumbnailInterface, ThumbnailPathInterface, ThumbnailMediaInterface

@@ -56,7 +56,7 @@ interface ImageThumbnailInterface
 
     /**
      * @internal
-     * @return string|null
+     *
      * @throws \Exception
      */
     public function getLocalFile(): ?string;
@@ -65,8 +65,7 @@ interface ImageThumbnailInterface
 
     /**
      * @internal
-     * @param array|null $pathReference
-     * @return bool
+     *
      * @throws \League\Flysystem\FilesystemException
      */
     public function existsOnStorage(?array $pathReference = []): bool;
@@ -78,8 +77,6 @@ interface ImageThumbnailInterface
     /**
      * Returns path for thumbnail image in a given file format
      *
-     * @param string $format
-     * @return static
      */
     public function getAsFormat(string $format): static;
 }

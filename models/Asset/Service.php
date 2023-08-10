@@ -586,7 +586,6 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-
     public static function getStreamedResponseFromImageThumbnail(
         ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array $thumbnail,
         array $config
