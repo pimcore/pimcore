@@ -100,7 +100,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
     geocode: function () {
         const address = this.searchfield.getValue();
-        pimcore.helpers.sendRequestWithoutDefaultHeaders(
+        pimcore.helpers.sendRequest(
             "GET",
             this.getSearchUrl(address),
             function (response) {

@@ -255,7 +255,7 @@ pimcore.settings.targeting.conditions = (function () {
 
                         var searchHandler = function() {
                             const address = searchfield.getValue();
-                            pimcore.helpers.sendRequestWithoutDefaultHeaders(
+                            pimcore.helpers.sendRequest(
                                 "GET",
                                 pimcore.settings.targeting.conditions.getSearchUrl(address),
                                 function (response) {

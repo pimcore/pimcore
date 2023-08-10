@@ -197,7 +197,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     geocode: function () {
         const address = this.searchfield.getValue();
-        pimcore.helpers.sendRequestWithoutDefaultHeaders(
+        pimcore.helpers.sendRequest(
             "GET",
             this.getSearchUrl(address),
             function (response) {
@@ -219,7 +219,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             const url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
-            pimcore.helpers.sendRequestWithoutDefaultHeaders(
+            pimcore.helpers.sendRequest(
                 "GET",
                 url,
                 function (response) {
