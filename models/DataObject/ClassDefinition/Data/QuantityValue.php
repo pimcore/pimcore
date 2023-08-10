@@ -177,7 +177,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @return TargetGroup
+     * @return $this
      */
     protected function init(): static
     {

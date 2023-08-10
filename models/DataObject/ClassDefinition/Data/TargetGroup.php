@@ -38,7 +38,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      *
-     * @return TargetGroup
+     * @return $this
      */
     protected function init(): static
     {

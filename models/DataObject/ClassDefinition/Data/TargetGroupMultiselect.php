@@ -38,7 +38,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     /**
      * @internal
      *
-     * @return TargetGroup
+     * @return $this
      */
     protected function init(): static
     {
