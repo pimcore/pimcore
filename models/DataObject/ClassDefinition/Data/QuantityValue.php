@@ -169,7 +169,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'unit' => 'varchar(64)',
     ];
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->init();
     }

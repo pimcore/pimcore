@@ -30,7 +30,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      */
     public $fieldtype = 'targetGroup';
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->init();
     }

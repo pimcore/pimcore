@@ -30,7 +30,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
      */
     public $fieldtype = 'targetGroupMultiselect';
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->init();
     }
