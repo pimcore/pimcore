@@ -1,5 +1,8 @@
 <?php
 
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,8 +15,6 @@
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\RateLimiter;
 
@@ -31,7 +32,8 @@ class AdminRequestRateLimiter implements RequestRateLimiterInterface
 {
     public function __construct(
         private RequestRateLimiterInterface $decorated,
-    ) {}
+    ) {
+    }
 
     public function consume(Request $request): RateLimit
     {
