@@ -48,6 +48,11 @@ final class ConfigurationHelper
         string $folder,
         array $additionalNodes = []
     ): void {
+        //BC reasons: Remove this check in Pimcore 12
+        if (!str_starts_with($folder, PIMCORE_PROJECT_ROOT)) {
+            $folder = PIMCORE_PROJECT_ROOT . $folder;
+        }
+
         if (in_array('read_target', $additionalNodes)) {
             $node->
             arrayNode($name)
