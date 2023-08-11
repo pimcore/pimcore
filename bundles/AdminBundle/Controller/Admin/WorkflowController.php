@@ -249,7 +249,7 @@ class WorkflowController extends AdminAbstractController implements KernelContro
             $globalActions = $actionsButtonService->getGlobalActions($workflow, $this->element);
 
             $data[] = [
-                'workflowName' => $workflowConfig->getLabel(),
+                'workflowName' =>  $this->translator->trans($workflowConfig->getLabel(), [], 'admin'),
                 'placeInfo' => $placeStatusInfo->getAllPalacesHtml($this->element, $workflow->getName()),
                 'graph' => $msg ?: '<a href="' . $url .'" target="_blank"><div class="workflow-graph-preview">'.$svg.'</div></a>',
                 'allowedTransitions' => $allowedTransitions,
