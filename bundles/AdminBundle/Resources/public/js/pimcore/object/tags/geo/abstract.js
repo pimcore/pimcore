@@ -95,22 +95,21 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
 
     getSearchUrl: function (query) {
-        var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
-        return url;
+        return pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
     },
 
     geocode: function () {
-        var address = this.searchfield.getValue();
-        Ext.Ajax.request({
-            url: this.getSearchUrl(address),
-            method: "GET",
-            success: function (response, opts) {
-                var data = Ext.decode(response.responseText);
-                if( data[0].lat !== null && data[0].lon !== null) {
-                    var map = this.getLeafletMap(data[0].lat, data[0].lon, 15);
+        const address = this.searchfield.getValue();
+        pimcore.helpers.sendRequest(
+            "GET",
+            this.getSearchUrl(address),
+            function (response) {
+                const data = Ext.decode(response.responseText);
+                if (data[0].lat !== null && data[0].lon !== null) {
+                    const map = this.getLeafletMap(data[0].lat, data[0].lon, 15);
                     this.getLeafletToolbar(map);
                 }
-            }.bind(this),
-        });
+            }.bind(this)
+        );
     }
 });

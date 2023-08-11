@@ -196,40 +196,39 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     geocode: function () {
-        var address = this.searchfield.getValue();
-        Ext.Ajax.request({
-            url: this.getSearchUrl(address),
-            method: "GET",
-            success: function (response, opts) {
+        const address = this.searchfield.getValue();
+        pimcore.helpers.sendRequest(
+            "GET",
+            this.getSearchUrl(address),
+            function (response) {
                 const data = Ext.decode(response.responseText);
-                if(!Array.isArray(data) || data.length === 0) {
+                if (!Array.isArray(data) || data.length === 0) {
                     Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
                         t('possible_causes') + ':' +
-                        `<p>${t('postal_code_format_error')}</p>` );
+                        `<p>${t('postal_code_format_error')}</p>`);
 
                     return;
                 }
                 this.latitude.setValue(data[0].lat);
                 this.longitude.setValue(data[0].lon);
                 this.updateMap();
-            }.bind(this),
-        });
-
+            }.bind(this)
+        );
     },
 
     reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
-            var url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
-            Ext.Ajax.request({
-                url: url,
-                method: "GET",
-                success: function (response, opts) {
-                    var data = Ext.decode(response.responseText);
+            const url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
+            pimcore.helpers.sendRequest(
+                "GET",
+                url,
+                function (response) {
+                    const data = Ext.decode(response.responseText);
                     this.currentLocationText = data.display_name;
                     layerObj.bindTooltip(this.currentLocationText);
                     layerObj.openTooltip();
-                }.bind(this),
-            });
+                }.bind(this)
+            );
         }
     },
 

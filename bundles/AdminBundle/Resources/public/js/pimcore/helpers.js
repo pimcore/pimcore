@@ -3288,3 +3288,31 @@ pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
 
     return true;
 };
+
+// Sends an Ajax request, it is recommended to be used when doing simple calls or to third-party services, in contrast to Ext.Ajax.request which, by default, sends extra info (eg. custom headers) that are usually needed to be working within Pimcore interface.
+pimcore.helpers.sendRequest = function (
+    method,
+    url,
+    successCallback = function (response) {},
+    failureCallback = function (response) {},
+    alwaysCallback = function (response) {}
+) {
+    const request = new XMLHttpRequest();
+
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            successCallback(this);
+        } else {
+            failureCallback(this);
+        }
+        alwaysCallback(this);
+    };
+
+    request.onerror = function () {
+        failureCallback(this);
+        alwaysCallback(this);
+    }
+
+    request.open(method, url);
+    request.send();
+};
