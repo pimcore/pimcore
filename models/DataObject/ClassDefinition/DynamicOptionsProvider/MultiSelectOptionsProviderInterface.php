@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
+/**
+ * @deprecated use SelectOptionsProviderInterface instead
+ */
 interface MultiSelectOptionsProviderInterface
 {
     public function getOptions(array $context, Data $fieldDefinition): array;
@@ -31,4 +34,6 @@ interface MultiSelectOptionsProviderInterface
      *
      */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
+
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
 }

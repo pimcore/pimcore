@@ -18,7 +18,19 @@ namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
+interface SelectOptionsProviderInterface
 {
+    public function getOptions(array $context, Data $fieldDefinition): array;
+
+    /**
+     * Whether options are depending on the object context (i.e. different options for different objects) or not.
+     * This is especially important for exposing options in the object grid. For options depending on object-context
+     * there will be no batch assignment mode, and filtering can only be done through a text field instead of the
+     * options list.
+     *
+     *
+     */
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
+
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
 }
