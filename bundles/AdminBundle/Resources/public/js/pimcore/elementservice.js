@@ -1022,10 +1022,26 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
                     handler: function (workflow, transition) {
 
                         transition.isGlobalAction = false;
-                        if (transition.notes) {
-                            new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
-                        } else {
-                            pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+
+                        if(elementEditor.isDirty()) {
+                            Ext.Msg.confirm(t('warning'), t('you_have_unsaved_changes')
+                                + "<br />" + t("continue") + "?",
+                                function(btn){
+                                    if (btn === 'yes'){
+                                        if (transition.notes) {
+                                            new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
+                                        } else {
+                                            pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+                                        }
+                                    }
+                                }.bind(this)
+                            );
+                        }else {
+                            if (transition.notes) {
+                                new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
+                            } else {
+                                pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+                            }
                         }
 
 
