@@ -34,13 +34,13 @@ interface ImageThumbnailInterface
      */
     public function reset(): void;
 
-    public function getWidth(): int;
+    public function getWidth(): ?int;
 
-    public function getHeight(): int;
+    public function getHeight(): ?int;
 
-    public function getRealWidth(): int;
+    public function getRealWidth(): ?int;
 
-    public function getRealHeight(): int;
+    public function getRealHeight(): ?int;
 
     public function getDimensions(): array;
 
