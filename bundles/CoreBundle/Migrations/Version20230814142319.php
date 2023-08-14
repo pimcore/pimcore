@@ -33,7 +33,9 @@ final class Version20230814142319 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if ($schema->getTable('assets')->hasColumn('dataModificationDate') === false) {
-            $this->addSql('ALTER TABLE `assets` ADD COLUMN `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL AFTER `modificationDate`;');
+            $this->addSql('ALTER TABLE `assets`
+                ADD COLUMN `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL AFTER `modificationDate`;'
+            );
         }
     }
 
