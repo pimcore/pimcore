@@ -48,6 +48,11 @@ final class ConfigurationHelper
         string $folder,
         array $additionalNodes = []
     ): void {
+        //BC reasons: Remove this check in Pimcore 12
+        if (!str_starts_with($folder, PIMCORE_PROJECT_ROOT)) {
+            $folder = PIMCORE_PROJECT_ROOT . $folder;
+        }
+
         if (in_array('read_target', $additionalNodes)) {
             $node->
             arrayNode($name)
@@ -61,7 +66,7 @@ final class ConfigurationHelper
                             ->defaultValue('symfony-config')
                         ->end()
                         ->arrayNode('options')
-                            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                            ->defaultValue(['directory' => $folder])
                             ->variablePrototype()->end()
                         ->end()
                     ->end()
@@ -93,7 +98,7 @@ final class ConfigurationHelper
                             ->defaultValue('symfony-config')
                         ->end()
                         ->arrayNode('options')
-                            ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                            ->defaultValue(['directory' => $folder])
                             ->variablePrototype()
                         ->end()
                     ->end()
