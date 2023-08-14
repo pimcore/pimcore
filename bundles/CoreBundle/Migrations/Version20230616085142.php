@@ -37,6 +37,8 @@ final class Version20230616085142 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('SET foreign_key_checks = 0');
+
         $db = Db::get();
 
         $metaDataTables = $db->fetchAllAssociative(
@@ -67,10 +69,14 @@ final class Version20230616085142 extends AbstractMigration
                 );
             }
         }
+
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('SET foreign_key_checks = 0');
+
         $db = Db::get();
 
         $metaDataTables = $db->fetchAllAssociative(
@@ -88,5 +94,6 @@ final class Version20230616085142 extends AbstractMigration
             }
         }
 
+        $this->addSql('SET foreign_key_checks = 1');
     }
 }
