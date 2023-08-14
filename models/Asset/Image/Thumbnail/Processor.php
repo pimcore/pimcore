@@ -194,7 +194,7 @@ class Processor
 
         if ($modificationDate) {
             try {
-                if ($modificationDate >= $asset->getModificationDate()) {
+                if ($modificationDate >= $asset->getDataModificationDate()) {
                     return [
                         'src' => $storagePath,
                         'type' => 'thumbnail',

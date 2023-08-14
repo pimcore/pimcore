@@ -156,6 +156,29 @@ class Asset extends Element\AbstractElement
     protected $dataChanged = false;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected $dataModificationDate = null;
+
+    /**
+     * @return int|null
+     */
+    public function getDataModificationDate(): ?int
+    {
+        return $this->dataModificationDate;
+    }
+
+    /**
+     * @param int|null $dataModificationDate
+     */
+    public function setDataModificationDate(?int $dataModificationDate): void
+    {
+        $this->dataModificationDate = $dataModificationDate;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
@@ -1218,7 +1241,8 @@ class Asset extends Element\AbstractElement
         }
 
         if (is_resource($stream)) {
-            $this->setDataChanged(true);
+            $this->setDataChanged();
+            $this->setDataModificationDate(time());
             $this->stream = $stream;
 
             $isRewindable = @rewind($this->stream);
