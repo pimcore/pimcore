@@ -869,12 +869,12 @@ class Document extends Element\AbstractElement
         if (!$link && Tool::isFrontend()) {
             $differentDomain = false;
             $site = FrontendTool::getSiteForDocument($this);
-            if ($site instanceof Site){
+            if (Tool::isFrontendRequestByAdmin() && $site instanceof Site){
                 $differentDomain = $site->getMainDomain() != $request->getHost();
             }
 
             if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
-                || (Tool::isFrontendRequestByAdmin() && $differentDomain)){
+                || $differentDomain){
                 if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                     if ($mainDocument instanceof WrapperInterface) {
                         $hardlinkPath = '';
