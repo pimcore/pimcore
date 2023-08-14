@@ -40,10 +40,10 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
      *
      * @return $this
      */
-    protected function init(): static
+    private function init(): static
     {
         $options = $this->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (empty($options)) {
             $this->configureOptions();
         }
 

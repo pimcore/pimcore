@@ -179,10 +179,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return $this
      */
-    protected function init(): static
+    private function init(): static
     {
         $options = $this->getValidUnits();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (empty($options)) {
             $this->configureOptions();
         }
 

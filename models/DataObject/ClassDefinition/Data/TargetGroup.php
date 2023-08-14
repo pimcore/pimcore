@@ -40,10 +40,10 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @return $this
      */
-    protected function init(): static
+    private function init(): static
     {
         $options = $this->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (empty($options)) {
             $this->configureOptions();
         }
 
