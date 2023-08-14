@@ -51,16 +51,16 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected array $currentIndex;
+    protected ?array $currentIndex = null;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var bool|null
      */
-    protected bool $blockStarted;
+    protected ?bool $blockStarted = false;
 
     /**
      * @internal
