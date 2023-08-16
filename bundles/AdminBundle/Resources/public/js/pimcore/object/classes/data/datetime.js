@@ -82,7 +82,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         var time = {
             format:"H:i",
             emptyText:"",
-            invalidText: t('invalidTime'),
+            invalidText: t('invalid_time'),
             width:120
         };
 
