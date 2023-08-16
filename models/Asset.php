@@ -172,10 +172,14 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param int|null $dataModificationDate
+     *
+     * @return $this
      */
-    public function setDataModificationDate(?int $dataModificationDate): void
+    public function setDataModificationDate(?int $dataModificationDate): static
     {
         $this->dataModificationDate = $dataModificationDate;
+        
+        return $this;
     }
 
     /**
