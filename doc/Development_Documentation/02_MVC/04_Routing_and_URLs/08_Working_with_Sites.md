@@ -90,3 +90,6 @@ The functionality should be pretty self-explanatory:
 \Pimcore\Tool\Frontend::isDocumentInCurrentSite($document);
 \Pimcore\Tool\Frontend::isDocumentInSite($site, $document);
 ```
+
+#### Document Preview Navigation with Sites
+Please keep in mind that when previewing documents that have links to different Sites, the navigation may not be working properly due the Iframe Content Security Policies and Cross-origin resource sharing (CORS) policy, please set your own security rules accordingly to your own needs.
