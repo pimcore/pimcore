@@ -676,5 +676,6 @@
   "max_characters": "Maximum Characters",
   "sites": "Sites",
   "show_hide_areablock": "Show or Hide on frontend",
-  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes."
+  "asset_type_chaged": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
+  "invalidTime": "Invalid value. Please check the time format"
 }
