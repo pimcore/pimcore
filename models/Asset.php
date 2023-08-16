@@ -160,7 +160,7 @@ class Asset extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $dataModificationDate = null;
+    protected ?int $dataModificationDate = null;
 
     /**
      * @return int|null
@@ -858,7 +858,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $setModificationDate
-     * @param bool $saveOnlyVersionn
+     * @param bool $saveOnlyVersion
      * @param string $versionNote version note
      *
      * @return null|Version

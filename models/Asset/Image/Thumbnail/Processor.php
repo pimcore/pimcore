@@ -408,7 +408,7 @@ class Processor
      *
      * @return void
      */
-    private static function applyTransformations(Adapter $image, Asset $asset, Config $config, ?array $transformations)
+    private static function applyTransformations(Adapter $image, Asset $asset, Config $config, ?array $transformations): void
     {
         if (is_array($transformations) && !empty($transformations)) {
             $sourceImageWidth = PHP_INT_MAX;
