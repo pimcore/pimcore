@@ -992,7 +992,7 @@ class AssetHelperController extends AdminAbstractController
     }
 
     /**
-     * @Route("/get-batch-jobs", name="pimcore_admin_asset_assethelper_getbatchjobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="pimcore_admin_asset_assethelper_getbatchjobs", methods={"POST"})
      *
      * @param Request $request
      *
