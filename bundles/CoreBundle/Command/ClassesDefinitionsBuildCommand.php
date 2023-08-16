@@ -81,9 +81,10 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
             $this->collectionClassDumper->dumpPHPClass($fcDefinition);
         }
 
-        if ($cacheStatus){
+        if ($cacheStatus) {
             \Pimcore\Cache::enable();
         }
+
         return 0;
     }
 }

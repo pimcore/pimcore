@@ -94,6 +94,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     public function getDataForResource($data, $object = null, $params = [])
     {
         $this->init();
+
         return parent::getDataForResource($data, $object, $params);
     }
 
