@@ -34,7 +34,10 @@ class OptionsProviderResolver extends ClassResolver
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
-                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface));
+                || ($mode == self::MODE_MULTISELECT && (
+                    $provider instanceof MultiSelectOptionsProviderInterface ||
+                    $provider instanceof SelectOptionsProviderInterface)
+                );
         });
     }
 }
