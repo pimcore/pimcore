@@ -1515,29 +1515,35 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
+    protected function getMetadataByName(
+        string $name,
+        ?string $language = null,
+        bool $strictMatchLanguage = false,
+        bool $raw = false
+    ): mixed
     {
-        $result = null;if ($language === null) {
+        $result = null;
+        $data = null;
+        if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
         }
 
-            $data = null;
-            foreach ($this->metadata as $md) {
-                if ($md['name'] == $name) {
-                    if ($language == $md['language'] || (empty($md['language']) && !$strictMatch)) {
-                        $data = $md;
+        foreach ($this->metadata as $md) {
+            if ($md['name'] == $name) {
+                if ($language == $md['language'] || (empty($md['language']) && !$strictMatchLanguage)) {
+                    $data = $md;
 
-                        break;
-                    }
+                    break;
                 }
             }
-
-            if ($data) {
-                $result = $raw ? $data : $this->transformMetadata($data);
-            }
-
-            return $result;
         }
+
+        if ($data) {
+            $result = $raw ? $data : $this->transformMetadata($data);
+        }
+
+        return $result;
+    }
 
     public function getFileSize(bool $formatted = false, int $precision = 2): int|string
     {
