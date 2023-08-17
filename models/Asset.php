@@ -650,9 +650,9 @@ class Asset extends Element\AbstractElement
             }
 
             // use the parent's path from the database here (getCurrentFullPath),
-                //to ensure the path really exists and does not rely on the path
+            //to ensure the path really exists and does not rely on the path
             // that is currently in the parent asset (in memory),
-                //because this might have changed but wasn't not saved
+            //because this might have changed but wasn't not saved
             $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
@@ -1509,8 +1509,8 @@ class Asset extends Element\AbstractElement
             $instance = $loader->build($metaData['type']);
             $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
         } catch (UnsupportedException $e) {
-        Logger::error((string) $e);
-            }
+            Logger::error((string) $e);
+        }
 
         return $transformedData;
     }
@@ -1520,8 +1520,7 @@ class Asset extends Element\AbstractElement
         ?string $language = null,
         bool $strictMatchLanguage = false,
         bool $raw = false
-    ): mixed
-    {
+    ): mixed {
         $result = null;
         $data = null;
         if ($language === null) {

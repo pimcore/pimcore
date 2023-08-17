@@ -97,8 +97,7 @@ class Processor
         mixed $fileSystemPath = null,
         bool $deferred = false,
         bool &$generated = false
-    ): array
-    {
+    ): array {
         $generated = false;
         $format = strtolower($config->getFormat());
         // Optimize if allowed to strip info.
@@ -425,7 +424,7 @@ class Processor
                             if ($position !== false) {
                                 // high res calculations if enabled
                                 if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
-                                        ['width', 'height', 'x', 'y'])) {
+                                    ['width', 'height', 'x', 'y'])) {
                                     if ($highResFactor && $highResFactor > 1) {
                                         $value *= $highResFactor;
                                         $value = (int)ceil($value);
