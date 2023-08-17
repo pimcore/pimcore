@@ -84,9 +84,13 @@ final class Version20230616085142 extends AbstractMigration
                        WHERE `Tables_in_{$db->getDatabase()}` LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
         );
         foreach ($metaDataTables as $table) {
-            $metaDataTable = $schema->getTable(current($table));
+            $tableName = current($table);
+            $metaDataTable = $schema->getTable($tableName);
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
+                $fkName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
+
+                $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `' . $fkName . '`');
                 $metaDataTable->dropPrimaryKey();
                 $metaDataTable->dropColumn(self::AUTO_ID);
                 $metaDataTable->setPrimaryKey(self::PK_COLUMNS);
