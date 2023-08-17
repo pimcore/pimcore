@@ -55,7 +55,7 @@ final class Version20210107103923 extends AbstractMigration
             $this->write(
                 'Could not write class definition file. Please set PIMCORE_CLASS_DEFINITION_WRITABLE env.' . "\n" .
                 sprintf(
-                    'If you already have migrate the definitions you can skip this migration via "php bin/console doctrine:migrations:version --add %s"',
+                    'If you have already migrated the definitions, you can skip this migration via "php bin/console doctrine:migrations:version --add %s"',
                     __CLASS__
                 )
             );
