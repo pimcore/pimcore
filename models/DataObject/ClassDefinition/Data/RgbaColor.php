@@ -273,11 +273,7 @@ class RgbaColor extends Data implements
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return sprintf('#%02x%02x%02x%02x', $data->getR(), $data->getG(), $data->getB(), $data->getA());
-        }
-
-        return '';
+        return $this->getDataForEditmode($data) ?? '';
     }
 
     /**
