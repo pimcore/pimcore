@@ -129,7 +129,7 @@ class Dao extends Model\Dao\AbstractDao
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
-              PRIMARY KEY (`id`),
+              PRIMARY KEY (`auto_id`),
               UNIQUE KEY `metadata_un` (
                 `o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`
               ),
