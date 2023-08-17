@@ -32,7 +32,16 @@ class OptionsProviderResolver extends ClassResolver
 
     public static function resolveProvider(?string $providerClass, int $mode): ?object
     {
+
         return self::resolve($providerClass, function ($provider) use ($mode) {
+            if ($provider instanceof MultiSelectOptionsProviderInterface) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '12.0',
+                    sprintf('Implementing %s is deprecated, use %s instead', MultiSelectOptionsProviderInterface::class, SelectOptionsProviderInterface::class)
+                );
+            }
+
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
                 || ($mode == self::MODE_MULTISELECT && (
                     $provider instanceof MultiSelectOptionsProviderInterface ||
