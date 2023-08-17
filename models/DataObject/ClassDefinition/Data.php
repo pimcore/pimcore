@@ -50,7 +50,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $noteditable;
 
     /**
-     * @var int|null
+     * @var bool
      */
     public $index;
 
@@ -360,7 +360,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return int|null
+     * @return bool
      */
     public function getIndex()
     {
@@ -368,13 +368,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int|null $index
+     * @param bool $index
      *
      * @return $this
      */
     public function setIndex($index)
     {
-        $this->index = $index;
+        $this->index = (bool) $index;
 
         return $this;
     }
@@ -460,7 +460,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $invisible
+     * @param bool $invisible
      *
      * @return $this
      */
@@ -480,7 +480,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $visibleGridView
+     * @param bool $visibleGridView
      *
      * @return $this
      */
@@ -500,7 +500,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool|int|null $visibleSearch
+     * @param bool $visibleSearch
      *
      * @return $this
      */
