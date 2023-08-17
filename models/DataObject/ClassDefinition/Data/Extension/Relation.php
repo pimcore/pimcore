@@ -41,6 +41,9 @@ trait Relation
                 $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.document');
                 foreach ($documentTypes as $item) {
                     if ($className = $this->resolveClassName($factory, $resolver, $item['documentTypes'])) {
+                        if (str_starts_with($className, '\\') === false) {
+                            $className = '\\' . $className;
+                        }
                         $types[] = $className;
                     }
                 }
@@ -57,6 +60,9 @@ trait Relation
                 $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.asset');
                 foreach ($assetTypes as $item) {
                     if ($className = $this->resolveClassName($factory, $resolver, $item['assetTypes'])) {
+                        if (str_starts_with($className, '\\') === false) {
+                            $className = '\\' . $className;
+                        }
                         $types[] = $className;
                     }
                 }
