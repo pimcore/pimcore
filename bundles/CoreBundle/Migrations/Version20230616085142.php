@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Db;
 
 final class Version20230616085142 extends AbstractMigration
 {
@@ -38,25 +37,30 @@ final class Version20230616085142 extends AbstractMigration
     {
         $this->addSql('SET foreign_key_checks = 0');
 
-        $db = Db::get();
+        $metaDataTables = $this->connection->fetchAllAssociative(
+            "SHOW FULL TABLES
+                   WHERE `Tables_in_{$this->connection->getDatabase()}`
+                    LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
+        );
 
-        $metaDataTables = $db->fetchAllAssociative(
-                "SHOW FULL TABLES
-                       WHERE `Tables_in_{$db->getDatabase()}` LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
-            );
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
-                $this->addSql(
-                    'ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY, ' .
-                    'ADD `' . self::AUTO_ID . '` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST'
-                );
-                $this->addSql(
-                    'ALTER TABLE `' . $tableName . '` ADD ' .
-                    'CONSTRAINT `' . self::UNIQUE_KEY_NAME . '` UNIQUE (' . self::PK_COLUMNS . ')'
-                );
+                if ($metaDataTable->hasPrimaryKey()) {
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY');
+                }
+
+                $this->addSql('ALTER TABLE ' . $tableName . ' ADD `' . self::AUTO_ID .
+                    '` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST');
+
+                if (!$metaDataTable->hasIndex(self::UNIQUE_KEY_NAME)) {
+                    $this->addSql(
+                        'ALTER TABLE `' . $tableName . '` ADD ' .
+                        'CONSTRAINT `' . self::UNIQUE_KEY_NAME . '` UNIQUE (' . self::PK_COLUMNS . ')'
+                    );
+                }
             }
         }
 
@@ -67,12 +71,12 @@ final class Version20230616085142 extends AbstractMigration
     {
         $this->addSql('SET foreign_key_checks = 0');
 
-        $db = Db::get();
-
-        $metaDataTables = $db->fetchAllAssociative(
-            "SHOW FULL TABLES
-                       WHERE `Tables_in_{$db->getDatabase()}` LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
+        $metaDataTables = $this->connection->fetchAllAssociative(
+        "SHOW FULL TABLES
+                   WHERE `Tables_in_{$this->connection->getDatabase()}`
+                    LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
         );
+
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
