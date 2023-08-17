@@ -717,7 +717,7 @@ class Service extends Model\Element\Service
                         $fielddata = $definition->getDataForGrid($fielddata, $object);
                     }
 
-                    return $fielddata;
+                    return (string) $fielddata;
                 }
             }
         }
