@@ -303,10 +303,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                                 ownerName: this.fieldConfig.name,
                                 applyDefaults: manuallyAdded
                             }, false, true, dataProvider);
-                            if (this.fieldConfig.noteditable && children) {
-                                children.forEach(function (record) {
-                                    record.disabled = true;
-                                });
+                            if (this.fieldConfig.noteditable){
+                                panel.mask();
                             }
 
                             if (children) {
