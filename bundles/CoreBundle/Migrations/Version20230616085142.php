@@ -51,7 +51,7 @@ final class Version20230616085142 extends AbstractMigration
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
                 $this->addSql(
                     'ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY, ' .
-                    'ADD `' . self::AUTO_ID . '` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY'
+                    'ADD `' . self::AUTO_ID . '` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST'
                 );
                 $this->addSql(
                     'ALTER TABLE `' . $tableName . '` ADD ' .
