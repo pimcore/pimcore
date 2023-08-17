@@ -178,7 +178,7 @@ class Asset extends Element\AbstractElement
     public function setDataModificationDate(?int $dataModificationDate): static
     {
         $this->dataModificationDate = $dataModificationDate;
-        
+
         return $this;
     }
 
@@ -339,7 +339,7 @@ class Asset extends Element\AbstractElement
                 $fileExtension = File::getFileExtension($data['filename']);
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . $fileExtension;
 
-                if (!str_starts_with($tmpFile,  PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+                if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
                     throw new \InvalidArgumentException('Invalid filename');
                 }
 
@@ -544,7 +544,7 @@ class Asset extends Element\AbstractElement
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate;// need for $this->update() for certain types (image, video, document)
+            $params['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, to restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -1623,6 +1623,7 @@ class Asset extends Element\AbstractElement
                 if ($md['name'] == $name) {
                     if ($language == $md['language'] || (empty($md['language']) && !$strictMatch)) {
                         $data = $md;
+
                         break;
                     }
                 }
