@@ -107,7 +107,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
               INDEX `index` (`index`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`o_id`)
+              CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`)
               REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
