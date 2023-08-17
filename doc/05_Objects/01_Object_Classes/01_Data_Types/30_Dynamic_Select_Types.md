@@ -24,10 +24,9 @@ services:
     public: true
 ```
 
-Depending on your datatype you have to implement the appropriate interface.
+You have to implement following interface.
  
- * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options,
- * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface` for the Multiselect options 
+ * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options
  
  Implement the following methods:
  * `getOptions` should return a list of valid options in the format indicated below
