@@ -50,7 +50,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         }
 
         $this
-            ->addDoumentEditables($document, $result)
+            ->addDocumentEditables($document, $result)
             ->addSettings($document, $result);
 
         return $result;
@@ -61,7 +61,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
      *
      * @throws \Exception
      */
-    protected function addDoumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
+    protected function addDocumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $editables = [];
         $service = new Document\Service;
