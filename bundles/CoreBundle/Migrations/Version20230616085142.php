@@ -23,9 +23,12 @@ use Doctrine\Migrations\AbstractMigration;
 final class Version20230616085142 extends AbstractMigration
 {
     private const ID_COLUMN = 'o_id';
+
     private const PK_COLUMNS = '`' . self::ID_COLUMN .
     '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
+
     private const UNIQUE_KEY_NAME = 'metadata_un';
+
     private const AUTO_ID = 'auto_id';
 
     public function getDescription(): string
@@ -72,7 +75,7 @@ final class Version20230616085142 extends AbstractMigration
         $this->addSql('SET foreign_key_checks = 0');
 
         $metaDataTables = $this->connection->fetchAllAssociative(
-        "SHOW FULL TABLES
+            "SHOW FULL TABLES
                    WHERE `Tables_in_{$this->connection->getDatabase()}`
                     LIKE 'object_metadata_%' AND Table_type = 'BASE TABLE'"
         );
