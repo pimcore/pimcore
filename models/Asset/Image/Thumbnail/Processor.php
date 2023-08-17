@@ -257,7 +257,7 @@ class Processor
                 $fileExists = true;
             }
         } catch (\Exception $e) {
-            Logger::warn($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         if ($fileExists === false) {
