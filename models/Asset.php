@@ -156,6 +156,33 @@ class Asset extends Element\AbstractElement
     protected $dataChanged = false;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $dataModificationDate = null;
+
+    /**
+     * @return int|null
+     */
+    public function getDataModificationDate(): ?int
+    {
+        return $this->dataModificationDate;
+    }
+
+    /**
+     * @param int|null $dataModificationDate
+     *
+     * @return $this
+     */
+    public function setDataModificationDate(?int $dataModificationDate): static
+    {
+        $this->dataModificationDate = $dataModificationDate;
+        
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
@@ -199,7 +226,10 @@ class Asset extends Element\AbstractElement
             $asset = new static();
             $asset->getDao()->getByPath($path);
 
-            return static::getById($asset->getId(), Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
+            return static::getById(
+                $asset->getId(),
+                Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1)
+            );
         } catch (NotFoundException $e) {
             return null;
         }
@@ -269,20 +299,18 @@ class Asset extends Element\AbstractElement
 
                 Cache::save($asset, $cacheKey);
             } catch (NotFoundException $e) {
-                return null;
+                $asset = null;
             }
         } else {
             RuntimeCache::set($cacheKey, $asset);
         }
 
-        if (!$asset || !static::typeMatch($asset)) {
-            return null;
+        if ($asset && static::typeMatch($asset)) {
+            \Pimcore::getEventDispatcher()->dispatch(
+                new AssetEvent($asset, ['params' => $params]),
+                AssetEvents::POST_LOAD
+            );
         }
-
-        \Pimcore::getEventDispatcher()->dispatch(
-            new AssetEvent($asset, ['params' => $params]),
-            AssetEvents::POST_LOAD
-        );
 
         return $asset;
     }
@@ -299,9 +327,22 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = Asset::class;
-        if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
+        if (
+            array_key_exists('filename', $data) &&
+            (
+                array_key_exists('data', $data) ||
+                array_key_exists('sourcePath', $data) ||
+                array_key_exists('stream', $data)
+            )
+        ) {
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $fileExtension = File::getFileExtension($data['filename']);
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . $fileExtension;
+
+                if (!str_starts_with($tmpFile,  PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+                    throw new \InvalidArgumentException('Invalid filename');
+                }
+
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
                     self::checkMaxPixels($tmpFile, $data);
@@ -399,7 +440,7 @@ class Asset extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (!is_array($config)) {
-            throw new Exception('Unable to initiate list class - please provide valid configuration array');
+            throw new \RuntimeException('Unable to initiate list class - please provide valid configuration array');
         }
 
         $listClass = Listing::class;
@@ -444,7 +485,8 @@ class Asset extends Element\AbstractElement
 
         $mappings = [
             'unknown' => ["/\.stp$/"],
-            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
+            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/",
+                "/\.wmf$/", '/photoshop/'],
             'text' => ['/text\//', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
@@ -502,11 +544,11 @@ class Asset extends Element\AbstractElement
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
+            $params['isUpdate'] = $isUpdate;// need for $this->update() for certain types (image, video, document)
 
-            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+            // we wrap the save actions in a loop here, to restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+            // especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 $this->beginTransaction();
@@ -642,8 +684,10 @@ class Asset extends Element\AbstractElement
 
             $parent = Asset::getById($this->getParentId());
             if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
+                // use the parent's path from the database here (getCurrentFullPath),
+                //to ensure the path really exists and does not rely on the path
+                // that is currently in the parent asset (in memory),
+                //because this might have changed but wasn't not saved
                 $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
             } else {
                 trigger_deprecation(
@@ -1218,7 +1262,8 @@ class Asset extends Element\AbstractElement
         }
 
         if (is_resource($stream)) {
-            $this->setDataChanged(true);
+            $this->setDataChanged();
+            $this->setDataModificationDate(time());
             $this->stream = $stream;
 
             $isRewindable = @rewind($this->stream);
@@ -1561,12 +1606,14 @@ class Asset extends Element\AbstractElement
                 $instance = $loader->build($metaData['type']);
                 $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
             } catch (UnsupportedException $e) {
+                Logger::error((string) $e);
             }
 
             return $transformedData;
         };
 
         if ($name) {
+            $result = null;
             if ($language === null) {
                 $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
@@ -1574,31 +1621,18 @@ class Asset extends Element\AbstractElement
             $data = null;
             foreach ($this->metadata as $md) {
                 if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
+                    if ($language == $md['language'] || (empty($md['language']) && !$strictMatch)) {
                         $data = $md;
+                        break;
                     }
                 }
             }
 
             if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
+                $result = $raw ? $data : $convert($data);
             }
 
-            return null;
+            return $result;
         }
 
         $metaData = $this->getObjectVar('metadata');
