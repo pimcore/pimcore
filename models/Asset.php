@@ -502,7 +502,7 @@ class Asset extends Element\AbstractElement
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
+            $parameters['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, to restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
