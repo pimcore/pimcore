@@ -323,8 +323,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         mixed $data,
         DataObject\Concrete $object = null,
         array $params = []
-    ): DataObject\Classificationstore
-    {
+    ): DataObject\Classificationstore {
         $classificationStore = $this->getDataFromObjectParam($object);
 
         if (!$classificationStore instanceof DataObject\Classificationstore) {
