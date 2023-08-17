@@ -20,14 +20,13 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Db;
-use Pimcore\Model\Dao\AbstractDao;
 
 final class Version20230616085142 extends AbstractMigration
 {
     private const ID_COLUMN = 'o_id';
-    private const PK_COLUMNS = [
-        self::ID_COLUMN, 'dest_id', 'type', 'fieldname', 'column', 'ownertype', 'ownername', 'position', 'index'];
-    private const UNIQUE_INDEX_NAME = 'metadata_un';
+    private const PK_COLUMNS = '`' . self::ID_COLUMN .
+    '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
+    private const UNIQUE_KEY_NAME = 'metadata_un';
     private const AUTO_ID = 'id';
 
     public function getDescription(): string
@@ -50,22 +49,13 @@ final class Version20230616085142 extends AbstractMigration
             $metaDataTable = $schema->getTable($tableName);
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
-                $metaDataTable->addColumn(self::AUTO_ID, 'integer', [
-                    'autoincrement' => true,
-                ]);
-
-                $fkName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
-                $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `' . $fkName . '`');
-                $metaDataTable->dropPrimaryKey();
-                $metaDataTable->setPrimaryKey([self::AUTO_ID]);
-                $metaDataTable->addUniqueIndex(self::PK_COLUMNS, self::UNIQUE_INDEX_NAME);
-
-                $metaDataTable->addForeignKeyConstraint(
-                    'objects',
-                    [self::ID_COLUMN],
-                    [self::ID_COLUMN],
-                    ["onDelete" => "CASCADE"],
-                    $fkName
+                $this->addSql(
+                    'ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY, ' .
+                    'ADD `' . self::AUTO_ID . '` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY'
+                );
+                $this->addSql(
+                    'ALTER TABLE `' . $tableName . '` ADD ' .
+                    'CONSTRAINT `' . self::UNIQUE_KEY_NAME . '` UNIQUE (' . self::PK_COLUMNS . ')'
                 );
             }
         }
@@ -88,13 +78,13 @@ final class Version20230616085142 extends AbstractMigration
             $metaDataTable = $schema->getTable($tableName);
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
-                $fkName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
-
-                $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `' . $fkName . '`');
-                $metaDataTable->dropPrimaryKey();
-                $metaDataTable->dropColumn(self::AUTO_ID);
-                $metaDataTable->setPrimaryKey(self::PK_COLUMNS);
-                $metaDataTable->dropIndex(self::UNIQUE_INDEX_NAME);
+                $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `' . self::AUTO_ID . '`');
+                $this->addSql(
+                    'ALTER TABLE `' . $tableName . '` ADD PRIMARY KEY (' . self::PK_COLUMNS  . ')'
+                );
+                $this->addSql(
+                    'ALTER TABLE `' . $tableName . '` DROP INDEX IF EXISTS `' . self::UNIQUE_KEY_NAME  . '`'
+                );
             }
         }
 
