@@ -670,6 +670,10 @@ body > .x-mask {
     cursor: default;
     pointer-events: auto!important;
 }
+/* Ext override to allow click through not editable object-brick's mask eg. relation buttons*/
+.pimcore_objectbrick_item.x-masked .x-mask{
+    pointer-events: none;
+}
 
 /** ExtJS7 changes starting from here */
 /* base color is #5fa2dd */

@@ -297,16 +297,14 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     afterrender: function (childConfig, dataProvider, manuallyAdded, panel) {
                         if (!panel.__tabpanel_initialized) {
                             var copy = Ext.decode(Ext.encode(childConfig));
-                            var children = this.getRecursiveLayout(copy, null, {
+                            var children = this.getRecursiveLayout(copy, this.fieldConfig.noteditable, {
                                 containerType: "objectbrick",
                                 containerKey: type,
                                 ownerName: this.fieldConfig.name,
                                 applyDefaults: manuallyAdded
                             }, false, true, dataProvider);
-                            if (this.fieldConfig.noteditable && children) {
-                                children.forEach(function (record) {
-                                    record.disabled = true;
-                                });
+                            if (this.fieldConfig.noteditable){
+                                panel.mask();
                             }
 
                             if (children) {
