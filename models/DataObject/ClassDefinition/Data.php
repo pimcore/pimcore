@@ -37,7 +37,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public bool $noteditable = false;
 
-    public int|bool|null $index = null;
+    public bool $index = null;
 
     public bool $locked = false;
 
@@ -230,12 +230,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function getIndex(): ?int
+    public function getIndex(): ?bool
     {
         return $this->index;
     }
 
-    public function setIndex(?int $index): static
+    public function setIndex(?bool $index): static
     {
         $this->index = $index;
 
@@ -288,7 +288,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->invisible;
     }
 
-    public function setInvisible(bool|int|null $invisible): static
+    public function setInvisible(bool $invisible): static
     {
         $this->invisible = (bool)$invisible;
 
@@ -300,9 +300,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleGridView;
     }
 
-    public function setVisibleGridView(bool|int|null $visibleGridView): static
+    public function setVisibleGridView(bool $visibleGridView): static
     {
-        $this->visibleGridView = (bool)$visibleGridView;
+        $this->visibleGridView = $visibleGridView;
 
         return $this;
     }
@@ -312,9 +312,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleSearch;
     }
 
-    public function setVisibleSearch(bool|int|null $visibleSearch): static
+    public function setVisibleSearch(bool $visibleSearch): static
     {
-        $this->visibleSearch = (bool)$visibleSearch;
+        $this->visibleSearch = $visibleSearch;
 
         return $this;
     }

@@ -50,7 +50,7 @@ The following options are available:
 
 #### Storage directory for symfony Config files
 
-The default storage directory for Symfony Config files is `/var/config/...`.
+The default storage directory for Symfony Config files is defined by `PIMCORE_CONFIGURATION_DIRECTORY`.
 If there is no read target set, the config of write target is used.
 
 Available options for write targets and directory & read targets and directory for Symfony Config files are: 
