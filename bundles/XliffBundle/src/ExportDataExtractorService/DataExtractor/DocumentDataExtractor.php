@@ -61,7 +61,13 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
      */
     protected function addDoumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
     {
-        trigger_deprecation('pimcore/pimcore', '11.2', 'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.', 'addDoumentEditables', 'addDocumentEditables');
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2',
+            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
+            'addDoumentEditables',
+            'addDocumentEditables'
+        );
 
         return $this->addDocumentEditables($document, $result);
     }
