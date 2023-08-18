@@ -256,9 +256,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @return $this
      */
-    public function setIndex(bool $index): static
+    public function setIndex(?bool $index): static
     {
-        $this->index = $index;
+        $this->index = $index ?? false;
 
         return $this;
     }
