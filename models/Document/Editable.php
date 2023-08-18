@@ -54,7 +54,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected string $realName = '';
+    protected ?string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
@@ -332,7 +332,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function getRealName(): string
     {
-        return $this->realName;
+        return $this->realName ?? '';
     }
 
     public function setRealName(string $realName): void

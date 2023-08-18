@@ -30,9 +30,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
- * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getTableName(DataObject\ClassDefinition $class, bool $query = false)
  * @method void createUpdateTable(DataObject\ClassDefinition $class)
- * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en')
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {

@@ -41,12 +41,8 @@ class Imagick extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
-    private ?array $initalOptions = null;
-
     public function load(string $imagePath, array $options = []): static|false
     {
-        $this->initalOptions ??= $options;
-
         if (isset($options['preserveColor'])) {
             // set this option to TRUE to skip all color transformations during the loading process
             // this can massively improve performance if the color information doesn't matter, ...
@@ -750,7 +746,7 @@ class Imagick extends Adapter
             }
 
             $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
-            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), $x, $y);
+            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
         }
 
         $this->postModify();

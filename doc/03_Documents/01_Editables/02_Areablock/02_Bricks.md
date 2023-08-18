@@ -18,10 +18,10 @@ system. If a brick ID is registered twice (e.g. by multiple bundles), an error w
 register a brick is to just save it to a special namespace `Document\Areabrick` inside your bundle. Every bundle will
 be scanned for classes implementing `AreabrickInterface` and all found bricks will be automatically registered to 
 the system. The brick ID will be built from the class name of the implementing class by converting the class name to 
-dashed case. For example a brick named `MyCustomAreaBrick` will be automatically registered as `my-custom-area-brick`.
+dashed case. For example, a brick named `MyCustomAreaBrick` will be automatically registered as `my-custom-area-brick`.
 
 A basic brick implementation could look like the following. As it is defined in the special namespace, Pimcore will
-implicitely auto-create a service `app.area.brick.iframe` and register it on the areabrick manager with the ID `iframe`.
+implicitly auto-create a service `app.area.brick.iframe` and register it on the areabrick manager with the ID `iframe`.
 
 ```php
 <?php
@@ -36,9 +36,7 @@ class Iframe implements AreabrickInterface
 }
 ```
 
-> Please note that you need to clear the cache after you added a brick to the special namespace.
-
-If you need more control over the brick instance (e.g. because your brick has dependencies on other services or you
+If you need more control over the brick instance (e.g. because your brick has dependencies on other services, or you
 want to specify the brick ID manually), you can add the service definition yourself and tag the service with the DI
 tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto-registration, even if they're
 defined in the special namespace. Let's define our brick as above, but assume it needs access to a logger instance:
@@ -54,6 +52,25 @@ services:
 
 This will register the brick as above, but you have control over the brick ID and are able to make use of the
 container for dependencies.
+
+There's also the `AsAreabrick` attribute, as a way to control its ID when using the auto-loading,
+or to automatically tag it when defining the service yourself.
+
+```php
+<?php
+
+namespace App\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
+use Psr\Log\LoggerInterface;
+
+#[AsAreabrick(id: 'iframe')]
+class Iframe implements AreabrickInterface
+{
+    // implementing class methods
+}
+```
 
 > Although it might be tempting to overwrite the `getId()` method in your bricks, please make sure the brick always
 refers to the ID which is set via `setId($id)` when the brick is registered. Overriding `getId()` won't affect the
@@ -72,10 +89,10 @@ The template location defines the base path which will be used to find your temp
 locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
 as registered on the areabrick manager (see below).
 
-| Location | Path                                                                                                                                                                                      |
-|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| global   | `templates/areas/<brickId>/`                                                                                                                                                              |
-| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony <= 4) bundle strucure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
+| Location | Path                                                                                                                                                                                       |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| global   | `templates/areas/<brickId>/`                                                                                                                                                               |
+| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony <= 4) bundle structure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
 implementing the methods for templates and icon yourself (see `AreabrickInterface`):
@@ -112,7 +129,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 ## How to Create a Brick
  
-Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
+Let's suppose that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
 from a specified URL in the editmode. First of all, let's update the class to add metadata for the extension manager, to
 make use of template auto-discovery and to load the view template from `templates` instead of the bundle
 directory:
@@ -147,8 +164,8 @@ class Iframe extends AbstractTemplateAreabrick
 }
 ```
 
-Let's create a view as next step. Views behave exactly as native controller views and you have access to the current 
-document, to editmode and to editables and templating helpers as everywhere else. In addition there's a `instance` 
+Let's create a view as next step. Views behave exactly as native controller views, and you have access to the current 
+document, to editmode and to editables and templating helpers as everywhere else. In addition, there's a `instance` 
 variable on the view which gives you access to the brick instance. A `info` variable (see below) gives you access to 
 brick metadata.
 
@@ -284,7 +301,7 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
 }
 ``` 
 
-### Advaned Example Config using Layouts
+### Advanced Example Config using Layouts
 It is also possible to use tab panels in your configuration. 
 ```php
 <?php
@@ -432,8 +449,8 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
 ```
 
 ### Accessing Data of the Editable Dialog
-The editables in the dialog are just normal editables, there's not difference to editables which are defined 
-via the template. So can either use them as well in the template or access them in your custom code. 
+The editables in the dialog are just normal editables, there's no difference to editables which are defined 
+via the template. So you can either use them as well in the template or access them in your custom code. 
 
 
 ## Methods on the brick class

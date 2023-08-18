@@ -130,18 +130,23 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image_thumbnails',
-            'video_thumbnails' => '/var/config/video_thumbnails',
-            'document_types' => '/var/config/document_types',
-            'predefined_properties' => '/var/config/predefined_properties',
-            'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
-            'perspectives' => '/var/config/perspectives',
-            'custom_views' => '/var/config/custom_views',
-            'object_custom_layouts' => '/var/config/object_custom_layouts',
-            'system_settings' => '/var/config/system_settings',
+            'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
+            'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
+            'document_types' => PIMCORE_CONFIGURATION_DIRECTORY . '/document_types',
+            'predefined_properties' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_properties',
+            'predefined_asset_metadata' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_asset_metadata',
+            'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
+            'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
+            'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
+            'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
         ]);
 
-        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', [LocationAwareConfigRepository::READ_TARGET]);
+        ConfigurationHelper::addConfigLocationTargetNode(
+            $storageNode,
+            'system_settings',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            [LocationAwareConfigRepository::READ_TARGET]
+        );
 
         return $treeBuilder;
     }

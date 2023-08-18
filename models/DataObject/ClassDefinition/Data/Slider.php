@@ -182,7 +182,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(?float $data, Concrete $object = null, array $params = []): ?float
+    public function getDataFromGridEditor(mixed $data, Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }

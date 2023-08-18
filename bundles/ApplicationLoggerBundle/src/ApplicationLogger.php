@@ -106,7 +106,7 @@ class ApplicationLogger implements LoggerInterface
         }
     }
 
-    public function log($level, $message, array $context = []): void
+    public function log(mixed $level, string|\Stringable $message, array $context = []): void
     {
         if (!isset($context['component'])) {
             $context['component'] = $this->component;
@@ -221,42 +221,42 @@ class ApplicationLogger implements LoggerInterface
         return $source;
     }
 
-    public function emergency($message, array $context = []): void
+    public function emergency(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('emergency', $message, func_get_args());
     }
 
-    public function critical($message, array $context = []): void
+    public function critical(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('critical', $message, func_get_args());
     }
 
-    public function error($message, array $context = []): void
+    public function error(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('error', $message, func_get_args());
     }
 
-    public function alert($message, array $context = []): void
+    public function alert(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('alert', $message, func_get_args());
     }
 
-    public function warning($message, array $context = []): void
+    public function warning(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('warning', $message, func_get_args());
     }
 
-    public function notice($message, array $context = []): void
+    public function notice(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('notice', $message, func_get_args());
     }
 
-    public function info($message, array $context = []): void
+    public function info(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('info', $message, func_get_args());
     }
 
-    public function debug($message, array $context = []): void
+    public function debug(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('debug', $message, func_get_args());
     }

@@ -53,7 +53,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, bool $index = false, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;

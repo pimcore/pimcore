@@ -708,11 +708,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /** See parent class.
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];

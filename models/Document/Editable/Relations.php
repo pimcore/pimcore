@@ -224,10 +224,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         reset($this->elements);
     }
 
-    /**
-     * @return Element\ElementInterface|false
-     */
-    public function current(): bool|Element\ElementInterface
+    public function current(): false|Element\ElementInterface
     {
         $this->setElements();
 

@@ -124,7 +124,7 @@ trait ImageThumbnailTrait
         $this->realWidth = null;
     }
 
-    public function getWidth(): int
+    public function getWidth(): ?int
     {
         if (!$this->width) {
             $this->getDimensions();
@@ -133,7 +133,7 @@ trait ImageThumbnailTrait
         return $this->width;
     }
 
-    public function getHeight(): int
+    public function getHeight(): ?int
     {
         if (!$this->height) {
             $this->getDimensions();
@@ -142,7 +142,7 @@ trait ImageThumbnailTrait
         return $this->height;
     }
 
-    public function getRealWidth(): int
+    public function getRealWidth(): ?int
     {
         if (!$this->realWidth) {
             $this->getDimensions();
@@ -151,7 +151,7 @@ trait ImageThumbnailTrait
         return $this->realWidth;
     }
 
-    public function getRealHeight(): int
+    public function getRealHeight(): ?int
     {
         if (!$this->realHeight) {
             $this->getDimensions();

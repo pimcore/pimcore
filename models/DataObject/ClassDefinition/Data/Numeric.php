@@ -411,6 +411,12 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 
+        if ($operator === 'in') {
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
+        }
+
         return '';
     }
 
