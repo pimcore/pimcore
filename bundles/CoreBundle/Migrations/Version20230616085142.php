@@ -101,7 +101,7 @@ final class Version20230616085142 extends AbstractMigration
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
-            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, 'o_id');
+            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
