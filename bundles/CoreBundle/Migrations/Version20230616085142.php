@@ -71,7 +71,6 @@ final class Version20230616085142 extends AbstractMigration
                             UNIQUE (' . self::PK_COLUMNS . ')'
                     );
                 }
-#
                 if ($recreateForeignKey) {
                     $this->addSql(
                         'ALTER TABLE `' . $tableName . '`
