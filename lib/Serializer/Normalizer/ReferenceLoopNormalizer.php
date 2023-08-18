@@ -53,6 +53,6 @@ class ReferenceLoopNormalizer implements NormalizerInterface
 
     public function getSupportedTypes(?string $format): array
     {
-        return ['*' => false];
+        return ['*' => true];
     }
 }
