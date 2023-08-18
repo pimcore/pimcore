@@ -490,9 +490,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {

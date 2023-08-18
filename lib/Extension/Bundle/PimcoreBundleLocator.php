@@ -134,7 +134,7 @@ class PimcoreBundleLocator
 
     private function processBundleClass(string $bundle, array &$result): void
     {
-        if (empty($bundle) || !is_string($bundle)) {
+        if (!$bundle) {
             return;
         }
 

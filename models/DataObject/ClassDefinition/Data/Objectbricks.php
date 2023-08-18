@@ -755,22 +755,20 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
-        if (is_array($this->allowedTypes)) {
-            foreach ($this->allowedTypes as $allowedType) {
-                $definition = DataObject\Objectbrick\Definition::getByKey($allowedType);
-                if ($definition) {
-                    $definition->getDao()->createUpdateTable($class);
-                    $fieldDefinition = $definition->getFieldDefinitions();
+        foreach ($this->allowedTypes as $allowedType) {
+            $definition = DataObject\Objectbrick\Definition::getByKey($allowedType);
+            if ($definition) {
+                $definition->getDao()->createUpdateTable($class);
+                $fieldDefinition = $definition->getFieldDefinitions();
 
-                    foreach ($fieldDefinition as $fd) {
-                        if ($fd instanceof ClassSavedInterface) {
-                            // defer creation
-                            $fd->classSaved($class, $params);
-                        }
+                foreach ($fieldDefinition as $fd) {
+                    if ($fd instanceof ClassSavedInterface) {
+                        // defer creation
+                        $fd->classSaved($class, $params);
                     }
-
-                    $definition->getDao()->classSaved($class);
                 }
+
+                $definition->getDao()->classSaved($class);
             }
         }
     }
@@ -781,11 +779,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
-        if (is_array($container)) {
-            foreach ($container as $childDef) {
-                if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-                    $list[] = $childDef;
-                }
+        foreach ($container as $childDef) {
+            if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+                $list[] = $childDef;
             }
         }
     }

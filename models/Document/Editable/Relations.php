@@ -82,17 +82,15 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
         $return = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
-                } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
-                } elseif ($element instanceof Asset) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
-                } elseif ($element instanceof Document) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
-                }
+        foreach ($this->elements as $element) {
+            if ($element instanceof DataObject\Concrete) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
+            } elseif ($element instanceof Asset) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
+            } elseif ($element instanceof Document) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
             }
         }
 
@@ -166,17 +164,15 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
         $dependencies = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof Element\ElementInterface) {
-                    $elementType = Element\Service::getElementType($element);
-                    $key = $elementType . '_' . $element->getId();
+        foreach ($this->elements as $element) {
+            if ($element instanceof Element\ElementInterface) {
+                $elementType = Element\Service::getElementType($element);
+                $key = $elementType . '_' . $element->getId();
 
-                    $dependencies[$key] = [
-                        'id' => $element->getId(),
-                        'type' => $elementType,
-                    ];
-                }
+                $dependencies[$key] = [
+                    'id' => $element->getId(),
+                    'type' => $elementType,
+                ];
             }
         }
 
@@ -228,10 +224,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         reset($this->elements);
     }
 
-    /**
-     * @return Element\ElementInterface|false
-     */
-    public function current(): bool|Element\ElementInterface
+    public function current(): false|Element\ElementInterface
     {
         $this->setElements();
 

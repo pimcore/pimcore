@@ -28,6 +28,7 @@ use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\SystemSettingsConfig;
+use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -358,7 +359,7 @@ class Document extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $updatedDocument) {
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
@@ -470,15 +471,13 @@ class Document extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
-                if (!$property->getInherited()) {
-                    $property->setDao(null);
-                    $property->setCid($this->getId());
-                    $property->setCtype('document');
-                    $property->setCpath($this->getRealFullPath());
-                    $property->save();
-                }
+        foreach ($this->getProperties() as $property) {
+            if (!$property->getInherited()) {
+                $property->setDao(null);
+                $property->setCid($this->getId());
+                $property->setCtype('document');
+                $property->setCpath($this->getRealFullPath());
+                $property->save();
             }
         }
 
@@ -492,7 +491,7 @@ class Document extends Element\AbstractElement
                 // dont't add a reference to yourself
                 continue;
             } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
+                $d->addRequirement((int)$requirement['id'], $requirement['type']);
             }
         }
         $d->save();
@@ -696,7 +695,7 @@ class Document extends Element\AbstractElement
 
         // check if this document is also the site root, if so return /
         try {
-            if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest()) {
+            if (!$link && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
@@ -710,6 +709,7 @@ class Document extends Element\AbstractElement
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
         $mainRequest = $requestStack->getMainRequest();
+        $request = $requestStack->getCurrentRequest();
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
@@ -720,49 +720,55 @@ class Document extends Element\AbstractElement
         // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
-        if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
-                if ($mainDocument instanceof WrapperInterface) {
-                    $hardlinkPath = '';
-                    $hardlink = $mainDocument->getHardLinkSource();
-                    $hardlinkTarget = $hardlink->getSourceDocument();
-
-                    if ($hardlinkTarget) {
-                        $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
-
-                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
-                            $hardlinkPath, $this->getRealFullPath());
-                    }
-
-                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
-                        $link = null;
-                    }
-                }
+        if (!$link && Tool::isFrontend()) {
+            $differentDomain = false;
+            $site = FrontendTool::getSiteForDocument($this);
+            if (Tool::isFrontendRequestByAdmin() && $site instanceof Site) {
+                $differentDomain = $site->getMainDomain() != $request->getHost();
             }
 
-            if (!$link) {
-                $config = SystemSettingsConfig::get()['general'];
-                $request = $requestStack->getCurrentRequest();
-                $scheme = 'http://';
-                if ($request) {
-                    $scheme = $request->getScheme() . '://';
-                }
+            if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
+                || $differentDomain) {
+                if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
+                    if ($mainDocument instanceof WrapperInterface) {
+                        $hardlinkPath = '';
+                        $hardlink = $mainDocument->getHardLinkSource();
+                        $hardlinkTarget = $hardlink->getSourceDocument();
 
-                /** @var Site $site */
-                if ($site = FrontendTool::getSiteForDocument($this)) {
-                    if ($site->getMainDomain()) {
-                        // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
-                        if ($site->getRootDocument()->getId() == $this->getId()) {
-                            $link = $scheme . $site->getMainDomain() . '/';
-                        } else {
-                            $link = $scheme . $site->getMainDomain() .
-                                preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
+                        if ($hardlinkTarget) {
+                            $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
+
+                            $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
+                        }
+
+                        if (!str_contains($link, $hardlinkPath) && !str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
+                            $link = null;
                         }
                     }
                 }
 
-                if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
-                    $link = $scheme . $config['domain'] . $this->getRealFullPath();
+                if (!$link) {
+                    $config = SystemSettingsConfig::get()['general'];
+                    $scheme = 'http://';
+                    if ($request) {
+                        $scheme = $request->getScheme() . '://';
+                    }
+
+                    if ($site) {
+                        if ($site->getMainDomain()) {
+                            // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
+                            if ($site->getRootDocument()->getId() == $this->getId()) {
+                                $link = $scheme . $site->getMainDomain() . '/';
+                            } else {
+                                $link = $scheme . $site->getMainDomain() .
+                                    preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
+                            }
+                        }
+                    }
+
+                    if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
+                        $link = $scheme . $config['domain'] . $this->getRealFullPath();
+                    }
                 }
             }
         }
@@ -785,7 +791,7 @@ class Document extends Element\AbstractElement
 
     private function prepareFrontendPath(string $path): string
     {
-        if (\Pimcore\Tool::isFrontend()) {
+        if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($path);
 
             $event = new GenericEvent($this, [
@@ -807,7 +813,7 @@ class Document extends Element\AbstractElement
     {
         // check for site, if so rewrite the path for output
         try {
-            if (\Pimcore\Tool::isFrontend() && Site::isSiteRequest()) {
+            if (Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {

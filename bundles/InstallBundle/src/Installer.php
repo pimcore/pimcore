@@ -454,6 +454,7 @@ class Installer
         $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('complete');
 
         return $errors;
     }
@@ -733,7 +734,7 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        if (strpos($file, 'atomic') !== false) {
+        if (str_contains($file, 'atomic')) {
             $db->executeStatement($dumpFile);
         } else {
             // get every command as single part - ; at end of line

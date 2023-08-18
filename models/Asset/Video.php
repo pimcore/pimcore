@@ -60,7 +60,7 @@ class Video extends Model\Asset
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig(string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
+    public function getThumbnailConfig(null|string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 
@@ -134,7 +134,7 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');

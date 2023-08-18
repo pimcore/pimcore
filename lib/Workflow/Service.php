@@ -109,17 +109,15 @@ class Service
         $note->setDescription($description);
         $note->setUser($user ? $user->getId() : 0);
 
-        if (is_array($noteData)) {
-            foreach ($noteData as $row) {
-                if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
-                    /**
-                     * @var \DateTime $date
-                     */
-                    $date = $row['value'];
-                    $note->setDate($date->getTimestamp());
-                } else {
-                    $note->addData($row['key'], $row['type'], $row['value']);
-                }
+        foreach ($noteData as $row) {
+            if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
+                /**
+                 * @var \DateTime $date
+                 */
+                $date = $row['value'];
+                $note->setDate($date->getTimestamp());
+            } else {
+                $note->addData($row['key'], $row['type'], $row['value']);
             }
         }
 

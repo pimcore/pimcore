@@ -101,7 +101,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
+        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -126,12 +126,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND r.type='document'
 
             ORDER BY `index` ASC", $params);
-
-        if (is_array($relations) && count($relations) > 0) {
-            return $relations;
-        } else {
-            return [];
-        }
     }
 
     /**

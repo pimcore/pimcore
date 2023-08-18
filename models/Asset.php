@@ -369,10 +369,6 @@ class Asset extends Element\AbstractElement
      */
     public static function getList(array $config = []): Listing
     {
-        if (!is_array($config)) {
-            throw new Exception('Unable to initiate list class - please provide valid configuration array');
-        }
-
         $listClass = Listing::class;
 
         /** @var Listing $list */
@@ -511,7 +507,7 @@ class Asset extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $assetId) {
                     $tag = 'asset_' . $assetId;
                     $additionalTags[] = $tag;
@@ -702,15 +698,13 @@ class Asset extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
-                if (!$property->getInherited()) {
-                    $property->setDao(null);
-                    $property->setCid($this->getId());
-                    $property->setCtype('asset');
-                    $property->setCpath($this->getRealFullPath());
-                    $property->save();
-                }
+        foreach ($this->getProperties() as $property) {
+            if (!$property->getInherited()) {
+                $property->setDao(null);
+                $property->setCid($this->getId());
+                $property->setCtype('asset');
+                $property->setCpath($this->getRealFullPath());
+                $property->save();
             }
         }
 
@@ -1189,6 +1183,9 @@ class Asset extends Element\AbstractElement
         return self::getLocalFileFromStream($this->getStream());
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSetting(string $key, mixed $value): static
     {
         $this->customSettings[$key] = $value;
@@ -1198,18 +1195,12 @@ class Asset extends Element\AbstractElement
 
     public function getCustomSetting(string $key): mixed
     {
-        if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
-            return $this->customSettings[$key];
-        }
-
-        return null;
+        return $this->customSettings[$key] ?? null;
     }
 
     public function removeCustomSetting(string $key): void
     {
-        if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
-            unset($this->customSettings[$key]);
-        }
+        unset($this->customSettings[$key]);
     }
 
     public function getCustomSettings(): array
@@ -1217,6 +1208,9 @@ class Asset extends Element\AbstractElement
         return $this->customSettings;
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
@@ -1293,6 +1287,9 @@ class Asset extends Element\AbstractElement
         return $this->hasMetaData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHasMetaData(bool $hasMetaData): static
     {
         $this->hasMetaData = $hasMetaData;
@@ -1311,9 +1308,6 @@ class Asset extends Element\AbstractElement
         if ($name && $type) {
             $tmp = [];
             $name = str_replace('~', '---', $name);
-            if (!is_array($this->metadata)) {
-                $this->metadata = [];
-            }
 
             foreach ($this->metadata as $item) {
                 if ($item['name'] != $name || $language != $item['language']) {
@@ -1347,14 +1341,14 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeMetadata(string $name, ?string $language = null): static
     {
         if ($name) {
             $tmp = [];
             $name = str_replace('~', '---', $name);
-            if (!is_array($this->metadata)) {
-                $this->metadata = [];
-            }
 
             foreach ($this->metadata as $item) {
                 if ($item['name'] === $name && ($language == $item['language'] || $language === '*')) {

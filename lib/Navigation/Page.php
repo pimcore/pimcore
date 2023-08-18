@@ -165,10 +165,6 @@ abstract class Page extends Container
      */
     public static function factory(array $options): Url|Page
     {
-        if (!is_array($options)) {
-            throw new \Exception('Invalid argument: $options must be an array');
-        }
-
         if (isset($options['type'])) {
             $type = $options['type'];
         } elseif (self::getDefaultPageType() != null) {
@@ -970,9 +966,7 @@ abstract class Page extends Container
      */
     public function addRel(string $relation, mixed $value): static
     {
-        if (is_string($relation)) {
-            $this->_rel[$relation] = $value;
-        }
+        $this->_rel[$relation] = $value;
 
         return $this;
     }
@@ -988,9 +982,7 @@ abstract class Page extends Container
      */
     public function addRev(string $relation, mixed $value): static
     {
-        if (is_string($relation)) {
-            $this->_rev[$relation] = $value;
-        }
+        $this->_rev[$relation] = $value;
 
         return $this;
     }
@@ -1004,9 +996,7 @@ abstract class Page extends Container
      */
     public function removeRel(string $relation): static
     {
-        if (isset($this->_rel[$relation])) {
-            unset($this->_rel[$relation]);
-        }
+        unset($this->_rel[$relation]);
 
         return $this;
     }

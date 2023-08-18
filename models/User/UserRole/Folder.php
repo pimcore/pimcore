@@ -65,12 +65,13 @@ class Folder extends Model\User\AbstractUser
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
-        if (is_array($children)) {
-            $this->children = $children;
-            $this->hasChildren = count($children) > 0;
-        }
+        $this->children = $children;
+        $this->hasChildren = count($children) > 0;
 
         return $this;
     }

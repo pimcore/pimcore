@@ -24,27 +24,37 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    /**
+     * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
+     */
+    protected function skipSaveCheck(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): bool
     {
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
-                if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$object->hasDirtyFields()) {
-                            return;
-                        }
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$object->isFieldDirty($this->getName())) {
-                            return;
-                        }
-                    }
+        $forceSave = $params['forceSave'] ?? false;
+
+        if (
+            $forceSave === false &&
+            !DataObject::isDirtyDetectionDisabled() &&
+            $object instanceof DirtyIndicatorInterface
+        ) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    return true;
                 }
+            } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                return true;
             }
         }
 
-        $data = $this->getDataFromObjectParam($object, $params);
+        return false;
+    }
+
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    {
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
+        }
 
         parent::save($object, $params);
     }

@@ -31,7 +31,7 @@ final class Version20221003115124 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE objects CHANGE o_id id int(11) unsigned auto_increment NOT NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_parentId parentId int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE o_type `type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE o_type `type` enum('object','folder','variant') DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE o_key `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
         $this->addSql('ALTER TABLE objects CHANGE o_path `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_index `index` int(11) unsigned DEFAULT 0 NULL;');
@@ -71,7 +71,7 @@ final class Version20221003115124 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE objects CHANGE id o_id int(11) unsigned auto_increment NOT NULL;');
         $this->addSql('ALTER TABLE objects CHANGE parentId o_parentId int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE `type` `o_type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE `type` `o_type` enum('object','folder','variant') DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE `key` `o_key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
         $this->addSql('ALTER TABLE objects CHANGE `path` `o_path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE `index` `o_index` int(11) unsigned DEFAULT 0 NULL;');

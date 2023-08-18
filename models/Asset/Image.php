@@ -173,7 +173,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -213,8 +213,6 @@ EOT;
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public function getDimensions(string $path = null, bool $force = false): ?array
@@ -404,7 +402,10 @@ EOT;
              *
              * @see http://foone.org/apng/
              */
-            $isAnimated = strpos(substr($fileContent, 0, strpos($fileContent, 'IDAT')), 'acTL') !== false;
+            $posIDAT = strpos($fileContent, 'IDAT');
+            if ($posIDAT !== false) {
+                $isAnimated = str_contains(substr($fileContent, 0, $posIDAT), 'acTL');
+            }
         }
 
         return $isAnimated;

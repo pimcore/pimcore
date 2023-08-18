@@ -458,7 +458,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -537,7 +537,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
             if ($youtubeId = $this->id) {
-                if (strpos($youtubeId, '//') !== false) {
+                if (str_contains($youtubeId, '//')) {
                     $parts = parse_url($this->id);
                     if (array_key_exists('query', $parts)) {
                         parse_str($parts['query'], $vars);
@@ -548,7 +548,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-                    if (strpos($this->id, 'embed') !== false) {
+                    if (str_contains($this->id, 'embed')) {
                         $explodedPath = explode('/', $parts['path']);
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
@@ -595,7 +595,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $wmode = '?wmode=transparent';
         $seriesPrefix = '';
-        if (strpos($youtubeId, 'PL') === 0) {
+        if (str_starts_with($youtubeId, 'PL')) {
             $wmode = '';
             $seriesPrefix = 'videoseries?list=';
         }
@@ -813,32 +813,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
         if ($video) {
-            $duration = ceil($video->getDuration());
-
-            $durationParts = ['PT'];
-
-            // hours
-            if ($duration / 3600 >= 1) {
-                $hours = floor($duration / 3600);
-                $durationParts[] = $hours . 'H';
-                $duration = $duration - $hours * 3600;
-            }
-
-            // minutes
-            if ($duration / 60 >= 1) {
-                $minutes = floor($duration / 60);
-                $durationParts[] = $minutes . 'M';
-                $duration = $duration - $minutes * 60;
-            }
-
-            $durationParts[] = $duration . 'S';
-            $durationString = implode('', $durationParts);
-
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">' . "\n";
 
             $uploadDate = new \DateTime();
@@ -850,11 +829,15 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
-                'duration' => $durationString,
                 //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
+            $duration = $video->getDuration();
+
+            if ($duration !== null) {
+                $jsonLd['duration'] = $this->getDurationString($duration);
+            }
 
             if (!$thumbnail) {
                 $thumbnail = $video->getImageThumbnail([]);
@@ -908,7 +891,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 $attributesString .= ' ' . $key;
                 if (!empty($value)) {
                     $quoteChar = '"';
-                    if (strpos($value, '"')) {
+                    if (is_string($value) && strpos($value, '"')) {
                         $quoteChar = "'";
                     }
                     $attributesString .= '=' . $quoteChar . $value . $quoteChar;
@@ -934,6 +917,30 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         return $code;
+    }
+
+    private function getDurationString(float $duration): string
+    {
+        $duration = ceil($duration);
+        $durationParts = ['PT'];
+
+        // hours
+        if ($duration / 3600 >= 1) {
+            $hours = floor($duration / 3600);
+            $durationParts[] = $hours . 'H';
+            $duration = $duration - $hours * 3600;
+        }
+
+        // minutes
+        if ($duration / 60 >= 1) {
+            $minutes = floor($duration / 60);
+            $durationParts[] = $minutes . 'M';
+            $duration = $duration - $minutes * 60;
+        }
+
+        $durationParts[] = $duration . 'S';
+
+        return implode('', $durationParts);
     }
 
     private function getProgressCode(string $thumbnail = null): string
@@ -1026,11 +1033,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     /**
      *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|string
+     * @return Asset\Image\ThumbnailInterface|Asset\Video\ImageThumbnailInterface|string
      *
      * TODO Pimcore 11: Change empty string return to null
      */
-    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail|string
+    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|string
     {
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);

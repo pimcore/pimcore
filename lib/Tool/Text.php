@@ -68,7 +68,7 @@ class Text
                         } elseif ($element instanceof Document) {
                             // get parameters
                             preg_match('/href="([^"]+)*"/', $oldTag, $oldHref);
-                            if ($oldHref[1] && (strpos($oldHref[1], '?') !== false || strpos($oldHref[1], '#') !== false)) {
+                            if (isset($oldHref[1]) && (str_contains($oldHref[1], '?') || str_contains($oldHref[1], '#'))) {
                                 $urlParts = parse_url($oldHref[1]);
                                 if (array_key_exists('query', $urlParts) && !empty($urlParts['query'])) {
                                     $path .= '?' . $urlParts['query'];
@@ -118,11 +118,11 @@ class Text
                             $cleanedStyle = preg_replace('#[ ]+#', '', $styleAttr[1]);
                             $styles = explode(';', $cleanedStyle);
                             foreach ($styles as $style) {
-                                if (strpos(trim($style), 'width') === 0) {
+                                if (str_starts_with(trim($style), 'width')) {
                                     if (preg_match('/([0-9]+)(px)/i', $style, $match)) {
                                         $config['width'] = $match[1];
                                     }
-                                } elseif (strpos(trim($style), 'height') === 0) {
+                                } elseif (str_starts_with(trim($style), 'height')) {
                                     if (preg_match('/([0-9]+)(px)/i', $style, $match)) {
                                         $config['height'] = $match[1];
                                     }
@@ -181,7 +181,7 @@ class Text
 
     private static function getElementsTagsInWysiwyg(string $text): array
     {
-        if (!is_string($text) || strlen($text) < 1) {
+        if (strlen($text) < 1) {
             return [];
         }
 
@@ -213,13 +213,10 @@ class Text
                 preg_match('/[0-9]+/', $matches[2][$i], $idMatches);
                 preg_match('/asset|object|document/', $matches[3][$i], $typeMatches);
 
-                $id = $idMatches[0];
-                $type = $typeMatches[0];
-
-                if ($id && $type) {
+                if (isset($idMatches[0], $typeMatches[0])) {
                     $elements[] = [
-                        'id' => $id,
-                        'type' => $type,
+                        'id' => (int) $idMatches[0],
+                        'type' => $typeMatches[0],
                     ];
                 }
             }

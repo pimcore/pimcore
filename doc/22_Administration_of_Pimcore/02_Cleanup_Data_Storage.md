@@ -71,3 +71,6 @@ amount of items in your recycle bin:
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
 ```
+
+**WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
+Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**

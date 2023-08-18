@@ -188,6 +188,7 @@ class Service extends Model\Element\Service
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
+            $new->setMissingRequiredEditable(false);
             $new->setContentMainDocumentId($source->getId(), true);
         }
 
@@ -224,6 +225,13 @@ class Service extends Model\Element\Service
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
         }
+
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */

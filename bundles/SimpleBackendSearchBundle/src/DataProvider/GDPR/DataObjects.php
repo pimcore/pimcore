@@ -65,7 +65,7 @@ class DataObjects extends DataProvider\DataObjects
             }
         }
 
-        if (is_array($classnames) && !empty($classnames[0])) {
+        if ($classnames) {
             $conditionClassnameParts = [];
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);

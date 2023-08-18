@@ -394,10 +394,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $dependencies = [[]];
 
         // check for properties
-        if (method_exists($this, 'getProperties')) {
-            foreach ($this->getProperties() as $property) {
-                $dependencies[] = $property->resolveDependencies();
-            }
+        foreach ($this->getProperties() as $property) {
+            $dependencies[] = $property->resolveDependencies();
         }
 
         return array_merge(...$dependencies);

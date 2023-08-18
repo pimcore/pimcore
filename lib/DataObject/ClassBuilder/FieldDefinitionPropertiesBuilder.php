@@ -27,12 +27,10 @@ class FieldDefinitionPropertiesBuilder implements FieldDefinitionPropertiesBuild
         $cd .= 'protected $classId = "' . $classDefinition->getId(). "\";\n";
         $cd .= 'protected $className = "'.$classDefinition->getName().'"'.";\n";
 
-        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof ClassDefinition\Data\ReverseObjectRelation && !$def instanceof ClassDefinition\Data\CalculatedValue
-                ) {
-                    $cd .= 'protected $'.$key.";\n";
-                }
+        foreach ($classDefinition->getFieldDefinitions() as $key => $def) {
+            if (!$def instanceof ClassDefinition\Data\ReverseObjectRelation && !$def instanceof ClassDefinition\Data\CalculatedValue
+            ) {
+                $cd .= 'protected $'.$key.";\n";
             }
         }
 

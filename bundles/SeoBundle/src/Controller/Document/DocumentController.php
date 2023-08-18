@@ -92,7 +92,7 @@ class DocumentController extends UserAwareController
         // make sure document routes are also built for unpublished documents
         $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
 
-        $document = Document::getById($allParams['node']);
+        $document = Document::getById((int) $allParams['node']);
 
         $documents = [];
         if ($document->hasChildren()) {
