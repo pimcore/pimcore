@@ -93,8 +93,6 @@ class ContainerService
      */
     public function createContainer(string $key, array $value = []): Container
     {
-        $key = $key;
-
         $this->_items[$this->currentIndex][$key] = new Container($value);
 
         return $this->_items[$this->currentIndex][$key];
@@ -109,7 +107,6 @@ class ContainerService
      */
     public function getContainer(string $key): Container
     {
-        $key = $key;
         if (isset($this->_items[$this->currentIndex][$key])) {
             return $this->_items[$this->currentIndex][$key];
         }
@@ -128,7 +125,6 @@ class ContainerService
      */
     public function containerExists(string $key): bool
     {
-
         $return = array_key_exists($key, $this->_items[$this->currentIndex]);
 
         return $return;
