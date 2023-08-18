@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Pimcore 11.0.7
+- Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
+
 ## Pimcore 11.0.6
 - Properties of `Pimcore\Model\DataObject\Data\Link` are nullable now. 
 
