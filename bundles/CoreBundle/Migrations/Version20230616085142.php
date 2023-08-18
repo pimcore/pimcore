@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Model\DataObject\Data\ObjectMetadata\Dao;
+use Pimcore\Model\Dao\AbstractDao;
 
 final class Version20230616085142 extends AbstractMigration
 {
@@ -50,7 +50,7 @@ final class Version20230616085142 extends AbstractMigration
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
-            $foreignKeyName = Dao::getForeignKeyName($tableName, 'o_id');
+            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, 'o_id');
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
@@ -71,6 +71,7 @@ final class Version20230616085142 extends AbstractMigration
                             UNIQUE (' . self::PK_COLUMNS . ')'
                     );
                 }
+
                 if ($recreateForeignKey) {
                     $this->addSql(
                         'ALTER TABLE `' . $tableName . '`
@@ -100,7 +101,7 @@ final class Version20230616085142 extends AbstractMigration
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
-            $foreignKeyName = Dao::getForeignKeyName($tableName, 'o_id');
+            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, 'o_id');
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
