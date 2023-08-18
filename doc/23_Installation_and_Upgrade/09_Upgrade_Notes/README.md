@@ -2,6 +2,7 @@
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
+- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 
 ## Pimcore 11.0.6
 - Properties of `Pimcore\Model\DataObject\Data\Link` are nullable now. 
