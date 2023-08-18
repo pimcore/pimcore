@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class ReferenceLoopNormalizer implements NormalizerInterface
 {
-    public function normalize($object, $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
+    public function normalize(mixed $object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $object = Serialize::removeReferenceLoops($object);
 
@@ -47,7 +47,7 @@ class ReferenceLoopNormalizer implements NormalizerInterface
         return $object;
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $format === JsonEncoder::FORMAT;
     }

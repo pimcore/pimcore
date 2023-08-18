@@ -421,7 +421,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->id;
     }
 
-    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\ThumbnailInterface|string
     {
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {

@@ -26,8 +26,8 @@ use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 
 /**
  * @method Dao getDao()
- * @method void save(Concrete $object, $params = [])
- * @method array getRelationData($field, $forOwner, $remoteClassId)
+ * @method void save(Concrete $object, array $params = [])
+ * @method array getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null)
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {

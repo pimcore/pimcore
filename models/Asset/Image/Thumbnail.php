@@ -27,7 +27,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-final class Thumbnail
+final class Thumbnail implements ThumbnailInterface
 {
     use ImageThumbnailTrait;
 
@@ -375,7 +375,7 @@ final class Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia(string $name, int $highRes = 1): Thumbnail
+    public function getMedia(string $name, int $highRes = 1): ?ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
