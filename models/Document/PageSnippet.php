@@ -607,10 +607,6 @@ abstract class PageSnippet extends Model\Document
 
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = $missingRequiredEditable;
-        }
-
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
