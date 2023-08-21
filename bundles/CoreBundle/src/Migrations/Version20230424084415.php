@@ -30,6 +30,8 @@ class Version20230424084415 extends AbstractMigration
     {
         if($schema->hasTable('documents_editables')) {
             $db = Db::get();
+            $db->executeStatement('SET foreign_key_checks = 0');
+
             $primaryKey = $schema->getTable('documents_editables')->getPrimaryKey()->getColumns();
             $editables = $db->fetchAllAssociative('SELECT * FROM documents_editables WHERE type = ?', ['link']);
 
@@ -48,6 +50,7 @@ class Version20230424084415 extends AbstractMigration
                     );
                 }
             }
+            $db->executeStatement('SET foreign_key_checks = 1');
         }
     }
 
