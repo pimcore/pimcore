@@ -121,11 +121,11 @@ final class Version20220120162621 extends AbstractMigration
     {
         foreach (['asset', 'document', 'object'] as $elementType) {
             if ($schema->getTable('users_workspaces_'.$elementType)->hasForeignKey('fk_users_workspaces_'.$elementType.'_'.$elementType.'s')) {
-                $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY IF EXISTS `fk_users_workspaces_'.$elementType.'_'.$elementType.'s`');
+                $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY `fk_users_workspaces_'.$elementType.'_'.$elementType.'s`');
             }
 
             if ($schema->getTable('users_workspaces_'.$elementType)->hasForeignKey('fk_users_workspaces_'.$elementType.'_users')) {
-                $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY IF EXISTS `fk_users_workspaces_'.$elementType.'_users`');
+                $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY `fk_users_workspaces_'.$elementType.'_users`');
             }
 
             $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` CHANGE `userId` `userId` int(11) NOT NULL DEFAULT \'0\'');
