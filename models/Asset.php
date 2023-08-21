@@ -428,10 +428,6 @@ class Asset extends Element\AbstractElement
      */
     public static function getList(array $config = []): Listing
     {
-        if (!is_array($config)) {
-            throw new \RuntimeException('Unable to initiate list class - please provide valid configuration array');
-        }
-
         $listClass = Listing::class;
 
         /** @var Listing $list */
