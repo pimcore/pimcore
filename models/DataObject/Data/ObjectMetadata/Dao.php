@@ -85,6 +85,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         $table = 'object_metadata_' . $classId;
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+              `auto_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
               `id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',
@@ -95,7 +96,10 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
-              PRIMARY KEY (`id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
+              PRIMARY KEY (`auto_id`),
+              UNIQUE KEY `metadata_un` (
+                `id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`
+              ),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),
@@ -103,7 +107,8 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
               INDEX `index` (`index`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`)
+              REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($class, [$table]);
