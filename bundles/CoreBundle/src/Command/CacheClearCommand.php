@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Event\SystemEvents;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,6 +30,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
+#[AsCommand('pimcore:cache:clear')]
 class CacheClearCommand extends AbstractCommand
 {
     public function __construct(private EventDispatcherInterface $eventDispatcher)
@@ -39,7 +41,6 @@ class CacheClearCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:cache:clear')
             ->setDescription('Clear caches')
             ->addOption(
                 'tags',
