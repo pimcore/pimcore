@@ -152,9 +152,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
