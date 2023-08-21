@@ -54,7 +54,7 @@ final class Version20230616085142 extends AbstractMigration
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
-                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `'.$foreignKeyName.'`');
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyName . '`');
                 }
 
                 if ($metaDataTable->hasPrimaryKey()) {
@@ -105,16 +105,19 @@ final class Version20230616085142 extends AbstractMigration
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
-                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY IF EXISTS `'.$foreignKeyName.'`');
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyName . '`');
                 }
 
                 $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `' . self::AUTO_ID . '`');
                 $this->addSql(
                     'ALTER TABLE `' . $tableName . '` ADD PRIMARY KEY (' . self::PK_COLUMNS  . ')'
                 );
-                $this->addSql(
-                    'ALTER TABLE `' . $tableName . '` DROP INDEX IF EXISTS `' . self::UNIQUE_KEY_NAME  . '`'
-                );
+
+                if ($metaDataTable->hasIndex(self::UNIQUE_KEY_NAME)) {
+                    $this->addSql(
+                        'ALTER TABLE `' . $tableName . '` DROP INDEX `' . self::UNIQUE_KEY_NAME . '`'
+                    );
+                }
 
                 if ($recreateForeignKey) {
                     $this->addSql(
