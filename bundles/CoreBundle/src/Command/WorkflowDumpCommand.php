@@ -30,14 +30,13 @@ use Symfony\Component\Workflow\Marking;
  */
 class WorkflowDumpCommand extends AbstractCommand
 {
-    protected static $defaultName = 'pimcore:workflow:dump';
-
     /**
      * {@inheritdoc}
      */
     protected function configure(): void
     {
         $this
+            ->setName('pimcore:workflow:dump')
             ->setDefinition([
                 new InputArgument('name', InputArgument::REQUIRED, 'A workflow name'),
                 new InputArgument('marking', InputArgument::IS_ARRAY, 'A marking (a list of places)'),

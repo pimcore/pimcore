@@ -31,8 +31,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class CacheClearCommand extends AbstractCommand
 {
-    protected static $defaultName = 'pimcore:cache:clear';
-
     public function __construct(private EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct();
@@ -41,6 +39,7 @@ class CacheClearCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
+            ->setName('pimcore:cache:clear')
             ->setDescription('Clear caches')
             ->addOption(
                 'tags',
@@ -89,6 +88,11 @@ class CacheClearCommand extends AbstractCommand
         return 0;
     }
 
+    /**
+     * @param string[] $tags
+     *
+     * @return string[]
+     */
     private function prepareTags(array $tags): array
     {
         // previous implementations didn't use VALUE_IS_ARRAY and just supported csv strings, so we not iterate
