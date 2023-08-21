@@ -63,7 +63,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '11.2',
+            '11.1',
             'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
             'addDoumentEditables',
             'addDocumentEditables'
