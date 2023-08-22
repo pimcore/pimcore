@@ -24,9 +24,6 @@ The following configuration is used with the assumption that it is for developme
 ```nginx
 # mime types are already covered in nginx.conf
 #include mime.types;
-types {
-    image/avif avif;
-}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
@@ -201,9 +198,6 @@ The following configuration provides an approperiate base for a secure applicati
 ```nginx
 # mime types are already covered in nginx.conf
 #include mime.types;
-types {
-    image/avif avif;
-}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
