@@ -160,13 +160,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $cacheKey = $this->getCacheKey($domain, $locale);
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
-        //    return;
+            return;
         }
 
         $this->initializedCatalogues[$cacheKey] = true;
 
         if (Translation::isAValidDomain($domain)) {
-         //   if (!$catalogue = Cache::load($cacheKey)) {
+            if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
                 $dataIntl = ['__pimcore_dummy' => 'only_a_dummy'];
 
@@ -194,17 +194,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                         if ($fallbackTranslationTerm) {
                             $data[$translation['key']] = $fallbackTranslationTerm;
-                        }elseif ($fallbackLocale2 = $this->getCatalogue($fallbackLocale)->getFallbackCatalogue()?->getLocale()){
-                            $fallbackTranslationTerm = Translation::getByKey(
-                                $translation['key'],
-                                $domain,
-                                false,
-                                false,
-                                [$fallbackLocale2]
-                            )?->getTranslations()[$fallbackLocale2];
-                            if ($fallbackTranslationTerm) {
-                                $data[$translation['key']] = $fallbackTranslationTerm;
-                            }
                         }
                     }
 
@@ -233,7 +222,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 $catalogue = new MessageCatalogue($locale, $data);
 
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
-           // }
+           }
 
             if ($catalogue) {
                 $this->getCatalogue($locale)->addCatalogue($catalogue);
