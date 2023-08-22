@@ -82,7 +82,7 @@
 
 #### [Authentication] :
 
--  Removed support old authentication system
+- Removed support old authentication system
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events
