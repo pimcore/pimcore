@@ -5,11 +5,13 @@
     "valid_languages": [
       "en",
       "de",
+      "de_AT",
       "fr"
     ],
     "fallback_languages": {
       "en": "",
-      "de": "en"
+      "de": "en",
+      "de_AT": "de"
     },
     "default_language": "",
     "debug_admin_translations": false
