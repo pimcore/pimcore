@@ -91,7 +91,8 @@ class Area extends Model\Document\Editable
                 'type' => $config->getType(),
                 'name' => $config->getName(),
                 'label' => $config->getLabel(),
-                'config' => $config->getConfig()
+                'config' => $config->getConfig(),
+                'description' => $config->getDialogDescription(),
             ];
         }
 
