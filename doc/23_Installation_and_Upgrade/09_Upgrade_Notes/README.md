@@ -82,7 +82,7 @@
 
 #### [Authentication] :
 
--  Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+-  Removed support old authentication system
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events
