@@ -347,7 +347,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->label ?? null;
     }
 
-    public function setLabel(?string $label): self
+    /**
+     * @return $this
+     */
+    public function setLabel(?string $label): static
     {
         $this->label = $label;
         return $this;
