@@ -279,7 +279,7 @@ final class Translation extends AbstractModel
      */
     public function getTranslation($language)
     {
-        return $this->translations[$language];
+        return $this->translations[$language] ?? '';
     }
 
     /**
