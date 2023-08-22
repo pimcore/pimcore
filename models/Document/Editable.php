@@ -361,7 +361,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->dialogDescription ?? null;
     }
 
-    public function setDialogDescription(?string $dialogDescription): self
+    /**
+     * @return $this
+     */
+    public function setDialogDescription(?string $dialogDescription): static
     {
         $this->dialogDescription = $dialogDescription;
         return $this;
