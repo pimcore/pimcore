@@ -192,7 +192,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             [$fallbackLocale]
                         )?->getTranslations()[$fallbackLocale];
 
-                        $a = $this->getCatalogue($fallbackLocale)->get($translation['key'], $domain);
                         if ($fallbackTranslationTerm) {
                             $data[$translation['key']] = $fallbackTranslationTerm;
                         }elseif ($fallbackLocale2 = $this->getCatalogue($fallbackLocale)->getFallbackCatalogue()?->getLocale()){
