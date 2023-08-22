@@ -43,6 +43,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected array $config = [];
 
     /**
+     * The label rendered for the editmode dialog.
+     * @internal
+     */
+    protected ?string $label = null;
+
+    /**
      * @internal
      *
      */
@@ -327,6 +333,17 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $this->config[$name] = $value;
 
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label ?? null;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
         return $this;
     }
 
