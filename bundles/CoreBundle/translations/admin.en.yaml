@@ -1,3 +1,4 @@
 workflow_change_email_notification_text: 'For %s with ID %s the action "%s" was triggered in workflow ''%s''.'
 workflow_change_email_notification_deeplink: 'Deeplink to the element.'
 workflow_change_email_notification_note: 'Note Added:'
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
