@@ -390,7 +390,7 @@ class Asset extends Element\AbstractElement
         }
 
         $type = null;
-        $assetTypes = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['type_definitions']['map'];
+        $assetTypes = Config::getSystemConfiguration('assets')['type_definitions']['map'];
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
             foreach ($assetTypeConfiguration['matching'] as $pattern) {
