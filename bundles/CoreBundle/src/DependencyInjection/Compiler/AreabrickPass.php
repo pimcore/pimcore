@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
+use Pimcore\Config;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
@@ -45,7 +46,7 @@ final class AreabrickPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        $config = $container->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $areabrickManager = $container->getDefinition(AreabrickManager::class);
         $areabrickLocator = $container->getDefinition('pimcore.document.areabrick.brick_locator');
