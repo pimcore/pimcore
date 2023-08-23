@@ -173,7 +173,7 @@ class Processor
         // check for existing and still valid thumbnail
 
         $modificationDate = null;
-        $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
