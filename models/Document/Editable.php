@@ -344,7 +344,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function getLabel(): ?string
     {
-        return $this->label ?? null;
+        return $this->label;
     }
 
     /**
@@ -358,7 +358,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function getDialogDescription(): ?string
     {
-        return $this->dialogDescription ?? null;
+        return $this->dialogDescription;
     }
 
     /**
