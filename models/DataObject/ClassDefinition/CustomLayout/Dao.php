@@ -33,7 +33,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $storageConfig = $config['config_location']['object_custom_layouts'];
 
