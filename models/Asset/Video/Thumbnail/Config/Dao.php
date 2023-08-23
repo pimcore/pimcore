@@ -17,7 +17,6 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 /**
  * @internal
