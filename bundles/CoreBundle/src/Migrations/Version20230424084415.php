@@ -37,17 +37,19 @@ class Version20230424084415 extends AbstractMigration
 
             foreach ($editables as $editable) {
                 $unserialized = unserialize($editable['data']);
-                if(array_key_exists('attributes', $unserialized)) {
-                    unset($unserialized['attributes']);
+                if(is_array($unserialized)) {
+                    if (array_key_exists('attributes', $unserialized)) {
+                        unset($unserialized['attributes']);
 
-                    $editable['data'] = serialize($unserialized);
+                        $editable['data'] = serialize($unserialized);
 
-                    Db\Helper::upsert(
-                        $db,
-                        'documents_editables',
-                        $editable,
-                        $primaryKey
-                    );
+                        Db\Helper::upsert(
+                            $db,
+                            'documents_editables',
+                            $editable,
+                            $primaryKey
+                        );
+                    }
                 }
             }
             $db->executeStatement('SET foreign_key_checks = 1');
