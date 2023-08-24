@@ -213,11 +213,7 @@ class ObjectTest extends ModelTestCase
     {
         $object = TestHelper::createEmptyObject('', false, true);
         $object->setOmitMandatoryCheck(false);
-        try {
-            $object->save();
-        } catch (\Exception $e) {
-            $this->assertStringContainsString( 'Empty mandatory field', $e->getMessage());
-        }
+        $object->save();
 
         $versions = $object->getVersions();
         $latestVersion = end($versions);
