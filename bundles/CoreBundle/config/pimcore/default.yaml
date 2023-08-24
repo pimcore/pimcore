@@ -84,6 +84,12 @@ framework:
                     u: [ 'class', 'id' ]
                     i: [ 'class', 'id' ]
                     b: [ 'class', 'id' ]
+                    caption: [ 'class', 'id' ]
+                    sub: [ 'class', 'id' ]
+                    sup: [ 'class', 'id' ]
+                    blockquote: [ 'class', 'id' ]
+                    s: [ 'class', 'id' ]
+                    iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
                     img: [ 'alt', 'style', 'src' ]
             pimcore.translation_sanitizer:
