@@ -207,6 +207,25 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Verifies a newly published object gets the default values of mandatory fields
+     */
+    public function testDefaultValueAndMandatorySavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        try {
+            $object->save();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString( 'Empty mandatory field', $e->getMessage());
+        }
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+
+        $this->assertEquals('default', $latestVersion->getData()->getMandatoryInputWithDefault(), 'Expected default value saved to version');
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
