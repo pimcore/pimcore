@@ -48,16 +48,10 @@ class SystemSettingsConfig
     private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
-            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $config[self::CONFIG_ID] = [
-                'general' => $containerConfig['general'],
-                'documents' => $containerConfig['documents'],
-                'objects' => $containerConfig['objects'],
-                'assets' => $containerConfig['assets'],
-                'email' => $containerConfig['email'],
-            ];
+            $containerConfigSettings = self::getValuesFromContainerConfig();
+            $config[self::CONFIG_ID] = $containerConfigSettings['config'];
 
-            $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
+            $storageConfig = $containerConfigSettings['containerConfig']['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -68,12 +62,21 @@ class SystemSettingsConfig
 
         return self::$locationAwareConfigRepository;
     }
-
     public static function get(): array
     {
         $repository = self::getRepository();
 
-        return SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+        $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+
+        $loadType = $repository->getReadTargets()[0] ?? null;
+
+        // If the read target is settings-store and no data is found there,
+        // load the data from the container config
+        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+            $data = self::getValuesFromContainerConfig()['config'];
+            $data['writeable'] = $repository->isWriteable();
+        }
+        return $data;
     }
 
     public function save(array $values): void
@@ -235,5 +238,17 @@ class SystemSettingsConfig
         } else {
             throw new \Exception("Language `$source` doesn't exist");
         }
+    }
+
+    private static function getValuesFromContainerConfig():array {
+        $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $data = [
+            'general' => $containerConfig['general'],
+            'documents' => $containerConfig['documents'],
+            'objects' => $containerConfig['objects'],
+            'assets' => $containerConfig['assets'],
+            'email' => $containerConfig['email'],
+        ];
+        return ['containerConfig' =>$containerConfig, 'config' => $data];
     }
 }
