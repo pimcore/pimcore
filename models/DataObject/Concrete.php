@@ -146,7 +146,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     if (empty($value) && !$isUpdate && $fd->getMandatory()
                         && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
                     ){
-                        //$omitMandatoryCheck = true;
+                        $omitMandatoryCheck = true;
                     }
 
                     //check throws Exception
