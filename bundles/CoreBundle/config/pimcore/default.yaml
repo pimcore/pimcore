@@ -77,6 +77,7 @@ framework:
                     tbody: [ 'class', 'id' ]
                     tr: [ 'class', 'id' ]
                     td: [ 'class', 'id' ]
+                    th: [ 'class', 'id', 'scope' ]
                     ul: [ 'class', 'style', 'id' ]
                     li: [ 'class', 'style', 'id' ]
                     ol: [ 'class', 'style', 'id' ]
