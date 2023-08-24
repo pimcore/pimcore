@@ -112,7 +112,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $requiresByPath = $this->db->fetchAllAssociative($query);
 
-        if (is_array($requiresByPath) && count($requiresByPath) > 0) {
+        if (count($requiresByPath) > 0) {
             return $requiresByPath;
         } else {
             return [];
@@ -174,7 +174,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $requiredByPath = $this->db->fetchAllAssociative($query);
 
-        if (is_array($requiredByPath) && count($requiredByPath) > 0) {
+        if (count($requiredByPath) > 0) {
             return $requiredByPath;
         } else {
             return [];
