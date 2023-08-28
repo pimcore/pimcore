@@ -39,9 +39,9 @@ class Version20230424084415 extends AbstractMigration
                 $unserialized = unserialize($editable['data']);
                 if (is_array($unserialized) && array_key_exists('attributes', $unserialized)) {
                     unset($unserialized['attributes']);
-    
+
                     $editable['data'] = serialize($unserialized);
-    
+
                     Db\Helper::upsert(
                         $db,
                         'documents_editables',
