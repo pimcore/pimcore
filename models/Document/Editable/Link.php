@@ -171,7 +171,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $attribs = array_unique($attribs);
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : ($this->data['text'] ?? $url))) . $suffix . '</a>';
         }
 
         return '';
