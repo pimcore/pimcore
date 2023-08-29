@@ -260,7 +260,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
-        while ($row = $res->fetch()) {
+        while ($row = $res->fetchAssociative()) {
             $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
