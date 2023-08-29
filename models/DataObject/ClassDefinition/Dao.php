@@ -204,13 +204,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns);
 
         // remove / cleanup unused relations
-        if (is_array($datastoreColumnsToRemove)) {
-            foreach ($datastoreColumnsToRemove as $value) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
-                    $tableRelation = 'object_relations_' . $this->model->getId();
-                    $this->db->delete($tableRelation, ['fieldname' => $value, 'ownertype' => 'object']);
-                    // @TODO: remove localized fields and fieldcollections
-                }
+        foreach ($columnsToRemove as $value) {
+            if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                $this->db->delete($objectDatastoreTableRelation, ['fieldname' => $value, 'ownertype' => 'object']);
+                // @TODO: remove localized fields and fieldcollections
             }
         }
 
