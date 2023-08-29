@@ -48,7 +48,7 @@ class SystemSettingsConfig
     private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
-            $containerConfigSettings = self::getValuesFromContainerConfig();
+            $containerConfigSettings = self::getConfigValuesFromContainer();
             $config[self::CONFIG_ID] = $containerConfigSettings['config'];
 
             $storageConfig = $containerConfigSettings['containerConfig']['config_location'][self::CONFIG_ID];
@@ -72,8 +72,9 @@ class SystemSettingsConfig
 
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
+        // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
         if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
-            $data = self::getValuesFromContainerConfig()['config'];
+            $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }
         return $data;
@@ -240,7 +241,7 @@ class SystemSettingsConfig
         }
     }
 
-    private static function getValuesFromContainerConfig():array {
+    private static function getConfigValuesFromContainer():array {
         $containerConfig = \Pimcore\Config::getSystemConfiguration();
         $data = [
             'general' => $containerConfig['general'],
