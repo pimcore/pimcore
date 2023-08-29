@@ -36,7 +36,7 @@ services:
         arguments:
             - '@Pimcore\Security\User\UserLoader'
         tags:
-            - { name: kernel.event_listener, event: pimcore.admin.object.get.preSendData, method: checkPermissions }
+            - { name: kernel.event_listener, event: pimcore.admin.dataObject.get.preSendData, method: checkPermissions }
 ```
 
 `src/EventListener/MyEventListener`
