@@ -62,6 +62,7 @@ class SystemSettingsConfig
 
         return self::$locationAwareConfigRepository;
     }
+
     public static function get(): array
     {
         $repository = self::getRepository();
@@ -77,6 +78,7 @@ class SystemSettingsConfig
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }
+
         return $data;
     }
 
@@ -241,7 +243,8 @@ class SystemSettingsConfig
         }
     }
 
-    private static function getConfigValuesFromContainer():array {
+    private static function getConfigValuesFromContainer(): array
+    {
         $containerConfig = \Pimcore\Config::getSystemConfiguration();
         $data = [
             'general' => $containerConfig['general'],
@@ -250,6 +253,7 @@ class SystemSettingsConfig
             'assets' => $containerConfig['assets'],
             'email' => $containerConfig['email'],
         ];
+
         return ['containerConfig' =>$containerConfig, 'config' => $data];
     }
 }
