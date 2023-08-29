@@ -94,6 +94,9 @@ final class Translation extends AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -121,6 +124,9 @@ final class Translation extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
         $this->setModificationDate($date);
@@ -133,6 +139,9 @@ final class Translation extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $date): static
     {
         $this->creationDate = $date;
@@ -145,6 +154,9 @@ final class Translation extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $date): static
     {
         $this->modificationDate = $date;
