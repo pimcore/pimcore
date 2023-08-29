@@ -203,9 +203,9 @@ final class Translation extends AbstractModel
         $this->translations[$language] = $text;
     }
 
-    public function getTranslation(string $language): string
+    public function getTranslation(string $language): ?string
     {
-        return $this->translations[$language];
+        return $this->translations[$language] ?? null;
     }
 
     public function hasTranslation(string $language): bool
@@ -446,7 +446,7 @@ final class Translation extends AbstractModel
                         foreach ($keyValueArray as $key => $value) {
                             $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
-                                $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
+                                $currentTranslation = $t->getTranslation($key);
                                 if ($replaceExistingTranslations) {
                                     $t->addTranslation($key, $value);
                                     if ($currentTranslation != $value) {
