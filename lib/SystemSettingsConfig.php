@@ -241,7 +241,7 @@ class SystemSettingsConfig
     }
 
     private static function getValuesFromContainerConfig():array {
-        $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $containerConfig = \Pimcore\Config::getSystemConfiguration();
         $data = [
             'general' => $containerConfig['general'],
             'documents' => $containerConfig['documents'],
