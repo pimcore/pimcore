@@ -243,7 +243,7 @@ class Dao extends Model\Element\Dao
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
-            return strcmp($left['cpath'], $right['cpath']);
+            return strcmp((string)$left['cpath'], (string)$right['cpath']);
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
