@@ -393,7 +393,8 @@ class Service extends Model\AbstractModel
     {
         $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
-            // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
+            // only for assets: add the prefix _copy before the file extension (if exist)
+            // not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type === 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
                 // temporary remove file extension from sourceKey
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '', $sourceKey);
@@ -412,8 +413,8 @@ class Service extends Model\AbstractModel
                 $sourceKey .= '_copy';
             }
 
-            // re-add file extension to sourceKey, that got previously removed
-            if ($fileExtension ?? false) {
+            // restore file extension that got previously removed from sourceKey, if it was present
+            if ($fileExtension ?? '') {
                 $sourceKey .= '.' . $fileExtension;
             }
 
