@@ -65,7 +65,8 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '11.1',
-                    'Using "outputFormat" config for date editable is deprecated, use "outputIsoFormat" config.'
+                    'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
+                    __CLASS__
                 );
                 return $this->date->formatLocalized($this->config['outputFormat']);
             } else {

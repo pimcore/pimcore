@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Pimcore 11.1.0
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+
 ## Pimcore 11.0.6
 - Properties of `Pimcore\Model\DataObject\Data\Link` are nullable now. 
 
