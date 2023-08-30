@@ -171,7 +171,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
             return $this->$key;
         }
 
-        return false;
+        return null;
     }
 
     /**
