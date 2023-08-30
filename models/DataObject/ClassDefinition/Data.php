@@ -37,7 +37,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public bool $noteditable = false;
 
-    public int|bool|null $index = null;
+    public bool $index = false;
 
     public bool $locked = false;
 
@@ -160,6 +160,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->permissions;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -167,6 +170,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -174,6 +180,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setMandatory(bool $mandatory): static
     {
         $this->mandatory = $mandatory;
@@ -181,6 +190,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPermissions(array|string|null $permissions): static
     {
         $this->permissions = $permissions;
@@ -188,6 +200,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
@@ -209,6 +224,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->noteditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setNoteditable(bool $noteditable): static
     {
         $this->noteditable = $noteditable;
@@ -216,13 +234,24 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function getIndex(): ?int
+    public function getIndex(): bool
     {
         return $this->index;
     }
 
-    public function setIndex(?int $index): static
+    /**
+     * @return $this
+     */
+    public function setIndex(?bool $index): static
     {
+        if (null === $index) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0.7',
+                sprintf('Passing null to method %s is deprecated', __METHOD__)
+            );
+            $index = false;
+        }
         $this->index = $index;
 
         return $this;
@@ -233,9 +262,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->style;
     }
 
+    /**
+     * @return $this
+     */
     public function setStyle(?string $style): static
     {
-        $this->style = (string)$style;
+        $this->style = $style;
 
         return $this;
     }
@@ -245,6 +277,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->locked;
     }
 
+    /**
+     * @return $this
+     */
     public function setLocked(bool $locked): static
     {
         $this->locked = $locked;
@@ -257,9 +292,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->tooltip;
     }
 
+    /**
+     * @return $this
+     */
     public function setTooltip(?string $tooltip): static
     {
-        $this->tooltip = (string)$tooltip;
+        $this->tooltip = $tooltip;
 
         return $this;
     }
@@ -274,9 +312,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->invisible;
     }
 
-    public function setInvisible(bool|int|null $invisible): static
+    /**
+     * @return $this
+     */
+    public function setInvisible(bool $invisible): static
     {
-        $this->invisible = (bool)$invisible;
+        $this->invisible = $invisible;
 
         return $this;
     }
@@ -286,9 +327,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleGridView;
     }
 
-    public function setVisibleGridView(bool|int|null $visibleGridView): static
+    /**
+     * @return $this
+     */
+    public function setVisibleGridView(bool $visibleGridView): static
     {
-        $this->visibleGridView = (bool)$visibleGridView;
+        $this->visibleGridView = $visibleGridView;
 
         return $this;
     }
@@ -298,9 +342,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleSearch;
     }
 
-    public function setVisibleSearch(bool|int|null $visibleSearch): static
+    /**
+     * @return $this
+     */
+    public function setVisibleSearch(bool $visibleSearch): static
     {
-        $this->visibleSearch = (bool)$visibleSearch;
+        $this->visibleSearch = $visibleSearch;
 
         return $this;
     }

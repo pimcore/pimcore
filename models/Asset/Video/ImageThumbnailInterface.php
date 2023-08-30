@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,19 +15,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Model\Asset\Video;
 
-final class MailEvents
+use Pimcore\Model\Asset\Thumbnail\ThumbnailInterface;
+use Pimcore\Model\Asset\Thumbnail\ThumbnailMediaInterface;
+use Pimcore\Model\Asset\Thumbnail\ThumbnailPathInterface;
+
+interface ImageThumbnailInterface extends ThumbnailInterface, ThumbnailPathInterface, ThumbnailMediaInterface
 {
-    /**
-     * Arguments:
-     *  - mailer | \Pimcore\Mail\Mailer | contains the mailer object. Modify (or unset) this parameter if you want to implement a custom mail sending method
-     *
-     * @Event("Pimcore\Event\Model\MailEvent")
-     *
-     * @var string
-     */
-    const PRE_SEND = 'pimcore.mail.preSend';
-
-    const PRE_LOG = 'pimcore.mail.preLog';
 }

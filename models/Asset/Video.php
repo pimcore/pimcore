@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -121,7 +122,7 @@ class Video extends Model\Asset
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -134,7 +135,7 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');

@@ -51,7 +51,7 @@ class QuantityValue extends AbstractQuantityValue
 
             if ($locale) {
                 $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
-                $value = $formatter->format($value);
+                $value = $formatter->format((float) $value);
             }
         }
 

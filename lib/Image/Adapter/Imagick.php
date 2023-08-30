@@ -41,12 +41,8 @@ class Imagick extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
-    private ?array $initalOptions = null;
-
     public function load(string $imagePath, array $options = []): static|false
     {
-        $this->initalOptions ??= $options;
-
         if (isset($options['preserveColor'])) {
             // set this option to TRUE to skip all color transformations during the loading process
             // this can massively improve performance if the color information doesn't matter, ...
@@ -124,7 +120,7 @@ class Imagick extends Adapter
                 $this->resource = $this->resource->coalesceImages();
             }
 
-            $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
+            $isClipAutoSupport = Config::getSystemConfiguration('assets')['image']['thumbnails']['clip_auto_support'];
             if ($isClipAutoSupport && !$this->reinitializing && $this->has8BIMClippingPath()) {
                 // the following way of determining a clipping path is very resource intensive (using Imagick),
                 // so we try with the approach in has8BIMClippingPath() instead
@@ -750,7 +746,7 @@ class Imagick extends Adapter
             }
 
             $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
-            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), $x, $y);
+            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
         }
 
         $this->postModify();

@@ -83,7 +83,7 @@ class Document extends Model\Asset
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
      */
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $page = 1, bool $deferred = false): Document\ImageThumbnail
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $page = 1, bool $deferred = false): Document\ImageThumbnailInterface
     {
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');

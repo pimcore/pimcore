@@ -137,7 +137,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->image;
     }
 
-    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $thumbnailName = null, bool $deferred = true): Asset\Image\Thumbnail|string
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $thumbnailName = null, bool $deferred = true): Asset\Image\ThumbnailInterface|string
     {
         if (!$this->getImage()) {
             return '';

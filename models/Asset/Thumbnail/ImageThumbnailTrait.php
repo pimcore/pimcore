@@ -294,13 +294,13 @@ trait ImageThumbnailTrait
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail_deferred'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'thumbnail') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
