@@ -413,7 +413,7 @@ class Service extends Model\AbstractModel
             }
 
             // re-add file extension to sourceKey, that got previously removed
-            if ($fileExtension) {
+            if ($fileExtension ?? false) {
                 $sourceKey .= '.' . $fileExtension;
             }
 
