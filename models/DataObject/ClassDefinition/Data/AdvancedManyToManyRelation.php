@@ -165,10 +165,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                         $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
-                        $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
-                        $ownername = $element['ownername'] ? $element['ownername'] : '';
-                        $position = $element['position'] ? $element['position'] : '0';
-                        $index = $element['index'] ? $element['index'] : '0';
+                        $ownertype = $element['ownertype'] ?: '';
+                        $ownername = $element['ownername'] ?: '';
+                        $position = $element['position'] ?: '0';
+                        $index = $element['index'] ?: '0';
 
                         $metaData->load(
                             $source,
@@ -568,7 +568,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
-        $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
+        $position = $relation['position'] ? (string)$relation['position'] : '0';
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
@@ -619,7 +619,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($multihrefMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
-                $meta->save($objectConcrete, $ownerType, $ownerName, (string) $position, $counter);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
                 $counter++;
             }
         }
