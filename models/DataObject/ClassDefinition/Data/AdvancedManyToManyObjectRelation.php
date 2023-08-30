@@ -474,7 +474,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
-        $position = $relation['position'] ? (string)$relation['position'] : '0';
+        $position = isset($relation['position']) ? (string)$relation['position'] : '0';
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
