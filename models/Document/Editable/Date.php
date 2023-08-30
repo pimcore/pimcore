@@ -59,7 +59,14 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     public function frontend()
     {
         if ($this->date instanceof Carbon) {
-            if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+            if (isset($this->config['outputIsoFormat']) && $this->config['outputIsoFormat']) {
+                return $this->date->isoFormat($this->config['outputIsoFormat']);
+            } elseif (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '11.1',
+                    'Using "outputFormat" config for date editable is deprecated, use "outputIsoFormat" config.'
+                );
                 return $this->date->formatLocalized($this->config['outputFormat']);
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
@@ -71,6 +78,8 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                 return $this->date->format($format);
             }
         }
+
+        return '';
     }
 
     public function getDataForResource(): mixed

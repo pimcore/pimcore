@@ -2,11 +2,12 @@
 
 ### Configuration
 
-| Name     | Type   | Description                                                                        |
-|----------|--------|------------------------------------------------------------------------------------|
-| `format` | string | A string which describes how to format the date in editmode                       |
-| `outputFormat` | string | A string which describes how to format the date in frontend, [see possible formats](https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters)                 |
-| `class`  | string | A CSS class that is added to the surrounding container of this element in editmode |
+| Name                | Type   | Description                                                                                                                                                                                 |
+|---------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `format`            | string | A string which describes how to format the date in editmode                                                                                                                                 |
+| `outputFormat`      | string | *DEPRECATED* A string which describes how to format the date in frontend, [see possible formats](https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters) |
+| `outputIsoFormat`   | string | A string which describes how to format the date in frontend, [see possible formats](https://carbon.nesbot.com/docs/#iso-format-available-replacements) |
+| `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                          |
 
 ## Methods
 
@@ -26,7 +27,6 @@ Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 ```twig
 {{ pimcore_date('myDate', {
     'format': 'd.m.Y',
-    'outputFormat': '%d.%m.%Y'
-    })
-}}
+    'outputIsoFormat': 'DD.MM.YYYY'
+}) }}
 ```
