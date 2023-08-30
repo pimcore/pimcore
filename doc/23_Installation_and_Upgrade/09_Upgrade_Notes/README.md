@@ -1,5 +1,21 @@
 # Upgrade Notes
 
+## Pimcore 11.0.8
+- Nginx config has been updated to fix the webDAV [assets access issue](https://github.com/pimcore/pimcore/issues/15855). Please update your project config with below changes:
+
+Old: 
+```
+# Assets
+....
+location ~* ^(?!/admin)(.+?)....
+```
+New:
+```
+# Assets
+....
+location ~* ^(?!/admin|/asset/webdav)(.+?)....
+```
+
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
 
