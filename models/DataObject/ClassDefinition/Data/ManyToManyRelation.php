@@ -224,6 +224,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $elements['dirty'] = true;
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $elements;
     }
@@ -332,6 +333,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
             }
         }
+
         //must return array if data shall be set
         return $elements;
     }

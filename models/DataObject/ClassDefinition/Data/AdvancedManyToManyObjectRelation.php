@@ -178,6 +178,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $list;
     }
