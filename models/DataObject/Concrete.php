@@ -462,7 +462,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param mixed $params
      *
      * @throws InheritanceParentNotFoundException
      */
