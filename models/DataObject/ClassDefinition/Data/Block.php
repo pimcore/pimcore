@@ -920,6 +920,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $data = $blockElement->getData();
 
                             if ($data instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
+
+                                if (isset($params['object'])){
+                                    $data->setObject($params['object']);
+                                }
                                 foreach ($data->getInternalData() as $language => $fields) {
                                     foreach ($fields as $fieldName => $values) {
                                         $lfd = $fd->getFieldDefinition($fieldName);
