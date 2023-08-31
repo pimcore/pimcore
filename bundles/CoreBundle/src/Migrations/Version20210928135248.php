@@ -29,7 +29,7 @@ final class Version20210928135248 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('sanitycheck')) {
+        if ($schema->hasTable('sanitycheck')) {
             $schema->dropTable('sanitycheck');
         }
     }
