@@ -104,7 +104,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      */
-    protected ?string $thumbnail = null;
+    protected array|string|null $thumbnail = null;
 
     /**
      * {@inheritdoc}
@@ -382,7 +382,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $this->cropLeft = $data['cropLeft'] ?? 0;
         $this->marker = $data['marker'] ?? [];
         $this->hotspots = $data['hotspots'] ?? [];
-        $this->thumbnail = (string)($data['thumbnail'] ?? '');
+        $this->thumbnail = $data['thumbnail'] ?? null;
     }
 
     public function getText(): string
@@ -400,7 +400,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->getText();
     }
 
-    public function getThumbnailConfig(): ?string
+    public function getThumbnailConfig(): array|string|null
     {
         return $this->thumbnail;
     }
