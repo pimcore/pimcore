@@ -148,7 +148,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $crop = $this->getCrop();
         }
 
-        $thumbConfig = $this->getImage()->getThumbnailConfig($thumbnailName);
+        $thumbConfig = $this->getImage()->getThumbnail($thumbnailName)->getConfig();
         if (!$thumbConfig && $crop) {
             $thumbConfig = new Asset\Image\Thumbnail\Config();
         }

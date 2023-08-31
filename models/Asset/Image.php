@@ -159,19 +159,6 @@ EOT;
     }
 
     /**
-     * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
-     *
-     * @internal
-     *
-     */
-    public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
-    {
-        $thumbnail = $this->getThumbnail($config);
-
-        return $thumbnail->getConfig();
-    }
-
-    /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
     public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
