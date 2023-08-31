@@ -29,10 +29,6 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 
     private \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @param string $property
-     * @param PropertyAccessorInterface|null $propertyAccessor
-     */
     public function __construct(string $property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->property = $property;

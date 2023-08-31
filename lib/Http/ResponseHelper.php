@@ -28,8 +28,6 @@ class ResponseHelper
     /**
      * Disable cache
      *
-     * @param Response $response
-     * @param bool $force
      */
     public function disableCache(Response $response, bool $force = false): void
     {
@@ -62,7 +60,7 @@ class ResponseHelper
             return false;
         }
 
-        if (false !== strpos((string)$response->getContent(), '<html')) {
+        if (str_contains((string)$response->getContent(), '<html')) {
             return true;
         }
 

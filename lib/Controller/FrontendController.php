@@ -48,7 +48,6 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * @param string $name
      *
      * @return mixed
      */
@@ -82,10 +81,6 @@ abstract class FrontendController extends Controller
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
-     * @param string $key
-     * @param array|string $values
-     * @param bool $replace
-     * @param Request|null $request
      */
     protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
     {
@@ -101,12 +96,7 @@ abstract class FrontendController extends Controller
      *
      * e.g. `$this->getDocumentEditable('input', 'foobar')`
      *
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param Document\PageSnippet|null $document
      *
-     * @return Document\Editable\EditableInterface
      *
      * @throws \Exception
      */
@@ -119,13 +109,6 @@ abstract class FrontendController extends Controller
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
-    /**
-     * @param string $view
-     * @param array $parameters
-     * @param Response|null $response
-     *
-     * @return Response
-     */
     protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);

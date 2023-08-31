@@ -82,7 +82,6 @@ class Installer
     /**
      * Predefined DB credentials from config
      *
-     * @var array
      */
     private array $dbCredentials;
 
@@ -91,14 +90,12 @@ class Installer
     /**
      * When false, skips creating database structure during install
      *
-     * @var bool
      */
     private bool $createDatabaseStructure = true;
 
     /**
      * When false, skips importing all database data during install
      *
-     * @var bool
      */
     private bool $importDatabaseData = true;
 
@@ -106,21 +103,18 @@ class Installer
      * When false, skips importing database data dump files (if available) during install
      * only imports needed base data
      *
-     * @var bool
      */
     private bool $importDatabaseDataDump = true;
 
     /**
      * skip writing database.yaml file
      *
-     * @var bool
      */
     private bool $skipDatabaseConfig = false;
 
     /**
      * Bundles that will be installed
      *
-     * @var array
      */
     private array $bundlesToInstall =  [];
 
@@ -226,9 +220,7 @@ class Installer
 
     /**
      * @param Check[] $checks
-     * @param array $filterStates
      *
-     * @return array
      */
     public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR]): array
     {
@@ -274,7 +266,6 @@ class Installer
     }
 
     /**
-     * @param array $params
      *
      * @return array Array of errors
      */
@@ -463,6 +454,7 @@ class Installer
         $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('complete');
 
         return $errors;
     }
@@ -731,7 +723,6 @@ class Installer
     }
 
     /**
-     * @param string $file
      *
      * @throws \Exception
      */
@@ -743,7 +734,7 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        if (strpos($file, 'atomic') !== false) {
+        if (str_contains($file, 'atomic')) {
             $db->executeStatement($dumpFile);
         } else {
             // get every command as single part - ; at end of line
@@ -845,6 +836,10 @@ class Installer
             'notifications_send',
             'sites',
             'objects_sort_method',
+            'objectbricks',
+            'fieldcollections',
+            'quantityValueUnits',
+            'classificationstore',
         ];
 
         foreach ($userPermissions as $permission) {

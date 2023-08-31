@@ -37,7 +37,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public bool $noteditable = false;
 
-    public int|bool|null $index = null;
+    public bool $index = false;
 
     public bool $locked = false;
 
@@ -85,31 +85,20 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Returns the data for the editmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return mixed
      */
     abstract public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return mixed
      */
     abstract public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -136,10 +125,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
      *
-     * @return string
      *
      * @internal
      */
@@ -174,6 +160,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->permissions;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -181,6 +170,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -188,6 +180,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setMandatory(bool $mandatory): static
     {
         $this->mandatory = $mandatory;
@@ -195,6 +190,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPermissions(array|string|null $permissions): static
     {
         $this->permissions = $permissions;
@@ -202,6 +200,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
@@ -223,6 +224,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->noteditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setNoteditable(bool $noteditable): static
     {
         $this->noteditable = $noteditable;
@@ -230,13 +234,24 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function getIndex(): ?int
+    public function getIndex(): bool
     {
         return $this->index;
     }
 
-    public function setIndex(?int $index): static
+    /**
+     * @return $this
+     */
+    public function setIndex(?bool $index): static
     {
+        if (null === $index) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0.7',
+                sprintf('Passing null to method %s is deprecated', __METHOD__)
+            );
+            $index = false;
+        }
         $this->index = $index;
 
         return $this;
@@ -247,9 +262,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->style;
     }
 
+    /**
+     * @return $this
+     */
     public function setStyle(?string $style): static
     {
-        $this->style = (string)$style;
+        $this->style = $style;
 
         return $this;
     }
@@ -259,6 +277,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->locked;
     }
 
+    /**
+     * @return $this
+     */
     public function setLocked(bool $locked): static
     {
         $this->locked = $locked;
@@ -271,9 +292,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->tooltip;
     }
 
+    /**
+     * @return $this
+     */
     public function setTooltip(?string $tooltip): static
     {
-        $this->tooltip = (string)$tooltip;
+        $this->tooltip = $tooltip;
 
         return $this;
     }
@@ -288,9 +312,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->invisible;
     }
 
-    public function setInvisible(bool|int|null $invisible): static
+    /**
+     * @return $this
+     */
+    public function setInvisible(bool $invisible): static
     {
-        $this->invisible = (bool)$invisible;
+        $this->invisible = $invisible;
 
         return $this;
     }
@@ -300,9 +327,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleGridView;
     }
 
-    public function setVisibleGridView(bool|int|null $visibleGridView): static
+    /**
+     * @return $this
+     */
+    public function setVisibleGridView(bool $visibleGridView): static
     {
-        $this->visibleGridView = (bool)$visibleGridView;
+        $this->visibleGridView = $visibleGridView;
 
         return $this;
     }
@@ -312,9 +342,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->visibleSearch;
     }
 
-    public function setVisibleSearch(bool|int|null $visibleSearch): static
+    /**
+     * @return $this
+     */
+    public function setVisibleSearch(bool $visibleSearch): static
     {
-        $this->visibleSearch = (bool)$visibleSearch;
+        $this->visibleSearch = $visibleSearch;
 
         return $this;
     }
@@ -332,11 +365,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -353,11 +382,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -370,6 +396,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $key = $db->quoteIdentifier($name);
         if (!empty($params['brickPrefix'])) {
             $key = $params['brickPrefix'].$key;
+        }
+
+        if ($operator === 'in') {
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
         if ($value === 'NULL') {
@@ -422,9 +454,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getGetterCode(DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -475,9 +505,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -565,9 +593,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param DataObject\Objectbrick\Definition $brickClass
      *
-     * @return string
      */
     public function getGetterCodeObjectbrick(DataObject\Objectbrick\Definition $brickClass): string
     {
@@ -616,9 +642,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param DataObject\Objectbrick\Definition $brickClass
      *
-     * @return string
      */
     public function getSetterCodeObjectbrick(DataObject\Objectbrick\Definition $brickClass): string
     {
@@ -701,9 +725,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
      *
-     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
-     * @return string
      */
     public function getGetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition): string
     {
@@ -744,9 +766,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
-     * @return string
      */
     public function getSetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition): string
     {
@@ -818,9 +838,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -860,9 +878,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -943,7 +959,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Creates filter method code for listing classes
      *
-     * @return string
      */
     public function getFilterCode(): string
     {
@@ -954,12 +969,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $dataParamDoc = 'mixed $data';
         $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
-        if (preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        $docComment = $reflectionMethod->getDocComment();
+        if ($docComment && preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $docComment, $dataParam)) {
             $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
         }
 
         $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
-        if (preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        if ($docComment && preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $docComment, $dataParam)) {
             $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
         }
 
@@ -987,13 +1003,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return strlen((string) $number) === 0 ? null : (float)$number;
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return 'no preview';
@@ -1005,10 +1014,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool
      */
     public function isDiffChangeAllowed(DataObject\Concrete $object, array $params = []): bool
     {
@@ -1021,11 +1027,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return mixed
      */
     public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
@@ -1047,11 +1049,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *      - "title" => pretty name describing the data element
      *
      *
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return null|array
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -1083,10 +1081,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
      *
-     * @return mixed
      *
      * @throws \Exception
      */
@@ -1247,7 +1242,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Returns if datatype supports data inheritance
      *
-     * @return bool
      */
     public function supportsInheritance(): bool
     {
@@ -1269,7 +1263,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Returns if datatype supports listing filters: getBy, filterBy
      *
-     * @return bool
      */
     public function isFilterable(): bool
     {
@@ -1277,11 +1270,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param DataObject\Listing $listing
      * @param string|int|float|array|Model\Element\ElementInterface $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
@@ -30,16 +31,10 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -58,13 +53,11 @@ class Image extends Model\Asset
 
     private function isLowQualityPreviewEnabled(): bool
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        return Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
     }
 
     /**
-     * @param string|null $generator
      *
-     * @return bool|string
      *
      * @throws \Exception
      *
@@ -126,7 +119,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -170,7 +163,6 @@ EOT;
      *
      * @internal
      *
-     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
@@ -182,7 +174,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -192,7 +184,6 @@ EOT;
      *
      * @throws \Exception
      *
-     * @return null|\Pimcore\Image\Adapter
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
@@ -223,11 +214,6 @@ EOT;
     }
 
     /**
-     * @param string|null $path
-     * @param bool $force
-     *
-     * @return array|null
-     *
      * @throws \Exception
      */
     public function getDimensions(string $path = null, bool $force = false): ?array
@@ -355,7 +341,6 @@ EOT;
     /**
      * Checks if this file represents an animated image (png or gif)
      *
-     * @return bool
      */
     public function isAnimated(): bool
     {
@@ -418,7 +403,10 @@ EOT;
              *
              * @see http://foone.org/apng/
              */
-            $isAnimated = strpos(substr($fileContent, 0, strpos($fileContent, 'IDAT')), 'acTL') !== false;
+            $posIDAT = strpos($fileContent, 'IDAT');
+            if ($posIDAT !== false) {
+                $isAnimated = str_contains(substr($fileContent, 0, $posIDAT), 'acTL');
+            }
         }
 
         return $isAnimated;

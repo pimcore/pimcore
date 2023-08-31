@@ -40,9 +40,6 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
             ->setDescription('For internal use only');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $source = 'https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/supplementalData.xml';

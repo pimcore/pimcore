@@ -56,9 +56,6 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $keygroupconfig->save();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUpTestClasses(): void
     {
         if (!ClassDefinition::getByName('csstore')) {

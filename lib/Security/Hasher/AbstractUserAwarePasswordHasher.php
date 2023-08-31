@@ -27,9 +27,6 @@ abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher i
 {
     protected ?UserInterface $user = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUser(UserInterface $user): void
     {
         if ($this->user) {
@@ -39,9 +36,6 @@ abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher i
         $this->user = $user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUser(): UserInterface
     {
         if (!$this->user) {

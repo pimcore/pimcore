@@ -23,9 +23,6 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class QuantityValue implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
@@ -38,9 +35,6 @@ class QuantityValue implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {

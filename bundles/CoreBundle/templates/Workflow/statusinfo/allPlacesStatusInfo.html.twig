@@ -4,7 +4,7 @@
 <div>
     {% for place in places %}
 
-        <div class="pimcore-workflow-place-indicator" style="background-color: {{ place.backgroundColor }}; color:{{ place.fontColor }}; border: 1px solid {{ place.borderColor }};" title="{{ place.title }}">
+        <div class="pimcore-workflow-place-indicator" style="background-color: {{ place.backgroundColor }}; color:{{ place.fontColor }}; border: 1px solid {{ place.borderColor }};" title="{{ translator.trans(place.title,[],'admin') }}">
             {{ translator.trans(place.label,[],'admin') }}
         </div>
     {% endfor %}

@@ -22,10 +22,7 @@ use Pimcore\Bundle\XliffBundle\ImporterService\Importer\ImporterInterface;
 interface ImporterServiceInterface
 {
     /**
-     * @param AttributeSet $attributeSet
-     * @param bool $saveElement
      *
-     * @return void
      *
      * @throws \Exception
      */
@@ -34,9 +31,7 @@ interface ImporterServiceInterface
     public function registerImporter(string $type, ImporterInterface $importer): ImporterServiceInterface;
 
     /**
-     * @param string $type
      *
-     * @return ImporterInterface
      *
      * @throws \Exception
      */

@@ -42,32 +42,23 @@ final class Config implements ArrayAccess
      */
     protected static ?array $systemConfig = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetExists($offset): bool
     {
         return self::getSystemConfiguration($offset) !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($offset, $value): void
     {
         throw new Exception("modifying the config isn't allowed");
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetUnset($offset): void
     {
         throw new Exception("modifying the config isn't allowed");
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return array<string, mixed>|null
      */
@@ -81,7 +72,6 @@ final class Config implements ArrayAccess
      *
      * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
-     * @return string
      */
     public static function locateConfigFile(string $name): string
     {
@@ -174,9 +164,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param string|null $languange
      *
-     * @return string
      *
      * @internal
      */
@@ -301,7 +289,6 @@ final class Config implements ArrayAccess
 
     /**
      * @param array<string, mixed>|null $config
-     * @param string|null $language
      *
      * @internal
      */
@@ -315,9 +302,7 @@ final class Config implements ArrayAccess
      *
      * @param string|null $key  Config key to directly load. If null, the whole config will be returned
      * @param mixed $default    Default value to use if the key is not set
-     * @param string|null $language
      *
-     * @return mixed
      */
     public static function getWebsiteConfigValue(string $key = null, mixed $default = null, string $language = null): mixed
     {

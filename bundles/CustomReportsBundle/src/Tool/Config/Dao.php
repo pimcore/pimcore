@@ -42,7 +42,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -102,17 +101,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
-            'pimcore' => [
-                'custom_report' => [
-                    'definitions' => [
-                        $id => $data,
-                    ],
+            'pimcore_custom_reports' => [
+                'definitions' => [
+                    $id => $data,
                 ],
             ],
         ];

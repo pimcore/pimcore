@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
@@ -49,9 +48,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Request $request
-     * @param Site|null $site
-     * @param bool $override
      *
      * @throws NotFoundException
      */

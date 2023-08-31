@@ -39,7 +39,7 @@ final class Version20230322114936 extends AbstractMigration
 
         foreach (self::TABLES as $tableName) {
             if ($schema->getTable($tableName)->hasColumn(self::CONTENT_MASTER_DOC_ID)) {
-                $this->addSql(sprintf('ALTER TABLE %s RENAME COLUMN %s TO %s;', $tableName, self::CONTENT_MASTER_DOC_ID, self::CONTENT_MAIN_DOC_ID));
+                $this->addSql(sprintf('ALTER TABLE %s CHANGE COLUMN %s %s int(11) DEFAULT NULL NULL;', $tableName, self::CONTENT_MASTER_DOC_ID, self::CONTENT_MAIN_DOC_ID));
             }
         }
     }
@@ -50,7 +50,7 @@ final class Version20230322114936 extends AbstractMigration
 
         foreach (self::TABLES as $tableName) {
             if ($schema->getTable($tableName)->hasColumn(self::CONTENT_MAIN_DOC_ID)) {
-                $this->addSql(sprintf('ALTER TABLE %s RENAME COLUMN %s TO %s;', $tableName, self::CONTENT_MAIN_DOC_ID, self::CONTENT_MASTER_DOC_ID));
+                $this->addSql(sprintf('ALTER TABLE %s CHANGE COLUMN %s %s int(11) DEFAULT NULL NULL;', $tableName, self::CONTENT_MAIN_DOC_ID, self::CONTENT_MASTER_DOC_ID));
             }
         }
     }

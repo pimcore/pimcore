@@ -57,6 +57,11 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_relative_medias: true
                 allow_elements:
                     span : [ 'class', 'style', 'id' ]
                     div : [ 'class', 'style', 'id' ]
@@ -74,7 +79,13 @@ framework:
                     ul: ['class', 'style', 'id']
                     li: ['class', 'style', 'id']
                     ol: ['class', 'style', 'id']
+                    br: ''
+                    img: ['alt', 'style', 'src']
             pimcore.translation_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
                 allow_elements:
                     span: [ 'class', 'style', 'id' ]
                     p: [ 'class', 'style', 'id' ]
@@ -87,6 +98,7 @@ framework:
                     h5: [ 'class', 'id' ]
                     h6: [ 'class', 'id' ]
                     a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
+                    br: ''
 
 # Twig Configuration
 twig:
@@ -303,4 +315,4 @@ pimcore:
                 functions: ['path', 'asset']
 
     gotenberg:
-        base_url: 'gotenberg:3000'
+        base_url: 'http://gotenberg:3000'

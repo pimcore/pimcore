@@ -21,21 +21,18 @@ abstract class AbstractArea
     /**
      * @internal
      *
-     * @var array
      */
     protected array $config;
 
     /**
      * @internal
      *
-     * @var Info
      */
     protected Info $brick;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $params = [];
 

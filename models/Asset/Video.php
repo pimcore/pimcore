@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -29,14 +30,8 @@ class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'video';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -64,13 +59,9 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|Video\Thumbnail\Config $config
-     *
-     * @return Video\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig(string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
+    public function getThumbnailConfig(null|string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 
@@ -90,10 +81,7 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param string|Video\Thumbnail\Config $thumbnailName
-     * @param array $onlyFormats
      *
-     * @return array|null
      */
     public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
     {
@@ -134,7 +122,7 @@ class Video extends Model\Asset
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -147,14 +135,7 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $thumbnailName
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     *
-     * @return Video\ImageThumbnail
-     */
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');
@@ -175,9 +156,7 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|null $filePath
      *
-     * @return float|null
      */
     public function getDurationFromBackend(?string $filePath = null): ?float
     {
@@ -198,7 +177,6 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getDimensionsFromBackend(): ?array
     {
@@ -213,7 +191,6 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return float|int|null
      *
      * @throws \Exception
      */
@@ -282,7 +259,6 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array
      */
     public function getSphericalMetaData(): array
     {

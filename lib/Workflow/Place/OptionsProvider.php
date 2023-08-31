@@ -38,10 +38,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -80,9 +77,6 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
-        if (!method_exists($this->translator, 'getLocale')) {
-            return '';
-        }
         // do not translate or format options when not in admin context
         if (empty($this->translator->getLocale())) {
             return $placeConfig->getLabel();

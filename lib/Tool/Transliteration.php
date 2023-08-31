@@ -24,10 +24,7 @@ class Transliteration
     /**
      * @static
      *
-     * @param string $value
-     * @param string|null $language
      *
-     * @return string
      */
     public static function toASCII(string $value, string $language = null): string
     {

@@ -39,9 +39,6 @@ class SearchBackendReindexCommand extends AbstractCommand
             ->setDescription('Re-indexes the backend search of pimcore');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // clear all data

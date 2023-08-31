@@ -42,11 +42,6 @@ class XliffTranslationController extends UserAwareController
     /**
      * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})
      *
-     * @param Request $request
-     * @param ExportServiceInterface $exportService
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
@@ -95,11 +90,6 @@ class XliffTranslationController extends UserAwareController
     /**
      * @Route("/xliff-import-upload", name="pimcore_bundle_xliff_translation_xliffimportupload", methods={"POST"})
      *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
@@ -138,12 +128,6 @@ class XliffTranslationController extends UserAwareController
 
     /**
      * @Route("/xliff-import-element", name="pimcore_bundle_xliff_translation_xliffimportelement", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     * @param ImporterServiceInterface $importerService
-     *
-     * @return JsonResponse
      *
      * @throws \Exception
      */

@@ -48,11 +48,10 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $cacheStatus = \Pimcore\Cache::isEnabled();
+        \Pimcore\Cache::disable();
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
@@ -78,6 +77,10 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         $list = $list->load();
         foreach ($list as $fcDefinition) {
             $this->collectionClassDumper->dumpPHPClass($fcDefinition);
+        }
+
+        if ($cacheStatus) {
+            \Pimcore\Cache::enable();
         }
 
         return 0;

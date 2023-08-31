@@ -59,7 +59,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -69,7 +68,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -98,9 +96,6 @@ class Ghostscript extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {
@@ -108,7 +103,12 @@ class Ghostscript extends Adapter
         }
 
         if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
-            return $asset->getStream();
+            $file = $asset->getStream();
+            if (!is_resource($file)) {
+                throw new \Exception(sprintf('Could not get pdf from asset with id %s', $asset->getId()));
+            }
+
+            return $file;
         }
 
         $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
@@ -117,9 +117,6 @@ class Ghostscript extends Adapter
         throw new \Exception($message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());
@@ -135,7 +132,6 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -159,7 +155,6 @@ class Ghostscript extends Adapter
     /**
      * Get the version of the installed Ghostscript CLI.
      *
-     * @return string
      *
      * @throws \Exception
      */

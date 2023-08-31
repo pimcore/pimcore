@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
@@ -25,7 +26,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
  */
-abstract class AbstractUser extends Model\AbstractModel
+abstract class AbstractUser extends Model\AbstractModel implements AbstractUserInterface
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
@@ -39,15 +40,15 @@ abstract class AbstractUser extends Model\AbstractModel
 
     public static function getById(int $id): static|null
     {
-        if (!is_numeric($id) || $id < 0) {
+        if ($id < 0) {
             return null;
         }
 
         $cacheKey = 'user_' . $id;
 
         try {
-            if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-                $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                $user = RuntimeCache::get($cacheKey);
             } else {
                 $reflectionClass = new \ReflectionClass(static::class);
                 if ($reflectionClass->isAbstract()) {
@@ -64,7 +65,7 @@ abstract class AbstractUser extends Model\AbstractModel
                     $user = $className::getById($user->getId());
                 }
 
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $user);
+                RuntimeCache::set($cacheKey, $user);
             }
         } catch (Model\Exception\NotFoundException $e) {
             return null;
@@ -201,6 +202,7 @@ abstract class AbstractUser extends Model\AbstractModel
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
         }
+        $parentUserId = $this->getParentId();
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
 
@@ -220,7 +222,18 @@ abstract class AbstractUser extends Model\AbstractModel
 
         // now delete the current user
         $this->getDao()->delete();
-        \Pimcore\Cache::clearAll();
+
+        $cacheKey = 'user_' . $this->getId();
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::set($cacheKey, null);
+        }
+
+        if ($parentUserId && $parentUserId > 1) {
+            $parentCacheKey = 'user_' . $parentUserId;
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
+                RuntimeCache::set($parentCacheKey, null);
+            }
+        }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
     }
@@ -238,13 +251,11 @@ abstract class AbstractUser extends Model\AbstractModel
         if (count($userRoleListing)) {
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
-                if (is_array($userRoles)) {
-                    $key = array_search($this->getId(), $userRoles);
-                    if (false !== $key) {
-                        unset($userRoles[$key]);
-                        $relatedUser->setRoles($userRoles);
-                        $relatedUser->save();
-                    }
+                $key = array_search($this->getId(), $userRoles);
+                if (false !== $key) {
+                    unset($userRoles[$key]);
+                    $relatedUser->setRoles($userRoles);
+                    $relatedUser->save();
                 }
             }
         }

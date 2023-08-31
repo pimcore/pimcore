@@ -73,11 +73,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     abstract public function getVersionCountForUpdate(): int;
 
     /**
-     * @param string $type
-     * @param array $userIds
-     * @param string $tableSuffix
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -98,9 +94,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
-     * @param string $tableSuffix
+     * @param string[] $columns
      *
      * @return array<string, int>
      *

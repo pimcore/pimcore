@@ -3,6 +3,24 @@
 ## Upgrade to Pimcore 10.6
 - Upgrade to version 10.6.x, if you are using a lower version.
 
+## Migrate PHP Templates to Twig
+
+With Pimcore 11, it is required to update your PHP templates to Twig.
+
+:::caution
+
+Be aware that Pimcore 11 does not support `installing pimcore/php-templating-engine-bundle` anymore. The migration to Twig is then required even for enterprise customers.
+
+:::
+
+You can use a [RegEx](https://gist.github.com/putzflorian/219f582377b20d64d97ea9d8751dbb89) to replace strings in your template files. For example, rewrite `{% extends ':Layout:default.html.twig' %}` to `{% extends 'Layout/default.html.twig' %}`.
+
+:::tip 
+
+Better replace the strings manually with your IDE instead of as a batch process.
+
+:::
+
 ## Code Changes
 - [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
   The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
@@ -71,7 +89,7 @@
 - [Ecommerce] Switch to ElasticSearch8 implementations in case you are using elasticsearch indices. 
 
 - [Symfony]
-  - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
+  - Require `symfony/dotenv` package in your project to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
     ```bash
     composer require --no-update symfony/dotenv
     ```

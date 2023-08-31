@@ -18,6 +18,7 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
+use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
@@ -27,11 +28,6 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class Authentication
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return User|null
-     */
     public static function authenticateSession(Request $request = null): ?User
     {
         if (null === $request) {
@@ -123,8 +119,7 @@ class Authentication
         $timestamp = null;
 
         try {
-            $decrypted = self::tokenDecrypt($token);
-            list($timestamp, $username) = $decrypted;
+            [$timestamp, $username] = self::tokenDecrypt($token);
         } catch (CryptoException $e) {
             return null;
         }
@@ -165,7 +160,7 @@ class Authentication
             return false;
         }
 
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+        $config = Config::getSystemConfiguration()['security']['password'];
 
         if (password_needs_rehash($user->getPassword(), $config['algorithm'], $config['options'])) {
             $user->setPassword(self::getPasswordHash($user->getName(), $password));
@@ -181,10 +176,7 @@ class Authentication
     }
 
     /**
-     * @param string $username
-     * @param string $plainTextPassword
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -193,7 +185,7 @@ class Authentication
     public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
         $password = self::preparePlainTextPassword($username, $plainTextPassword);
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+        $config = Config::getSystemConfiguration()['security']['password'];
 
         if ($hash = password_hash($password, $config['algorithm'], $config['options'])) {
             return $hash;
@@ -210,9 +202,7 @@ class Authentication
     }
 
     /**
-     * @param string $username
      *
-     * @return string
      *
      * @internal
      */

@@ -28,9 +28,6 @@ use Pimcore\Tool\Storage;
  */
 class Folder extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 
     /**
@@ -43,7 +40,6 @@ class Folder extends Model\Asset
     /**
      * set the children of the document
      *
-     * @param Listing|null $children
      *
      * @return $this
      */
@@ -81,8 +77,6 @@ class Folder extends Model\Asset
 
     /**
      * @internal
-     *
-     * @param bool $force
      *
      * @return resource|null
      *
@@ -166,8 +160,14 @@ class Folder extends Model\Asset
                         break;
                     }
 
+                    $width = $tileThumb->getWidth();
+                    $height = $tileThumb->getHeight();
+                    if (!$width || !$height) {
+                        break;
+                    }
+
                     $tile = imagecreatefromstring(stream_get_contents($stream));
-                    imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
+                    imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $width, $height);
 
                     $count++;
                     if ($count % $colums === 0) {

@@ -39,17 +39,11 @@ final class DocumentRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContent(): ?object
     {
         return $this->getDocument();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteKey(): ?string
     {
         if ($this->document) {

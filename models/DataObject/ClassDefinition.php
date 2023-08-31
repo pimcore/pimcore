@@ -29,13 +29,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
+final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
@@ -528,12 +527,10 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
             $modified = false;
 
             $classDefinitions = $brickDefinition->getClassDefinitions();
-            if (is_array($classDefinitions)) {
-                foreach ($classDefinitions as $key => $classDefinition) {
-                    if ($classDefinition['classname'] == $this->getId()) {
-                        unset($classDefinitions[$key]);
-                        $modified = true;
-                    }
+            foreach ($classDefinitions as $key => $classDefinition) {
+                if ($classDefinition['classname'] == $this->getId()) {
+                    unset($classDefinitions[$key]);
+                    $modified = true;
                 }
             }
             if ($modified) {
@@ -813,7 +810,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      */
     public function setParentClass(string $parentClass): static
     {
-        $this->parentClass = $parentClass;
+        $this->parentClass = (string) $parentClass;
 
         return $this;
     }
@@ -933,9 +930,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      */
     public function setPropertyVisibility(array $propertyVisibility): static
     {
-        if (is_array($propertyVisibility)) {
-            $this->propertyVisibility = $propertyVisibility;
-        }
+        $this->propertyVisibility = $propertyVisibility;
 
         return $this;
     }
@@ -960,7 +955,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      */
     public function setDescription(string $description): static
     {
-        $this->description = $description;
+        $this->description = (string) $description;
 
         return $this;
     }

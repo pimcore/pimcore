@@ -16,8 +16,7 @@ jobs:
               env:
                   MESSAGE: |
                       ### Review Checklist
-                      - [ ] Target branch (`10.6` for bug fixes for Pimcore 10, `11.0` for bug fixes for Pimcore 11 and `11.x` for features and improvements for Pimcore 11)
-                      - [ ] Bug fix: check if files are affected that were [moved to a bundle](https://github.com/pimcore/pimcore/issues/12094) - create a PR there if applicable
+                      - [ ] Target branch (`11.0` for bug fixes, others `11.x`)
                       - [ ] Tests (if it's testable code, there should be a test for it - [get help](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Testing/Core_Tests.html))
                       - [ ] Docs (every functionality needs to be documented, [see here](https://github.com/pimcore/pimcore/tree/11.x/doc)) 
                       - [ ] [Migration](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html) incl. `install.sql` (e.g. if the database schema changes, ...) 
