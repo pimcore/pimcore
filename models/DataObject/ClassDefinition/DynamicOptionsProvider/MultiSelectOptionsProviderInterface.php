@@ -34,6 +34,4 @@ interface MultiSelectOptionsProviderInterface
      *
      */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
-
-    public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
 }
