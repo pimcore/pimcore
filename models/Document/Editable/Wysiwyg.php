@@ -78,7 +78,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromResource(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize(html_entity_decode($data));
+        $this->text = $helper->sanitize($data);
 
         return $this;
     }
@@ -86,7 +86,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromEditmode(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize(html_entity_decode($data));
+        $this->text = $helper->sanitize($data);
 
         return $this;
     }

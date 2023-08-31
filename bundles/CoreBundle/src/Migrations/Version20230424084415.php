@@ -37,7 +37,7 @@ class Version20230424084415 extends AbstractMigration
 
             foreach ($editables as $editable) {
                 $unserialized = unserialize($editable['data']);
-                if(array_key_exists('attributes', $unserialized)) {
+                if (is_array($unserialized) && array_key_exists('attributes', $unserialized)) {
                     unset($unserialized['attributes']);
 
                     $editable['data'] = serialize($unserialized);
