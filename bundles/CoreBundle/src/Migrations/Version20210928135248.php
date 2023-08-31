@@ -36,12 +36,10 @@ final class Version20210928135248 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        if (!$schema->hasTable('sanitycheck')) {
-            $this->addSql("CREATE TABLE IF NOT EXISTS `sanitycheck` (
-              `id` int(11) unsigned NOT NULL,
-              `type` enum('document','asset','object') NOT NULL,
-              PRIMARY KEY  (`id`,`type`)
-            ) DEFAULT CHARSET=utf8mb4;");
-        }
+        $this->addSql("CREATE TABLE IF NOT EXISTS `sanitycheck` (
+          `id` int(11) unsigned NOT NULL,
+          `type` enum('document','asset','object') NOT NULL,
+          PRIMARY KEY  (`id`,`type`)
+        ) DEFAULT CHARSET=utf8mb4;");
     }
 }
