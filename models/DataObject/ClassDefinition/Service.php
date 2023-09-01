@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
 
@@ -283,7 +282,6 @@ class Service
 
     /**
      *
-     * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
      *

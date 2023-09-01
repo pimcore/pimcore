@@ -92,7 +92,6 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param bool $force
      *
      * @throws \Exception
      */

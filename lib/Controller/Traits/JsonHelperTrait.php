@@ -19,6 +19,7 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @property ContainerInterface $container
@@ -27,10 +28,7 @@ trait JsonHelperTrait
 {
     protected PimcoreSerializer $pimcoreSerializer;
 
-    /**
-     * @required
-     *
-     */
+    #[Required]
     public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
     {
         $this->pimcoreSerializer = $pimcoreSerializer;

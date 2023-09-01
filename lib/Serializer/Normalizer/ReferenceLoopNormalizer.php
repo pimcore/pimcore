@@ -51,4 +51,9 @@ class ReferenceLoopNormalizer implements NormalizerInterface
     {
         return $format === JsonEncoder::FORMAT;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return ['*' => false];
+    }
 }

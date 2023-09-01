@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
@@ -52,7 +53,7 @@ class Image extends Model\Asset
 
     private function isLowQualityPreviewEnabled(): bool
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        return Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
     }
 
     /**
@@ -118,7 +119,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 

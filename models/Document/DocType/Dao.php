@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\DocType;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $storageConfig = $config['config_location'][self::CONFIG_KEY];
 

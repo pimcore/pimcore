@@ -680,7 +680,7 @@ class Service extends Model\Element\Service
     /**
      * gets store value for given object and key
      */
-    private static function getStoreValueForObject(Concrete $object, string $key, ?string $requestedLanguage): ?string
+    private static function getStoreValueForObject(Concrete $object, string $key, ?string $requestedLanguage): mixed
     {
         $keyParts = explode('~', $key);
 

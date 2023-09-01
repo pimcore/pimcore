@@ -10,6 +10,7 @@ CREATE TABLE `assets` (
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` longtext,

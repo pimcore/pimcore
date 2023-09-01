@@ -50,7 +50,6 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param mixed $keyDefinition
      *
      * @internal
      *

@@ -362,10 +362,13 @@ class Service extends Model\AbstractModel
     {
         $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
-            // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
-            if ($type == 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
-                $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
-            } elseif (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
+            // only for assets: add the prefix _copy before the file extension (if exist)
+            // not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
+            if ($type === 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
+                // temporary remove file extension from sourceKey
+                $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '', $sourceKey);
+            }
+            if (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
                 // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
                 $keyParts = explode('_', $sourceKey);
                 $counterKey = array_key_last($keyParts);
@@ -377,6 +380,11 @@ class Service extends Model\AbstractModel
                 $sourceKey = implode('_', $keyParts);
             } else {
                 $sourceKey .= '_copy';
+            }
+
+            // restore file extension that got previously removed from sourceKey, if it was present
+            if ($fileExtension ?? '') {
+                $sourceKey .= '.' . $fileExtension;
             }
 
             return self::getSafeCopyName($sourceKey, $target);
