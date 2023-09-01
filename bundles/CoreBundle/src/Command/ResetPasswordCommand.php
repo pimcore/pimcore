@@ -57,10 +57,11 @@ class ResetPasswordCommand extends AbstractCommand
     {
         $userArgument = $input->getArgument('user');
 
-        $method = is_numeric($userArgument) ? 'getById' : 'getByName';
-
-        /** @var User|null $user */
-        $user = User::$method($userArgument);
+        if (is_numeric($userArgument)) {
+            $user = User::getById((int) $userArgument);
+        } else {
+            $user = User::getByName($userArgument);
+        }
 
         if (!$user) {
             $this->writeError('User with name/ID ' . $userArgument . ' could not be found. Exiting');
