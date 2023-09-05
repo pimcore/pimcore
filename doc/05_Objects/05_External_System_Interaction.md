@@ -94,6 +94,7 @@ If you're using / creating very much objects you should call the Pimcore garbage
 ```
 
 **WARNING:** This will flush the entire internal registry!
+**NOTICE:** This helper only works in `prod` environments!
 
 To avoid this, you can pass an array with keys (indexes) which should stay in the registry eg. 
 
