@@ -8,8 +8,7 @@ in order to show up in the `pimcore:bundle:list` command. This gives you the fol
   command to trigger the installation/uninstallation, for example to install/update database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode.
 
-To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods
-defined by the interface.
+To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods defined by the interface.
 
 If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../13_Loading_Admin_UI_Assets.md) section in the docs.
 
