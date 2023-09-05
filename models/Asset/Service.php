@@ -22,11 +22,9 @@ use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
-use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
+use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
-use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
@@ -184,6 +182,13 @@ class Service extends Model\Element\Service
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
         }
+
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         if (!$source instanceof Asset\Folder) {
             $target->setStream($source->getStream());
@@ -369,10 +374,6 @@ class Service extends Model\Element\Service
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -404,10 +405,6 @@ class Service extends Model\Element\Service
      */
     public static function expandMetadataForEditmode(array $metadata): array
     {
-        if (!is_array($metadata)) {
-            return $metadata;
-        }
-
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -473,7 +470,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getImageThumbnailByArrayConfig(array $config): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
+    public static function getImageThumbnailByArrayConfig(array $config): null|ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array
     {
         $asset = Asset::getById($config['asset_id']);
 
@@ -535,7 +532,7 @@ class Service extends Model\Element\Service
                 }
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
-                if (preg_match("|~\-~page\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                if (preg_match("|~\-~page\-(\d+)(@[0-9.]+x)?\.|", $config['filename'], $matchesThumbs)) {
                     $page = (int)$matchesThumbs[1];
                 }
 
@@ -563,7 +560,7 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([^\.]+)\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;
@@ -589,8 +586,10 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array $thumbnail, array $config): ?StreamedResponse
-    {
+    public static function getStreamedResponseFromImageThumbnail(
+        ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array $thumbnail,
+        array $config
+    ): ?StreamedResponse {
         $thumbnailStream = null;
 
         $storage = Storage::get('thumbnail');

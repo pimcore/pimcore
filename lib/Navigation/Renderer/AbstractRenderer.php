@@ -128,6 +128,9 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_maxDepth;
     }
 
+    /**
+     * @return $this
+     */
     public function setIndent(string $indent): static
     {
         $this->_indent = $this->_getWhitespace($indent);
@@ -145,11 +148,12 @@ abstract class AbstractRenderer implements RendererInterface
         return "\n";
     }
 
+    /**
+     * @return $this
+     */
     public function setPrefixForId(string $prefix): static
     {
-        if (is_string($prefix)) {
-            $this->_prefixForId = trim($prefix);
-        }
+        $this->_prefixForId = trim($prefix);
 
         return $this;
     }
@@ -166,6 +170,9 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_prefixForId;
     }
 
+    /**
+     * @return $this
+     */
     public function skipPrefixForId(bool $flag = true): static
     {
         $this->_skipPrefixForId = $flag;
@@ -178,6 +185,9 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_renderInvisible;
     }
 
+    /**
+     * @return $this
+     */
     public function setRenderInvisible(bool $renderInvisible = true): static
     {
         $this->_renderInvisible = $renderInvisible;
@@ -195,11 +205,8 @@ abstract class AbstractRenderer implements RendererInterface
         if (!is_int($minDepth)) {
             $minDepth = $this->getMinDepth();
         }
-        if ((!is_int($maxDepth) || $maxDepth < 0) && null !== $maxDepth) {
+        if (!is_int($maxDepth) || $maxDepth < 0) {
             $maxDepth = $this->getMaxDepth();
-        }
-        if (is_null($maxDepth)) {
-            $maxDepth = -1;
         }
 
         $found = null;
@@ -223,7 +230,7 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if (is_int($maxDepth) && $foundDepth > $maxDepth) {
+        if ($foundDepth > $maxDepth) {
             while ($foundDepth > $maxDepth) {
                 if (--$foundDepth < $minDepth) {
                     $found = null;
@@ -343,7 +350,7 @@ abstract class AbstractRenderer implements RendererInterface
         foreach ($attribs as $key => $val) {
             $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
-            if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {
+            if ('constraints' === $key || str_starts_with($key, 'on')) {
                 // Don't escape event attributes; _do_ substitute double quotes with singles
                 if (!is_scalar($val)) {
                     // non-scalar data should be cast to JSON first
@@ -365,7 +372,7 @@ abstract class AbstractRenderer implements RendererInterface
                 $val = $this->_normalizeId($val);
             }
 
-            if (strpos($val, '"') !== false) {
+            if (str_contains($val, '"')) {
                 $xhtml .= " $key='$val'";
             } else {
                 $xhtml .= " $key=\"$val\"";
@@ -392,8 +399,8 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if (strstr($value, '[')) {
-            if ('[]' == substr($value, -2)) {
+        if (str_contains($value, '[')) {
+            if (str_ends_with($value, '[]')) {
                 $value = substr($value, 0, strlen($value) - 2);
             }
             $value = trim($value, ']');

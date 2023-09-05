@@ -152,15 +152,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -220,15 +218,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->delete($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->delete($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }

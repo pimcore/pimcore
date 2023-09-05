@@ -287,10 +287,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         if ($fd) {
             $data = $this->getDataFromObjectParam($object, $params);
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-
-            if (is_array($params)) {
-                $params = [];
-            }
             $params['injectedData'] = $data;
 
             return $fd->getForCsvExport($object, $params);
@@ -338,9 +334,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             if ($loader->supports($this->getDelegateDatatype())) {
                 $delegate = $loader->build($this->getDelegateDatatype());
                 $className = get_class($delegate);
-                if (method_exists($className, '__set_state')) {
-                    $delegate = $className::__set_state($data);
-                }
+                $delegate = $className::__set_state($data);
                 $this->delegate = $delegate;
             }
         }

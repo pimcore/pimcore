@@ -94,6 +94,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param string[] $columns
      *
      * @return array<string, int>
      *

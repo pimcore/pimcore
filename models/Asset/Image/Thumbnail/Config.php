@@ -241,7 +241,7 @@ final class Config extends Model\AbstractModel
      */
     public static function getPreviewConfig(): Config
     {
-        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $customPreviewImageThumbnail = \Pimcore\Config::getSystemConfiguration('assets')['preview_image_thumbnail'];
         $thumbnail = null;
 
         if ($customPreviewImageThumbnail) {
@@ -349,6 +349,9 @@ final class Config extends Model\AbstractModel
         return false;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -361,6 +364,9 @@ final class Config extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -373,6 +379,9 @@ final class Config extends Model\AbstractModel
         return $this->items;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -385,6 +394,9 @@ final class Config extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setFormat(string $format): static
     {
         $this->format = $format;
@@ -397,6 +409,9 @@ final class Config extends Model\AbstractModel
         return $this->format;
     }
 
+    /**
+     * @return $this
+     */
     public function setQuality(int $quality): static
     {
         if ($quality) {
@@ -575,70 +590,68 @@ final class Config extends Model\AbstractModel
         ];
 
         $transformations = $this->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            if ($originalWidth && $originalHeight) {
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        $arg = $transformation['arguments'];
+        if ($originalWidth && $originalHeight) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    $arg = $transformation['arguments'];
 
-                        $forceResize = false;
-                        if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
-                            $forceResize = true;
-                        }
+                    $forceResize = false;
+                    if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
+                        $forceResize = true;
+                    }
 
-                        if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
+                    if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
+                        $dimensions['width'] = $arg['width'];
+                        $dimensions['height'] = $arg['height'];
+                    } elseif ($transformation['method'] == '1x1_pixel') {
+                        return [
+                            'width' => 1,
+                            'height' => 1,
+                        ];
+                    } elseif ($transformation['method'] == 'scaleByWidth') {
+                        if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
+                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
                             $dimensions['width'] = $arg['width'];
-                            $dimensions['height'] = $arg['height'];
-                        } elseif ($transformation['method'] == '1x1_pixel') {
-                            return [
-                                'width' => 1,
-                                'height' => 1,
-                            ];
-                        } elseif ($transformation['method'] == 'scaleByWidth') {
-                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
-                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                                $dimensions['width'] = $arg['width'];
-                            }
-                        } elseif ($transformation['method'] == 'scaleByHeight') {
-                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
-                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                                $dimensions['height'] = $arg['height'];
-                            }
-                        } elseif ($transformation['method'] == 'contain') {
-                            $x = $dimensions['width'] / $arg['width'];
-                            $y = $dimensions['height'] / $arg['height'];
-
-                            if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
-                                continue;
-                            }
-
-                            if ($x > $y) {
-                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                                $dimensions['width'] = $arg['width'];
-                            } else {
-                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                                $dimensions['height'] = $arg['height'];
-                            }
-                        } elseif ($transformation['method'] == 'cropPercent') {
-                            $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
-                            $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
-                        } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
-                            // unable to calculate dimensions -> return empty
-                            return [];
                         }
+                    } elseif ($transformation['method'] == 'scaleByHeight') {
+                        if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
+                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                            $dimensions['height'] = $arg['height'];
+                        }
+                    } elseif ($transformation['method'] == 'contain') {
+                        $x = $dimensions['width'] / $arg['width'];
+                        $y = $dimensions['height'] / $arg['height'];
+
+                        if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
+                            continue;
+                        }
+
+                        if ($x > $y) {
+                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
+                            $dimensions['width'] = $arg['width'];
+                        } else {
+                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                            $dimensions['height'] = $arg['height'];
+                        }
+                    } elseif ($transformation['method'] == 'cropPercent') {
+                        $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
+                        $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
+                    } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
+                        // unable to calculate dimensions -> return empty
+                        return [];
                     }
                 }
-            } else {
-                // this method is only if we don't have the source dimensions
-                // this doesn't necessarily return both with & height
-                // and is only a very rough estimate, you should avoid falling back to this functionality
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                if ($key == 'width' || $key == 'height') {
-                                    $dimensions[$key] = $value;
-                                }
+            }
+        } else {
+            // this method is only if we don't have the source dimensions
+            // this doesn't necessarily return both with & height
+            // and is only a very rough estimate, you should avoid falling back to this functionality
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
+                        foreach ($transformation['arguments'] as $key => $value) {
+                            if ($key == 'width' || $key == 'height') {
+                                $dimensions[$key] = $value;
                             }
                         }
                     }
@@ -771,7 +784,7 @@ final class Config extends Model\AbstractModel
      */
     public static function getAutoFormats(): array
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+        return \Pimcore\Config::getSystemConfiguration('assets')['image']['thumbnails']['auto_formats'];
     }
 
     /**

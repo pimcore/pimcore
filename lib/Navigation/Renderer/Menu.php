@@ -121,9 +121,7 @@ class Menu extends AbstractRenderer
      */
     public function setUlClass(string $ulClass): static
     {
-        if (is_string($ulClass)) {
-            $this->_ulClass = $ulClass;
-        }
+        $this->_ulClass = $ulClass;
 
         return $this;
     }
@@ -175,9 +173,7 @@ class Menu extends AbstractRenderer
      */
     public function setActiveClass(string $activeClass): static
     {
-        if (is_string($activeClass)) {
-            $this->_activeClass = $activeClass;
-        }
+        $this->_activeClass = $activeClass;
 
         return $this;
     }
@@ -201,9 +197,7 @@ class Menu extends AbstractRenderer
      */
     public function setParentClass(string $parentClass): static
     {
-        if (is_string($parentClass)) {
-            $this->_parentClass = $parentClass;
-        }
+        $this->_parentClass = $parentClass;
 
         return $this;
     }

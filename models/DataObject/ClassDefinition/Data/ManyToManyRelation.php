@@ -214,6 +214,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $elements['dirty'] = true;
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $elements;
     }
@@ -310,6 +311,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
             }
         }
+
         //must return array if data shall be set
         return $elements;
     }
@@ -708,11 +710,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /** See parent class.
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];

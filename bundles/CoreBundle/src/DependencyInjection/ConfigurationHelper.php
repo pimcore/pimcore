@@ -42,6 +42,11 @@ final class ConfigurationHelper
 
     public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
     {
+        //BC reasons: Remove this check in Pimcore 12
+        if (!str_starts_with($folder, PIMCORE_PROJECT_ROOT)) {
+            $folder = PIMCORE_PROJECT_ROOT . $folder;
+        }
+
         if (in_array(LocationAwareConfigRepository::READ_TARGET, $additionalNodes)) {
             $node->
             arrayNode($name)
@@ -55,25 +60,25 @@ final class ConfigurationHelper
                 ->defaultValue('symfony-config')
                 ->end()
                 ->arrayNode(LocationAwareConfigRepository::OPTIONS)
-                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => '%kernel.project_dir%' . $folder])
+                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => $folder])
                 ->variablePrototype()->end()
                 ->end()
                 ->end()
                 ->end()
                 ->arrayNode(LocationAwareConfigRepository::READ_TARGET)
-                ->addDefaultsIfNotSet()
-                ->children()
-                ->enumNode(LocationAwareConfigRepository::TYPE)
-                ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE])
-                ->defaultValue(null)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode(LocationAwareConfigRepository::TYPE)
+                            ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE])
+                            ->defaultValue(null)
+                        ->end()
+                        ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                            ->defaultValue([LocationAwareConfigRepository::DIRECTORY => null])
+                            ->variablePrototype()->end()
+                        ->end()
+                    ->end()
                 ->end()
-                ->arrayNode(LocationAwareConfigRepository::OPTIONS)
-                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => null])
-                ->variablePrototype()->end()
-                ->end()
-                ->end()
-                ->end()
-                ->end();
+            ->end();
         } else {
             $node->
             arrayNode($name)
@@ -87,7 +92,7 @@ final class ConfigurationHelper
                         ->defaultValue('symfony-config')
                     ->end()
                     ->arrayNode(LocationAwareConfigRepository::OPTIONS)
-                    ->defaultValue([LocationAwareConfigRepository::DIRECTORY => '%kernel.project_dir%' . $folder])
+                    ->defaultValue([LocationAwareConfigRepository::DIRECTORY => $folder])
                     ->variablePrototype()->end()
                     ->end()
                 ->end();

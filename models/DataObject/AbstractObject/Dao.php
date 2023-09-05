@@ -535,9 +535,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -601,7 +601,7 @@ class Dao extends Model\Element\Dao
             $orderByType = $type ? ', `' . $type . '` DESC' : '';
             $permissions = $this->db->fetchAssociative('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
 
-            return $permissions;
+            return $permissions ?: null;
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }

@@ -103,7 +103,12 @@ class Ghostscript extends Adapter
         }
 
         if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
-            return $asset->getStream();
+            $file = $asset->getStream();
+            if (!is_resource($file)) {
+                throw new \Exception(sprintf('Could not get pdf from asset with id %s', $asset->getId()));
+            }
+
+            return $file;
         }
 
         $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';

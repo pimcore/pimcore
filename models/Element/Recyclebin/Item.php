@@ -184,11 +184,9 @@ class Item extends Model\AbstractModel
                     $storage->writeStream($scope->getStorageFileBinary($element), $element->getStream());
                 }
 
-                if (method_exists($element, 'getChildren')) {
-                    $children = $element->getChildren();
-                    foreach ($children as $child) {
-                        $rec($child, $rec, $scope);
-                    }
+                $children = $element->getChildren();
+                foreach ($children as $child) {
+                    $rec($child, $rec, $scope);
                 }
             }
         };

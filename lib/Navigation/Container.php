@@ -191,13 +191,11 @@ class Container implements \RecursiveIterator, \Countable
     {
         if ($page instanceof Page) {
             $hash = $page->hashCode();
-        } elseif (is_int($page)) {
+        } else {
             $this->_sort();
             if (!$hash = array_search($page, $this->_index)) {
                 return false;
             }
-        } else {
-            return false;
         }
 
         if (isset($this->_pages[$hash])) {

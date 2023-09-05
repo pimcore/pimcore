@@ -49,15 +49,15 @@ abstract class Adapter
     abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed;
 
     /**
-     *
      * @return resource
+     *
+     * @throws \Exception
      */
     abstract public function getPdf(?Asset\Document $asset = null);
 
     abstract public function isFileTypeSupported(string $fileType): bool;
 
     /**
-     *
      * @throws \Exception
      */
     abstract public function getPageCount(): int;

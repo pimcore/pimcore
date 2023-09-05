@@ -130,7 +130,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                 if (method_exists($this, $getter)) {
                     $value = $this->$getter();
+
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
+                    // when adding a new object, skip check on mandatory fields with default value
+                    if (empty($value) && !$isUpdate && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
+                    ) {
+                        $omitMandatoryCheck = true;
+                    }
 
                     //check throws Exception
                     try {
@@ -462,7 +468,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param mixed $params
      *
      * @throws InheritanceParentNotFoundException
      */
@@ -805,7 +810,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $actualValue = $row[$column];
                 if (isset($likes[$column])) {
                     $expectedValue = $likes[$column];
-                    if (strpos($actualValue, $expectedValue) !== 0) {
+                    if (!str_starts_with($actualValue, $expectedValue)) {
                         return false;
                     }
                 } elseif ($actualValue != $expectedValue) {

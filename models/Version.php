@@ -354,6 +354,9 @@ final class Version extends AbstractModel
         return $this->userId;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
         $this->cid = $cid;
@@ -361,6 +364,9 @@ final class Version extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
         $this->date = $date;
@@ -368,6 +374,9 @@ final class Version extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -375,6 +384,9 @@ final class Version extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setNote(string $note): static
     {
         $this->note = $note;
@@ -382,13 +394,14 @@ final class Version extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserId(int $userId): static
     {
-        if (is_numeric($userId)) {
-            if ($user = User::getById($userId)) {
-                $this->userId = (int) $userId;
-                $this->setUser($user);
-            }
+        if ($user = User::getById($userId)) {
+            $this->userId = $userId;
+            $this->setUser($user);
         }
 
         return $this;
@@ -403,6 +416,9 @@ final class Version extends AbstractModel
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $this->data = $data;
@@ -415,6 +431,9 @@ final class Version extends AbstractModel
         return $this->serialized;
     }
 
+    /**
+     * @return $this
+     */
     public function setSerialized(bool $serialized): static
     {
         $this->serialized = $serialized;
@@ -427,6 +446,9 @@ final class Version extends AbstractModel
         return $this->ctype;
     }
 
+    /**
+     * @return $this
+     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -439,6 +461,9 @@ final class Version extends AbstractModel
         return $this->user;
     }
 
+    /**
+     * @return $this
+     */
     public function setUser(?User $user): static
     {
         $this->user = $user;
@@ -456,6 +481,9 @@ final class Version extends AbstractModel
         return $this->public;
     }
 
+    /**
+     * @return $this
+     */
     public function setPublic(bool $public): static
     {
         $this->public = $public;
@@ -465,7 +493,7 @@ final class Version extends AbstractModel
 
     public function getVersionCount(): int
     {
-        return $this->versionCount ? $this->versionCount : 0;
+        return $this->versionCount ?: 0;
     }
 
     public function setVersionCount(int $versionCount): void

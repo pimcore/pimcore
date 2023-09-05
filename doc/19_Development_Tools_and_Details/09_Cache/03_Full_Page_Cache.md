@@ -103,16 +103,16 @@ Just add the parameter `?pimcore_outputfilters_disabled=true` to the URL.
 ### Disable the Full Page Cache with a Cookie and a Bookmarklet
 Per default the disable-cookie configuration is set to `pimcore_admin_sid`.
 
-That means that if your're logged into Pimcore (have a session-id cookie) you will always get the
+That means that if you're logged into Pimcore (have a session-id cookie) you will always get the
 content live and not from the cache.
 
 #### Bookmarklet
 If you have the cookie `pimcore_admin_sid` in your system configuration you can use the following
-bookmarklet to disable the full page cache without having an active admin session in an other tab.
+bookmarklet to disable the full page cache without having an active admin session in another tab.
 To use the bookmarklet, just drag the following Link into your bookmark toolbar (any browser):
 
 
-* <a href="(javascript:(function() {document.cookie='pimcore_admin_sid=disablethecachebaby'+(Math.floor(Math.random() * 147483648) + 2000)+';path=/;';})())">Disable Pimcore Cache</a>
+* <a href="javascript:(function() {document.cookie='pimcore_admin_sid=disablethecachebaby'+(Math.floor(Math.random() * 147483648) + 2000)+';path=/;';})()">Disable Pimcore Cache</a>
 
-* <a href='(javascript:void((function(){var a,b,c,e,f;f=0;a=document.cookie.split("; ");for(e=0;e<a.length&&a[e];e++){f++;for(b="."+location.host;b;b=b.replace(/^(?:%5C.|[^%5C.]+)/,"")){for(c=location.pathname;c;c=c.replace(/.$/,"")){document.cookie=(a[e]+"; domain="+b+"; path="+c+"; expires="+new Date((new Date()).getTime()-1e11).toGMTString());}}}alert("Expired "+f+" cookies");})()))'>Enable Pimcore Cache</a>
+* <a href='javascript:void((function(){var a,b,c,e,f;f=0;a=document.cookie.split("; ");for(e=0;e<a.length&&a[e];e++){f++;for(b="."+location.host;b;b=b.replace(/^(?:%5C.|[^%5C.]+)/,"")){for(c=location.pathname;c;c=c.replace(/.$/,"")){document.cookie=(a[e]+"; domain="+b+"; path="+c+"; expires="+new Date((new Date()).getTime()-1e11).toGMTString());}}}alert("Expired "+f+" cookies");})())'>Enable Pimcore Cache</a>
 

@@ -16,98 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\DataObject\ClassDefinition;
-use Psr\Log\LoggerInterface;
+use Pimcore\Maintenance\Tasks\DataObject\ConcreteTaskHelperInterface;
 
 /**
  * @internal
  */
 class CleanupFieldcollectionTablesTask implements TaskInterface
 {
-    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY = PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
-
-    private LoggerInterface $logger;
-
-    private array $mapLowerToCamelCase = [];
-
-    public function __construct(LoggerInterface $logger)
+    public function __construct(private ConcreteTaskHelperInterface $helper)
     {
-        $this->logger = $logger;
-
-        $files = array_diff(scandir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY), ['..', '.']);
-        foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
-            $this->mapLowerToCamelCase[strtolower($classname)] = $classname;
-        }
     }
 
     public function execute(): void
     {
-        $db = Db::get();
-        $tasks = [
-            [
-                'localized' => false,
-                'prefix' => 'object_collection_',
-                'pattern' => "object\_collection\_%",
-            ],
-        ];
-        foreach ($tasks as $task) {
-            $prefix = $task['prefix'];
-            $pattern = $task['pattern'];
-            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
-
-            foreach ($tableNames as $tableName) {
-                $tableName = current($tableName);
-                $this->logger->info($tableName . "\n");
-
-                $fieldDescriptor = substr($tableName, strlen($prefix));
-                $idx = strpos($fieldDescriptor, '_');
-                $fcType = substr($fieldDescriptor, 0, $idx);
-                $fcType = $this->mapLowerToCamelCase[$fcType] ?? $fcType;
-
-                $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
-                if (!$fcDef) {
-                    $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
-
-                    continue;
-                }
-
-                $classId = substr($fieldDescriptor, $idx + 1);
-
-                $isLocalized = false;
-
-                if (strpos($classId, 'localized_') === 0) {
-                    $isLocalized = true;
-                    $classId = substr($classId, strlen('localized_'));
-                }
-
-                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
-                if (!$classDefinition) {
-                    $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
-                    continue;
-                }
-
-                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
-
-                foreach ($fieldNames as $fieldName) {
-                    $fieldDef = $classDefinition->getFieldDefinition($fieldName);
-                    if (!$fieldDef && $isLocalized) {
-                        $lfDef = $classDefinition->getFieldDefinition('localizedfields');
-                        if ($lfDef instanceof ClassDefinition\Data\Localizedfields) {
-                            $fieldDef = $lfDef->getFieldDefinition($fieldName);
-                        }
-                    }
-
-                    if (!$fieldDef) {
-                        $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->delete($tableName, ['fieldname' => $fieldName]);
-                    }
-                }
-            }
-        }
+        $this->helper->cleanupCollectionTable();
     }
 }
