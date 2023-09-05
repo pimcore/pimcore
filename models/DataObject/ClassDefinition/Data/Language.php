@@ -81,9 +81,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
@@ -92,9 +89,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

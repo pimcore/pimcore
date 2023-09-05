@@ -239,9 +239,7 @@ class EditableHandler implements LoggerAwareInterface
      * Try to get the brick template from getTemplate() method. If method returns null and brick implements
      * TemplateAreabrickInterface, fall back to auto-resolving the template reference. See interface for examples.
      *
-     * @param AreabrickInterface $brick
      *
-     * @return null|string
      */
     protected function resolveBrickTemplate(AreabrickInterface $brick): ?string
     {
@@ -272,9 +270,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * Return either bundle or global (= app/Resources) template reference
      *
-     * @param TemplateAreabrickInterface $brick
      *
-     * @return string
      */
     protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick): string
     {

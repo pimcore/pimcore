@@ -20,15 +20,18 @@ final class EncoreHelper
 {
     public static function getBuildPathsFromEntrypoints(string $entrypointsFile, string $type = 'js'): array
     {
+        if (!file_exists($entrypointsFile)) {
+            throw new \InvalidArgumentException(sprintf('The file "%s" does not exist.', $entrypointsFile));
+        }
+
         $entrypointsContent = file_get_contents($entrypointsFile);
-        $entrypointsJson = json_decode($entrypointsContent, true)['entrypoints'];
-        $entrypoints = array_keys($entrypointsJson);
+        $entrypoints = json_decode($entrypointsContent, true, flags: JSON_THROW_ON_ERROR)['entrypoints'];
 
         $paths = [];
         foreach ($entrypoints as $entrypoint) {
-            $paths = array_merge($paths, $entrypointsJson[$entrypoint][$type] ?? []);
+            $paths[] = $entrypoint[$type] ?? [];
         }
 
-        return $paths;
+        return array_merge(...$paths);
     }
 }

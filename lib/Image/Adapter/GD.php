@@ -27,9 +27,6 @@ class GD extends Adapter
      */
     protected mixed $resource = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(string $imagePath, array $options = []): static|false
     {
         $this->path = $imagePath;
@@ -38,7 +35,7 @@ class GD extends Adapter
         }
 
         // set dimensions
-        list($width, $height) = getimagesize($this->path);
+        [$width, $height] = getimagesize($this->path);
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -66,9 +63,6 @@ class GD extends Adapter
         return $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format || $format == 'png32') {
@@ -131,9 +125,6 @@ class GD extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function destroy(): void
     {
         if ($this->resource) {
@@ -218,7 +209,7 @@ class GD extends Adapter
     {
         $this->preModify();
 
-        list($r, $g, $b) = $this->colorhex2colorarray($color);
+        [$r, $g, $b] = $this->colorhex2colorarray($color);
 
         // just imagefill() on the existing image doesn't work, so we have to create a new image, fill it and then merge
         // the source image with the background-image together
@@ -245,7 +236,7 @@ class GD extends Adapter
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
-            list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+            [$backgroundImageWidth, $backgroundImageHeight] = getimagesize($image);
 
             $newImg = $this->createImage($this->getWidth(), $this->getHeight());
 
@@ -293,9 +284,6 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
@@ -304,7 +292,7 @@ class GD extends Adapter
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
         if (is_file($image)) {
-            list($oWidth, $oHeight) = getimagesize($image);
+            [$oWidth, $oHeight] = getimagesize($image);
 
             if ($origin === 'top-right') {
                 $x = $this->getWidth() - $oWidth - $x;
@@ -364,9 +352,6 @@ class GD extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsFormat(string $format, bool $force = false): bool
     {
         if (!isset(self::$supportedFormatsCache[$format]) || $force) {

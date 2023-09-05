@@ -76,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -241,7 +240,7 @@ class Dao extends Model\Dao\AbstractDao
                 throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
             }
 
-            if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
+            if ($container instanceof DataObject\ClassDefinitionInterface || $container instanceof DataObject\Objectbrick\Definition) {
                 // query table
                 $data = [];
                 $data['ooo_id'] = $this->model->getObject()->getId();
@@ -440,8 +439,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $deleteQuery
-     * @param bool $isUpdate
      *
      * @return bool force update
      */
@@ -487,19 +484,17 @@ class Dao extends Model\Dao\AbstractDao
             $fieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
             $childDefinitions = $fieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]);
 
-            if (is_array($childDefinitions)) {
-                foreach ($childDefinitions as $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        $params = [
-                            'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate,
-                        ];
-                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
-                            $params['context']['subContainerType'] = 'localizedfield';
-                        }
-
-                        $fd->delete($object, $params);
+            foreach ($childDefinitions as $fd) {
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $params = [
+                        'context' => $this->model->getContext() ? $this->model->getContext() : [],
+                        'isUpdate' => $isUpdate,
+                    ];
+                    if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
+                        $params['context']['subContainerType'] = 'localizedfield';
                     }
+
+                    $fd->delete($object, $params);
                 }
             }
         } catch (\Exception $e) {
@@ -781,7 +776,6 @@ QUERY;
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -867,7 +861,7 @@ QUERY;
 
         $validLanguages = Tool::getValidLanguages();
 
-        if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
+        if ($container instanceof DataObject\ClassDefinitionInterface || $container instanceof DataObject\Objectbrick\Definition) {
             foreach ($validLanguages as &$language) {
                 $queryTable = $this->getQueryTableName();
                 $queryTable .= '_'.$language;
@@ -910,38 +904,36 @@ QUERY;
                 }
 
                 // add non existing columns in the table
-                if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $value) {
-                        if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
-                            $key = $value->getName();
+                foreach ($fieldDefinitions as $value) {
+                    if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                        $key = $value->getName();
 
-                            // if a datafield requires more than one column in the query table
-                            if (is_array($value->getQueryColumnType())) {
-                                foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                    $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
-                                    $protectedColumns[] = $key.'__'.$fkey;
-                                }
-                            } elseif ($value->getQueryColumnType()) {
-                                $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                                $protectedColumns[] = $key;
+                        // if a datafield requires more than one column in the query table
+                        if (is_array($value->getQueryColumnType())) {
+                            foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                $protectedColumns[] = $key.'__'.$fkey;
                             }
-
-                            // add indices
-                            $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
+                        } elseif ($value->getQueryColumnType()) {
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                            $protectedColumns[] = $key;
                         }
+
+                        // add indices
+                        $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
                     }
                 }
 
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
 
-                if ($container instanceof DataObject\ClassDefinition) {
+                if ($container instanceof DataObject\ClassDefinitionInterface) {
                     $this->updateCompositeIndices($queryTable, 'localized_query', $this->model->getClass()->getCompositeIndices());
                 }
             }
         }
 
-        if ($container instanceof DataObject\ClassDefinition) {
+        if ($container instanceof DataObject\ClassDefinitionInterface) {
             $this->updateCompositeIndices($table, 'localized_store', $this->model->getClass()->getCompositeIndices());
             $this->createLocalizedViews();
         }

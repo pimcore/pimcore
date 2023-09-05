@@ -17,8 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 interface ListingClassFieldDefinitionBuilderInterface
 {
-    public function buildListingClassFieldDefinition(ClassDefinition $classDefinition, ClassDefinition\Data $fieldDefinition): string;
+    public function buildListingClassFieldDefinition(ClassDefinitionInterface $classDefinition, ClassDefinition\Data $fieldDefinition): string;
 }

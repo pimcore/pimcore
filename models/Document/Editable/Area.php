@@ -35,7 +35,6 @@ class Area extends Model\Document\Editable
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -44,17 +43,11 @@ class Area extends Model\Document\Editable
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'area';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -76,9 +69,6 @@ class Area extends Model\Document\Editable
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin(): void
     {
         $attributes = $this->getEditmodeElementAttributes();
@@ -105,7 +95,7 @@ class Area extends Model\Document\Editable
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->render());
-        } elseif (is_array($config) && isset($config[0])) {
+        } else {
             foreach ($config as $item) {
                 $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
             }
@@ -135,9 +125,6 @@ class Area extends Model\Document\Editable
         return $info;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend(): void
     {
         $config = $this->getConfig();
@@ -201,9 +188,6 @@ class Area extends Model\Document\Editable
         $blockState->popBlock();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
@@ -215,9 +199,6 @@ class Area extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
@@ -237,9 +218,7 @@ class Area extends Model\Document\Editable
      * as used areabrick and this areabrick defines a block "gallery", you can use $area->getElement('gallery') to get
      * an instance of the block element.
      *
-     * @param string $name
      *
-     * @return Model\Document\Editable
      */
     public function getElement(string $name): Model\Document\Editable
     {

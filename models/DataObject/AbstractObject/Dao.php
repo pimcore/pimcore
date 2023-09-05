@@ -32,7 +32,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -53,7 +52,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -86,7 +84,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -136,7 +133,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes object from database
      *
-     * @return void
      */
     public function delete(): void
     {
@@ -155,9 +151,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
-     * @param string $oldPath
      *
-     * @return null|array
      *
      * @internal
      */
@@ -191,7 +185,6 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      *
-     * @return void
      */
     public function deleteAllProperties(): void
     {
@@ -229,9 +222,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
      *
-     * @return array
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -381,10 +372,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param array|null $objectTypes
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
     {
@@ -416,9 +405,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param int $id
      *
-     * @return array
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -461,7 +448,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return DataObject\ClassDefinition[]
+     * @return DataObject\ClassDefinitionInterface[]
      */
     public function getClasses(): array
     {
@@ -504,10 +491,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -551,11 +535,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -619,7 +601,7 @@ class Dao extends Model\Element\Dao
             $orderByType = $type ? ', `' . $type . '` DESC' : '';
             $permissions = $this->db->fetchAssociative('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
 
-            return $permissions;
+            return $permissions ?: null;
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }

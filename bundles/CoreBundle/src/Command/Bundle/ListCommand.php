@@ -49,9 +49,6 @@ class ListCommand extends AbstractBundleCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $details = $input->getOption('details');

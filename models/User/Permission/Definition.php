@@ -31,9 +31,7 @@ class Definition extends Model\AbstractModel
 
     public function __construct(array $data = [])
     {
-        if (is_array($data) && !empty($data)) {
-            $this->setValues($data);
-        }
+        $this->setValues($data);
     }
 
     public function getKey(): ?string
@@ -67,9 +65,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return Definition|null
      *
      * @throws \Exception
      */
@@ -91,9 +87,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return self|static
      *
      * @throws \Exception
      */

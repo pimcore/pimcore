@@ -33,14 +33,12 @@ class Builder
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $htmlMenuIdPrefix = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $pageClass = DocumentPage::class;
 
@@ -179,10 +177,7 @@ class Builder
     /**
      * @internal
      *
-     * @param Container $navigation
-     * @param Document|null $activeDocument
      *
-     * @return void
      */
     protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
     {
@@ -269,8 +264,6 @@ class Builder
     }
 
     /**
-     * @param Page $page
-     * @param bool $isActive
      *
      * @throws \Exception
      *
@@ -316,7 +309,6 @@ class Builder
     /**
      * Returns the name of the pageclass
      *
-     * @return String
      */
     public function getPageClass(): string
     {
@@ -324,7 +316,6 @@ class Builder
     }
 
     /**
-     * @param Document $parentDocument
      *
      * @return Document[]
      */
@@ -332,15 +323,14 @@ class Builder
     {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
+        if ($parentDocument instanceof Document\Hardlink || $parentDocument instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            return $parentDocument->getChildren()->getData();
+        }
+
         return $parentDocument->getChildren()->load();
     }
 
     /**
-     * @param Document $parentDocument
-     * @param bool $isRoot
-     * @param callable|null $pageCallback
-     * @param array $parents
-     * @param int|null $maxDepth
      *
      * @return Page[]
      *
@@ -354,10 +344,6 @@ class Builder
         $pages = [];
         $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
-
-        if (!is_array($children)) {
-            return $pages;
-        }
 
         foreach ($children as $child) {
             $classes = '';

@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 interface ObjectBrickContainerClassBuilderInterface
 {
-    public function buildContainerClass(Definition $definition, ClassDefinition $classDefinition, string $fieldName, array $brickKeys): string;
+    public function buildContainerClass(Definition $definition, ClassDefinitionInterface $classDefinition, string $fieldName, array $brickKeys): string;
 }

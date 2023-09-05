@@ -18,15 +18,12 @@ namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
-use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Tool\Serialize;
 
 class Service
 {
     /**
-     * @param Document $doc
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      */
@@ -60,8 +57,6 @@ class Service
      *
      * @static
      *
-     * @param Document $doc
-     *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
@@ -84,10 +79,7 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      *
@@ -120,10 +112,7 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      *

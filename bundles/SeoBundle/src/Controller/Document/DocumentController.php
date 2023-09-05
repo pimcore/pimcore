@@ -44,9 +44,7 @@ class DocumentController extends UserAwareController
     /**
      * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
      *
-     * @param DocumentRouteHandler $documentRouteHandler
      *
-     * @return JsonResponse
      */
     public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
@@ -69,11 +67,7 @@ class DocumentController extends UserAwareController
     /**
      * @Route("/seopanel-tree", name="pimcore_bundle_seo_document_document_seopaneltree", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DocumentRouteHandler $documentRouteHandler
      *
-     * @return JsonResponse
      */
     public function seopanelTreeAction(
         Request $request,

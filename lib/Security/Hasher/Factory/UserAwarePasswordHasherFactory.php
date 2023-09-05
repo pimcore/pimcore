@@ -45,9 +45,6 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
      */
     private array $hashers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPasswordHasher(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): PasswordHasherInterface
     {
         if (!$user instanceof UserInterface) {

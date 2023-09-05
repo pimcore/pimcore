@@ -251,7 +251,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @throws \Exception
      */
-    public static function getByName(string $name): ?ClassDefinition
+    public static function getByName(string $name): ?ClassDefinitionInterface
     {
         try {
             $class = new self();
@@ -263,7 +263,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
     }
 
-    public static function create(array $values = []): ClassDefinition
+    public static function create(array $values = []): ClassDefinitionInterface
     {
         $class = new self();
         $class->setValues($values);
@@ -527,12 +527,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $modified = false;
 
             $classDefinitions = $brickDefinition->getClassDefinitions();
-            if (is_array($classDefinitions)) {
-                foreach ($classDefinitions as $key => $classDefinition) {
-                    if ($classDefinition['classname'] == $this->getId()) {
-                        unset($classDefinitions[$key]);
-                        $modified = true;
-                    }
+            foreach ($classDefinitions as $key => $classDefinition) {
+                if ($classDefinition['classname'] == $this->getId()) {
+                    unset($classDefinitions[$key]);
+                    $modified = true;
                 }
             }
             if ($modified) {
@@ -570,7 +568,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public function getDefinitionFile(string $name = null): string
+    public function getDefinitionFile(?string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -932,9 +930,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function setPropertyVisibility(array $propertyVisibility): static
     {
-        if (is_array($propertyVisibility)) {
-            $this->propertyVisibility = $propertyVisibility;
-        }
+        $this->propertyVisibility = $propertyVisibility;
 
         return $this;
     }
@@ -1137,7 +1133,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      *
      * @return $this
      */
-    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition
+    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinitionInterface
     {
         $this->deletedDataComponents = $deletedDataComponents;
 
@@ -1189,7 +1185,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
     }
 
-    public static function getByIdIgnoreCase(string $id): ClassDefinition|null
+    public static function getByIdIgnoreCase(string $id): ClassDefinitionInterface|null
     {
         try {
             $class = new self();

@@ -29,23 +29,23 @@ class Dao extends Model\Dao\AbstractDao
 
     protected array $tableDefinitions = [];
 
-    public function getTableName(DataObject\ClassDefinition $class): string
+    public function getTableName(DataObject\ClassDefinitionInterface $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_' . $class->getId();
     }
 
-    public function getLocalizedTableName(DataObject\ClassDefinition $class): string
+    public function getLocalizedTableName(DataObject\ClassDefinitionInterface $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();
     }
 
-    public function delete(DataObject\ClassDefinition $class): void
+    public function delete(DataObject\ClassDefinitionInterface $class): void
     {
         $table = $this->getTableName($class);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    public function createUpdateTable(DataObject\ClassDefinition $class): void
+    public function createUpdateTable(DataObject\ClassDefinitionInterface $class): void
     {
         $table = $this->getTableName($class);
 
@@ -102,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->tableDefinitions = [];
     }
 
-    public function classSaved(DataObject\ClassDefinition $classDefinition): void
+    public function classSaved(DataObject\ClassDefinitionInterface $classDefinition): void
     {
         $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);
     }

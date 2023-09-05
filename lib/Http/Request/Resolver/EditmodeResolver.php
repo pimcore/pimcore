@@ -50,11 +50,6 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         return $this;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
     public function isEditmode(Request $request = null): bool
     {
         if ($this->forceEditmode) {

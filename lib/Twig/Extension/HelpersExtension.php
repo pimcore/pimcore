@@ -45,9 +45,6 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -84,9 +81,7 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @param string $file
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -117,7 +112,6 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */

@@ -31,63 +31,54 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @var Asset|null
      */
     protected ?Asset $asset = null;
 
     /**
      * @internal
      *
-     * @var Config|null
      */
     protected ?Config $config = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $pathReference = [];
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $width = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $height = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $realHeight = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $mimetype = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $deferred = true;
 
@@ -303,13 +294,13 @@ trait ImageThumbnailTrait
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail_deferred'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'thumbnail') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
@@ -331,8 +322,6 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
-     *
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -372,10 +361,6 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
-     *
-     * @param array|null $pathReference
-     *
-     * @return bool
      *
      * @throws \League\Flysystem\FilesystemException
      */
@@ -429,9 +414,7 @@ trait ImageThumbnailTrait
     /**
      * Returns path for thumbnail image in a given file format
      *
-     * @param string $format
      *
-     * @return static
      */
     public function getAsFormat(string $format): static
     {

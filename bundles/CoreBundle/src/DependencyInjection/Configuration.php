@@ -41,9 +41,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
@@ -455,7 +452,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => 50,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
@@ -1610,6 +1607,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                            ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
                                             ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()

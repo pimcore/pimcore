@@ -34,7 +34,6 @@ class NotificationService
     /**
      * NotificationService constructor.
      *
-     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -42,11 +41,6 @@ class NotificationService
     }
 
     /**
-     * @param int $userId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -86,11 +80,6 @@ class NotificationService
     }
 
     /**
-     * @param int $groupId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -139,9 +128,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */
@@ -157,10 +144,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
-     * @param int|null $recipientId
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */

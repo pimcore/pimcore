@@ -79,7 +79,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         }
     }
 
-    public function createOrUpdateTable(DataObject\ClassDefinition $class): void
+    public function createOrUpdateTable(DataObject\ClassDefinitionInterface $class): void
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;

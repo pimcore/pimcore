@@ -35,14 +35,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $ownerClassId = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $ownerFieldName;
 
@@ -89,7 +87,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         if (empty($this->ownerClassId)) {
             try {
                 $class = $this->ownerClassName ? DataObject\ClassDefinition::getByName($this->ownerClassName) : null;
-                if (!$class instanceof DataObject\ClassDefinition) {
+                if (!$class instanceof DataObject\ClassDefinitionInterface) {
                     Logger::error('Reverse relation '.$this->getName().' has no owner class assigned');
 
                     return null;
@@ -115,14 +113,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function allowObjectRelation($object): bool
+    protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
-        if ($ownerClass instanceof DataObject\ClassDefinition && $object instanceof DataObject\Concrete && $ownerClass->getId() == $object->getClassId()) {
+        if ($ownerClass instanceof DataObject\ClassDefinitionInterface && $object instanceof DataObject\Concrete && $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                 return true;
@@ -132,9 +127,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
@@ -186,17 +178,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);

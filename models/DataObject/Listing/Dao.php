@@ -37,8 +37,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
-     *
      * @throws \Exception
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
@@ -57,7 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of objects for the specicifies parameters, returns an array of DataObject\AbstractObject elements
      *
-     * @return array
      */
     public function load(): array
     {

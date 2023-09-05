@@ -78,17 +78,11 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return null !== $this->getLoader($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): mixed
     {
         $loader = $this->getLoader($name);

@@ -30,11 +30,7 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface
     }
 
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */

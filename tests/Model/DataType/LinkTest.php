@@ -60,7 +60,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function setupInternalLinkObjects()
+    protected function setupInternalLinkObjects(): void
     {
         $this->testAsset = TestHelper::createImageAsset();
 
@@ -75,7 +75,6 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * @return unittestLink
      *
      * @throws \Exception
      */
@@ -113,7 +112,7 @@ class LinkTest extends ModelTestCase
      * Verifies that checkValidity method throws correct exception if invalid data is provided
      *
      */
-    public function testInternalCheckValidity()
+    public function testInternalCheckValidity(): void
     {
         $this->setupInternalLinkObjects();
         $this->testAsset->delete();
@@ -127,7 +126,7 @@ class LinkTest extends ModelTestCase
      * Verifies that checkValidity method sanitize the link data if invalid data is provided
      *
      */
-    public function testInternalCheckValidityParam()
+    public function testInternalCheckValidityParam(): void
     {
         $this->setupInternalLinkObjects();
         $this->testAsset->delete();

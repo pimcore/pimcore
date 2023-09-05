@@ -91,9 +91,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;
@@ -806,7 +803,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->assertNotNull($this->testObject->getVideo());
 
-        $this->testDataHelper->assertVideo($this->testObject, 'video', $this->seed, $returnData);
+        $this->testDataHelper->assertVideo($this->testObject, 'video', $returnData, $this->seed);
     }
 
     public function testWysiwyg(): void

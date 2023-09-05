@@ -346,6 +346,19 @@ pimcore:
 
 -  WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
 
+   As result of this change, the following changes are required in your nginx configuration:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin)(.+?)....
+    ```
+    New:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin|/asset/webdav)(.+?)....
+    ```
+
 -----------------
 
 ### Data Objects

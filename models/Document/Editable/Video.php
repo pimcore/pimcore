@@ -47,7 +47,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var int|string|null
      */
     protected string|int|null $id = null;
 
@@ -56,7 +55,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -65,28 +63,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $poster = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $title = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $allowedTypes = null;
 
@@ -158,9 +152,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'video';
@@ -182,9 +173,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->allowedTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         $path = $this->id;
@@ -247,9 +235,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $inAdmin = false;
@@ -279,9 +264,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -330,9 +312,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $valid;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         $html = parent::admin();
@@ -344,9 +323,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $html;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
@@ -362,9 +338,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (isset($data['type'])
@@ -485,7 +458,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -564,7 +537,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
             if ($youtubeId = $this->id) {
-                if (strpos($youtubeId, '//') !== false) {
+                if (str_contains($youtubeId, '//')) {
                     $parts = parse_url($this->id);
                     if (array_key_exists('query', $parts)) {
                         parse_str($parts['query'], $vars);
@@ -575,7 +548,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-                    if (strpos($this->id, 'embed') !== false) {
+                    if (str_contains($this->id, 'embed')) {
                         $explodedPath = explode('/', $parts['path']);
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
@@ -622,7 +595,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $wmode = '?wmode=transparent';
         $seriesPrefix = '';
-        if (strpos($youtubeId, 'PL') === 0) {
+        if (str_starts_with($youtubeId, 'PL')) {
             $wmode = '';
             $seriesPrefix = 'videoseries?list=';
         }
@@ -840,7 +813,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -1059,13 +1032,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @param string|Asset\Video\Thumbnail\Config $config
      *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|string
+     * @return Asset\Image\ThumbnailInterface|Asset\Video\ImageThumbnailInterface|string
      *
      * TODO Pimcore 11: Change empty string return to null
      */
-    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail|string
+    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|string
     {
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
@@ -1087,9 +1059,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return [];
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if ($this->type == self::TYPE_ASSET && array_key_exists(self::TYPE_ASSET, $idMapping) && array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {

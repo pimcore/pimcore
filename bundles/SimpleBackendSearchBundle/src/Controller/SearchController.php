@@ -119,7 +119,7 @@ class SearchController extends UserAwareController
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
+                if (str_starts_with($f, '~')) {
                     //                    $type = $parts[1];
                     //                    $field = $parts[2];
                     //                    $keyid = $parts[3];
@@ -187,7 +187,7 @@ class SearchController extends UserAwareController
             }
         }
 
-        if (is_array($types) && !empty($types[0])) {
+        if ($types[0]) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -198,7 +198,7 @@ class SearchController extends UserAwareController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) && !empty($subtypes[0])) {
+        if ($subtypes[0]) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -206,7 +206,7 @@ class SearchController extends UserAwareController
             $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) && !empty($classnames[0])) {
+        if ($classnames[0]) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -222,10 +222,8 @@ class SearchController extends UserAwareController
             $tagIds = $allParams['tagIds'];
 
             $tagsTypeCondition = '';
-            if (is_array($types) && !empty($types[0])) {
+            if ($types[0]) {
                 $tagsTypeCondition = 'ctype IN (\'' . implode('\',\'', $types) . '\') AND';
-            } elseif (!is_array($types)) {
-                $tagsTypeCondition = 'ctype = ' . $db->quote($types) . ' AND ';
             }
 
             foreach ($tagIds as $tagId) {
@@ -382,9 +380,7 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param array $types
      *
-     * @return string
      *
      * @internal
      */
@@ -471,10 +467,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return JsonResponse
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -546,10 +539,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
      *
-     * @param Request $request
-     * @param Config $config
      *
-     * @return JsonResponse
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
@@ -618,9 +608,6 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param ElementInterface $element
-     * @param int|null $context
-     * @param array $data
      *
      * @throws \Exception
      */

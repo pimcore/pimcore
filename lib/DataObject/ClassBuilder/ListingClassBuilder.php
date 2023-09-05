@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class ListingClassBuilder implements ListingClassBuilderInterface
 {
@@ -25,7 +26,7 @@ class ListingClassBuilder implements ListingClassBuilderInterface
     ) {
     }
 
-    public function buildListingClass(ClassDefinition $classDefinition): string
+    public function buildListingClass(ClassDefinitionInterface $classDefinition): string
     {
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -61,10 +62,8 @@ class ListingClassBuilder implements ListingClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (\is_array($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $def) {
-                $cd .= $this->fieldDefinitionBuilder->buildListingClassFieldDefinition($classDefinition, $def);
-            }
+        foreach ($classDefinition->getFieldDefinitions() as $def) {
+            $cd .= $this->fieldDefinitionBuilder->buildListingClassFieldDefinition($classDefinition, $def);
         }
 
         $cd .= "\n\n";

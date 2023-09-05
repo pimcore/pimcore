@@ -32,21 +32,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      * @internal
      *
-     * @var array|null
      */
     protected ?array $data = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'link';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         // update path if internal link
@@ -55,9 +48,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         // update path if internal link
@@ -66,9 +56,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
@@ -81,18 +68,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $classes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-            if (!is_array($this->config)) {
-                $this->config = [];
-            }
-
             $prefix = '';
             $suffix = '';
             $noText = false;
@@ -158,8 +138,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value))
-                    && (strpos($key, 'data-') === 0 ||
-                        strpos($key, 'aria-') === 0 ||
+                    && (str_starts_with($key, 'data-') ||
+                        str_starts_with($key, 'aria-') ||
                         in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
                         $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
@@ -224,7 +204,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
+            $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
@@ -337,9 +317,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data['class'] ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -350,9 +327,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
@@ -408,9 +382,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return strlen($this->getHref()) < 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -452,9 +423,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {

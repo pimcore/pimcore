@@ -35,17 +35,14 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
     /** The key
-     * @var string
      */
     protected string $name;
 
     /** Pseudo column for title
-     * @var string|null
      */
     protected ?string $title = null;
 
@@ -57,7 +54,6 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * The key type ("text", "number", etc...)
      *
-     * @var string
      */
     protected string $type;
 
@@ -96,11 +92,6 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool $force
-     *
-     * @return self|null
      *
      * @throws \Exception
      */

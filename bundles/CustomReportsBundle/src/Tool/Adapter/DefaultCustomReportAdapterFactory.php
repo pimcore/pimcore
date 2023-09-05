@@ -27,9 +27,6 @@ class DefaultCustomReportAdapterFactory implements CustomReportAdapterFactoryInt
         $this->className = $className;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(\stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface
     {
         return new $this->className($config, $fullConfig);

@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 interface PHPClassDumperInterface
 {
-    public function dumpPHPClasses(ClassDefinition $classDefinition): void;
+    public function dumpPHPClasses(ClassDefinitionInterface $classDefinition): void;
 }

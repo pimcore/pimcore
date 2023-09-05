@@ -48,9 +48,6 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cacheStatus = \Pimcore\Cache::isEnabled();

@@ -39,7 +39,6 @@ class Service
     }
 
     /**
-     * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return EncryptedField|Data|null
      *
@@ -86,9 +85,7 @@ class Service
         $dataDefinition->setValues($definition);
         $className = get_class($dataDefinition);
 
-        if (method_exists($className, '__set_state')) {
-            $dataDefinition = $className::__set_state((array) $dataDefinition);
-        }
+        $dataDefinition = $className::__set_state((array) $dataDefinition);
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();

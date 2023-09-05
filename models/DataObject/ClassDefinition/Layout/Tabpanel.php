@@ -25,21 +25,18 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'tabpanel';
 
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $border = false;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $tabPosition = 'top';
 

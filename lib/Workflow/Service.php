@@ -26,7 +26,6 @@ class Service
      * @param array $fc - The field configuration from the Workflow
      * @param mixed $value - The value
      *
-     * @return array
      */
     public static function createNoteData(array $fc, mixed $value): array
     {
@@ -92,12 +91,6 @@ class Service
     /**
      * Creates a note for an action with a transition
      *
-     * @param Element\ElementInterface $element
-     * @param string $type
-     * @param string $title
-     * @param string $description
-     * @param array $noteData
-     * @param User|null $user
      *
      * @return Element\Note $note
      */
@@ -116,17 +109,15 @@ class Service
         $note->setDescription($description);
         $note->setUser($user ? $user->getId() : 0);
 
-        if (is_array($noteData)) {
-            foreach ($noteData as $row) {
-                if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
-                    /**
-                     * @var \DateTime $date
-                     */
-                    $date = $row['value'];
-                    $note->setDate($date->getTimestamp());
-                } else {
-                    $note->addData($row['key'], $row['type'], $row['value']);
-                }
+        foreach ($noteData as $row) {
+            if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
+                /**
+                 * @var \DateTime $date
+                 */
+                $date = $row['value'];
+                $note->setDate($date->getTimestamp());
+            } else {
+                $note->addData($row['key'], $row['type'], $row['value']);
             }
         }
 

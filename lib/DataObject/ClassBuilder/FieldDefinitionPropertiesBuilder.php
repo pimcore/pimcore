@@ -17,22 +17,21 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class FieldDefinitionPropertiesBuilder implements FieldDefinitionPropertiesBuilderInterface
 {
-    public function buildProperties(ClassDefinition $classDefinition): string
+    public function buildProperties(ClassDefinitionInterface $classDefinition): string
     {
         $cd = '';
 
         $cd .= 'protected $classId = "' . $classDefinition->getId(). "\";\n";
         $cd .= 'protected $className = "'.$classDefinition->getName().'"'.";\n";
 
-        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof ClassDefinition\Data\ReverseObjectRelation && !$def instanceof ClassDefinition\Data\CalculatedValue
-                ) {
-                    $cd .= 'protected $'.$key.";\n";
-                }
+        foreach ($classDefinition->getFieldDefinitions() as $key => $def) {
+            if (!$def instanceof ClassDefinition\Data\ReverseObjectRelation && !$def instanceof ClassDefinition\Data\CalculatedValue
+            ) {
+                $cd .= 'protected $'.$key.";\n";
             }
         }
 

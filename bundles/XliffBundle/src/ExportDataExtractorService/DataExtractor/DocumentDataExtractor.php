@@ -35,11 +35,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */
@@ -54,21 +50,29 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         }
 
         $this
-            ->addDoumentEditables($document, $result)
+            ->addDocumentEditables($document, $result)
             ->addSettings($document, $result);
 
         return $result;
     }
 
     /**
-     * @param Document $document
-     * @param AttributeSet $result
-     *
-     * @return DocumentDataExtractor
-     *
-     * @throws \Exception
+     * @deprecated
      */
     protected function addDoumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
+    {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
+            'addDoumentEditables',
+            'addDocumentEditables'
+        );
+
+        return $this->addDocumentEditables($document, $result);
+    }
+
+    protected function addDocumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $editables = [];
         $service = new Document\Service;

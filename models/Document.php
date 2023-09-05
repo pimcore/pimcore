@@ -87,9 +87,6 @@ class Document extends Element\AbstractElement
      */
     protected array $siblings = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
@@ -126,9 +123,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param string $path
      *
-     * @return string
      */
     protected static function getPathCacheKey(string $path): string
     {
@@ -168,9 +163,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param Document $document
      *
-     * @return bool
      */
     protected static function typeMatch(Document $document): bool
     {
@@ -272,9 +265,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param array $config
      *
-     * @return Listing
      *
      * @throws \Exception
      */
@@ -287,9 +278,6 @@ class Document extends Element\AbstractElement
         return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -371,7 +359,7 @@ class Document extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $updatedDocument) {
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
@@ -483,15 +471,13 @@ class Document extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
-                if (!$property->getInherited()) {
-                    $property->setDao(null);
-                    $property->setCid($this->getId());
-                    $property->setCtype('document');
-                    $property->setCpath($this->getRealFullPath());
-                    $property->save();
-                }
+        foreach ($this->getProperties() as $property) {
+            if (!$property->getInherited()) {
+                $property->setDao(null);
+                $property->setCid($this->getId());
+                $property->setCtype('document');
+                $property->setCpath($this->getRealFullPath());
+                $property->save();
             }
         }
 
@@ -517,7 +503,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param int $index
      *
      * @internal
      */
@@ -542,8 +527,6 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param Listing|null $children
-     * @param bool $includingUnpublished
      *
      * @return $this
      */
@@ -755,11 +738,10 @@ class Document extends Element\AbstractElement
                         if ($hardlinkTarget) {
                             $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
 
-                            $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
-                                $hardlinkPath, $this->getRealFullPath());
+                            $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
                         }
 
-                        if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                        if (!str_contains($link, $hardlinkPath) && !str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
                             $link = null;
                         }
                     }
@@ -872,7 +854,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent id of the document.
      *
-     * @param int|null $id
      *
      * @return $this
      */
@@ -888,7 +869,6 @@ class Document extends Element\AbstractElement
     /**
      * Returns the document index.
      *
-     * @return int|null
      */
     public function getIndex(): ?int
     {
@@ -898,7 +878,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the document index.
      *
-     * @param int $index
      *
      * @return $this
      */
@@ -917,7 +896,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the document type.
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -955,7 +933,6 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent document instance.
      *
-     * @param ElementInterface|null $parent
      *
      * @return $this
      */
@@ -973,7 +950,6 @@ class Document extends Element\AbstractElement
     /**
      * Set true if want to hide documents.
      *
-     * @param bool $hideUnpublished
      */
     public static function setHideUnpublished(bool $hideUnpublished): void
     {
@@ -983,7 +959,6 @@ class Document extends Element\AbstractElement
     /**
      * Checks if unpublished documents should be hidden.
      *
-     * @return bool
      */
     public static function doHideUnpublished(): bool
     {
@@ -993,9 +968,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param array $args
      *
-     * @return string
      */
     protected function getListingCacheKey(array $args = []): string
     {
