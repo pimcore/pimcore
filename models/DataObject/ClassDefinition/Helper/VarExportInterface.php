@@ -26,7 +26,6 @@ interface VarExportInterface
      * @return string[]
      */
     public function getBlockedVarsForExport(): array;
-
     /**
      * @param string[] $vars
      */

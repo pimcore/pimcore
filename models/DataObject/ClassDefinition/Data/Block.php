@@ -913,7 +913,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * This method is called in DataObject\ClassDefinition::save()
      *
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
     {
         $blockDefinitions = $this->getFieldDefinitions();
 

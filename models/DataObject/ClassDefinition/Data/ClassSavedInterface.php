@@ -19,5 +19,5 @@ use Pimcore\Model\DataObject;
 
 interface ClassSavedInterface
 {
-    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void;
+    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void;
 }

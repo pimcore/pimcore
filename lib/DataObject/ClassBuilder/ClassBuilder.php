@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class ClassBuilder implements ClassBuilderInterface
 {
@@ -27,7 +28,7 @@ class ClassBuilder implements ClassBuilderInterface
     ) {
     }
 
-    public function buildClass(ClassDefinition $classDefinition): string
+    public function buildClass(ClassDefinitionInterface $classDefinition): string
     {
         // create class for object
         $extendClass = 'Concrete';

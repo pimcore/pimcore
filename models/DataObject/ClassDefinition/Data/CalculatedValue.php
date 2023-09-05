@@ -194,7 +194,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -221,7 +221,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
         $code = '/**' . "\n";
@@ -323,7 +323,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
     }
@@ -338,7 +338,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return '';
     }
 
-    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
     }

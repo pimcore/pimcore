@@ -30,9 +30,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
- * @method string getTableName(DataObject\ClassDefinition $class, bool $query = false)
- * @method void createUpdateTable(DataObject\ClassDefinition $class)
- * @method string getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en')
+ * @method string getTableName(DataObject\ClassDefinitionInterface $class, bool $query = false)
+ * @method void createUpdateTable(DataObject\ClassDefinitionInterface $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinitionInterface $class, bool $query = false, string $language = 'en')
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
@@ -376,7 +376,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @internal
      *
      */
-    public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
+    public function getAllowedTypesWithFieldname(DataObject\ClassDefinitionInterface $class): array
     {
         $result = [];
         $fieldDefinitions = $class->getFieldDefinitions();
@@ -483,7 +483,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 if (!isset($processedClasses[$cl['classname']])) {
                     $processedClasses[$cl['classname']] = true;
                     $class = DataObject\ClassDefinition::getByName($cl['classname']);
-                    if ($class instanceof DataObject\ClassDefinition) {
+                    if ($class instanceof DataObject\ClassDefinitionInterface) {
                         $this->getDao()->delete($class);
 
                         foreach ($class->getFieldDefinitions() as $fieldDef) {

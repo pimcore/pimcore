@@ -505,7 +505,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
     {
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setClass($class);
@@ -1090,7 +1090,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      *
      */
-    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 

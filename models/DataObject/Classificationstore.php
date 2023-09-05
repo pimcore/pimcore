@@ -47,7 +47,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      */
-    protected ?ClassDefinition $class = null;
+    protected ?ClassDefinitionInterface $class = null;
 
     /**
      * @internal
@@ -118,14 +118,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->object;
     }
 
-    public function setClass(?ClassDefinition $class): static
+    public function setClass(?ClassDefinitionInterface $class): static
     {
         $this->class = $class;
 
         return $this;
     }
 
-    public function getClass(): ?ClassDefinition
+    public function getClass(): ?ClassDefinitionInterface
     {
         if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();
