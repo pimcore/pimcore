@@ -122,7 +122,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             foreach ($definitions as $definition) {
                 if (!$this->isFieldExportable($object->getClassName(), $definition, $exportAttributes)) {
                     if ($definition->getFieldtype() === Attribute::TYPE_BLOCK) {
-                        $this->addBlocksInLocalizedfields($definition, $object, $result);
+                        $this->addBlocksInLocalizedfields($fd, $definition, $object, $result, $exportAttributes);
                     }
 
                     continue;
@@ -146,7 +146,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         return $this;
     }
 
-    protected function addBlocksInLocalizedfields(Data $definition, DataObject\Concrete $object, AttributeSet $result): void
+    protected function addBlocksInLocalizedfields(Localizedfields $fd, Data $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null): void
     {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
