@@ -6,7 +6,7 @@ odt, ods, odp and many others.
 You can of course use existing image-thumbnail configurations to create a thumbnail of your choice.
  
 > **Important**   
-> Please be aware that the processing of thumbnails for documents is done asynchronously as part of the maintenance job. 
+> Please be aware that the processing of thumbnails for documents is done asynchronously as part of the [maintenance job](../../01_Getting_Started/00_Installation/01_Webserver_Installation.md#5-maintenance-cron-job), under the `pimcore_asset_update` messenger queue
  
 ##### Examples
 ```php

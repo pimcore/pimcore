@@ -319,17 +319,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
-    {
+    public function getDataFromEditmode(
+        mixed $data,
+        DataObject\Concrete $object = null,
+        array $params = []
+    ): DataObject\Classificationstore {
         $classificationStore = $this->getDataFromObjectParam($object);
 
         if (!$classificationStore instanceof DataObject\Classificationstore) {
             $classificationStore = new DataObject\Classificationstore();
         }
 
+        $activeGroups = $data['activeGroups'];
+        $groupCollectionMapping = $data['groupCollectionMapping'];
         $data = $data['data'];
-        $activeGroups = $data['activeGroups'] ?? [];
-        $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
 
         $correctedMapping = [];
 
@@ -347,7 +350,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($keys as $keyId => $value) {
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
+                            $keyConfig
+                        );
 
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;

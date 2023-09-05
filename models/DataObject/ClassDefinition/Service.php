@@ -231,7 +231,7 @@ class Service
         $data = [
             'description' => $customLayout->getDescription(),
             'layoutDefinitions' => json_decode(json_encode($layoutDefinitions)),
-            'default' => $customLayout->getDefault() ?: 0,
+            'default' => $customLayout->getDefault(),
         ];
         self::setDoRemoveDynamicOptions(false);
 

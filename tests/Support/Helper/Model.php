@@ -451,6 +451,10 @@ class Model extends AbstractDefinitionHelper
             $inputWithDefault = $this->createDataChild('input', 'inputWithDefault');
             $inputWithDefault->setDefaultValue('default');
             $panel->addChild($inputWithDefault);
+            /** @var ClassDefinition\Data\Input $mandatoryInputWithDefault */
+            $mandatoryInputWithDefault = $this->createDataChild('input', 'mandatoryInputWithDefault', true);
+            $mandatoryInputWithDefault->setDefaultValue('default');
+            $panel->addChild($mandatoryInputWithDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
@@ -673,6 +677,17 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedFieldRelation')
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
+                ]));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

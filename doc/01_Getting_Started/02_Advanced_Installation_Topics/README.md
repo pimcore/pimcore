@@ -51,14 +51,14 @@ Attention: The bundles will be added to `config/bundles.php` automatically.
 
 Available bundles for installation: 
 
-- [PimcoreApplicationLoggerBundle](../18_Tools_and_Features/17_Application_Logger.md)
-- [PimcoreCustomReportsBundle](../18_Tools_and_Features/29_Custom_Reports.md)
-- [PimcoreGlossaryBundle](../18_Tools_and_Features/21_Glossary.md)
-- PimcoreSeoBundle (for SEO-related topics: [Robots.txt](../18_Tools_and_Features/38_Robots.txt.md), [Sitemaps](../18_Tools_and_Features/39_Sitemaps.md) and [Redirects](../02_MVC/04_Routing_and_URLs/04_Redirects.md))
+- [PimcoreApplicationLoggerBundle](../../18_Tools_and_Features/17_Application_Logger.md)
+- [PimcoreCustomReportsBundle](../../18_Tools_and_Features/29_Custom_Reports.md)
+- [PimcoreGlossaryBundle](../../18_Tools_and_Features/21_Glossary.md)
+- PimcoreSeoBundle (for SEO-related topics: [Robots.txt](../../18_Tools_and_Features/38_Robots.txt.md), [Sitemaps](../../18_Tools_and_Features/39_Sitemaps.md) and [Redirects](../../02_MVC/04_Routing_and_URLs/04_Redirects.md))
 - PimcoreSimpleBackendSearchBundle (for default search functionality in Backend UI interface)
-- [PimcoreStaticRoutesBundle](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
+- [PimcoreStaticRoutesBundle](../../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
 - [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md) (for default WYSIWYG editor)
-- [PimcoreUuidBundle](../19_Development_Tools_and_Details/19_UUID_Support.md)
+- [PimcoreUuidBundle](../../19_Development_Tools_and_Details/19_UUID_Support.md)
 - PimcoreWordExportBundle (for import/export functionality for translations in Word format)
 - PimcoreXliffBundle (for import/export functionality for translations in Xliff format)
 
@@ -156,4 +156,4 @@ pimcore:
 
 ## Office document preview
 
-The feature for displaying a [preview of documents](../04_Assets/03_Working_with_Thumbnails/05_Document_Thumbnails.md) directly in Pimcore is optional. To use it, you must install either [Gotenberg](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-) according to your preference.
+The feature for displaying a [preview of documents](../../04_Assets/03_Working_with_Thumbnails/05_Document_Thumbnails.md) directly in Pimcore is optional. To use it, you must install either [Gotenberg](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-) according to your preference.

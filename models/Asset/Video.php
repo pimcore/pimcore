@@ -64,13 +64,13 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|Video\Thumbnail\Config $config
+     * @param null|string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig(string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
+    public function getThumbnailConfig(null|string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 

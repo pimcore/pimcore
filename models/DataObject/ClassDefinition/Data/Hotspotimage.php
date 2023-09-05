@@ -256,11 +256,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return DataObject\Data\Hotspotimage
+     * @return DataObject\Data\Hotspotimage|null
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -290,7 +290,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'] ?? null, $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        if ($data && isset($data['id']) && (int)$data['id'] > 0) {
+            return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        }
+
+        return null;
     }
 
     /**

@@ -46,7 +46,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             language = {};
         }
 
-        const toolbar1 = 'undo redo | formatselect | ' +
+        const toolbar1 = 'undo redo | blocks | ' +
             'bold italic | alignleft aligncenter ' +
             'alignright alignjustify | link';
 
@@ -71,8 +71,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         let defaultConfig = {};
-        if('' !== subSpace && parent.pimcore[e.detail.context][subSpace]) {
-            defaultConfig = parent.pimcore[e.detail.context][subSpace].wysiwyg ? parent.pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
+        if('' !== subSpace && pimcore[e.detail.context][subSpace]) {
+            defaultConfig = pimcore[e.detail.context][subSpace].wysiwyg ? pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 
         tinymce.init(Object.assign({
@@ -88,7 +88,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             base_url: '/bundles/pimcoretinymce/build/tinymce',
             suffix: '.min',
             convert_urls: false,
-            extended_valid_elements: 'a[name|href|target|title|pimcore_type|pimcore_id],img[style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_type|pimcore_id]',
+            extended_valid_elements: 'a[name|href|target|title|pimcore_id|pimcore_type],img[style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();

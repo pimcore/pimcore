@@ -23,7 +23,7 @@ use Pimcore\Model\User\Workspace\Document;
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
  */
-abstract class UserRole extends AbstractUser
+abstract class UserRole extends AbstractUser implements UserRoleInterface
 {
     /**
      * @internal

@@ -10,16 +10,16 @@ log_detailinformation: "D\xE9tail des informations"
 log_pid: PID
 log_refresh_label: Actualiser chaque
 log_applicationlog: Journal applicatif
-log_search_component: Component
+log_search_component: Composant
 log_search_pid: PID
-log_refresh_seconds: Seconds
+log_refresh_seconds: Secondes
 keybinding_application_logger: Application logger
 log_search_from: De
-log_search_to: A
+log_search_to: "\xC0"
 log_type: Type
 log_source: Source
 log_message: Message
-log_reset_search: Reset
-log_search: Search
+log_reset_search: "R\xE9initialiser"
+log_search: Rechercher
 log_search_message: Message
 ...

@@ -273,7 +273,7 @@ class RgbaColor extends Data implements
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $this->getDataForEditmode($data, $object, $params) ?? '';
+        return $this->getDataForEditmode($data) ?? '';
     }
 
     /**

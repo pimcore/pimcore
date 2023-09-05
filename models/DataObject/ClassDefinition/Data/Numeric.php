@@ -467,6 +467,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     private function toNumeric(mixed $value): float|int|string
     {
+        if ($this->getInteger()) {
+            return (int) $value;
+        }
+
         $value = str_replace(',', '.', (string) $value);
 
         if ($this->isDecimalType()) {

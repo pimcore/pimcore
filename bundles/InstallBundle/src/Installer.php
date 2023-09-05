@@ -463,6 +463,7 @@ class Installer
         $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('complete');
 
         return $errors;
     }

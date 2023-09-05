@@ -158,9 +158,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $metaData->_setOwnerFieldname($this->getName());
                         $metaData->setObjectId($destinationId);
 
-                        $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
-                        $ownername = $relation['ownername'] ? $relation['ownername'] : '';
-                        $position = $relation['position'] ? $relation['position'] : '0';
+                        $ownertype = $relation['ownertype'] ?: '';
+                        $ownername = $relation['ownername'] ?: '';
+                        $position = $relation['position'] ?: '0';
                         $index = $key + 1;
 
                         $metaData->load(
@@ -178,6 +178,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $list;
     }
@@ -442,25 +443,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
-                        return;
-                    }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
         }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
-        $classId = null;
         $objectId = null;
 
         if ($object instanceof DataObject\Concrete) {
@@ -487,7 +475,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
-        $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
+        $position = isset($relation['position']) ? (string)$relation['position'] : '0';
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {

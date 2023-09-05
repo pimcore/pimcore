@@ -32,6 +32,11 @@ body:
           required: true
     - type: textarea
       attributes:
-          label: Expected / actual behavior
+          label: Actual Behavior
       validations:
-          required: false
+          required: true
+    - type: textarea
+      attributes:
+          label: Expected Behavior
+      validations:
+          required: true
