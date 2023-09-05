@@ -296,7 +296,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->getFieldType();
+        $diffdata['type'] = $this->fieldtype;
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);

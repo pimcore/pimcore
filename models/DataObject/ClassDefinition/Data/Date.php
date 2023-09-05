@@ -256,7 +256,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $diffdata = [];
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->getFieldType();
+        $diffdata['type'] = $this->fieldtype;
         $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
         $diffdata['data'] = $thedata;
         $diffdata['title'] = !empty($this->title) ? $this->title : $this->name;

@@ -214,7 +214,7 @@ class Select extends Data implements
         $diffdata['disabled'] = false;
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->getFieldType();
+        $diffdata['type'] = $this->fieldtype;
 
         $value = '';
         foreach ($this->options as $option) {

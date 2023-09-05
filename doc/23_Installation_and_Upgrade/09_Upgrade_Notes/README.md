@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## Pimcore 11.0.8
+## Pimcore 11.1.0
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 
 ## Pimcore 11.0.7
