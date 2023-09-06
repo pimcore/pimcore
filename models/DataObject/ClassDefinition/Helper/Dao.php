@@ -130,7 +130,7 @@ trait Dao
     /**
      * @param string[] $tables
      */
-    protected function handleEncryption(DataObject\ClassDefinitionInterface $classDefinition, array $tables): void
+    protected function handleEncryption(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         if ($classDefinition->getEncryption()) {
             $this->encryptTables($tables);
@@ -154,7 +154,7 @@ trait Dao
     /**
      * @param string[] $tables
      */
-    protected function decryptTables(DataObject\ClassDefinitionInterface $classDefinition, array $tables): void
+    protected function decryptTables(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         foreach ($tables as $table) {
             if ($classDefinition->isEncryptedTable($table)) {

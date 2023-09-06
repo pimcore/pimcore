@@ -80,7 +80,7 @@ class ClassCommand extends AbstractStructureImportCommand
      */
     protected function import(ModelInterface $definition, string $json): bool
     {
-        if (!$definition instanceof ClassDefinitionInterface) {
+        if (!$definition instanceof ClassDefinition) {
             return false;
         }
 

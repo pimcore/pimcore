@@ -646,7 +646,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $this->enableBatchEdit = $enableBatchEdit;
     }
 
-    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')

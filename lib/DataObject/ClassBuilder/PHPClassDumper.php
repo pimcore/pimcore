@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\Model\DataObject\ClassDefinitionInterface;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 
 class PHPClassDumper implements PHPClassDumperInterface
@@ -28,7 +28,7 @@ class PHPClassDumper implements PHPClassDumperInterface
     ) {
     }
 
-    public function dumpPHPClasses(ClassDefinitionInterface $classDefinition): void
+    public function dumpPHPClasses(ClassDefinition $classDefinition): void
     {
         $classFilePath = $classDefinition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($classDefinition);

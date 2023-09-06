@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
 
     protected array $tableDefinitions = [];
 
-    public function getTableName(DataObject\ClassDefinitionInterface $class, bool $query = false): string
+    public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {
         if ($query) {
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function getLocalizedTableName(DataObject\ClassDefinitionInterface $class, bool $query = false, string $language = 'en'): string
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en'): string
     {
         if ($query) {
             return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;
@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete(DataObject\ClassDefinitionInterface $class): void
+    public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class, false);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    public function createUpdateTable(DataObject\ClassDefinitionInterface $class): void
+    public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
@@ -147,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
 
-    public function classSaved(DataObject\ClassDefinitionInterface $classDefinition): void
+    public function classSaved(DataObject\ClassDefinition $classDefinition): void
     {
         $tableStore = $this->getTableName($classDefinition, false);
         $tableQuery = $this->getTableName($classDefinition, true);

@@ -441,7 +441,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
      */
-    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         // create a dummy instance just for updating the tables
         $localizedFields = new Localizedfield();
@@ -502,7 +502,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $container->getObjectVar('localizedfields');
     }
 
-    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $code = '';
         if (!$class instanceof DataObject\Fieldcollection\Definition) {
@@ -516,7 +516,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $code;
     }
 
-    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $code = '';
         if (!$class instanceof DataObject\Fieldcollection\Definition) {

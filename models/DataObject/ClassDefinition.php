@@ -251,7 +251,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @throws \Exception
      */
-    public static function getByName(string $name): ?ClassDefinitionInterface
+    public static function getByName(string $name): ?ClassDefinition
     {
         try {
             $class = new self();
@@ -263,7 +263,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
     }
 
-    public static function create(array $values = []): ClassDefinitionInterface
+    public static function create(array $values = []): ClassDefinition
     {
         $class = new self();
         $class->setValues($values);
@@ -568,7 +568,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public function getDefinitionFile(?string $name = null): string
+    public function getDefinitionFile(string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -1133,7 +1133,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      *
      * @return $this
      */
-    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinitionInterface
+    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition
     {
         $this->deletedDataComponents = $deletedDataComponents;
 
@@ -1185,7 +1185,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
     }
 
-    public static function getByIdIgnoreCase(string $id): ClassDefinitionInterface|null
+    public static function getByIdIgnoreCase(string $id): ClassDefinition|null
     {
         try {
             $class = new self();
