@@ -246,7 +246,9 @@ pimcore:
 
 #### [Migrations] :
 
--  Pimcore does not run core migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
+-  Removed `executeMigrationsUp` from `Pimcore\Composer`.
+-  Pimcore does not run core migrations after `composer` update automatically anymore.
+   Make sure that migrations are executed by running the command `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`.
 
 #### [Naming] :
 
