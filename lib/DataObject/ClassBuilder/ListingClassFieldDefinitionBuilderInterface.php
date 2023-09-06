@@ -21,5 +21,5 @@ use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 interface ListingClassFieldDefinitionBuilderInterface
 {
-    public function buildListingClassFieldDefinition(ClassDefinitionInterface $classDefinition, ClassDefinition\Data $fieldDefinition): string;
+    public function buildListingClassFieldDefinition(ClassDefinition $classDefinition, ClassDefinition\Data $fieldDefinition): string;
 }

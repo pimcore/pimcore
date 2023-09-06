@@ -26,7 +26,7 @@ class ListingClassBuilder implements ListingClassBuilderInterface
     ) {
     }
 
-    public function buildListingClass(ClassDefinitionInterface $classDefinition): string
+    public function buildListingClass(ClassDefinition $classDefinition): string
     {
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';

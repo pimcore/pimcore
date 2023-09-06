@@ -459,7 +459,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      */
-    public function getGetterCode(DataObject\ClassDefinitionInterface|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -485,7 +485,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         // insert this line if inheritance from parent objects is allowed
-        if ($class instanceof DataObject\ClassDefinitionInterface && $class->getAllowInherit() && $this->supportsInheritance()) {
+        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
@@ -510,7 +510,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      */
-    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         if ($class instanceof DataObject\Objectbrick\Definition) {
             $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
@@ -560,7 +560,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
-            if ($class instanceof DataObject\ClassDefinitionInterface && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
                 $code .= "\t" . '});' . "\n";
@@ -843,7 +843,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      */
-    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -883,7 +883,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      */
-    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
         if ($class instanceof DataObject\Objectbrick\Definition) {
@@ -929,7 +929,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
-            if ($class instanceof DataObject\ClassDefinitionInterface && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() use ($language) {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
                 $code .= "\t" . '});' . "\n";

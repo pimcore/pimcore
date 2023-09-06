@@ -446,7 +446,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return 'NOT SUPPORTED';
     }
 
-    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter, no inheritance here, that's the only difference
         $key = $this->getName();
@@ -574,7 +574,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
      */
-    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         foreach ($this->allowedTypes as $i => $allowedType) {
             if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {

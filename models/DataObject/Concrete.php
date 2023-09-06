@@ -383,11 +383,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @throws \Exception
      */
-    public function getClass(): ClassDefinitionInterface
+    public function getClass(): ClassDefinition
     {
         if (!$this->class) {
             $class = ClassDefinition::getById($this->getClassId());
-            if (!$class instanceof ClassDefinitionInterface) {
+            if (!$class instanceof ClassDefinition) {
                 throw new Model\Exception\NotFoundException('class not found for object id: ' . $this->getId());
             }
 

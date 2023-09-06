@@ -28,7 +28,7 @@ class ClassBuilder implements ClassBuilderInterface
     ) {
     }
 
-    public function buildClass(ClassDefinitionInterface $classDefinition): string
+    public function buildClass(ClassDefinition $classDefinition): string
     {
         // create class for object
         $extendClass = 'Concrete';
