@@ -240,7 +240,7 @@ class Dao extends Model\Dao\AbstractDao
                 throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
             }
 
-            if ($container instanceof DataObject\ClassDefinitionInterface || $container instanceof DataObject\Objectbrick\Definition) {
+            if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
                 // query table
                 $data = [];
                 $data['ooo_id'] = $this->model->getObject()->getId();
@@ -861,7 +861,7 @@ QUERY;
 
         $validLanguages = Tool::getValidLanguages();
 
-        if ($container instanceof DataObject\ClassDefinitionInterface || $container instanceof DataObject\Objectbrick\Definition) {
+        if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
             foreach ($validLanguages as &$language) {
                 $queryTable = $this->getQueryTableName();
                 $queryTable .= '_'.$language;
@@ -927,13 +927,13 @@ QUERY;
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
 
-                if ($container instanceof DataObject\ClassDefinitionInterface) {
+                if ($container instanceof DataObject\ClassDefinition) {
                     $this->updateCompositeIndices($queryTable, 'localized_query', $this->model->getClass()->getCompositeIndices());
                 }
             }
         }
 
-        if ($container instanceof DataObject\ClassDefinitionInterface) {
+        if ($container instanceof DataObject\ClassDefinition) {
             $this->updateCompositeIndices($table, 'localized_store', $this->model->getClass()->getCompositeIndices());
             $this->createLocalizedViews();
         }

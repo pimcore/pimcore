@@ -20,13 +20,13 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Listing\Dao getDao()
- * @method Model\DataObject\ClassDefinitionInterface[] load()
- * @method Model\DataObject\ClassDefinitionInterface|false current()
+ * @method Model\DataObject\ClassDefinition[] load()
+ * @method Model\DataObject\ClassDefinition|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @return Model\DataObject\ClassDefinitionInterface[]
+     * @return Model\DataObject\ClassDefinition[]
      */
     public function getClasses(): array
     {
@@ -34,7 +34,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param Model\DataObject\ClassDefinitionInterface[]|null $classes
+     * @param Model\DataObject\ClassDefinition[]|null $classes
      *
      * @return $this
      */

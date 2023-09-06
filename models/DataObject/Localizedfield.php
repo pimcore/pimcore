@@ -71,7 +71,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      */
-    protected ?ClassDefinitionInterface $class = null;
+    protected ?ClassDefinition $class = null;
 
     /**
      * @internal
@@ -235,14 +235,14 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this->object;
     }
 
-    public function setClass(?ClassDefinitionInterface $class): static
+    public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
 
         return $this;
     }
 
-    public function getClass(): ?ClassDefinitionInterface
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();

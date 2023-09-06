@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class FieldDefinitionPropertiesBuilder implements FieldDefinitionPropertiesBuilderInterface
 {

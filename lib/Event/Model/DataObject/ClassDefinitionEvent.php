@@ -16,28 +16,28 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model\DataObject;
 
-use Pimcore\Model\DataObject\ClassDefinitionInterface;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ClassDefinitionEvent extends Event
 {
-    protected ClassDefinitionInterface $classDefinition;
+    protected ClassDefinition $classDefinition;
 
     /**
      * DocumentEvent constructor.
      *
      */
-    public function __construct(ClassDefinitionInterface $classDefinition)
+    public function __construct(ClassDefinition $classDefinition)
     {
         $this->classDefinition = $classDefinition;
     }
 
-    public function getClassDefinition(): ClassDefinitionInterface
+    public function getClassDefinition(): ClassDefinition
     {
         return $this->classDefinition;
     }
 
-    public function setClassDefinition(ClassDefinitionInterface $classDefinition): void
+    public function setClassDefinition(ClassDefinition $classDefinition): void
     {
         $this->classDefinition = $classDefinition;
     }
