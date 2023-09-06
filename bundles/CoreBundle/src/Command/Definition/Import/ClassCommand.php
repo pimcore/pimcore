@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
-use Pimcore\Model\DataObject\ClassDefinitionInterface;
 use Pimcore\Model\ModelInterface;
 
 /**
