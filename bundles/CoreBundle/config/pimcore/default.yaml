@@ -119,6 +119,8 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        document: ~
+        editmode: false
     paths:
         '%kernel.project_dir%/templates': App
 
