@@ -38,7 +38,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
 
     protected string $type = '';
 
-    public static function getById(int $id): static|null
+    public static function getById(?int $id = null): static|null
     {
         if ($id < 0) {
             return null;
