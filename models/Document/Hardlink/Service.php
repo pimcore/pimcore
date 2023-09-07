@@ -18,14 +18,12 @@ namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
-use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Tool\Serialize;
 
 class Service
 {
     /**
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      */
@@ -82,7 +80,6 @@ class Service
 
     /**
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      *
@@ -116,7 +113,6 @@ class Service
 
     /**
      *
-     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      *

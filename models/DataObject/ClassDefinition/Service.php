@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
 
@@ -48,8 +47,9 @@ class Service
     public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
-        if ($class->layoutDefinitions instanceof Layout) {
-            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        $layoutDefinitions = $class->getLayoutDefinitions();
+        if ($layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
         }
 
         self::setDoRemoveDynamicOptions(true);
@@ -283,7 +283,6 @@ class Service
 
     /**
      *
-     * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
      *

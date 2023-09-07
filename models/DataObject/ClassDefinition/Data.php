@@ -45,6 +45,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public array|string|null $permissions = null;
 
+    /**
+     * @deprecated Will be removed in Pimcore 12, use getFieldType() instead.
+     */
     public string $fieldtype = '';
 
     public bool $relationType = false;

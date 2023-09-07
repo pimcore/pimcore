@@ -2,6 +2,7 @@
 
 ## Pimcore 11.1.0
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
@@ -345,6 +346,19 @@ pimcore:
 #### [WebDAV] :
 
 -  WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
+
+   As result of this change, the following changes are required in your nginx configuration:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin)(.+?)....
+    ```
+    New:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin|/asset/webdav)(.+?)....
+    ```
 
 -----------------
 

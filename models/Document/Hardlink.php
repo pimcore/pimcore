@@ -157,17 +157,18 @@ class Hardlink extends Document
         if (!isset($this->children[$cacheKey])) {
             $children = parent::getChildren($includingUnpublished);
 
-            $sourceChildren = [];
+            $wrappedSourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished);
-                foreach ($sourceChildren as &$c) {
-                    $c = Document\Hardlink\Service::wrap($c);
-                    $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished)->getDocuments();
+                foreach ($sourceChildren as $key => $c) {
+                    $wrappedChild = Document\Hardlink\Service::wrap($c);
+                    $wrappedChild->setHardLinkSource($this);
+                    $wrappedChild->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                    $wrappedSourceChildren[$key] = $wrappedChild;
                 }
             }
 
-            $children->setData(array_merge($sourceChildren, $children->load()));
+            $children->setData(array_merge($wrappedSourceChildren, $children->load()));
 
             $this->setChildren($children, $includingUnpublished);
         }
