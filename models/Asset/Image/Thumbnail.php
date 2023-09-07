@@ -53,7 +53,11 @@ final class Thumbnail implements ThumbnailInterface
         $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
 
         $pathReference = null;
-        if ($this->getConfig() && $this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+        if (
+            $this->getConfig() &&
+            $this->useOriginalFile($this->asset->getFilename()) &&
+            $this->getConfig()->isSvgTargetFormatPossible()
+        ) {
             // we still generate the raster image, to get the final size of the thumbnail
             // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
             $pathReference = [
@@ -319,7 +323,10 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         // get copyright from asset
-        if ((!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) && $image->getMetadata('copyright')) {
+        if (
+            (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) &&
+            $image->getMetadata('copyright')
+        ) {
             if (!empty($altText)) {
                 $altText .= ' | ';
             }
@@ -430,7 +437,10 @@ final class Thumbnail implements ThumbnailInterface
             // encode comma in thumbnail path as srcset is a comma separated list
             $srcSetValues[] = str_replace(',', '%2C', $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image));
 
-            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()?->isSvgTargetFormatPossible()) {
+            if (
+                $this->useOriginalFile($this->asset->getFilename()) &&
+                $this->getConfig()?->isSvgTargetFormatPossible()
+            ) {
                 break;
             }
         }
