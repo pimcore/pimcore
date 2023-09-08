@@ -53,7 +53,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         array $exportAttributes = null
     ): AttributeSet
     {
-        die('dd');
         $notInheritedSet = $this->extractRawAttributeSet(
             $translationItem,
             $sourceLanguage,
