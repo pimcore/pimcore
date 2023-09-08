@@ -51,8 +51,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         string $sourceLanguage,
         array $targetLanguages,
         array $exportAttributes = null
-    ): AttributeSet
-    {
+    ): AttributeSet {
         $notInheritedSet = $this->extractRawAttributeSet(
             $translationItem,
             $sourceLanguage,
@@ -96,8 +95,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         array $targetLanguages,
         ?array $exportAttributes,
         bool $inherited
-    ): AttributeSet
-    {
+    ): AttributeSet {
         return DataObject\Service::useInheritedValues(
             $inherited,
             function () use ($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes) {
@@ -142,8 +140,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor
-    {
+    ): DataObjectDataExtractor {
         /** @var Localizedfields|null $fd */
         $fd = $object->getClass()->getFieldDefinition('localizedfields');
         if ($fd) {
@@ -196,8 +193,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): void
-    {
+    ): void {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);
@@ -257,8 +253,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         mixed $fieldCollectionItem,
         AttributeSet $result,
         string $locale
-    ): void
-    {
+    ): void {
         $blockElements = $localizedField->getLocalizedValue($definition->getName(), $locale);
 
         $targetBlockElements = [];
@@ -559,6 +554,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                                 $result,
                                 $locale
                             );
+
                             continue;
                         }
 
