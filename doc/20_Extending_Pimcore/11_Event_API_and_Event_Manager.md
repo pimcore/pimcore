@@ -44,7 +44,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Targeting](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TargetingEvents.php)
 - [Tests](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TestEvents.php)
 - [Translation](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TranslationEvents.php)
-- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Event/BundleManagerEvents.php)
+- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php)
 
 ## Examples
 
@@ -161,4 +161,3 @@ into the /news/in-enim-justo_2/image_1 asset folder.
                 }
         });
 ```  
-
