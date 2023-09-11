@@ -847,6 +847,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
+            $this->preSetData($container, $data, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -921,9 +922,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                             if ($data instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
 
-                                if (isset($params['object'])){
-                                    $data->setObject($params['object']);
-                                }
                                 foreach ($data->getInternalData() as $language => $fields) {
                                     foreach ($fields as $fieldName => $values) {
                                         $lfd = $fd->getFieldDefinition($fieldName);

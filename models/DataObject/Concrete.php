@@ -153,9 +153,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         if ($fd instanceof Link) {
                             $params['resetInvalidFields'] = true;
                         }
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
-                            $params['object'] = $this;
-                        }
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {

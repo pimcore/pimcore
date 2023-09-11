@@ -150,7 +150,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $loadLazy = !($params['objectFromVersion'] ?? false);
 
-        $data->setObject($object);
         $dataItems = $data->getInternalData($loadLazy);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
