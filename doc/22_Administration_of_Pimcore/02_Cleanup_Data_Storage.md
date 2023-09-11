@@ -16,7 +16,7 @@ You can reduce the amount of restore points individually for Assets, Objects and
 After you have reduced the value, it's recommended to run the following command manually 
 (it would also run automatically as part of the regular maintenance script): 
 ```bash
-./bin/console pimcore:maintenance -f -j versioncleanup
+./bin/console pimcore:maintenance -j versioncleanup
 ```
 
 #### Example

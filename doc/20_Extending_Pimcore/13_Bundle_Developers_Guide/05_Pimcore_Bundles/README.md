@@ -1,6 +1,6 @@
 # Pimcore Bundles
 
-Pimcore bundles follow the same rules as normal bundles, but need to implement `Pimcore\Extension\Bundle\PimcoreBundleInterface`
+Pimcore bundles follow the same rules as normal bundles, but need to implement [Pimcore\Extension\Bundle\PimcoreBundleInterface](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/PimcoreBundleInterface.php)
 in order to show up in the `pimcore:bundle:list` command. This gives you the following possibilities:
 
 * The bundle shows up in the `pimcore:bundle:list` command with info, if bundle can be installed or uninstalled.
@@ -8,28 +8,7 @@ in order to show up in the `pimcore:bundle:list` command. This gives you the fol
   command to trigger the installation/uninstallation, for example to install/update database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode.
 
-To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods
-defined by the interface. Besides name, description and version as shown in the extension manager, the `PimcoreBundleInterface` interface defines the following methods you
-can use to configure your bundle:
-
-```php
-interface PimcoreBundleInterface extends BundleInterface
-{
-    // name, description, version, ...
-
-    /**
-     * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
-     */
-    public function getInstaller(): ?InstallerInterface;
-    
-    /**
-     * Get path to include in admin iframe
-     *
-     * @return string|RouteReferenceInterface|null
-     */
-    public function getAdminIframePath();
-}
-```
+To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods defined by the interface.
 
 If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../13_Loading_Admin_UI_Assets.md) section in the docs.
 
@@ -47,7 +26,7 @@ Read more in [Installers](./01_Installers.md).
 
 ### Composer bundles
 
-If you provide your bundle via composer, it won't be automatically found. To include your package directory to the list 
+If you provide your bundle via composer, it won't be automatically found. To include your package directory to the list
 of scanned paths, please set the package type of your package to `pimcore-bundle`. Additionally, if you set the specific
 bundle name through the `pimcore.bundles` composer extra config no filesystem scanning will be done which will have a
 positive effect on the bundle lookup performance.

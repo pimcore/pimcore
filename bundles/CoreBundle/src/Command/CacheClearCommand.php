@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Event\SystemEvents;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,10 +30,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
+#[AsCommand('pimcore:cache:clear')]
 class CacheClearCommand extends AbstractCommand
 {
-    protected static $defaultName = 'pimcore:cache:clear';
-
     public function __construct(private EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct();
@@ -86,6 +86,11 @@ class CacheClearCommand extends AbstractCommand
         return 0;
     }
 
+    /**
+     * @param string[] $tags
+     *
+     * @return string[]
+     */
     private function prepareTags(array $tags): array
     {
         // previous implementations didn't use VALUE_IS_ARRAY and just supported csv strings, so we not iterate

@@ -1061,7 +1061,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if (method_exists($this, 'getDiffVersionPreview')) {
             $value = $this->getDiffVersionPreview($data, $object, $params);
