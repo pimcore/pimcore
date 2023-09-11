@@ -246,7 +246,9 @@ class Definition extends Model\AbstractModel
      */
     public function getDefinitionFile(string $key = null): string
     {
-        return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
+        $lowerKey = $key ?? $this->getkey();
+
+        return $this->locateDefinitionFile(strtolower($lowerKey), 'fieldcollections/%s.php');
     }
 
     /**
