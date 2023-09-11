@@ -300,6 +300,10 @@ class Asset extends Element\AbstractElement
                 AssetEvents::POST_LOAD
             );
         }
+        else {
+            $asset = null;
+        }
+
 
         return $asset;
     }
