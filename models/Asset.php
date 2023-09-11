@@ -299,11 +299,9 @@ class Asset extends Element\AbstractElement
                 new AssetEvent($asset, ['params' => $params]),
                 AssetEvents::POST_LOAD
             );
-        }
-        else {
+        } else {
             $asset = null;
         }
-
 
         return $asset;
     }
