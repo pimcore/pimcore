@@ -76,7 +76,7 @@ class Data extends AbstractModel
      *
      * @var bool
      */
-    protected bool $published;
+    protected bool $published = false;
 
     /**
      * timestamp of creation date
