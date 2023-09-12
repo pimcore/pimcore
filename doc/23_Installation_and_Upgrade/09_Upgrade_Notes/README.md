@@ -149,7 +149,7 @@
 
     - [WordExport] has been moved into PimcoreWordExportBundle
 	- [Xliff Translation] Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
-	- [WYSIWYG-Editor] The default editor changed from `CKEditor` to `TinyMCE` and has been moved into PimcoreTinymceBundle. Please pay attention to the sanitizer for this bundle.
+	- [WYSIWYG-Editor] The default editor changed from `CKEditor` to `TinyMCE` and has been moved into PimcoreTinymceBundle. Please adapt custom configuration and [extend](https://pimcore.com/docs/platform/Pimcore/Documents/Editables/WYSIWYG#extending-symfony-html-sanitizer-configuration) the html sanitizer for supporting the required html elements in wysiwyg editor.
 
 
 
