@@ -163,7 +163,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setParameters(string $parameters): static
+    public function setParameters(?string $parameters): static
     {
         $this->parameters = $parameters;
         $this->markMeDirty();
@@ -179,7 +179,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setAnchor(string $anchor): static
+    public function setAnchor(?string $anchor): static
     {
         $this->anchor = $anchor;
         $this->markMeDirty();
@@ -195,7 +195,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         $this->markMeDirty();
@@ -211,7 +211,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setAccesskey(string $accesskey): static
+    public function setAccesskey(?string $accesskey): static
     {
         $this->accesskey = $accesskey;
         $this->markMeDirty();
@@ -227,7 +227,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setRel(string $rel): static
+    public function setRel(?string $rel): static
     {
         $this->rel = $rel;
         $this->markMeDirty();
@@ -243,7 +243,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setTabindex(string $tabindex): static
+    public function setTabindex(?string $tabindex): static
     {
         $this->tabindex = $tabindex;
         $this->markMeDirty();
@@ -254,7 +254,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setAttributes(string $attributes): static
+    public function setAttributes(?string $attributes): static
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
@@ -270,7 +270,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setClass(string $class): static
+    public function setClass(?string $class): static
     {
         $this->class = $class;
         $this->markMeDirty();
