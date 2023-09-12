@@ -2,6 +2,6 @@
 custom_reports: Egyedi riportok
 reports: Riportok
 custom_report_permissions: "Enged\xE9ly"
-keybinding_customReports: Custom Reports
-keybinding_reports: Report
+keybinding_customReports: Egyedi riportok
+keybinding_reports: Riport
 ...
