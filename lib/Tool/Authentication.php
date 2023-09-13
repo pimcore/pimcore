@@ -20,6 +20,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
 use Pimcore\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
