@@ -205,19 +205,17 @@ class Authentication
     }
 
     /**
-     * Use tokenGenerate() instead, this will be removed once dropping support for admin-ui-bundle 1.*
-     *
      * @internal
      */
     public static function generateToken(string $username): string
     {
         $user = User::getByName($username);
-        return self::tokenGenerate($user);
+        return self::generateTokenByUser($user);
     }
     /**
      * @internal
      */
-    public static function tokenGenerate(User $user): string
+    public static function generateTokenByUser(User $user): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 

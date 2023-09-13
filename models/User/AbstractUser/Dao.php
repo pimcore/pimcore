@@ -82,6 +82,10 @@ class Dao extends Model\Dao\AbstractDao
         if ($data) {
             $data['admin'] = (bool)$data['admin'];
             $data['active'] = (bool)$data['active'];
+            $data['welcomescreen'] = (bool)$data['welcomescreen'];
+            $data['closeWarning'] = (bool)$data['closeWarning'];
+            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Token "%s" does not match any user.', $token));
