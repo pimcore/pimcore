@@ -37,13 +37,14 @@ final class DirectoryAwareVersionComparator implements Comparator
     {
         try {
             return $this->getOrder($a) <=> $this->getOrder($b);
-        } catch (\ReflectionException) {
+        } catch (\ReflectionException|\ErrorException) {
             return (string) $a <=> (string) $b;
         }
     }
 
     /**
      * @throws \ReflectionException
+     * @throws \ErrorException if the migration file is not found
      *
      * @return array{int, string}
      */

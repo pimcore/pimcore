@@ -142,13 +142,11 @@ abstract class PageSnippet extends Model\Document
 
         parent::update($params);
 
-        if (is_array($editables) && count($editables)) {
-            foreach ($editables as $editable) {
-                if (!$editable->getInherited()) {
-                    $editable->setDao(null);
-                    $editable->setDocumentId($this->getId());
-                    $editable->save();
-                }
+        foreach ($editables as $editable) {
+            if (!$editable->getInherited()) {
+                $editable->setDao(null);
+                $editable->setDocumentId($this->getId());
+                $editable->save();
             }
         }
 
@@ -277,6 +275,9 @@ abstract class PageSnippet extends Model\Document
         return $this->template;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(?string $controller): static
     {
         $this->controller = $controller;
@@ -284,6 +285,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(?string $template): static
     {
         $this->template = $template;
@@ -333,6 +337,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeEditable(string $name): static
     {
         $this->getEditables();
@@ -355,25 +362,25 @@ abstract class PageSnippet extends Model\Document
             return $editables[$name];
         }
 
+        $inheritedEditable = null;
         if (array_key_exists($name, $this->inheritedEditables)) {
-            return $this->inheritedEditables[$name];
+            $inheritedEditable = $this->inheritedEditables[$name];
         }
 
-        // check for content main document (inherit data)
-        if ($contentMainDocument = $this->getContentMainDocument()) {
-            if ($contentMainDocument instanceof self) {
+        if (!$inheritedEditable) {
+            // check for content main document (inherit data)
+            $contentMainDocument = $this->getContentMainDocument();
+            if ($contentMainDocument instanceof self && $contentMainDocument->getId() != $this->getId()) {
                 $inheritedEditable = $contentMainDocument->getEditable($name);
                 if ($inheritedEditable) {
                     $inheritedEditable = clone $inheritedEditable;
                     $inheritedEditable->setInherited(true);
                     $this->inheritedEditables[$name] = $inheritedEditable;
-
-                    return $inheritedEditable;
                 }
             }
         }
 
-        return null;
+        return $inheritedEditable;
     }
 
     /**
@@ -429,6 +436,9 @@ abstract class PageSnippet extends Model\Document
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setContentMainDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
@@ -465,6 +475,9 @@ abstract class PageSnippet extends Model\Document
         return $this->editables;
     }
 
+    /**
+     * @return $this
+     */
     public function setEditables(?array $editables): static
     {
         $this->editables = $editables;
@@ -484,7 +497,10 @@ abstract class PageSnippet extends Model\Document
         return $this->versions;
     }
 
-    public function setVersions(array $versions): static
+    /**
+     * @return $this
+     */
+    public function setVersions(?array $versions): static
     {
         $this->versions = $versions;
 
@@ -566,6 +582,9 @@ abstract class PageSnippet extends Model\Document
         return $this->missingRequiredEditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
         $this->missingRequiredEditable = $missingRequiredEditable;

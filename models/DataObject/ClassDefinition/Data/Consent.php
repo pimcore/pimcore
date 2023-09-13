@@ -150,11 +150,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *  - "field" => the name of (this) field
      *  - "key" => the key of the data element
      *  - "data" => the data
-     *
-     * @param DataObject\Concrete|null $object
-     *
      */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): DataObject\Data\Consent
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Consent
     {
         $data = $data[0]['data'];
 

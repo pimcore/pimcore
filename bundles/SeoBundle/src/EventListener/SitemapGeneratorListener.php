@@ -40,7 +40,7 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            SitemapPopulateEvent::ON_SITEMAP_POPULATE => 'onPopulateSitemap',
+            SitemapPopulateEvent::class => 'onPopulateSitemap',
         ];
     }
 

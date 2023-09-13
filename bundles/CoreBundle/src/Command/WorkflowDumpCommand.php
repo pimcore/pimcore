@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Workflow\Dumper\GraphvizDumper;
 use Pimcore\Workflow\Dumper\StateMachineGraphvizDumper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,10 +29,9 @@ use Symfony\Component\Workflow\Marking;
 /**
  * @internal
  */
+#[AsCommand('pimcore:workflow:dump')]
 class WorkflowDumpCommand extends AbstractCommand
 {
-    protected static $defaultName = 'pimcore:workflow:dump';
-
     protected function configure(): void
     {
         $this

@@ -61,7 +61,7 @@ exports can be attached or external data sources can be included.
 To do so, following steps are necessary: 
 
 1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/GDPR/DataProvider/DataProviderInterface.php#L20). 
+[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/GDPR/DataProvider/DataProviderInterface.php#L20). 
 The following functions need to be implemented:
 
     * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.

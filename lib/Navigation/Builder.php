@@ -323,6 +323,10 @@ class Builder
     {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
+        if ($parentDocument instanceof Document\Hardlink || $parentDocument instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            return $parentDocument->getChildren()->getData();
+        }
+
         return $parentDocument->getChildren()->load();
     }
 
@@ -340,10 +344,6 @@ class Builder
         $pages = [];
         $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
-
-        if (!is_array($children)) {
-            return $pages;
-        }
 
         foreach ($children as $child) {
             $classes = '';

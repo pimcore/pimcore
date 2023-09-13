@@ -1,0 +1,25 @@
+---
+log_relatedobject: Related object
+log_component: Component
+log_search_form: Search parameter
+log_search_type: Logging type
+log_search_relatedobject: Related object (id)
+log_timestamp: Timestamp
+log_fileobject: File object
+log_detailinformation: Detail information
+log_pid: PID
+log_refresh_label: Refresh every
+log_applicationlog: Application Logger
+log_search_component: Component
+log_search_pid: PID
+log_refresh_seconds: Seconds
+keybinding_application_logger: Application logger
+log_search_from: From
+log_search_to: To
+log_type: Type
+log_source: Source
+log_message: Message
+log_reset_search: Reset
+log_search: Search
+log_search_message: Message
+...

@@ -312,19 +312,17 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if (is_array($config)) {
-            if (!empty($config['class'])) {
-                $className = ltrim($config['class'], '\\');
-            }
+        if (!empty($config['class'])) {
+            $className = ltrim($config['class'], '\\');
+        }
 
-            if ($className) {
-                $listClass = $className . '\\Listing';
-                /** @var DataObject\Listing $list */
-                $list = self::getModelFactory()->build($listClass);
-                $list->setValues($config);
+        if ($className) {
+            $listClass = $className . '\\Listing';
+            /** @var DataObject\Listing $list */
+            $list = self::getModelFactory()->build($listClass);
+            $list->setValues($config);
 
-                return $list;
-            }
+            return $list;
         }
 
         throw new \Exception('Unable to initiate list class - class not found or invalid configuration');
@@ -604,7 +602,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $objectId) {
                     $tag = 'object_' . $objectId;
                     $additionalTags[] = $tag;
@@ -709,15 +707,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
 
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
-                if (!$property->getInherited()) {
-                    $property->setDao(null);
-                    $property->setCid($this->getId());
-                    $property->setCtype('object');
-                    $property->setCpath($this->getRealFullPath());
-                    $property->save();
-                }
+        foreach ($this->getProperties() as $property) {
+            if (!$property->getInherited()) {
+                $property->setDao(null);
+                $property->setCid($this->getId());
+                $property->setCtype('object');
+                $property->setCpath($this->getRealFullPath());
+                $property->save();
             }
         }
 

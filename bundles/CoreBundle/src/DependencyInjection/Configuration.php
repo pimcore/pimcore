@@ -130,18 +130,23 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image_thumbnails',
-            'video_thumbnails' => '/var/config/video_thumbnails',
-            'document_types' => '/var/config/document_types',
-            'predefined_properties' => '/var/config/predefined_properties',
-            'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
-            'perspectives' => '/var/config/perspectives',
-            'custom_views' => '/var/config/custom_views',
-            'object_custom_layouts' => '/var/config/object_custom_layouts',
-            'system_settings' => '/var/config/system_settings',
+            'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
+            'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
+            'document_types' => PIMCORE_CONFIGURATION_DIRECTORY . '/document_types',
+            'predefined_properties' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_properties',
+            'predefined_asset_metadata' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_asset_metadata',
+            'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
+            'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
+            'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
+            'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
         ]);
 
-        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', [LocationAwareConfigRepository::READ_TARGET]);
+        ConfigurationHelper::addConfigLocationTargetNode(
+            $storageNode,
+            'system_settings',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            [LocationAwareConfigRepository::READ_TARGET]
+        );
 
         return $treeBuilder;
     }
@@ -447,7 +452,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => 50,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
@@ -994,7 +999,12 @@ final class Configuration implements ConfigurationInterface
                                 ->enumNode('algorithm')
                                     ->info('The hashing algorithm to use for backend users and objects containing a "password" field.')
                                     ->example('!php/const PASSWORD_BCRYPT')
-                                    ->values([PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
+                                    ->values(array_filter([
+                                        PASSWORD_DEFAULT,
+                                        PASSWORD_BCRYPT,
+                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                    ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
                                 ->arrayNode('options')
@@ -1597,6 +1607,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                            ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
                                             ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()

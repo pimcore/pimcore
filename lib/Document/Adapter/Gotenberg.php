@@ -109,11 +109,6 @@ class Gotenberg extends Ghostscript
         return $this;
     }
 
-    /**
-     *
-     *
-     * @throws \Exception
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {

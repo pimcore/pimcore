@@ -51,7 +51,7 @@ class Xliff12Escaper
                             $part = '<ph id="' . $count . '">' . $this->encodeData($part) . '</ph>';
 
                             $count++;
-                        } elseif (strpos($tag[1], '/') === false) {
+                        } elseif (!str_contains($tag[1], '/')) {
                             $openTags[$count] = ['tag' => $tagName, 'id' => $count];
                             $part = '<bpt id="' . $count . '">' . $this->encodeData($part) . '</bpt>';
 

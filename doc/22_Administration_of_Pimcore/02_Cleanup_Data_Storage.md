@@ -16,7 +16,7 @@ You can reduce the amount of restore points individually for Assets, Objects and
 After you have reduced the value, it's recommended to run the following command manually 
 (it would also run automatically as part of the regular maintenance script): 
 ```bash
-./bin/console pimcore:maintenance -f -j versioncleanup
+./bin/console pimcore:maintenance -j versioncleanup
 ```
 
 #### Example
@@ -71,3 +71,6 @@ amount of items in your recycle bin:
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
 ```
+
+**WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
+Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**

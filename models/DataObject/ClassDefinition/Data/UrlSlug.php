@@ -276,7 +276,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
-        $rawResult = null;
+        $rawResult = [];
         if ($object instanceof Model\DataObject\Concrete) {
             $rawResult = $object->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
@@ -300,11 +300,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         $result = [];
-        if (is_array($rawResult)) {
-            foreach ($rawResult as $rawItem) {
-                $slug = Model\DataObject\Data\UrlSlug::createFromDataRow($rawItem);
-                $result[] = $slug;
-            }
+        foreach ($rawResult as $rawItem) {
+            $slug = Model\DataObject\Data\UrlSlug::createFromDataRow($rawItem);
+            $result[] = $slug;
         }
 
         return $result;

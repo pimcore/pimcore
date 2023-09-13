@@ -82,13 +82,14 @@ class Breadcrumbs extends AbstractRenderer
 
     public function setSeparator(string $separator): static
     {
-        if (is_string($separator)) {
-            $this->_separator = $separator;
-        }
+        $this->_separator = $separator;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setLinkLast(bool $linkLast): static
     {
         $this->_linkLast = $linkLast;

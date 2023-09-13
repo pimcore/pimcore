@@ -29,7 +29,7 @@ final class MonologPublicLoggerPass implements CompilerPassInterface
     {
         $loggerPrefix = 'monolog.logger.';
         $serviceIds = array_filter($container->getServiceIds(), function (string $id) use ($loggerPrefix) {
-            return 0 === strpos($id, $loggerPrefix);
+            return str_starts_with($id, $loggerPrefix);
         });
 
         foreach ($serviceIds as $serviceId) {

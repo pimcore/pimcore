@@ -54,7 +54,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected string $realName = '';
+    protected ?string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
@@ -325,10 +325,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function addConfig(string $name, mixed $value): static
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $this->config[$name] = $value;
 
         return $this;
@@ -336,7 +332,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function getRealName(): string
     {
-        return $this->realName;
+        return $this->realName ?? '';
     }
 
     public function setRealName(string $realName): void
@@ -406,7 +402,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().' File: ' . $e->getFile().' Line: '. $e->getLine().'</b><br/>'.$e->getTraceAsString();
 
-                return $result;
+                return '<pre class="pimcore_editable_error">' . $result . '</pre>';
             }
 
             Logger::error('toString() returned an exception: {exception}', [
@@ -561,10 +557,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             array_pop($tmpBlocks);
             array_pop($tmpIndexes);
 
-            $tmpName = $name;
-            if (is_array($tmpBlocks)) {
-                $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
-            }
+            $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
 
             $previousBlockName = $blocks[count($blocks) - 1]->getName();
             if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {

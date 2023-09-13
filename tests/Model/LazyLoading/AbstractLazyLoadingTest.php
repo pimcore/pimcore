@@ -131,7 +131,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
 
         foreach ($needle as $item) {
-            $this->assertEquals($expected, strpos($string, $item) !== false, $messagePrefix . "Check if '$item' is occuring in serialized data.");
+            $this->assertEquals($expected, str_contains($string, $item), $messagePrefix . "Check if '$item' is occuring in serialized data.");
         }
     }
 

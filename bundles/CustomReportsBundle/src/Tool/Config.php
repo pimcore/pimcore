@@ -228,7 +228,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     public function getDataSourceConfig(): ?\stdClass
     {
-        if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
+        if (isset($this->dataSourceConfig[0])) {
             $dataSourceConfig = new \stdClass();
             $dataSourceConfigArray = $this->dataSourceConfig[0];
 

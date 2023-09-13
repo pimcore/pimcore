@@ -34,8 +34,11 @@ class AdminStyle
 
     protected ?array $elementQtipConfig = null;
 
+    protected ?string $elementText = null;
+
     public function __construct(ElementInterface $element)
     {
+        $this->setElementText($element->getKey());
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
@@ -161,5 +164,15 @@ class AdminStyle
     public function setElementQtipConfig(?array $elementQtipConfig): void
     {
         $this->elementQtipConfig = $elementQtipConfig;
+    }
+
+    public function getElementText(): ?string
+    {
+        return $this->elementText;
+    }
+
+    public function setElementText(?string $elementText): void
+    {
+        $this->elementText = $elementText;
     }
 }

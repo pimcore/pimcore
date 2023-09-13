@@ -160,21 +160,13 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      */
     public function __invoke(string $mode = self::FILE, string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
     {
-        if ((null !== $spec) && is_string($spec)) {
+        if (is_string($spec)) {
             $action = ucfirst(strtolower($mode));
             $placement = strtolower($placement);
-            switch ($placement) {
-                case 'set':
-                case 'prepend':
-                case 'append':
-                    $action = $placement . $action;
-
-                    break;
-                default:
-                    $action = 'append' . $action;
-
-                    break;
-            }
+            $action = match ($placement) {
+                'set', 'prepend', 'append' => $placement . $action,
+                default => 'append' . $action,
+            };
             $this->$action($spec, $type, $attrs);
         }
 

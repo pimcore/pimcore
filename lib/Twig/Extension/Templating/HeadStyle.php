@@ -118,22 +118,12 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      */
     public function __invoke(string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
     {
-        if ((null !== $content) && is_string($content)) {
-            switch (strtoupper($placement)) {
-                case 'SET':
-                    $action = 'setStyle';
-
-                    break;
-                case 'PREPEND':
-                    $action = 'prependStyle';
-
-                    break;
-                case 'APPEND':
-                default:
-                    $action = 'appendStyle';
-
-                    break;
-            }
+        if (is_string($content)) {
+            $action = match (strtoupper($placement)) {
+                'SET' => 'setStyle',
+                'PREPEND' => 'prependStyle',
+                default => 'appendStyle',
+            };
             $this->$action($content, $attributes);
         }
 
@@ -327,7 +317,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
                     continue;
                 }
                 if ('media' == $key) {
-                    if (false === strpos($value, ',')) {
+                    if (!str_contains($value, ',')) {
                         if (!in_array($value, $this->_mediaTypes)) {
                             continue;
                         }

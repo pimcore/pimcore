@@ -77,14 +77,64 @@ class DataObjectImporter extends AbstractElementImporter
             $element->{'set' . $blockName}($blockData, $targetLanguage);
         }
 
+        if ($attribute->getType() === Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD_COLLECTION) {
+            [
+                $fieldCollectionName,
+                $fieldCollectionItemIndex,
+                $blockName,
+                $blockIndex,
+                $fieldname,
+                $sourceLanguage
+            ] = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
+
+            /** @var DataObject\Fieldcollection|null $fieldCollection */
+            $fieldCollection = $element->{'get' . $fieldCollectionName}();
+
+            if ($fieldCollection) {
+                $item = $fieldCollection->get((int) $fieldCollectionItemIndex);
+                /** @var DataObject\Localizedfield $localizedFields */
+                if ($item) {
+                    /** @var array $originalBlockData */
+                    $originalBlockData = $item->{'get' . $blockName}($sourceLanguage);
+                    $originalBlockItem = $originalBlockData[$blockIndex] ?? null;
+                    $originalBlockItemData = $originalBlockItem[$fieldname] ?? null;
+
+                    /** @var array $blockData */
+                    $blockData = $item->{'get' . $blockName}($targetLanguage);
+                    $blockItem = isset($blockData[$blockIndex]) ? $blockData[$blockIndex] : $originalBlockItem;
+
+                    /** @var DataObject\Data\BlockElement $blockItemData */
+                    $blockItemData = !empty($blockData) ? clone $blockItem[$fieldname] : clone $originalBlockItemData;
+
+                    $blockItemData->setLanguage($targetLanguage);
+
+                    $blockItemData->setData($attribute->getContent());
+
+                    $blockItem[$fieldname] = $blockItemData;
+                    $blockData[$blockIndex] = $blockItem;
+
+                    $item->{'set' . $blockName}($blockData, $targetLanguage);
+                }
+            }
+        }
+
         if ($attribute->getType() === Attribute::TYPE_BLOCK) {
-            [$blockName, $blockIndex, $dummy, $fieldname] = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
+            [
+                $blockName,
+                $blockIndex,
+                $dummy,
+                $fieldname
+            ] = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
             /** @var array $blockData */
             $blockData = $element->{'get' . $blockName}();
             $blockItem = $blockData[$blockIndex];
             $blockItemData = $blockItem['localizedfields'];
             if (!$blockItemData) {
-                $blockItemData = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', new DataObject\Localizedfield());
+                $blockItemData = new DataObject\Data\BlockElement(
+                    'localizedfields',
+                    'localizedfields',
+                    new DataObject\Localizedfield()
+                );
             }
             /** @var DataObject\Localizedfield $localizedFieldData */
             $localizedFieldData = $blockItemData->getData();
@@ -92,14 +142,22 @@ class DataObjectImporter extends AbstractElementImporter
         }
 
         if ($attribute->getType() === Attribute::TYPE_FIELD_COLLECTION_LOCALIZED_FIELD) {
-            [$fieldCollectionField, $index, $field] = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
+            [
+                $fieldCollectionField,
+                $index,
+                $field
+            ] = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
 
             /** @var DataObject\Fieldcollection|null $fieldCollection */
             $fieldCollection = $element->{'get' . $fieldCollectionField}();
             if ($fieldCollection) {
                 $item = $fieldCollection->get((int) $index);
                 /** @var DataObject\Localizedfield $localizedFields */
-                if ($item && method_exists($item, 'getLocalizedfields') && ($localizedFields = $item->getLocalizedfields())) {
+                if (
+                    $item &&
+                    method_exists($item, 'getLocalizedfields') &&
+                    ($localizedFields = $item->getLocalizedfields())
+                ) {
                     $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
                 }
             }

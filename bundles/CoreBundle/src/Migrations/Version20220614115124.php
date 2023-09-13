@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version22020614115124 extends AbstractMigration
+final class Version20220614115124 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -29,6 +29,9 @@ final class Version22020614115124 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        // Delete old Version Name
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version22020614115124\'');
+
         if (!$schema->getTable('assets_image_thumbnail_cache')->hasColumn('filesize')) {
             $this->addSql(
                 'ALTER TABLE `assets_image_thumbnail_cache`

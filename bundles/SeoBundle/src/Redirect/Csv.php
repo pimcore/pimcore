@@ -34,6 +34,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class Csv
 {
+    /**
+     * @var string[]
+     */
     private array $columns = [
         'id',
         'type',
