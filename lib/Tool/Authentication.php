@@ -205,21 +205,27 @@ class Authentication
     }
 
     /**
-     *
+     * passing $user as a string is dis-recommended since 11.1.0, please pass a User object instead.
      *
      * @internal
      */
-    public static function generateToken(User $user): string
+    public static function generateToken(string|User $user): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 
-        $data = time() - 1 . '|' . $user->getName();
-        $token = Crypto::encryptWithPassword($data, $secret);
+        if (is_string($user)) {
+            $user = User::getByName($user);
+        }
 
-        $user->setPasswordRecoveryToken($token);
-        $user->save();
+        if ($user instanceof User) {
+            $data = time() - 1 . '|' . $user->getName();
+            $token = Crypto::encryptWithPassword($data, $secret);
 
-        return $token;
+            $user->setPasswordRecoveryToken($token);
+            $user->save();
+
+            return $token;
+        }
     }
 
     /**

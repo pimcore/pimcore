@@ -30,7 +30,9 @@ final class Version20230913173812 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('passwordRecoveryToken')) {
-            $this->addSql('ALTER TABLE `users` ADD COLUMN `passwordRecoveryToken` varchar(255) DEFAULT NULL AFTER `password`;');
+            $this->addSql(
+            'ALTER TABLE `users` ADD COLUMN `passwordRecoveryToken` varchar(255) DEFAULT NULL AFTER `password`;'
+            );
         }
     }
 
