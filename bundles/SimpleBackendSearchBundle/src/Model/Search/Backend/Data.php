@@ -95,7 +95,7 @@ class Data extends AbstractModel
     /**
      * User-ID of the owner
      *
-     * @var int
+     * @var int|null
      */
     protected ?int $userOwner = null;
 
