@@ -205,27 +205,29 @@ class Authentication
     }
 
     /**
-     * passing $user as a string is dis-recommended since 11.1.0, please pass a User object instead.
+     * Use tokenGenerate() instead, this will be removed once dropping support for admin-ui-bundle 1.*
      *
      * @internal
      */
-    public static function generateToken(string|User $user): string
+    public static function generateToken(string $username): string
+    {
+        $user = User::getByName($username);
+        return self::tokenGenerate($user);
+    }
+    /**
+     * @internal
+     */
+    public static function tokenGenerate(User $user): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 
-        if (is_string($user)) {
-            $user = User::getByName($user);
-        }
+        $data = time() - 1 . '|' . $user->getName();
+        $token = Crypto::encryptWithPassword($data, $secret);
 
-        if ($user instanceof User) {
-            $data = time() - 1 . '|' . $user->getName();
-            $token = Crypto::encryptWithPassword($data, $secret);
+        $user->setPasswordRecoveryToken($token);
+        $user->save();
 
-            $user->setPasswordRecoveryToken($token);
-            $user->save();
-
-            return $token;
-        }
+        return $token;
     }
 
     /**
