@@ -397,16 +397,17 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
-            if ($this->getParentId()) {
+            $parentElement = $this->getParent();
+            if ($parentElement) {
                 $list = new Listing();
                 $list->setUnpublished($includingUnpublished);
-                $list->addConditionParam('parentId = ?', $this->getParentId());
+                $list->addConditionParam('parentId = ?', $parentElement->getId());
                 if ($this->getId()) {
                     $list->addConditionParam('id != ?', $this->getId());
                 }
                 $list->setObjectTypes($objectTypes);
-                $list->setOrderKey($this->getParent()->getChildrenSortBy());
-                $list->setOrder($this->getParent()->getChildrenSortOrder());
+                $list->setOrderKey($parentElement->getChildrenSortBy());
+                $list->setOrder($parentElement->getChildrenSortOrder());
                 $this->siblings[$cacheKey] = $list;
             } else {
                 $list = new Listing();

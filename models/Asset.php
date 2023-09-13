@@ -891,14 +891,15 @@ class Asset extends Element\AbstractElement
     public function getSiblings(): Listing
     {
         if ($this->siblings === null) {
-            if ($this->getParentId()) {
+            $parentElement = $this->getParent();
+            if ($parentElement) {
                 $list = new Asset\Listing();
-                $list->addConditionParam('parentId = ?', $this->getParentId());
+                $list->addConditionParam('parentId = ?', $parentElement->getId());
                 if ($this->getId()) {
                     $list->addConditionParam('id != ?', $this->getId());
                 }
-                $list->setOrderKey('filename');
-                $list->setOrder('asc');
+                $list->setOrderKey($parentElement->getChildrenSortBy());
+                $list->setOrder($parentElement->getChildrenSortOrder());
                 $this->siblings = $list;
             } else {
                 $list = new Asset\Listing();
