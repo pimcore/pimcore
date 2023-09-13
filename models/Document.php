@@ -584,16 +584,15 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
-            $parentElement = $this->getParent();
-            if ($parentElement) {
+            if ($this->getParentId()) {
                 $list = new Document\Listing();
                 $list->setUnpublished($includingUnpublished);
-                $list->addConditionParam('parentId = ?', $parentElement->getId());
+                $list->addConditionParam('parentId = ?', $this->getParentId());
                 if ($this->getId()) {
                     $list->addConditionParam('id != ?', $this->getId());
                 }
-                $list->setOrderKey($parentElement->getChildrenSortBy());
-                $list->setOrder($parentElement->getChildrenSortOrder());
+                $list->setOrderKey('index');
+                $list->setOrder('asc');
                 $this->siblings[$cacheKey] = $list;
             } else {
                 $list = new Listing();
