@@ -104,7 +104,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      */
-    protected ?string $thumbnail = null;
+    protected array|string|null $thumbnail = null;
 
     /**
      * {@inheritdoc}
@@ -382,7 +382,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $this->cropLeft = $data['cropLeft'] ?? 0;
         $this->marker = $data['marker'] ?? [];
         $this->hotspots = $data['hotspots'] ?? [];
-        $this->thumbnail = (string)($data['thumbnail'] ?? '');
+        $this->thumbnail = $data['thumbnail'] ?? null;
     }
 
     public function getText(): string
@@ -400,7 +400,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->getText();
     }
 
-    public function getThumbnailConfig(): ?string
+    public function getThumbnailConfig(): array|string|null
     {
         return $this->thumbnail;
     }
@@ -424,6 +424,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->image;
     }
 
+    /**
+     * @return $this
+     */
     public function setImage(Asset\Image|ElementDescriptor|null $image): static
     {
         $this->image = $image;
@@ -584,6 +587,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $dependencies;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropHeight(float $cropHeight): static
     {
         $this->cropHeight = $cropHeight;
@@ -596,6 +602,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropHeight;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropLeft(float $cropLeft): static
     {
         $this->cropLeft = $cropLeft;
@@ -608,6 +617,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropLeft;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropPercent(bool $cropPercent): static
     {
         $this->cropPercent = $cropPercent;
@@ -620,6 +632,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropPercent;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropTop(float $cropTop): static
     {
         $this->cropTop = $cropTop;
@@ -632,6 +647,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropTop;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropWidth(float $cropWidth): static
     {
         $this->cropWidth = $cropWidth;
@@ -644,9 +662,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropWidth;
     }
 
-    public function setHotspots(array $hotspots): void
+    /**
+     * @return $this
+     */
+    public function setHotspots(array $hotspots): static
     {
         $this->hotspots = $hotspots;
+
+        return $this;
     }
 
     public function getHotspots(): array
@@ -654,9 +677,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->hotspots;
     }
 
-    public function setMarker(array $marker): void
+    /**
+     * @return $this
+     */
+    public function setMarker(array $marker): static
     {
         $this->marker = $marker;
+
+        return $this;
     }
 
     public function getMarker(): array
