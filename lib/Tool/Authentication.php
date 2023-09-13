@@ -18,6 +18,8 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
+use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -115,17 +117,19 @@ class Authentication
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
-        $username = null;
         $timestamp = null;
 
         try {
-            [$timestamp, $username] = self::tokenDecrypt($token);
+            [$timestamp, $user] = self::tokenDecrypt($token);
         } catch (CryptoException $e) {
             return null;
         }
 
-        $user = User::getByName($username);
         if (self::isValidUser($user)) {
+            // expiring the token
+            $user->setPasswordRecoveryToken(null);
+            $user->save();
+
             if ($adminRequired && !$user->isAdmin()) {
                 return null;
             }
@@ -206,21 +210,34 @@ class Authentication
      *
      * @internal
      */
-    public static function generateToken(string $username): string
+    public static function generateToken(User $user): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 
-        $data = time() - 1 . '|' . $username;
+        $data = time() - 1 . '|' . $user->getName();
         $token = Crypto::encryptWithPassword($data, $secret);
+
+        $user->setPasswordRecoveryToken($token);
+        $user->save();
 
         return $token;
     }
 
+    /**
+     * @throws NotFoundException if token does not belong to any user
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
+     */
     private static function tokenDecrypt(string $token): array
     {
+        $user = new User();
+        $user->getDao()->getByPasswordRecoveryToken($token);
+
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);
 
-        return explode('|', $decrypted);
+        $explode = explode('|', $decrypted);
+
+        return [$explode[0], $user];
     }
 }

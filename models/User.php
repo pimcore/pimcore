@@ -33,6 +33,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $password = null;
 
+    protected ?string $passwordRecoveryToken = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -104,6 +106,21 @@ final class User extends User\UserRole implements UserInterface
         if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
+
+        return $this;
+    }
+
+    public function getPasswordRecoveryToken(): ?string
+    {
+        return $this->passwordRecoveryToken;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static
+    {
+        $this->passwordRecoveryToken = $passwordRecoveryToken;
 
         return $this;
     }

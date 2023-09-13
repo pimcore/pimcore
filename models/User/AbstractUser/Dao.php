@@ -71,6 +71,22 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByPasswordRecoveryToken(string $token): void
+    {
+        $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `passwordRecoveryToken` = ?', [$token]);
+
+        if ($data) {
+            $data['admin'] = (bool)$data['admin'];
+            $data['active'] = (bool)$data['active'];
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException(sprintf('Token "%s" does not match any user.', $token));
+        }
+    }
     public function create(): void
     {
         $this->db->insert('users', [
