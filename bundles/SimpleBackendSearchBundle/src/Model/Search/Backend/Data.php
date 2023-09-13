@@ -95,9 +95,9 @@ class Data extends AbstractModel
     /**
      * User-ID of the owner
      *
-     * @var int
+     * @var int|null
      */
-    protected int $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * User-ID of the user last modified the element
@@ -255,7 +255,7 @@ class Data extends AbstractModel
         return $this;
     }
 
-    public function getUserOwner(): int
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
