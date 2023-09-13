@@ -18,8 +18,6 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
-use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
-use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -225,8 +223,6 @@ class Authentication
 
     /**
      * @throws NotFoundException if token does not belong to any user
-     * @throws EnvironmentIsBrokenException
-     * @throws WrongKeyOrModifiedCiphertextException
      */
     private static function tokenDecrypt(string $token): array
     {
