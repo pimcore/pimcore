@@ -224,6 +224,7 @@ class Authentication
 
     /**
      * @throws NotFoundException if token does not belong to any user
+     * @throws CryptoException
      */
     private static function tokenDecrypt(string $token): array
     {
