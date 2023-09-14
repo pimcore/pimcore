@@ -31,7 +31,7 @@ class Link implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    protected ?string $text = '';
+    protected string $text = '';
 
     protected ?string $internalType = null;
 
@@ -43,25 +43,25 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $target = null;
 
-    protected ?string $parameters = '';
+    protected string $parameters = '';
 
-    protected ?string $anchor = '';
+    protected string $anchor = '';
 
-    protected ?string $title = '';
+    protected string $title = '';
 
-    protected ?string $accesskey = '';
+    protected string $accesskey = '';
 
-    protected ?string $rel = '';
+    protected string $rel = '';
 
-    protected ?string $tabindex = '';
+    protected string $tabindex = '';
 
-    protected ?string $class = '';
+    protected string $class = '';
 
-    protected ?string $attributes = '';
+    protected string $attributes = '';
 
     public function getText(): string
     {
-        return $this->text ?? '';
+        return $this->text;
     }
 
     /**
@@ -157,13 +157,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getParameters(): string
     {
-        return $this->parameters ?? '';
+        return $this->parameters;
     }
 
     /**
      * @return $this
      */
-    public function setParameters(?string $parameters): static
+    public function setParameters(string $parameters): static
     {
         $this->parameters = $parameters;
         $this->markMeDirty();
@@ -173,13 +173,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAnchor(): string
     {
-        return $this->anchor ?? '';
+        return $this->anchor;
     }
 
     /**
      * @return $this
      */
-    public function setAnchor(?string $anchor): static
+    public function setAnchor(string $anchor): static
     {
         $this->anchor = $anchor;
         $this->markMeDirty();
@@ -189,13 +189,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getTitle(): string
     {
-        return $this->title ?? '';
+        return $this->title;
     }
 
     /**
      * @return $this
      */
-    public function setTitle(?string $title): static
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         $this->markMeDirty();
@@ -205,13 +205,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAccesskey(): string
     {
-        return $this->accesskey ?? '';
+        return $this->accesskey;
     }
 
     /**
      * @return $this
      */
-    public function setAccesskey(?string $accesskey): static
+    public function setAccesskey(string $accesskey): static
     {
         $this->accesskey = $accesskey;
         $this->markMeDirty();
@@ -221,13 +221,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getRel(): string
     {
-        return $this->rel ?? '';
+        return $this->rel;
     }
 
     /**
      * @return $this
      */
-    public function setRel(?string $rel): static
+    public function setRel(string $rel): static
     {
         $this->rel = $rel;
         $this->markMeDirty();
@@ -237,13 +237,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getTabindex(): string
     {
-        return $this->tabindex ?? '';
+        return $this->tabindex;
     }
 
     /**
      * @return $this
      */
-    public function setTabindex(?string $tabindex): static
+    public function setTabindex(string $tabindex): static
     {
         $this->tabindex = $tabindex;
         $this->markMeDirty();
@@ -254,7 +254,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return $this
      */
-    public function setAttributes(?string $attributes): static
+    public function setAttributes(string $attributes): static
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
@@ -264,13 +264,13 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAttributes(): string
     {
-        return $this->attributes ?? '';
+        return $this->attributes;
     }
 
     /**
      * @return $this
      */
-    public function setClass(?string $class): static
+    public function setClass(string $class): static
     {
         $this->class = $class;
         $this->markMeDirty();
@@ -280,7 +280,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getClass(): string
     {
-        return $this->class ?? '';
+        return $this->class;
     }
 
     /**
@@ -437,9 +437,12 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setValues(array $data = []): static
     {
+        $reflectionClass = new \ReflectionClass(static::class);
         foreach ($data as $key => $value) {
             $method = 'set' . ucfirst($key);
             if (method_exists($this, $method)) {
+                //used for non-nullable properties stored with null, todo: Remove in Pimcore 12
+                $value = $value ?: $reflectionClass->getProperty($key)->getDefaultValue();
                 $this->$method($value);
             }
         }
