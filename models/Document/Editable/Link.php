@@ -175,7 +175,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             if (!$noText) {
                 $text = htmlspecialchars($disabledText ? $url : ($this->data['text'] ?? $url));
             }
-            
+
             return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
         }
 
