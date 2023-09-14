@@ -95,7 +95,7 @@ class Data extends AbstractModel
     /**
      * User-ID of the owner
      *
-     * @var int|null
+     * @var int
      */
     protected ?int $userOwner = null;
 
@@ -218,7 +218,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = $creationDate;
 
@@ -233,7 +233,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setModificationDate(int $modificationDate): static
+    public function setModificationDate(?int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
@@ -248,7 +248,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->userModification = $userModification;
 
@@ -263,7 +263,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -298,7 +298,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setData(string $data): static
+    public function setData(?string $data): static
     {
         $this->data = $data;
 

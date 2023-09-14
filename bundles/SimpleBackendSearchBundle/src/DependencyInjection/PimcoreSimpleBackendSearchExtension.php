@@ -43,6 +43,7 @@ class PimcoreSimpleBackendSearchExtension extends Extension implements PrependEx
             );
 
             $loader->load('admin-classic.yaml');
+            $loader->load('doctrine_migrations.yaml');
         }
     }
 }
