@@ -189,7 +189,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getData(): mixed
     {
         $path = $this->id;
-        if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+        if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById((int)$this->id))) {
             $path = $video->getFullPath();
         }
 
@@ -229,7 +229,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $data['poster'] = $poster->getRealFullPath();
         }
 
-        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById((int)$this->id))) {
             $data['path'] = $video->getRealFullPath();
         }
 
@@ -290,7 +290,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         if (
             $this->id &&
             $this->type === self::TYPE_ASSET &&
-            $asset = Asset::getById($this->id)) {
+            $asset = Asset::getById((int)$this->id)) {
                 $key = 'asset_' . $asset->getId();
                 $dependencies[$key] = [
                     'id' => $asset->getId(),
@@ -312,8 +312,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function checkValidity(): bool
     {
         $valid = true;
-        if ($this->type === self::TYPE_ASSET && !empty($this->id)) {
-            $el = Asset::getById($this->id);
+        if ($this->type === self::TYPE_ASSET && $this->id) {
+            $el = Asset::getById((int)$this->id);
             if (!$el instanceof Asset) {
                 $valid = false;
                 Logger::notice(
@@ -441,7 +441,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private function getAssetCode(bool $inAdmin = false): string
     {
-        $asset = Asset::getById($this->id);
+        $asset = Asset::getById((int)$this->id);
         $config = $this->getConfig();
         $thumbnailConfig = $config['thumbnail'] ?? null;
 
@@ -1058,7 +1058,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getVideoAsset(): ?Asset\Video
     {
         if ($this->id && $this->getVideoType() === self::TYPE_ASSET) {
-            return Asset\Video::getById($this->id);
+            return Asset\Video::getById((int)$this->id);
         }
 
         return null;
