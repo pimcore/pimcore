@@ -186,10 +186,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
