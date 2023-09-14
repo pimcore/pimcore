@@ -291,11 +291,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $this->id &&
             $this->type === self::TYPE_ASSET &&
             $asset = Asset::getById((int)$this->id)) {
-                $key = 'asset_' . $asset->getId();
-                $dependencies[$key] = [
-                    'id' => $asset->getId(),
-                    'type' => self::TYPE_ASSET,
-                ];
+            $key = 'asset_' . $asset->getId();
+            $dependencies[$key] = [
+                'id' => $asset->getId(),
+                'type' => self::TYPE_ASSET,
+            ];
         }
 
         if ($this->poster && $poster = Asset::getById($this->poster)) {
@@ -854,8 +854,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     private function getHtml5Code(
         array $urls = [],
         Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null
-    ): string
-    {
+    ): string {
         $code = '';
         $video = $this->getVideoAsset();
         if ($video) {
@@ -1111,7 +1110,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $this->type == self::TYPE_ASSET &&
             array_key_exists(self::TYPE_ASSET, $idMapping) &&
             array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {
-                $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);
+            $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);
         }
     }
 }
