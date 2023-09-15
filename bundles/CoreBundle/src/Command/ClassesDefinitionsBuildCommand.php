@@ -22,12 +22,17 @@ use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Model\DataObject;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:build:classes',
+    description: 'rebuilds php files for classes, field collections and object bricks based on updated var/classes/definition_*.php files'
+)]
 class ClassesDefinitionsBuildCommand extends AbstractCommand
 {
     public function __construct(
@@ -41,11 +46,7 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
 
     protected function configure(): void
     {
-        $this
-            ->setName('pimcore:build:classes')
-            ->setDescription(
-                'rebuilds php files for classes, field collections and object bricks based on updated var/classes/definition_*.php files'
-            );
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

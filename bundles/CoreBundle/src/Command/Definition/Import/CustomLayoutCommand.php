@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\ModelInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 /**

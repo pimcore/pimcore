@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Tool\Requirements;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name:'pimcore:system:requirements:check',
+    description: 'Check system requirements',
+    aliases: ['system:requirements:check']
+)]
 class RequirementsCheckCommand extends AbstractCommand
 {
     /** @var int[] $levelsToDisplay */
@@ -34,9 +40,6 @@ class RequirementsCheckCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:system:requirements:check')
-            ->setAliases(['system:requirements:check'])
-            ->setDescription('Check system requirements')
             ->addOption('min-level', 'l', InputOption::VALUE_OPTIONAL, "Minimum status level to report: 'warning' or 'error'");
     }
 
