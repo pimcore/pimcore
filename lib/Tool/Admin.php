@@ -120,6 +120,8 @@ class Admin
     }
 
     /**
+     * @deprecated
+     *
      * @static
      *
      */
@@ -128,12 +130,16 @@ class Admin
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
+    /**
+     * @deprecated
+     */
     public static function getMaintenanceModeScheduleLoginFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
 
     /**
+     * @deprecated Use MaintenanceModeHelper::activate instead.
      *
      * @throws \Exception
      */
@@ -157,6 +163,8 @@ class Admin
     }
 
     /**
+     * @deprecated Use MaintenanceModeHelperInterface::activate instead.
+     *
      * @static
      */
     public static function deactivateMaintenanceMode(): void
@@ -167,6 +175,8 @@ class Admin
     }
 
     /**
+     * @deprecated use MaintenanceModeHelperInterface::isActive instead.
+     *
      * @static
      *
      */
@@ -175,6 +185,13 @@ class Admin
         $file = self::getMaintenanceModeFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::activateMaintenanceMode or using maintenance mode file %s is deprecated.
+                    \tUse MaintenanceModeHelperInterface::active instead.", $file)
+            );
             $conf = include($file);
             if (isset($conf['sessionId'])) {
                 return true;
@@ -186,6 +203,9 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated
+     */
     public static function isMaintenanceModeScheduledForLogin(): bool
     {
         $file = self::getMaintenanceModeScheduleLoginFile();
@@ -202,6 +222,9 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated
+     */
     public static function scheduleMaintenanceModeOnLogin(): void
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
@@ -213,6 +236,9 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
+    /**
+     * @deprecated
+     */
     public static function unscheduleMaintenanceModeOnLogin(): void
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
