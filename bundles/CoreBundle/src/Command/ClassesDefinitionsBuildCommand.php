@@ -44,11 +44,6 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cacheStatus = \Pimcore\Cache::isEnabled();

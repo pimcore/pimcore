@@ -34,11 +34,6 @@ class MigrateElementsCommand extends AbstractCommand
 {
     private bool $runCommand = true;
 
-    protected function configure(): void
-    {
-
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->runCommand) {
