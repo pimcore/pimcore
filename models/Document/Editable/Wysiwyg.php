@@ -101,7 +101,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromEditmode(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize($data);
+        $this->text = html_entity_decode($helper->sanitize($data));
 
         return $this;
     }
