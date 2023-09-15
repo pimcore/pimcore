@@ -92,6 +92,7 @@ If you're using / creating very much objects you should call the Pimcore garbage
 // just call this static method
 \Pimcore::collectGarbage();
 ```
+Or use `RuntimeCache::disable()` before iterate many objects to avoid excesive memory usage.
 
 **WARNING:** This will flush the entire internal registry!
 
