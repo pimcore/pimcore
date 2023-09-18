@@ -224,7 +224,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __sleep(): array
     {
         $finalVars = [];
-        $blockedVars = ['object'];
+        $blockedVars = ['object', 'brickGetters'];
         $vars = parent::__sleep();
 
         foreach ($vars as $value) {
