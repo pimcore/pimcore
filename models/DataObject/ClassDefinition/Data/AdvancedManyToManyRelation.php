@@ -597,6 +597,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
+                        if ($object instanceof Localizedfield) {
+                            $context['containerType'] = 'localizedfield';
+                        }
                         $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
                     }
                 }
