@@ -118,6 +118,8 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
+     * @internal
+     *
      * @return $this
      */
     public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static

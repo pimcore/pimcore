@@ -77,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    private function castUserDataToBoolean($data): array
+    private function castUserDataToBoolean(array $data): array
     {
         $data['admin'] = (bool)$data['admin'];
         $data['active'] = (bool)$data['active'];
