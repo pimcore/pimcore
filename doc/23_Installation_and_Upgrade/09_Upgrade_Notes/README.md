@@ -3,6 +3,7 @@
 ## Pimcore 11.1.0
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 - [DataObject] Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
+- [CoreCacheHandler] Remove redundant cache item tagging with own key
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
