@@ -31,7 +31,8 @@ use Symfony\Contracts\Service\Attribute\Required;
  */
 #[AsCommand(
     name: 'pimcore:deployment:classes-rebuild',
-    description: 'rebuilds db structure for classes, field collections and object bricks based on updated var/classes/definition_*.php files',
+    description: 'rebuilds db structure for classes, field collections and object bricks
+    based on updated var/classes/definition_*.php files',
     aliases: ['deployment:classes-rebuild']
 )]
 class ClassesRebuildCommand extends AbstractCommand

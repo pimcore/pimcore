@@ -31,7 +31,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 #[AsCommand(
     name: 'pimcore:build:classes',
-    description: 'rebuilds php files for classes, field collections and object bricks based on updated var/classes/definition_*.php files'
+    description: 'rebuilds php files for classes, field collections and object bricks
+    based on updated var/classes/definition_*.php files'
 )]
 class ClassesDefinitionsBuildCommand extends AbstractCommand
 {
