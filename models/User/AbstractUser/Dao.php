@@ -38,12 +38,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($data) {
-            $data['admin'] = (bool)$data['admin'];
-            $data['active'] = (bool)$data['active'];
-            $data['welcomescreen'] = (bool)$data['welcomescreen'];
-            $data['closeWarning'] = (bool)$data['closeWarning'];
-            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
-            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
+            $data = $this->castUserDataToBoolean($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("user doesn't exist");
@@ -59,12 +54,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
         if ($data) {
-            $data['admin'] = (bool)$data['admin'];
-            $data['active'] = (bool)$data['active'];
-            $data['welcomescreen'] = (bool)$data['welcomescreen'];
-            $data['closeWarning'] = (bool)$data['closeWarning'];
-            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
-            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
+            $data = $this->castUserDataToBoolean($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('User with name "%s" does not exist', $name));
@@ -80,17 +70,26 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `passwordRecoveryToken` = ?', [$token]);
 
         if ($data) {
-            $data['admin'] = (bool)$data['admin'];
-            $data['active'] = (bool)$data['active'];
-            $data['welcomescreen'] = (bool)$data['welcomescreen'];
-            $data['closeWarning'] = (bool)$data['closeWarning'];
-            $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
-            $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
+            $data = $this->castUserDataToBoolean($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Token "%s" does not match any user.', $token));
         }
     }
+
+    private function castUserDataToBoolean($data): array
+    {
+        $data['admin'] = (bool)$data['admin'];
+        $data['active'] = (bool)$data['active'];
+        $data['welcomescreen'] = (bool)$data['welcomescreen'];
+        $data['closeWarning'] = (bool)$data['closeWarning'];
+        $data['memorizeTabs'] = (bool)$data['memorizeTabs'];
+        $data['allowDirtyClose'] = (bool)$data['allowDirtyClose'];
+
+        return $data;
+    }
+
+
     public function create(): void
     {
         $this->db->insert('users', [

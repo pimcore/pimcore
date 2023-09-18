@@ -109,7 +109,9 @@ final class User extends User\UserRole implements UserInterface
 
         return $this;
     }
-
+    /**
+     * @internal
+     */
     public function getPasswordRecoveryToken(): ?string
     {
         return $this->passwordRecoveryToken;
