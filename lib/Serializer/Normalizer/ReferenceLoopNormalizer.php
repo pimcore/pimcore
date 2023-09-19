@@ -46,7 +46,7 @@ class ReferenceLoopNormalizer implements NormalizerInterface
         return $object;
     }
 
-    public function supportsNormalization(mixed $data, string $format = null): bool
+    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
         return $format === JsonEncoder::FORMAT;
     }
