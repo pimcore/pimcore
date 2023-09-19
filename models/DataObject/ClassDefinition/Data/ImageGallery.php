@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Bundle\ElementDependenciesBundle\Tool\ResolveDependecies;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -292,17 +293,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     public function resolveDependencies(mixed $data): array
     {
-        $dependencies = [];
-
-        if ($data instanceof DataObject\Data\ImageGallery) {
-            $fd = new Hotspotimage();
-            foreach ($data as $item) {
-                $itemDependencies = $fd->resolveDependencies($item);
-                $dependencies = array_merge($dependencies, $itemDependencies);
-            }
-        }
-
-        return $dependencies;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            sprintf('resolveDependencies() method %s is deprecated, use ResolveDependecies::resolveDependencies instead', __METHOD__)
+        );
+        return ResolveDependecies::resolveDependencies($this, $data);
     }
 
     public function getDataForGrid(?DataObject\Data\ImageGallery $data, DataObject\Concrete $object = null, array $params = []): array

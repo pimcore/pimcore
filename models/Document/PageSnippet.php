@@ -240,7 +240,7 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 

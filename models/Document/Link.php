@@ -76,7 +76,7 @@ class Link extends Model\Document
      */
     protected string $href = '';
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
 

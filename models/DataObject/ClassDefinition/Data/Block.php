@@ -593,28 +593,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function resolveDependencies(mixed $data): array
     {
-        $dependencies = [];
-
-        if (!is_array($data)) {
-            return [];
-        }
-
-        foreach ($data as $blockElements) {
-            foreach ($blockElements as $elementName => $blockElement) {
-                $fd = $this->getFieldDefinition($elementName);
-                if (!$fd) {
-                    // class definition seems to have changed
-                    Logger::warn('class definition seems to have changed, element name: ' . $elementName);
-
-                    continue;
-                }
-                $elementData = $blockElement->getData();
-
-                $dependencies = array_merge($dependencies, $fd->resolveDependencies($elementData));
-            }
-        }
-
-        return $dependencies;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            sprintf('resolveDependencies() method %s is deprecated, use ResolveDependecies::resolveDependencies instead', __METHOD__)
+        );
+        return ResolveDependecies::resolveDependencies($this, $data);
     }
 
     public function getCacheTags(mixed $data, array $tags = []): array
