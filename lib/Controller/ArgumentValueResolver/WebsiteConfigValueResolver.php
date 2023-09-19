@@ -23,6 +23,8 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
  * Adds support for type hinting controller actions and getting the current website config.
+ *
+ * @internal
  */
 final class WebsiteConfigValueResolver implements ValueResolverInterface
 {
