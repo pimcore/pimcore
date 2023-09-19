@@ -63,7 +63,7 @@ Deleting items in Pimcore moves them to the recycle bin first. The recycle bin w
 so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
 In the admin user-interface, under *Tools* > *Recycle Bin*, you can review items in the bin or flush the entire contents. 
 
-If you need to delete items based on how long they were stored in the recycle bin, the following command using cron or maintenance task may come in handy: 
+If you need to delete items based on how long they were stored in the recycle bin, the following command may come in handy: 
 ```bash
 ./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
 ```
