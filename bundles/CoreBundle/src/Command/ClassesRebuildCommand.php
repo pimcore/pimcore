@@ -43,11 +43,11 @@ class ClassesRebuildCommand extends AbstractCommand
     {
         $this
            ->addOption(
-                'create-classes',
-                'c',
-                InputOption::VALUE_NONE,
-                'Create missing Classes (Classes that exists in var/classes but not in the database)'
-            )
+               'create-classes',
+               'c',
+               InputOption::VALUE_NONE,
+               'Create missing Classes (Classes that exists in var/classes but not in the database)'
+           )
             ->addOption(
                 'delete-classes',
                 'd',

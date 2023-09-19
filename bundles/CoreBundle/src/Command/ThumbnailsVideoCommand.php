@@ -45,11 +45,11 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         $this
            ->addOption(
-                'parent',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images in this folder (ID)'
-            )
+               'parent',
+               null,
+               InputOption::VALUE_OPTIONAL,
+               'only create thumbnails of images in this folder (ID)'
+           )
             ->addOption(
                 'thumbnails',
                 't',
