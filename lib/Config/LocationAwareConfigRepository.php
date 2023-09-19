@@ -19,6 +19,7 @@ namespace Pimcore\Config;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -36,6 +37,7 @@ class LocationAwareConfigRepository
     public const LOCATION_DISABLED = 'disabled';
 
     public const READ_TARGET = 'read_target';
+    public const READ_TARGETS = 'read_targets';
 
     public const WRITE_TARGET = 'write_target';
 
@@ -65,10 +67,21 @@ class LocationAwareConfigRepository
 
     public function loadConfigByKey(string $key): array
     {
+        $readTargets = $this->getReadTargets();
+        $readTargetsCount = count($readTargets);
+
+        if ($readTargetsCount <= 1) {
+           return $this->loadConfigByKeyReadTarget($key, $readTargets[0] ?? null);
+        }
+
+        return $this->loadConfigByKeyReadTargets($key, $readTargets);
+    }
+
+    private function loadConfigByKeyReadTarget(string $key, ?string $loadType): array
+    {
         $data = null;
         $dataSource = null;
 
-        $loadType = $this->getReadTargets()[0] ?? null;
         if($loadType === null) {
             // try to load from container config
             $data = $this->getDataFromContainerConfig($key, $dataSource);
@@ -84,6 +97,26 @@ class LocationAwareConfigRepository
                 $data = $this->getDataFromSettingsStore($key, $dataSource);
             }
         }
+
+        return [
+            $data,
+            $dataSource,
+        ];
+    }
+
+    private function loadConfigByKeyReadTargets(string $key, array $readTargets): array
+    {
+        $data = null;
+        $dataSource = null;
+
+        foreach ($readTargets as $loadType) {
+            if ($loadType === self::LOCATION_SYMFONY_CONFIG) {
+                $data = $this->getDataFromContainerConfig($key, $dataSource);
+            } elseif ($loadType === self::LOCATION_SETTINGS_STORE) {
+                $data = $this->getDataFromSettingsStore($key, $dataSource);
+            }
+        }
+
 
         return [
             $data,
@@ -153,17 +186,25 @@ class LocationAwareConfigRepository
 
     public function getReadTargets(): array
     {
-        if (!isset($this->storageConfig[self::READ_TARGET])) {
-            return [];
+        $readLocation = [];
+
+        if (isset($this->storageConfig[self::READ_TARGET])) {
+            $readLocation = [$this->storageConfig[self::READ_TARGET][self::TYPE]];
+        } elseif (isset($this->storageConfig[self::READ_TARGETS])) {
+            $readLocation = $this->storageConfig[self::READ_TARGETS][self::TYPE];
         }
 
-        $readLocation = $this->storageConfig[self::READ_TARGET][self::TYPE];
-
-        if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
-            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
+        foreach ($readLocation as $type) {
+            if (!in_array(
+                    $type,
+                    [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED]
+                )
+            ) {
+                throw new InvalidConfigurationException(sprintf('Invalid read location: %s', $readLocation));
+            }
         }
 
-        return $readLocation ? [$readLocation] : [];
+        return $readLocation;
     }
 
     /**

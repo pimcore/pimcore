@@ -25,7 +25,11 @@ use Symfony\Component\Finder\Finder;
 
 final class ConfigurationHelper
 {
-    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes, array $additionalNodes = []): NodeBuilder
+    public static function addConfigLocationWithWriteTargetNodes(
+        ArrayNodeDefinition $rootNode,
+        array $nodes,
+        array $additionalNodes = []
+    ): NodeBuilder
     {
         $storageNode = $rootNode
             ->children()
@@ -40,14 +44,19 @@ final class ConfigurationHelper
         return $storageNode;
     }
 
-    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder, array $additionalNodes = []): void
+    public static function addConfigLocationTargetNode(
+        NodeBuilder $node,
+        string $name,
+        string $folder,
+        array $additionalNodes = []
+    ): void
     {
         //BC reasons: Remove this check in Pimcore 12
         if (!str_starts_with($folder, PIMCORE_PROJECT_ROOT)) {
             $folder = PIMCORE_PROJECT_ROOT . $folder;
         }
 
-        if (in_array(LocationAwareConfigRepository::READ_TARGET, $additionalNodes)) {
+        if (in_array(LocationAwareConfigRepository::READ_TARGETS, $additionalNodes)) {
             $node->
             arrayNode($name)
                 ->addDefaultsIfNotSet()
@@ -56,7 +65,45 @@ final class ConfigurationHelper
                 ->addDefaultsIfNotSet()
                 ->children()
                 ->enumNode(LocationAwareConfigRepository::TYPE)
-                ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE, LocationAwareConfigRepository::LOCATION_DISABLED])
+                ->values([
+                    LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG,
+                    LocationAwareConfigRepository::LOCATION_SETTINGS_STORE,
+                    LocationAwareConfigRepository::LOCATION_DISABLED
+                ])
+                ->defaultValue('symfony-config')
+                ->end()
+                ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => $folder])
+                ->variablePrototype()->end()
+                ->end()
+                ->end()
+                ->end()
+                ->arrayNode(LocationAwareConfigRepository::READ_TARGETS)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode(LocationAwareConfigRepository::TYPE)
+                            ->defaultValue([LocationAwareConfigRepository::DIRECTORY => $folder])
+                            ->variablePrototype()->end()
+                        ->arrayNode(LocationAwareConfigRepository::OPTIONS)
+                                ->defaultValue([LocationAwareConfigRepository::DIRECTORY => $folder])
+                                ->variablePrototype()->end()
+                    ->end()
+                ->end()
+            ->end();
+        } elseif (in_array(LocationAwareConfigRepository::READ_TARGET, $additionalNodes)) {
+            $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->arrayNode(LocationAwareConfigRepository::WRITE_TARGET)
+                ->addDefaultsIfNotSet()
+                ->children()
+                ->enumNode(LocationAwareConfigRepository::TYPE)
+                ->values([
+                    LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG,
+                    LocationAwareConfigRepository::LOCATION_SETTINGS_STORE,
+                    LocationAwareConfigRepository::LOCATION_DISABLED
+                ])
                 ->defaultValue('symfony-config')
                 ->end()
                 ->arrayNode(LocationAwareConfigRepository::OPTIONS)
@@ -69,7 +116,10 @@ final class ConfigurationHelper
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->enumNode(LocationAwareConfigRepository::TYPE)
-                            ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE])
+                            ->values([
+                                LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG,
+                                LocationAwareConfigRepository::LOCATION_SETTINGS_STORE
+                            ])
                             ->defaultValue(null)
                         ->end()
                         ->arrayNode(LocationAwareConfigRepository::OPTIONS)
@@ -88,7 +138,11 @@ final class ConfigurationHelper
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->enumNode(LocationAwareConfigRepository::TYPE)
-                        ->values([LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG, LocationAwareConfigRepository::LOCATION_SETTINGS_STORE, LocationAwareConfigRepository::LOCATION_DISABLED])
+                        ->values([
+                            LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG,
+                            LocationAwareConfigRepository::LOCATION_SETTINGS_STORE,
+                            LocationAwareConfigRepository::LOCATION_DISABLED
+                        ])
                         ->defaultValue('symfony-config')
                     ->end()
                     ->arrayNode(LocationAwareConfigRepository::OPTIONS)
