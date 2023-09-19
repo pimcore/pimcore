@@ -61,10 +61,9 @@ All temporary files can be deleted at any time.
 ## Recycle Bin
 Deleting items in Pimcore moves them to the recycle bin first. The recycle bin works quite similar to the versioning, 
 so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
-You can review items in the bin in the admin user-interface under *Tools* > *Recycle Bin*, there it's also possible to 
-flush the entire contents. 
+In the admin user-interface, under *Tools* > *Recycle Bin*, you can review items in the bin or flush the entire contents. 
 
-It's also possible to execute following command using cron or maintenance task: 
+If you need to delete items based on how long they were stored in the recycle bin, the following command using cron or maintenance task may come in handy: 
 ```bash
 ./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
 ```
