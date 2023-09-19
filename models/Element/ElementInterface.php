@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Model\Dependency;
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule\Task;
@@ -174,8 +173,6 @@ interface ElementInterface extends ModelInterface
      * @return Version[]
      */
     public function getVersions(): array;
-
-    public function getDependencies(): Dependency;
 
     public function __toString(): string;
 }

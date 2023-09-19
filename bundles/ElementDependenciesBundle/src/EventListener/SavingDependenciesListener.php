@@ -20,7 +20,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Model;
+use Pimcore\Bundle\ElementDependenciesBundle\Model\Dependency;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -48,7 +48,7 @@ class SavingDependenciesListener implements EventSubscriberInterface
     {
         $object = $e->getObject();
 
-        $d = new Model\Dependency();
+        $d = new Dependency();
         $d->setSourceType('object');
         $d->setSourceId($object->getId());
 
