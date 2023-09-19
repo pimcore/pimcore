@@ -23,22 +23,20 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:search-backend-reindex',
+    description: 'Re-indexes the backend search of pimcore',
+    aliases: ['search-backend-reindex']
+)]
 class SearchBackendReindexCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->setName('pimcore:search-backend-reindex')
-            ->setAliases(['search-backend-reindex'])
-            ->setDescription('Re-indexes the backend search of pimcore');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // clear all data

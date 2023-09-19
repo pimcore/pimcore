@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Maintenance\ExecutorInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:maintenance',
+    description: 'Asynchronous maintenance jobs of pimcore (needs to be set up as cron job)',
+    aliases: ['maintenance']
+)]
 class MaintenanceCommand extends AbstractCommand
 {
     public function __construct(private ExecutorInterface $maintenanceExecutor, private LoggerInterface $logger)
@@ -45,9 +51,6 @@ class MaintenanceCommand extends AbstractCommand
         }
 
         $this
-            ->setName('pimcore:maintenance')
-            ->setAliases(['maintenance'])
-            ->setDescription($description)
             ->setHelp($help)
             ->addOption(
                 'job',

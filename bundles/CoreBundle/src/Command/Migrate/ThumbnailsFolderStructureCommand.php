@@ -20,6 +20,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Storage;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,15 +28,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:migrate:thumbnails-folder-structure',
+    description: 'Change thumbnail folder structure to
+    <asset storage>/<path to asset>/<asset id>/image-thumb__<asset id>__<thumbnail name>/<asset filename>
+    instead of
+    <asset storage>/<path to asset>/image-thumb__<asset id>__<thumbnail name>/<asset filename>'
+)]
 class ThumbnailsFolderStructureCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->setName('pimcore:migrate:thumbnails-folder-structure')
-            ->setDescription('Change thumbnail folder structure to <asset storage>/<path to asset>/<asset id>/image-thumb__<asset id>__<thumbnail name>/<asset filename> instead of <asset storage>/<path to asset>/image-thumb__<asset id>__<thumbnail name>/<asset filename>');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $thumbnailStorage = Storage::get('thumbnail');

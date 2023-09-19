@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,6 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:migrate:storage',
+    description: 'Migrate data from one storage to another'
+)]
 class StorageCommand extends AbstractCommand
 {
     public function __construct(private ContainerInterface $locator)
@@ -37,8 +42,6 @@ class StorageCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:migrate:storage')
-            ->setDescription('Migrate data from one storage to another')
             ->addArgument(
                 'storage',
                 InputArgument::IS_ARRAY,

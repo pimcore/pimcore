@@ -20,21 +20,20 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+#[AsCommand(
+    name: 'pimcore:documents:migrate-elements',
+    description: 'Migrates document elements to editables.
+    See issue https://github.com/pimcore/pimcore/issues/7384 first'
+)]
 class MigrateElementsCommand extends AbstractCommand
 {
     private bool $runCommand = true;
-
-    protected function configure(): void
-    {
-        $this
-            ->setName('pimcore:documents:migrate-elements')
-            ->setDescription('Migrates document elements to editables. See issue https://github.com/pimcore/pimcore/issues/7384 first');
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
