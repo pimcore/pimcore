@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Tool\Email;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +26,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:email:cleanup',
+    description: 'Cleanup email logs',
+    aliases: ['email:cleanup']
+)]
 class EmailLogsCleanupCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:email:cleanup')
-            ->setAliases(['email:cleanup'])
-            ->setDescription('Cleanup email logs')
             ->addOption(
                 'older-than-days',
                 'days',

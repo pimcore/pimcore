@@ -24,6 +24,7 @@ use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,6 +38,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:install',
+    description: 'Installs Pimcore with the given parameters. Every parameter will be prompted interactively or can also be set via env vars'
+)]
 class InstallCommand extends Command
 {
     private Installer $installer;
@@ -144,8 +149,6 @@ class InstallCommand extends Command
         }
 
         $this
-            ->setName('pimcore:install')
-            ->setDescription($description)
             ->setHelp($help)
             ->addOption(
                 'skip-database-config',

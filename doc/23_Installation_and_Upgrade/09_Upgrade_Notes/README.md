@@ -4,6 +4,7 @@
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 - [DataObject] Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
 - [CoreCacheHandler] Remove redundant cache item tagging with own key
+- [Auth] The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
