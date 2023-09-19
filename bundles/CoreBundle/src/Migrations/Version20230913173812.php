@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Model\Dao\AbstractDao;
 
 final class Version20230913173812 extends AbstractMigration
 {
@@ -27,11 +26,12 @@ final class Version20230913173812 extends AbstractMigration
     {
         return 'Adds passwordRecoveryToken column to users table';
     }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('passwordRecoveryToken')) {
             $this->addSql(
-            'ALTER TABLE `users` ADD COLUMN `passwordRecoveryToken` varchar(255) DEFAULT NULL AFTER `password`;'
+                'ALTER TABLE `users` ADD COLUMN `passwordRecoveryToken` varchar(255) DEFAULT NULL AFTER `password`;'
             );
         }
     }

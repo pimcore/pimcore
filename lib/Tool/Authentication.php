@@ -210,8 +210,10 @@ class Authentication
     public static function generateToken(string $username): string
     {
         $user = User::getByName($username);
+
         return self::generateTokenByUser($user);
     }
+
     /**
      * @internal
      */
