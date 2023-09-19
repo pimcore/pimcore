@@ -68,9 +68,6 @@ It's also possible to execute following command using cron or maintenance task:
 ```bash
 ./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
 ```
-
-Or such extension: https://pimcore.com/en/developers/marketplace/blackbit_digital_commerce/recycle-bin-cleanup_e292447
-  
 It's also possible to do this manually, this is especially useful when automating this process, or if you have a huge 
 amount of items in your recycle bin:   
 ```bash
