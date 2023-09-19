@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->castUserDataToBoolean($data);
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Exception\NotFoundException(sprintf('Token "%s" does not match any user.', $token));
+            throw new Model\Exception\NotFoundException(sprintf('Token does not match any user.'));
         }
     }
 
