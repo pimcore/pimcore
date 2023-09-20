@@ -253,12 +253,12 @@ class TranslatorTest extends TestCase
         $key = 'sanitizerTest';
         $translation->setDomain('messages');
         $translation->setKey($key);
-        $translation->setTranslations(['en' => '@#$%^abc\'"<script>console.log("ops");</script> 测试']);
+        $translation->setTranslations(['en' => '!@#$%^abc\'"<script>console.log("ops");</script> 测试< edf > "']);
         $translation->save();
 
         $translation = Translation::getByKey($key);
         $getter = $translation->getTranslation('en');
-        $this->assertEquals('!@#$%^abc\'" 测试', $getter, 'Asserting translation is properly sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $getter, 'Asserting translation is properly sanitized');
 
         $db = Db::get();
         $dbValue = $db->fetchOne(
@@ -268,6 +268,6 @@ class TranslatorTest extends TestCase
                 $db->quote('en')
             )
         );
-        $this->assertEquals('!@#$%^abc\'" 测试', $dbValue, 'Asserting translation is persisted as sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $dbValue, 'Asserting translation is persisted as sanitized');
     }
 }
