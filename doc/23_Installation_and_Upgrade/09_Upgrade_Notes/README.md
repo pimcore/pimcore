@@ -9,6 +9,8 @@
     - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
     - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
     - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12
+- [CoreCacheHandler] Remove redundant cache item tagging with own key
+- [Auth] The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
@@ -92,7 +94,7 @@
 
 #### [Authentication] :
 
--  Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed support old authentication system
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events

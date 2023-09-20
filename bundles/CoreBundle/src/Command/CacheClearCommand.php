@@ -30,7 +30,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-#[AsCommand('pimcore:cache:clear')]
+#[AsCommand(
+    name: 'pimcore:cache:clear',
+    description: 'Clear caches'
+)]
 class CacheClearCommand extends AbstractCommand
 {
     public function __construct(private EventDispatcherInterface $eventDispatcher)
@@ -41,7 +44,6 @@ class CacheClearCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setDescription('Clear caches')
             ->addOption(
                 'tags',
                 't',

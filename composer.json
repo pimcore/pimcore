@@ -96,7 +96,7 @@
     "symfony/framework-bundle": "^6.2",
     "symfony/html-sanitizer": "^6.2",
     "symfony/http-foundation": "^6.2",
-    "symfony/http-kernel": "^6.2",
+    "symfony/http-kernel": "^6.3",
     "symfony/lock": "^6.2",
     "symfony/mailer": "^6.2",
     "symfony/messenger": "^6.2",

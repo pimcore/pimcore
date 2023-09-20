@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +26,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name:'pimcore:mysql-tools',
+    description: 'Optimize and warmup mysql database',
+    aliases: ['mysql-tools']
+)]
 class MysqlToolsCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:mysql-tools')
-            ->setAliases(['mysql-tools'])
-            ->setDescription('Optimize and warmup mysql database')
             ->addOption(
                 'mode',
                 'm',

@@ -20,6 +20,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Db;
 use Pimcore\Tool;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:locale:delete-unused-tables',
+    description: 'Delete unused locale(invalid language) tables & views'
+)]
 class DeleteUnusedLocaleDataCommand extends AbstractCommand
 {
     use DryRun;
@@ -34,8 +39,6 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:locale:delete-unused-tables')
-            ->setDescription('Delete unused locale(invalid language) tables & views')
             ->addOption(
                 'skip-locales',
                 's',

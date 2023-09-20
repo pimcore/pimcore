@@ -20,6 +20,7 @@ use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:maintenance-mode',
+    description: 'Enable or disable maintenance mode'
+)]
 class MaintenanceModeCommand extends AbstractCommand
 {
     public function __construct(protected MaintenanceModeHelperInterface $maintenanceModeHelper)
@@ -37,8 +42,6 @@ class MaintenanceModeCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:maintenance-mode')
-            ->setDescription('Enable or disable maintenance mode')
             ->addOption('enable', null, InputOption::VALUE_NONE, 'Enable maintenance mode (default)')
             ->addOption('disable', null, InputOption::VALUE_NONE, 'Disable maintenance mode')
         ;
