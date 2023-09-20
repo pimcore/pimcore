@@ -353,4 +353,33 @@ class ObjectTest extends ModelTestCase
         $value = $dataType->getDataFromEditmode($iqv, $object);
         $this->assertNull($value);
     }
+
+    public function testSanitization(): void
+    {
+        $db = Db::get();
+
+        $object = TestHelper::createEmptyObject();
+        $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试');
+        $object->save();
+
+        $dbQueryValue = $db->fetchOne(
+            sprintf(
+                'SELECT `wysiwyg` FROM object_query_%s WHERE oo_id = %d',
+                $object->getClassName(),
+                $object->getId()
+            )
+        );
+
+        $dbStoreValue = $db->fetchOne(
+            sprintf(
+                'SELECT `wysiwyg` FROM object_store_%s WHERE oo_id = %d',
+                $object->getClassName(),
+                $object->getId()
+            )
+        );
+
+        $this->assertEquals('!@#$%^abc\'" 测试', $object->getWysiwyg());
+        $this->assertEquals('!@#$%^abc\'" 测试', $dbQueryValue);
+        $this->assertEquals('!@#$%^abc\'" 测试', $dbStoreValue);
+    }
 }
