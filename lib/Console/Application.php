@@ -22,6 +22,7 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Tool\Admin;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
@@ -64,31 +65,46 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
         $this->setDispatcher($dispatcher);
 
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
-            // skip if maintenance mode is on and the flag is not set
-            if (Admin::isInMaintenanceMode() && !$event->getInput()->getOption('ignore-maintenance-mode')) {
-                throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
-            }
+        $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event)
+            use ($kernel, $maintenanceModeHelper) {
+                // skip if maintenance mode is on and the flag is not set
+                if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+                    !$event->getInput()->getOption('ignore-maintenance-mode')
+                ) {
+                    throw new \RuntimeException(
+                        'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
+                    );
+                }
 
-            if ($event->getInput()->getOption('maintenance-mode')) {
-                // enable maintenance mode if requested
-                $maintenanceModeId = 'cache-warming-dummy-session-id';
+                if ($event->getInput()->getOption('maintenance-mode')) {
+                    // enable maintenance mode if requested
+                    $maintenanceModeId = 'cache-warming-dummy-session-id';
 
-                $event->getOutput()->writeln('Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...');
+                    $event->getOutput()->writeln(
+                        'Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...'
+                    );
 
-                Admin::activateMaintenanceMode($maintenanceModeId);
-            }
+                    $maintenanceModeHelper->activate($maintenanceModeId);
+                }
 
-            if ($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
-                $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
-                $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
-            }
+                if ($event->getCommand() instanceof DoctrineCommand &&
+                    $prefix = $event->getInput()->getOption('prefix')
+                ) {
+                    $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
+                    $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
+                }
         });
 
-        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event)
+        use ($maintenanceModeHelper) {
             if ($event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
-                Admin::deactivateMaintenanceMode();
+                //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
+                if (Admin::isInMaintenanceMode()) {
+                    Admin::deactivateMaintenanceMode();
+                }
+                $maintenanceModeHelper->deactivate();
             }
         });
     }

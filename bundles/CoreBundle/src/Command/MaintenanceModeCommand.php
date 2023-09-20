@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Admin;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -33,6 +34,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class MaintenanceModeCommand extends AbstractCommand
 {
+    public function __construct(protected MaintenanceModeHelperInterface $maintenanceModeHelper)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this
@@ -58,12 +64,16 @@ class MaintenanceModeCommand extends AbstractCommand
         $disable = ($input->getOption('disable') ?? false);
 
         if ($disable) {
-            Admin::deactivateMaintenanceMode();
+            //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
+            if (Admin::isInMaintenanceMode()) {
+                Admin::deactivateMaintenanceMode();
+            }
+            $this->maintenanceModeHelper->deactivate();
             if ($output->isVerbose()) {
                 $output->writeln('Maintenance mode has been disabled');
             }
         } else {
-            Admin::activateMaintenanceMode('command-line-dummy-session-id');
+            $this->maintenanceModeHelper->activate('command-line-dummy-session-id');
             if ($output->isVerbose()) {
                 $output->writeln('Maintenance mode is now enabled');
                 $output->writeln('You can run commands only with the --ignore-maintenance-mode option');
