@@ -105,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
                         'key' => $this->model->getKey(),
                         'type' => $this->model->getType(),
                         'language' => $language,
-                        'text' => html_entity_decode($sanitizer->sanitize($text)),
+                        'text' => html_entity_decode($sanitizer->sanitizeFor('textarea', $text)),
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                         'userOwner' => $this->model->getUserOwner(),
