@@ -56,11 +56,9 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         if ($maintenanceModeEntry = $this->getEntry()) {
             if ($matchSessionId && $matchSessionId !== $maintenanceModeEntry) {
-                return false;
+                return true;
             }
-            return true;
         }
-
         return false;
     }
 

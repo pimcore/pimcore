@@ -69,7 +69,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event)
             use ($kernel, $maintenanceModeHelper) {
                 // skip if maintenance mode is on and the flag is not set
-                if ($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode() &&
+                if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
                     !$event->getInput()->getOption('ignore-maintenance-mode')
                 ) {
                     throw new \RuntimeException(

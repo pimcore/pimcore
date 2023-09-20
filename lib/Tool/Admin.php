@@ -163,7 +163,7 @@ class Admin
     }
 
     /**
-     * @deprecated Use MaintenanceModeHelperInterface::activate instead.
+     * @deprecated Use MaintenanceModeHelperInterface::deactivate instead.
      *
      * @static
      */
