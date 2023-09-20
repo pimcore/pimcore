@@ -120,7 +120,7 @@ class Admin
     }
 
     /**
-     * @deprecated
+     * @deprecated and will be removed in Pimcore 12
      *
      * @static
      *
@@ -131,7 +131,7 @@ class Admin
     }
 
     /**
-     * @deprecated
+     * @deprecated and will be removed in Pimcore 12
      */
     public static function getMaintenanceModeScheduleLoginFile(): string
     {
@@ -204,7 +204,7 @@ class Admin
     }
 
     /**
-     * @deprecated
+     * @deprecated and will be removed in Pimcore 12
      */
     public static function isMaintenanceModeScheduledForLogin(): bool
     {
@@ -223,7 +223,7 @@ class Admin
     }
 
     /**
-     * @deprecated
+     * @deprecated and will be removed in Pimcore 12
      */
     public static function scheduleMaintenanceModeOnLogin(): void
     {
@@ -237,7 +237,7 @@ class Admin
     }
 
     /**
-     * @deprecated
+     * @deprecated and will be removed in Pimcore 12
      */
     public static function unscheduleMaintenanceModeOnLogin(): void
     {

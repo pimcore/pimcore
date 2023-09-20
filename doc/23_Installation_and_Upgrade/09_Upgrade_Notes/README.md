@@ -3,6 +3,12 @@
 ## Pimcore 11.1.0
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
 - [DataObject] Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
+- [Maintenance Mode]
+  - Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
+    - `activateMaintenanceMode`, use `MaintenanceModeHelperInterface::activate` instead.
+    - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
+    - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
+    - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
