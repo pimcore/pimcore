@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -24,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 {
-    protected const ENTRY_ID = "maintenace_mode";
+    protected const ENTRY_ID = 'maintenace_mode';
 
     public function __construct(protected RequestStack $requestStack)
     {
@@ -37,7 +36,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         }
 
         if (empty($sessionId)) {
-            throw new \InvalidArgumentException("Pass sessionId to activate the maintenance mode");
+            throw new \InvalidArgumentException('Pass sessionId to activate the maintenance mode');
         }
 
         $this->addEntry($sessionId);
@@ -59,6 +58,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
                 return true;
             }
         }
+
         return false;
     }
 

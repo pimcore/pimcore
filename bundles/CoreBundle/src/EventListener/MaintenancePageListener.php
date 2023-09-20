@@ -36,8 +36,7 @@ class MaintenancePageListener implements EventSubscriberInterface
     public function __construct(
         protected KernelInterface $kernel,
         protected MaintenanceModeHelperInterface $maintenanceModeHelper
-    )
-    {
+    ) {
     }
 
     public static function getSubscribedEvents(): array
