@@ -256,9 +256,8 @@ class TranslatorTest extends TestCase
         $translation->setTranslations(['en' => '@#$%^abc\'"<script>console.log("ops");</script> 测试']);
         $translation->save();
 
-        $translationGet = new Translation();
-        $translationGet->getKey($key);
-        $getter = $translationGet->getTranslation('en');
+        $translation = Translation::getByKey($key);
+        $getter = $translation->getTranslation('en');
         $this->assertEquals('!@#$%^abc\'" 测试', $getter, 'Asserting translation is properly sanitized');
 
         $db = Db::get();
