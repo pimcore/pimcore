@@ -100,6 +100,10 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         use ($maintenanceModeHelper) {
             if ($event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
+                //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
+                if (Admin::isInMaintenanceMode()) {
+                    Admin::deactivateMaintenanceMode();
+                }
                 $maintenanceModeHelper->deactivate();
             }
         });
