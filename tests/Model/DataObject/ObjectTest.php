@@ -359,10 +359,10 @@ class ObjectTest extends ModelTestCase
         $db = Db::get();
 
         $object = TestHelper::createEmptyObject();
-        $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试');
+        $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试< edf > "');
         $object->save();
 
-        $this->assertEquals('!@#$%^abc\'" 测试', $object->getWysiwyg(),'Asseting setter/getter value is sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $object->getWysiwyg(),'Asseting setter/getter value is sanitized');
 
         $dbQueryValue = $db->fetchOne(
             sprintf(
@@ -371,7 +371,7 @@ class ObjectTest extends ModelTestCase
                 $object->getId()
             )
         );
-        $this->assertEquals('!@#$%^abc\'" 测试', $dbQueryValue, 'Asserting object_query table value is persisted as sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $dbQueryValue, 'Asserting object_query table value is persisted as sanitized');
 
         $dbStoreValue = $db->fetchOne(
             sprintf(
@@ -380,6 +380,6 @@ class ObjectTest extends ModelTestCase
                 $object->getId()
             )
         );
-        $this->assertEquals('!@#$%^abc\'" 测试', $dbStoreValue, 'Asserting object_store table value is persisted as sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $dbStoreValue, 'Asserting object_store table value is persisted as sanitized');
     }
 }
