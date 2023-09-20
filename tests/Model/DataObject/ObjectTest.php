@@ -362,6 +362,8 @@ class ObjectTest extends ModelTestCase
         $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试');
         $object->save();
 
+        $this->assertEquals('!@#$%^abc\'" 测试', $object->getWysiwyg(),'Asseting setter/getter value is sanitized');
+
         $dbQueryValue = $db->fetchOne(
             sprintf(
                 'SELECT `wysiwyg` FROM object_query_%s WHERE oo_id = %d',
@@ -369,6 +371,7 @@ class ObjectTest extends ModelTestCase
                 $object->getId()
             )
         );
+        $this->assertEquals('!@#$%^abc\'" 测试', $dbQueryValue, 'Asserting object_query table value is persisted as sanitized');
 
         $dbStoreValue = $db->fetchOne(
             sprintf(
@@ -377,9 +380,6 @@ class ObjectTest extends ModelTestCase
                 $object->getId()
             )
         );
-
-        $this->assertEquals('!@#$%^abc\'" 测试', $object->getWysiwyg());
-        $this->assertEquals('!@#$%^abc\'" 测试', $dbQueryValue);
-        $this->assertEquals('!@#$%^abc\'" 测试', $dbStoreValue);
+        $this->assertEquals('!@#$%^abc\'" 测试', $dbStoreValue, 'Asserting object_store table value is persisted as sanitized');
     }
 }
