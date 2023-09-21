@@ -43,7 +43,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $target = null;
 
-    protected string $parameters = '123';
+    protected string $parameters = '';
 
     protected string $anchor = '';
 
