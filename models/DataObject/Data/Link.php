@@ -43,7 +43,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $target = null;
 
-    protected string $parameters = '';
+    protected string $parameters = '123';
 
     protected string $anchor = '';
 
@@ -437,12 +437,9 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setValues(array $data = []): static
     {
-        $reflectionClass = new \ReflectionClass(static::class);
         foreach ($data as $key => $value) {
             $method = 'set' . ucfirst($key);
             if (method_exists($this, $method)) {
-                //used for non-nullable properties stored with null, todo: Remove in Pimcore 12
-                $value = $value ?: $reflectionClass->getProperty($key)->getDefaultValue();
                 $this->$method($value);
             }
         }
@@ -454,5 +451,19 @@ class Link implements OwnerAwareFieldInterface
     public function __toString(): string
     {
         return $this->getHtml();
+    }
+
+    /**
+     * https://github.com/pimcore/pimcore/pull/15926
+     * used for non-nullable properties stored with null
+     * @TODO: Remove in Pimcore 12
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        foreach (get_object_vars($this) as $property => $value) {
+            $this->$property = $data["\0*\0".$property] ?? $value;
+        }
     }
 }
