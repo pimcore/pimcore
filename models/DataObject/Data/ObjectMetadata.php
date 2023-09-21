@@ -39,8 +39,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     protected array $data = [];
 
     /**
-     * @param string|null $fieldname
-     * @param array $columns
      * @param Concrete|null $object
      */
     public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
@@ -50,6 +48,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->setObject($object);
     }
 
+    /**
+     * @return $this
+     */
     public function setObject(?DataObject\Concrete $object): static
     {
         $this->markMeDirty();
@@ -66,8 +67,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param string $method
-     * @param array $args
      *
      * @return mixed|void
      *
@@ -75,7 +74,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function __call(string $method, array $args)
     {
-        if (substr($method, 0, 3) == 'get') {
+        if (str_starts_with($method, 'get')) {
             $key = substr($method, 3, strlen($method) - 3);
 
             $idx = array_searchi($key, $this->columns);
@@ -88,7 +87,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($method, 0, 3) == 'set') {
+        if (str_starts_with($method, 'set')) {
             $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 
@@ -115,6 +114,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $return;
     }
 
+    /**
+     * @return $this
+     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -142,6 +144,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(DataObject\Concrete $element): static
     {
         $this->markMeDirty();
@@ -154,6 +159,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this->getObject();
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         $this->columns = $columns;

@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Module;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
@@ -37,12 +36,6 @@ abstract class AbstractDefinitionHelper extends Module
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
-                $path = TestHelper::resolveFilePath('system_settings.json');
-                if (!file_exists($path)) {
-                    throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
-                }
-                $data = file_get_contents($path);
-                SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
                 $this->initializeDefinitions();
             } else {
                 $this->debug(sprintf(
@@ -60,7 +53,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, bool $index = false, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;

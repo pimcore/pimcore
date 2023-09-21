@@ -34,8 +34,6 @@ class Dao extends Model\Dao\AbstractDao
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -93,13 +91,17 @@ class Dao extends Model\Dao\AbstractDao
             Logger::warning('Error during removing old relations: ' . $e);
         }
 
-        if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
+        if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
             // if this is a fresh object, then we don't need the check
             $isBrickUpdate = false; // used to indicate whether we want to consider the default value
         } else {
             // or brick has been added
-            $existsResult = $this->db->fetchOne('SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1', [$object->getId()]);
-            $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
+            $existsResult = $this->db->fetchOne(
+                'SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1',
+                [$object->getId()]
+            );
+
+            $isBrickUpdate = (bool)$existsResult; // used to indicate whether we want to consider the default value
         }
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
@@ -360,7 +362,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper->resetFieldsToCheck();
     }
 
-    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {
@@ -378,7 +380,7 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
+        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
@@ -405,11 +407,5 @@ class Dao extends Model\Dao\AbstractDao
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='document'
             ORDER BY `index` ASC", $params);
-
-        if (is_array($relations) && count($relations) > 0) {
-            return $relations;
-        } else {
-            return [];
-        }
     }
 }

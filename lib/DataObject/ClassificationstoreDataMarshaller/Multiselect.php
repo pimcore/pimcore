@@ -23,9 +23,6 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Multiselect implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
@@ -35,9 +32,6 @@ class Multiselect implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value) && strlen($value['value']) > 0) {

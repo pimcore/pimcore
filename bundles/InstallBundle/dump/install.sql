@@ -10,6 +10,7 @@ CREATE TABLE `assets` (
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` longtext,
@@ -253,11 +254,13 @@ CREATE TABLE `notes` (
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
+  `auto_id` int(11) NOT NULL AUTO_INCREMENT,
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  PRIMARY KEY (`id`, `name`)
+  PRIMARY KEY (`auto_id`),
+  UNIQUE KEY `UNIQ_E5A8E5E2BF3967505E237E06` (`id`,`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
@@ -422,20 +425,6 @@ CREATE TABLE `settings_store` (
   KEY `scope` (`scope`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_admin`;
-CREATE TABLE `translations_admin` (
-  `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
-  `type` varchar(10) DEFAULT NULL,
-  `language` varchar(10) NOT NULL DEFAULT '',
-  `text` text,
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
-  `userOwner` int(11) unsigned DEFAULT NULL,
-  `userModification` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`key`,`language`),
-  KEY `language` (`language`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -490,6 +479,7 @@ CREATE TABLE `users` (
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   `lastLogin` int(11) unsigned DEFAULT NULL,
   `keyBindings` json NULL,
+  `passwordRecoveryToken` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
@@ -730,6 +720,7 @@ CREATE TABLE `gridconfigs` (
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
 	`shareGlobally` TINYINT(1) NULL,
+	`setAsFavourite` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),

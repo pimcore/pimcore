@@ -34,8 +34,6 @@ class PublicServicesController extends Controller
 {
     public function thumbnailAction(Request $request): RedirectResponse|StreamedResponse
     {
-        $thumbnailStream = null;
-
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 

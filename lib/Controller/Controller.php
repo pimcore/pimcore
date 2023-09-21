@@ -23,10 +23,6 @@ use Symfony\Component\Templating\EngineInterface;
 
 abstract class Controller extends AbstractController
 {
-    /**
-     * {@inheritdoc}
-     *
-     */
     protected function render(string $view, array $parameters = [], Response $response = null): Response
     {
         $templatingEngine = $this->container->get('pimcore.templating');
@@ -44,10 +40,6 @@ abstract class Controller extends AbstractController
         return parent::render($view, $parameters, $response);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
     {
         $templatingEngine = $this->container->get('pimcore.templating');
@@ -68,10 +60,6 @@ abstract class Controller extends AbstractController
         return parent::stream($view, $parameters, $response);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     */
     protected function renderView(string $view, array $parameters = []): string
     {
         $templatingEngine = $this->container->get('pimcore.templating');

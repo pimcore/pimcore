@@ -209,7 +209,8 @@ pimcore.bundle.customreports.custom.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), record.data.text), function (btn) {
+        const decodedName = Ext.util.Format.htmlDecode(record.data.text);
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), Ext.util.Format.htmlEncode(decodedName)), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_bundle_customreports_customreport_delete'),

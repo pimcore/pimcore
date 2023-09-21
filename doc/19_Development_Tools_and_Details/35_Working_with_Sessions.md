@@ -1,4 +1,4 @@
-# Working with Sessions
+# Working With Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
 For details see [sessions docs](https://symfony.com/doc/current/components/http_foundation/sessions.html). 
@@ -29,8 +29,18 @@ class SessionBagListener implements EventSubscriberInterface
         if (!$event->isMainRequest()) {
             return;
         }
+        
+        if ($event->getRequest()->attributes->get('_stateless', false)) {
+            return;
+        }
 
         $session = $event->getRequest()->getSession();
+        
+        //do not register bags, if session is already started
+        if ($session->isStarted()) {
+            return;
+        }
+
         $bag = new AttributeBag('_session_cart');
         $bag->setName('session_cart');
  

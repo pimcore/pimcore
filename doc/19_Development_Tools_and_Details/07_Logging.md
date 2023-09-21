@@ -55,7 +55,14 @@ In this log you can see every request where a redirect takes action.
 2021-04-26T14:03:20+0200 : 10.242.2.255          Custom-Redirect ID: 1, Source: /asdsad/redirectsource/asd -> /en/Events
 ```
 
-## Writing your own log files
+:::info
+
+Redirects are logged into a `redirect` monolog log channel at info level. By default, Pimcore logs that channel into `var/log/redirect.log`.
+Of course, the corresponding monolog handler configuration can be adapted as needed.
+
+:::
+
+## Writing Your Own Log Files
 To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
 
 ```yaml

@@ -18,6 +18,8 @@ namespace Pimcore;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Admin;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,8 +73,10 @@ class Bootstrap
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
+            $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
             // skip if maintenance mode is on and the flag is not set
-            if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
+            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+                !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
                 die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution\n");
             }
         }
@@ -173,7 +177,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
         $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
-        $resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_PRIVATE_VAR . '/application-logger');
         $resolveConstant('PIMCORE_SYMFONY_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache');
         $resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PRIVATE_VAR . '/classes');
         $resolveConstant('PIMCORE_CLASS_DEFINITION_DIRECTORY', PIMCORE_CLASS_DIRECTORY);
@@ -211,7 +214,7 @@ class Bootstrap
         \Pimcore::setKernel($kernel);
         $kernel->boot();
 
-        $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $conf = Config::getSystemConfiguration();
 
         if ($conf['general']['timezone']) {
             date_default_timezone_set($conf['general']['timezone']);

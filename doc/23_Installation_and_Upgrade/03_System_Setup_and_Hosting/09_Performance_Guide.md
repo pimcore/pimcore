@@ -231,9 +231,8 @@ framework:
         pools:
             pimcore.cache.pool:
                 public: true
-                tags: true
                 default_lifetime: 31536000  # 1 year
-                adapter: pimcore.cache.adapter.redis_tag_aware
+                adapter: cache.adapter.redis_tag_aware
                 provider: 'redis://localhost'
 ```
 
@@ -381,7 +380,7 @@ You can cache part of a template like:
         {% set navStartNode = pimcore_document(1) %}
     {% endif %}
 
-    {% set mainNavigation =  app_navigation_data_links(document, navStartNode) %}
+    {% set mainNavigation = app_navigation_data_links(document, navStartNode) %}
     <div class="container">
         ...
         {{
@@ -396,6 +395,7 @@ You can cache part of a template like:
         }}
         ...
     </div>
+    {% do cache.end() %}
 {% endif %}
 ```
 

@@ -28,9 +28,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserChecker extends InMemoryUserChecker
 {
-    /**
-     * {@inheritdoc}
-     */
     public function checkPreAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);
@@ -38,9 +35,6 @@ class UserChecker extends InMemoryUserChecker
         parent::checkPreAuth($user);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkPostAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);

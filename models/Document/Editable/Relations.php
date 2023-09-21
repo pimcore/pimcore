@@ -37,13 +37,9 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @internal
      *
-     * @var array
      */
     protected array $elementIds = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'relations';
@@ -69,9 +65,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         $this->setElements();
@@ -84,34 +77,26 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): array
     {
         $this->setElements();
         $return = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
-                } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
-                } elseif ($element instanceof Asset) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
-                } elseif ($element instanceof Document) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
-                }
+        foreach ($this->elements as $element) {
+            if ($element instanceof DataObject\Concrete) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
+            } elseif ($element instanceof Asset) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
+            } elseif ($element instanceof Document) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
             }
         }
 
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $this->setElements();
@@ -126,9 +111,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
@@ -138,9 +120,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
@@ -180,34 +159,26 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return count($this->elements) > 0 ? false : true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $this->setElements();
         $dependencies = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof Element\ElementInterface) {
-                    $elementType = Element\Service::getElementType($element);
-                    $key = $elementType . '_' . $element->getId();
+        foreach ($this->elements as $element) {
+            if ($element instanceof Element\ElementInterface) {
+                $elementType = Element\Service::getElementType($element);
+                $key = $elementType . '_' . $element->getId();
 
-                    $dependencies[$key] = [
-                        'id' => $element->getId(),
-                        'type' => $elementType,
-                    ];
-                }
+                $dependencies[$key] = [
+                    'id' => $element->getId(),
+                    'type' => $elementType,
+                ];
             }
         }
 
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store
@@ -225,9 +196,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -242,9 +210,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         $this->setElements();
@@ -259,10 +224,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         reset($this->elements);
     }
 
-    /**
-     * @return Element\ElementInterface|false
-     */
-    public function current(): bool|Element\ElementInterface
+    public function current(): false|Element\ElementInterface
     {
         $this->setElements();
 
@@ -287,10 +249,12 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
 
         $el = $this->current();
-        if (Element\Service::doHideUnpublished($el)) {
-            if (!Element\Service::isPublished($el)) {
-                $this->next();
-            }
+        if (
+            $el instanceof Element\ElementInterface &&
+            Element\Service::doHideUnpublished($el) &&
+            !Element\Service::isPublished($el)
+        ) {
+            $this->next();
         }
 
         return $this->current() !== false;

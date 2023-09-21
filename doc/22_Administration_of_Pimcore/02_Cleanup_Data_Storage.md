@@ -16,7 +16,7 @@ You can reduce the amount of restore points individually for Assets, Objects and
 After you have reduced the value, it's recommended to run the following command manually 
 (it would also run automatically as part of the regular maintenance script): 
 ```bash
-./bin/console pimcore:maintenance -f -j versioncleanup
+./bin/console pimcore:maintenance -j versioncleanup
 ```
 
 #### Example
@@ -54,7 +54,17 @@ Used for uploads, imports, exports, page, previews, ...
 **Public temporary directory**: `public/var/tmp/`  
 Used for image/video/document thumbnails used in the web-application. 
   
- 
+### Clearing Temporary Files
+```php
+// clear public files
+Tool\Storage::get('thumbnail')->deleteDirectory('/');
+Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
+
+Tool\Storage::get('asset_cache')->deleteDirectory('/');
+
+// clear system files
+recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
+```
 All temporary files can be deleted at any time.   
 **WARNING: Deleting all files in `public/var/tmp/` can have a huge impact on performance until all needed thumbnails are generated again.**
 
@@ -70,4 +80,19 @@ amount of items in your recycle bin:
 // replace ### with the name of your database
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
+```
+
+**WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
+Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**
+
+## Output Cache
+When enabled, the full page cache stores the whole frontend request response including the headers from a request and stores it into the cache. 
+
+The output cache can be cleared with the following snippet:
+```php
+// remove "output" out of the ignored tags, if a cache lifetime is specified
+Cache::removeIgnoredTagOnClear('output');
+
+// empty document cache
+Cache::clearTags(['output', 'output_lifetime']);
 ```

@@ -23,9 +23,6 @@ interface QueryResourcePersistenceAwareInterface
     /**
      * Returns the data which should be stored in the query columns
      *
-     * @param mixed $data
-     * @param null|Concrete $object
-     * @param array $params
      *
      * @return mixed
      *

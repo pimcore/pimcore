@@ -15,40 +15,22 @@
 
 namespace Pimcore\Controller\Traits;
 
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Serializer\Serializer as PimcoreSerializer;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
- * @internal
- *
  * @property ContainerInterface $container
  */
 trait JsonHelperTrait
 {
-    protected SerializerInterface $serializer;
-
     protected PimcoreSerializer $pimcoreSerializer;
 
-    /**
-     * @required
-     *
-     * @param PimcoreSerializer $pimcoreSerializer
-     */
+    #[Required]
     public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
     {
         $this->pimcoreSerializer = $pimcoreSerializer;
-    }
-
-    /**
-     * @required
-     *
-     * @param SerializerInterface $serializer
-     */
-    public function setSerializer(SerializerInterface $serializer): void
-    {
-        $this->serializer = $serializer;
     }
 
     /**
@@ -58,12 +40,9 @@ trait JsonHelperTrait
      * @param int $status    The status code to use for the Response
      * @param array $headers Array of extra headers to add
      * @param array $context Context to pass to serializer when using serializer component
-     * @param bool $usePimcoreSerializer
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
      *
      */
-    public function jsonResponse($data, $status = 200, $headers = [], $context = [], bool $usePimcoreSerializer = true)
+    public function jsonResponse(mixed $data, int $status = 200, array $headers = [], array $context = [], bool $usePimcoreSerializer = true): JsonResponse
     {
         $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $usePimcoreSerializer);
 
@@ -76,16 +55,13 @@ trait JsonHelperTrait
      * @param mixed $data    The data to be encoded
      * @param array $context Context to pass to serializer when using serializer component
      * @param int $options   Options passed to json_encode
-     * @param bool $usePimcoreSerializer
-     *
-     * @return string
      */
-    public function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true)
+    public function encodeJson(mixed $data, array $context = [], int $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $usePimcoreSerializer = true): string
     {
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
         return $serializer->serialize($data, 'json', array_merge([
@@ -99,16 +75,13 @@ trait JsonHelperTrait
      * @param mixed $json       The data to be decoded
      * @param bool $associative Whether to decode into associative array or object
      * @param array $context    Context to pass to serializer when using serializer component
-     * @param bool $usePimcoreSerializer
-     *
-     * @return mixed
      */
-    public function decodeJson($json, $associative = true, array $context = [], bool $usePimcoreSerializer = true)
+    public function decodeJson(mixed $json, bool $associative = true, array $context = [], bool $usePimcoreSerializer = true): mixed
     {
         if ($usePimcoreSerializer) {
             $serializer = $this->pimcoreSerializer;
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
         if ($associative) {

@@ -20,19 +20,23 @@ body:
               - This is not a security issue -> see [our security policy](https://github.com/pimcore/pimcore/security/policy) instead.
               - You are not able to provide a pull request that fixes the issue.
               - There's no existing ticket for the same issue.
-
-    - type: textarea
+    - type: input
       attributes:
-          label: Expected behavior
-      validations:
-          required: true
-    - type: textarea
-      attributes:
-          label: Actual behavior
+          label: Pimcore version
       validations:
           required: true
     - type: textarea
       attributes:
           label: Steps to reproduce
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Actual Behavior
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Expected Behavior
       validations:
           required: true

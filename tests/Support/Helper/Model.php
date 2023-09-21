@@ -32,7 +32,7 @@ class Model extends AbstractDefinitionHelper
     /**
      * Set up a class which contains a classification store field
      */
-    public function setupPimcoreClass_Csstore(array $params = [], string $name = 'csstore', string $filename = 'classificationstore.json'): ?ClassDefinition
+    public function setupPimcoreClass_Csstore(array $params = [], string $name = 'csstore', string $filename = 'classificationstore.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -59,7 +59,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_LazyLoading(string $name = 'LazyLoading', string $filename = 'lazyloading/class_LazyLoading_export.json'): ?ClassDefinition
+    public function setupPimcoreClass_LazyLoading(string $name = 'LazyLoading', string $filename = 'lazyloading/class_LazyLoading_export.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -210,7 +210,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_RelationTest(string $name = 'RelationTest', string $filename = 'relations/class_RelationTest_export.json'): ?ClassDefinition
+    public function setupPimcoreClass_RelationTest(string $name = 'RelationTest', string $filename = 'relations/class_RelationTest_export.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -248,7 +248,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_MultipleAssignments(string $name = 'MultipleAssignments', string $filename = 'relations/class_MultipleAssignments_export.json'): ?ClassDefinition
+    public function setupPimcoreClass_MultipleAssignments(string $name = 'MultipleAssignments', string $filename = 'relations/class_MultipleAssignments_export.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -299,7 +299,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_Block(string $name = 'unittestBlock', string $filename = 'block-import.json'): ?ClassDefinition
+    public function setupPimcoreClass_Block(string $name = 'unittestBlock', string $filename = 'block-import.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -357,7 +357,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_Link(string $name = 'unittestLink', string $filename = 'link-import.json'): ?ClassDefinition
+    public function setupPimcoreClass_Link(string $name = 'unittestLink', string $filename = 'link-import.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -393,7 +393,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_Unittest(string $name = 'unittest', string $filename = 'class-import.json'): ?ClassDefinition
+    public function setupPimcoreClass_Unittest(string $name = 'unittest', string $filename = 'class-import.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -451,6 +451,10 @@ class Model extends AbstractDefinitionHelper
             $inputWithDefault = $this->createDataChild('input', 'inputWithDefault');
             $inputWithDefault->setDefaultValue('default');
             $panel->addChild($inputWithDefault);
+            /** @var ClassDefinition\Data\Input $mandatoryInputWithDefault */
+            $mandatoryInputWithDefault = $this->createDataChild('input', 'mandatoryInputWithDefault', true);
+            $mandatoryInputWithDefault->setDefaultValue('default');
+            $panel->addChild($mandatoryInputWithDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
@@ -592,7 +596,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?ClassDefinition
+    public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -634,7 +638,7 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
-    protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): ClassDefinition
+    protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -673,6 +677,17 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedFieldRelation')
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
+                ]));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

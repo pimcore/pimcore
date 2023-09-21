@@ -29,7 +29,6 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -46,7 +45,6 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
     protected string $ctype;
 
@@ -58,7 +56,6 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $user = null;
 
@@ -75,7 +72,6 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var array
      */
     protected array $data = [];
 
@@ -89,9 +85,7 @@ final class Note extends Model\AbstractModel
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return self|null
      */
     public static function getById(int $id): ?Note
     {

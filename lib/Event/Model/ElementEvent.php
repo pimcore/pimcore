@@ -29,8 +29,6 @@ class ElementEvent extends Event implements ElementEventInterface
     /**
      * ElementEvent constructor.
      *
-     * @param ElementInterface $element
-     * @param array $arguments
      */
     public function __construct(ElementInterface $element, array $arguments = [])
     {

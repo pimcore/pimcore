@@ -31,7 +31,7 @@ final class Version20221003115124 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE objects CHANGE o_id id int(11) unsigned auto_increment NOT NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_parentId parentId int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE o_type `type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE o_type `type` enum('object','folder','variant') DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE o_key `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
         $this->addSql('ALTER TABLE objects CHANGE o_path `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_index `index` int(11) unsigned DEFAULT 0 NULL;');
@@ -46,16 +46,23 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
-        foreach ($schema->getTables() as $table) {
-            if ($table->hasColumn('o_id')) {
-                $tableName = $table->getName();
-                if (str_starts_with($tableName, 'object_brick_') ||
-                    str_starts_with($tableName, 'object_metadata_') ||
-                    str_starts_with($tableName, 'object_collection_')) {
-                    $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(10) unsigned DEFAULT 0 NOT NULL;");
-                } elseif (str_starts_with($tableName, 'object_classificationstore_')) {
-                    $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(11) unsigned NOT NULL;");
-                }
+        $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");
+        $tableListObject = array_merge($tableListObject, $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_metadata_%'"));
+        $tableListObject = array_merge($tableListObject, $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_collection_%'"));
+        foreach ($tableListObject as $table) {
+            $tableName = current($table);
+            $columnExists = $this->connection->fetchAllAssociative("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$tableName' AND COLUMN_NAME = 'o_id'");
+            if ($columnExists) {
+                $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(10) unsigned DEFAULT 0 NOT NULL;");
+            }
+        }
+
+        $tableListClassificationstore = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_%'");
+        foreach ($tableListClassificationstore as $table) {
+            $tableName = current($table);
+            $columnExists = $this->connection->fetchAllAssociative("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$tableName' AND COLUMN_NAME = 'o_id'");
+            if ($columnExists) {
+                $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(11) unsigned NOT NULL;");
             }
         }
     }
@@ -64,7 +71,7 @@ final class Version20221003115124 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE objects CHANGE id o_id int(11) unsigned auto_increment NOT NULL;');
         $this->addSql('ALTER TABLE objects CHANGE parentId o_parentId int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE `type` `o_type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE `type` `o_type` enum('object','folder','variant') DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE `key` `o_key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
         $this->addSql('ALTER TABLE objects CHANGE `path` `o_path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE `index` `o_index` int(11) unsigned DEFAULT 0 NULL;');
@@ -79,16 +86,23 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
-        foreach ($schema->getTables() as $table) {
-            if ($table->hasColumn('id')) {
-                $tableName = $table->getName();
-                if (str_starts_with($tableName, 'object_brick_') ||
-                    str_starts_with($tableName, 'object_metadata_') ||
-                    str_starts_with($tableName, 'object_collection_')) {
-                    $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(10) unsigned DEFAULT 0 NOT NULL;");
-                } elseif (str_starts_with($tableName, 'object_classificationstore_')) {
-                    $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(11) unsigned NOT NULL;");
-                }
+        $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");
+        $tableListObject = array_merge($tableListObject, $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_metadata_%'"));
+        $tableListObject = array_merge($tableListObject, $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_collection_%'"));
+        foreach ($tableListObject as $table) {
+            $tableName = current($table);
+            $columnExists = $this->connection->fetchAllAssociative("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$tableName' AND COLUMN_NAME = 'id'");
+            if ($columnExists) {
+                $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(10) unsigned DEFAULT 0 NOT NULL;");
+            }
+        }
+
+        $tableListClassificationstore = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_%'");
+        foreach ($tableListClassificationstore as $table) {
+            $tableName = current($table);
+            $columnExists = $this->connection->fetchAllAssociative("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$tableName' AND COLUMN_NAME = 'id'");
+            if ($columnExists) {
+                $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(11) unsigned NOT NULL;");
             }
         }
     }

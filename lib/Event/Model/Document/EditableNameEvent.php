@@ -26,28 +26,24 @@ class EditableNameEvent extends Event
     /**
      * Editable type (e.g. "input")
      *
-     * @var string
      */
     private string $type;
 
     /**
      * Editable name (e.g. "headline")
      *
-     * @var string
      */
     private string $inputName;
 
     /**
      * The current block state
      *
-     * @var BlockState
      */
     private BlockState $blockState;
 
     /**
      * The built editable name
      *
-     * @var string
      */
     private string $editableName;
 

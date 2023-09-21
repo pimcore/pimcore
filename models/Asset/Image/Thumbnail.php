@@ -20,12 +20,13 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-final class Thumbnail
+final class Thumbnail implements ThumbnailInterface
 {
     use ImageThumbnailTrait;
 
@@ -36,11 +37,6 @@ final class Thumbnail
      */
     protected static array $hasListenersCache = [];
 
-    /**
-     * @param Image $asset
-     * @param string|array|Thumbnail\Config|null $config
-     * @param bool $deferred
-     */
     public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -129,8 +125,7 @@ final class Thumbnail
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
-                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    Logger::error($e->getMessage());
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath() . ': ' . $e);
                 }
             }
         }
@@ -170,7 +165,7 @@ final class Thumbnail
         return $path;
     }
 
-    private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
+    private function getSourceTagHtml(Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
         $sourceTagAttributes = [];
         $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
@@ -211,28 +206,22 @@ final class Thumbnail
      *
      * @param array $options Custom configuration
      *
-     * @return string
      */
     public function getHtml(array $options = []): string
     {
+        $emptyGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         /** @var Image $image */
         $image = $this->getAsset();
         $thumbConfig = $this->getConfig();
 
         $pictureTagAttributes = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
-        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
-            $previewDataUri = $image->getLowQualityPreviewDataUri();
-            if (!$previewDataUri) {
-                // use a 1x1 transparent GIF as a fallback if no LQIP exists
-                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-            }
-
-            // this gets used in getImagTag() later
-            $options['previewDataUri'] = $previewDataUri;
+        if (($options['lowQualityPlaceholder'] ?? false) && !Tool::isFrontendRequestByAdmin()) {
+            // this gets used in getImagTag() later, use a 1x1 transparent GIF as a fallback if no LQIP exists
+            $options['previewDataUri'] =  $image->getLowQualityPreviewDataUri() ?: $emptyGif;
         }
 
-        $isAutoFormat = $thumbConfig instanceof Image\Thumbnail\Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
+        $isAutoFormat = $thumbConfig instanceof Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
@@ -246,28 +235,9 @@ final class Thumbnail
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
-        if ($thumbConfig instanceof Image\Thumbnail\Config) {
-            $mediaConfigs = $thumbConfig->getMedias();
-
-            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-            ksort($mediaConfigs, SORT_NUMERIC);
-            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
-
-            foreach ($mediaConfigs as $mediaQuery => $config) {
-                $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
-                if (!empty($sourceHtml)) {
-                    if ($isAutoFormat) {
-                        foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
-                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
-                            if (!empty($autoFormatThumbnailHtml)) {
-                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
-                            }
-                        }
-                    }
-
-                    $html .= "\t" . $sourceHtml . "\n";
-                }
-            }
+        if ($thumbConfig instanceof Config) {
+            $thumbConfigRes = clone $thumbConfig;
+            $html.= $this->getMediaConfigHtml($thumbConfigRes, $image, $options, $isAutoFormat);
         }
 
         if (!($options['disableImgTag'] ?? null)) {
@@ -276,8 +246,37 @@ final class Thumbnail
 
         $html .= '</picture>' . "\n";
 
-        if (isset($options['useDataSrc']) && $options['useDataSrc']) {
+        if ($options['useDataSrc'] ?? false) {
             $html = preg_replace('/ src(set)?=/i', ' data-src$1=', $html);
+        }
+
+        return $html;
+    }
+
+    protected function getMediaConfigHtml(Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
+    {
+        $html = '';
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+        ksort($mediaConfigs, SORT_NUMERIC);
+        array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+
+        foreach ($mediaConfigs as $mediaQuery => $config) {
+            $thumbConfig->setItems($config);
+            $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
+            if (!empty($sourceHtml)) {
+                if ($isAutoFormat) {
+                    foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                        $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                        if (!empty($autoFormatThumbnailHtml)) {
+                            $html .= "\t" . $autoFormatThumbnailHtml . "\n";
+                        }
+                    }
+                }
+
+                $html .= "\t" . $sourceHtml . "\n";
+            }
         }
 
         return $html;
@@ -371,14 +370,11 @@ final class Thumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia(string $name, int $highRes = 1): Thumbnail
+    public function getMedia(string $name, int $highRes = 1): ?ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
@@ -423,7 +419,7 @@ final class Thumbnail
      *
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution
      */
-    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
+    private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
         foreach ([1, 2] as $highRes) {

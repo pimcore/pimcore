@@ -23,10 +23,12 @@ use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -65,6 +67,13 @@ final class Translation extends AbstractModel
      */
     protected ?int $userModification = null;
 
+    protected ?HtmlSanitizerInterface $pimcoreTranslationSanitizer = null;
+
+    public function getTranslationSanitizer(): HtmlSanitizerInterface
+    {
+        return $this->pimcoreTranslationSanitizer ??= \Pimcore::getContainer()->get(Tool\Text::PIMCORE_TRANSLATION_SANITIZER_ID);
+    }
+
     public function getType(): string
     {
         return $this->type ?: 'simple';
@@ -85,6 +94,9 @@ final class Translation extends AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -112,6 +124,9 @@ final class Translation extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
         $this->setModificationDate($date);
@@ -124,6 +139,9 @@ final class Translation extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $date): static
     {
         $this->creationDate = $date;
@@ -136,6 +154,9 @@ final class Translation extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $date): static
     {
         $this->modificationDate = $date;
@@ -176,9 +197,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      *
-     * @param string $domain
-     *
-     * @return array
+     * @return string[]
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
@@ -194,9 +213,9 @@ final class Translation extends AbstractModel
         $this->translations[$language] = $text;
     }
 
-    public function getTranslation(string $language): string
+    public function getTranslation(string $language): ?string
     {
-        return $this->translations[$language];
+        return $this->translations[$language] ?? null;
     }
 
     public function hasTranslation(string $language): bool
@@ -213,13 +232,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param string $domain
-     * @param bool $create
-     * @param bool $returnIdIfEmpty
-     * @param array|null $languages
      *
-     * @return static|null
      *
      * @throws \Exception
      */
@@ -287,13 +300,8 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param string $domain
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
-     * @param string|null $language
-     *
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -364,12 +372,7 @@ final class Translation extends AbstractModel
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
      * @param string $file - path to the csv file
-     * @param string $domain
-     * @param bool $replaceExistingTranslations
-     * @param array|null $languages
-     * @param \stdClass|null $dialect
-     *
-     * @return array
+     * @param string[]|null $languages
      *
      * @throws \Exception
      *
@@ -380,7 +383,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || !is_array($languages)) {
+            if (!$languages) {
                 $languages = static::getValidLanguages($domain);
             }
 
@@ -416,7 +419,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) && count($data) > 1) {
+            if (count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {
@@ -435,8 +438,9 @@ final class Translation extends AbstractModel
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
+                            $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
-                                $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
+                                $currentTranslation = $t->getTranslation($key);
                                 if ($replaceExistingTranslations) {
                                     $t->addTranslation($key, $value);
                                     if ($currentTranslation != $value) {

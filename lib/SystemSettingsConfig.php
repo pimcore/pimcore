@@ -37,8 +37,6 @@ class SystemSettingsConfig
 
     private EventDispatcherInterface $eventDispatcher;
 
-    private static ?SystemConfig $systemConfigService = null;
-
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         LocaleServiceInterface $localeService
@@ -47,19 +45,13 @@ class SystemSettingsConfig
         $this->localeService = $localeService;
     }
 
-    public static function getRepository(): LocationAwareConfigRepository
+    private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
-            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $config[self::CONFIG_ID] = [
-                'general' => $containerConfig['general'],
-                'documents' => $containerConfig['documents'],
-                'objects' => $containerConfig['objects'],
-                'assets' => $containerConfig['assets'],
-                'email' => $containerConfig['email'],
-            ];
+            $containerConfigSettings = self::getConfigValuesFromContainer();
+            $config[self::CONFIG_ID] = $containerConfigSettings['config'];
 
-            $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
+            $storageConfig = $containerConfigSettings['containerConfig']['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -74,9 +66,20 @@ class SystemSettingsConfig
     public static function get(): array
     {
         $repository = self::getRepository();
-        $service = self::getSystemConfigService();
 
-        return $service::get($repository, self::CONFIG_ID);
+        $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+
+        $loadType = $repository->getReadTargets()[0] ?? null;
+
+        // If the read target is settings-store and no data is found there,
+        // load the data from the container config
+        // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
+        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+            $data = self::getConfigValuesFromContainer()['config'];
+            $data['writeable'] = $repository->isWriteable();
+        }
+
+        return $data;
     }
 
     public function save(array $values): void
@@ -119,7 +122,7 @@ class SystemSettingsConfig
         if (RuntimeCache::isRegistered('pimcore_system_settings_config')) {
             $config = RuntimeCache::get('pimcore_system_settings_config');
         } else {
-            $config = $this->get();
+            $config = self::get();
             $this->setSystemSettingsConfig($config);
         }
 
@@ -135,15 +138,6 @@ class SystemSettingsConfig
         RuntimeCache::set('pimcore_system_settings_config', $config);
     }
 
-    private static function getSystemConfigService(): SystemConfig
-    {
-        if (!self::$systemConfigService) {
-            self::$systemConfigService = new SystemConfig();
-        }
-
-        return self::$systemConfigService;
-    }
-
     /**
      * @throws Exception
      */
@@ -153,7 +147,7 @@ class SystemSettingsConfig
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
-        $existingValues = $this->get();
+        $existingValues = self::get();
 
         foreach ($languages as $language) {
             if (isset($values['general.fallbackLanguages.' . $language])) {
@@ -247,5 +241,19 @@ class SystemSettingsConfig
         } else {
             throw new \Exception("Language `$source` doesn't exist");
         }
+    }
+
+    private static function getConfigValuesFromContainer(): array
+    {
+        $containerConfig = \Pimcore\Config::getSystemConfiguration();
+        $data = [
+            'general' => $containerConfig['general'],
+            'documents' => $containerConfig['documents'],
+            'objects' => $containerConfig['objects'],
+            'assets' => $containerConfig['assets'],
+            'email' => $containerConfig['email'],
+        ];
+
+        return ['containerConfig' =>$containerConfig, 'config' => $data];
     }
 }

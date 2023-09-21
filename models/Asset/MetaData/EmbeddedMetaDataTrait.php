@@ -22,10 +22,7 @@ use Symfony\Component\Process\Process;
 trait EmbeddedMetaDataTrait
 {
     /**
-     * @param bool $force
-     * @param bool $useExifTool
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -41,9 +38,6 @@ trait EmbeddedMetaDataTrait
     /**
      * @internal
      *
-     * @param bool $useExifTool
-     * @param string|null $filePath
-     *
      * @throws \Exception
      */
     public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
@@ -54,10 +48,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param bool $useExifTool
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -134,9 +125,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */

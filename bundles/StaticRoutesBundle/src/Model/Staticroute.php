@@ -20,7 +20,6 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
-use Pimcore\Security\SecurityHelper;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -66,28 +65,24 @@ final class Staticroute extends AbstractModel
      * Associative array filled on match() that holds matched path values
      * for given variable names.
      *
-     * @var array
      */
     protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
      *
-     * @var array
      */
     protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute|null
      */
     protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute|null $route
      */
     public static function setCurrentRoute(?Staticroute $route): void
     {
@@ -97,7 +92,6 @@ final class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute|null
      */
     public static function getCurrentRoute(): ?Staticroute
     {
@@ -107,9 +101,7 @@ final class Staticroute extends AbstractModel
     /**
      * Static helper to retrieve an instance of Staticroute by the given ID
      *
-     * @param string $id
      *
-     * @return self|null
      */
     public static function getById(string $id): ?Staticroute
     {
@@ -135,10 +127,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int|null $siteId
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -242,7 +231,7 @@ final class Staticroute extends AbstractModel
      */
     public function setPattern(string $pattern): static
     {
-        $this->pattern = SecurityHelper::convertHtmlSpecialChars($pattern);
+        $this->pattern = $pattern;
 
         return $this;
     }
@@ -252,7 +241,7 @@ final class Staticroute extends AbstractModel
      */
     public function setController(?string $controller): static
     {
-        $this->controller = SecurityHelper::convertHtmlSpecialChars($controller);
+        $this->controller = $controller;
 
         return $this;
     }
@@ -262,7 +251,7 @@ final class Staticroute extends AbstractModel
      */
     public function setVariables(string $variables): static
     {
-        $this->variables = SecurityHelper::convertHtmlSpecialChars($variables);
+        $this->variables = $variables;
 
         return $this;
     }
@@ -272,7 +261,7 @@ final class Staticroute extends AbstractModel
      */
     public function setDefaults(string $defaults): static
     {
-        $this->defaults = SecurityHelper::convertHtmlSpecialChars($defaults);
+        $this->defaults = $defaults;
 
         return $this;
     }
@@ -297,7 +286,7 @@ final class Staticroute extends AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -312,7 +301,7 @@ final class Staticroute extends AbstractModel
      */
     public function setReverse(string $reverse): static
     {
-        $this->reverse = SecurityHelper::convertHtmlSpecialChars($reverse);
+        $this->reverse = $reverse;
 
         return $this;
     }
@@ -367,11 +356,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param array $urlOptions
-     * @param bool $encode
-     *
-     * @return string
-     *
+     * @internal
      * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
@@ -402,8 +387,8 @@ final class Staticroute extends AbstractModel
 
         $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
-            if (strpos($tmpReversePattern, '%' . $key) !== false) {
-                $parametersInReversePattern[$key] = $param;
+            if (str_contains($tmpReversePattern, '%' . $key)) {
+                $parametersInReversePattern[$key] = (string) $param;
 
                 // we need to replace the found variable to that it cannot match again a placeholder
                 // eg. %abcd prior %ab if %abcd matches already %ab shouldn't match again on the same placeholder
@@ -465,14 +450,9 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return array|bool
+     * @internal
      *
      * @throws \Exception
-     *
-     * @internal
      */
     public function match(string $path, array $params = []): bool|array
     {
@@ -501,13 +481,11 @@ final class Staticroute extends AbstractModel
 
             preg_match_all($this->getPattern(), $path, $matches);
 
-            if (is_array($matches) && count($matches) > 1) {
-                foreach ($matches as $index => $match) {
-                    if (isset($variables[$index - 1]) && $variables[$index - 1]) {
-                        $paramValue = urldecode($match[0]);
-                        if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
-                            $params[$variables[$index - 1]] = $paramValue;
-                        }
+            foreach ($matches as $index => $match) {
+                if (isset($variables[$index - 1]) && $variables[$index - 1]) {
+                    $paramValue = urldecode($match[0]);
+                    if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                        $params[$variables[$index - 1]] = $paramValue;
                     }
                 }
             }
@@ -541,7 +519,7 @@ final class Staticroute extends AbstractModel
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             foreach($methods as $key => $method) {
-                $methods[$key] = SecurityHelper::convertHtmlSpecialChars(trim($method));
+                $methods[$key] = trim($method);
             }
         }
 

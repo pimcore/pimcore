@@ -29,7 +29,6 @@ class Dao extends AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int|null $id
      *
      * @throws NotFoundException
      */

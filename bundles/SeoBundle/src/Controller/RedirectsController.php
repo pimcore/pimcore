@@ -17,16 +17,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -38,15 +40,14 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class RedirectsController extends AdminAbstractController
+class RedirectsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/list", name="pimcore_bundle_seo_redirects_redirects", methods={"POST"})
      *
-     * @param Request $request
-     * @param RedirectHandler $redirectHandler
      *
-     * @return JsonResponse
      */
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler): JsonResponse
     {
@@ -63,7 +64,7 @@ class RedirectsController extends AdminAbstractController
                     $redirect?->delete();
                 }
 
-                return $this->adminJson(['success' => true, 'data' => []]);
+                return $this->jsonResponse(['success' => true, 'data' => []]);
             }
             if ($request->get('xaction') === 'update') {
                 $data = $this->decodeJson($request->get('data'));
@@ -72,7 +73,7 @@ class RedirectsController extends AdminAbstractController
                 $redirect = Redirect::getById($data['id']);
 
                 if (!$redirect) {
-                    return $this->adminJson(['success' => false]);
+                    return $this->jsonResponse(['success' => false]);
                 }
 
                 if ($data['target']) {
@@ -96,7 +97,7 @@ class RedirectsController extends AdminAbstractController
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
             if ($request->get('xaction') === 'create') {
                 $data = $this->decodeJson($request->get('data'));
@@ -126,9 +127,13 @@ class RedirectsController extends AdminAbstractController
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
+            if (!class_exists(QueryParams::class)) {
+                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+            }
+
             // get list of routes
 
             $list = new Redirect\Listing();
@@ -174,18 +179,16 @@ class RedirectsController extends AdminAbstractController
                 $redirects[] = $redirect->getObjectVars();
             }
 
-            return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->jsonResponse(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(['success' => false]);
+        return $this->jsonResponse(['success' => false]);
     }
 
     /**
      * @Route("/csv-export", name="pimcore_bundle_seo_redirects_csvexport", methods={"GET"})
      *
-     * @param Csv $csv
      *
-     * @return Response
      */
     public function csvExportAction(Csv $csv): Response
     {
@@ -214,10 +217,7 @@ class RedirectsController extends AdminAbstractController
     /**
      * @Route("/csv-import", name="pimcore_bundle_seo_redirects_csvimport", methods={"POST"})
      *
-     * @param Request $request
-     * @param Csv $csv
      *
-     * @return Response
      */
     public function csvImportAction(Request $request, Csv $csv): Response
     {
@@ -232,7 +232,7 @@ class RedirectsController extends AdminAbstractController
 
         $result = $csv->import($file->getRealPath());
 
-        return $this->adminJson([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $result,
         ]);
@@ -241,7 +241,6 @@ class RedirectsController extends AdminAbstractController
     /**
      * @Route("/cleanup", name="pimcore_bundle_seo_redirects_cleanup", methods={"DELETE"})
      *
-     * @return JsonResponse
      */
     public function cleanupAction(): JsonResponse
     {
@@ -257,18 +256,17 @@ class RedirectsController extends AdminAbstractController
                 $expiredRedirect->delete();
             }
 
-            return $this->adminJson(['success' => true]);
+            return $this->jsonResponse(['success' => true]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->adminJson(['success' => false]);
+            return $this->jsonResponse(['success' => false]);
         }
     }
 
     /**
      * @Route("/get-statuscodes", name="pimcore_bundle_seo_redirects_statuscodes", methods={"GET"})
      *
-     * @return JsonResponse
      */
     public function statusCodesAction(): JsonResponse
     {
@@ -287,6 +285,6 @@ class RedirectsController extends AdminAbstractController
             ],
         ];
 
-        return $this->adminJson($response);
+        return $this->jsonResponse($response);
     }
 }

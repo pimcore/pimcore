@@ -45,9 +45,6 @@ class Definition extends Model\AbstractModel
         'object', 'interface', 'default',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
@@ -62,7 +59,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -88,9 +84,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -124,7 +118,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
@@ -159,15 +152,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -175,7 +166,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
@@ -228,15 +218,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->delete($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->delete($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -252,9 +240,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string|null $key
      *
-     * @return string
      *
      * @internal
      */
@@ -266,7 +252,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     public function getPhpClassFile(): string
     {
@@ -276,7 +261,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {

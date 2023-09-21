@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -37,12 +38,9 @@ class LowQualityImagePreviewTask implements TaskInterface
         $this->lock = $lockFactory->createLock(self::class, 86400 * 2);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
-        $isLowQualityPreviewEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        $isLowQualityPreviewEnabled = Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
         if (!$isLowQualityPreviewEnabled) {
             return;
         }

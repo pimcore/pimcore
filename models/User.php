@@ -25,13 +25,15 @@ use Pimcore\Tool;
 /**
  * @method User\Dao getDao()
  */
-final class User extends User\UserRole
+final class User extends User\UserRole implements UserInterface
 {
     use TemporaryFileHelperTrait;
 
     protected string $type = 'user';
 
     protected ?string $password = null;
+
+    protected ?string $passwordRecoveryToken = null;
 
     protected ?string $firstname = null;
 
@@ -109,9 +111,28 @@ final class User extends User\UserRole
     }
 
     /**
+     * @internal
+     */
+    public function getPasswordRecoveryToken(): ?string
+    {
+        return $this->passwordRecoveryToken;
+    }
+
+    /**
+     * @internal
+     *
+     * @return $this
+     */
+    public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static
+    {
+        $this->passwordRecoveryToken = $passwordRecoveryToken;
+
+        return $this;
+    }
+
+    /**
      * Alias for getName()
      *
-     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -198,7 +219,6 @@ final class User extends User\UserRole
     /**
      * @see getAdmin()
      *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -426,8 +446,6 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param int|null $width
-     * @param int|null $height
      *
      * @return resource
      */
@@ -443,18 +461,22 @@ final class User extends User\UserRole
         $storage = Tool\Storage::get('admin');
         if ($storage->fileExists($this->getOriginalImageStoragePath())) {
             if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
-                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
+                $originalImageStream = $storage->readStream($this->getOriginalImageStoragePath());
+                $localFile = self::getLocalFileFromStream($originalImageStream);
+                @fclose($originalImageStream);
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                $image->load($localFile);
-                $image->cover($width, $height);
-                $image->save($targetFile, 'png');
-
-                $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                if($image->load($localFile)) {
+                    $image->cover($width, $height);
+                    $image->save($targetFile, 'png');
+                    $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                }
             }
 
-            return $storage->readStream($this->getThumbnailImageStoragePath());
+            if ($storage->fileExists($this->getThumbnailImageStoragePath())) {
+                return $storage->readStream($this->getThumbnailImageStoragePath());
+            }
         }
 
         return fopen($this->getFallbackImage(), 'rb');
@@ -465,7 +487,7 @@ final class User extends User\UserRole
      */
     public function getContentLanguages(): array
     {
-        if (strlen($this->contentLanguages)) {
+        if (is_string($this->contentLanguages) && strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
 

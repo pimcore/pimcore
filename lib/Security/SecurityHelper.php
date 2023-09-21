@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,6 +17,9 @@
 
 namespace Pimcore\Security;
 
+/**
+ * @internal
+ */
 class SecurityHelper
 {
     public static function convertHtmlSpecialChars(?string $text): ?string
@@ -24,5 +29,14 @@ class SecurityHelper
         }
 
         return null;
+    }
+
+    public static function convertHtmlSpecialCharsArrayKeys(array &$array, array $keys): void
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $array[$key] = self::convertHtmlSpecialChars($array[$key]);
+            }
+        }
     }
 }

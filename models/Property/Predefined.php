@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Property;
 
 use Pimcore\Model;
-use Pimcore\Security\SecurityHelper;
 
 /**
  * @internal
@@ -119,7 +118,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setKey(string $key): static
     {
-        $this->key = SecurityHelper::convertHtmlSpecialChars($key);
+        $this->key = $key;
 
         return $this;
     }
@@ -129,7 +128,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setName(string $name): static
     {
-        $this->name = SecurityHelper::convertHtmlSpecialChars($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -149,7 +148,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setData(?string $data): static
     {
-        $this->data = SecurityHelper::convertHtmlSpecialChars($data);
+        $this->data = $data;
 
         return $this;
     }
@@ -179,7 +178,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setConfig(string $config): static
     {
-        $this->config = SecurityHelper::convertHtmlSpecialChars($config);
+        $this->config = $config;
 
         return $this;
     }
@@ -219,7 +218,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function setDescription(?string $description): static
     {
-        $this->description = SecurityHelper::convertHtmlSpecialChars($description);
+        $this->description = $description;
 
         return $this;
     }

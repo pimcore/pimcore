@@ -28,10 +28,7 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     * @param string $type
-     * @param MailClient $mail
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -92,7 +89,6 @@ class Mail
      *
      * @static
      *
-     * @return string
      */
     public static function getDebugInformationCssStyle(): string
     {
@@ -131,9 +127,7 @@ CSS;
      *
      * Helper to format the receivers for the debug email and logging
      *
-     * @param array $receivers
      *
-     * @return string
      */
     public static function formatDebugReceivers(array $receivers): string
     {
@@ -154,13 +148,6 @@ CSS;
         return implode(', ', $formatedReceiversArray);
     }
 
-    /**
-     * @param MailClient $mail
-     * @param array $recipients
-     * @param string|null $error
-     *
-     * @return Model\Tool\Email\Log
-     */
     public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
@@ -177,7 +164,7 @@ CSS;
         $emailLog->setSentDate(time());
 
         $subject = $mail->getSubjectRendered();
-        if (0 === strpos($subject, '=?')) {
+        if (str_starts_with($subject, '=?')) {
             $mbIntEnc = mb_internal_encoding();
             mb_internal_encoding($mail->getTextCharset());
             $subject = mb_decode_mimeheader($subject);
@@ -218,11 +205,7 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
-     * @param string|null $hostUrl
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -250,12 +233,12 @@ CSS;
             foreach ($matches[0] as $key => $value) {
                 $path = $matches[2][$key];
 
-                if (strpos($path, '//') === 0) {
+                if (str_starts_with($path, '//')) {
                     $absolutePath = 'http:' . $path;
-                } elseif (strpos($path, '/') === 0) {
+                } elseif (str_starts_with($path, '/')) {
                     $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
-                } elseif (strpos($path, 'file://') === 0) {
+                } elseif (str_starts_with($path, 'file://')) {
                     continue;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
@@ -277,10 +260,10 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v, 'http://') === 0 ||
-                    strpos($v, 'https://') === 0 ||
-                    strpos($v, '//') === 0 ||
-                    strpos($v, 'file://') === 0
+                if (str_starts_with($v, 'http://') ||
+                    str_starts_with($v, 'https://') ||
+                    str_starts_with($v, '//') ||
+                    str_starts_with($v, 'file://')
                 ) {
                     continue;
                 }
@@ -296,10 +279,7 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -320,12 +300,10 @@ CSS;
                 $fileInfo = [];
                 if (stream_is_local($path)) {
                     $fileInfo = self::getNormalizedFileInfo($path, $document);
-                    if ($fileInfo['fileExtension'] == 'css' && is_readable($fileInfo['filePathNormalized'])) {
-                        if ($fileInfo['fileExtension'] == 'css') {
-                            $fileContent = file_get_contents($fileInfo['filePathNormalized']);
-                        }
+                    if ($fileInfo['fileExtension'] === 'css' && is_readable($fileInfo['filePathNormalized'])) {
+                        $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                     }
-                } elseif (strpos($path, 'http') === 0) {
+                } elseif (str_starts_with($path, 'http')) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
                         'fileUrlNormalized' => $path,
@@ -355,10 +333,7 @@ CSS;
      *
      * @static
      *
-     * @param string $content
-     * @param array $fileInfo
      *
-     * @return string
      */
     public static function normalizeCssContent(string $content, array $fileInfo): string
     {
@@ -386,10 +361,7 @@ CSS;
     }
 
     /**
-     * @param string $path
-     * @param Model\Document|null $document
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -406,7 +378,8 @@ CSS;
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
         $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
-        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
+
+        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-\d+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));
 
         return $fileInfo;
     }

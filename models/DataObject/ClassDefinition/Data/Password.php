@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -35,21 +36,18 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @internal
      *
-     * @var string
      */
     public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $salt = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $saltlocation = '';
 
@@ -96,11 +94,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -156,16 +150,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
-     * @param string $data
      *
-     * @return string
      *
      * @internal
      */
     public function calculateHash(string $data): string
     {
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+            $config = Config::getSystemConfiguration()['security']['password'];
 
             $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
@@ -190,11 +182,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @param string $password
-     * @param DataObject\Concrete $object
      * @param bool|true $updateHash
-     *
-     * @return bool
      *
      * @internal
      */
@@ -212,7 +200,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+                $config = Config::getSystemConfiguration()['security']['password'];
 
                 if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);
@@ -230,11 +218,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -244,11 +228,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -276,11 +256,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -300,32 +276,18 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data[0]['data'];
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -334,7 +296,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
@@ -380,9 +342,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException|\Exception
      */

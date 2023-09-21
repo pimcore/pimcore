@@ -728,7 +728,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\RgbaColor::class, $value);
 
-        $seed = (int) $seed;
         $expectedBase = $seed % 200;
 
         $this->assertEquals($expectedBase, $value->getR());
@@ -850,7 +849,10 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertVideo(Concrete $object, string $field, int $seed = 1, mixed $returnParams): void
+    /**
+     * @param array<string, mixed> $returnParams
+     */
+    public function assertVideo(Concrete $object, string $field, array $returnParams, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -876,7 +878,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = 'sometext<br>' . $seed;
+        $expected = 'sometext<br />' . $seed;
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
@@ -1305,7 +1307,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
     public function fillRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
-        $seed = (int) $seed;
         $value = $seed % 200;
         $value = new DataObject\Data\RgbaColor($value, $value + 1, $value + 2, $value + 3);
 
@@ -1408,6 +1409,6 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillTextarea(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter('sometext<br>' . $seed);
+        $object->$setter('sometext<br />' . $seed);
     }
 }

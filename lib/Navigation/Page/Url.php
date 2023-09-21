@@ -65,23 +65,19 @@ class Url extends Page
     /**
      * Returns URI
      *
-     * @return string|null
      */
     public function getUri(): ?string
     {
         return $this->_uri;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHref(): string
     {
         $uri = $this->getUri();
 
         $fragment = $this->getFragment();
         if (null !== $fragment) {
-            if ('#' === substr($uri, -1)) {
+            if (str_ends_with($uri, '#')) {
                 return $uri . $fragment;
             }
 
@@ -93,9 +89,6 @@ class Url extends Page
 
     // Public methods:
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return array_merge(

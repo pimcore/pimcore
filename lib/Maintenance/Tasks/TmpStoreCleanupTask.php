@@ -31,9 +31,6 @@ class TmpStoreCleanupTask implements TaskInterface
         $this->db = $db;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $this->db->executeQuery('DELETE FROM tmp_store WHERE `expiryDate` < :time', ['time' => time()]);

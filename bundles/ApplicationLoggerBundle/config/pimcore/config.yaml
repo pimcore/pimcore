@@ -1,6 +1,3 @@
-imports:
-    - { resource: default.yaml }
-
 flysystem:
     storages:
         pimcore.application_log.storage:
@@ -8,5 +5,4 @@ flysystem:
             adapter: 'local'
             visibility: private
             options:
-                # TODO: revert default to `var/application-logger` when PIMCORE_LOG_FILEOBJECT_DIRECTORY is deprecated
-                directory: "%log.fileobject%"
+                directory: "%kernel.project_dir%/var/application-logger"

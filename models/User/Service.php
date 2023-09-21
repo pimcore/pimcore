@@ -28,9 +28,7 @@ class Service
      *
      * @static
      *
-     * @param string $type
      *
-     * @return string|null
      */
     public static function getClassNameForType(string $type): ?string
     {

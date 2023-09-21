@@ -108,23 +108,28 @@ trait Dao
         }
     }
 
+    /**
+     * @param string[] $columnsToRemove
+     * @param string[] $protectedColumns
+     */
     protected function removeUnusedColumns(string $table, array $columnsToRemove, array $protectedColumns): void
     {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
-            $dropColumns = [];
-            foreach ($columnsToRemove as $value) {
-                //if (!in_array($value, $protectedColumns)) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $dropColumns[] = 'DROP COLUMN `' . $value . '`';
-                }
+        $dropColumns = [];
+        foreach ($columnsToRemove as $value) {
+            //if (!in_array($value, $protectedColumns)) {
+            if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                $dropColumns[] = 'DROP COLUMN `' . $value . '`';
             }
-            if ($dropColumns) {
-                $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
-                $this->resetValidTableColumnsCache($table);
-            }
+        }
+        if ($dropColumns) {
+            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+            $this->resetValidTableColumnsCache($table);
         }
     }
 
+    /**
+     * @param string[] $tables
+     */
     protected function handleEncryption(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         if ($classDefinition->getEncryption()) {
@@ -136,6 +141,9 @@ trait Dao
         }
     }
 
+    /**
+     * @param string[] $tables
+     */
     protected function encryptTables(array $tables): void
     {
         foreach ($tables as $table) {
@@ -143,6 +151,9 @@ trait Dao
         }
     }
 
+    /**
+     * @param string[] $tables
+     */
     protected function decryptTables(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         foreach ($tables as $table) {
@@ -152,9 +163,13 @@ trait Dao
         }
     }
 
+    /**
+     * @param string[] $columnsToRemove
+     * @param string[] $protectedColumns
+     */
     protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+        if ($columnsToRemove) {
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns)) {

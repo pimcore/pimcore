@@ -27,7 +27,6 @@ interface PasswordHasherFactoryAwareUserInterface
      * If the method returns null, the standard way to retrieve the hasher
      * will be used instead.
      *
-     * @return string
      */
     public function getHasherFactoryName(): string;
 }

@@ -72,7 +72,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -82,7 +81,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -99,7 +97,6 @@ class MarkerHotspotItem implements \ArrayAccess
 
     /**
      * @param string $offset
-     * @param mixed $value
      */
     public function offsetSet($offset, mixed $value): void
     {

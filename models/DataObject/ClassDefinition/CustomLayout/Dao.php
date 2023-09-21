@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
 
         $storageConfig = $config['config_location']['object_custom_layouts'];
 
@@ -45,7 +46,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -120,36 +120,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         return $name;
     }
 
-    /**
-     * @param string $name
-     * @param string $classId
-     *
-     * @return string|null
-     *
-     * @deprecated
-     */
-    public function getIdByNameAndClassId(string $name, string $classId): ?string
-    {
-        $id = null;
-
-        $list = new Listing();
-        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
-        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name, $classId) {
-            $return = false;
-            if ($item->getName() == $name && $item->getClassId() == $classId) {
-                $return = true;
-            }
-
-            return $return;
-        }));
-
-        if (count($definitions) && $definitions[0] instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-            $id = $definitions[0]->getId();
-        }
-
-        return $id;
-    }
-
     public function getNewId(): UuidV4
     {
         $newId = Uid::v4();
@@ -161,9 +131,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get latest identifier
      *
-     * @param string $classId
      *
-     * @return UuidV4
      */
     public function getLatestIdentifier(string $classId): UuidV4
     {
@@ -214,9 +182,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

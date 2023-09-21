@@ -2,7 +2,7 @@
 
 The DeviceDetector helper makes it easy to implement the adaptive design approach in Pimcore. 
  
-### Using it anywhere in your Code
+### Using It Anywhere in Your Code
 
 ```php
 use Pimcore\Tool\DeviceDetector;

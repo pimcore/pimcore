@@ -52,22 +52,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @deprecated duplicate work, use the listing instead
-     *
-     * @return Staticroute[]
-     */
-    public function getAll(): array
-    {
-        $list = new Staticroute\Listing();
-        $list = $list->load();
-
-        return $list;
-    }
-
-    /**
      * Get the data for the object from database for the given id
      *
-     * @param string|null $id
      *
      * @throws NotFoundException
      */
@@ -94,8 +80,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $name
-     * @param int|null $siteId
      *
      * @throws NotFoundException
      */
@@ -138,9 +122,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

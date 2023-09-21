@@ -31,7 +31,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Document|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
     use TemporaryFileHelperTrait;
@@ -39,16 +39,9 @@ final class ImageThumbnail
     /**
      * @internal
      *
-     * @var int
      */
     protected int $page = 1;
 
-    /**
-     * @param Model\Asset\Document|null $asset
-     * @param string|array|Image\Thumbnail\Config|null $config
-     * @param int $page
-     * @param bool $deferred
-     */
     public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -100,8 +93,7 @@ final class ImageThumbnail
                     }
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                Logger::error($e->getMessage());
+                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath() . ': ' . $e);
             }
         }
 

@@ -16,9 +16,6 @@ In addition to Symfony configurations, Pimcore also supports environment specifi
 * <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
 * <https://github.com/pimcore/demo/tree/11.x/var/config>
 
-The environment specific config file has priority over the default config, so if your 
-current environment is `dev` Pimcore first checks if e.g. `var/config/image-thumbnails_dev.php`
-exists, if not the default config `var/config/image-thumbnails.php` is used. 
 
 ## Configuration Storage Locations & Fallbacks
 For certain configurations which can be edited in the user interface, 
@@ -26,7 +23,6 @@ Pimcore provides the possibility to configure them using various storage types.
 Available storages are (in priority order): 
 - Symfony Config (YAML, needs container rebuild)
 - Pimcore [`SettingsStore`](../19_Development_Tools_and_Details/42_Settings_Store.md)
-- Pimcore Legacy PHP Array Config (deprecated)
 
 This feature is currently supported by the following configurations: 
 - Custom reports
@@ -54,7 +50,7 @@ The following options are available:
 
 #### Storage directory for symfony Config files
 
-The default storage directory for Symfony Config files is `/var/config/...`.
+The default storage directory for Symfony Config files is defined by `PIMCORE_CONFIGURATION_DIRECTORY`.
 If there is no read target set, the config of write target is used.
 
 Available options for write targets and directory & read targets and directory for Symfony Config files are: 
@@ -66,24 +62,12 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/image-thumbnails'
-        custom_reports:
-            write_target:
-	          type: 'settings-store'
         video_thumbnails:
             write_target:
 	          type: 'disabled'
         document_types:
             write_target:
 	          type: 'disabled'
-        web_to_print:
-            write_target:
-	          type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/web_to_print'
-            read_target:
-              type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/web_to_print'
         predefined_properties:
             write_target:
 	          type: 'settings-store'
@@ -92,11 +76,6 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/predefined_asset_metadata'
-        staticroutes:
-            write_target:
-	          type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/staticroutes'
         perspectives:
             write_target:
 	          type: 'symfony-config'
@@ -107,11 +86,6 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/custom_views'
-        data_hub:
-            write_target:
-        	  type: 'symfony-config'
-              options:
-                directory: '/var/www/html/var/config/data_hub'
         object_custom_layouts:
             write_target:
 	          type: 'symfony-config'
