@@ -200,7 +200,7 @@ class Service extends Model\AbstractModel
         return $dependencies;
     }
 
-        /**
+    /**
      * @param array $elements
      *
      * @return array

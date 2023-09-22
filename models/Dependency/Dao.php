@@ -66,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getFilterRequiresByPath($offset = null, $limit = null,$value = null, $orderBy = null, $orderDirection = null)
+    public function getFilterRequiresByPath($offset = null, $limit = null, $value = null, $orderBy = null, $orderDirection = null)
     {
 
         $sourceId = (int)$this->model->getSourceId();
@@ -128,7 +128,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getFilterRequiredByPath($offset = null, $limit = null,$value = null, $orderBy = null, $orderDirection = null)
+    public function getFilterRequiredByPath($offset = null, $limit = null, $value = null, $orderBy = null, $orderDirection = null)
     {
 
         $targetId = (int)$this->model->getSourceId();
