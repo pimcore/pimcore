@@ -24,7 +24,7 @@ class RuntimeCache extends \ArrayObject
 
     protected static ?RuntimeCache $instance = null;
 
-    public static bool $disabled = false;
+    private static bool $disabled = false;
 
     /**
      * Retrieves the default registry instance.
