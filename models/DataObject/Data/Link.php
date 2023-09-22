@@ -458,6 +458,7 @@ class Link implements OwnerAwareFieldInterface
      *
      * https://github.com/pimcore/pimcore/pull/15926
      * used for non-nullable properties stored with null
+     *
      * @TODO: Remove in Pimcore 12
      *
      * @return void
