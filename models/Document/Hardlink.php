@@ -55,7 +55,7 @@ class Hardlink extends Document
         return null;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
         $sourceDocument = $this->getSourceDocument();

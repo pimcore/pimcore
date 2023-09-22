@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Dependency;
+namespace Pimcore\Bundle\ElementDependenciesBundle\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Db\Helper;

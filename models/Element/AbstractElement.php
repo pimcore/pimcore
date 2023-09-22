@@ -389,7 +389,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [[]];
 

@@ -61,7 +61,7 @@ return [
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Dao',
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing\\Dao',
     'Pimcore\\Model\\DataObject\\Service' => 'Pimcore\\Model\\Element\\Dao',
-    'Pimcore\\Model\\Dependency' => 'Pimcore\\Model\\Dependency\\Dao',
+    'Pimcore\\Model\\Dependency' => 'Pimcore\\Bundle\\ElementDependenciesBundle\\Model\\Dependency\\Dao',
     'Pimcore\\Model\\Document' => 'Pimcore\\Model\\Document\\Dao',
     'Pimcore\\Model\\Document\\DocType' => 'Pimcore\\Model\\Document\\DocType\\Dao',
     'Pimcore\\Model\\Document\\DocType\\Listing' => 'Pimcore\\Model\\Document\\DocType\\Listing\\Dao',

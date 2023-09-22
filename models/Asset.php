@@ -1550,7 +1550,7 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 

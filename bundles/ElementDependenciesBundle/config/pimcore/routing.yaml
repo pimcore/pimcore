@@ -1,0 +1,6 @@
+_pimcore_dependencies:
+    resource: "@PimcoreElementDependenciesBundle/src/Controller/"
+    type: annotation
+    prefix: /admin
+    options:
+        expose: true
