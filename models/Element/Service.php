@@ -201,14 +201,10 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $elements
-     *
-     * @return array
-     *
      * @internal
      *
      */
-    public static function getFilterRequiresForFrontend($elements)
+    public static function getFilterRequiresForFrontend(array $elements): array
     {
         $dependencies['hasHidden'] = false;
 
@@ -226,14 +222,10 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $elements
-     *
-     * @return array
-     *
      * @internal
      *
      */
-    public static function getFilterRequiredByPathForFrontend($elements)
+    public static function getFilterRequiredByPathForFrontend(array $elements): array
     {
         $dependencies['hasHidden'] = false;
 
