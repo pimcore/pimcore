@@ -170,7 +170,7 @@ class RuntimeCache extends \ArrayObject
         if (self::$disabled) {
             return;
         }
-        
+
         parent::offsetSet($index, $value);
     }
 
