@@ -125,7 +125,7 @@
     "symfony/yaml": "^6.2",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/extra-bundle": "^3.4.0",
-    "twig/string-extra": "^3.0.4",
+    "twig/string-extra": "^3.3.5",
     "twig/twig": "^3.3.9",
     "umpirsky/country-list": "^2.0.6"
   },
