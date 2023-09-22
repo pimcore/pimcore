@@ -121,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
         string $value = null,
         string $orderBy = null,
         string $orderDirection = null
-    )
+    ): array
     {
 
         $targetId = (int)$this->model->getSourceId();
