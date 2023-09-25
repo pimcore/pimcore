@@ -211,6 +211,13 @@ class Admin
         $file = self::getMaintenanceModeScheduleLoginFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::scheduleMaintenanceModeOnLogin or using maintenance mode file %s is deprecated.
+                    \tThe maintenance mode schedule on login will not work in Pimcore 12", $file)
+            );
             $conf = include($file);
             if (isset($conf['schedule']) && $conf['schedule']) {
                 return true;

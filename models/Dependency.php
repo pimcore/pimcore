@@ -101,6 +101,34 @@ class Dependency extends AbstractModel
         return $this->requires;
     }
 
+    /**
+     * @param string|null $value
+     * @param int|null $offset
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getFilterRequiresByPath($offset = null, $limit = null, $value = null)
+    {
+
+        return $this->getDao()->getFilterRequiresByPath($offset, $limit, $value);
+
+    }
+
+    /**
+     * @param string|null $value
+     * @param int|null $offset
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getFilterRequiredByPath($offset = null, $limit = null, $value = null)
+    {
+
+        return $this->getDao()->getFilterRequiredByPath($offset, $limit, $value);
+
+    }
+
     public function getRequiredBy(int $offset = null, int $limit = null): array
     {
         return $this->getDao()->getRequiredBy($offset, $limit);

@@ -163,9 +163,18 @@ EOT;
      *
      * @internal
      *
+     * @deprecated Will be removed in Pimcore 12
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
+            __METHOD__,
+            'getThumbnail($config)->getConfig()'
+        );
+
         $thumbnail = $this->getThumbnail($config);
 
         return $thumbnail->getConfig();

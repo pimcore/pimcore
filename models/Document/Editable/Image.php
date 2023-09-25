@@ -219,7 +219,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 // create a thumbnail first
                 $autoName = false;
 
-                $thumbConfig = $image->getThumbnailConfig($thumbnailName);
+                $thumbConfig = $image->getThumbnail($thumbnailName)->getConfig();
                 if (!$thumbConfig && $this->cropPercent) {
                     $thumbConfig = new Asset\Image\Thumbnail\Config();
                 }
@@ -428,7 +428,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     {
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {
-            $thumbConfig = $image->getThumbnailConfig($conf);
+            $thumbConfig = $image->getThumbnail($conf)->getConfig();
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);
                 $thumbConfig->generateAutoName();
