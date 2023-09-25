@@ -71,16 +71,21 @@ All temporary files can be deleted at any time.
 ## Recycle Bin
 Deleting items in Pimcore moves them to the recycle bin first. The recycle bin works quite similar to the versioning, 
 so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
-You can review items in the bin in the admin user-interface under *Tools* > *Recycle Bin*, there it's also possible to 
-flush the entire contents. 
-  
-It's also possible to do this manually, this is especially useful when automating this process, or if you have a huge 
+In the admin user-interface, under *Tools* > *Recycle Bin*, you can review items in the bin or flush the entire content. 
+
+If you need to delete items based on how long they were stored in the recycle bin, the following command may come in handy: 
+```bash
+./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
+```
+It's also possible to flush the entire bin manually, this is especially useful when automating this process, or if you have a huge 
 amount of items in your recycle bin:   
 ```bash
 // replace ### with the name of your database
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
 ```
+
+
 
 **WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
 Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**

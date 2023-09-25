@@ -185,19 +185,19 @@ pimcore.bundle.tinymce.editor = Class.create({
 
                 additionalAttributes = mergeObject(additionalAttributes, {
                     src: uri,
-                    pimcore_type: 'asset',
-                    pimcore_id: id,
                     target: '_blank',
-                    alt: 'asset_image'
+                    alt: 'asset_image',
+                    pimcore_id: id,
+                    pimcore_type: 'asset'
                 });
                 tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('img', additionalAttributes));
                 return true;
             } else {
                 tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                     href: uri,
-                    pimcore_type: 'asset',
+                    target: '_blank',
                     pimcore_id: id,
-                    target: '_blank'
+                    pimcore_type: 'asset'
                 }, wrappedText));
                 return true;
             }
@@ -207,8 +207,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             || data.type === "hardlink" || data.type === "link")) {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
-                pimcore_type: 'document',
-                pimcore_id: id
+                pimcore_id: id,
+                pimcore_type: 'document'
             }, wrappedText));
             return true;
         }
@@ -216,8 +216,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (data.elementType === "object") {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
-                pimcore_type: 'object',
-                pimcore_id: id
+                pimcore_id: id,
+                pimcore_type: 'object'
             }, wrappedText));
             return true;
         }
