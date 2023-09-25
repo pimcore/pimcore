@@ -30,6 +30,14 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         this.config = e.detail.config;
+
+        if(this.config.toolbarConfig) {
+            const useNativeJson = Ext.USE_NATIVE_JSON;
+            Ext.USE_NATIVE_JSON = false;
+            const elementCustomConfig = Ext.decode(this.config.toolbarConfig);
+            Ext.USE_NATIVE_JSON = useNativeJson;
+            this.config = mergeObject(this.config, elementCustomConfig);
+        }
     },
 
     createWysiwyg: function (e) {
