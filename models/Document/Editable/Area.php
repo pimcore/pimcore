@@ -84,7 +84,7 @@ class Area extends Model\Document\Editable
         if ($config instanceof BlockInterface || $config instanceof Area) {
             // Unsupported element was passed (e.g., Block, Areablock, ...)
             // or an Areas was passed, which is not supported to avoid too long editable names
-            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.',  get_debug_type($config), $dialogId));
+            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
         } elseif ($config instanceof Model\Document\Editable) {
             // Map editable to array config
             $config = [

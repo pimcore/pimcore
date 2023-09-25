@@ -44,12 +44,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * The label rendered for the editmode dialog.
+     *
      * @internal
      */
     protected ?string $label = null;
 
     /**
      * The description rendered for the editmode dialog.
+     *
      * @internal
      */
     protected ?string $dialogDescription = null;
@@ -353,6 +355,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function setLabel(?string $label): static
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -367,6 +370,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function setDialogDescription(?string $dialogDescription): static
     {
         $this->dialogDescription = $dialogDescription;
+
         return $this;
     }
 
