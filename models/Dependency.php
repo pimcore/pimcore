@@ -125,8 +125,7 @@ class Dependency extends AbstractModel
         int $limit = null,
         string $orderBy = null,
         string $orderDirection = null
-    ): array
-    {
+    ): array {
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
