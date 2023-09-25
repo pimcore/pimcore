@@ -19,15 +19,8 @@ namespace Pimcore\Helper;
 
 class CsvFormulaFormatter extends \League\Csv\EscapeFormula
 {
-    public function unEscapeField(string $field): string
+    public function unEscapeField(mixed $field): string
     {
-        if (isset($field[0], $field[1])
-            && $field[0] === $this->getEscape()
-            && in_array($field[1], $this->getSpecialCharacters())
-        ) {
-            return ltrim($field, $field[0]);
-        }
-
-        return $field;
+        return parent::unescapeField($field);
     }
 }
