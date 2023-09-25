@@ -115,7 +115,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         if (is_string($data)) {
             //fix for https://github.com/pimcore/pimcore/issues/15740
-            $data = preg_replace('/(?!<[a-zA-Z=\"\':; ]*[^ ]>|<\\/[a-zA-Z="\':; ]*>)(<)/', "&lt;", $data);
+            $data = preg_replace('/(?!<[a-zA-Z=\"\':; ]*[^ ]>|<\\/[a-zA-Z="\':; ]*>)(<)/', '&lt;', $data);
             $data = html_entity_decode(self::getWysiwygSanitizer()->sanitizeFor('body', $data));
         }
 

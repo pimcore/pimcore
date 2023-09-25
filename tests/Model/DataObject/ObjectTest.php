@@ -365,7 +365,7 @@ class ObjectTest extends ModelTestCase
         //reload from db
         $object = DataObject::getById($object->getId(), ['force' => true]);
 
-        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $object->getWysiwyg(),'Asseting setter/getter value is sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $object->getWysiwyg(), 'Asseting setter/getter value is sanitized');
 
         $dbQueryValue = $db->fetchOne(
             sprintf(
