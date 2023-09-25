@@ -295,15 +295,13 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
             [
                 (new Editable\Input())
                     ->setName('myDialogInput')
-                    ->setLabel('Some additional Text') // labels are optional
-            ],
-            [
+                    ->setLabel('Some additional Text'), // labels are optional
+                    
                 (new Editable\Checkbox())
                     ->setName('myDialogCheckbox')
                     ->setLabel('This is the checkbox label')
-                    ->setDialogDescription('This is a description for myDialogCheckbox')  // descriptions are optional
-            ],
-            [
+                    ->setDialogDescription('This is a description for myDialogCheckbox'),  // descriptions are optional
+                    
                 (new Editable\Date())
                     ->setName('myDialogDate')
             ]
