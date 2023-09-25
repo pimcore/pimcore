@@ -428,6 +428,7 @@ final class Translation extends AbstractModel
                 $data = array_slice($data, 1);
                 foreach ($data as $row) {
                     $keyValueArray = [];
+                    $row = Service::unEscapeCsvRecord($row);
                     for ($counter = 0; $counter < count($row); $counter++) {
                         $rd = str_replace('&quot;', '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
@@ -438,7 +439,6 @@ final class Translation extends AbstractModel
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
-                            $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
                                 $currentTranslation = $t->getTranslation($key);
                                 if ($replaceExistingTranslations) {
