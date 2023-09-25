@@ -353,4 +353,27 @@ class ObjectTest extends ModelTestCase
         $value = $dataType->getDataFromEditmode($iqv, $object);
         $this->assertNull($value);
     }
+
+    public function testSanitization(): void
+    {
+        $db = Db::get();
+
+        $object = TestHelper::createEmptyObject();
+        $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试< edf > "');
+        $object->save();
+
+        //reload from db
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $object->getWysiwyg(),'Asseting setter/getter value is sanitized');
+
+        $dbQueryValue = $db->fetchOne(
+            sprintf(
+                'SELECT `wysiwyg` FROM object_query_%s WHERE oo_id = %d',
+                $object->getClassName(),
+                $object->getId()
+            )
+        );
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $dbQueryValue, 'Asserting object_query table value is persisted as sanitized');
+    }
 }
