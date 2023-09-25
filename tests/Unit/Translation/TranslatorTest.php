@@ -263,7 +263,7 @@ class TranslatorTest extends TestCase
         $db = Db::get();
         $dbValue = $db->fetchOne(
             sprintf(
-                'SELECT `text` FROM translations_messages WHERE key = %s AND language = %s',
+                'SELECT `text` FROM translations_messages WHERE `key` = %s AND `language` = %s',
                 $db->quote($key),
                 $db->quote('en')
             )
