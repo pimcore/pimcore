@@ -44,6 +44,14 @@ class Dao extends Model\Dao\AbstractDao
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
+        $cpath = $this->model->getCpath();
+        if(empty($cpath)) {
+            $element = Model\Element\Service::getElementById($this->model->getCtype(), $this->model->getCid());
+            if($element instanceof Model\Element\ElementInterface) {
+                $cpath = $element->getRealFullPath();
+            }
+        }
+
         $saveData = [
             'cid' => $this->model->getCid(),
             'ctype' => $this->model->getCtype(),
