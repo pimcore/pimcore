@@ -460,7 +460,6 @@ class Link implements OwnerAwareFieldInterface
      *
      * @TODO: Remove in Pimcore 12
      *
-     * @return void
      */
     public function __unserialize(array $data): void
     {
