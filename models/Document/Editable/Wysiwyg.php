@@ -78,7 +78,9 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromResource(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize($data);
+        //fix for https://github.com/pimcore/pimcore/issues/15740
+        $data = preg_replace('/(?!<[a-zA-Z=\"\':; ]*[^ ]>|<\\/[a-zA-Z="\':; ]*>)(<)/', '&lt;', $data);
+        $this->text = html_entity_decode($helper->sanitizeFor('body', $data));
 
         return $this;
     }
@@ -86,7 +88,9 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function setDataFromEditmode(mixed $data): static
     {
         $helper = self::getWysiwygSanitizer();
-        $this->text = $helper->sanitize($data);
+        //fix for https://github.com/pimcore/pimcore/issues/15740
+        $data = preg_replace('/(?!<[a-zA-Z=\"\':; ]*[^ ]>|<\\/[a-zA-Z="\':; ]*>)(<)/', '&lt;', $data);
+        $this->text = html_entity_decode($helper->sanitizeFor('body', $data));
 
         return $this;
     }

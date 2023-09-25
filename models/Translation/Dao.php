@@ -98,11 +98,12 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
-                $data = [
+                //fix for https://github.com/pimcore/pimcore/issues/15740
+                    $text = preg_replace('/(?!<[a-zA-Z=\"\':; ]*[^ ]>|<\\/[a-zA-Z="\':; ]*>)(<)/', '&lt;', $text);$data = [
                     'key' => $this->model->getKey(),
                     'type' => $this->model->getType(),
                     'language' => $language,
-                    'text' => $sanitizer->sanitize($text),
+                    'text' => html_entity_decode($sanitizer->sanitizeFor('body', $text)),
                     'modificationDate' => $this->model->getModificationDate(),
                     'creationDate' => $this->model->getCreationDate(),
                     'userOwner' => $this->model->getUserOwner(),
