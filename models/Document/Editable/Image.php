@@ -723,4 +723,20 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         return $finalVars;
     }
+
+    /**
+     * @internal
+     *
+     * https://github.com/pimcore/pimcore/issues/15932
+     * used for non-nullable properties stored with null
+     * @TODO: Remove in Pimcore 12
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        foreach (get_object_vars($this) as $property => $value) {
+            $this->$property = $data["\0*\0".$property] ?? $value;
+        }
+    }
 }
