@@ -111,7 +111,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $totalQb->setMaxResults(null)
             ->setFirstResult(0)
             ->select('COUNT(id) as count');
-        $total = $totalQb->executeQuery()->fetch();
+        $total = $totalQb->executeQuery()->fetchAssociative();
         $total = (int) $total['count'];
 
         $stmt = $qb->executeQuery();
