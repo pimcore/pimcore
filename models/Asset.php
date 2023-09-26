@@ -732,17 +732,22 @@ class Asset extends Element\AbstractElement
 
         $this->postPersistData();
 
-        // save properties
-        $this->getProperties();
-        $this->getDao()->deleteAllProperties();
-        foreach ($this->getProperties() as $property) {
-            if (!$property->getInherited()) {
-                $property->setDao(null);
-                $property->setCid($this->getId());
-                $property->setCtype('asset');
-                $property->setCpath($this->getRealFullPath());
-                $property->save();
+        $propertiesDependencies = [];
+        if ($this->isFieldDirty('properties')) {
+            // save properties
+            $properties = $this->getProperties();
+            $this->getDao()->deleteAllProperties();
+            foreach ($properties as $property) {
+                if (!$property->getInherited()) {
+                    $property->setDao(null);
+                    $property->setCid($this->getId());
+                    $property->setCtype('asset');
+                    $property->setCpath($this->getRealFullPath());
+                    $property->save();
+                }
             }
+
+            $propertiesDependencies = parent::resolveDependencies();
         }
 
         // save dependencies
@@ -750,9 +755,9 @@ class Asset extends Element\AbstractElement
         $d->setSourceType('asset');
         $d->setSourceId($this->getId());
 
-        foreach ($this->resolveDependencies() as $requirement) {
+        foreach ($this->resolveDependencies($propertiesDependencies) as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // dont't add a reference to yourself
+                // don't add a reference to yourself
                 continue;
             } else {
                 $d->addRequirement($requirement['id'], $requirement['type']);
@@ -1550,10 +1555,9 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    protected function resolveDependencies(): array
+    protected function resolveDependencies(/** $dependencies = [] */): array
     {
-        $dependencies = [parent::resolveDependencies()];
-
+        $dependencies = func_get_arg(0) ?? [];
         if ($this->hasMetaData) {
             $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
@@ -1567,7 +1571,8 @@ class Asset extends Element\AbstractElement
                         /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
                         $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
-                    } catch (UnsupportedException $e) {
+                    } catch (UnsupportedException) {
+                        //nothing to log here
                     }
                 }
             }

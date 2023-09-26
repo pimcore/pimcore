@@ -244,7 +244,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                 Cache::save($properties, $cacheKey, $cacheTags);
             }
 
-            $this->setProperties($properties);
+            $this->properties = $properties;
         }
 
         return $this->properties;
@@ -252,6 +252,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setProperties(?array $properties): static
     {
+        $this->markFieldDirty('properties');
         $this->properties = $properties;
 
         return $this;
