@@ -202,13 +202,13 @@ class InstallCommand extends Command
         $bundleOption = $input->getOption('install-bundles');
         if (false !== $bundleOption) {
             $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
-            
+
             if (null === $bundleOption) {
                 $bundles = [];
             } else {
                 $bundles = explode(',', $bundleOption);
             }
-            
+
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
             $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
