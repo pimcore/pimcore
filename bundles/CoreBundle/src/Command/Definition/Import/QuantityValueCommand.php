@@ -50,7 +50,6 @@ class QuantityValueCommand extends AbstractCommand
     /**
      * Validate and return path to JSON file
      *
-     * @return string
      */
     protected function getPath(): string
     {
@@ -78,9 +77,6 @@ class QuantityValueCommand extends AbstractCommand
         return $content;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $this->getPath();
