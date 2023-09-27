@@ -98,7 +98,6 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
-
                 $data = [
                 'key' => $this->model->getKey(),
                 'type' => $this->model->getType(),
