@@ -24,6 +24,8 @@ use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Pimcore\Tool;
+use Pimcore\Tool\Frontend;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -87,7 +89,22 @@ class DocumentRenderer implements DocumentRendererInterface
         try {
             $request = $this->requestHelper->getCurrentRequest();
         } catch (\Exception $e) {
+
+            $host = 'localhost';
+            if( $site = Frontend::getSiteForDocument($document) ){
+                $host = $site->getMainDomain() ?? 'localhost';
+            }elseif( $systemMainDomain = Tool::getHostUrl() ){
+                $host = $systemMainDomain;
+            }
+
             $request = $this->requestHelper->createRequestWithContext();
+        }
+
+        if( in_array('pimcore_static_page_generator', $attributes) && isset(\Pimcore::getContainer()->getParameter('pimcore.config')['static_page_generator']) ) {
+            $headers = \Pimcore::getContainer()->getParameter('pimcore.config')['static_page_generator']['headers'];
+            foreach( $headers as $header ) {
+                $request->headers->set($header['name'], $header['value']);
+            }
         }
 
         $documentLocale = $document->getProperty('language');
