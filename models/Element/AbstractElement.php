@@ -264,8 +264,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         mixed $data,
         bool $inherited = false,
         bool $inheritable = false
-    ): static
-    {
+    ): static {
         $properties = $this->getProperties();
 
         $id = $this->getId();
