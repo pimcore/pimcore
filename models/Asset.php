@@ -746,8 +746,6 @@ class Asset extends Element\AbstractElement
                     $property->save();
                 }
             }
-
-            $propertiesDependencies = parent::resolveDependencies();
         }
 
         // save dependencies
@@ -755,7 +753,7 @@ class Asset extends Element\AbstractElement
         $d->setSourceType('asset');
         $d->setSourceId($this->getId());
 
-        foreach ($this->resolveDependencies($propertiesDependencies) as $requirement) {
+        foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
                 // don't add a reference to yourself
                 continue;
@@ -1555,9 +1553,10 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    protected function resolveDependencies(/** $dependencies = [] */): array
+    protected function resolveDependencies(): array
     {
-        $dependencies = func_get_arg(0) ?? [];
+        $dependencies = [parent::resolveDependencies()];
+
         if ($this->hasMetaData) {
             $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 

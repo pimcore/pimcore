@@ -481,22 +481,22 @@ class Document extends Element\AbstractElement
                     $property->save();
                 }
             }
-
-            // save dependencies
-            $d = new Dependency();
-            $d->setSourceType('document');
-            $d->setSourceId($this->getId());
-
-            foreach ($this->resolveDependencies() as $requirement) {
-                if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                    // don't add a reference to yourself
-                    continue;
-                } else {
-                    $d->addRequirement((int)$requirement['id'], $requirement['type']);
-                }
-            }
-            $d->save();
         }
+
+        // save dependencies
+        $d = new Dependency();
+        $d->setSourceType('document');
+        $d->setSourceId($this->getId());
+
+        foreach ($this->resolveDependencies() as $requirement) {
+            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
+                // don't add a reference to yourself
+                continue;
+            } else {
+                $d->addRequirement((int)$requirement['id'], $requirement['type']);
+            }
+        }
+        $d->save();
 
         $this->getDao()->update();
 
