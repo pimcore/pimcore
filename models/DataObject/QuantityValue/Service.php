@@ -20,7 +20,7 @@ use Pimcore\Model\Translation;
 
 class Service
 {
-    public static function importDefinitionFromJson(string $json, bool $override = false): bool
+    public function importDefinitionFromJson(string $json, bool $override = false): bool
     {
         try {
             $unitsArray = json_decode($json, true);
@@ -54,7 +54,7 @@ class Service
         return true;
     }
 
-    public static function generateDefinitionJson(): string|false
+    public function generateDefinitionJson(): string|false
     {
         $list = new Unit\Listing();
         $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);

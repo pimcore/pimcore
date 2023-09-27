@@ -28,7 +28,11 @@ class QuantityValueCommand extends AbstractCommand
 {
     use DryRun;
 
-    public function configure(): void
+    public function __construct(private Service $service){
+        parent::__construct();
+    }
+
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:definition:import:units')
@@ -52,7 +56,7 @@ class QuantityValueCommand extends AbstractCommand
      * Validate and return path to JSON file
      *
      */
-    protected function getPath(): string
+    private function getPath(): string
     {
         $path = $this->input->getArgument('path');
         if (!file_exists($path) || !is_readable($path)) {
@@ -65,7 +69,7 @@ class QuantityValueCommand extends AbstractCommand
     /**
      * Load JSON data from file
      */
-    protected function getJson(string $path): string
+    private function getJson(string $path): string
     {
         $content = file_get_contents($path);
 
@@ -89,7 +93,7 @@ class QuantityValueCommand extends AbstractCommand
             $result = true;
         } else {
             $this->output->writeln(sprintf('Importing quantity value unit definitions from %s', $path));
-            $result = Service::importDefinitionFromJson($json, $override);
+            $result = $this->service->importDefinitionFromJson($json, $override);
         }
 
         if ($result) {
