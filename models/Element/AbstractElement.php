@@ -269,6 +269,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
         $property->setName($name);
         $property->setCtype(Service::getElementType($this));
+        $property->setCpath($this->getRealFullPath());
         $property->setData($data);
         $property->setInherited($inherited);
         $property->setInheritable($inheritable);
