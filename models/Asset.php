@@ -732,7 +732,6 @@ class Asset extends Element\AbstractElement
 
         $this->postPersistData();
 
-        $propertiesDependencies = [];
         if ($this->isFieldDirty('properties')) {
             // save properties
             $properties = $this->getProperties();
