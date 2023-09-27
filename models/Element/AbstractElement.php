@@ -258,9 +258,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static
+    public function setProperty(
+        string $name,
+        string $type,
+        mixed $data,
+        bool $inherited = false,
+        bool $inheritable = false
+    ): static
     {
-        $this->getProperties();
+        $properties = $this->getProperties();
 
         $id = $this->getId();
         $property = new Model\Property();
@@ -274,7 +280,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $property->setInherited($inherited);
         $property->setInheritable($inheritable);
 
-        $this->properties[$name] = $property;
+        $properties[$name] = $property;
+
+        $this->setProperties($properties);
 
         return $this;
     }
