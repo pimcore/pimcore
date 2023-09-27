@@ -37,6 +37,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class SearchBackendReindexCommand extends AbstractCommand
 {
+    /**
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // clear all data
@@ -56,9 +59,9 @@ class SearchBackendReindexCommand extends AbstractCommand
 
             if (method_exists($list, 'setObjectTypes')) {
                 $list->setObjectTypes([
-                    DataObject::OBJECT_TYPE_OBJECT,
-                    DataObject::OBJECT_TYPE_FOLDER,
-                    DataObject::OBJECT_TYPE_VARIANT,
+                    DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
+                    DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
+                    DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
                 ]);
             }
 
@@ -68,19 +71,24 @@ class SearchBackendReindexCommand extends AbstractCommand
                 $list->setLimit($elementsPerLoop);
                 $list->setOffset($i * $elementsPerLoop);
 
-                $this->output->writeln('Processing ' .$type . ': ' . ($list->getOffset() + $elementsPerLoop) . '/' . $elementsTotal);
+                $this->output->writeln(
+                    'Processing ' .$type . ': ' . ($list->getOffset() + $elementsPerLoop) . '/' . $elementsTotal
+                );
 
                 $elements = $list->load();
                 foreach ($elements as $element) {
                     try {
                         //process page count, if not exists
-                        if ($element instanceof Asset\Document && !$element->getCustomSetting('document_page_count')) {
-                            $element->processPageCount();
+                        if (
+                            $element instanceof Asset\Document &&
+                            !$element->getCustomSetting('document_page_count') &&
+                            $element->processPageCount()
+                        ) {
                             $this->saveAsset($element);
                         }
 
                         $searchEntry = Search\Backend\Data::getForElement($element);
-                        if ($searchEntry instanceof Search\Backend\Data && $searchEntry->getId() instanceof Search\Backend\Data\Id) {
+                        if ($searchEntry->getId() instanceof Search\Backend\Data\Id) {
                             $searchEntry->setDataFromElement($element);
                         } else {
                             $searchEntry = new Search\Backend\Data($element);
@@ -100,6 +108,9 @@ class SearchBackendReindexCommand extends AbstractCommand
         return 0;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function saveAsset(Asset $asset): void
     {
         Version::disable();

@@ -11,6 +11,16 @@
     - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12
 - [CoreCacheHandler] Remove redundant cache item tagging with own key
 - [Auth] The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
+- [Assets] Asset Documents background processing (e.g. page count, thumbnails & search text) can be disabled with config:
+```yaml
+pimcore:
+    assets:
+        document:
+            thumbnails:
+                enabled: false #disable generating thumbnail for asset documents
+            process_page_count: false #disable processing page count
+            process_text: false #disable processing text extraction
+```
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
