@@ -98,8 +98,7 @@ class Document extends Model\Asset
         array|string|Image\Thumbnail\Config $thumbnailName,
         int $page = 1,
         bool $deferred = false
-    ): Document\ImageThumbnailInterface
-    {
+    ): Document\ImageThumbnailInterface {
         if (!$this->isThumbnailsEnabled()) {
             return new Document\ImageThumbnail(null);
         }
