@@ -99,14 +99,14 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $data = [
-                    'key' => $this->model->getKey(),
-                    'type' => $this->model->getType(),
-                    'language' => $language,
-                    'text' => $sanitizer->sanitize($text),
-                    'modificationDate' => $this->model->getModificationDate(),
-                    'creationDate' => $this->model->getCreationDate(),
-                    'userOwner' => $this->model->getUserOwner(),
-                    'userModification' => $this->model->getUserModification(),
+                'key' => $this->model->getKey(),
+                'type' => $this->model->getType(),
+                'language' => $language,
+                'text' => html_entity_decode($sanitizer->sanitizeFor('body', $text)),
+                'modificationDate' => $this->model->getModificationDate(),
+                'creationDate' => $this->model->getCreationDate(),
+                'userOwner' => $this->model->getUserOwner(),
+                'userModification' => $this->model->getUserModification(),
                 ];
                 Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }

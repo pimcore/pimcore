@@ -105,7 +105,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_string($data)) {
-            $data = self::getWysiwygSanitizer()->sanitize($data);
+            $data = html_entity_decode(self::getWysiwygSanitizer()->sanitizeFor('body', $data));
         }
 
         return Text::wysiwygText($data);

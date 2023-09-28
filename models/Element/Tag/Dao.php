@@ -226,7 +226,7 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->createQueryBuilder()->select(['*'])
+        $select = $this->db->createQueryBuilder()->select('*')
                            ->from('tags_assignment')
                            ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 
@@ -260,7 +260,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
-        while ($row = $res->fetch()) {
+        while ($row = $res->fetchAssociative()) {
             $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;

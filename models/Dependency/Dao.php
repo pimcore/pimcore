@@ -57,16 +57,12 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string|null $orderBy
-     * @param string|null $orderDirection
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param string|null $value
-     *
-     * @return array
-     */
-    public function getFilterRequiresByPath($offset = null, $limit = null, $value = null, $orderBy = null, $orderDirection = null)
+    public function getFilterRequiresByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null): array
     {
 
         $sourceId = (int)$this->model->getSourceId();
@@ -119,17 +115,13 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string|null $orderBy
-     * @param string|null $orderDirection
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param string|null $value
-     *
-     * @return array
-     */
-    public function getFilterRequiredByPath($offset = null, $limit = null, $value = null, $orderBy = null, $orderDirection = null)
-    {
+    public function getFilterRequiredByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null
+    ): array {
 
         $targetId = (int)$this->model->getSourceId();
 

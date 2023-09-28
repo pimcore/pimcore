@@ -120,6 +120,7 @@ class InstallCommand extends Command
             'install-bundles' => [
                 'description' => sprintf('Installable bundles: %s', $this->generateBundleDescription()),
                 'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
                 'group' => 'bundles',
             ],
         ];
@@ -198,9 +199,16 @@ class InstallCommand extends Command
         if ($input->getOption('skip-database-data-dump')) {
             $this->installer->setImportDatabaseDataDump(false);
         }
-        if ($input->getOption('install-bundles')) {
+        $bundleOption = $input->getOption('install-bundles');
+        if (false !== $bundleOption) {
             $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
-            $bundles = explode(',', $input->getOption('install-bundles'));
+
+            if (null === $bundleOption) {
+                $bundles = [];
+            } else {
+                $bundles = explode(',', $bundleOption);
+            }
+
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
             $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }

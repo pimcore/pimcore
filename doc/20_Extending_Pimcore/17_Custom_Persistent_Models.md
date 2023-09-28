@@ -376,7 +376,7 @@ class Dao extends Listing\Dao\AbstractDao
     {
         $queryBuilder = $this->db->createQueryBuilder();
         $field = $this->getTableName().'.id';
-        $queryBuilder->select([sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)]);
+        $queryBuilder->select(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field));
         $queryBuilder->from($this->getTableName());
 
         $this->applyListingParametersToQueryBuilder($queryBuilder);

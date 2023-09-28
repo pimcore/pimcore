@@ -201,14 +201,10 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $elements
-     *
-     * @return array
-     *
      * @internal
      *
      */
-    public static function getFilterRequiresForFrontend($elements)
+    public static function getFilterRequiresForFrontend(array $elements): array
     {
         $dependencies['hasHidden'] = false;
 
@@ -226,14 +222,10 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $elements
-     *
-     * @return array
-     *
      * @internal
      *
      */
-    public static function getFilterRequiredByPathForFrontend($elements)
+    public static function getFilterRequiredByPathForFrontend(array $elements): array
     {
         $dependencies['hasHidden'] = false;
 
@@ -948,7 +940,7 @@ class Service extends Model\AbstractModel
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
+                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
 
                         $joinAlias = array_keys($joinConfig['name']);
                         $joinAlias = reset($joinAlias);
@@ -956,7 +948,7 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->addSelect($columns);
+                        $select->add('select', $columns, true);
                         $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
