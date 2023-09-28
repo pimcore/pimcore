@@ -47,7 +47,7 @@ class Document extends Model\Asset
      */
     public function processPageCount(string $path = null): bool
     {
-        if ($this->isPageCountProcessingEnabled()) {
+        if (!$this->isPageCountProcessingEnabled()) {
             return false;
         }
 
