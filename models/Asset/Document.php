@@ -130,7 +130,7 @@ class Document extends Model\Asset
      */
     public function getText(int $page = null): ?string
     {
-        if ($this->isTextProcessingEnabled()) {
+        if (!$this->isTextProcessingEnabled()) {
             return null;
         }
 
