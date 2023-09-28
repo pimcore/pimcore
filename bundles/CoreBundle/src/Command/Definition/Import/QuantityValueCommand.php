@@ -24,6 +24,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'pimcore:definition:import:units',
+    description: 'Import quantity value units from a JSON export',
+    aliases: ['definition:import:units']
+)]
 class QuantityValueCommand extends AbstractCommand
 {
     use DryRun;
@@ -35,9 +40,6 @@ class QuantityValueCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:definition:import:units')
-            ->setAliases(['definition:import:units'])
-            ->setDescription('Import quantity value units from a JSON export')
             ->addArgument(
                 'path',
                 InputArgument::REQUIRED,
