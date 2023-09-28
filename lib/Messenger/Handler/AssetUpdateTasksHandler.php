@@ -92,7 +92,14 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('videoHeight');
         }
 
-        $asset->handleEmbeddedMetaData(true);
+        $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
+        if (!empty($sphericalMetaData)) {
+            $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
+        } else {
+            $asset->removeCustomSetting('SphericalMetaData');
+        }
+
+        $asset->handleEmbeddedMetaData();
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
