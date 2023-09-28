@@ -250,19 +250,30 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns properties for the object from the database and assigns these.
+     * Returns properties for the object from the database
      *
-     *
+     * @throws \Exception
      */
     public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
         $properties = [];
 
         if ($onlyDirect) {
-            $propertiesRaw = $this->db->fetchAllAssociative("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    "SELECT * FROM properties WHERE cid = ? AND ctype='document'",
+                    [$this->model->getId()]
+                );
         } else {
             $parentIds = $this->getParentIds();
-            $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    'SELECT * FROM properties WHERE
+                             (
+                                 (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ?
+                             ) AND ctype='document'",
+                    [$this->model->getId()]
+                );
         }
 
         // because this should be faster than mysql
@@ -295,17 +306,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited || $onlyDirect) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }

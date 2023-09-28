@@ -704,17 +704,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $this->updateModificationInfos();
 
-        // save properties
-        $this->getProperties();
-        $this->getDao()->deleteAllProperties();
+        if ($this->isFieldDirty('properties')) {
+            // save properties
+            $properties = $this->getProperties();
+            $this->getDao()->deleteAllProperties();
 
-        foreach ($this->getProperties() as $property) {
-            if (!$property->getInherited()) {
-                $property->setDao(null);
-                $property->setCid($this->getId());
-                $property->setCtype('object');
-                $property->setCpath($this->getRealFullPath());
-                $property->save();
+            foreach ($properties as $property) {
+                if (!$property->getInherited()) {
+                    $property->setDao(null);
+                    $property->setCid($this->getId());
+                    $property->setCtype('object');
+                    $property->setCpath($this->getRealFullPath());
+                    $property->save();
+                }
             }
         }
 
@@ -725,7 +727,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // dont't add a reference to yourself
+                // don't add a reference to yourself
                 continue;
             }
 

@@ -21,6 +21,7 @@ pimcore:
             process_page_count: false #disable processing page count
             process_text: false #disable processing text extraction
 ```
+- [Elements] Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
