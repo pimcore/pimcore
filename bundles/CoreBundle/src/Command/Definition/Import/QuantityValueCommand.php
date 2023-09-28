@@ -33,7 +33,8 @@ class QuantityValueCommand extends AbstractCommand
 {
     use DryRun;
 
-    public function __construct(private Service $service){
+    public function __construct(private Service $service)
+    {
         parent::__construct();
     }
 
