@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Model\DataObject\QuantityValue\Service;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
