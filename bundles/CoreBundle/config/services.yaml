@@ -107,6 +107,7 @@ services:
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true
+    Pimcore\Model\DataObject\QuantityValue\Service: ~
 
     Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
         public: true
