@@ -26,7 +26,7 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Helper\CsvFormulaFormatter;
+use League\Csv\EscapeFormula;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -53,7 +53,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    private static ?CsvFormulaFormatter $formatter = null;
+    private static ?EscapeFormula $formatter = null;
 
     /**
      * @internal
@@ -1434,24 +1434,22 @@ class Service extends Model\AbstractModel
     public static function escapeCsvRecord(array $rowData): array
     {
         if (self::$formatter === null) {
-            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
         }
-        $rowData = self::$formatter->escapeRecord($rowData);
 
-        return $rowData;
+        return self::$formatter->escapeRecord($rowData);
     }
 
     /**
      * @internal
      */
-    public static function unEscapeCsvField(string $value): string
+    public static function unEscapeCsvRecord(array $rowData): array
     {
         if (self::$formatter === null) {
-            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
         }
-        $value = self::$formatter->unEscapeField($value);
 
-        return $value;
+        return self::$formatter->unescapeRecord($rowData);
     }
 
     /**
