@@ -87,8 +87,8 @@ class Dao extends Model\Dao\AbstractDao
         FROM (
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN objects o ON o.o_id = d.targetid AND d.targettype= 'object'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.o_path, o.o_key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
             UNION
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
@@ -145,8 +145,8 @@ class Dao extends Model\Dao\AbstractDao
         FROM (
             SELECT d.sourceid as id, d.sourcetype as type
             FROM dependencies d
-            INNER JOIN objects o ON o.o_id = d.sourceid AND d.targettype= 'object'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.o_path, o.o_key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
             UNION
             SELECT d.sourceid as id, d.sourcetype as type
             FROM dependencies d
