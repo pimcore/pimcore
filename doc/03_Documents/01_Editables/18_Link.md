@@ -28,7 +28,7 @@ pimcore:
         link:
             allowed_attributes:
 ```
->
+
 ## Methods
 
 | Name              | Return      | Description                          |

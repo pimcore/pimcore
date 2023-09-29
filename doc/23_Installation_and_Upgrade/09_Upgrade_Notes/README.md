@@ -29,7 +29,7 @@ pimcore:
         documents:
             link_editable:
                 allowed_attributes:
-```
+    ```
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
