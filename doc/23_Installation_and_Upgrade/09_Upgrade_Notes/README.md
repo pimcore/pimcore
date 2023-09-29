@@ -23,6 +23,13 @@ pimcore:
 ```
 - [Elements] Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
 - `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
+- [Documents] The allowedAttributes List in the link editable can be extended by config now:
+    ```yaml
+    pimcore:
+        documents:
+            link_editable:
+                allowed_attributes:
+```
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -126,6 +127,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'referrerpolicy',
                 'xml:lang',
             ];
+
+            $allowedAttributesFromConfig = Config::getSystemConfiguration('documents')['editables']['link']['allowed_attributes'];
+
+            if (isset($allowedAttributesFromConfig)) {
+                $allowedAttributes = array_merge($allowedAttributes, $allowedAttributesFromConfig);
+            }
             $defaultAttributes = [];
 
             if (!is_array($this->data)) {

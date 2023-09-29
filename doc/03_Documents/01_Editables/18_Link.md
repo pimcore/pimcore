@@ -20,8 +20,15 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 | `allowedTargets` | array          | You can limit the available targets for this editable by passing the allowed targets explicitly. If this option is not used, all targets are available. Valid targets are: ` ` (empty string), `_blank`, `_self`, `_top`, `_parent`                                             |
 | `disabledFields` | array          | You can limit the available fields for this editable by passing the allowed fields explicitly. If this option is not used, all fields are available. Valid Fields are: `text`, `target`, `parameters`, `anchor`, `title`, `accesskey`, `rel`, `tabindex`, `class`, `attributes` |
 
-> For security reasons we created an For security reasons we created an [allow list](https://github.com/pimcore/pimcore/blob/9bf18aca55e5303661c68835c950412a428cf616/models/Document/Editable/Link.php#L115-L141) to filter harmfull html attributes. For example all `on*` attributes will be filtered out!
-
+> For security reasons we created an [allow list](https://github.com/pimcore/pimcore/blob/9bf18aca55e5303661c68835c950412a428cf616/models/Document/Editable/Link.php#L115-L141) to filter harmfull html attributes. For example all `on*` attributes will be filtered out!
+This list can be extended by adding your own attributes using the following config.
+```yaml
+pimcore:
+    editables:
+        link:
+            allowed_attributes:
+```
+>
 ## Methods
 
 | Name              | Return      | Description                          |
