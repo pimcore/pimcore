@@ -128,7 +128,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 'xml:lang',
             ];
 
-            $allowedAttributesFromConfig = Config::getSystemConfiguration('documents')['editables']['link']['allowed_attributes'];
+            $allowedAttributesFromConfig =
+                Config::getSystemConfiguration('documents')['editables']['link']['allowed_attributes'];
 
             if (isset($allowedAttributesFromConfig)) {
                 $allowedAttributes = array_merge($allowedAttributes, $allowedAttributesFromConfig);
