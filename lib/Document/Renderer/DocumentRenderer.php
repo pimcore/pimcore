@@ -97,7 +97,7 @@ class DocumentRenderer implements DocumentRendererInterface
                 $host = $systemMainDomain;
             }
 
-            $request = $this->requestHelper->createRequestWithContext();
+            $request = $this->requestHelper->createRequestWithContext(host: $host);
         }
 
         if( in_array('pimcore_static_page_generator', $attributes) && in_array('static_page_generator', \Pimcore::getContainer()->getParameter('pimcore.config')) ) {
