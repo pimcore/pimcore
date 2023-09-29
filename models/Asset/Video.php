@@ -213,7 +213,6 @@ class Video extends Model\Asset
 
     public function getDimensions(): ?array
     {
-        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
         if (!$width || !$height) {
@@ -262,6 +261,15 @@ class Video extends Model\Asset
      */
     public function getSphericalMetaData(): array
     {
+        return $this->getCustomSetting('SphericalMetaData') ?? [];
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function getSphericalMetaDataFromBackend(): array
+    {
         $data = [];
 
         if (in_array(pathinfo($this->getFilename(), PATHINFO_EXTENSION), ['mp4', 'webm'])) {
@@ -295,17 +303,16 @@ class Video extends Model\Asset
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
                     $chunkSize)) !== false && !empty($chunk)) {
-                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $offset = strlen($buffer) - $tagLength; //subtract the tag size for case it's split between chunks
                     $buffer .= $chunk;
                 }
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
                     throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
-                } else {
-                    $buffer = substr($buffer, 0, $position + $tagLength);
                 }
 
+                $buffer = substr($buffer, 0, $position + $tagLength);
                 $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
                 $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
 
