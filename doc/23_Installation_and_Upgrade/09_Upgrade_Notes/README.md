@@ -26,9 +26,10 @@ pimcore:
 - [Documents] The allowedAttributes List in the link editable can be extended by config now:
     ```yaml
     pimcore:
-        documents:
-            link_editable:
-                allowed_attributes:
+      documents:
+          editables:
+            link:
+              allowed_attributes:
     ```
 
 ## Pimcore 11.0.7

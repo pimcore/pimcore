@@ -24,9 +24,10 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 This list can be extended by adding your own attributes using the following config.
 ```yaml
 pimcore:
-    editables:
+    documents:
+      editables:
         link:
-            allowed_attributes:
+          allowed_attributes:
 ```
 
 ## Methods
