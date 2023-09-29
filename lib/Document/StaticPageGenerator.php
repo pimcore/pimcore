@@ -46,6 +46,27 @@ class StaticPageGenerator
             $path = '/%home';
         }
 
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        if( $config['documents']['static_page_router']['use_main_domain'] ){
+            $pathInfo = pathinfo($path);
+            if( $pathInfo['dirname'] != '' ) {
+                $directories = explode('/', $pathInfo['dirname']);
+                $directories = array_filter($directories);
+                $pathString = '';
+                foreach ($directories as $directory) {
+                    $pathString .= '/' . $directory;
+                    $doc = Document::getByPath($pathString);
+                    $site = Site::getByRootId($doc->getId());
+                    if ($site instanceof Site) {
+                        $path = '/' . $site->getMainDomain();
+                    }else {
+                        $path .= '/' . $directory;
+                    }
+                }
+                $path .= '/' . $pathInfo['basename'];
+            }
+        }
+        
         return $path . '.html';
     }
 
