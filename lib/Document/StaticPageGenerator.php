@@ -21,6 +21,7 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -66,7 +67,7 @@ class StaticPageGenerator
                 $path .= '/' . $pathInfo['basename'];
             }
         }
-        
+
         return $path . '.html';
     }
 
