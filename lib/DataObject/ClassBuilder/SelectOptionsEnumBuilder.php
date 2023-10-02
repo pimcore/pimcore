@@ -168,6 +168,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         if ($addEndLineBreak && (bool)count($lines)) {
             $content .= "\n";
         }
+
         return $content;
     }
 
@@ -189,7 +190,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         if (!preg_match('/^[A-Z-a-z_][A-Za-z0-9_]*$/', $selectOptionName)) {
             throw new \Exception(
                 sprintf(
-                'Invalid name \'%s\' for option with value \'%s\'. Must be alphanumeric and start with a letter (underscores allowed). Configure a name or use a different value.',
+                    'Invalid name \'%s\' for option with value \'%s\'. Must be alphanumeric and start with a letter (underscores allowed). Configure a name or use a different value.',
                     $selectOptionName,
                     $selectOption->getValue()
                 ),

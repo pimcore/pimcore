@@ -19,7 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 interface OptionsProviderInterface
 {
     public const TYPE_CONFIGURE = 'configure';
+
     public const TYPE_SELECT_OPTIONS = 'select_options';
+
     public const TYPE_CLASS = 'class';
 
     public const TYPES = [

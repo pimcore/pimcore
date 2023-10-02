@@ -39,9 +39,13 @@ final class Config extends AbstractModel implements \JsonSerializable
     use LocateFileTrait;
 
     public const PROPERTY_ID = 'id';
+
     public const PROPERTY_GROUP = 'group';
+
     public const PROPERTY_USE_TRAITS = 'useTraits';
+
     public const PROPERTY_IMPLEMENTS_INTERFACES = 'implementsInterfaces';
+
     public const PROPERTY_SELECT_OPTIONS = 'selectOptions';
 
     protected string $id;
@@ -76,6 +80,7 @@ final class Config extends AbstractModel implements \JsonSerializable
         }
 
         $this->id = $id;
+
         return $this;
     }
 
@@ -90,6 +95,7 @@ final class Config extends AbstractModel implements \JsonSerializable
     public function setGroup(?string $group): static
     {
         $this->group = $group;
+
         return $this;
     }
 
@@ -109,6 +115,7 @@ final class Config extends AbstractModel implements \JsonSerializable
     public function setUseTraits(string $useTraits): static
     {
         $this->useTraits = $useTraits;
+
         return $this;
     }
 
@@ -123,6 +130,7 @@ final class Config extends AbstractModel implements \JsonSerializable
     public function setImplementsInterfaces(string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
         return $this;
     }
 
@@ -140,7 +148,7 @@ final class Config extends AbstractModel implements \JsonSerializable
     public function getSelectOptionsAsData(): array
     {
         return array_map(
-            fn(Data\SelectOption $selectOption) => $selectOption->toArray(),
+            fn (Data\SelectOption $selectOption) => $selectOption->toArray(),
             $this->getSelectOptions()
         );
     }
@@ -151,6 +159,7 @@ final class Config extends AbstractModel implements \JsonSerializable
     public function setSelectOptions(Data\SelectOption ...$selectOptions): static
     {
         $this->selectOptions = $selectOptions;
+
         return $this;
     }
 
@@ -335,7 +344,7 @@ final class Config extends AbstractModel implements \JsonSerializable
         if ($localizedFieldDefinition instanceof ClassDefinition\Data\Localizedfields) {
             $fieldDefinitions = [
                 ...$fieldDefinitions,
-                ...$localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true])
+                ...$localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]),
             ];
         }
 

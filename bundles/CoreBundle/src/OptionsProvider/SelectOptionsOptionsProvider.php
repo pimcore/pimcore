@@ -20,7 +20,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\SelectOptions\Config;
 use Pimcore\Model\DataObject\SelectOptions\Data\SelectOption;
-use Pimcore\Model\DataObject\Service;
 
 class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
 {
@@ -55,6 +54,7 @@ class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
         if ($fieldDefinition instanceof Data\Select) {
             return $fieldDefinition->getDefaultValue();
         }
+
         return null;
     }
 }

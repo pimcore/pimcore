@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\SelectOptions\Config;
 
 use Pimcore\Config;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 
 /**
@@ -117,9 +116,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

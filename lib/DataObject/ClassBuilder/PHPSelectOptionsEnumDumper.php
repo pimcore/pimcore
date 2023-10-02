@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
 use Pimcore\Model\DataObject\SelectOptions\Config;
 use Symfony\Component\Filesystem\Filesystem;
 

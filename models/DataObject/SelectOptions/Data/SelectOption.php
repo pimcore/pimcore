@@ -19,14 +19,17 @@ namespace Pimcore\Model\DataObject\SelectOptions\Data;
 class SelectOption implements \JsonSerializable
 {
     public const PROPERTY_VALUE = 'value';
+
     public const PROPERTY_LABEL = 'label';
+
     public const PROPERTY_NAME = 'name';
 
     public function __construct(
         protected string $value,
         protected string $label,
         protected string $name = '',
-    ) {}
+    ) {
+    }
 
     public function getValue(): string
     {
@@ -39,6 +42,7 @@ class SelectOption implements \JsonSerializable
     public function setValue(string $value): static
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -63,6 +67,7 @@ class SelectOption implements \JsonSerializable
     public function setLabel(string $label): static
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -77,6 +82,7 @@ class SelectOption implements \JsonSerializable
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -111,6 +117,6 @@ class SelectOption implements \JsonSerializable
         $label = $data[static::PROPERTY_LABEL] ?? '';
         $name = $data[static::PROPERTY_NAME] ?? '';
 
-        return (new static($value, $label, $name));
+        return new static($value, $label, $name);
     }
 }

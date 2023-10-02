@@ -63,6 +63,7 @@ class Listing extends Model\AbstractModel implements \IteratorAggregate
     {
         return $this->getSelectOptions();
     }
+
     /**
      * @return \ArrayIterator<\Pimcore\Model\DataObject\SelectOptions\Config>
      */

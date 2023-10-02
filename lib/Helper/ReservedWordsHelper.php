@@ -28,20 +28,20 @@ class ReservedWordsHelper
         'function', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof',
         'interface', 'isset', 'list', 'match', 'namespace', 'new', 'or', 'print', 'private', 'protected', 'public',
         'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use',
-        'var', 'while', 'xor', 'yield', 'yield_from'
+        'var', 'while', 'xor', 'yield', 'yield_from',
     ];
 
     public const PHP_CLASSES = [
-        'self', 'static', 'parent'
+        'self', 'static', 'parent',
     ];
 
     public const PHP_OTHER_WORDS = [
         'int', 'float', 'bool', 'string', 'true', 'false', 'null', 'void', 'iterable', 'object', 'mixed', 'never',
-        'enum', 'resource', 'numeric'
+        'enum', 'resource', 'numeric',
     ];
 
     public const PIMCORE = [
-        'data', 'folder', 'permissions', 'dao', 'concrete', 'items'
+        'data', 'folder', 'permissions', 'dao', 'concrete', 'items',
     ];
 
     /**
