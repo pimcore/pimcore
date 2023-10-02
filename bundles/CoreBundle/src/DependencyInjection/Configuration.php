@@ -139,6 +139,7 @@ final class Configuration implements ConfigurationInterface
             'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
             'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
             'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            'select_options' => PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
         ]);
 
         ConfigurationHelper::addConfigLocationTargetNode(
@@ -710,6 +711,31 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
                                             ->variableNode('layoutDefinitions')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('select_options')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('definitions')
+                                    ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('id')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('useTraits')->end()
+                                            ->scalarNode('implementsInterfaces')->end()
+                                            ->arrayNode('selectOptions')
+                                                ->prototype('array')
+                                                    ->children()
+                                                        ->scalarNode('value')->end()
+                                                        ->scalarNode('label')->end()
+                                                        ->scalarNode('name')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
                                         ->end()
                                     ->end()
                                 ->end()

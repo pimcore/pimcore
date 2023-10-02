@@ -90,6 +90,7 @@ abstract class Kernel extends SymfonyKernel
             'custom_views',
             'object_custom_layouts',
             'system_settings',
+            'select_options',
         ];
 
         $loader->load(function (ContainerBuilder $container) use ($loader, $configKeysArray) {
