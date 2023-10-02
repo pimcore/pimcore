@@ -729,6 +729,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * https://github.com/pimcore/pimcore/issues/15932
      * used for non-nullable properties stored with null
+     *
      * @TODO: Remove in Pimcore 12
      *
      * @return void
