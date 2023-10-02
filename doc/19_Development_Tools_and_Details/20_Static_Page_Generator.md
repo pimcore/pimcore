@@ -100,7 +100,6 @@ pimcore:
 
 ## Use Static Page HTML files with mainDomain instead path
 Enable the main domain option to get the static pages with starting main domain instead of the keys from Pimcore documents.
-Attention: you need to change the nginx/apache options for ``STATIC_PAGE_URI``
 
 ```yaml
 pimcore:
@@ -111,6 +110,22 @@ pimcore:
 | config         | Description                                                   |
 |----------------|---------------------------------------------------------------|
 | use_main_domain| Use tmp path like /public/var/tmp/pages/my-domain.com/en.html |
+
+NGINX Config Changes:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages/$host;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+```
+
 
 
 ## Static Page Generation With Ajax Request
