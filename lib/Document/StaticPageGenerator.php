@@ -58,7 +58,6 @@ class StaticPageGenerator
                     $doc = Document::getByPath($pathString);
                     $site = Site::getByRootId($doc->getId());
                     if ($site instanceof Site) {
-                        $path = '';
                         $mainDomain = '/' . $site->getMainDomain();
                     }else{
                         $returnPath .= '/' . $directory;
