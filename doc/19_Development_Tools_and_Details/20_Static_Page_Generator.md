@@ -97,6 +97,37 @@ pimcore:
 | enabled        | Set it true to enable Static Page Router                      |
 | route_pattern  | Regular expression to match routes for static page rendering  |
 
+
+## Use Static Page HTML files with mainDomain instead path
+Enable the main domain option to get the static pages with starting main domain instead of the keys from Pimcore documents.
+
+```yaml
+pimcore:
+    documents:
+        static_page_router:
+            use_main_domain: true
+```
+| config         | Description                                                   |
+|----------------|---------------------------------------------------------------|
+| use_main_domain| Use tmp path like /public/var/tmp/pages/my-domain.com/en.html |
+
+NGINX Config Changes:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages/$host;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+```
+
+
+
 ## Static Page Generation With Ajax Request
 The static pages with XMLHttpRequest fetches the data and displays it on the page, just like a standard document page. 
 However, if you are using the Fetch API to request the data, then must add the `XMLHttpRequest` header as shown below, 
