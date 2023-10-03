@@ -28,7 +28,6 @@ use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
-
     public function __construct(protected DocumentRenderer $documentRenderer, private LockFactory $lockFactory, protected SystemSettingsConfig $settingsConfig)
     {
     }
@@ -49,7 +48,7 @@ class StaticPageGenerator
             $mainDomain = '/' . $systemConfig['general']['domain'];
             $returnPath = '';
             $pathInfo = pathinfo($path);
-            if( $pathInfo['dirname'] != '' ) {
+            if($pathInfo['dirname'] != '') {
                 $directories = explode('/', $pathInfo['dirname']);
                 $directories = array_filter($directories);
                 $pathString = '';
@@ -59,7 +58,7 @@ class StaticPageGenerator
                     $site = Site::getByRootId($doc->getId());
                     if ($site instanceof Site) {
                         $mainDomain = '/' . $site->getMainDomain();
-                    }else{
+                    } else {
                         $returnPath .= '/' . $directory;
                     }
                 }
