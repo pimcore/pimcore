@@ -43,8 +43,8 @@ class StaticPageGenerator
             $path = '/%home';
         }
 
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-        if( $config['documents']['static_page_router']['use_main_domain'] ){
+        $useMainDomain = \Pimcore\Config::getSystemConfiguration('documents')['static_page_router']['use_main_domain'];
+        if ($useMainDomain) {
             $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
             $mainDomain = '/' . $systemConfig['general']['domain'];
             $returnPath = '';
