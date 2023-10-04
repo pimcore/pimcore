@@ -151,6 +151,10 @@ If you are sure you can run all available migrations after `composer update`, in
     
     You might also adapt the `config_location` from other extensions, like Datahub.
 
+### Migrate o_ prefix properties in the stored data
+As `o_` prefix will be removed from data objects system properties in v11. It is recommended to migrate the stored data to use new properties (without o_ prefix).
+Please adapt and use these [scripts](https://gist.github.com/dvesh3/50a1a99fd337d461e1652f2fd3b4d6cd) to migrate versions and recycle-bin data.
+
 ## Additional Things to Consider
 
 - [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
