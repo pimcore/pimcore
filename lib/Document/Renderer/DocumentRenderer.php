@@ -101,8 +101,7 @@ class DocumentRenderer implements DocumentRendererInterface
         }
 
         if ($attributes['pimcore_static_page_generator'] ?? false) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $headers = $config['static_page_generator']['headers'];
+            $headers = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['headers'];
             foreach( $headers as $header ) {
                 $request->headers->set($header['name'], $header['value']);
             }
