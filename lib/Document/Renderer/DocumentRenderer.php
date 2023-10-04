@@ -100,7 +100,7 @@ class DocumentRenderer implements DocumentRendererInterface
             $request = $this->requestHelper->createRequestWithContext(host: $host);
         }
 
-        if( $attributes['pimcore_static_page_generator']){
+        if ($attributes['pimcore_static_page_generator'] ?? false) {
             $config = \Pimcore::getContainer()->getParameter('pimcore.config');
             $headers = $config['static_page_generator']['headers'];
             foreach( $headers as $header ) {
