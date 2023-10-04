@@ -171,7 +171,6 @@ class Document extends Model\Asset
            return false;
         }
         $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::inProgress);
-        sleep(15);
 
         $chunkSize = 1024;
         $filePointer = $this->getStream();
