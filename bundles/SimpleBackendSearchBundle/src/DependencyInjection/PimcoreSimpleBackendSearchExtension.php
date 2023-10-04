@@ -32,6 +32,7 @@ class PimcoreSimpleBackendSearchExtension extends Extension implements PrependEx
         );
 
         $loader->load('services.yaml');
+        $loader->load('doctrine_migrations.yaml');
     }
 
     public function prepend(ContainerBuilder $container): void
@@ -43,7 +44,6 @@ class PimcoreSimpleBackendSearchExtension extends Extension implements PrependEx
             );
 
             $loader->load('admin-classic.yaml');
-            $loader->load('doctrine_migrations.yaml');
         }
     }
 }
