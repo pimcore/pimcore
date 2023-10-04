@@ -62,15 +62,24 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset): void
     {
+        $saveAsset = false;
+        if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
+            $saveAsset = true;
+        }
+
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
             if ($asset->processPageCount()) {
-                $this->saveAsset($asset);
+                $saveAsset = true;
             }
 
             if ($asset->getCustomSetting('document_page_count') === 'failed') {
                 throw new \RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
             }
+        }
+
+        if ($saveAsset) {
+            $this->saveAsset($asset);
         }
 
         $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);

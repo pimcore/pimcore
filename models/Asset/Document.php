@@ -26,6 +26,8 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
+    public const CUSTOM_SETTING_SANITIZED = 'document_sanitized';
+
     protected string $type = 'document';
 
     protected function update(array $params = []): void
@@ -163,6 +165,35 @@ class Document extends Model\Asset
         return null;
     }
 
+    public function checkIfPdfContainsJS(): bool
+    {
+        if (!$this->isSanitizingProcessingEnabled()) {
+           return false;
+        }
+        $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::inProgress);
+        sleep(15);
+
+        $chunkSize = 1024;
+        $filePointer = $this->getStream();
+
+        $tagLength = strlen('/JS');
+
+        while ($chunk = fread($filePointer, $chunkSize)) {
+            if (strlen($chunk) <= $tagLength) {
+                break;
+            }
+
+            if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
+                $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::unsafe);
+                return true;
+            }
+        }
+
+        $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::safe);
+
+        return true;
+    }
+
     private function isThumbnailsEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['thumbnails']['enabled'];
@@ -176,5 +207,10 @@ class Document extends Model\Asset
     private function isTextProcessingEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['process_text'];
+    }
+
+    private function isSanitizingProcessingEnabled(): bool
+    {
+        return Config::getSystemConfiguration('assets')['document']['process_sanitizing'];
     }
 }
