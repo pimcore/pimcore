@@ -180,7 +180,7 @@ class RequestHelper
      *
      * @internal
      */
-    public function createRequestWithContext(string $uri = '/', ?string $host): Request
+    public function createRequestWithContext(string $uri = '/', ?string $host = null): Request
     {
         $port = '';
         $scheme = $this->requestContext->getScheme();
