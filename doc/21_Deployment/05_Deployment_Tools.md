@@ -82,7 +82,7 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:definition:import:customlayout    | Import Customlayout definition from a JSON export                                                                                 |
 | pimcore:definition:import:fieldcollection | Import FieldCollection definition from a JSON export                                                                              |
 | pimcore:definition:import:objectbrick     | Import ObjectBrick definition from a JSON export                                                                                  |
-| pimcore:definition:import:unit            | Import Quantity value units definition from a JSON export                                                                         |
+| pimcore:definition:import:units            | Import Quantity value units definition from a JSON export                                                                         |
 | pimcore:deployment:classes-rebuild        | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files                                           |
 | pimcore:thumbnails:image                  | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
 | pimcore:thumbnails:optimize-images        | Optimize file size of all images in `web/var/tmp`                                                                                 |
