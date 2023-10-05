@@ -69,9 +69,10 @@ In background, maintenance job takes care of generating static pages for documen
 If you want to add NGINX SSI module for generating the static pages, you can add following config:
 ```yaml
 pimcore:
-    static_page_generator:
-        headers:
-            - { name: "Surrogate-Capability", value: 'device="SSI/1.0"' }
+    document:
+        static_page_generator:
+            headers:
+                - { name: "Surrogate-Capability", value: 'device="SSI/1.0"' }
 ```
 Now the maintenance command can generate SSI includes in the static files like a normal page load.
 
