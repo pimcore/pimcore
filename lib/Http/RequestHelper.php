@@ -184,7 +184,7 @@ class RequestHelper
     {
         $port = '';
         $scheme = $this->requestContext->getScheme();
-        if ($host){
+        if ($host) {
             $this->requestContext->setHost($host);
         }
 
