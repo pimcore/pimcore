@@ -731,6 +731,10 @@ class Service extends Model\AbstractModel
             return $data;
         }
         if (is_object($data)) {
+            if ($data instanceof \UnitEnum) {
+                return $data;
+            }
+
             if ($data instanceof ElementInterface && !$initial) {
                 return self::getElementById(self::getElementType($data), $data->getId());
             }
