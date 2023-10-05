@@ -65,6 +65,18 @@ In background, maintenance job takes care of generating static pages for documen
  also, you can filter the documents by parent path, which should processed for static generation:
  `php bin/console pimcore:documents:generate-static-pages -p /en/Magazine`
  
+### SSI
+If you want to add NGINX SSI module for generating the static pages, you can add following config:
+```yaml
+pimcore:
+    document:
+        static_page_generator:
+            headers:
+                - { name: "Surrogate-Capability", value: 'device="SSI/1.0"' }
+```
+Now the maintenance command can generate SSI includes in the static files like a normal page load.
+
+
 ## Storage
 By default, Pimcore stores the generated HTML pages on local path: `'document_root/public/var/tmp/pages'`.
 

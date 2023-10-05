@@ -912,6 +912,18 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('static_page_generator')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('headers')
+                            ->normalizeKeys(false)
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->scalarNode('value')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         $this->addDocumentDefinition($documentsNode, 'type_definitions');
