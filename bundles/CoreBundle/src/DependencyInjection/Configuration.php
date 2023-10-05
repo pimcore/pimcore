@@ -129,7 +129,6 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
-        $this->addStaticPageGeneratorNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -858,6 +857,18 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('route_pattern')
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('static_page_generator')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('headers')
+                            ->normalizeKeys(false)
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->scalarNode('value')->end()
                         ->end()
                     ->end()
                 ->end()
@@ -1908,25 +1919,6 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('uri')
                             ->defaultNull()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addStaticPageGeneratorNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('static_page_generator')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('headers')
-                            ->normalizeKeys(false)
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('name')->end()
-                                        ->scalarNode('value')->end()
                         ->end()
                     ->end()
                 ->end()
