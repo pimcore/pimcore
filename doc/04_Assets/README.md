@@ -28,7 +28,7 @@ pimcore:
                 enabled: false #disable generating thumbnail for asset documents
             process_page_count: false #disable processing page count
             process_text: false #disable processing text extraction
-            process_sanitizing: false #disable sanitizing Pdf documents for JavaScript.
+            scan_pdf: false #disable scanning Pdf documents for unsafe JavaScript.
 ```
 
 The sub chapters of this chapter provide insight into details for

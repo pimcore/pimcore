@@ -26,7 +26,7 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
-    public const CUSTOM_SETTING_SANITIZED = 'document_sanitized';
+    public const CUSTOM_SETTING_PDF_SCAN_STATUS = 'document_pdf_scan_status';
 
     protected string $type = 'document';
 
@@ -167,10 +167,14 @@ class Document extends Model\Asset
 
     public function checkIfPdfContainsJS(): bool
     {
-        if (!$this->isSanitizingProcessingEnabled()) {
+        if (!$this->isPdfScanningEnabled()) {
            return false;
         }
-        $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::inProgress);
+
+        $this->setCustomSetting(
+            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+            Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
+        );
 
         $chunkSize = 1024;
         $filePointer = $this->getStream();
@@ -183,14 +187,25 @@ class Document extends Model\Asset
             }
 
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
-                $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::unsafe);
+                $this->setCustomSetting(
+                    self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+                    Model\Asset\Enum\PdfScanStatus::UNSAFE->value
+                );
                 return true;
             }
         }
 
-        $this->setCustomSetting(self::CUSTOM_SETTING_SANITIZED, SanitizedStatus::safe);
+        $this->setCustomSetting(
+            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+            Model\Asset\Enum\PdfScanStatus::SAFE->value
+        );
 
         return true;
+    }
+
+    public function getScanStatus(): ?string
+    {
+        return $this->getCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
     }
 
     private function isThumbnailsEnabled(): bool
@@ -208,8 +223,8 @@ class Document extends Model\Asset
         return Config::getSystemConfiguration('assets')['document']['process_text'];
     }
 
-    private function isSanitizingProcessingEnabled(): bool
+    private function isPdfScanningEnabled(): bool
     {
-        return Config::getSystemConfiguration('assets')['document']['process_sanitizing'];
+        return Config::getSystemConfiguration('assets')['document']['scan_pdf'];
     }
 }

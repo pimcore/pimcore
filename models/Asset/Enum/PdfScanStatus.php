@@ -14,11 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Asset;
+namespace Pimcore\Model\Asset\Enum;
 
-enum SanitizedStatus
+enum PdfScanStatus: string
 {
-    case safe;
-    case unsafe;
-    case inProgress;
+    case SAFE = 'safe';
+    case UNSAFE = 'unsafe';
+    case IN_PROGRESS = 'inProgress';
 }
