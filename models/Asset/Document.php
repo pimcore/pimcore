@@ -203,9 +203,9 @@ class Document extends Model\Asset
         return true;
     }
 
-    public function getScanStatus(): ?string
+    public function getScanStatus(): ?Model\Asset\Enum\PdfScanStatus
     {
-        return $this->getCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
+        return Model\Asset\Enum\PdfScanStatus::tryFrom($this->getCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS));
     }
 
     private function isThumbnailsEnabled(): bool
