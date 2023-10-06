@@ -23,6 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Storage;
 use Pimcore\Web2Print\Exception\CancelException;
 use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
@@ -148,7 +149,7 @@ abstract class Processor
         $lock->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
 
-        @unlink(static::getJobConfigFile($documentId));
+        Storage::get('temp')->delete(static::getJobConfigFile($documentId));
 
         return $pdf;
     }
@@ -170,7 +171,7 @@ abstract class Processor
      */
     protected function saveJobConfigObjectFile($jobConfig)
     {
-        file_put_contents(static::getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
+        Storage::get('temp')->write(static::getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
 
         return true;
     }
@@ -182,9 +183,10 @@ abstract class Processor
      */
     protected function loadJobConfigObject($documentId)
     {
+        $storage = Storage::get('temp');
         $file = static::getJobConfigFile($documentId);
-        if (file_exists($file)) {
-            return json_decode(file_get_contents($file));
+        if ($storage->fileExists($file)) {
+            return json_decode($storage->read($file));
         }
 
         return null;
@@ -214,7 +216,7 @@ abstract class Processor
      */
     public static function getJobConfigFile($processId)
     {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'pdf-creation-job-' . $processId . '.json';
+        return 'pdf-creation-job-' . $processId . '.json';
     }
 
     /**
@@ -272,7 +274,8 @@ abstract class Processor
 
         $this->getLock($document)->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
-        @unlink(static::getJobConfigFile($documentId));
+
+        Storage::get('temp')->delete(static::getJobConfigFile($documentId));
     }
 
     /**
