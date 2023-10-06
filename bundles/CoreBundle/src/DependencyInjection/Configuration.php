@@ -555,7 +555,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->booleanNode('scan_pdf')
                                 ->defaultTrue()
-                                ->info('Scan Pdf documents for unsafe JavaScript.')
+                                ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
                         ->end()
                     ->end()
