@@ -77,9 +77,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->cols;
     }
 
+    /**
+     * @return $this
+     */
     public function setCols(?int $cols): static
     {
-        $this->cols = $this->getAsIntegerCast($cols);
+        $this->cols = $cols;
 
         return $this;
     }
@@ -89,9 +92,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->rows;
     }
 
+    /**
+     * @return $this
+     */
     public function setRows(?int $rows): static
     {
-        $this->rows = $this->getAsIntegerCast($rows);
+        $this->rows = $rows;
 
         return $this;
     }
@@ -101,6 +107,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->rowsFixed;
     }
 
+    /**
+     * @return $this
+     */
     public function setRowsFixed(bool $rowsFixed): static
     {
         $this->rowsFixed = $rowsFixed;
@@ -113,6 +122,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->colsFixed;
     }
 
+    /**
+     * @return $this
+     */
     public function setColsFixed(bool $colsFixed): static
     {
         $this->colsFixed = $colsFixed;
@@ -125,6 +137,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(string $data): static
     {
         $this->data = $data;

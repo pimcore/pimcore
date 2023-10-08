@@ -106,6 +106,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->objectsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -118,6 +121,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->documentsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -130,6 +136,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->documentTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -142,6 +151,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -157,6 +169,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetTypes;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -481,9 +496,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -508,6 +526,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetInlineDownloadAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;

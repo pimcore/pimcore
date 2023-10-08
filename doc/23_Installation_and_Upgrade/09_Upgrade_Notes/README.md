@@ -2,6 +2,7 @@
 
 ## Pimcore 11.1.0
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
 - [DataObject] Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
 - [Maintenance Mode]
   - Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
