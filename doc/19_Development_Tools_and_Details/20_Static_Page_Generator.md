@@ -116,7 +116,7 @@ Enable the main domain option to get the static pages with starting main domain 
 ```yaml
 pimcore:
     documents:
-        static_page_router:
+        static_page_generator:
             use_main_domain: true
 ```
 | config         | Description                                                   |
