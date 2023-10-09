@@ -168,7 +168,7 @@ class Document extends Model\Asset
     public function checkIfPdfContainsJS(): bool
     {
         if (!$this->isPdfScanningEnabled()) {
-           return false;
+            return false;
         }
 
         $this->setCustomSetting(
@@ -191,6 +191,7 @@ class Document extends Model\Asset
                     self::CUSTOM_SETTING_PDF_SCAN_STATUS,
                     Model\Asset\Enum\PdfScanStatus::UNSAFE->value
                 );
+
                 return true;
             }
         }
