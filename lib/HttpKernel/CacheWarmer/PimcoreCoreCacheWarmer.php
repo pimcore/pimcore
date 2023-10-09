@@ -79,7 +79,8 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
                 $className = preg_replace('@\.php$@', '', $className);
                 $className = str_replace(DIRECTORY_SEPARATOR, '\\', $className);
 
-                if (class_exists($className)) {
+                // do not load all classes here / causes memory issues
+                if (class_exists($className, false)) {
                     $classes[] = $className;
                 }
             }
