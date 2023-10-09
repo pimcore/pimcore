@@ -61,7 +61,7 @@ interface ElementInterface extends ModelInterface
 
     public function setUserModification(int $userModification): static;
 
-    public static function getById(int $id): ?static;
+    public static function getById(int $id, array $params = []): ?static;
 
     /**
      * get possible types
