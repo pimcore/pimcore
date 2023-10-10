@@ -358,11 +358,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $data = Serialize::unserialize($data);
         }
 
-        $this->id = $data['id'];
-        $this->type = $data['type'];
-        $this->poster = $data['poster'];
-        $this->title = $data['title'];
-        $this->description = $data['description'];
+        $this->id = $data['id'] ?? null;
+        $this->type = $data['type'] ?? null;
+        $this->poster = $data['poster'] ?? null;
+        $this->title = $data['title'] ?? '';
+        $this->description = $data['description'] ?? '';
 
         return $this;
     }
