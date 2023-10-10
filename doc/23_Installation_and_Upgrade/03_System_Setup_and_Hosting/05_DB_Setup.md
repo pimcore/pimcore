@@ -9,7 +9,7 @@ If you create a new database just set the character set to `utf8mb4`.
 ### Command to Create a new Database
 
 ```bash
-mysql -u root -p -e "CREATE DATABASE project_database charset=utf8mb4;"
+mysql -u root -p -e "CREATE DATABASE project_database CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
 ```
 
 ### Permissions needed for Pimcore
@@ -41,7 +41,7 @@ default-character-set=utf8mb4
 # Applies to mysql server
 [mysqld]
 character-set-server=utf8mb4
-collation-server=utf8mb4_unicode_ci
+collation-server=utf8mb4_general_ci
 init-connect='SET NAMES utf8mb4'
 lower_case_table_names=1
 ```
