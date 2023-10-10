@@ -143,7 +143,7 @@ abstract class Page extends Container
      *
      * @var string
      */
-    protected static string $_defaultPageType;
+    protected static ?string $_defaultPageType = null;
 
     // Initialization:
 
@@ -1121,7 +1121,7 @@ abstract class Page extends Container
     /**
      * @internal
      */
-    public static function getDefaultPageType(): string
+    public static function getDefaultPageType(): ?string
     {
         return self::$_defaultPageType;
     }
