@@ -354,7 +354,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function setDataFromResource(mixed $data): static
     {
-        if (!empty($data) && is_string($data)) {
+        if (is_string($data) && $data) {
             $data = Serialize::unserialize($data);
         }
 
