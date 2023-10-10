@@ -277,7 +277,7 @@ class Environment implements EnvironmentInterface
     {
         $this->load();
 
-        if ($this->currentCheckoutTenant != $tenant) {
+        if ($this->currentTransientCheckoutTenant != $tenant) {
             if ($persistent) {
                 $this->currentCheckoutTenant = $tenant;
             }
