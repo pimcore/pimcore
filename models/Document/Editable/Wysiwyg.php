@@ -124,7 +124,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
             }
         }
 
-        $this->text = $html->html();
+        $this->setDataFromResource($html->html());
 
         $html->clear();
         unset($html);
