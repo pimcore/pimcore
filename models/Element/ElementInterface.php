@@ -61,7 +61,8 @@ interface ElementInterface extends ModelInterface
 
     public function setUserModification(int $userModification): static;
 
-    public static function getById(int $id): ?static;
+    //TODO add $params parameter in Pimcore 12
+    public static function getById(int $id /*, array $params = [] */): ?static;
 
     /**
      * get possible types
