@@ -49,7 +49,9 @@ $unit->save();
 ```
 
 
-In the class editor, it is possible to restrict the list of valid units on a field-level.
+In the class editor, it is possible to restrict the list of valid units on a field-level. 
+It is also possible to import and export the units as json file. 
+For importing there is also a command: `pimcore:definition:import:units`
 
 ![Quantity Value Configuration](../../../img/classes-datatypes-number5.png)
 

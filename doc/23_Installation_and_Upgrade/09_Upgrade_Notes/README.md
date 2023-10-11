@@ -20,6 +20,8 @@ pimcore:
                 enabled: false #disable generating thumbnail for asset documents
             process_page_count: false #disable processing page count
             process_text: false #disable processing text extraction
+            scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
+
 ```
 - [Elements] Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
 - `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.

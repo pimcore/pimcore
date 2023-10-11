@@ -33,13 +33,15 @@ class Select extends Data implements
     \JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
-    FieldDefinitionEnrichmentInterface
+    FieldDefinitionEnrichmentInterface,
+    OptionsProviderInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataWidthTrait;
+    use OptionsProviderTrait;
 
     /**
      * Available options to select
@@ -54,22 +56,6 @@ class Select extends Data implements
      *
      */
     public ?string $defaultValue = null;
-
-    /**
-     * Options provider class
-     *
-     * @internal
-     *
-     */
-    public ?string $optionsProviderClass = null;
-
-    /**
-     * Options provider data
-     *
-     * @internal
-     *
-     */
-    public ?string $optionsProviderData = null;
 
     /**
      * Column length
@@ -257,6 +243,7 @@ class Select extends Data implements
         $this->options = $mainDefinition->options;
         $this->columnLength = $mainDefinition->columnLength;
         $this->defaultValue = $mainDefinition->defaultValue;
+        $this->optionsProviderType = $mainDefinition->optionsProviderType;
         $this->optionsProviderClass = $mainDefinition->optionsProviderClass;
         $this->optionsProviderData = $mainDefinition->optionsProviderData;
     }
@@ -271,26 +258,9 @@ class Select extends Data implements
         $this->defaultValue = $defaultValue;
     }
 
-    public function getOptionsProviderClass(): ?string
-    {
-        return $this->optionsProviderClass;
-    }
-
-    public function setOptionsProviderClass(?string $optionsProviderClass): void
-    {
-        $this->optionsProviderClass = $optionsProviderClass;
-    }
-
-    public function getOptionsProviderData(): ?string
-    {
-        return $this->optionsProviderData;
-    }
-
-    public function setOptionsProviderData(?string $optionsProviderData): void
-    {
-        $this->optionsProviderData = $optionsProviderData;
-    }
-
+    /**
+     * { @inheritdoc }
+     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -318,7 +288,7 @@ class Select extends Data implements
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
         );
 
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context = $params['context'] ?? [];
             $context['object'] = $object;
             if ($object) {
@@ -380,7 +350,7 @@ class Select extends Data implements
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
         );
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context['object'] = $object;
             $context['class'] = $object->getClass();
 
@@ -397,7 +367,7 @@ class Select extends Data implements
 
     public function jsonSerialize(): mixed
     {
-        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
@@ -408,7 +378,7 @@ class Select extends Data implements
     {
         $blockedVars = parent::resolveBlockedVars();
 
-        if ($this->getOptionsProviderClass()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass()) {
             $blockedVars[] = 'options';
         }
 

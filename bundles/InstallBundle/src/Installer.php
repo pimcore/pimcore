@@ -808,6 +808,7 @@ class Installer
         $userPermissions = [
             'assets',
             'classes',
+            'selectoptions',
             'clear_cache',
             'clear_fullpage_cache',
             'clear_temp_files',

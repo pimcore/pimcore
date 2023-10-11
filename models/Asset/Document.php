@@ -26,6 +26,8 @@ use Pimcore\Model;
  */
 class Document extends Model\Asset
 {
+    public const CUSTOM_SETTING_PDF_SCAN_STATUS = 'document_pdf_scan_status';
+
     protected string $type = 'document';
 
     protected function update(array $params = []): void
@@ -163,6 +165,54 @@ class Document extends Model\Asset
         return null;
     }
 
+    public function checkIfPdfContainsJS(): bool
+    {
+        if (!$this->isPdfScanningEnabled()) {
+            return false;
+        }
+
+        $this->setCustomSetting(
+            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+            Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
+        );
+
+        $chunkSize = 1024;
+        $filePointer = $this->getStream();
+
+        $tagLength = strlen('/JS');
+
+        while ($chunk = fread($filePointer, $chunkSize)) {
+            if (strlen($chunk) <= $tagLength) {
+                break;
+            }
+
+            if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
+                $this->setCustomSetting(
+                    self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+                    Model\Asset\Enum\PdfScanStatus::UNSAFE->value
+                );
+
+                return true;
+            }
+        }
+
+        $this->setCustomSetting(
+            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+            Model\Asset\Enum\PdfScanStatus::SAFE->value
+        );
+
+        return true;
+    }
+
+    public function getScanStatus(): ?Model\Asset\Enum\PdfScanStatus
+    {
+        if ($scanStatus = $this->getCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS)) {
+            return Model\Asset\Enum\PdfScanStatus::tryFrom($scanStatus);
+        }
+
+        return null;
+    }
+
     private function isThumbnailsEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['thumbnails']['enabled'];
@@ -176,5 +226,10 @@ class Document extends Model\Asset
     private function isTextProcessingEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['process_text'];
+    }
+
+    private function isPdfScanningEnabled(): bool
+    {
+        return Config::getSystemConfiguration('assets')['document']['scan_pdf'];
     }
 }

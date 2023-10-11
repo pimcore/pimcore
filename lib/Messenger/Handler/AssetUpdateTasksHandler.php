@@ -62,6 +62,10 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset): void
     {
+        if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
+            $asset->save(['versionNote' => 'PDF scan result']);
+        }
+
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
             if ($asset->processPageCount()) {
@@ -92,7 +96,14 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('videoHeight');
         }
 
-        $asset->handleEmbeddedMetaData(true);
+        $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
+        if (!empty($sphericalMetaData)) {
+            $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
+        } else {
+            $asset->removeCustomSetting('SphericalMetaData');
+        }
+
+        $asset->handleEmbeddedMetaData();
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
