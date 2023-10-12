@@ -107,8 +107,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if (is_string($value) || is_numeric($value)) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
                         $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
-                    }
-                    elseif ($value) {
+                    } elseif ($value) {
                         $attribs[] = (is_string($value)) ?
                             $key . '="' . htmlspecialchars($value) . '"' :
                             $key . '="' . $value . '"';
