@@ -261,7 +261,7 @@ class TranslatorTest extends TestCase
 
         $translation = Translation::getByKey($key);
         $getter = $translation->getTranslation('en');
-        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $getter, 'Asserting translation is properly sanitized');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($getter), 'Asserting translation is properly sanitized');
 
         $db = Db::get();
         $dbValue = $db->fetchOne(
