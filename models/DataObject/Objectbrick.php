@@ -81,11 +81,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return $values;
         }
 
-        if (empty($this->items)) {
-            foreach ($this->getObjectVars() as $var) {
-                if ($var instanceof Objectbrick\Data\AbstractData) {
-                    $this->items[] = $var;
-                }
+        foreach ($this->getObjectVars() as $var) {
+            if ($var instanceof Objectbrick\Data\AbstractData &&
+                !in_array($var, $this->items, true)) {
+                $this->items[] = $var;
             }
         }
 
