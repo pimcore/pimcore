@@ -169,6 +169,8 @@ abstract class Page extends Container
     {
         if (isset($options['type'])) {
             $type = $options['type'];
+        } elseif (self::$_defaultPageType != null) {
+            $type = self::$_defaultPageType;
         }
 
         if (isset($type)) {
