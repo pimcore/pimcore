@@ -76,7 +76,7 @@ class Admin
         }
         
         if (empty($languages)) {
-            $languages = $languageFiles;
+            $languages = $translatedLanguages;
         }
 
         return array_unique($languages);
