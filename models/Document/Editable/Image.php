@@ -696,7 +696,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @TODO: Remove in Pimcore 12
      *
-     * @return void
      */
     public function __unserialize(array $data): void
     {
