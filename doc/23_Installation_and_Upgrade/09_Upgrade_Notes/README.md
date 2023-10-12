@@ -25,6 +25,7 @@ pimcore:
 ```
 - [Elements] Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
 - `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
+- [Navigation]: The property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
 
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
