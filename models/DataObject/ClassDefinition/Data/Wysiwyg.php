@@ -99,6 +99,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if (is_string($data) && !($params['no_sanitize'] ?? false)) {
+            $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
+        }
+
         return Text::wysiwygText($data);
     }
 
@@ -113,10 +117,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_string($data)) {
-            $data = html_entity_decode(self::getWysiwygSanitizer()->sanitizeFor('body', $data));
-        }
-
         return Text::wysiwygText($data);
     }
 
@@ -131,7 +131,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        $data = $this->getDataForResource($data, $object, $params);
+        $data = $this->getDataForResource($data, $object, array_merge($params, ['no_sanitize' => true]));
 
         if (null !== $data) {
             $data = strip_tags($data, '<a><img>');
@@ -166,7 +166,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $this->getDataForResource($data, $object, $params);
+        return $this->getDataForResource($data, $object, array_merge($params, ['no_sanitize' => true]));
     }
 
     /**
