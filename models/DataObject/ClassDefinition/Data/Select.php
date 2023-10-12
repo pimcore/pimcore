@@ -353,13 +353,13 @@ class Select extends Data implements
     }
 
     /**
-     * @param string|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array|string|null
+     * @return array|string|int|null
      */
-    public function getDataForGrid(?string $data, Concrete $object = null, array $params = []): array|string|null
+    public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): array|string|int|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
