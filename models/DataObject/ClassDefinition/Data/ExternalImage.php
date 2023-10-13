@@ -172,9 +172,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     {
         if ($data instanceof Model\DataObject\Data\ExternalImage && $data->getUrl()) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
-        }
+        } 
 
-        return $data;
+        return '';
     }
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
