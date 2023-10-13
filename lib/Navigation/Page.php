@@ -142,7 +142,7 @@ abstract class Page extends Container
      * The type of page to use when it wasn't set
      *
      */
-    protected static string $_defaultPageType;
+    protected static ?string $_defaultPageType = null;
 
     // Initialization:
 
