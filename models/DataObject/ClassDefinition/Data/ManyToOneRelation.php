@@ -217,7 +217,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
             $return = [
                 $idIndex => $rData[0]['dest_id'] ?? null,
-                $typeIndex => $rData[0]['type'] ?? null
+                $typeIndex => $rData[0]['type'] ?? null,
             ];
         }
 
