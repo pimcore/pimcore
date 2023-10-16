@@ -1,16 +1,14 @@
 # Upgrade Notes
 
 ## Pimcore 11.1.0
-### [Documents]:
-- Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
-- Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
+### Elements
 
-### [DataObjects]:
-- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
-- Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
-- Input fields `CheckValidity` checks the column length.
+#### [All]:
+- Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
+- Added hint for second parameter `array $params = []` to `Element/ElementInterface::getById`
+- `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
 
-### [Assets]:
+#### [Assets]:
 - Asset Documents background processing (e.g. page count, thumbnails & search text) can be disabled with config:
     ```yaml
     pimcore:
@@ -24,21 +22,20 @@
     ```
 - Video Assets spherical metadata is now calculated in the backfground instead of on load.
 
-### [Elements]:
-- Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
-- Added hint for second parameter `array $params = []` to `Element/ElementInterface::getById`
+#### [Data Objects]:
+- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
+- Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
+- Input fields `CheckValidity` checks the column length.
 
-### [General]:
-- `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
-- [Maintenance Mode]
-    - Maintenance mode check is handled via `tmp_store` in database. Using maintenance mode files is deprecated.
-    - Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
-        - `activateMaintenanceMode`, use `MaintenanceModeHelperInterface::activate` instead.
-        - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
-        - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
-        - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12
-- [CoreCacheHandler] Remove redundant cache item tagging with own key
-- [Auth] The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
+#### [Documents]:
+- Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
+- Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
+
+-----------------
+### General
+
+#### [Authentication]:
+The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
 - [Static Page Generator]: Static pages can be generated based on sub-sites main domain using below config:
     ```yaml
     pimcore:
@@ -60,11 +57,26 @@
     }
   ```
 
-- [Installer]: Passing `--install-bundles` as empty option now installs the required bundles.
+#### [Core Cache Handler]:
+- Remove redundant cache item tagging with own key.
 
+#### [Installer]: 
+- Passing `--install-bundles` as empty option now installs the required bundles.
+
+#### [Maintenance Mode]:
+- Maintenance mode check is handled via `tmp_store` in database. Using maintenance mode files is deprecated.
+- Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
+    - `activateMaintenanceMode`, use `MaintenanceModeHelperInterface::activate` instead.
+    - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
+    - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
+    - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12.
+
+
+------------------
 ## Pimcore 11.0.7
 - Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
 
+------------------
 ## Pimcore 11.0.0
 ### API
 #### [General] :
