@@ -4,4 +4,5 @@ reports: Berichte
 custom_report_permissions: Berechtigung
 keybinding_customReports: Benutzerdefinierte Berichte
 keybinding_reports: Bericht
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
 ...
