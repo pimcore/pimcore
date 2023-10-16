@@ -1,0 +1,29 @@
+name: Clone PR
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    outputs:
+      has_release_label: ${{ steps.label-check.outputs.has_label }}
+    steps:
+    - name: Check for AutomatedReleasePR label
+      id: label-check
+      run: |
+        HAS_LABEL=$(echo '$LABELS' | jq 'any(.[]; .name == "AutomatedReleasePR")')
+        echo "::set-output name=has_label::$HAS_LABEL"
+
+  clone-pr:
+    needs: check-labels
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-pr-clone.yml@v1.0.0-rc.1
+    if: github.event.pull_request.merged == true && github.repository == 'pimcore/pimocre' && needs.check-labels.outputs.has_release_label == 'false'
+    with:
+      head_ref: ${{ github.head_ref }}
+      html_url: ${{ github.event.pull_request.html_url }}
+      sha: ${{ github.sha }}
+      ref_name: ${{ github.ref_name }}
+      target_repo: 'ee-pimcore'
+    secrets:
+      token: ${{ secrets.SYNC_TOKEN }}
