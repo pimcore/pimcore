@@ -17,7 +17,7 @@
         assets:
             document:
                 thumbnails:
-                    enabled: false #disable generating thumbnail for asset documents
+                    enabled: false #disable generating thumbnail for Asset Documents
                 process_page_count: false #disable processing page count
                 process_text: false #disable processing text extraction
                 scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
