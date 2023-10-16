@@ -203,7 +203,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
             return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
         }
 
-        return $data;
+        return '';
     }
 
     /**
