@@ -98,57 +98,22 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 unset($this->config['disabledFields']);
             }
 
-            // add attributes to link
-            $allowedAttributes = [
-                'charset',
-                'coords',
-                'hreflang',
-                'name',
-                'rel',
-                'rev',
-                'shape',
-                'target',
-                'accesskey',
-                'class',
-                'dir',
-                'draggable',
-                'dropzone',
-                'contextmenu',
-                'id',
-                'lang',
-                'style',
-                'tabindex',
-                'title',
-                'media',
-                'download',
-                'ping',
-                'type',
-                'referrerpolicy',
-                'xml:lang',
-            ];
-            $defaultAttributes = [];
-
-            if (!is_array($this->data)) {
-                $this->data = [];
-            }
-
-            $availableAttribs = array_merge($defaultAttributes, $this->data, $this->config);
+            $this->data = is_array($this->data) ? $this->data : [];
+            $availableAttribs = array_merge($this->data, $this->config);
 
             // add attributes to link
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if ((is_string($value) || is_numeric($value))
-                    && (str_starts_with($key, 'data-') ||
-                        str_starts_with($key, 'aria-') ||
-                        in_array($key, $allowedAttributes))) {
+                if (is_string($value) || is_numeric($value)) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
                         $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
-                    } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.htmlspecialchars($value).'"';
+                    } elseif ($value) {
+                        $attribs[] = (is_string($value)) ?
+                            $key . '="' . htmlspecialchars($value) . '"' :
+                            $key . '="' . $value . '"';
                     }
                 }
             }
-
             $attribs = array_unique($attribs);
 
             $text = '';

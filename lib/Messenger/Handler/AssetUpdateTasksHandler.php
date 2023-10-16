@@ -62,6 +62,10 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset): void
     {
+        if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
+            $asset->save(['versionNote' => 'PDF scan result']);
+        }
+
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
             if ($asset->processPageCount()) {
