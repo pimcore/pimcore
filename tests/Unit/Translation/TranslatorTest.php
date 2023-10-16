@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -243,27 +244,29 @@ class TranslatorTest extends TestCase
         $this->assertCount(count($beforeAdd) + 1, $afterAdd);
     }
 
-    //    public function testSanitizedTranslation(): void
-    //    {
-    //        $translation = new Translation();
-    //        $key = 'sanitizerTest';
-    //        $translation->setDomain('messages');
-    //        $translation->setKey($key);
-    //        $translation->setTranslations(['en' => '!@#$%^abc\'"<script>console.log("ops");</script> 测试< edf > "']);
-    //        $translation->save();
-    //
-    //        $translation = Translation::getByKey($key);
-    //        $getter = $translation->getTranslation('en');
-    //        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $getter, 'Asserting translation is properly sanitized');
-    //
-    //        $db = Db::get();
-    //        $dbValue = $db->fetchOne(
-    //            sprintf(
-    //                'SELECT `text` FROM translations_messages WHERE `key` = %s AND `language` = %s',
-    //                $db->quote($key),
-    //                $db->quote('en')
-    //            )
-    //        );
-    //        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', $dbValue, 'Asserting translation is persisted as sanitized');
-    //    }
+    public function testSanitizedTranslation(): void
+    {
+        $translation = new Translation();
+        $key = 'sanitizerTest';
+        $translation->setDomain('messages');
+        $translation->setKey($key);
+        $translation->setTranslations(['en' => '!@#$%^abc\'"<script>console.log("ops");</script> 测试&lt; edf &gt; "']);
+        $translation->save();
+
+        RuntimeCache::clear();
+
+        $translation = Translation::getByKey($key);
+        $getter = $translation->getTranslation('en');
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($getter), 'Asserting translation is properly sanitized');
+
+        $db = Db::get();
+        $dbValue = $db->fetchOne(
+            sprintf(
+                'SELECT `text` FROM translations_messages WHERE `key` = %s AND `language` = %s',
+                $db->quote($key),
+                $db->quote('en')
+            )
+        );
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($dbValue), 'Asserting translation is persisted as sanitized');
+    }
 }

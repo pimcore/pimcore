@@ -98,11 +98,16 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
+                if ($text != strip_tags($text)) {
+                    $text = $sanitizer->sanitizeFor('body', $text);
+                    $this->model->addTranslation($language, $text);
+                }
+
                 $data = [
                 'key' => $this->model->getKey(),
                 'type' => $this->model->getType(),
                 'language' => $language,
-                'text' => html_entity_decode($sanitizer->sanitizeFor('body', $text)),
+                'text' => $text,
                 'modificationDate' => $this->model->getModificationDate(),
                 'creationDate' => $this->model->getCreationDate(),
                 'userOwner' => $this->model->getUserOwner(),
