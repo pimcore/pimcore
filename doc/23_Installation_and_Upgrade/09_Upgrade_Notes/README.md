@@ -3,6 +3,11 @@
 ## Pimcore 11.1.0
 ### Elements
 
+#### [All]:
+- Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
+- Added hint for second parameter `array $params = []` to `Element/ElementInterface::getById`
+- `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
+
 #### [Assets]:
 - Asset Documents background processing (e.g. page count, thumbnails & search text) can be disabled with config:
     ```yaml
