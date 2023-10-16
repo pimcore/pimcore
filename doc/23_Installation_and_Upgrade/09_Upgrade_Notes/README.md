@@ -22,7 +22,7 @@
                 process_text: false #disable processing text extraction
                 scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
     ```
-- Video assets spherical metadata is now calculated in the backfground instead of on load.
+- Video Assets spherical metadata is now calculated in the backfground instead of on load.
 
 ### [Elements]:
 - Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
