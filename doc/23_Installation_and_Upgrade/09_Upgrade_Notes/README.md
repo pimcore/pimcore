@@ -99,7 +99,9 @@
 #### [Security] :
 
 -  Enabled Content Security Policy by default.
--  Implemented Symfony HTML sanitizer for WYSIWYG editors.
+-  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities <,>, & etc.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
 
 
 -----------------
