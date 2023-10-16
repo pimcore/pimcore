@@ -2,7 +2,7 @@
 
 ## Pimcore 11.1.0
 ### [Documents]:
-- Removed `allow list` filter from `Pimore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
+- Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
 - Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
 
 ### [DataObjects]:
