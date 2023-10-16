@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
