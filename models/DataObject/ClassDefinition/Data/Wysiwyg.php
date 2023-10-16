@@ -99,7 +99,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_string($data) && !($params['no_sanitize'] ?? false)) {
+        if (is_string($data) && (!isset($params['sanitize']) || $params['sanitize'])) {
             $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
         }
 
@@ -131,7 +131,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        $data = $this->getDataForResource($data, $object, array_merge($params, ['no_sanitize' => true]));
+        $data = $this->getDataForResource($data, $object, array_merge($params, ['sanitize' => false]));
 
         if (null !== $data) {
             $data = strip_tags($data, '<a><img>');
@@ -166,7 +166,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $this->getDataForResource($data, $object, array_merge($params, ['no_sanitize' => true]));
+        return $this->getDataForResource($data, $object, array_merge($params, ['sanitize' => false]));
     }
 
     /**
