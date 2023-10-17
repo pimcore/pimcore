@@ -38,7 +38,7 @@ class AssetPreLoadEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    public function getAsset(): ?Asset
+    public function getAsset(): Asset
     {
         if (empty($this->asset)) {
             throw new NotFoundException();
