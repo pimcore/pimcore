@@ -25,7 +25,7 @@ class AssetPreLoadEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    protected ?Asset $asset = null;
+    protected ?Asset $asset;
 
     /**
      * AssetEvent constructor.

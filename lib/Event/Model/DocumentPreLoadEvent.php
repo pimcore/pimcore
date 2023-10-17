@@ -25,7 +25,7 @@ class DocumentPreLoadEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    protected ?Document $document = null;
+    protected ?Document $document;
 
     /**
      * DocumentEvent constructor.

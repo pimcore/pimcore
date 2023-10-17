@@ -25,7 +25,7 @@ class DataObjectPreLoadEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    protected ?AbstractObject $object = null;
+    protected ?AbstractObject $object;
 
     /**
      * DataObjectEvent constructor.
