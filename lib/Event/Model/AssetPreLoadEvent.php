@@ -40,7 +40,7 @@ class AssetPreLoadEvent extends Event implements ElementEventInterface
 
     public function getAsset(): ?Asset
     {
-        if (empty($this->document)) {
+        if (empty($this->asset)) {
             throw new NotFoundException();
         }
         return $this->asset;
