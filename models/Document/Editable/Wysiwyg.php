@@ -77,16 +77,14 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function setDataFromResource(mixed $data): static
     {
-        $helper = self::getWysiwygSanitizer();
-        $this->text = html_entity_decode($helper->sanitizeFor('body', $data));
+        $this->text = $data;
 
         return $this;
     }
 
     public function setDataFromEditmode(mixed $data): static
     {
-        $helper = self::getWysiwygSanitizer();
-        $this->text = html_entity_decode($helper->sanitizeFor('body', $data));
+        $this->text = $data;
 
         return $this;
     }
@@ -128,5 +126,12 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
         $html->clear();
         unset($html);
+    }
+
+    public function save(): void
+    {
+        $helper = self::getWysiwygSanitizer();
+        $this->text = $helper->sanitizeFor('body', $this->text);
+        $this->getDao()->save();
     }
 }

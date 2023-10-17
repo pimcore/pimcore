@@ -371,7 +371,7 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
-        if ($tmpFile) {
+        if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
