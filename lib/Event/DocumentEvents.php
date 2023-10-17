@@ -109,6 +109,16 @@ final class DocumentEvents
      * Arguments:
      *  - params | array | contains the values that were passed to getById() as the second parameter
      *
+     * @Event("Pimcore\Event\Model\DocumentPreLoadEvent")
+     *
+     * @var string
+     */
+    const PRE_LOAD = 'pimcore.document.preLoad';
+
+    /**
+     * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string

@@ -121,6 +121,16 @@ final class DataObjectEvents
      * Arguments:
      *  - params | array | contains the values that were passed to getById() as the second parameter
      *
+     * @Event("Pimcore\Event\Model\DataObjectPreLoadEvent")
+     *
+     * @var string
+     */
+    const PRE_LOAD = 'pimcore.dataobject.preLoad';
+
+    /**
+     * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string

@@ -119,6 +119,16 @@ final class AssetEvents
      * Arguments:
      *  - params | array | contains the values that were passed to getById() as the second parameter
      *
+     * @Event("Pimcore\Event\Model\AssetPreLoadEvent")
+     *
+     * @var string
+     */
+    const PRE_LOAD = 'pimcore.asset.preLoad';
+
+    /**
+     * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
