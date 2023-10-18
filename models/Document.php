@@ -240,6 +240,14 @@ class Document extends Element\AbstractElement
 
             \Pimcore\Cache::save($document, $cacheKey);
         } else {
+            try {
+                // fire pre load event
+                $preLoadEvent = new DocumentPreLoadEvent($document, ['params' => $params]);
+                \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DocumentEvents::PRE_LOAD);
+                $document = $preLoadEvent->getDocument();
+            } catch (NotFoundException $e) {
+                return null;
+            }
             RuntimeCache::set($cacheKey, $document);
         }
 

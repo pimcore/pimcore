@@ -267,6 +267,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 return null;
             }
         } else {
+            try {
+                // fire pre load event
+                $preLoadEvent = new DataObjectPreLoadEvent($object, ['params' => $params]);
+                \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DataObjectEvents::PRE_LOAD);
+                $object = $preLoadEvent->getObject();
+            } catch (Model\Exception\NotFoundException $e) {
+                return null;
+            }
             RuntimeCache::set($cacheKey, $object);
         }
 
