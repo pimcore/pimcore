@@ -384,6 +384,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         if (Model\Version::isEnabled() === true) {
             $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        } else {
+            $this->setVersionCount($this->getDao()->getVersionCountForUpdate());
         }
 
         if ($this->getVersionCount() > 4200000000) {
