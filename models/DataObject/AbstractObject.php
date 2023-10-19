@@ -246,7 +246,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     // fire pre load event
                     $preLoadEvent = new DataObjectPreLoadEvent($object, ['params' => $params]);
                     \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DataObjectEvents::PRE_LOAD);
-                    /** @var ?static $object */
                     $object = $preLoadEvent->getObject();
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());
@@ -272,7 +271,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new DataObjectPreLoadEvent($object, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DataObjectEvents::PRE_LOAD);
-                /** @var ?static $object */
                 $object = $preLoadEvent->getObject();
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -288,7 +286,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             new DataObjectEvent($object, ['params' => $params]),
             DataObjectEvents::POST_LOAD
         );
-
+        /** @var ?static $object */
         return $object;
     }
 

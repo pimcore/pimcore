@@ -215,7 +215,6 @@ class Document extends Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new DocumentPreLoadEvent($document, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DocumentEvents::PRE_LOAD);
-                /** @var ?static $document */
                 $document = $preLoadEvent->getDocument();
             } catch (NotFoundException $e) {
                 return null;
@@ -245,7 +244,6 @@ class Document extends Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new DocumentPreLoadEvent($document, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DocumentEvents::PRE_LOAD);
-                /** @var ?static $document */
                 $document = $preLoadEvent->getDocument();
             } catch (NotFoundException $e) {
                 return null;
@@ -261,7 +259,7 @@ class Document extends Element\AbstractElement
             new DocumentEvent($document, ['params' => $params]),
             DocumentEvents::POST_LOAD
         );
-
+        /** @var ?static $document */
         return $document;
     }
 
