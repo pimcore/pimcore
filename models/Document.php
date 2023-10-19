@@ -244,6 +244,7 @@ class Document extends Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new DocumentPreLoadEvent($document, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DocumentEvents::PRE_LOAD);
+                /** @var ?static $document */
                 $document = $preLoadEvent->getDocument();
             } catch (NotFoundException $e) {
                 return null;

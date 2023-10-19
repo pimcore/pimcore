@@ -276,6 +276,7 @@ class Asset extends Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new AssetPreLoadEvent($asset, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, AssetEvents::PRE_LOAD);
+                /** @var ?static $asset */
                 $asset = $preLoadEvent->getAsset();
             } catch (NotFoundException $e) {
                 return null;
