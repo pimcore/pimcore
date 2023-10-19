@@ -69,3 +69,4 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundl
         return $paths;
     }
 }
+
