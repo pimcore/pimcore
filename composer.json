@@ -202,6 +202,10 @@
       "Pimcore\\Composer::postInstall",
       "@pimcore-scripts"
     ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts"
+    ],
     "pimcore-scripts": [
       "Pimcore\\Composer::clearCache",
       "Pimcore\\Composer::installAssets"
