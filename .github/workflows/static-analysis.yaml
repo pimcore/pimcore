@@ -44,7 +44,7 @@ jobs:
                     - { php-version: "8.1", database: "mariadb:10.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.1", database: "mariadb:10.7", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
-        services:
+        service:
             mariadb:
                 image: "${{ matrix.database }}"
                 ports:
