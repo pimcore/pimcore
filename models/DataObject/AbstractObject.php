@@ -246,6 +246,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     // fire pre load event
                     $preLoadEvent = new DataObjectPreLoadEvent($object, ['params' => $params]);
                     \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, DataObjectEvents::PRE_LOAD);
+                    /** @var ?static $object */
                     $object = $preLoadEvent->getObject();
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());

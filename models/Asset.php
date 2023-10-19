@@ -251,6 +251,7 @@ class Asset extends Element\AbstractElement
                 // fire pre load event
                 $preLoadEvent = new AssetPreLoadEvent($asset, ['params' => $params]);
                 \Pimcore::getEventDispatcher()->dispatch($preLoadEvent, AssetEvents::PRE_LOAD);
+                /** @var ?static $asset */
                 $asset = $preLoadEvent->getAsset();
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
