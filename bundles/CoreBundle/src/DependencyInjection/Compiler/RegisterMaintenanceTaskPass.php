@@ -26,9 +26,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class RegisterMaintenanceTaskPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition(Executor::class)) {

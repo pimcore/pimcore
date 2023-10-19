@@ -51,9 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $name
      *
-     * @return string
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -78,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $isUpdate
      *
      * @throws \Exception
      */
@@ -161,41 +158,39 @@ class Dao extends Model\Dao\AbstractDao
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$objectTable, $objectDatastoreTable]);
 
         // add non existing columns in the table
-        if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
-            foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                    && $value instanceof DataObject\ClassDefinition\Data) {
-                    // if a datafield requires more than one column in the datastore table => only for non-relation types
-                    if (!$value->isRelationType()) {
-                        if (is_array($value->getColumnType())) {
-                            foreach ($value->getColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                                $protectedDatastoreColumns[] = $key . '__' . $fkey;
-                            }
-                        } elseif ($value->getColumnType()) {
-                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
-                            $protectedDatastoreColumns[] = $key;
+        foreach ($this->model->getFieldDefinitions() as $key => $value) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
+                // if a datafield requires more than one column in the datastore table => only for non-relation types
+                if (!$value->isRelationType()) {
+                    if (is_array($value->getColumnType())) {
+                        foreach ($value->getColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedDatastoreColumns[] = $key . '__' . $fkey;
                         }
+                    } elseif ($value->getColumnType()) {
+                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                        $protectedDatastoreColumns[] = $key;
                     }
-
-                    $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                    && $value instanceof DataObject\ClassDefinition\Data) {
-                    // if a datafield requires more than one column in the query table
-                    if (is_array($value->getQueryColumnType())) {
-                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                            $protectedColumns[] = $key . '__' . $fkey;
-                        }
-                    } elseif ($value->getQueryColumnType()) {
-                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                        $protectedColumns[] = $key;
-                    }
+                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
+            }
 
-                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
+                // if a datafield requires more than one column in the query table
+                if (is_array($value->getQueryColumnType())) {
+                    foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $protectedColumns[] = $key . '__' . $fkey;
+                    }
+                } elseif ($value->getQueryColumnType()) {
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                    $protectedColumns[] = $key;
                 }
+
+                $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
             }
         }
 
@@ -228,7 +223,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return void
      */
     public function create(): void
     {
@@ -296,7 +290,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @param string $newName
      */
     public function updateClassNameInObjects(string $newName): void
     {

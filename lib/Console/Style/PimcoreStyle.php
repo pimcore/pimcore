@@ -52,9 +52,6 @@ final class PimcoreStyle extends SymfonyStyle
     /**
      * Prints an underlined title without prepending block and/or formatting output
      *
-     * @param string $message
-     * @param string $underlineChar
-     * @param string|null $style
      */
     public function simpleSection(string $message, string $underlineChar = '-', string $style = null): void
     {

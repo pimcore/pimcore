@@ -33,54 +33,35 @@ class Select extends Data implements
     \JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
-    FieldDefinitionEnrichmentInterface
+    FieldDefinitionEnrichmentInterface,
+    OptionsProviderInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataWidthTrait;
+    use OptionsProviderTrait;
 
     /**
      * Available options to select
      *
      * @internal
      *
-     * @var array|null
      */
     public ?array $options = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $defaultValue = null;
-
-    /**
-     * Options provider class
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    public ?string $optionsProviderClass = null;
-
-    /**
-     * Options provider data
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    public ?string $optionsProviderData = null;
 
     /**
      * Column length
      *
      * @internal
      *
-     * @var int
      */
     public int $columnLength = 190;
 
@@ -138,11 +119,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -154,11 +131,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -168,11 +141,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -182,11 +151,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see Data::getDataForEditmode
      *
@@ -197,11 +162,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return  null|string|int
      *
      * @see Data::getDataFromEditmode
      *
@@ -212,11 +173,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -226,20 +183,13 @@ class Select extends Data implements
         return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -269,9 +219,6 @@ class Select extends Data implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -296,6 +243,7 @@ class Select extends Data implements
         $this->options = $mainDefinition->options;
         $this->columnLength = $mainDefinition->columnLength;
         $this->defaultValue = $mainDefinition->defaultValue;
+        $this->optionsProviderType = $mainDefinition->optionsProviderType;
         $this->optionsProviderClass = $mainDefinition->optionsProviderClass;
         $this->optionsProviderData = $mainDefinition->optionsProviderData;
     }
@@ -310,26 +258,6 @@ class Select extends Data implements
         $this->defaultValue = $defaultValue;
     }
 
-    public function getOptionsProviderClass(): ?string
-    {
-        return $this->optionsProviderClass;
-    }
-
-    public function setOptionsProviderClass(?string $optionsProviderClass): void
-    {
-        $this->optionsProviderClass = $optionsProviderClass;
-    }
-
-    public function getOptionsProviderData(): ?string
-    {
-        return $this->optionsProviderData;
-    }
-
-    public function setOptionsProviderData(?string $optionsProviderData): void
-    {
-        $this->optionsProviderData = $optionsProviderData;
-    }
-
     /**
      * { @inheritdoc }
      */
@@ -341,9 +269,6 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
@@ -353,11 +278,8 @@ class Select extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string|int|null
      */
     public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): array|string|int|null
     {
@@ -366,7 +288,7 @@ class Select extends Data implements
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
         );
 
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context = $params['context'] ?? [];
             $context['object'] = $object;
             if ($object) {
@@ -392,11 +314,8 @@ class Select extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -419,9 +338,6 @@ class Select extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -434,7 +350,7 @@ class Select extends Data implements
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
         );
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context['object'] = $object;
             $context['class'] = $object->getClass();
 
@@ -451,21 +367,18 @@ class Select extends Data implements
 
     public function jsonSerialize(): mixed
     {
-        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
 
-        if ($this->getOptionsProviderClass()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass()) {
             $blockedVars[] = 'options';
         }
 

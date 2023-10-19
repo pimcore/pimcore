@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\AbstractElementGenerator;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
@@ -54,6 +55,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setDefaults([
             'rootId' => 1,
             'handleMainDomain' => true,
+            'handleCurrentSite' => false,
             'handleSites' => true,
             'urlGeneratorOptions' => [],
             'garbageCollectThreshold' => 50,
@@ -61,6 +63,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
 
         $options->setAllowedTypes('rootId', 'int');
         $options->setAllowedTypes('handleMainDomain', 'bool');
+        $options->setAllowedTypes('handleCurrentSite', 'bool');
         $options->setAllowedTypes('handleSites', 'bool');
         $options->setAllowedTypes('urlGeneratorOptions', 'array');
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
@@ -68,10 +71,25 @@ class DocumentTreeGenerator extends AbstractElementGenerator
 
     public function populate(UrlContainerInterface $urlContainer, string $section = null): void
     {
-        if ($this->options['handleMainDomain'] && null === $section || $section === 'default') {
+        if ($this->options['handleMainDomain'] && (null === $section || $section === 'default')) {
             $rootDocument = Document::getById($this->options['rootId']);
 
-            $this->populateCollection($urlContainer, $rootDocument, 'default');
+            if($rootDocument instanceof Document) {
+                $this->populateCollection($urlContainer, $rootDocument, 'default');
+            }
+        }
+
+        if ($this->options['handleCurrentSite']) {
+            try {
+                $currentSite = Site::getCurrentSite();
+                $rootDocument = $currentSite->getRootDocument();
+                if ($rootDocument instanceof Document) {
+                    $siteSection = sprintf('site_%s', $currentSite->getId());
+                    $this->populateCollection($urlContainer, $rootDocument, $siteSection, $currentSite);
+                }
+            } catch (\Exception $e) {
+                Logger::error('Cannot determine current domain for sitemap generation');
+            }
         }
 
         if ($this->options['handleSites']) {

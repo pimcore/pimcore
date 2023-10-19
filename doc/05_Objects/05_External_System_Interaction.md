@@ -13,25 +13,24 @@ To keep things simple, we're using simple CLI scripts in the following example, 
 ## Import
 The following example indicates the creation of a new object of the class `myclass`. 
 Put the following script into the file `/bin/example.php` (or any other PHP file).
+
 ```php
 <?php
 
 namespace App\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\DataObject;
 
+#[AsCommand(
+    name: 'app:awesome',
+    description: 'Awesome command'
+)]
 class AwesomeCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->setName('app:awesome')
-            ->setDescription('Awesome command');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //create single object
@@ -92,6 +91,7 @@ If you're using / creating very much objects you should call the Pimcore garbage
 // just call this static method
 \Pimcore::collectGarbage();
 ```
+Or use `RuntimeCache::disable()` before iterate many objects to avoid excesive memory usage.
 
 **WARNING:** This will flush the entire internal registry!
 

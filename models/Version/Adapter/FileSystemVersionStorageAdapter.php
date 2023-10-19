@@ -18,6 +18,7 @@ namespace Pimcore\Model\Version\Adapter;
 
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
+use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model\Version;
 use Pimcore\Tool\Storage;
@@ -95,7 +96,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             // we always try to create a hardlink onto the original file, the asset ensures that not the actual
             // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
             // old file first before opening a new stream -> see Asset::update()
-            $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
+            $useHardlinks = Config::getSystemConfiguration('assets')['versions']['use_hardlinks'];
             $this->storage->write($binaryStoragePath, '1'); // temp file to determine if stream is local or not
             if ($useHardlinks && stream_is_local($this->getBinaryFileStream($version)) && stream_is_local($binaryDataStream)) {
                 $linkPath = stream_get_meta_data($this->getBinaryFileStream($version))['uri'];

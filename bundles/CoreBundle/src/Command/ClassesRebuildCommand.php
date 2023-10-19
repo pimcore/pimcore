@@ -20,6 +20,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +29,12 @@ use Symfony\Contracts\Service\Attribute\Required;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:deployment:classes-rebuild',
+    description: 'rebuilds db structure for classes, field collections and object bricks
+    based on updated var/classes/definition_*.php files',
+    aliases: ['deployment:classes-rebuild']
+)]
 class ClassesRebuildCommand extends AbstractCommand
 {
     protected ClassDefinitionManager $classDefinitionManager;
@@ -35,15 +42,12 @@ class ClassesRebuildCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:deployment:classes-rebuild')
-            ->setAliases(['deployment:classes-rebuild'])
-            ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated var/classes/definition_*.php files')
-            ->addOption(
-                'create-classes',
-                'c',
-                InputOption::VALUE_NONE,
-                'Create missing Classes (Classes that exists in var/classes but not in the database)'
-            )
+           ->addOption(
+               'create-classes',
+               'c',
+               InputOption::VALUE_NONE,
+               'Create missing Classes (Classes that exists in var/classes but not in the database)'
+           )
             ->addOption(
                 'delete-classes',
                 'd',
@@ -58,9 +62,6 @@ class ClassesRebuildCommand extends AbstractCommand
         $this->classDefinitionManager = $classDefinitionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('delete-classes')) {
@@ -103,7 +104,7 @@ class ClassesRebuildCommand extends AbstractCommand
         } else {
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
-                if ($class instanceof ClassDefinition) {
+                if ($class instanceof DataObject\ClassDefinitionInterface) {
                     if ($output->isVerbose()) {
                         $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
                     }
@@ -143,6 +144,19 @@ class ClassesRebuildCommand extends AbstractCommand
             }
 
             $fc->save(false);
+        }
+
+        if ($output->isVerbose()) {
+            $output->writeln('---------------------');
+            $output->writeln('Saving all select options');
+        }
+        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+        foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
+            if ($output->isVerbose()) {
+                $output->writeln(sprintf('%s saved', $selectOptionConfiguration->getId()));
+            }
+
+            $selectOptionConfiguration->generateEnumFiles();
         }
 
         return 0;

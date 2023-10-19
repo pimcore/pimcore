@@ -42,6 +42,12 @@ The entire list of data types is indicated below:
 | countries                | combo box with multiple select and predefined country list                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | languages                | combo box with multiple select and combo box with multiple select and predefined language                                                                                                                                                                                                                                                                                                                                                                                   |
 
+### [Select Options](./77_Select_Options.md)
+
+| Name           | Description                                    |
+|----------------|------------------------------------------------|
+| select options | Manage select options for (multi)select fields |
+
 ### [Dynamic Select Datatypes](./30_Dynamic_Select_Types.md)
 
 | Name                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |

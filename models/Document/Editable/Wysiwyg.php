@@ -40,17 +40,11 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'wysiwyg';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return (string) $this->text;
@@ -71,9 +65,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $document = $this->getDocument();
@@ -84,9 +75,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
             ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->text = $data;
@@ -94,9 +82,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->text = $data;
@@ -109,9 +94,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return empty($this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         return Text::getDependenciesOfWysiwygText($this->text);
@@ -122,9 +104,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return Text::getCacheTagsOfWysiwygText($this->text, $tags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(array $idMapping): void
     {
         $html = new DomCrawler($this->text);

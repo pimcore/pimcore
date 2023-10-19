@@ -35,14 +35,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -54,7 +52,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
@@ -72,9 +69,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
-    /**
-     * @param array|null $items
-     */
     public function __construct(array $items = null)
     {
         if ($items) {
@@ -140,11 +134,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    /**
-     * @param string|null $language
-     *
-     * @return string
-     */
     public function getLanguage(string $language = null): string
     {
         if ($language) {
@@ -155,10 +144,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $groupId
-     * @param int $keyId
-     * @param mixed $value
-     * @param string|null $language
      *
      * @return $this
      *
@@ -238,7 +223,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * Removes the group with the given id
      *
-     * @param int $groupId
      */
     public function removeGroupData(int $groupId): void
     {
@@ -246,7 +230,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /** Returns an array of
-     * @return array
      */
     public function getGroupIdsWithData(): array
     {
@@ -331,13 +314,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $groupId
-     * @param int $keyId
-     * @param string $language
-     * @param bool $ignoreFallbackLanguage
-     * @param bool $ignoreDefaultLanguage
      *
-     * @return mixed
      *
      * @throws \Exception
      */
@@ -441,10 +418,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
-    /**
-     * @param int|null $groupId
-     * @param int|null $collectionId
-     */
     public function setGroupCollectionMapping(int $groupId = null, int $collectionId = null): void
     {
         if ($groupId && $collectionId) {

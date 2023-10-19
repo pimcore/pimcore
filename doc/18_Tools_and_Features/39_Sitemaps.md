@@ -76,7 +76,7 @@ interface GeneratorInterface
 }
 ```
 
-When the sitemap bundle fires its `SitemapPopulateEvent::ON_SITEMAP_POPULATE` event, Pimcore will iterate through every
+When the sitemap bundle fires its `SitemapPopulateEvent::class` event, Pimcore will iterate through every
 registered generator and call the `populate()` method. To make a generator available to the event handler, it needs to be
 registered via config. `generator_id` in the config below references a generator which was previously registered
 as service. As you can see, generators can be enabled/disabled and ordered by priority.
@@ -121,6 +121,10 @@ services:
             $processors:
                 - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
                 - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+            $options:
+                handleMainDomain: true
+                handleCurrentSite: false
+                handleSites: true
 ```
 
 If you need to influence the behaviour of the document tree sitemap either overwrite the core service definition or define

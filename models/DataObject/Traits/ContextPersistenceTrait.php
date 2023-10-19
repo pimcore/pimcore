@@ -28,11 +28,6 @@ trait ContextPersistenceTrait
     /**
      * Enrich relation / slug with type-specific data.
      *
-     * @param \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|AbstractData|Concrete|Localizedfield $object
-     * @param array $params
-     * @param string|null $classId
-     * @param array $row
-     * @param string $srcCol
      */
     protected function enrichDataRow(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params, ?string &$classId, array &$row = [], string $srcCol = 'src_id'): void
     {

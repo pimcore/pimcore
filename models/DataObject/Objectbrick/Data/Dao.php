@@ -34,8 +34,6 @@ class Dao extends Model\Dao\AbstractDao
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -382,7 +380,7 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
+        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
@@ -409,11 +407,5 @@ class Dao extends Model\Dao\AbstractDao
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='document'
             ORDER BY `index` ASC", $params);
-
-        if (is_array($relations) && count($relations) > 0) {
-            return $relations;
-        } else {
-            return [];
-        }
     }
 }

@@ -23,8 +23,5 @@ use Pimcore\Model;
  */
 class Folder extends Model\Document
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 }

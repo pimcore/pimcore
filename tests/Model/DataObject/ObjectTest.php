@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -375,5 +376,16 @@ class ObjectTest extends ModelTestCase
             )
         );
         $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($dbQueryValue), 'Asserting object_query table value is persisted as sanitized');
+    }
+
+    public function testInputCheckValidate(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $targetObject = TestHelper::createEmptyObject();
+        $randomText = TestHelper::generateRandomString(500);
+
+        $targetObject->setInput($randomText);
+        $targetObject->save();
     }
 }

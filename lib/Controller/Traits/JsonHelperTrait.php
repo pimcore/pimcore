@@ -27,9 +27,6 @@ trait JsonHelperTrait
 {
     protected PimcoreSerializer $pimcoreSerializer;
 
-    /**
-     * @param PimcoreSerializer $pimcoreSerializer
-     */
     #[Required]
     public function setPimcoreSerializer(PimcoreSerializer $pimcoreSerializer): void
     {

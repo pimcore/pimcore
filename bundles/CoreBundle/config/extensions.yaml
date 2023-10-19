@@ -34,3 +34,7 @@ services:
 
     Pimcore\Tool\AssetsInstaller:
         public: true
+
+    Pimcore\Tool\MaintenanceModeHelperInterface:
+        class: Pimcore\Tool\MaintenanceModeHelper
+        public: true

@@ -182,7 +182,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
     public function getLocked(): ?string
     {
@@ -196,7 +195,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
@@ -246,25 +244,28 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                 Cache::save($properties, $cacheKey, $cacheTags);
             }
 
-            $this->setProperties($properties);
+            $this->properties = $properties;
         }
 
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setProperties(?array $properties): static
     {
+        $this->markFieldDirty('properties');
         $this->properties = $properties;
 
         return $this;
     }
 
-    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static
-    {
-        $this->getProperties();
+    public function setProperty(
+        string $name,
+        string $type,
+        mixed $data,
+        bool $inherited = false,
+        bool $inheritable = false
+    ): static {
+        $properties = $this->getProperties();
 
         $id = $this->getId();
         $property = new Model\Property();
@@ -279,7 +280,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $property->setInherited($inherited);
         $property->setInheritable($inheritable);
 
-        $this->properties[$name] = $property;
+        $properties[$name] = $property;
+
+        $this->setProperties($properties);
 
         return $this;
     }
@@ -323,9 +326,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $properties = $this->getProperties();
@@ -374,9 +374,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|string $id
      *
-     * @return string
      *
      * @internal
      */
@@ -399,25 +397,19 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      *
-     * @return array
      */
     protected function resolveDependencies(): array
     {
         $dependencies = [[]];
 
         // check for properties
-        if (method_exists($this, 'getProperties')) {
-            foreach ($this->getProperties() as $property) {
-                $dependencies[] = $property->resolveDependencies();
-            }
+        foreach ($this->getProperties() as $property) {
+            $dependencies[] = $property->resolveDependencies();
         }
 
         return array_merge(...$dependencies);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocked(): bool
     {
         if ($this->getLocked()) {
@@ -429,9 +421,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param User|null $user
      *
-     * @return array
      *
      * @throws \Exception
      *
@@ -478,9 +468,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $permissions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllowed(string $type, ?User $user = null): bool
     {
         if (null === $user) {
@@ -562,12 +549,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param string|null $versionNote
-     * @param bool $saveOnlyVersion
-     * @param bool $saveStackTrace
-     * @param bool $isAutoSave
      *
-     * @return Model\Version
      *
      * @throws \Exception
      *
@@ -623,17 +605,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getScheduledTasks(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         return [];
@@ -686,7 +662,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param int|null $userId
      *
      * @internal
      */

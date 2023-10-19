@@ -81,13 +81,8 @@ class Processor
     }
 
     /**
-     * @param Asset $asset
-     * @param Config $config
      * @param string|resource|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
-     * @param bool $generated
-     *
-     * @return array
      *
      * @throws \Exception
      */
@@ -178,7 +173,7 @@ class Processor
         // check for existing and still valid thumbnail
 
         $modificationDate = null;
-        $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
@@ -388,7 +383,7 @@ class Processor
 
     private static function applyTransformations(Adapter $image, Asset $asset, Config $config, ?array $transformations): void
     {
-        if (is_array($transformations) && count($transformations) > 0) {
+        if ($transformations) {
             $sourceImageWidth = PHP_INT_MAX;
             $sourceImageHeight = PHP_INT_MAX;
             if ($asset instanceof Asset\Image) {
@@ -482,12 +477,10 @@ class Processor
     private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    if ($transformation['method'] == $transformationType) {
-                        return true;
-                    }
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                if ($transformation['method'] == $transformationType) {
+                    return true;
                 }
             }
         }

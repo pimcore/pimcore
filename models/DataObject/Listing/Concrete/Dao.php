@@ -49,7 +49,6 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param \Exception $e
      *
      * @return int[]
      *
@@ -75,7 +74,6 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -106,7 +104,6 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -152,7 +149,6 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
      *

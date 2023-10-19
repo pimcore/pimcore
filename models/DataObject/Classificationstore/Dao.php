@@ -75,16 +75,14 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
 
-        if (is_array($activeGroups)) {
-            foreach ($activeGroups as $activeGroupId => $enabled) {
-                if ($enabled) {
-                    $data = [
-                        'id' => $objectId,
-                        'groupId' => $activeGroupId,
-                        'fieldname' => $fieldname,
-                    ];
-                    Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
-                }
+        foreach ($activeGroups as $activeGroupId => $enabled) {
+            if ($enabled) {
+                $data = [
+                    'id' => $objectId,
+                    'groupId' => $activeGroupId,
+                    'fieldname' => $fieldname,
+                ];
+                Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
             }
         }
 

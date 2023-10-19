@@ -28,7 +28,6 @@ class Page extends PageSnippet
      *
      * @internal
      *
-     * @var string
      */
     protected string $title = '';
 
@@ -37,19 +36,14 @@ class Page extends PageSnippet
      *
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'page';
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $prettyUrl = null;
 

@@ -34,7 +34,6 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $internal = null;
 
@@ -43,7 +42,6 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $internalType = null;
 
@@ -52,7 +50,6 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var Model\Element\ElementInterface|Model\Element\ElementDescriptor|null
      */
     protected Model\Element\ElementInterface|Model\Element\ElementDescriptor|null $object = null;
 
@@ -70,9 +67,6 @@ class Link extends Model\Document
      */
     protected string $linktype = 'internal';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'link';
 
     /**
@@ -82,9 +76,6 @@ class Link extends Model\Document
      */
     protected string $href = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -124,7 +115,6 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link
      *
-     * @return string
      */
     public function getHref(): string
     {
@@ -158,7 +148,6 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link needed for the editmode
      *
-     * @return string
      */
     public function getRawHref(): string
     {
@@ -182,7 +171,6 @@ class Link extends Model\Document
     /**
      * Returns the path of the link including the anchor and parameters
      *
-     * @return string
      */
     public function getLink(): string
     {
@@ -204,7 +192,6 @@ class Link extends Model\Document
     /**
      * Returns the id of the internal document|asset which is linked
      *
-     * @return int|null
      */
     public function getInternal(): ?int
     {
@@ -214,7 +201,6 @@ class Link extends Model\Document
     /**
      * Returns the direct link (eg. http://www.pimcore.org/test)
      *
-     * @return string
      */
     public function getDirect(): string
     {
@@ -224,7 +210,6 @@ class Link extends Model\Document
     /**
      * Returns the type of the link (internal/direct)
      *
-     * @return string
      */
     public function getLinktype(): string
     {
@@ -319,7 +304,6 @@ class Link extends Model\Document
     /**
      * returns the ready-use html for this link
      *
-     * @return string
      */
     public function getHtml(): string
     {
@@ -347,9 +331,6 @@ class Link extends Model\Document
         return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);

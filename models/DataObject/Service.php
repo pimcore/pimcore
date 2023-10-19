@@ -54,7 +54,6 @@ class Service extends Model\Element\Service
     /**
      * System fields used by filter conditions
      *
-     * @var array
      */
     protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
@@ -68,9 +67,6 @@ class Service extends Model\Element\Service
                                                                 'classid', 'childrensortby', 'classname', 'childrensortorder',
                                                                 'versioncount', ];
 
-    /**
-     * @param Model\User|null $user
-     */
     public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
@@ -80,8 +76,6 @@ class Service extends Model\Element\Service
      * finds all objects which hold a reference to a specific user
      *
      * @static
-     *
-     * @param int $userId
      *
      * @return Concrete[]
      */
@@ -96,14 +90,12 @@ class Service extends Model\Element\Service
         foreach ($classesList as $class) {
             $fieldDefinitions = $class->getFieldDefinitions();
             $dataKeys = [];
-            if (is_array($fieldDefinitions)) {
-                foreach ($fieldDefinitions as $tag) {
-                    if ($tag instanceof ClassDefinition\Data\User) {
-                        $dataKeys[] = $tag->getName();
-                    }
+            foreach ($fieldDefinitions as $tag) {
+                if ($tag instanceof ClassDefinition\Data\User) {
+                    $dataKeys[] = $tag->getName();
                 }
             }
-            if (is_array($dataKeys) && count($dataKeys) > 0) {
+            if ($dataKeys) {
                 $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
@@ -171,8 +163,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
      *
      * @return AbstractObject copied object
      */
@@ -253,6 +243,13 @@ class Service extends Model\Element\Service
             throw new \Exception('Source and target have to be the same type');
         }
 
+        // triggers actions before object cloning
+        $event = new DataObjectEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
@@ -277,26 +274,19 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $field
      *
-     * @return bool
      *
      * @internal
      */
     public static function isHelperGridColumnConfig(string $field): bool
     {
-        return strpos($field, '#') === 0;
+        return str_starts_with($field, '#');
     }
 
     /**
      * Language only user for classification store !!!
      *
-     * @param AbstractObject $object
-     * @param array|null $fields
-     * @param string|null $requestedLanguage
-     * @param array $params
      *
-     * @return array
      *
      * @internal
      */
@@ -333,7 +323,7 @@ class Service extends Model\Element\Service
 
                 $def = $object->getClass()->getFieldDefinition($key, $context);
 
-                if (strpos($key, '#') === 0) {
+                if (str_starts_with($key, '#')) {
                     if (!$haveHelperDefinition) {
                         $helperDefinitions = self::getHelperDefinitions();
                         $haveHelperDefinition = true;
@@ -342,7 +332,7 @@ class Service extends Model\Element\Service
                         $context['fieldname'] = $key;
                         $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
                     }
-                } elseif (strpos($key, '~') === 0) {
+                } elseif (str_starts_with($key, '~')) {
                     $type = $keyParts[1];
                     if ($type === 'classificationstore') {
                         $data[$key] = self::getStoreValueForObject($object, $key, $requestedLanguage);
@@ -350,7 +340,7 @@ class Service extends Model\Element\Service
                 } elseif (count($keyParts) > 1) {
                     // brick
                     $brickType = $keyParts[0];
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $brickType = $brickDescriptor['containerKey'];
@@ -427,7 +417,11 @@ class Service extends Model\Element\Service
                                     }
                                 } else {
                                     $data[$dataKey] = $tempData;
-                                    if ($def instanceof Model\DataObject\ClassDefinition\Data\Select && $def->getOptionsProviderClass()) {
+                                    if (
+                                        $def instanceof Model\DataObject\ClassDefinition\Data\Select
+                                        && !$def->useConfiguredOptions()
+                                        && $def->getOptionsProviderClass()
+                                    ) {
                                         $data[$dataKey . '%options'] = $def->getOptions();
                                     }
                                 }
@@ -438,7 +432,7 @@ class Service extends Model\Element\Service
                     }
 
                     // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
-                    if (strpos($key, '~') === 0 && empty($data[$key])) {
+                    if (str_starts_with($key, '~') && empty($data[$key])) {
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
@@ -478,8 +472,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $helperDefinitions
-     * @param string $key
      *
      * @return string[]|null
      *
@@ -496,11 +488,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $helperDefinitions
-     * @param string $key
-     * @param array $context
      *
-     * @return ConfigElementInterface|null
      *
      * @internal
      */
@@ -700,7 +688,7 @@ class Service extends Model\Element\Service
     {
         $keyParts = explode('~', $key);
 
-        if (strpos($key, '~') === 0) {
+        if (str_starts_with($key, '~')) {
             $type = $keyParts[1];
             if ($type === 'classificationstore') {
                 $field = $keyParts[2];
@@ -755,7 +743,6 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param AbstractObject $object
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
@@ -783,23 +770,17 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string|Concrete $object
-     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $definition
      *
-     * @return array
      */
     public static function getOptionsForSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $definition): array
     {
-        $class = null;
         $options = [];
 
-        if (is_object($object) && method_exists($object, 'getClass')) {
-            $class = $object->getClass();
-        } elseif (is_string($object)) {
+        if (!$object instanceof Concrete) {
             $object = '\\' . ltrim($object, '\\');
             $object = new $object();
-            $class = $object->getClass();
         }
+        $class = $object->getClass();
 
         if ($class) {
             if (is_string($definition)) {
@@ -812,7 +793,7 @@ class Service extends Model\Element\Service
                     DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
                 );
 
-                if ($optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
+                if (!$definition->useConfiguredOptions() && $optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
                     $_options = $optionsProvider->getOptions(['fieldname' => $definition->getName()], $definition);
                 } else {
                     $_options = $definition->getOptions();
@@ -830,10 +811,7 @@ class Service extends Model\Element\Service
     /**
      * alias of getOptionsForMultiSelectField
      *
-     * @param string|Concrete $object
-     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $fieldname
      *
-     * @return array
      */
     public static function getOptionsForMultiSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $fieldname): array
     {
@@ -843,10 +821,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string $path
-     * @param string|null $type
      *
-     * @return bool
      */
     public static function pathExists(string $path, string $type = null): bool
     {
@@ -889,11 +864,7 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param AbstractObject $object
-     * @param array $rewriteConfig
-     * @param array $params
      *
-     * @return AbstractObject
      */
     public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject
     {
@@ -923,7 +894,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
      *
      * @return array<string, DataObject\ClassDefinition\CustomLayout>
      */
@@ -992,9 +962,7 @@ class Service extends Model\Element\Service
      * Returns the fields of a datatype container (e.g. block or localized fields)
      *
      * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
-     * @param string $targetClass
      * @param ClassDefinition\Data[] $targetList
-     * @param bool $insideDataType
      *
      * @return ClassDefinition\Data[]
      */
@@ -1018,9 +986,7 @@ class Service extends Model\Element\Service
     }
 
     /** Calculates the super layout definition for the given object.
-     * @param Concrete $object
      *
-     * @return mixed
      */
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
@@ -1091,7 +1057,6 @@ class Service extends Model\Element\Service
     }
 
     /** Synchronizes a custom layout with its main layout
-     * @param ClassDefinition\CustomLayout $customLayout
      */
     public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
@@ -1112,10 +1077,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $classId
-     * @param int $objectId
      *
-     * @return array|null
      *
      * @internal
      */
@@ -1286,8 +1248,6 @@ class Service extends Model\Element\Service
     }
 
     /**  Determines the custom layout definition (if necessary) for the given class
-     * @param ClassDefinition $class
-     * @param int $objectId
      *
      * @return array layout
      *
@@ -1366,7 +1326,6 @@ class Service extends Model\Element\Service
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
-     * @param Concrete|null $object
      * @param array<string, mixed> $context additional contextual data
      *
      * @internal
@@ -1480,11 +1439,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param array $params
      * @param Model\DataObject\Data\CalculatedValue|null $data
-     *
-     * @return string|null
      *
      * @internal
      */
@@ -1639,9 +1594,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $descriptor
      *
-     * @return array
      *
      * @internal
      */
@@ -1662,15 +1615,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param string $requestedLanguage
-     * @param array $fields
-     * @param array $helperDefinitions
-     * @param LocaleServiceInterface $localeService
-     * @param bool $returnMappedFieldNames
-     * @param array $context
      *
-     * @return array
      *
      * @internal
      */
@@ -1729,14 +1674,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $requestedLanguage
-     * @param LocaleServiceInterface $localeService
      * @param DataObject\Listing $list
      * @param string[] $fields
-     * @param bool $addTitles
-     * @param array $context
-     *
-     * @return array
      *
      * @internal
      */
@@ -1775,7 +1714,7 @@ class Service extends Model\Element\Service
 
         $key = $field['key'];
         $title = $field['label'];
-        if (strpos($key, '#') === 0) {
+        if (str_starts_with($key, '#')) {
             if (isset($helperDefinitions[$key])) {
                 if ($helperDefinitions[$key]->attributes) {
                     return $helperDefinitions[$key]->attributes->label ? $helperDefinitions[$key]->attributes->label : $title;
@@ -1783,7 +1722,7 @@ class Service extends Model\Element\Service
 
                 return $title;
             }
-        } elseif (substr($key, 0, 1) == '~') {
+        } elseif (str_starts_with($key, '~')) {
             $fieldParts = explode('~', $key);
             $type = $fieldParts[1];
 
@@ -1847,7 +1786,7 @@ class Service extends Model\Element\Service
 
                         return (string) $cellValue;
                     }
-                } elseif (substr($field, 0, 1) == '~') {
+                } elseif (str_starts_with($field, '~')) {
                     $type = $fieldParts[1];
 
                     if ($type == 'classificationstore') {
@@ -1888,7 +1827,7 @@ class Service extends Model\Element\Service
                     $brickDescriptor = null;
                     $innerContainer = null;
 
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';

@@ -33,6 +33,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $password = null;
 
+    protected ?string $passwordRecoveryToken = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -109,9 +111,28 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
+     * @internal
+     */
+    public function getPasswordRecoveryToken(): ?string
+    {
+        return $this->passwordRecoveryToken;
+    }
+
+    /**
+     * @internal
+     *
+     * @return $this
+     */
+    public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static
+    {
+        $this->passwordRecoveryToken = $passwordRecoveryToken;
+
+        return $this;
+    }
+
+    /**
      * Alias for getName()
      *
-     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -198,7 +219,6 @@ final class User extends User\UserRole implements UserInterface
     /**
      * @see getAdmin()
      *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -426,8 +446,6 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * @param int|null $width
-     * @param int|null $height
      *
      * @return resource
      */

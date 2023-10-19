@@ -52,11 +52,9 @@ class ValidationException extends \Exception
     public function __toString(): string
     {
         $result = parent::__toString();
-        if (is_array($this->subItems)) {
-            foreach ($this->subItems as $subItem) {
-                $result .= "\n\n";
-                $result .= $subItem->__toString();
-            }
+        foreach ($this->subItems as $subItem) {
+            $result .= "\n\n";
+            $result .= $subItem->__toString();
         }
 
         return $result;

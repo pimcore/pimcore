@@ -37,14 +37,12 @@ class Mail extends Email
     /**
      * If true - emails are logged in the database and on the file-system
      *
-     * @var bool
      */
     private bool $loggingEnable = true;
 
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email|null
      */
     private Model\Document\Email|null $document = null;
 
@@ -72,14 +70,12 @@ class Mail extends Email
     /**
      * Prevent adding debug information
      *
-     * @var bool
      */
     private bool $preventDebugInformationAppending = false;
 
     /**
      * if true - the Pimcore debug mode is ignored
      *
-     * @var bool
      */
     private bool $ignoreDebugMode = false;
 
@@ -89,21 +85,18 @@ class Mail extends Email
      *
      * @see MailHelper::setAbsolutePaths()
      *
-     * @var string|null
      */
     private ?string $hostUrl = null;
 
     /**
      * if true: prevent setting the recipients from the Document - set in $this->clearRecipients()
      *
-     * @var bool
      */
     private bool $recipientsCleared = false;
 
     /**
      * place to store original data before modifying message when sending in debug mode
      *
-     * @var array|null
      */
     private ?array $originalData = null;
 
@@ -127,7 +120,6 @@ class Mail extends Email
     /**
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
-     * @param string|null $contentType
      */
     public function __construct($headers = null, $body = null, string $contentType = null)
     {
@@ -164,7 +156,6 @@ class Mail extends Email
     /**
      * Initializes the mailer with the configured pimcore.email system settings
      *
-     * @param string $type
      *
      * @internal
      */
@@ -196,7 +187,6 @@ class Mail extends Email
     /**
      * Checks if the Debug mode is ignored
      *
-     * @return bool
      */
     public function getIgnoreDebugMode(): bool
     {
@@ -208,7 +198,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
     public function doRedirectMailsToDebugMailAddresses(): bool
     {
@@ -222,7 +211,6 @@ class Mail extends Email
     /**
      * Sets options that are passed to html2text
      *
-     * @param array $options
      *
      * @return $this
      */
@@ -287,7 +275,6 @@ class Mail extends Email
     /**
      * returns the logging status
      *
-     * @return bool
      */
     public function loggingIsEnabled(): bool
     {
@@ -297,7 +284,6 @@ class Mail extends Email
     /**
      * Sets the parameters to the request object
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
@@ -313,18 +299,12 @@ class Mail extends Email
     /**
      * Sets a single parameter to the request object
      *
-     * @param int|string $key
-     * @param mixed $value
      *
      * @return $this Provides fluent interface
      */
     public function setParam(int|string $key, mixed $value): static
     {
-        if (is_string($key) || is_int($key)) {
-            $this->params[$key] = $value;
-        } else {
-            Logger::warn('$key has to be a string or integer - Param ignored!');
-        }
+        $this->params[$key] = $value;
 
         return $this;
     }
@@ -342,9 +322,7 @@ class Mail extends Email
     /**
      * Returns a parameter which was set with "setParams" or "setParam"
      *
-     * @param int|string $key
      *
-     * @return mixed
      */
     public function getParam(int|string $key): mixed
     {
@@ -354,7 +332,6 @@ class Mail extends Email
     /**
      * Forces the debug mode - useful for cli-script which should not send emails to recipients
      *
-     * @param bool $value
      */
     public static function setForceDebugMode(bool $value): void
     {
@@ -364,7 +341,6 @@ class Mail extends Email
     /**
      * Deletes parameters which were set with "setParams" or "setParam"
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
@@ -380,17 +356,12 @@ class Mail extends Email
     /**
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
-     * @param int|string $key
      *
      * @return $this Provides fluent interface
      */
     public function unsetParam(int|string $key): static
     {
-        if (is_string($key) || is_int($key)) {
-            unset($this->params[$key]);
-        } else {
-            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
-        }
+        unset($this->params[$key]);
 
         return $this;
     }
@@ -449,7 +420,6 @@ class Mail extends Email
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  MailerInterface|null $mailer
      *
      * @return $this Provides fluent interface
      */
@@ -483,7 +453,6 @@ class Mail extends Email
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param MailerInterface|null $mailer
      *
      * @return $this
      *
@@ -552,6 +521,8 @@ class Mail extends Email
             if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
+
+            \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
 
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
@@ -644,7 +615,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
     public function getSubjectRendered(): string
     {
@@ -666,7 +636,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string|null
      */
     public function getBodyHtmlRendered(): ?string
     {
@@ -701,7 +670,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
     public function getBodyTextRendered(): string
     {
@@ -739,7 +707,6 @@ class Mail extends Email
     }
 
     /**
-     * @param Model\Document|int|string|null $document
      *
      * @return $this
      *
@@ -769,7 +736,6 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email|null
      */
     public function getDocument(): Model\Document\Email|null
     {
@@ -805,7 +771,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
     public function isPreventingDebugInformationAppending(): bool
     {
@@ -832,7 +797,6 @@ class Mail extends Email
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getOriginalData(): ?array
     {
@@ -840,7 +804,6 @@ class Mail extends Email
     }
 
     /**
-     * @param array|null $originalData
      *
      * @internal
      */
@@ -857,7 +820,6 @@ class Mail extends Email
     /**
      * Set the Content-type of this entity.
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -884,7 +846,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -896,7 +858,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -908,7 +870,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -920,7 +882,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -932,7 +894,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */

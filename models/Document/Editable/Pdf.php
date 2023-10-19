@@ -28,21 +28,14 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'pdf';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -57,9 +50,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): array
     {
         $pages = 0;
@@ -86,9 +76,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -120,9 +107,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
@@ -134,9 +118,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $pdf = $data['id'] ? Asset::getById($data['id']) : null;
@@ -147,9 +128,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $asset = $this->id ? Asset::getById($this->id) : null;

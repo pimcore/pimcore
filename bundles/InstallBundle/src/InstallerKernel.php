@@ -41,33 +41,21 @@ class InstallerKernel extends Kernel
         parent::__construct($environment, $debug);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProjectDir(): string
     {
         return $this->projectRoot;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLogDir(): string
     {
         return $this->projectRoot . '/var/log';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheDir(): string
     {
         return $this->projectRoot . '/var/installer/cache';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerBundles(): array
     {
         $bundles = [

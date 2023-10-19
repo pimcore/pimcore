@@ -43,17 +43,11 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     protected Document\Snippet|Model\Element\ElementDescriptor|null $snippet = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'snippet';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->id;
@@ -69,9 +63,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return (int) $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         if ($this->snippet instanceof Document\Snippet) {
@@ -84,9 +75,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
@@ -154,9 +142,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $content;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $data = (int) $data;
@@ -168,9 +153,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if ((int)$data > 0) {
@@ -192,9 +174,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -211,9 +190,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -228,9 +204,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         if (!$this->snippet && $this->id) {
@@ -238,9 +211,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         $id = $this->getId();

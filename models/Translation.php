@@ -197,9 +197,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      *
-     * @param string $domain
-     *
-     * @return array
+     * @return string[]
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
@@ -234,13 +232,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param string $domain
-     * @param bool $create
-     * @param bool $returnIdIfEmpty
-     * @param array|null $languages
      *
-     * @return static|null
      *
      * @throws \Exception
      */
@@ -308,13 +300,8 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param string $domain
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
-     * @param string|null $language
-     *
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -385,12 +372,7 @@ final class Translation extends AbstractModel
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
      * @param string $file - path to the csv file
-     * @param string $domain
-     * @param bool $replaceExistingTranslations
-     * @param array|null $languages
-     * @param \stdClass|null $dialect
-     *
-     * @return array
+     * @param string[]|null $languages
      *
      * @throws \Exception
      *
@@ -401,7 +383,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || !is_array($languages)) {
+            if (!$languages) {
                 $languages = static::getValidLanguages($domain);
             }
 
@@ -437,7 +419,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) && count($data) > 1) {
+            if (count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {
@@ -446,6 +428,7 @@ final class Translation extends AbstractModel
                 $data = array_slice($data, 1);
                 foreach ($data as $row) {
                     $keyValueArray = [];
+                    $row = Service::unEscapeCsvRecord($row);
                     for ($counter = 0; $counter < count($row); $counter++) {
                         $rd = str_replace('&quot;', '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
@@ -456,7 +439,6 @@ final class Translation extends AbstractModel
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
-                            $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
                                 $currentTranslation = $t->getTranslation($key);
                                 if ($replaceExistingTranslations) {

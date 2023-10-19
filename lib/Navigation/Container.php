@@ -51,14 +51,12 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * An index that contains the order in which to iterate pages
      *
-     * @var array
      */
     protected array $_index = [];
 
     /**
      * Whether index is dirty and needs to be re-arranged
      *
-     * @var bool
      */
     protected bool $_dirtyIndex = false;
 
@@ -193,13 +191,11 @@ class Container implements \RecursiveIterator, \Countable
     {
         if ($page instanceof Page) {
             $hash = $page->hashCode();
-        } elseif (is_int($page)) {
+        } else {
             $this->_sort();
             if (!$hash = array_search($page, $this->_index)) {
                 return false;
             }
-        } else {
-            return false;
         }
 
         if (isset($this->_pages[$hash])) {
@@ -487,7 +483,6 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Returns an array representation of all pages in container
      *
-     * @return array
      */
     public function toArray(): array
     {
@@ -504,7 +499,6 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return Page
      *
      * @throws \Exception
      */

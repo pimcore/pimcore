@@ -22,11 +22,7 @@ use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 interface DataExtractorInterface
 {
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */

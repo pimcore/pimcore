@@ -57,7 +57,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $collapsible = false;
 
@@ -74,7 +73,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var string
      */
     public string $datatype = 'layout';
 
@@ -205,7 +203,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @return array
      */
     public function &getChildrenByRef(): array
     {
@@ -221,7 +218,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
+        if (count($this->children) > 0) {
             return true;
         }
 

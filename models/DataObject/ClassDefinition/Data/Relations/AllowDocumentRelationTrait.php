@@ -27,9 +27,7 @@ trait AllowDocumentRelationTrait
     /**
      * Checks if a document is an allowed relation
      *
-     * @param Document $document
      *
-     * @return bool
      *
      * @internal
      */
