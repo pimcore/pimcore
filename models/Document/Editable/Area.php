@@ -208,7 +208,7 @@ class Area extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (strlen($data) > 2) {
+        if (is_string($data) && strlen($data) > 2) {
             $data = Serialize::unserialize($data);
         }
 
