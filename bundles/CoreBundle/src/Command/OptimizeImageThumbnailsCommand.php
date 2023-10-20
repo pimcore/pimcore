@@ -20,25 +20,23 @@ use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Image\ImageOptimizerInterface;
 use Pimcore\Tool\Storage;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:thumbnails:optimize-images',
+    description: 'Optimize filesize of all thumbnails',
+    aliases: ['thumbnails:optimize-images']
+)]
 class OptimizeImageThumbnailsCommand extends AbstractCommand
 {
     public function __construct(private ImageOptimizerInterface $optimizer)
     {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setName('pimcore:thumbnails:optimize-images')
-            ->setAliases(['thumbnails:optimize-images'])
-            ->setDescription('Optimize filesize of all thumbnails');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

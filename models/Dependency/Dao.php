@@ -58,6 +58,122 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    public function getFilterRequiresByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null): array
+    {
+
+        $sourceId = (int)$this->model->getSourceId();
+
+        if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
+            $sourceType = $this->model->getSourceType();
+        } else {
+            throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
+        }
+
+        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+            $orderBy = 'id';
+        }
+
+        if (!in_array($orderDirection, ['ASC', 'DESC'])) {
+            $orderDirection = 'ASC';
+        }
+
+        //filterRequiresByPath
+        $query = "
+        SELECT id, type
+        FROM (
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= 'document'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= 'asset'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+        ) dep
+        ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        if ($offset !== null && $limit !== null) {
+            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+        }
+
+        $requiresByPath = $this->db->fetchAllAssociative($query);
+
+        if (count($requiresByPath) > 0) {
+            return $requiresByPath;
+        } else {
+            return [];
+        }
+    }
+
+    public function getFilterRequiredByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null
+    ): array {
+
+        $targetId = (int)$this->model->getSourceId();
+
+        if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
+            $targetType = $this->model->getSourceType();
+        } else {
+            throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
+        }
+
+        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+            $orderBy = 'id';
+        }
+
+        if (!in_array($orderDirection, ['ASC', 'DESC'])) {
+            $orderDirection = 'ASC';
+        }
+
+        //filterRequiredByPath
+        $query = "
+        SELECT id, type
+        FROM (
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= 'document'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= 'asset'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+        ) dep
+        ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        if ($offset !== null && $limit !== null) {
+            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+        }
+
+        $requiredByPath = $this->db->fetchAllAssociative($query);
+
+        if (count($requiredByPath) > 0) {
+            return $requiredByPath;
+        } else {
+            return [];
+        }
+    }
+
     /**
      * Clear all relations in the database
      *

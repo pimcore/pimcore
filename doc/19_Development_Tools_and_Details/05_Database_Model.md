@@ -83,11 +83,11 @@ added to the database. The tables have a numerical suffix, denoting the number
  
 | Table / View | Description |
 |-------|-------------|
-| object_(id) View | Database view joining object_query_(id) and objects table |
-| object_query_(id) Table | Use this table to retrieve data incl. inherited data. Data types with relations are usually stored in a serialized form here, too. Pimcore Object-Lists work with this table. |
-| object_relations_(id) Table | Contains data of fields with relations to objects, assets, etc. |
-| object_store_(id) Table | This is the main data storage table of an object class. It contains all "flat" data without any relations or external dependencies. |
-| objects Table | Contains an entry for each and every object in the system. The id field is an auto_increment and the source of the primary key for an object. Metadata about an object is stored in this table, too. |
+| `object_(id)` View | Database view joining object_query_(id) and objects table |
+| `object_query_(id)` Table | Use this table to retrieve data incl. inherited data. Data types with relations are usually stored in a serialized form here, too. Pimcore Object-Lists work with this table. |
+| `object_relations_(id)` Table | Contains data of fields with relations to objects, assets, etc. |
+| `object_store_(id)` Table | This is the main data storage table of an object class. It contains all "flat" data without any relations or external dependencies. |
+| `objects` Table | Contains an entry for each and every object in the system. The id field is an auto_increment and the source of the primary key for an object. Metadata about an object is stored in this table, too. |
 
 > When restore of query tables is necessary (for what ever reason) calling `DataObject\Concrete::disableDirtyDetection();` and 
 > saving all data objects of class will do the trick. When not disabling dirty detection, there might be data missing in query table. 

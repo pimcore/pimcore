@@ -137,10 +137,12 @@ abstract class Page extends Container
     protected array $_customHtmlAttribs = [];
 
     /**
+     * @deprecated will be removed in Pimcore 12.
+     *
      * The type of page to use when it wasn't set
      *
      */
-    protected static string $_defaultPageType;
+    protected static ?string $_defaultPageType = null;
 
     // Initialization:
 
@@ -167,8 +169,8 @@ abstract class Page extends Container
     {
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif (self::getDefaultPageType() != null) {
-            $type = self::getDefaultPageType();
+        } elseif (self::$_defaultPageType != null) {
+            $type = self::$_defaultPageType;
         }
 
         if (isset($type)) {
@@ -1089,24 +1091,6 @@ abstract class Page extends Container
     protected static function _normalizePropertyName(string $property): string
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @internal
-     */
-    public static function setDefaultPageType(string $type): void
-    {
-        self::$_defaultPageType = $type;
-    }
-
-    /**
-     * @internal
-     */
-    public static function getDefaultPageType(): string
-    {
-        return self::$_defaultPageType;
     }
 
     /**

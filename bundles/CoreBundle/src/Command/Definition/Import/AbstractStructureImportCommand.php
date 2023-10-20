@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Model\AbstractModel;
+use Pimcore\Model\ModelInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -185,19 +185,19 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      *
      */
-    abstract protected function loadDefinition(string $name): ?AbstractModel;
+    abstract protected function loadDefinition(string $name): ?ModelInterface;
 
     /**
      * Create a new definition
      *
      *
      */
-    abstract protected function createDefinition(string $name): ?AbstractModel;
+    abstract protected function createDefinition(string $name): ?ModelInterface;
 
     /**
      * Process import
      *
      *
      */
-    abstract protected function import(AbstractModel $definition, string $json): bool;
+    abstract protected function import(ModelInterface $definition, string $json): bool;
 }

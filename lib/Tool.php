@@ -549,6 +549,8 @@ final class Tool
      * @internal
      *
      * @return string[]
+     *
+     * @deprecated. Remove in Pimcore 12
      */
     public static function getCachedSymfonyEnvironments(): array
     {

@@ -37,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount(): int
     {
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $queryBuilder->resetQueryPart('orderBy');
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
@@ -54,7 +54,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return count($this->model->load());
         }
 
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
@@ -64,7 +64,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getAllTranslations(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['*']);
+        $queryBuilder = $this->getQueryBuilder('*');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
@@ -103,7 +103,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadRaw(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['*']);
+        $queryBuilder = $this->getQueryBuilder('*');
         $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
         return $translationsData;
@@ -113,7 +113,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
 
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {

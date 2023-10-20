@@ -39,7 +39,7 @@ In the following example the workflow applies to products where the attribute "p
 ## Custom Support Strategy
 
 If a very specific logic is needed it's possible to add a service which implements the 
-`Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface`.
+`Symfony\Component\Workflow\SupportStrategy\WorkflowSupportStrategyInterface`.
 
 ##### Configuration Example
 
@@ -54,12 +54,12 @@ If a very specific logic is needed it's possible to add a service which implemen
 <?php
 namespace App\Workflow;
 
-use Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\SupportStrategy\WorkflowSupportStrategyInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
-class SupportStrategy implements SupportStrategyInterface
+class SupportStrategy implements WorkflowSupportStrategyInterface
 {
-    public function supports(Workflow $workflow, object $subject): bool
+    public function supports(WorkflowInterface $workflow, object $subject): bool
     {
         if ($subject instanceof \Pimcore\Model\DataObject\Test) {
             return true;

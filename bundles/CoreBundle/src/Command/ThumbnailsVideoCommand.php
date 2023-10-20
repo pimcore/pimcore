@@ -21,6 +21,7 @@ use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +29,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:thumbnails:video',
+    description: 'Generate video thumbnails, useful to pre-generate thumbnails in the background',
+    aliases: ['thumbnails:video']
+)]
 class ThumbnailsVideoCommand extends AbstractCommand
 {
     use Parallelization;
@@ -38,15 +44,12 @@ class ThumbnailsVideoCommand extends AbstractCommand
         self::configureCommand($this);
 
         $this
-            ->setName('pimcore:thumbnails:video')
-            ->setAliases(['thumbnails:video'])
-            ->setDescription('Generate video thumbnails, useful to pre-generate thumbnails in the background')
-            ->addOption(
-                'parent',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images in this folder (ID)'
-            )
+           ->addOption(
+               'parent',
+               null,
+               InputOption::VALUE_OPTIONAL,
+               'only create thumbnails of images in this folder (ID)'
+           )
             ->addOption(
                 'thumbnails',
                 't',

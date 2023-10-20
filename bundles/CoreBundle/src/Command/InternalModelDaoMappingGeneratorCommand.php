@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\File;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -26,16 +27,13 @@ use Symfony\Component\Finder\Finder;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'internal:model-dao-mapping-generator',
+    description: 'For internal use only',
+    hidden: true
+)]
 class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->setHidden(true)
-            ->setName('internal:model-dao-mapping-generator')
-            ->setDescription('For internal use only');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $finder = new Finder();

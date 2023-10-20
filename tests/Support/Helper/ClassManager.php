@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Support\Helper;
 use Codeception\Module;
 use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
@@ -29,7 +30,7 @@ class ClassManager extends Module
     /**
      * @throws Exception
      */
-    public function getClass(string $name): ?ClassDefinition
+    public function getClass(string $name): ?ClassDefinitionInterface
     {
         if ($class = ClassDefinition::getByName($name)) {
             return $class;
@@ -48,7 +49,7 @@ class ClassManager extends Module
      *
      * @throws DefinitionWriteException
      */
-    public function setupClass(string $name, string $filename): ClassDefinition
+    public function setupClass(string $name, string $filename): ClassDefinitionInterface
     {
         // class either already exists or it must be created
         if (!$this->hasClass($name)) {

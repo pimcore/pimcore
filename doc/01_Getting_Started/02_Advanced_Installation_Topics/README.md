@@ -38,18 +38,22 @@ $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=passwor
 
 ### Installing Bundles
 
-The `--install-bundles` flag will install and enable the specified bundles.  
-Attention: The bundles will be added to `config/bundles.php` automatically.
+#### Overview of Bundle Lists
 
-```bash
-./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
---mysql-username=username --mysql-password=password --mysql-database=pimcore \
---mysql-host-socket=127.0.0.1 --mysql-port=3306 \
---install-bundles=PimcoreApplicationLoggerBundle,PimcoreCustomReportsBundle \
---no-interaction
-```
+When installing, you will [interact with](#modifying-required-bundles-and-bundle-recommendations) two lists of
+bundles: **Recommended Bundles** and **Required Bundles**.
 
-Available bundles for installation: 
+- **Recommended Bundles**:
+    - Displayed to users during interactive mode.
+    - These are the bundles users can specify when using the `--install-bundles=commaSeparatedBundleList` option.
+
+- **Required Bundles**:
+    - These bundles will automatically be installed in interactive mode, if the user choses to install bundles.
+    - They are installed whenever the `--install-bundles` option is set.
+
+#### Default Recommended Bundles
+
+By default, here's what's included in the Recommended Bundles list:
 
 - [PimcoreApplicationLoggerBundle](../../18_Tools_and_Features/17_Application_Logger.md)
 - [PimcoreCustomReportsBundle](../../18_Tools_and_Features/29_Custom_Reports.md)
@@ -62,11 +66,30 @@ Available bundles for installation:
 - PimcoreWordExportBundle (for import/export functionality for translations in Word format)
 - PimcoreXliffBundle (for import/export functionality for translations in Xliff format)
 
-#### Adding or Removing Bundles / Bundle Recommendations
-Before bundles are displayed in the installation process, the `BundleSetupEvent` is fired.
-You can listen or subscribe to this event to add/remove bundles.
-Note that a recommendation will only be added if the bundle is already in the bundles list.
-For more info, you can take a look at the [Pimcore Skeleton](https://github.com/pimcore/skeleton) to see how the [Admin UI Classic Bundle](https://github.com/pimcore/admin-ui-classic-bundle) is installed.
+#### Automating Bundle Installation
+
+To install specific bundles automatically, use the `--install-bundles[=bundleList]` flag. This flag installs and
+activates all required bundles and any specified bundles, provided they are part of the recommended bundles list.
+
+**Note**: The bundles will be automatically added to `config/bundles.php`.
+
+```bash
+./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
+--mysql-username=username --mysql-password=password --mysql-database=pimcore \
+--mysql-host-socket=127.0.0.1 --mysql-port=3306 \
+--install-bundles=PimcoreApplicationLoggerBundle,PimcoreCustomReportsBundle \
+--no-interaction
+```
+
+#### Modifying Required Bundles and Bundle Recommendations
+The `BundleSetupEvent` is triggered under two circumstances:
+
+1. To preset the installable (recommended) and automatically installed (required) bundles for the `--install-bundles` option.
+2. To modify a list of recommended bundles in interactive mode. Required bundles are not installed if the user declines to install bundles.
+
+By subscribing or listening to the `BundleSetupEvent`, you can add or remove bundles from the required or recommended lists.
+
+For practical examples, refer to the [Pimcore Skeleton](https://github.com/pimcore/skeleton). It shows how the [Admin UI Classic Bundle](https://github.com/pimcore/admin-ui-classic-bundle) is integrated.
 
 ```php
 <?php
@@ -91,7 +114,7 @@ class BundleSetupSubscriber implements EventSubscriberInterface
 
     public function bundleSetup(BundleSetupEvent $event): void
     {
-        // add installable bundle and recommend it
+        // make bundle installable (using --install-bundles) and recommend it in interactive installation
         $event->addInstallableBundle('PimcoreAdminBundle', PimcoreAdminBundle::class, true);
 
         // add required bundle

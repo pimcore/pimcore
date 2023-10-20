@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,13 +27,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:assets:remove-custom-setting',
+    description: 'Removes a custom setting from assets',
+)]
 class RemoveCustomSettingCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:assets:remove-custom-setting')
-            ->setDescription('Removes a custom setting from assets')
             ->addArgument('name', InputOption::VALUE_REQUIRED, 'Name of the custom setting to remove')
             ->addOption(
                 'id',

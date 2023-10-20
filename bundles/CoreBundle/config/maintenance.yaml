@@ -94,6 +94,10 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
 
+    Pimcore\Maintenance\Tasks\PruningCacheItemsTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: pruning_cache_items }
+
     Pimcore\Maintenance\Tasks\StaticPagesGenerationTask:
         arguments:
             - '@Pimcore\Document\StaticPageGenerator'

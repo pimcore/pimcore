@@ -24,7 +24,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -86,7 +86,7 @@ class UUIDListener implements EventSubscriberInterface
         return false;
     }
 
-    protected function extractElement(Event $event): ClassDefinition|ElementInterface|null
+    protected function extractElement(Event $event): ClassDefinitionInterface|ElementInterface|null
     {
         $element = null;
 

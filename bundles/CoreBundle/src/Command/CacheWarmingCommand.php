@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,6 +26,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:cache:warming',
+    description: 'Warm up caches'
+)]
 class CacheWarmingCommand extends AbstractCommand
 {
     protected array $validTypes = [
@@ -60,8 +65,6 @@ class CacheWarmingCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:cache:warming')
-            ->setDescription('Warm up caches')
             ->addOption(
                 'types',
                 't',

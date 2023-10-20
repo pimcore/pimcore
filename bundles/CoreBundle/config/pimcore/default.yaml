@@ -23,6 +23,7 @@ framework:
     php_errors:
         log: true
     assets: ~
+    http_method_override: false
     mailer:
         enabled: true
         transports:
@@ -48,7 +49,6 @@ framework:
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
-        reset_on_message: true
     rate_limiter:
         reset_password:
             policy: 'fixed_window'
@@ -119,6 +119,8 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        document: ~
+        editmode: false
     paths:
         '%kernel.project_dir%/templates': App
 

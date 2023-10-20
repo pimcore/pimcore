@@ -163,7 +163,7 @@ final class UUID extends Model\AbstractModel
 
         if ($item instanceof Model\Element\ElementInterface) {
             $this->setType(Model\Element\Service::getElementType($item));
-        } elseif ($item instanceof Model\DataObject\ClassDefinition) {
+        } elseif ($item instanceof Model\DataObject\ClassDefinitionInterface) {
             $this->setType('class');
         }
 

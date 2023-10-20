@@ -47,8 +47,9 @@ class Service
     public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
-        if ($class->layoutDefinitions instanceof Layout) {
-            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        $layoutDefinitions = $class->getLayoutDefinitions();
+        if ($layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
         }
 
         self::setDoRemoveDynamicOptions(true);
@@ -79,7 +80,7 @@ class Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     if ($child instanceof DataObject\ClassDefinition\Data\Select) {
-                        if ($child->getOptionsProviderClass()) {
+                        if (!$child->useConfiguredOptions() && $child->getOptionsProviderClass()) {
                             $child->options = null;
                         }
                     }
