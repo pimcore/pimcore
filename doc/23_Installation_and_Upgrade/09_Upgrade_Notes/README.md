@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.2.0
+### Elements
+#### [Data Objects]:
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+
 ## Pimcore 11.1.0
 ### Elements
 
@@ -24,7 +29,6 @@
 
 #### [Data Objects]:
 - Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
-- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
 - Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
 - Input fields `CheckValidity` checks the column length.
 

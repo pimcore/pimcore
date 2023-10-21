@@ -1003,7 +1003,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '11.1',
+            '11.2',
             'Using "%s" is deprecated and will be removed in Pimcore 12.',
             __METHOD__
         );
@@ -1018,7 +1018,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '11.1',
+            '11.2',
             'Using "%s" is deprecated and will be removed in Pimcore 12.',
             __METHOD__
         );
