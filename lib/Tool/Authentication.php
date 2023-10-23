@@ -55,6 +55,7 @@ class Authentication
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
                 $pimcoreUser = $user->getUser();
                 $pimcoreUser->setLastLoginDate(); //set user current login date
+
                 return $pimcoreUser;
             }
         }
