@@ -407,17 +407,19 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
-        if ($value === 'NULL') {
-            if ($operator === '=') {
-                $operator = 'IS';
-            } elseif ($operator === '!=') {
-                $operator = 'IS NOT';
-            }
-        } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator === 'LIKE') {
-                $value = $db->quote('%' . $value . '%');
-            } else {
-                $value = $db->quote($value);
+        if (!is_numeric($value)) {
+            if ($value === 'NULL') {
+                if ($operator === '=') {
+                    $operator = 'IS';
+                } elseif ($operator === '!=') {
+                    $operator = 'IS NOT';
+                }
+            } elseif (!is_array($value) && !is_object($value)) {
+                if ($operator === 'LIKE') {
+                    $value = $db->quote('%' . $value . '%');
+                } else {
+                    $value = $db->quote($value);
+                }
             }
         }
 
