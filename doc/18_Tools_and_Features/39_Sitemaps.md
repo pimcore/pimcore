@@ -258,7 +258,7 @@ Make the generator available to the core listener by registering it on the confi
 ```yaml
 # config.yaml
 
-pimcore:
+pimcore_seo:
     sitemaps:
         generators:
             app_blog:
