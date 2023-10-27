@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.2.0
+### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+
 ## Pimcore 11.1.0
 ### Elements
 
@@ -28,7 +33,6 @@
 - Input fields `CheckValidity` checks the column length.
 
 #### [Documents]:
-- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
 - Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
 - Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
 
