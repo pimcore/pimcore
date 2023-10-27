@@ -81,11 +81,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return $values;
         }
 
-        if (empty($this->items)) {
-            foreach ($this->getObjectVars() as $var) {
-                if ($var instanceof Objectbrick\Data\AbstractData) {
-                    $this->items[] = $var;
-                }
+        foreach ($this->getObjectVars() as $var) {
+            if ($var instanceof Objectbrick\Data\AbstractData &&
+                !in_array($var, $this->items, true)) {
+                $this->items[] = $var;
             }
         }
 
@@ -186,10 +185,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
@@ -222,7 +217,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __sleep(): array
     {
         $finalVars = [];
-        $blockedVars = ['object'];
+        $blockedVars = ['object', 'brickGetters'];
         $vars = parent::__sleep();
 
         foreach ($vars as $value) {

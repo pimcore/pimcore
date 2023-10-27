@@ -19,11 +19,16 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'pimcore:documents:cleanup',
+    description: 'Cleans up unused document types. Removes type from enums and tables if exist'
+)]
 class CleanupCommand extends AbstractCommand
 {
     protected const STANDARD_DOCUMENT_ENUM_TYPES = [
@@ -40,8 +45,6 @@ class CleanupCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:documents:cleanup')
-            ->setDescription('Cleans up unused document types. Removes type from enums and tables if exist')
             ->addArgument('documentTypes',
                 InputArgument::IS_ARRAY,
                 'Which types do you want to clean up');

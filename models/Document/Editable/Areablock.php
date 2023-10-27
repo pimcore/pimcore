@@ -400,7 +400,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $dialogHtml = '';
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
+            $items = $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
+            $dialogConfig->setItems($items);
         }
 
         return [
@@ -420,12 +421,27 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      */
-    protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html): void
+    protected function renderDialogBoxEditables(array|Document\Editable $config, EditableRenderer $editableRenderer, string $dialogId, string &$html): array
     {
+        if ($config instanceof BlockInterface || $config instanceof Area) {
+            // Unsupported element was passed (e.g., Block, Areablock, ...)
+            // or an Areas was passed, which is not supported to avoid too long editable names
+            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
+        } elseif ($config instanceof Document\Editable) {
+            // Map editable to array config
+            $config = [
+                'type' => $config->getType(),
+                'name' => $config->getName(),
+                'label' => $config->getLabel(),
+                'config' => $config->getConfig(),
+                'description' => $config->getDialogDescription(),
+            ];
+        }
+
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
-            foreach ($config['items'] as $child) {
-                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
+            foreach ($config['items'] as $index => $child) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
@@ -437,10 +453,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             $editable->addConfig('dialogBoxConfig', $config);
             $html .= $editable->render();
         } else {
-            foreach ($config as $item) {
-                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
+            foreach ($config as $index => $item) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
             }
         }
+
+        return $config;
     }
 
     public function blockEnd(): void

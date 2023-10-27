@@ -23,6 +23,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Data Objects](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectEvents.php)
 - [Versions](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/VersionEvents.php)
 - [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectClassDefinitionEvents.php)
+- [Object Brick Definition](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/ObjectbrickDefinitionEvents.php)
 - [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectClassificationStoreEvents.php)
 - [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectCustomLayoutEvents.php)
 - [Data Object Import](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectImportEvents.php)
@@ -44,7 +45,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Targeting](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TargetingEvents.php)
 - [Tests](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TestEvents.php)
 - [Translation](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TranslationEvents.php)
-- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Event/BundleManagerEvents.php)
+- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php)
 
 ## Examples
 
@@ -161,4 +162,3 @@ into the /news/in-enim-justo_2/image_1 asset folder.
                 }
         });
 ```  
-

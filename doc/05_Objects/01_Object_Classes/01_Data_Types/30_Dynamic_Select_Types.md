@@ -10,14 +10,19 @@ Note that there are two ways to define an options provider.
 
 Either simply specify the class name ...
 
-![Select Field](../../../img/dynselect1.png)
+![Select Field](../../../img/dynamic_select_class.png)
 
 ... or the name of a Symfony service (notice the prefix).
-![Select Field](../../../img/dynselect1b.png)
+![Select Field](../../../img/dynamic_select_service.png)
 
-The services.yaml would then look like this one ...
+The services.yaml would then look like this:
 
-![Select Field](../../../img/dynselect1a.png)
+```yaml
+services:
+  website.optionsprovider:
+    class: Website\OptionsProvider
+    public: true
+```
 
 Depending on your datatype you have to implement the appropriate interface.
  

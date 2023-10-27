@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,14 +27,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:classificationstore:delete-store',
+    description: 'Delete Classification Store',
+    aliases: ['classificationstore:delete-store']
+)]
 class DeleteClassificationStoreCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:classificationstore:delete-store')
-            ->setAliases(['classificationstore:delete-store'])
-            ->setDescription('Delete Classification Store')
             ->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete')
         ;
     }

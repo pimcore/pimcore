@@ -20,6 +20,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
 use Pimcore\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,7 +53,10 @@ class Authentication
             $user = $token->getUser();
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
-                return $user->getUser();
+                $pimcoreUser = $user->getUser();
+                $pimcoreUser->setLastLoginDate(); //set user current login date
+
+                return $pimcoreUser;
             }
         }
 
@@ -115,17 +119,19 @@ class Authentication
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
-        $username = null;
         $timestamp = null;
 
         try {
-            [$timestamp, $username] = self::tokenDecrypt($token);
+            [$timestamp, $user] = self::tokenDecrypt($token);
         } catch (CryptoException $e) {
             return null;
         }
 
-        $user = User::getByName($username);
         if (self::isValidUser($user)) {
+            // expiring the token
+            $user->setPasswordRecoveryToken(null);
+            $user->save();
+
             if ($adminRequired && !$user->isAdmin()) {
                 return null;
             }
@@ -202,25 +208,45 @@ class Authentication
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function generateToken(string $username): string
     {
+        $user = User::getByName($username);
+
+        return self::generateTokenByUser($user);
+    }
+
+    /**
+     * @internal
+     */
+    public static function generateTokenByUser(User $user): string
+    {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 
-        $data = time() - 1 . '|' . $username;
+        $data = time() - 1 . '|' . $user->getName();
         $token = Crypto::encryptWithPassword($data, $secret);
+
+        $user->setPasswordRecoveryToken($token);
+        $user->save();
 
         return $token;
     }
 
+    /**
+     * @throws NotFoundException if token does not belong to any user
+     * @throws CryptoException
+     */
     private static function tokenDecrypt(string $token): array
     {
+        $user = new User();
+        $user->getDao()->getByPasswordRecoveryToken($token);
+
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);
 
-        return explode('|', $decrypted);
+        $explode = explode('|', $decrypted);
+
+        return [$explode[0], $user];
     }
 }

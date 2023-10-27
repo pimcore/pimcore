@@ -501,7 +501,6 @@ class CoreCacheHandler implements LoggerAwareInterface
         $item->set($data);
         $item->expiresAfter($lifetime);
         $item->tag($tags);
-        $item->tag($key);
         $result = $this->pool->save($item);
 
         if ($result) {

@@ -275,6 +275,8 @@ class Asset extends Element\AbstractElement
                 new AssetEvent($asset, ['params' => $params]),
                 AssetEvents::POST_LOAD
             );
+        } else {
+            $asset = null;
         }
 
         return $asset;
@@ -362,7 +364,7 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
-        if ($tmpFile) {
+        if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
@@ -730,16 +732,18 @@ class Asset extends Element\AbstractElement
 
         $this->postPersistData();
 
-        // save properties
-        $this->getProperties();
-        $this->getDao()->deleteAllProperties();
-        foreach ($this->getProperties() as $property) {
-            if (!$property->getInherited()) {
-                $property->setDao(null);
-                $property->setCid($this->getId());
-                $property->setCtype('asset');
-                $property->setCpath($this->getRealFullPath());
-                $property->save();
+        if ($this->isFieldDirty('properties')) {
+            // save properties
+            $properties = $this->getProperties();
+            $this->getDao()->deleteAllProperties();
+            foreach ($properties as $property) {
+                if (!$property->getInherited()) {
+                    $property->setDao(null);
+                    $property->setCid($this->getId());
+                    $property->setCtype('asset');
+                    $property->setCpath($this->getRealFullPath());
+                    $property->save();
+                }
             }
         }
 
@@ -750,7 +754,7 @@ class Asset extends Element\AbstractElement
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // dont't add a reference to yourself
+                // don't add a reference to yourself
                 continue;
             } else {
                 $d->addRequirement($requirement['id'], $requirement['type']);
@@ -1565,7 +1569,8 @@ class Asset extends Element\AbstractElement
                         /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
                         $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
-                    } catch (UnsupportedException $e) {
+                    } catch (UnsupportedException) {
+                        //nothing to log here
                     }
                 }
             }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -32,8 +33,10 @@ class MaintenancePageListener implements EventSubscriberInterface
 
     protected ?string $templateCode = null;
 
-    public function __construct(protected KernelInterface $kernel)
-    {
+    public function __construct(
+        protected KernelInterface $kernel,
+        protected MaintenanceModeHelperInterface $maintenanceModeHelper
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -79,22 +82,23 @@ class MaintenancePageListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $maintenance = false;
-        $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
+        $requestSessionId = $request->getSession()->getId();
 
-        if (!is_file($file)) {
-            return;
-        }
-
-        $conf = include($file);
-        if (isset($conf['sessionId'])) {
-            $requestSessionId = $request->getSession()->getId();
-
+        if ($this->maintenanceModeHelper->isActive($requestSessionId)) {
             $maintenance = true;
-            if ($conf['sessionId'] === $requestSessionId) {
-                $maintenance = false;
-            }
         } else {
-            @unlink($file);
+            $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
+
+            if (!is_file($file)) {
+                return;
+            }
+
+            $conf = include($file);
+            if (isset($conf['sessionId'])) {
+                $maintenance = $conf['sessionId'] !== $requestSessionId;
+            } else {
+                @unlink($file);
+            }
         }
 
         // do not activate the maintenance for the server itself

@@ -80,7 +80,7 @@ class Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     if ($child instanceof DataObject\ClassDefinition\Data\Select) {
-                        if ($child->getOptionsProviderClass()) {
+                        if (!$child->useConfiguredOptions() && $child->getOptionsProviderClass()) {
                             $child->options = null;
                         }
                     }

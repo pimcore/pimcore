@@ -800,6 +800,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
+            $this->preSetData($container, $data, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
