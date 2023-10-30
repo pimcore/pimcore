@@ -597,7 +597,7 @@ pimcore_seo:
 #### [Cache] :
 
 -  Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
--  Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+-  Responses containing a header `Cache-Control: no-store` will no longer be cached by the full page cache.
 -  Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 
 #### [Console] :
