@@ -32,5 +32,5 @@ interface SelectOptionsProviderInterface
      */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
 
-    public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
+    public function getDefaultValue(array $context, Data $fieldDefinition): mixed;
 }
