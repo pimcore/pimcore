@@ -26,7 +26,7 @@ services:
 
 You have to implement the following interface:
  
- * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options
+ * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface`
  
  Implement the following methods:
  * `getOptions` should return a list of valid options in the format indicated below
