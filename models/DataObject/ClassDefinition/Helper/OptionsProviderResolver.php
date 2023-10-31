@@ -34,7 +34,7 @@ class OptionsProviderResolver extends ClassResolver
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '11.1',
+            '11.2',
             'Implementing %s is deprecated, use %s instead',
             MultiSelectOptionsProviderInterface::class,
             SelectOptionsProviderInterface::class,
