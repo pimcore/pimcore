@@ -78,7 +78,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
-        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne(
+            $queryBuilder->getSQL(),
+            $this->model->getConditionVariables() + $queryBuilder->getParameters(),
+            $this->model->getConditionVariableTypes() + $queryBuilder->getParameterTypes()
+        );
 
         return (int) $totalCount;
     }
@@ -102,7 +106,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList(): array
     {
         $queryBuilder = $this->getQueryBuilder([sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as `type`', $this->getTableName() . '.type')]);
-        $objectIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $objectIds = $this->db->fetchFirstColumn(
+            $queryBuilder->getSQL(),
+            $this->model->getConditionVariables() + $queryBuilder->getParameters(),
+            $this->model->getConditionVariableTypes() + $queryBuilder->getParameterTypes()
+        );
 
         return array_map('intval', $objectIds);
     }
