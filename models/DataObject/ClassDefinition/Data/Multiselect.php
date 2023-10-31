@@ -138,21 +138,11 @@ class Multiselect extends Data implements
 
         $defaultValue = $this->handleDefaultValue($data, $object, $params);
 
-        if (null === $defaultValue) {
-            return '';
-        }
-
         if (is_array($defaultValue)) {
-            $defaultValue = array_map(function ($v) {
-                if(!isset($v['value'])) {
-                    return $v;
-                }
-
-                return $v['value'];
-            }, $defaultValue);
+            return implode(',', array_map(fn ($v) => $v['value'] ?? $v, $defaultValue));
         }
 
-        return implode(',', $defaultValue);
+        return $defaultValue ?? '';
     }
 
     /**
