@@ -24,7 +24,7 @@ services:
     public: true
 ```
 
-You have to implement following interface.
+You have to implement the following interface:
  
  * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options
  
