@@ -51,11 +51,28 @@ final class WorkflowPass implements CompilerPassInterface
 
         $workflowsConfig = $container->getParameter('pimcore.workflow');
         foreach ($workflowsConfig as $workflowName => $workflowConfig) {
+
+            $type = $workflowConfig['type'] ?? 'workflow';
+            $workflowId = sprintf('%s.%s', $type, $workflowName);
+
+            // Process Metadata (workflow + places (transition is done in the "create transition" block))
+            $metadataStoreDefinition = new Definition(Workflow\Metadata\InMemoryMetadataStore::class, [[], [], null]);
+            if (!empty($workflowConfig['metadata'])) {
+                $metadataStoreDefinition->replaceArgument(0, $workflowConfig['metadata']);
+            }
+            $placesMetadata = [];
+            foreach ($workflowConfig['places'] as $place) {
+                if (!empty($place['metadata'])) {
+                    $placesMetadata[$place['name']] = $place['metadata'];
+                }
+            }
+            if ($placesMetadata) {
+                $metadataStoreDefinition->replaceArgument(1, $placesMetadata);
+            }
+
             if (!$workflowConfig['enabled']) {
                 continue;
             }
-
-            $type = $workflowConfig['type'] ?? 'workflow';
 
             $workflowManagerDefinition->addMethodCall(
                 'registerWorkflow',
@@ -70,24 +87,38 @@ final class WorkflowPass implements CompilerPassInterface
             );
 
             $transitions = [];
+            $transitionCounter = 0;
+
+            $transitionsMetadataDefinition = new Definition(\SplObjectStorage::class);
             foreach ($workflowConfig['transitions'] as $transitionName => $transitionConfig) {
                 if ('workflow' === $type) {
-                    $transitions[] = new Definition(
-                        Transition::class,
-                        [
-                            $transitionName,
-                            $transitionConfig['from'],
-                            $transitionConfig['to'],
-                            $transitionConfig['options'],
-                        ]
-                    );
+                    $transitionDefinition = new Definition(Transition::class, [$transitionConfig['name'], $transitionConfig['from'], $transitionConfig['to'], $transitionConfig['options']]);
+                    $transitionDefinition->setPublic(false);
+                    $transitionId = sprintf('.%s.transition.%s', $workflowId, $transitionCounter++);
+                    $container->setDefinition($transitionId, $transitionDefinition);
+                    $transitions[] = new Reference($transitionId);
+                    if (!empty($transitionConfig['metadata'])) {
+                        $transitionsMetadataDefinition->addMethodCall('attach', [
+                            new Reference($transitionId),
+                            $transitionConfig['metadata'],
+                        ]);
+                    }
                 } elseif ('state_machine' === $type) {
                     foreach ($transitionConfig['from'] as $from) {
                         foreach ($transitionConfig['to'] as $to) {
-                            $transitions[] = new Definition(
-                                Transition::class,
-                                [$transitionName, $from, $to, $transitionConfig['options']]
-                            );
+
+                            $transitionDefinition = new Definition(Transition::class, [$transitionName, $from, $to, $transitionConfig['options']]);
+                            $transitionDefinition->setPublic(false);
+                            $transitionId = sprintf('.%s.transition.%s', $workflowId, $transitionCounter++);
+                            $container->setDefinition($transitionId, $transitionDefinition);
+                            $transitions[] = new Reference($transitionId);
+
+                            if (isset($transitionConfig['metadata'])) {
+                                $transitionsMetadataDefinition->addMethodCall('attach', [
+                                    new Reference($transitionId),
+                                    $transitionConfig['metadata'],
+                                ]);
+                            }
                         }
                     }
                 }
@@ -103,6 +134,9 @@ final class WorkflowPass implements CompilerPassInterface
                     }
                 }
             }
+
+            $metadataStoreDefinition->replaceArgument(2, $transitionsMetadataDefinition);
+            $container->setDefinition(sprintf('%s.metadata_store', $workflowId), $metadataStoreDefinition);
 
             $places = [];
             foreach ($workflowConfig['places'] as $place => $placeConfig) {
@@ -147,6 +181,7 @@ final class WorkflowPass implements CompilerPassInterface
                 $definitionDefinition->addArgument($workflowConfig['initial_markings']);
             }
 
+            $definitionDefinition->addArgument(new Reference(sprintf('%s.metadata_store', $workflowId)));
             // Create MarkingStore
             if (!is_null($markingStoreType)) {
                 $markingStoreDefinition = new ChildDefinition('workflow.marking_store.'.$markingStoreType);
@@ -174,8 +209,6 @@ final class WorkflowPass implements CompilerPassInterface
                 $markingStoreDefinition = new Reference($markingStoreService);
             }
 
-            // Create Workflow
-            $workflowId = sprintf('%s.%s', $type, $workflowName);
             $workflowDefinition = new ChildDefinition(sprintf('%s.abstract', $type));
             $workflowDefinition->replaceArgument(0, new Reference(sprintf('%s.definition', $workflowId)));
             if (isset($markingStoreDefinition)) {
@@ -187,6 +220,7 @@ final class WorkflowPass implements CompilerPassInterface
             // Store to container
             $container->setDefinition($workflowId, $workflowDefinition);
             $container->setDefinition(sprintf('%s.definition', $workflowId), $definitionDefinition);
+
 
             $registryDefinition = $container->getDefinition('workflow.registry');
             // Add workflow to Registry
