@@ -12,7 +12,7 @@ Add the bundle in your `config/bundles.php` file:
 \Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle::class => ['all' => true],
 ```
 
-After this be sure, that PimcoreTinymceBundle is installed. You can check it with: `bin/console pimcore:bundle:list`
+After this, make sure PimcoreTinymceBundle is installed with `bin/console pimcore:bundle:list`.
 If it is not installed, you can install it with `bin/console pimcore:bundle:install PimcoreTinymceBundle`.
 
 ## Add a Custom Editor
