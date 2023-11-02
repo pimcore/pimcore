@@ -13,7 +13,7 @@ Add the bundle in your `config/bundles.php` file:
 ```
 
 After this be sure, that PimcoreTinymceBundle is installed. You can check it with: `bin/console pimcore:bundle:list`
-If it is not installed, you can install it with: `bin/console pimcore:bundle:install PimcoreTinymceBundle`
+If it is not installed, you can install it with `bin/console pimcore:bundle:install PimcoreTinymceBundle`.
 
 ## Add a Custom Editor
 Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases(documents, objects ...):
