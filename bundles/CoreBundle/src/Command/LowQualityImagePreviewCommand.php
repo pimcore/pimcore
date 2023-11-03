@@ -30,9 +30,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 #[AsCommand(
     name: 'pimcore:image:low-quality-preview',
-    description: 'Regenerates low quality image previews for all image assets',
+    description: 'Regenerates low-quality image previews for all image assets',
     aliases: ['pimcore:image:svg-preview']
-
 )]
 class LowQualityImagePreviewCommand extends AbstractCommand
 {
@@ -62,8 +61,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 'f',
                 InputOption::VALUE_NONE,
                 'generate preview regardless if it already exists or not'
-            )
-            ->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'Force a generator, either `svg` or `imagick`');
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -92,11 +90,6 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $conditionVariables[] = $regex;
         }
 
-        $generator = null;
-        if ($input->getOption('generator')) {
-            $generator = $input->getOption('generator');
-        }
-
         $force = $input->getOption('force');
 
         $list = new Asset\Listing();
@@ -114,8 +107,8 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 $progressBar->advance();
                 if ($force || !$image->getLowQualityPreviewDataUri()) {
                     try {
-                        $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
-                        $image->generateLowQualityPreview($generator);
+                        $this->output->writeln('generating low-quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                        $image->generateLowQualityPreview();
                     } catch (\Exception $e) {
                         $this->output->writeln('<error>'.$e->getMessage().'</error>');
                     }
