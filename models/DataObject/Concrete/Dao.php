@@ -200,7 +200,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
-        $untouchable = [];
+        $untouchable = $relationalIdsToDelete = [];
         $db = Db::get();
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
@@ -218,24 +218,44 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
                 }
             }
+
+            $relationalIds = $this->getRelationIds($fieldName);
+            if (!empty($relationalIds)) {
+                $getter = 'get' . ucfirst($fieldName);
+                $existIds = array_map(static function($item) {
+                    return $item->getId();
+                }, $this->model->$getter());
+                $diff = array_diff($relationalIds, $existIds);
+                if (!empty($diff)) {
+                    $relationalIdsToDelete[$fieldName] = $diff;
+                }
+            }
         }
 
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
             $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
-        } else {
-            $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
+        } elseif(!empty($relationalIdsToDelete)) {
+            $condition = '';
+            foreach ($relationalIdsToDelete as $fieldName => $ids) {
+                if (!empty($condition)) {
+                    $condition .= ' AND ';
+                }
+                $condition .= '(src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object" AND fieldname = '.$db->quote($fieldName).' AND dest_id IN ('.implode(',',$ids).'))';
+            }
         }
 
-        if (!DataObject::isDirtyDetectionDisabled()) {
+        if (isset($condition) && !DataObject::isDirtyDetectionDisabled()) {
             $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
         }
 
-        $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
-        WHERE '.$condition .' LIMIT 1');
-        if ($dataExists) {
-            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
+        if (isset($condition)) {
+            $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_' . $this->model->getClassId() . '` WHERE ' . $condition . ' LIMIT 1');
+
+            if ( $dataExists ) {
+                $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
+            }
         }
 
         $inheritedValues = DataObject::doGetInheritedValues();
