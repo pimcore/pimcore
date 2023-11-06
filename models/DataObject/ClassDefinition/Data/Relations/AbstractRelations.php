@@ -117,7 +117,7 @@ abstract class AbstractRelations extends Data implements
         if (is_array($relations) && !empty($relations)) {
 
             foreach ($relations as $relation) {
-                if ( in_array($relation['dest_id'], $dataExists, true) ) {
+                if (in_array($relation['dest_id'], $dataExists, true)) {
                     continue;
                 }
 

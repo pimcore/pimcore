@@ -222,7 +222,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $relationalIds = $this->getRelationIds($fieldName);
             if (!empty($relationalIds)) {
                 $getter = 'get' . ucfirst($fieldName);
-                $existIds = array_map(static function($item) {
+                $existIds = array_map(static function ($item) {
                     return $item->getId();
                 }, $this->model->$getter());
                 $diff = array_diff($relationalIds, $existIds);
@@ -242,7 +242,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= '(src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object" AND fieldname = '.$db->quote($fieldName).' AND dest_id IN ('.implode(',',$ids).'))';
+                $condition .= '(src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object" AND fieldname = '.$db->quote($fieldName).' AND dest_id IN ('.implode(',', $ids).'))';
             }
         }
 
@@ -253,7 +253,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         if (isset($condition)) {
             $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_' . $this->model->getClassId() . '` WHERE ' . $condition . ' LIMIT 1');
 
-            if ( $dataExists ) {
+            if ($dataExists) {
                 $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
             }
         }

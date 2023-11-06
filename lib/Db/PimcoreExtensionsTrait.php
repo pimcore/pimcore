@@ -330,6 +330,7 @@ trait PimcoreExtensionsTrait
     public function fetchOne($sql, $params = [], $types = [])
     {
         $params = $this->prepareParams($params);
+
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to use $this->fetchColumn() instead
         return parent::fetchOne($sql, $params, $types);
     }

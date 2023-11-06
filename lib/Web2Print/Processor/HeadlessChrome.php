@@ -130,6 +130,7 @@ class HeadlessChrome extends Processor
 
             return $path;
         }
+
         /** @var StringOutput $output */
         return $output->get();
     }

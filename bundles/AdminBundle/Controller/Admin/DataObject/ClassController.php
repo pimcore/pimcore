@@ -97,6 +97,7 @@ class ClassController extends AdminAbstractController implements KernelControlle
             $this->checkPermission('objects');
         } catch (AccessDeniedHttpException $e) {
             Logger::log('[Startup] Object types are not loaded as "objects" permission is missing');
+
             //return empty string to avoid error on startup
             return $this->adminJson([]);
         }

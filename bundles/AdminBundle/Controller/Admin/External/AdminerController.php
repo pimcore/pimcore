@@ -270,6 +270,7 @@ namespace {
                 public function database()
                 {
                     $db = \Pimcore\Db::get();
+
                     // database name, will be escaped by Adminer
                     return $db->getDatabase();
                 }

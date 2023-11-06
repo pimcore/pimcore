@@ -1076,6 +1076,7 @@ class SettingsController extends AdminAbstractController
             $this->checkPermission('documents');
         } catch (AccessDeniedHttpException $e) {
             Logger::log('[Startup] Sites are not loaded as "documents" permission is missing');
+
             //return empty string to avoid error on startup
             return $this->adminJson([]);
         }
