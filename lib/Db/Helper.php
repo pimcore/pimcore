@@ -56,6 +56,7 @@ class Helper
                         }
                     }
                 }
+                throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', implode(', ', $checkKeys)));
             }
 
             return $connection->update($table, $data, $criteria);
