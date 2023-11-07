@@ -80,8 +80,33 @@ The installer writes a log in `var/log` which contains any errors encountered du
 ## 5. Maintenance Cron Job
 
 Maintenance tasks are handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance
-messages to the bus and run them afterward immediately from the queue. However, it is  recommended to set up independent workers that process the queues by running `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_asset_update` (using e.g.
-`Supervisor`).
+messages to the bus. `pimcore:maintenance` however, will not process the maintenance messages itself. Instead,
+independent workers are required to consume these messages from the queues and to actually perform maintenance tasks.
+In a typical pimcore installation you should set up workers for these transports:
+
+| # | Transport name                 | Purpose                                                                                       |
+|---|--------------------------------|-----------------------------------------------------------------------------------------------|
+| 1 | pimcore_core                   | Core background tasks such as converting videos, rendering asset previews, etc.               |
+| 2 | pimcore_maintenance            | [Maintenance tasks](../../20_Extending_Pimcore/16_Maintenance_Tasks.md)                       |
+| 3 | pimcore_scheduled_tasks        | [Scheduled tasks](../../18_Tools_and_Features/03_Scheduling.md)                               |
+| 3 | pimcore_image_optimize         | Apply optimizations to image assets                                                           |
+| 4 | pimcore_asset_update           | Updates of asset metadata                                                                     |
+| 6 | pimcore_search_backend_message | Updates the index for pimcore backend search. Only if you install `SimpleBackendSearchBundle` |
+
+Beware, that the actual transports depend on which core bundles you chose to install, so you will need to adjust the list
+in accordance with your installation. Use `bin/console debug:messenger` to list all available transports.
+
+Consuming messages from the queues is performed with the `messenger:consume` command, i.e.: `bin/console messenger:consume pimcore_core ...`
+You might need to spawn multiple workers, each consuming from a different queues to avoid blocking message processing by long-running tasks,
+i.e.:
+
+```bash
+bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_scheduled_tasks pimcore_search_backend_message pimcore_asset_update
+bin/console messenger:consume pimcore_image_optimize
+```
+
+We recommend to follow the [Symfony Messenger guide](https://symfony.com/doc/current/messenger.html#deploying-to-production) for setting up
+worker processes in production. The following is a simplified example for executing maintenance tasks using cron:
 
 ```bash
 # this command needs to be executed via cron or similar task scheduler
@@ -94,6 +119,10 @@ messages to the bus and run them afterward immediately from the queue. However, 
 */5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_scheduled_tasks pimcore_search_backend_message --time-limit=300
 */5 * * * * /your/project/bin/console messenger:consume pimcore_asset_update --time-limit=300
 */5 * * * * /your/project/bin/console messenger:consume pimcore_image_optimize --time-limit=300
+```
+
+Refer to [Symfony Messenger](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md) for further information on working
+with the messenger component in pimcore.
 
 > Depending on installed and activated extensions, it might be necessary to add additional transports to the messenger consume command. Please look at the documentation of corresponding extensions for more details. 
 
