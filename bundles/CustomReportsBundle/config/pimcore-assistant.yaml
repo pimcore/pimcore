@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\CustomReportsBundle\Assistant\ActionProvider\CustomReport:
+        tags:
+            - { name: "pimcore.assistant.actions_provider", priority: 30 }
