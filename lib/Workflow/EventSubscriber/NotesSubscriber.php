@@ -47,7 +47,6 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Event $event
      *
      * @throws ValidationException
      */
@@ -80,7 +79,6 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param GlobalActionEvent $event
      *
      * @throws ValidationException
      */

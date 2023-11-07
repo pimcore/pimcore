@@ -22,3 +22,7 @@ foreach ($list as $element) {
 
 \Pimcore\Model\DataObject::getById(123) === \Pimcore\Model\DataObject::getById(123, ['force' => true]) => false
 ```
+
+Using a large number of objects in one process could result in a "not enough memory" error.
+For example, iterate through thousands of objects while reading or even creating them.
+Please refer to this [section](../05_Objects/05_External_System_Interaction.md#memory-issues) to handle memory issues, which also clears runtime cache along with tasks.

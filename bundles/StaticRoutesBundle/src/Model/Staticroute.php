@@ -65,28 +65,24 @@ final class Staticroute extends AbstractModel
      * Associative array filled on match() that holds matched path values
      * for given variable names.
      *
-     * @var array
      */
     protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
      *
-     * @var array
      */
     protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute|null
      */
     protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute|null $route
      */
     public static function setCurrentRoute(?Staticroute $route): void
     {
@@ -96,7 +92,6 @@ final class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute|null
      */
     public static function getCurrentRoute(): ?Staticroute
     {
@@ -106,9 +101,7 @@ final class Staticroute extends AbstractModel
     /**
      * Static helper to retrieve an instance of Staticroute by the given ID
      *
-     * @param string $id
      *
-     * @return self|null
      */
     public static function getById(string $id): ?Staticroute
     {
@@ -134,10 +127,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int|null $siteId
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -367,12 +357,6 @@ final class Staticroute extends AbstractModel
 
     /**
      * @internal
-     *
-     * @param array $urlOptions
-     * @param bool $encode
-     *
-     * @return string
-     *
      * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
@@ -403,7 +387,7 @@ final class Staticroute extends AbstractModel
 
         $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
-            if (strpos($tmpReversePattern, '%' . $key) !== false) {
+            if (str_contains($tmpReversePattern, '%' . $key)) {
                 $parametersInReversePattern[$key] = (string) $param;
 
                 // we need to replace the found variable to that it cannot match again a placeholder
@@ -468,11 +452,6 @@ final class Staticroute extends AbstractModel
     /**
      * @internal
      *
-     * @param string $path
-     * @param array $params
-     *
-     * @return array|bool
-     *
      * @throws \Exception
      */
     public function match(string $path, array $params = []): bool|array
@@ -502,13 +481,11 @@ final class Staticroute extends AbstractModel
 
             preg_match_all($this->getPattern(), $path, $matches);
 
-            if (is_array($matches) && count($matches) > 1) {
-                foreach ($matches as $index => $match) {
-                    if (isset($variables[$index - 1]) && $variables[$index - 1]) {
-                        $paramValue = urldecode($match[0]);
-                        if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
-                            $params[$variables[$index - 1]] = $paramValue;
-                        }
+            foreach ($matches as $index => $match) {
+                if (isset($variables[$index - 1]) && $variables[$index - 1]) {
+                    $paramValue = urldecode($match[0]);
+                    if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                        $params[$variables[$index - 1]] = $paramValue;
                     }
                 }
             }

@@ -71,21 +71,18 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type = '';
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $filename = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $mimetype = null;
 
@@ -99,14 +96,12 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $metadata = [];
 
@@ -116,49 +111,38 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      *
-     * @var array
      */
     protected array $customSettings = [];
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $hasMetaData = false;
 
     /**
      * @internal
      *
-     * @var Listing|null
      */
     protected ?Listing $siblings = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $dataChanged = false;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $dataModificationDate = null;
 
-    /**
-     * @return int|null
-     */
     public function getDataModificationDate(): ?int
     {
         return $this->dataModificationDate;
     }
 
     /**
-     * @param int|null $dataModificationDate
-     *
      * @return $this
      */
     public function setDataModificationDate(?int $dataModificationDate): static
@@ -168,9 +152,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getBlockedVars(): array
     {
         $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
@@ -196,10 +177,7 @@ class Asset extends Element\AbstractElement
     /**
      * Static helper to get an asset by the passed path
      *
-     * @param string $path
-     * @param array $params
      *
-     * @return static|null
      */
     public static function getByPath(string $path, array $params = []): static|null
     {
@@ -225,9 +203,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @param Asset $asset
      *
-     * @return bool
      */
     protected static function typeMatch(Asset $asset): bool
     {
@@ -400,7 +376,7 @@ class Asset extends Element\AbstractElement
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
-        $maxPixels = (int)Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
         if ($size = @getimagesize($localPath)) {
             $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
@@ -422,9 +398,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $config
      *
-     * @return Listing
      *
      * @throws Exception
      */
@@ -440,10 +414,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $mimeType
-     * @param string $filename
      *
-     * @return string
      *
      * @internal
      */
@@ -454,7 +425,7 @@ class Asset extends Element\AbstractElement
         }
 
         $type = null;
-        $assetTypes = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['type_definitions']['map'];
+        $assetTypes = Config::getSystemConfiguration('assets')['type_definitions']['map'];
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
             foreach ($assetTypeConfiguration['matching'] as $pattern) {
@@ -478,9 +449,6 @@ class Asset extends Element\AbstractElement
         return $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -574,7 +542,7 @@ class Asset extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $assetId) {
                     $tag = 'asset_' . $assetId;
                     $additionalTags[] = $tag;
@@ -764,11 +732,11 @@ class Asset extends Element\AbstractElement
 
         $this->postPersistData();
 
-        // save properties
-        $this->getProperties();
-        $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
+        if ($this->isFieldDirty('properties')) {
+            // save properties
+            $properties = $this->getProperties();
+            $this->getDao()->deleteAllProperties();
+            foreach ($properties as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
                     $property->setCid($this->getId());
@@ -786,7 +754,7 @@ class Asset extends Element\AbstractElement
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // dont't add a reference to yourself
+                // don't add a reference to yourself
                 continue;
             } else {
                 $d->addRequirement($requirement['id'], $requirement['type']);
@@ -819,11 +787,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
      * @param string|null $versionNote version note
-     *
-     * @return null|Version
      *
      * @throws Exception
      */
@@ -894,7 +858,6 @@ class Asset extends Element\AbstractElement
     /**
      * Returns the full path of the asset (listener aware)
      *
-     * @return string
      *
      * @internal
      */
@@ -903,7 +866,7 @@ class Asset extends Element\AbstractElement
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
 
-        $prefix = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
@@ -1217,9 +1180,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersions(): array
     {
         if ($this->versions === null) {
@@ -1246,8 +1206,6 @@ class Asset extends Element\AbstractElement
      *
      * @param bool $keep whether to delete this file on shutdown or not
      *
-     * @return string
-     *
      * @throws Exception
      */
     public function getTemporaryFile(bool $keep = false): string
@@ -1258,8 +1216,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @return string
-     *
      * @throws Exception
      */
     public function getLocalFile(): string
@@ -1267,6 +1223,9 @@ class Asset extends Element\AbstractElement
         return self::getLocalFileFromStream($this->getStream());
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSetting(string $key, mixed $value): static
     {
         $this->customSettings[$key] = $value;
@@ -1276,18 +1235,12 @@ class Asset extends Element\AbstractElement
 
     public function getCustomSetting(string $key): mixed
     {
-        if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
-            return $this->customSettings[$key];
-        }
-
-        return null;
+        return $this->customSettings[$key] ?? null;
     }
 
     public function removeCustomSetting(string $key): void
     {
-        if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
-            unset($this->customSettings[$key]);
-        }
+        unset($this->customSettings[$key]);
     }
 
     public function getCustomSettings(): array
@@ -1295,6 +1248,9 @@ class Asset extends Element\AbstractElement
         return $this->customSettings;
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
@@ -1371,6 +1327,9 @@ class Asset extends Element\AbstractElement
         return $this->hasMetaData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHasMetaData(bool $hasMetaData): static
     {
         $this->hasMetaData = $hasMetaData;
@@ -1379,10 +1338,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $name
      * @param string $type can be "asset", "checkbox", "date", "document", "input", "object", "select" or "textarea"
-     * @param mixed $data
-     * @param string|null $language
      *
      * @return $this
      */
@@ -1391,9 +1347,6 @@ class Asset extends Element\AbstractElement
         if ($name && $type) {
             $tmp = [];
             $name = str_replace('~', '---', $name);
-            if (!is_array($this->metadata)) {
-                $this->metadata = [];
-            }
 
             foreach ($this->metadata as $item) {
                 if ($item['name'] != $name || $language != $item['language']) {
@@ -1427,14 +1380,14 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeMetadata(string $name, ?string $language = null): static
     {
         if ($name) {
             $tmp = [];
             $name = str_replace('~', '---', $name);
-            if (!is_array($this->metadata)) {
-                $this->metadata = [];
-            }
 
             foreach ($this->metadata as $item) {
                 if ($item['name'] === $name && ($language == $item['language'] || $language === '*')) {
@@ -1599,9 +1552,6 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
@@ -1619,7 +1569,8 @@ class Asset extends Element\AbstractElement
                         /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
                         $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
-                    } catch (UnsupportedException $e) {
+                    } catch (UnsupportedException) {
+                        //nothing to log here
                     }
                 }
             }

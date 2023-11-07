@@ -97,9 +97,7 @@ class IntlFormatter
     }
 
     /**
-     * @param string $format
      *
-     * @return \IntlDateFormatter
      *
      * @throws \RuntimeException
      */
@@ -168,10 +166,7 @@ class IntlFormatter
     /**
      * formats given datetime in given format
      *
-     * @param \DateTimeInterface|int|string $dateTime
-     * @param string $format
      *
-     * @return bool|string
      */
     public function formatDateTime(\DateTimeInterface|int|string $dateTime, string $format = self::DATETIME_MEDIUM): bool|string
     {
@@ -188,9 +183,7 @@ class IntlFormatter
     /**
      * formats given value as number based on current locale
      *
-     * @param float|int $value
      *
-     * @return bool|string
      */
     public function formatNumber(float|int $value): bool|string
     {
@@ -204,11 +197,7 @@ class IntlFormatter
     /**
      * formats given value as currency string with given currency based on current locale
      *
-     * @param float $value
-     * @param string $currency
-     * @param string $pattern
      *
-     * @return string
      */
     public function formatCurrency(float $value, string $currency, string $pattern = 'default'): string
     {

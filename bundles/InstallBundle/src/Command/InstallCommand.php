@@ -24,6 +24,7 @@ use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,6 +38,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:install',
+    description: 'Installs Pimcore with the given parameters. Every parameter will be prompted interactively or can also be set via env vars'
+)]
 class InstallCommand extends Command
 {
     private Installer $installer;
@@ -115,6 +120,7 @@ class InstallCommand extends Command
             'install-bundles' => [
                 'description' => sprintf('Installable bundles: %s', $this->generateBundleDescription()),
                 'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
                 'group' => 'bundles',
             ],
         ];
@@ -128,9 +134,6 @@ class InstallCommand extends Command
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $options = $this->getOptions();
@@ -147,8 +150,6 @@ class InstallCommand extends Command
         }
 
         $this
-            ->setName('pimcore:install')
-            ->setDescription($description)
             ->setHelp($help)
             ->addOption(
                 'skip-database-config',
@@ -182,9 +183,6 @@ class InstallCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if ($input->getOption('skip-database-config')) {
@@ -201,9 +199,16 @@ class InstallCommand extends Command
         if ($input->getOption('skip-database-data-dump')) {
             $this->installer->setImportDatabaseDataDump(false);
         }
-        if ($input->getOption('install-bundles')) {
+        $bundleOption = $input->getOption('install-bundles');
+        if (false !== $bundleOption) {
             $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
-            $bundles = explode(',', $input->getOption('install-bundles'));
+
+            if (null === $bundleOption) {
+                $bundles = [];
+            } else {
+                $bundles = explode(',', $bundleOption);
+            }
+
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
             $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
@@ -304,9 +309,6 @@ class InstallCommand extends Command
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // dispatch a bundle config event here to manually add/remove bundles/recommendations

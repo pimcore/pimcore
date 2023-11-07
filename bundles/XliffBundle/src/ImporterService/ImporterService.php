@@ -26,9 +26,6 @@ class ImporterService implements ImporterServiceInterface
      */
     private array $importers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $this->getImporter($attributeSet->getTranslationItem()->getType())->import($attributeSet, $saveElement);
@@ -41,9 +38,6 @@ class ImporterService implements ImporterServiceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getImporter(string $type): ImporterInterface
     {
         if (isset($this->importers[$type])) {

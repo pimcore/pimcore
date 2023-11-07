@@ -95,7 +95,6 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param string $fieldName
      *
      * @return string[]
      */

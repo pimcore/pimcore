@@ -69,7 +69,6 @@ final class Requirements
     }
 
     /**
-     * @param Connection $db
      *
      * @return Check[]
      */
@@ -690,10 +689,7 @@ final class Requirements
     }
 
     /**
-     * @param string $base
-     * @param array $data
      *
-     * @return array
      *
      * @throws \Exception
      */

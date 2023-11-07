@@ -36,25 +36,16 @@ final class RouteReference implements RouteReferenceInterface
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoute(): string
     {
         return $this->route;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): int
     {
         return $this->type;

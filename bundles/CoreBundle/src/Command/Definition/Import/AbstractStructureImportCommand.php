@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Model\AbstractModel;
+use Pimcore\Model\ModelInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,9 +56,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
         $this->configureDryRunOption();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $this->getPath();
@@ -117,7 +114,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Validate and return path to JSON file
      *
-     * @return string
      */
     protected function getPath(): string
     {
@@ -132,7 +128,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Load JSON data from file
      *
-     * @param string $path
      *
      * @return string|false
      */
@@ -154,9 +149,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Ask for confirmation before overwriting
      *
-     * @param string $name
      *
-     * @return bool
      */
     protected function askConfirmation(string $name): bool
     {
@@ -177,44 +170,34 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Get type
      *
-     * @return string
      */
     abstract protected function getType(): string;
 
     /**
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
-     * @param string $filename
      *
-     * @return string|null
      */
     abstract protected function getDefinitionName(string $filename): ?string;
 
     /**
      * Try to load definition by name
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
-    abstract protected function loadDefinition(string $name): ?AbstractModel;
+    abstract protected function loadDefinition(string $name): ?ModelInterface;
 
     /**
      * Create a new definition
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
-    abstract protected function createDefinition(string $name): ?AbstractModel;
+    abstract protected function createDefinition(string $name): ?ModelInterface;
 
     /**
      * Process import
      *
-     * @param AbstractModel $definition
-     * @param string $json
      *
-     * @return bool
      */
-    abstract protected function import(AbstractModel $definition, string $json): bool;
+    abstract protected function import(ModelInterface $definition, string $json): bool;
 }

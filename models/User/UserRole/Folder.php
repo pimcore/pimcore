@@ -27,21 +27,18 @@ class Folder extends Model\User\AbstractUser
     /**
      * @internal
      *
-     * @var array|null
      */
     protected ?array $children = null;
 
     /**
      * @internal
      *
-     * @var bool|null
      */
     protected ?bool $hasChildren = null;
 
     /**
      * Returns true if the document has at least one child
      *
-     * @return bool
      */
     public function hasChildren(): bool
     {
@@ -68,12 +65,13 @@ class Folder extends Model\User\AbstractUser
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
-        if (is_array($children)) {
-            $this->children = $children;
-            $this->hasChildren = count($children) > 0;
-        }
+        $this->children = $children;
+        $this->hasChildren = count($children) > 0;
 
         return $this;
     }

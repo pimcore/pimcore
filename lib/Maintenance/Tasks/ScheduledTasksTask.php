@@ -37,9 +37,6 @@ class ScheduledTasksTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $list = new Listing();

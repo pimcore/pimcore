@@ -78,7 +78,6 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param FileObject|string $fileObject
      *
      * @deprecated
      *
@@ -89,7 +88,6 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param \Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject
      *
      * @deprecated
      */
@@ -108,12 +106,7 @@ class ApplicationLogger implements LoggerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function log($level, $message, array $context = []): void
+    public function log(mixed $level, string|\Stringable $message, array $context = []): void
     {
         if (!isset($context['component'])) {
             $context['component'] = $this->component;
@@ -165,7 +158,6 @@ class ApplicationLogger implements LoggerInterface
     /**
      * Resolve logging source
      *
-     * @return string
      */
     protected function resolveLoggingSource(): string
     {
@@ -229,82 +221,42 @@ class ApplicationLogger implements LoggerInterface
         return $source;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function emergency($message, array $context = []): void
+    public function emergency(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('emergency', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function critical($message, array $context = []): void
+    public function critical(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('critical', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function error($message, array $context = []): void
+    public function error(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('error', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function alert($message, array $context = []): void
+    public function alert(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('alert', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function warning($message, array $context = []): void
+    public function warning(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('warning', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function notice($message, array $context = []): void
+    public function notice(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('notice', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function info($message, array $context = []): void
+    public function info(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('info', $message, func_get_args());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     */
-    public function debug($message, array $context = []): void
+    public function debug(string|\Stringable $message, array $context = []): void
     {
         $this->handleLog('debug', $message, func_get_args());
     }
@@ -337,13 +289,6 @@ class ApplicationLogger implements LoggerInterface
         $this->log($level, $message, $context);
     }
 
-    /**
-     * @param string $message
-     * @param \Throwable $exceptionObject
-     * @param string|null $priority
-     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
-     * @param string|null $component
-     */
     public function logException(string $message, \Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null): void
     {
         if (is_null($priority)) {

@@ -56,39 +56,21 @@ abstract class Kernel extends SymfonyKernel
 
     private BundleCollection $bundleCollection;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function getProjectDir(): string
     {
         return PIMCORE_PROJECT_ROOT;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function getCacheDir(): string
     {
         return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $bundleConfigLocator = new BundleConfigLocator($this);
@@ -108,6 +90,7 @@ abstract class Kernel extends SymfonyKernel
             'custom_views',
             'object_custom_layouts',
             'system_settings',
+            'select_options',
         ];
 
         $loader->load(function (ContainerBuilder $container) use ($loader, $configKeysArray) {
@@ -142,9 +125,6 @@ abstract class Kernel extends SymfonyKernel
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function boot(): void
     {
         if (true === $this->booted) {
@@ -160,9 +140,6 @@ abstract class Kernel extends SymfonyKernel
         parent::boot();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shutdown(): void
     {
         if (true === $this->booted) {
@@ -173,9 +150,6 @@ abstract class Kernel extends SymfonyKernel
         parent::shutdown();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initializeContainer(): void
     {
         parent::initializeContainer();
@@ -233,7 +207,6 @@ abstract class Kernel extends SymfonyKernel
      * Creates bundle collection. Use this method to set bundles on the collection
      * early.
      *
-     * @return BundleCollection
      */
     protected function createBundleCollection(): BundleCollection
     {
@@ -243,7 +216,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Returns the bundle collection which was used to build the set of used bundles
      *
-     * @return BundleCollection
      */
     public function getBundleCollection(): BundleCollection
     {
@@ -253,7 +225,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Registers "core" bundles
      *
-     * @param BundleCollection $collection
      */
     protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
@@ -301,7 +272,6 @@ abstract class Kernel extends SymfonyKernel
      *
      * To be implemented in child classes
      *
-     * @param BundleCollection $collection
      */
     public function registerBundlesToCollection(BundleCollection $collection): void
     {

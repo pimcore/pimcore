@@ -23,10 +23,10 @@ use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Helper\CsvFormulaFormatter;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -53,14 +53,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    private static ?CsvFormulaFormatter $formatter = null;
+    private static ?EscapeFormula $formatter = null;
 
     /**
      * @internal
      *
-     * @param ElementInterface $element
      *
-     * @return string
      */
     public static function getIdPath(ElementInterface $element): string
     {
@@ -82,10 +80,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @param ElementInterface $element
-     *
-     * @return string
      *
      * @throws \Exception
      */
@@ -112,10 +106,6 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param ElementInterface $element
-     *
-     * @return string
-     *
      * @throws \Exception
      */
     public static function getSortIndexPath(ElementInterface $element): string
@@ -136,8 +126,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array|Model\Listing\AbstractListing $list
-     * @param string $idGetter
      *
      * @return int[]
      *
@@ -165,11 +153,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Dependency $d
-     * @param int|null $offset
-     * @param int|null $limit
      *
-     * @return array
      *
      * @internal
      */
@@ -193,11 +177,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Dependency $d
-     * @param int|null $offset
-     * @param int|null $limit
      *
-     * @return array
      *
      * @internal
      */
@@ -211,6 +191,48 @@ class Service extends Model\AbstractModel
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requires'][] = self::getDependencyForFrontend($e);
+                } else {
+                    $dependencies['hasHidden'] = true;
+                }
+            }
+        }
+
+        return $dependencies;
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public static function getFilterRequiresForFrontend(array $elements): array
+    {
+        $dependencies['hasHidden'] = false;
+
+        foreach ($elements as $r) {
+            if ($e = self::getDependedElement($r)) {
+                if ($e->isAllowed('list')) {
+                    $dependencies['requires'][] = self::getDependencyForFrontend($e);
+                } else {
+                    $dependencies['hasHidden'] = true;
+                }
+            }
+        }
+
+        return $dependencies;
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public static function getFilterRequiredByPathForFrontend(array $elements): array
+    {
+        $dependencies['hasHidden'] = false;
+
+        foreach ($elements as $r) {
+            if ($e = self::getDependedElement($r)) {
+                if ($e->isAllowed('list')) {
+                    $dependencies['requiredBy'][] = self::getDependencyForFrontend($e);
                 } else {
                     $dependencies['hasHidden'] = true;
                 }
@@ -250,9 +272,7 @@ class Service extends Model\AbstractModel
     /**
      * determines whether an element is published
      *
-     * @param  ElementInterface|null $element
      *
-     * @return bool
      *
      * @internal
      */
@@ -270,9 +290,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array|null $data
      *
-     * @return array
      *
      * @throws \Exception
      *
@@ -355,9 +373,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string|ElementInterface $element
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -367,10 +383,8 @@ class Service extends Model\AbstractModel
     {
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-        } elseif (is_string($element)) {
-            $elementType = $element;
         } else {
-            throw new \Exception('Wrong type given for getBaseClassNameForElement(), ElementInterface and string are allowed');
+            $elementType = $element;
         }
 
         $baseClass = ucfirst($elementType);
@@ -384,10 +398,7 @@ class Service extends Model\AbstractModel
     /**
      * Returns a uniqe key for the element in the $target-Path (recursive)
      *
-     * @return string
      *
-     * @param string $sourceKey
-     * @param ElementInterface $target
      */
     public static function getSafeCopyName(string $sourceKey, ElementInterface $target): string
     {
@@ -424,12 +435,6 @@ class Service extends Model\AbstractModel
         return $sourceKey;
     }
 
-    /**
-     * @param string $path
-     * @param string|null $type
-     *
-     * @return bool
-     */
     public static function pathExists(string $path, string $type = null): bool
     {
         return match ($type) {
@@ -463,9 +468,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param array $params
      *
-     * @return array
      */
     public static function prepareGetByIdParams(array $params): array
     {
@@ -482,9 +485,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param ElementInterface $element
      *
-     * @return string|null
      */
     public static function getElementType(ElementInterface $element): ?string
     {
@@ -499,9 +500,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $className
      *
-     * @return string|null
      */
     public static function getElementTypeByClassName(string $className): ?string
     {
@@ -518,9 +517,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param ElementInterface $element
      *
-     * @return string|null
      */
     public static function getElementHash(ElementInterface $element): ?string
     {
@@ -533,9 +530,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $props
      *
-     * @return array
      *
      * @internal
      */
@@ -614,9 +609,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param  ElementInterface $element
      *
-     * @return array
      */
     public static function gridElementData(ElementInterface $element): array
     {
@@ -644,7 +637,6 @@ class Service extends Model\AbstractModel
      * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
      * @param string $type asset|object|document
-     * @param Model\User $user
      *
      * @return array{forbidden: array, allowed: array}
      *
@@ -719,11 +711,7 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     * @param mixed $data
-     * @param bool $initial
-     * @param string|null $key
      *
-     * @return mixed
      *
      * @internal
      */
@@ -743,6 +731,10 @@ class Service extends Model\AbstractModel
             return $data;
         }
         if (is_object($data)) {
+            if ($data instanceof \UnitEnum) {
+                return $data;
+            }
+
             if ($data instanceof ElementInterface && !$initial) {
                 return self::getElementById(self::getElementType($data), $data->getId());
             }
@@ -800,9 +792,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $path
      *
-     * @return string
      */
     public static function correctPath(string $path): string
     {
@@ -824,9 +814,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param ElementInterface $element
      *
-     * @return ElementInterface
      */
     public static function loadAllFields(ElementInterface $element): ElementInterface
     {
@@ -854,10 +842,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $path
-     * @param array $options
      *
-     * @return Asset\Folder|DataObject\Folder|Document\Folder|null
      *
      * @throws \Exception
      */
@@ -940,7 +925,6 @@ class Service extends Model\AbstractModel
     /**
      * Changes the query according to the custom view config
      *
-     * @param array $cv
      * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
      *
      * @internal
@@ -960,7 +944,7 @@ class Service extends Model\AbstractModel
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
+                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
 
                         $joinAlias = array_keys($joinConfig['name']);
                         $joinAlias = reset($joinAlias);
@@ -968,7 +952,7 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->addSelect($columns);
+                        $select->add('select', $columns, true);
                         $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
@@ -1034,10 +1018,7 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     * @param ElementInterface $element
-     * @param int $nr
      *
-     * @return string|null
      *
      * @throws \Exception
      */
@@ -1059,17 +1040,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $data
-     * @param string $type
      *
-     * @return array
      *
      * @internal
      */
     public static function fixAllowedTypes(array $data, string $type): array
     {
         // this is the new method with Ext.form.MultiSelect
-        if (is_array($data) && count($data)) {
+        if (count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;
@@ -1097,13 +1075,11 @@ class Service extends Model\AbstractModel
             }
         }
 
-        return $data ? $data : [];
+        return $data;
     }
 
     /**
      * @param Model\Version[] $versions
-     *
-     * @return array
      *
      * @internal
      */
@@ -1112,36 +1088,34 @@ class Service extends Model\AbstractModel
         $indexMap = [];
         $result = [];
 
-        if (is_array($versions)) {
-            foreach ($versions as $versionObj) {
-                $version = [
-                    'id' => $versionObj->getId(),
-                    'cid' => $versionObj->getCid(),
-                    'ctype' => $versionObj->getCtype(),
-                    'note' => $versionObj->getNote(),
-                    'date' => $versionObj->getDate(),
-                    'public' => $versionObj->getPublic(),
-                    'versionCount' => $versionObj->getVersionCount(),
-                    'autoSave' => $versionObj->isAutoSave(),
+        foreach ($versions as $versionObj) {
+            $version = [
+                'id' => $versionObj->getId(),
+                'cid' => $versionObj->getCid(),
+                'ctype' => $versionObj->getCtype(),
+                'note' => $versionObj->getNote(),
+                'date' => $versionObj->getDate(),
+                'public' => $versionObj->getPublic(),
+                'versionCount' => $versionObj->getVersionCount(),
+                'autoSave' => $versionObj->isAutoSave(),
+            ];
+
+            $version['user'] = ['name' => '', 'id' => ''];
+            if ($user = $versionObj->getUser()) {
+                $version['user'] = [
+                    'name' => $user->getName(),
+                    'id' => $user->getId(),
                 ];
-
-                $version['user'] = ['name' => '', 'id' => ''];
-                if ($user = $versionObj->getUser()) {
-                    $version['user'] = [
-                        'name' => $user->getName(),
-                        'id' => $user->getId(),
-                    ];
-                }
-
-                $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
-                if (!isset($indexMap[$versionKey])) {
-                    $indexMap[$versionKey] = 0;
-                }
-                $version['index'] = $indexMap[$versionKey];
-                $indexMap[$versionKey] = $indexMap[$versionKey] + 1;
-
-                $result[] = $version;
             }
+
+            $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
+            if (!isset($indexMap[$versionKey])) {
+                $indexMap[$versionKey] = 0;
+            }
+            $version['index'] = $indexMap[$versionKey];
+            $indexMap[$versionKey] = $indexMap[$versionKey] + 1;
+
+            $result[] = $version;
         }
 
         return $result;
@@ -1151,9 +1125,6 @@ class Service extends Model\AbstractModel
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
-            /**
-             * {@inheritdoc}
-             */
             public function matches($object, $property): bool
             {
                 try {
@@ -1220,9 +1191,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param Note $note
      *
-     * @return array
      */
     public static function getNoteData(Note $note): array
     {
@@ -1247,33 +1216,31 @@ class Service extends Model\AbstractModel
 
         // prepare key-values
         $keyValues = [];
-        if (is_array($note->getData())) {
-            foreach ($note->getData() as $name => $d) {
-                $type = $d['type'];
-                $data = $d['data'];
+        foreach ($note->getData() as $name => $d) {
+            $type = $d['type'];
+            $data = $d['data'];
 
-                if ($type == 'document' || $type == 'object' || $type == 'asset') {
-                    if ($d['data'] instanceof ElementInterface) {
-                        $data = [
-                            'id' => $d['data']->getId(),
-                            'path' => $d['data']->getRealFullPath(),
-                            'type' => $d['data']->getType(),
-                        ];
-                    }
-                } elseif ($type == 'date') {
-                    if (is_object($d['data'])) {
-                        $data = $d['data']->getTimestamp();
-                    }
+            if ($type == 'document' || $type == 'object' || $type == 'asset') {
+                if ($d['data'] instanceof ElementInterface) {
+                    $data = [
+                        'id' => $d['data']->getId(),
+                        'path' => $d['data']->getRealFullPath(),
+                        'type' => $d['data']->getType(),
+                    ];
                 }
-
-                $keyValue = [
-                    'type' => $type,
-                    'name' => $name,
-                    'data' => $data,
-                ];
-
-                $keyValues[] = $keyValue;
+            } elseif ($type == 'date') {
+                if (is_object($d['data'])) {
+                    $data = $d['data']->getTimestamp();
+                }
             }
+
+            $keyValue = [
+                'type' => $type,
+                'name' => $name,
+                'data' => $data,
+            ];
+
+            $keyValues[] = $keyValue;
         }
 
         $e['data'] = $keyValues;
@@ -1295,11 +1262,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     * @param int $elementId
-     * @param string|null $postfix
      *
-     * @return string
      *
      * @internal
      */
@@ -1349,8 +1312,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param ElementInterface $element
-     * @param string $postfix
      * @param bool $clone save a copy
      *
      * @internal
@@ -1407,10 +1368,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param mixed $element
-     * @param array|null $context
      *
-     * @return DeepCopy
      */
     public static function getDeepCopyInstance(mixed $element, ?array $context = []): DeepCopy
     {
@@ -1475,38 +1433,31 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param array $rowData
      *
-     * @return array
      */
     public static function escapeCsvRecord(array $rowData): array
     {
         if (self::$formatter === null) {
-            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
         }
-        $rowData = self::$formatter->escapeRecord($rowData);
 
-        return $rowData;
+        return self::$formatter->escapeRecord($rowData);
     }
 
     /**
      * @internal
      */
-    public static function unEscapeCsvField(string $value): string
+    public static function unEscapeCsvRecord(array $rowData): array
     {
         if (self::$formatter === null) {
-            self::$formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
         }
-        $value = self::$formatter->unEscapeField($value);
 
-        return $value;
+        return self::$formatter->unescapeRecord($rowData);
     }
 
     /**
-     * @param string $type
-     * @param int|string|null $id
      *
-     * @return string
      *
      * @internal
      */

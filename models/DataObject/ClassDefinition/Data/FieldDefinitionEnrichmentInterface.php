@@ -24,7 +24,6 @@ interface FieldDefinitionEnrichmentInterface
      * One example purpose is to populate or change dynamic settings like the options for select and multiselect fields.
      * The context param contains contextual information about the container, the field name, etc ...
      *
-     * @param array $context
      *
      * @return $this
      */

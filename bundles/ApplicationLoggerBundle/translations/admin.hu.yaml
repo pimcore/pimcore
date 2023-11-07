@@ -13,7 +13,6 @@ log_applicationlog: "Alkalmaz\xE1snapl\xF3"
 log_search_component: Component
 log_search_pid: PID
 log_refresh_seconds: Seconds
-keybinding_application_logger: Application logger
 log_search_from: From
 log_search_to: To
 log_type: Type
@@ -22,4 +21,5 @@ log_message: Message
 log_reset_search: Reset
 log_search: Search
 log_search_message: Message
+keybinding_applicationLogger: Application logger
 ...

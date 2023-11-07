@@ -9,7 +9,11 @@ multiselect, values are stored as a comma separated list.
 
 For select and multiselect the options can be defined with a value and display value in the class definition: 
 
-![Select Field](../../../img/classes-datatypes-select2.png)
+![Select Field](../../../img/classes-datatypes-select-configure.png)
+
+It's also possible to retrieve options from difference sources.
+* [Select Options](./77_Select_Options.md)
+* [Class / Service](./30_Dynamic_Select_Types.md)
 
 Country and language have fixed option values. For the language field the options can be limited to available system 
 languages. The country and language select field are also available as multi select fields.

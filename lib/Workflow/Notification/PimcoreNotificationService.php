@@ -30,8 +30,6 @@ class PimcoreNotificationService extends AbstractNotificationService
     /**
      * PimcoreNotificationService constructor.
      *
-     * @param NotificationService $notificationService
-     * @param TranslatorInterface $translator
      */
     public function __construct(NotificationService $notificationService, TranslatorInterface $translator)
     {

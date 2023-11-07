@@ -72,19 +72,17 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
         $cd .= "\n\n";
 
         $fdDefs = $definition->getFieldDefinitions();
-        if (is_array($fdDefs) && count($fdDefs)) {
-            foreach ($fdDefs as $key => $def) {
-                $cd .= $def->getGetterCodeFieldcollection($definition);
+        foreach ($fdDefs as $def) {
+            $cd .= $def->getGetterCodeFieldcollection($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getGetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getGetterCode($definition);
+            }
 
-                $cd .= $def->getSetterCodeFieldcollection($definition);
+            $cd .= $def->getSetterCodeFieldcollection($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getSetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getSetterCode($definition);
             }
         }
 

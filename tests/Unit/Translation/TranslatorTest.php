@@ -31,7 +31,6 @@ class TranslatorTest extends TestCase
     /**
      * ['locale' => 'fallback']
      *
-     * @var array
      */
     protected array $locales = [
         'en' => '',
@@ -65,9 +64,6 @@ class TranslatorTest extends TestCase
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

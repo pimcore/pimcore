@@ -33,10 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations for the given sourceId and type
      *
-     * @param int|null $id
-     * @param string|null $type
      *
-     * @return void
      */
     public function getBySourceId(int $id = null, string $type = null): void
     {
@@ -55,19 +52,131 @@ class Dao extends Model\Dao\AbstractDao
             ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $this->model->addRequirement($d['targetid'], $d['targettype']);
-            }
+        foreach ($data as $d) {
+            $this->model->addRequirement($d['targetid'], $d['targettype']);
+        }
+    }
+
+    public function getFilterRequiresByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null): array
+    {
+
+        $sourceId = (int)$this->model->getSourceId();
+
+        if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
+            $sourceType = $this->model->getSourceType();
+        } else {
+            throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
+        }
+
+        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+            $orderBy = 'id';
+        }
+
+        if (!in_array($orderDirection, ['ASC', 'DESC'])) {
+            $orderDirection = 'ASC';
+        }
+
+        //filterRequiresByPath
+        $query = "
+        SELECT id, type
+        FROM (
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= 'document'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.targetid as id, d.targettype as type
+            FROM dependencies d
+            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= 'asset'
+            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+        ) dep
+        ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        if ($offset !== null && $limit !== null) {
+            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+        }
+
+        $requiresByPath = $this->db->fetchAllAssociative($query);
+
+        if (count($requiresByPath) > 0) {
+            return $requiresByPath;
+        } else {
+            return [];
+        }
+    }
+
+    public function getFilterRequiredByPath(
+        int $offset = null,
+        int $limit = null,
+        string $value = null,
+        string $orderBy = null,
+        string $orderDirection = null
+    ): array {
+
+        $targetId = (int)$this->model->getSourceId();
+
+        if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
+            $targetType = $this->model->getSourceType();
+        } else {
+            throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
+        }
+
+        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+            $orderBy = 'id';
+        }
+
+        if (!in_array($orderDirection, ['ASC', 'DESC'])) {
+            $orderDirection = 'ASC';
+        }
+
+        //filterRequiredByPath
+        $query = "
+        SELECT id, type
+        FROM (
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= 'document'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            UNION
+            SELECT d.sourceid as id, d.sourcetype as type
+            FROM dependencies d
+            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= 'asset'
+            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+        ) dep
+        ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        if ($offset !== null && $limit !== null) {
+            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+        }
+
+        $requiredByPath = $this->db->fetchAllAssociative($query);
+
+        if (count($requiredByPath) > 0) {
+            return $requiredByPath;
+        } else {
+            return [];
         }
     }
 
     /**
      * Clear all relations in the database
      *
-     * @param Element\ElementInterface $element
      *
-     * @return void
      */
     public function cleanAllForElement(Element\ElementInterface $element): void
     {
@@ -77,12 +186,10 @@ class Dao extends Model\Dao\AbstractDao
 
             //schedule for sanity check
             $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
-            if (is_array($data)) {
-                foreach ($data as $row) {
-                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                        new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
-                    );
-                }
+            foreach ($data as $row) {
+                \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
+                );
             }
 
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
@@ -94,7 +201,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Clear all relations in the database for current source id
      *
-     * @return void
      */
     public function clear(): void
     {
@@ -108,7 +214,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save to database
      *
-     * @return void
      */
     public function save(): void
     {
@@ -176,10 +281,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations that need the given source element
      *
-     * @param int|null $offset
-     * @param int|null $limit
      *
-     * @return array
      */
     public function getRequiredBy(int $offset = null, int $limit = null): array
     {
@@ -200,26 +302,16 @@ class Dao extends Model\Dao\AbstractDao
 
         $requiredBy = [];
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $requiredBy[] = [
-                    'id' => $d['sourceid'],
-                    'type' => $d['sourcetype'],
-                ];
-            }
+        foreach ($data as $d) {
+            $requiredBy[] = [
+                'id' => $d['sourceid'],
+                'type' => $d['sourcetype'],
+            ];
         }
 
         return $requiredBy;
     }
 
-    /**
-     * @param string|null $orderBy
-     * @param string|null $orderDirection
-     * @param int|null $offset
-     * @param int|null $limit
-     *
-     * @return array
-     */
     public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
         $targetId = $this->model->getSourceId();
@@ -262,19 +354,12 @@ class Dao extends Model\Dao\AbstractDao
             $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
-        $requiredBy = $this->db->fetchAllAssociative($query);
-
-        if (is_array($requiredBy) && count($requiredBy) > 0) {
-            return $requiredBy;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query);
     }
 
     /**
      * get total count of required by records
      *
-     * @return int
      */
     public function getRequiredByTotalCount(): int
     {

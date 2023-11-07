@@ -54,6 +54,7 @@ The following list outlines what the different system permissions (available for
 * **Redirects**: User can create and modify redirects
 * **Reports**: User has access to reports module
 * **Seemode**: Seemode available/not available for user
+* **Select Options**: Object [select options editor](../05_Objects/01_Object_Classes/01_Data_Types/77_Select_Options.md)
 * **SEO Document Editor**: User has access to SEO document editor
 * **System Settings**: User has access to system settings
 * **Tag & Snippet Management**: User can create and modify entries in tag & snippet management

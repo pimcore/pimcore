@@ -22,9 +22,6 @@ use Pimcore\Model;
 
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && is_string($data) && strlen($data) > 0) {

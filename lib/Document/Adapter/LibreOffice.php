@@ -53,7 +53,6 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -90,9 +89,6 @@ class LibreOffice extends Ghostscript
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {
@@ -173,12 +169,9 @@ class LibreOffice extends Ghostscript
         try {
             if (!parent::isFileTypeSupported($asset->getFilename())) {
                 $file = $this->getPdf($asset);
-                if (!is_resource($file)) {
-                    throw new \Exception(sprintf('Could not convert asset with id %s to pdf', $asset->getId()));
-                }
 
                 $fileMetaData = stream_get_meta_data($file);
-                if (array_key_exists('uri', $fileMetaData) && !empty($fileMetaData['uri'])) {
+                if ($fileMetaData['uri']) {
                     $path = $fileMetaData['uri'];
                 }
             }

@@ -341,7 +341,6 @@ class Link implements OwnerAwareFieldInterface
     /**
      * Returns the plain text path of the link
      *
-     * @return string
      */
     public function getHref(): string
     {
@@ -461,7 +460,6 @@ class Link implements OwnerAwareFieldInterface
      *
      * @TODO: Remove in Pimcore 12
      *
-     * @return void
      */
     public function __unserialize(array $data): void
     {

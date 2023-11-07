@@ -31,7 +31,6 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      * Get response headers which were added to the request either by annotation
      * or manually.
      *
-     * @param Request|null $request
      *
      * @return ResponseHeader[]
      */
@@ -48,10 +47,6 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
-     * @param Request $request
-     * @param string $key
-     * @param array|string $values
-     * @param bool $replace
      */
     public function addResponseHeader(Request $request, string $key, array|string $values, bool $replace = false): void
     {

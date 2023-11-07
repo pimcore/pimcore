@@ -111,7 +111,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $totalQb->setMaxResults(null)
             ->setFirstResult(0)
             ->select('COUNT(id) as count');
-        $total = $totalQb->executeQuery()->fetch();
+        $total = $totalQb->executeQuery()->fetchAssociative();
         $total = (int) $total['count'];
 
         $stmt = $qb->executeQuery();
@@ -171,9 +171,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     /**
      * @Route("/log/priority-json", name="pimcore_admin_bundle_applicationlogger_log_priorityjson", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function priorityJsonAction(Request $request): JsonResponse
     {
@@ -190,9 +188,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     /**
      * @Route("/log/component-json", name="pimcore_admin_bundle_applicationlogger_log_componentjson", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function componentJsonAction(Request $request): JsonResponse
     {

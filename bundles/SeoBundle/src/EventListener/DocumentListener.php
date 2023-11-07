@@ -31,9 +31,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DocumentListener implements EventSubscriberInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [

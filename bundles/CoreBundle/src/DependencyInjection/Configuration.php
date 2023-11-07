@@ -41,9 +41,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
@@ -142,6 +139,7 @@ final class Configuration implements ConfigurationInterface
             'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
             'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
             'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            'select_options' => PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
         ]);
 
         ConfigurationHelper::addConfigLocationTargetNode(
@@ -455,7 +453,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => 50,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
@@ -532,6 +530,32 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultTrue()
                                     ->end()
                                 ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('document')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('thumbnails')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')
+                                        ->defaultTrue()
+                                        ->info('Process thumbnails for Asset documents.')
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->booleanNode('process_page_count')
+                                ->defaultTrue()
+                                ->info('Process & store page count for Asset documents. Internally required for thumbnails & text generation')
+                            ->end()
+                            ->booleanNode('process_text')
+                                ->defaultTrue()
+                                ->info('Process text for Asset documents (e.g. used by backend search).')
+                            ->end()
+                            ->booleanNode('scan_pdf')
+                                ->defaultTrue()
+                                ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
                         ->end()
                     ->end()
@@ -691,6 +715,31 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
                                             ->variableNode('layoutDefinitions')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('select_options')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('definitions')
+                                    ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('id')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('useTraits')->end()
+                                            ->scalarNode('implementsInterfaces')->end()
+                                            ->arrayNode('selectOptions')
+                                                ->prototype('array')
+                                                    ->children()
+                                                        ->scalarNode('value')->end()
+                                                        ->scalarNode('label')->end()
+                                                        ->scalarNode('name')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
                                         ->end()
                                     ->end()
                                 ->end()
@@ -860,6 +909,22 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('route_pattern')
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('static_page_generator')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('use_main_domain')
+                            ->defaultFalse()
+                            ->info('Use main domain for static pages folder in tmp/pages')
+                        ->end()
+                        ->arrayNode('headers')
+                            ->normalizeKeys(false)
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->scalarNode('value')->end()
                         ->end()
                     ->end()
                 ->end()
@@ -1610,6 +1675,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                            ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
                                             ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
