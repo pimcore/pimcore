@@ -407,7 +407,26 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
-        if (!is_numeric($value)) {
+        if ($this->elementType === 'date') {
+            $startDate = new \Carbon\Carbon($value);
+            if ($operator === '=') {
+                $maxTime = $startDate->timestamp + (86400 - 1);
+                $endDate = new \Carbon\Carbon($maxTime);
+                $operator = ' BETWEEN ' . $db->quote($startDate->format('Y-m-d H:i:s')) . ' AND ' . $db->quote($endDate->format('Y-m-d H:i:s'));
+
+                return $key . ' ' . $operator;
+            } else {
+                return $key . ' ' . $operator . ' ' . $db->quote($startDate->format('Y-m-d H:i:s'));
+            }
+        }
+
+        if ($this->elementType === 'boolean') {
+            $bool = $value === 1 ? 1 : $db->quote(null);
+
+            return $key . ' ' . $operator . ' ' . $bool;
+        }
+
+        if ($this->elementType !== 'numeric') {
             if ($value === 'NULL') {
                 if ($operator === '=') {
                     $operator = 'IS';
