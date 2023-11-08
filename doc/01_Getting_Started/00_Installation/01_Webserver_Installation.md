@@ -97,7 +97,7 @@ Beware, that the actual transports depend on which core bundles you chose to ins
 in accordance with your installation. Use `bin/console debug:messenger` to list all available transports.
 
 Consuming messages from the queues is performed with the `messenger:consume` command, i.e.: `bin/console messenger:consume pimcore_core ...`
-You might need to spawn multiple workers, each consuming from a different queues to avoid blocking message processing by long-running tasks,
+You might need to spawn multiple workers, each consuming from a different queue to avoid blocking message processing by long-running tasks,
 i.e.:
 
 ```bash
