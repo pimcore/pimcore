@@ -12,10 +12,16 @@ const standardConfigs = [
         name: "tinymce",
         bundleName: "pimcoretinymce",
         configName: "pimcoreTinymce",
-        copyFiles: {
-            from: "node_modules/tinymce/skins",
-            to: "skins/[path]/[name].[ext]"
-        }
+        copyFiles: [
+            {
+                from: "node_modules/tinymce/skins",
+                to: "skins/[path]/[name].[ext]"
+            },
+            {
+                from: "node_modules/tinymce/plugins/help/js",
+                to: "plugins/help/js/[path]/[name].[ext]"
+            },
+        ]
     }
 ]
 
