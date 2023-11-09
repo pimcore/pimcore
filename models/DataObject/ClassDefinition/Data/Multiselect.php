@@ -302,8 +302,8 @@ class Multiselect extends Data implements
             }
 
             $value = $operator === '='
-                ? "'%,".$value.",%'"
-                : "'%,%".$value."%,%'";
+                ? $db->quote('%,'. $value . ',%')
+                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }
