@@ -55,6 +55,9 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     public function isActive(string $matchSessionId = null): bool
     {
         if ($this->db->isConnected() && $maintenanceModeEntry = $this->getEntry()) {
+            if ($matchSessionId === null && $maintenanceModeEntry !== null) {
+                return true;
+            }
             if ($matchSessionId && $matchSessionId !== $maintenanceModeEntry) {
                 return true;
             }
