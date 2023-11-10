@@ -45,7 +45,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public ?array $validUnits = null;
+    public array $validUnits = [];
 
     /**
      * @internal
