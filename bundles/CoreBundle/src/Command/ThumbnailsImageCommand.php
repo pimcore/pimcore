@@ -37,6 +37,8 @@ class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
 
+    private const DATE_FORMAT = 'Y-m-d H:i:s';
+    
     protected function configure(): void
     {
         parent::configure();
