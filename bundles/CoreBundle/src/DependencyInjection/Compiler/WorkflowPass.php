@@ -57,12 +57,12 @@ final class WorkflowPass implements CompilerPassInterface
 
             // Process Metadata (workflow + places (transition is done in the "create transition" block))
             $metadataStoreDefinition = new Definition(Workflow\Metadata\InMemoryMetadataStore::class, [[], [], null]);
-            if (!empty($workflowConfig['metadata'])) {
+            if (isset($workflowConfig['metadata'])) {
                 $metadataStoreDefinition->replaceArgument(0, $workflowConfig['metadata']);
             }
             $placesMetadata = [];
             foreach ($workflowConfig['places'] as $name => $place) {
-                if (!empty($place['metadata'])) {
+                if (isset($place['metadata'])) {
                     $placesMetadata[$name] = $place['metadata'];
                 }
             }
@@ -141,13 +141,7 @@ final class WorkflowPass implements CompilerPassInterface
             $places = [];
             foreach ($workflowConfig['places'] as $place => $placeConfig) {
                 $places[] = $place;
-                if (!empty($place['metadata'])) {
-                    $placesMetadata[$place['name']] = $place['metadata'];
-                }
                 $workflowManagerDefinition->addMethodCall('addPlaceConfig', [$workflowName, $place, $placeConfig]);
-            }
-            if ($placesMetadata) {
-                $metadataStoreDefinition->replaceArgument(1, $placesMetadata);
             }
 
             foreach ($workflowConfig['globalActions'] ?? [] as $action => $actionConfig) {
