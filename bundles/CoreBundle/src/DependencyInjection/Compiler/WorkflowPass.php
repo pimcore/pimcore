@@ -141,8 +141,13 @@ final class WorkflowPass implements CompilerPassInterface
             $places = [];
             foreach ($workflowConfig['places'] as $place => $placeConfig) {
                 $places[] = $place;
-
+                if ($place['metadata']) {
+                    $placesMetadata[$place['name']] = $place['metadata'];
+                }
                 $workflowManagerDefinition->addMethodCall('addPlaceConfig', [$workflowName, $place, $placeConfig]);
+            }
+            if ($placesMetadata) {
+                $metadataStoreDefinition->replaceArgument(1, $placesMetadata);
             }
 
             foreach ($workflowConfig['globalActions'] ?? [] as $action => $actionConfig) {
