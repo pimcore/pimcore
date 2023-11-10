@@ -85,7 +85,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return $this->defaultUnit;
     }
 
-    public function setDefaultUnit(string $defaultUnit): void
+    public function setDefaultUnit(?string $defaultUnit): void
     {
         $this->defaultUnit = $defaultUnit;
     }
