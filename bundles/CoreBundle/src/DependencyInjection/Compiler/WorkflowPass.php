@@ -61,9 +61,9 @@ final class WorkflowPass implements CompilerPassInterface
                 $metadataStoreDefinition->replaceArgument(0, $workflowConfig['metadata']);
             }
             $placesMetadata = [];
-            foreach ($workflowConfig['places'] as $place) {
+            foreach ($workflowConfig['places'] as $name => $place) {
                 if (!empty($place['metadata'])) {
-                    $placesMetadata[$place['name']] = $place['metadata'];
+                    $placesMetadata[$name] = $place['metadata'];
                 }
             }
             if ($placesMetadata) {
@@ -141,7 +141,7 @@ final class WorkflowPass implements CompilerPassInterface
             $places = [];
             foreach ($workflowConfig['places'] as $place => $placeConfig) {
                 $places[] = $place;
-                if (isset($place['metadata'])) {
+                if (!empty($place['metadata'])) {
                     $placesMetadata[$place['name']] = $place['metadata'];
                 }
                 $workflowManagerDefinition->addMethodCall('addPlaceConfig', [$workflowName, $place, $placeConfig]);
