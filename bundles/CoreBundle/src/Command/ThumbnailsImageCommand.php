@@ -62,6 +62,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'Filter images against the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
             )
             ->addOption(
+                'last-modified-since',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of images that have been modified since the given date (format: ' . self::DATE_FORMAT . ' )'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -128,6 +134,12 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
+        if ($lastModifiedSince = $input->getOption('last-modified-since')) {
+            $lastModifiedSinceDate = \DateTime::createFromFormat(self::DATE_FORMAT, $lastModifiedSince);
+            $conditions[] = 'modificationDate >= ?';
+            $conditionVariables[] = $lastModifiedSinceDate->getTimestamp();
+        }
+        
         if ($regex = $input->getOption('pathPattern')) {
             $conditions[] = 'CONCAT(`path`, filename) REGEXP ?';
             $conditionVariables[] = $regex;
