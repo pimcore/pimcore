@@ -126,8 +126,14 @@ abstract class AbstractRelations extends Data implements
 
             if (is_array($relations) && !empty($relations)) {
                 $db = Db::get();
+                $condition = 'src_id = ' . $db->quote($object->getId()) . ' AND ownertype = "object"';
+                $dataExists = $db->fetchCol('SELECT `dest_id` FROM `object_relations_' . $object->getClassName() . '` WHERE ' . $condition);
 
                 foreach ($relations as $relation) {
+                    if ( in_array($relation['dest_id'], $dataExists, true) ) {
+                        continue;
+                    }
+
                     $this->enrichDataRow($object, $params, $classId, $relation);
 
                     // relation needs to be an array with src_id, dest_id, type, fieldname
