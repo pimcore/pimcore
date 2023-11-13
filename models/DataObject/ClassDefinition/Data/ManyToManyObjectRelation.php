@@ -169,6 +169,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $objects['dirty'] = true;
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $objects;
     }
@@ -260,6 +261,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 }
             }
         }
+
         //must return array if data shall be set
         return $objects;
     }
