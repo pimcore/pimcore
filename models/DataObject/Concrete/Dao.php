@@ -225,7 +225,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= '(src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object" AND fieldname = '.$db->quote($fieldName).' AND dest_id IN ('.implode(',',$ids).'))';
+                $condition .= '(src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object" 
+                    AND fieldname = '.$db->quote($fieldName).' AND dest_id IN ('.implode(',',$ids).'))';
             }
         }
 
@@ -234,10 +235,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         if (isset($condition)) {
-            $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_' . $this->model->getClassId() . '`
-        WHERE ' . $condition . ' LIMIT 1');
+            $dataExists = $this->db->fetchAssociative(
+                'SELECT `src_id` FROM `object_relations_' . $this->model->getClassId() . '`
+                        WHERE ' . $condition . ' LIMIT 1'
+            );
             if ( $dataExists ) {
-                $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
+                $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' 
+                WHERE ' . $condition);
             }
         }
 
