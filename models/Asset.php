@@ -158,6 +158,17 @@ class Asset extends Element\AbstractElement
 
         if (!$this->isInDumpState()) {
             // for caching asset
+
+            foreach($this->customSettings as $customSetting) {
+                foreach($customSetting['embeddedMetaData'] ?? [] as &$embeddedMetaDataItem) {
+                    // do not store big metadata items in cache because it will blast cache database size and slow down element loading (esp. with remote cache storage)
+                    if(is_string($embeddedMetaDataItem) && strlen($embeddedMetaDataItem) > 10e6) {
+                        $embeddedMetaDataItem = null;
+                    }
+                }
+                unset($embeddedMetaDataItem);
+            }
+
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
