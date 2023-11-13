@@ -126,9 +126,21 @@ abstract class AbstractRelations extends Data implements
 
             if (is_array($relations) && !empty($relations)) {
                 $db = Db::get();
-                $condition = 'src_id = ' . $db->quote($object->getId()) . ' AND ownertype = "object"';
-                $dataExists = $db->fetchFirstColumn('SELECT `dest_id` 
+
+                if ($object instanceof Concrete) {
+                    $relationObjectId = $object->getId();
+                } elseif ($object instanceof AbstractData) {
+                    $relationObjectId = $object->getObject()->getId();
+                } elseif ($object instanceof Localizedfield) {
+                    $relationObjectId = $object->getObject()->getId();
+                }
+
+                $dataExists = false;
+                if (isset($relationObjectId)) {
+                    $condition = 'src_id = ' . $db->quote($relationObjectId) . ' AND ownertype = "object"';
+                    $dataExists = $db->fetchFirstColumn('SELECT `dest_id` 
                     FROM `object_relations_' . $object->getClassName() . '` WHERE ' . $condition);
+                }
 
                 foreach ($relations as $relation) {
                     if ( $dataExists && in_array($relation['dest_id'], $dataExists, true) ) {
