@@ -31,6 +31,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 final class Configuration implements ConfigurationInterface
 {
+    private const DOWNLOAD_NAMING_VALUES = ['default', 'filename', 'uppercase', 'lowercase'];
+
     private PlaceholderProcessor $placeholderProcessor;
 
     private array $placeholders = [];
@@ -129,6 +131,7 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
+        $this->addDownloadNamingNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -1975,6 +1978,22 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('uri')
                             ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addDownloadNamingNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('download_naming')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('assets')
+                            ->values(self::DOWNLOAD_NAMING_VALUES)
+                            ->defaultValue('default')
                         ->end()
                     ->end()
                 ->end()

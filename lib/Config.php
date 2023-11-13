@@ -435,4 +435,28 @@ final class Config implements ArrayAccess
 
         throw new Exception($file . ' is invalid');
     }
+
+    public static function getDownloadFilenameByConfig(string $filename, string $type, string $default): string
+    {
+        $file = explode('.', $filename);
+
+        $naming = Config::getSystemConfiguration('download_naming')[$type];
+        if ($naming === 'default') {
+            $naming = $default;
+        } elseif (str_contains($filename, '%')) {
+            $filename = urldecode($filename);
+        }
+
+        $downloadFilename = str_replace(end($file), '', $filename);
+        if ($naming === 'filename') {
+            return $filename;
+        } elseif ($naming === 'lowercase') {
+            $downloadFilename = strtolower($downloadFilename);
+        } elseif ($naming === 'uppercase') {
+            $downloadFilename = strtoupper($downloadFilename);
+        }
+
+        return $downloadFilename . end($file);
+    }
+
 }
