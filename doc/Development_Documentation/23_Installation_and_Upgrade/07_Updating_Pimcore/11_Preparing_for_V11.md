@@ -1,7 +1,7 @@
 # Preparing Pimcore for Version 11
 
 ## Preparatory Work
-- Upgrade to version 10.5.x, if you are using a lower version.
+- Upgrade to version 10.6.x, if you are using a lower version.
 - [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
     ```
     security:
