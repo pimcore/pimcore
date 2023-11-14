@@ -74,7 +74,7 @@
     "phpoffice/phpspreadsheet": "^1.24",
     "presta/sitemap-bundle": "^3.3",
     "rybakit/twig-deferred-extension": "^3.0",
-    "sabre/dav": "^4.1.2",
+    "sabre/dav": "*",
     "scheb/2fa-bundle": "^6.0",
     "scheb/2fa-google-authenticator": "^6.0",
     "spatie/image-optimizer": "^1.6.2",
