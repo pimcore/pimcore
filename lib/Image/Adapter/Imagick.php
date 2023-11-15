@@ -43,9 +43,6 @@ class Imagick extends Adapter
 
     private ?array $initalOptions = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(string $imagePath, array $options = []): static|false
     {
         $this->initalOptions ??= $options;
@@ -182,9 +179,6 @@ class Imagick extends Adapter
         return $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format) {
@@ -307,9 +301,6 @@ class Imagick extends Adapter
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function destroy(): void
     {
         if ($this->resource) {
@@ -419,7 +410,6 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $CMYKColorProfile
      *
      * @internal
      */
@@ -431,7 +421,6 @@ class Imagick extends Adapter
     /**
      * @internal
      *
-     * @return string
      */
     public static function getCMYKColorProfile(): string
     {
@@ -450,7 +439,6 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $RGBColorProfile
      *
      * @internal
      *
@@ -463,7 +451,6 @@ class Imagick extends Adapter
     /**
      * @internal
      *
-     * @return string
      */
     public static function getRGBColorProfile(): string
     {
@@ -713,9 +700,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
@@ -973,9 +957,6 @@ class Imagick extends Adapter
         return parent::getVectorRasterDimensions();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsFormat(string $format, bool $force = false): bool
     {
         if ($force) {

@@ -65,9 +65,6 @@ class PimcoreCoreBundle extends Bundle
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new AreabrickPass());

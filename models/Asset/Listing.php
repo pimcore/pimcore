@@ -49,8 +49,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     * @param int $offset
-     * @param int $itemCountPerPage
      *
      * @return Model\Asset[]
      */
@@ -64,10 +62,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @internal
-     *
-     * @param Model\User $user
-     * @param Model\Asset $asset
-
      *
      * @return $this
      */

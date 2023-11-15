@@ -29,13 +29,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $restrictTo = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -58,9 +54,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this->restrictTo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

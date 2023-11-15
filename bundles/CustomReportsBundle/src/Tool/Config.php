@@ -75,9 +75,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     protected array $sharedRoleNames = [];
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
      * @throws \Exception
      */
@@ -96,11 +94,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         }
     }
 
-    /**
-     * @param Model\User|null $user
-     *
-     * @return array
-     */
     public static function getReportsList(Model\User $user = null): array
     {
         $reports = [];

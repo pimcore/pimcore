@@ -23,9 +23,6 @@ use Pimcore\Model\Element;
 
 class DataObjectImporter extends AbstractElementImporter
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
@@ -109,9 +106,6 @@ class DataObjectImporter extends AbstractElementImporter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function saveElement(Element\ElementInterface $element): void
     {
         if ($element instanceof DataObject\Concrete) {

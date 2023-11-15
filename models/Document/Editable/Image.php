@@ -47,56 +47,48 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementInterface|Element\ElementDescriptor|null
      */
     protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $cropPercent = false;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropLeft = 0.0;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $hotspots = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $marker = [];
 
@@ -107,17 +99,11 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      */
     protected ?string $thumbnail = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'image';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -150,9 +136,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         $image = $this->getImage();
@@ -227,9 +210,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         if (!is_array($this->config)) {
@@ -291,9 +271,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
@@ -332,9 +309,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $rewritePath = function ($data) {
@@ -537,9 +511,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -665,9 +636,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->marker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {

@@ -37,9 +37,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
     /**
      * ExpressionSupportStrategy constructor.
      *
-     * @param ExpressionService $expressionService
      * @param string|string[] $className a FQCN
-     * @param string $expression
      */
     public function __construct(ExpressionService $expressionService, array|string $className, string $expression)
     {

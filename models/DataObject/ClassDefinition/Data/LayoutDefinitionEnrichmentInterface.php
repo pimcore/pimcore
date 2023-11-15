@@ -26,7 +26,6 @@ interface LayoutDefinitionEnrichmentInterface
      * An example would the select datatype with a dynamic options provider.
      *
      *
-     * @param Concrete|null $object
      * @param array<string, mixed> $context additional contextual data like fieldname etc.
      *
      * @return $this

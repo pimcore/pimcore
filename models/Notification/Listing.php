@@ -32,8 +32,6 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      *
      * @return Model\Notification[]
      */

@@ -53,7 +53,6 @@ class BlockTest extends ModelTestCase
     }
 
     /**
-     * @return unittestBlock
      *
      * @throws \Exception
      */

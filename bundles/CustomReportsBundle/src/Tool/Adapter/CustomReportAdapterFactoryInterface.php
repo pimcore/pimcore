@@ -23,10 +23,7 @@ interface CustomReportAdapterFactoryInterface
     /**
      * Create a CustomReport Adapter
      *
-     * @param \stdClass $config
-     * @param Config|null $fullConfig
      *
-     * @return CustomReportAdapterInterface
      */
     public function create(\stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface;
 }

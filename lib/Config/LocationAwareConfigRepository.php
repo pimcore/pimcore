@@ -114,10 +114,7 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string|null $key
-     * @param string|null $dataSource
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -171,9 +168,6 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string $key
-     * @param mixed $data
-     * @param callable|null $yamlStructureCallback
      *
      * @throws \Exception
      */
@@ -244,8 +238,6 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @param string $key
-     * @param string|null $dataSource
      *
      * @throws \Exception
      */

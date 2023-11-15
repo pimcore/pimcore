@@ -50,8 +50,6 @@ trait TemporaryFileHelperTrait
      * @param resource|string $stream
      * @param bool $keep whether to delete this file on shutdown or not
      *
-     * @return string
-     *
      * @throws \Exception
      */
     protected static function getTemporaryFileFromStream(mixed $stream, bool $keep = false): string

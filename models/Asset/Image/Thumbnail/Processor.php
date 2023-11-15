@@ -80,13 +80,8 @@ class Processor
     }
 
     /**
-     * @param Asset $asset
-     * @param Config $config
      * @param string|resource|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
-     * @param bool $generated
-     *
-     * @return array
      *
      * @throws \Exception
      */

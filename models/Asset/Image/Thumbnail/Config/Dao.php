@@ -41,7 +41,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -110,9 +109,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->clearDatabaseCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

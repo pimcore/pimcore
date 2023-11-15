@@ -27,10 +27,6 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 
     protected ?float $latitude = null;
 
-    /**
-     * @param float|null $latitude
-     * @param float|null $longitude
-     */
     public function __construct(float $latitude = null, float $longitude = null)
     {
         if ($latitude !== null) {

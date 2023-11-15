@@ -90,9 +90,6 @@ It is possible to define custom tooltips which are shown while hovering over the
 The example outlines how to provide a custom tooltip for `Car` objects.
 
 ```php
-    /**
-     * {@inheritdoc}
-     */
     public function getElementQtipConfig(): ?array
     {
         if ($this->element instanceof \App\Model\Product\Car) {

@@ -45,9 +45,6 @@ class Definition extends Model\AbstractModel
         'object', 'interface', 'default',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
@@ -62,7 +59,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -88,9 +84,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -124,7 +118,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
@@ -175,7 +168,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
@@ -252,9 +244,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string|null $key
      *
-     * @return string
      *
      * @internal
      */
@@ -266,7 +256,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     public function getPhpClassFile(): string
     {
@@ -276,7 +265,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {

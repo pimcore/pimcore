@@ -39,7 +39,6 @@ class Service
     }
 
     /**
-     * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return EncryptedField|Data|null
      *

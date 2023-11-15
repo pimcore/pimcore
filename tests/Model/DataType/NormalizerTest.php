@@ -42,9 +42,6 @@ class NormalizerTest extends ModelTestCase
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     protected function needsDb(): bool
     {
         return true;

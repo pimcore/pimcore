@@ -41,9 +41,6 @@ class OptimizeImageThumbnailsCommand extends AbstractCommand
             ->setDescription('Optimize filesize of all thumbnails');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $storage = Storage::get('thumbnail');
