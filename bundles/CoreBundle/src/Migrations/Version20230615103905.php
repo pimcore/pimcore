@@ -24,23 +24,23 @@ final class Version20230615103905 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add lastRebuildDate to classes table for optimizing rebuild command performance.';
+        return 'Add definitionModificationDate to classes table for optimizing rebuild command performance.';
     }
 
     public function up(Schema $schema): void
     {
-        if (!$schema->getTable('classes')->hasColumn('lastRebuildDate')) {
+        if (!$schema->getTable('classes')->hasColumn('definitionModificationDate')) {
             $this->addSql(
-                'ALTER TABLE `classes` ADD COLUMN `lastRebuildDate` INT(11) UNSIGNED NULL DEFAULT NULL;'
+                'ALTER TABLE `classes` ADD COLUMN `definitionModificationDate` INT(11) UNSIGNED NULL DEFAULT NULL;'
             );
         }
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->getTable('classes')->hasColumn('lastRebuildDate')) {
+        if ($schema->getTable('classes')->hasColumn('definitionModificationDate')) {
             $this->addSql(
-                'ALTER TABLE `classes` DROP COLUMN `lastRebuildDate`;'
+                'ALTER TABLE `classes` DROP COLUMN `definitionModificationDate`;'
             );
         }
     }

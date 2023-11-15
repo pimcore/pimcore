@@ -102,13 +102,13 @@ class ClassDefinitionManager
         if (!$force) {
             $db = \Pimcore\Db::get();
 
-            $lastRebuildDate = null;
+            $definitionModificationDate = null;
 
             if ($classId = $class->getId()) {
-                $lastRebuildDate = $db->fetchOne('SELECT lastRebuildDate FROM classes WHERE id = ?;', [$classId]);
+                $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
             }
 
-            if (!$lastRebuildDate || $lastRebuildDate !== $class->getModificationDate()) {
+            if (!$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate()) {
                 $shouldSave = true;
             }
         }
