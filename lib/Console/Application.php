@@ -25,6 +25,7 @@ use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -122,7 +123,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
     public function add(Command $command): ?Command
     {
-        if ($command instanceof LazyCommand) {
+        if ($command instanceof LazyCommand && str_starts_with($command->getName(), 'doctrine:')) {
             $command = $command->getCommand();
         }
         
