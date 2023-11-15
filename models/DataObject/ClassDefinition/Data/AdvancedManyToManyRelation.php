@@ -157,10 +157,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                         $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
-                        $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
-                        $ownername = $element['ownername'] ? $element['ownername'] : '';
-                        $position = $element['position'] ? $element['position'] : '0';
-                        $index = $element['index'] ? $element['index'] : '0';
+                        $ownertype = $element['ownertype'] ?: '';
+                        $ownername = $element['ownername'] ?: '';
+                        $position = $element['position'] ?: '0';
+                        $index = $element['index'] ?: '0';
 
                         $metaData->load(
                             $source,
@@ -494,27 +494,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    public function save(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
-                        return;
-                    }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
 
-        $classId = null;
         $objectId = null;
 
         if ($object instanceof DataObject\Concrete) {
@@ -529,7 +518,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         if ($object instanceof DataObject\Localizedfield) {
             $classId = $object->getClass()->getId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData || $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData ||
+            $object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $classId = $object->getObject()->getClassId();
         } else {
             $classId = $object->getClassId();
@@ -541,7 +531,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
-        $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
+        $position = isset($relation['position']) ? (string)$relation['position'] : '0';
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
@@ -559,7 +549,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' .
+                Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -569,6 +560,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
+                        if ($object instanceof Localizedfield) {
+                            $context['containerType'] = 'localizedfield';
+                        }
                         $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
                     }
                 }
@@ -578,7 +572,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
 
         if (!empty($multihrefMetadata)) {
-            if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
+            if ($object instanceof DataObject\Localizedfield
+                || $object instanceof DataObject\Objectbrick\Data\AbstractData
                 || $object instanceof DataObject\Fieldcollection\Data\AbstractData
             ) {
                 $objectConcrete = $object->getObject();
@@ -880,11 +875,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $data;
     }
 
-    /** See parent class.
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];

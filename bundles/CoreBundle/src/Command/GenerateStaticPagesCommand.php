@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Model\Document;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,6 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:documents:generate-static-pages',
+    description: 'Regenerate static pages'
+)]
 class GenerateStaticPagesCommand extends AbstractCommand
 {
     public function __construct(protected StaticPageGenerator $staticPageGenerator)
@@ -37,8 +42,6 @@ class GenerateStaticPagesCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:documents:generate-static-pages')
-            ->setDescription('Regenerate static pages')
             ->addOption(
                 'path',
                 'p',

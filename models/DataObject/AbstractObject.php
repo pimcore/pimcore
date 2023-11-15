@@ -312,19 +312,17 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if (is_array($config)) {
-            if (!empty($config['class'])) {
-                $className = ltrim($config['class'], '\\');
-            }
+        if (!empty($config['class'])) {
+            $className = ltrim($config['class'], '\\');
+        }
 
-            if ($className) {
-                $listClass = $className . '\\Listing';
-                /** @var DataObject\Listing $list */
-                $list = self::getModelFactory()->build($listClass);
-                $list->setValues($config);
+        if ($className) {
+            $listClass = $className . '\\Listing';
+            /** @var DataObject\Listing $list */
+            $list = self::getModelFactory()->build($listClass);
+            $list->setValues($config);
 
-                return $list;
-            }
+            return $list;
         }
 
         throw new \Exception('Unable to initiate list class - class not found or invalid configuration');
@@ -399,16 +397,17 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
-            if ($this->getParentId()) {
+            $parentElement = $this->getParent();
+            if ($parentElement) {
                 $list = new Listing();
                 $list->setUnpublished($includingUnpublished);
-                $list->addConditionParam('parentId = ?', $this->getParentId());
+                $list->addConditionParam('parentId = ?', $parentElement->getId());
                 if ($this->getId()) {
                     $list->addConditionParam('id != ?', $this->getId());
                 }
-                $list->setOrderKey('key');
                 $list->setObjectTypes($objectTypes);
-                $list->setOrder('asc');
+                $list->setOrderKey($parentElement->getChildrenSortBy());
+                $list->setOrder($parentElement->getChildrenSortOrder());
                 $this->siblings[$cacheKey] = $list;
             } else {
                 $list = new Listing();
@@ -604,7 +603,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $objectId) {
                     $tag = 'object_' . $objectId;
                     $additionalTags[] = $tag;
@@ -705,12 +704,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $this->updateModificationInfos();
 
-        // save properties
-        $this->getProperties();
-        $this->getDao()->deleteAllProperties();
+        if ($this->isFieldDirty('properties')) {
+            // save properties
+            $properties = $this->getProperties();
+            $this->getDao()->deleteAllProperties();
 
-        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
-            foreach ($this->getProperties() as $property) {
+            foreach ($properties as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
                     $property->setCid($this->getId());
@@ -728,7 +727,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // dont't add a reference to yourself
+                // don't add a reference to yourself
                 continue;
             }
 

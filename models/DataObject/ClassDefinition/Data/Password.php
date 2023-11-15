@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -156,7 +157,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function calculateHash(string $data): string
     {
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+            $config = Config::getSystemConfiguration()['security']['password'];
 
             $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
@@ -199,7 +200,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+                $config = Config::getSystemConfiguration()['security']['password'];
 
                 if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);
@@ -280,11 +281,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data[0]['data'];
     }
@@ -299,7 +296,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);

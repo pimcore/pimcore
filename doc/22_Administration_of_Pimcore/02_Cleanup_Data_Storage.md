@@ -16,7 +16,7 @@ You can reduce the amount of restore points individually for Assets, Objects and
 After you have reduced the value, it's recommended to run the following command manually 
 (it would also run automatically as part of the regular maintenance script): 
 ```bash
-./bin/console pimcore:maintenance -f -j versioncleanup
+./bin/console pimcore:maintenance -j versioncleanup
 ```
 
 #### Example
@@ -54,20 +54,50 @@ Used for uploads, imports, exports, page, previews, ...
 **Public temporary directory**: `public/var/tmp/`  
 Used for image/video/document thumbnails used in the web-application. 
   
- 
+### Clearing Temporary Files
+```php
+// clear public files
+Tool\Storage::get('thumbnail')->deleteDirectory('/');
+Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
+
+Tool\Storage::get('asset_cache')->deleteDirectory('/');
+
+// clear system files
+recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
+```
 All temporary files can be deleted at any time.   
 **WARNING: Deleting all files in `public/var/tmp/` can have a huge impact on performance until all needed thumbnails are generated again.**
 
 ## Recycle Bin
 Deleting items in Pimcore moves them to the recycle bin first. The recycle bin works quite similar to the versioning, 
 so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
-You can review items in the bin in the admin user-interface under *Tools* > *Recycle Bin*, there it's also possible to 
-flush the entire contents. 
-  
-It's also possible to do this manually, this is especially useful when automating this process, or if you have a huge 
+In the admin user-interface, under *Tools* > *Recycle Bin*, you can review items in the bin or flush the entire content. 
+
+If you need to delete items based on how long they were stored in the recycle bin, the following command may come in handy: 
+```bash
+./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
+```
+It's also possible to flush the entire bin manually, this is especially useful when automating this process, or if you have a huge 
 amount of items in your recycle bin:   
 ```bash
 // replace ### with the name of your database
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
+```
+
+
+
+**WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
+Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**
+
+## Output Cache
+When enabled, the full page cache stores the whole frontend request response including the headers from a request and stores it into the cache. 
+
+The output cache can be cleared with the following snippet:
+```php
+// remove "output" out of the ignored tags, if a cache lifetime is specified
+Cache::removeIgnoredTagOnClear('output');
+
+// empty document cache
+Cache::clearTags(['output', 'output_lifetime']);
 ```

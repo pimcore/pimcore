@@ -232,12 +232,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-    /** See parent class.
-     *
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?Carbon
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         $thedata = $data[0]['data'];
         if ($thedata) {
@@ -261,7 +256,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $diffdata = [];
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
         $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
         $diffdata['data'] = $thedata;
         $diffdata['title'] = !empty($this->title) ? $this->title : $this->name;

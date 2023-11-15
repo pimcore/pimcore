@@ -137,10 +137,12 @@ abstract class Page extends Container
     protected array $_customHtmlAttribs = [];
 
     /**
+     * @deprecated will be removed in Pimcore 12.
+     *
      * The type of page to use when it wasn't set
      *
      */
-    protected static string $_defaultPageType;
+    protected static ?string $_defaultPageType = null;
 
     // Initialization:
 
@@ -165,14 +167,10 @@ abstract class Page extends Container
      */
     public static function factory(array $options): Url|Page
     {
-        if (!is_array($options)) {
-            throw new \Exception('Invalid argument: $options must be an array');
-        }
-
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif (self::getDefaultPageType() != null) {
-            $type = self::getDefaultPageType();
+        } elseif (self::$_defaultPageType != null) {
+            $type = self::$_defaultPageType;
         }
 
         if (isset($type)) {
@@ -970,9 +968,7 @@ abstract class Page extends Container
      */
     public function addRel(string $relation, mixed $value): static
     {
-        if (is_string($relation)) {
-            $this->_rel[$relation] = $value;
-        }
+        $this->_rel[$relation] = $value;
 
         return $this;
     }
@@ -988,9 +984,7 @@ abstract class Page extends Container
      */
     public function addRev(string $relation, mixed $value): static
     {
-        if (is_string($relation)) {
-            $this->_rev[$relation] = $value;
-        }
+        $this->_rev[$relation] = $value;
 
         return $this;
     }
@@ -1004,9 +998,7 @@ abstract class Page extends Container
      */
     public function removeRel(string $relation): static
     {
-        if (isset($this->_rel[$relation])) {
-            unset($this->_rel[$relation]);
-        }
+        unset($this->_rel[$relation]);
 
         return $this;
     }
@@ -1099,24 +1091,6 @@ abstract class Page extends Container
     protected static function _normalizePropertyName(string $property): string
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @internal
-     */
-    public static function setDefaultPageType(string $type): void
-    {
-        self::$_defaultPageType = $type;
-    }
-
-    /**
-     * @internal
-     */
-    public static function getDefaultPageType(): string
-    {
-        return self::$_defaultPageType;
     }
 
     /**

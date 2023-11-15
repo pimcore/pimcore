@@ -31,7 +31,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Document|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
     use TemporaryFileHelperTrait;

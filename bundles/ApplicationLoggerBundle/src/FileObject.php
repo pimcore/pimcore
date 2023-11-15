@@ -32,15 +32,14 @@ final class FileObject
         $this->data = $data;
         $this->filename = $filename;
 
-        if (empty($this->filename)) {
-            $folderpath = strftime('/%Y/%m/%d');
-            $this->filename = $folderpath.'/'.uniqid('fileobject_', true);
+        if (!$this->filename) {
+            $this->filename = date('/Y/m/d/') . uniqid('fileobject_', true);
         }
         $storage = Storage::get('application_log');
 
         try {
             $storage->write($this->filename, $this->data);
-        } catch (FilesystemException | UnableToWriteFile $exception) {
+        } catch (FilesystemException | UnableToWriteFile) {
             Logger::warn('Application Logger could not write File Object:'.$this->filename);
         }
     }

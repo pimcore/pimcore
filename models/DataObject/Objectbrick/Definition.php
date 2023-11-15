@@ -20,6 +20,9 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
+use Pimcore\Event\Model\DataObject\ObjectbrickDefinitionEvent;
+use Pimcore\Event\ObjectbrickDefinitionEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -30,15 +33,16 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
- * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getTableName(DataObject\ClassDefinition $class, bool $query = false)
  * @method void createUpdateTable(DataObject\ClassDefinition $class)
- * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en')
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     public array $classDefinitions = [];
 
@@ -158,6 +162,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->checkTablenames();
         $this->checkContainerRestrictions();
 
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_UPDATE);
+        }
+
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
@@ -195,6 +207,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
                 $fd->postSave($this);
             }
+        }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_UPDATE);
         }
     }
 
@@ -472,6 +490,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function delete(): void
     {
+        $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
@@ -506,17 +525,17 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            break;
-                        }
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        break;
                     }
                 }
             }
         }
+
+        $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_DELETE);
     }
 
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data

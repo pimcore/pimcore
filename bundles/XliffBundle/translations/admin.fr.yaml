@@ -7,7 +7,7 @@ xliff_export_objects: "Seuls les champs \xE0 l'int\xE9rieur d'un conteneur Champ
   Localis\xE9s sont reconnus. Lors de l'importation des traductions XLIFF la langue
   source restera intacte, seuls les champs de la langue cible seront \xE9cras\xE9es."
 xliff_export_notice: "Vous pouvez s\xE9lectionner ici les documents et objets que
-  vous souhaiter exporter pour traduction."
+  vous souhaitez exporter pour traduction."
 xliff_import_notice: "S\xE9lectionnez un fichier XLIFF traduit qui a \xE9t\xE9 pr\xE9c\xE9demment
   export\xE9 par Pimcore puis traduit par un fournisseur de services de traduction
   (LSP) ou par une application de type CAT. Soyez conscient que l'importation va \xE9craser

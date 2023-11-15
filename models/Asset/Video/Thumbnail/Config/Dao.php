@@ -29,7 +29,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = \Pimcore\Config::getSystemConfiguration();
 
         $storageConfig = $config['config_location'][self::CONFIG_KEY];
 
@@ -104,7 +104,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     protected function autoClearTempFiles(): void
     {
-        $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['video']['thumbnails']['auto_clear_temp_files'];
+        $enabled = \Pimcore\Config::getSystemConfiguration('assets')['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
             \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new CleanupThumbnailsMessage('video', $this->model->getName())

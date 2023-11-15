@@ -591,6 +591,17 @@ final class Requirements
             ]);
         }
 
+        $checks[] = new Check([
+            'name' => 'locales-utf8',
+            'link' => 'https://packages.debian.org/en/stable/locales-all',
+            'state' => setlocale(LC_ALL, [
+                           'en.utf8', 'en.UTF-8', 'en_US.utf8', 'en_US.UTF-8', 'en_GB.utf8', 'en_GB.UTF-8',
+                       ]) === false
+                       ? Check::STATE_ERROR
+                       : Check::STATE_OK,
+            'message' => 'It is recommended to install UTF-8 locale, otherwise all CLI calls which use escapeshellarg() will strip multibyte characters',
+        ]);
+
         // Imagick
         $checks[] = new Check([
             'name' => 'Imagick',

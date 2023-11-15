@@ -24,12 +24,12 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /**
-     * @var Hotspotimage[]
+     * @var array<int, Hotspotimage|null>
      */
     protected array $items;
 
     /**
-     * @param Hotspotimage[] $items
+     * @param array<int, Hotspotimage|null> $items
      */
     public function __construct(array $items = [])
     {
@@ -37,7 +37,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    public function current(): Hotspotimage|bool|null
+    public function current(): Hotspotimage|null|false
     {
         return current($this->items);
     }
@@ -63,7 +63,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * @return Hotspotimage[]
+     * @return array<int, Hotspotimage|null>
      */
     public function getItems(): array
     {
@@ -71,13 +71,10 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * @param Hotspotimage[] $items
+     * @param array<int, Hotspotimage|null> $items
      */
     public function setItems(array $items): void
     {
-        if (!is_array($items)) {
-            $items = [];
-        }
         $this->items = $items;
         $this->rewind();
         $this->markMeDirty();
@@ -86,7 +83,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     public function hasValidImages(): bool
     {
         foreach ($this->getItems() as $item) {
-            if ($item instanceof \Pimcore\Model\DataObject\Data\Hotspotimage) {
+            if ($item instanceof Hotspotimage) {
                 return true;
             }
         }

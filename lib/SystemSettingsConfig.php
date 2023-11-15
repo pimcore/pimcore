@@ -48,16 +48,10 @@ class SystemSettingsConfig
     private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
-            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $config[self::CONFIG_ID] = [
-                'general' => $containerConfig['general'],
-                'documents' => $containerConfig['documents'],
-                'objects' => $containerConfig['objects'],
-                'assets' => $containerConfig['assets'],
-                'email' => $containerConfig['email'],
-            ];
+            $containerConfigSettings = self::getConfigValuesFromContainer();
+            $config[self::CONFIG_ID] = $containerConfigSettings['config'];
 
-            $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
+            $storageConfig = $containerConfigSettings['containerConfig']['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -73,7 +67,19 @@ class SystemSettingsConfig
     {
         $repository = self::getRepository();
 
-        return SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+        $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+
+        $loadType = $repository->getReadTargets()[0] ?? null;
+
+        // If the read target is settings-store and no data is found there,
+        // load the data from the container config
+        // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
+        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+            $data = self::getConfigValuesFromContainer()['config'];
+            $data['writeable'] = $repository->isWriteable();
+        }
+
+        return $data;
     }
 
     public function save(array $values): void
@@ -235,5 +241,19 @@ class SystemSettingsConfig
         } else {
             throw new \Exception("Language `$source` doesn't exist");
         }
+    }
+
+    private static function getConfigValuesFromContainer(): array
+    {
+        $containerConfig = \Pimcore\Config::getSystemConfiguration();
+        $data = [
+            'general' => $containerConfig['general'],
+            'documents' => $containerConfig['documents'],
+            'objects' => $containerConfig['objects'],
+            'assets' => $containerConfig['assets'],
+            'email' => $containerConfig['email'],
+        ];
+
+        return ['containerConfig' =>$containerConfig, 'config' => $data];
     }
 }

@@ -1,6 +1,84 @@
-# Upgrade Notes - Pimcore 11.0.0
+# Upgrade Notes
 
-## API
+## Pimcore 11.1.0
+### Elements
+
+#### [All]:
+- Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
+- Added hint for second parameter `array $params = []` to `Element/ElementInterface::getById`
+- `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
+
+#### [Assets]:
+- Asset Documents background processing (e.g. page count, thumbnails & search text) can be disabled with config:
+    ```yaml
+    pimcore:
+        assets:
+            document:
+                thumbnails:
+                    enabled: false #disable generating thumbnail for Asset Documents
+                process_page_count: false #disable processing page count
+                process_text: false #disable processing text extraction
+                scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
+    ```
+- Video Assets spherical metadata is now calculated in the backfground instead of on load.
+
+#### [Data Objects]:
+- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
+- Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
+- Input fields `CheckValidity` checks the column length.
+
+#### [Documents]:
+- Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
+- Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
+
+-----------------
+### General
+
+#### [Authentication]:
+The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
+- [Static Page Generator]: Static pages can be generated based on sub-sites main domain using below config:
+    ```yaml
+    pimcore:
+        documents:
+            static_page_router:
+                use_main_domain: true #generates pages in path /public/var/tmp/pages/my-domain.com/en.html 
+    ```
+    and adapting NGINX config:
+    ```nginx
+    map $args $static_page_root {
+        default                                 /var/tmp/pages/$host;
+        "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+        "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+        "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+    }
+    map $uri $static_page_uri {
+        default                                 $uri;
+        "/"                                     /%home;
+    }
+  ```
+
+#### [Core Cache Handler]:
+- Remove redundant cache item tagging with own key.
+
+#### [Installer]: 
+- Passing `--install-bundles` as empty option now installs the required bundles.
+
+#### [Maintenance Mode]:
+- Maintenance mode check is handled via `tmp_store` in database. Using maintenance mode files is deprecated.
+- Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
+    - `activateMaintenanceMode`, use `MaintenanceModeHelperInterface::activate` instead.
+    - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
+    - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
+    - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12.
+
+
+------------------
+## Pimcore 11.0.7
+- Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
+
+------------------
+## Pimcore 11.0.0
+### API
 #### [General] :
 
 -  **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. Double check your classes which are extending from Pimcore classes and adapt if necessary. 
@@ -66,7 +144,7 @@
 -  Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`.
 
 -----------------
-## Admin UI
+### Admin UI
 #### [General] :
 
 -  Removed `adminer` as built-in database management tool.
@@ -75,7 +153,7 @@
 
 #### [Authentication] :
 
--  Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed support old authentication system
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events
@@ -95,11 +173,13 @@
 #### [Security] :
 
 -  Enabled Content Security Policy by default.
--  Implemented Symfony HTML sanitizer for WYSIWYG editors.
+-  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities <,>, & etc.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
 
 
 -----------------
-## Bundles
+### Bundles
 #### [Bundles General] :
 
 - Removed support for loading bundles through `extensions.php`.
@@ -142,6 +222,7 @@
 
     - [WordExport] has been moved into PimcoreWordExportBundle
 	- [Xliff Translation] Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+	- [WYSIWYG-Editor] The default editor changed from `CKEditor` to `TinyMCE` and has been moved into PimcoreTinymceBundle. Please adapt custom configuration and [extend](https://pimcore.com/docs/platform/Pimcore/Documents/Editables/WYSIWYG#extending-symfony-html-sanitizer-configuration) the html sanitizer for supporting the required html elements in wysiwyg editor.
 
 
 
@@ -155,7 +236,6 @@
             $collection->addBundle(new \Pimcore\Bundle\AdminBundle\PimcoreAdminBundle\PimcoreAdminBundle(), 60);
         }
         ```
-		- Moved `BundleManagerEvents` to AdminBundle. Please use `Pimcore\Bundle\AdminBundle\Event\BundleManagerEvents` instead of `Pimcore\Event\BundleManagerEvents`.
         -  Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     - [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
@@ -182,7 +262,7 @@
         - Service ids changed from `pimcore.newsletter` to `pimcore_newsletter` e.g. `pimcore_newsletter.document.newsletter.factory.default`
 
 
-## Core
+### Core
 
 #### [Commands] :
 
@@ -221,6 +301,7 @@ pimcore:
 #### [CoreBundle] :
 
 -  Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
+-  Priority of `PimcoreCoreBundle` has been changed to `-10` to make sure that it is loaded after default bundles.
 
 #### [Environment] :
 
@@ -239,7 +320,9 @@ pimcore:
 
 #### [Migrations] :
 
--  Pimcore does not run core migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
+-  Removed `executeMigrationsUp` from `Pimcore\Composer`.
+-  Pimcore does not run core migrations after `composer` update automatically anymore.
+   Make sure that migrations are executed by running the command `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`.
 
 #### [Naming] :
 
@@ -262,7 +345,7 @@ pimcore:
 - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 
 -----------------
-## Ecommerce
+### Ecommerce
 #### [Ecommerce General] :
 
 - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
@@ -287,7 +370,7 @@ pimcore:
 -  Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 
 -----------------
-## Elements
+### Elements
 
 #### [All] :
 
@@ -335,6 +418,19 @@ pimcore:
 #### [WebDAV] :
 
 -  WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
+
+   As result of this change, the following changes are required in your nginx configuration:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin)(.+?)....
+    ```
+    New:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin|/asset/webdav)(.+?)....
+    ```
 
 -----------------
 
@@ -476,7 +572,7 @@ pimcore_seo:
 -  Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 
 -----------------
-## Infrastructure
+### Infrastructure
 #### [PHP Options] :
 
 -  Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
@@ -491,7 +587,7 @@ pimcore_seo:
 -  Replace deprecated `Symfony\Component\HttpFoundation\RequestMatcher` with `Symfony\Component\HttpFoundation\ChainRequestMatcher`
 
 -----------------
-## Tools
+### Tools
 #### [Application Logger] :
 
 -  Removed deprecated `PIMCORE_LOG_FILEOBJECT_DIRECTORY` constant, since flysystem is used to save/get fileobjects. Please make sure to adapt your code and migrate your fileobjects manually.
@@ -501,7 +597,7 @@ pimcore_seo:
 #### [Cache] :
 
 -  Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
--  Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+-  Responses containing a header `Cache-Control: no-store` will no longer be cached by the full page cache.
 -  Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 
 #### [Console] :

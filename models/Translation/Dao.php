@@ -91,26 +91,29 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($this->model->getKey() !== '') {
-            if (is_array($this->model->getTranslations())) {
-                foreach ($this->model->getTranslations() as $language => $text) {
-                    if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
-                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
+            foreach ($this->model->getTranslations() as $language => $text) {
+                if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
+                    Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
 
-                        continue;
-                    }
-
-                    $data = [
-                        'key' => $this->model->getKey(),
-                        'type' => $this->model->getType(),
-                        'language' => $language,
-                        'text' => $sanitizer->sanitize($text),
-                        'modificationDate' => $this->model->getModificationDate(),
-                        'creationDate' => $this->model->getCreationDate(),
-                        'userOwner' => $this->model->getUserOwner(),
-                        'userModification' => $this->model->getUserModification(),
-                    ];
-                    Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
+                    continue;
                 }
+
+                if ($text != strip_tags($text)) {
+                    $text = $sanitizer->sanitizeFor('body', $text);
+                    $this->model->addTranslation($language, $text);
+                }
+
+                $data = [
+                'key' => $this->model->getKey(),
+                'type' => $this->model->getType(),
+                'language' => $language,
+                'text' => $text,
+                'modificationDate' => $this->model->getModificationDate(),
+                'creationDate' => $this->model->getCreationDate(),
+                'userOwner' => $this->model->getUserOwner(),
+                'userModification' => $this->model->getUserModification(),
+                ];
+                Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }
         }
     }
@@ -140,7 +143,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Returns a array containing all available domains
+     * Returns a array containing all available (registered) domains
      *
      */
     public function getAvailableDomains(): array
@@ -149,7 +152,10 @@ class Dao extends Model\Dao\AbstractDao
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
-            $domains[] = str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            $domain =  str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            if ($this->isAValidDomain($domain)) {
+                $domains[] = $domain;
+            }
         }
 
         return $domains;

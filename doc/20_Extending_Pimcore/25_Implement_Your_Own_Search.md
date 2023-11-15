@@ -36,7 +36,7 @@ pimcore.helpers.hasSearchImplementation()
 If you want to create your own search implementation you have to provide some predefined methods. 
 These methods are: `openItemSelector`, `showQuickSearch`, `hideQuickSearch` and `getObjectRelationInlineSearchRoute`.
 - The `openItemSelector` method will be triggered by certain data object fields and editables through the 
-  [helper.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/helpers.js#L814).
+  [helper.js](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/public/js/pimcore/helpers.js#L822).
 - The `showQuickSearch` and `hideQuickSearch` is responsible for managing the quickSearch.
 - The `getObjectRelationInlineSearchRoute` has to return the route to `DataObjectController::optionsAction`.
 

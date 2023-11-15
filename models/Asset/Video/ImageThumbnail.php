@@ -29,7 +29,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Video|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
@@ -203,7 +203,7 @@ final class ImageThumbnail
      *
      * @throws \Exception
      */
-    public function getMedia(string $name, int $highRes = 1): ?Image\Thumbnail
+    public function getMedia(string $name, int $highRes = 1): ?Image\ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {

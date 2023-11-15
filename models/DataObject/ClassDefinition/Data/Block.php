@@ -508,11 +508,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
-            return true;
-        }
-
-        return false;
+        return count($this->children) > 0;
     }
 
     /**
@@ -804,6 +800,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
+            $this->preSetData($container, $data, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -888,6 +885,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 $fd->performMultipleAssignmentCheck($data);
                             }
 
+                            if ($fd instanceof Link) {
+                                $params['resetInvalidFields'] = true;
+                            }
                             $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
@@ -918,13 +918,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $blockDefinitions = $this->getFieldDefinitions();
 
-        if (is_array($blockDefinitions)) {
-            foreach ($blockDefinitions as $field) {
-                if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
-                    // Lazy loading inside blocks isn't supported, turn it off if possible
-                    if (method_exists($field, 'setLazyLoading')) {
-                        $field->setLazyLoading(false);
-                    }
+        foreach ($blockDefinitions as $field) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+                // Lazy loading inside blocks isn't supported, turn it off if possible
+                if (method_exists($field, 'setLazyLoading')) {
+                    $field->setLazyLoading(false);
                 }
             }
         }

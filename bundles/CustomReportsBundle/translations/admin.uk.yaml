@@ -5,4 +5,5 @@ reports: "\u0417\u0432\u0456\u0442\u0438"
 custom_report_permissions: "\u0414\u043E\u0441\u0442\u0443\u043F"
 keybinding_customReports: Custom Reports
 keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
 ...

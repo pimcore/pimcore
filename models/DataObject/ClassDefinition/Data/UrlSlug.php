@@ -131,15 +131,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
+                $matches = [];
                 $slug = htmlspecialchars($item->getSlug());
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
-                    $slugToCompare = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $item->getSlug());
-                    if ($item->getSlug() !== $slugToCompare) {
-                        throw new Model\Element\ValidationException('Slug contains forbidden characters!');
-                    }
-
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
                         throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
@@ -149,8 +145,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
 
-                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
-                        throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
+                    if(preg_match_all('([?#])', $item->getSlug(), $matches)) {
+                        throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
                     }
                 }
             }
@@ -280,7 +276,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
-        $rawResult = null;
+        $rawResult = [];
         if ($object instanceof Model\DataObject\Concrete) {
             $rawResult = $object->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
@@ -304,11 +300,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         $result = [];
-        if (is_array($rawResult)) {
-            foreach ($rawResult as $rawItem) {
-                $slug = Model\DataObject\Data\UrlSlug::createFromDataRow($rawItem);
-                $result[] = $slug;
-            }
+        foreach ($rawResult as $rawItem) {
+            $slug = Model\DataObject\Data\UrlSlug::createFromDataRow($rawItem);
+            $result[] = $slug;
         }
 
         return $result;

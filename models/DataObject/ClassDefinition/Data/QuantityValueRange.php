@@ -303,7 +303,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
-            if ($minimum !== null && (!\is_numeric($minimum) || !\is_numeric($maximum))) {
+            if (!\is_numeric($minimum) || !\is_numeric($maximum)) {
                 throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
             }
 

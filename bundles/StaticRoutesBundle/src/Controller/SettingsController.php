@@ -111,9 +111,7 @@ class SettingsController extends UserAwareController
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
                 $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
+                $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 $routes[] = $route;
             }
 

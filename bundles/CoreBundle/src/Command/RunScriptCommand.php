@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,6 +26,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name:'pimcore:run-script',
+    description: 'Run a specific PHP script in an initialized Pimcore environment'
+)]
 class RunScriptCommand extends AbstractCommand
 {
     use DryRun;
@@ -32,8 +37,6 @@ class RunScriptCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:run-script')
-            ->setDescription('Run a specific PHP script in an initialized Pimcore environment')
             ->addArgument(
                 'script',
                 InputArgument::REQUIRED,

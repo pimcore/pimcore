@@ -20,6 +20,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Db;
 use Pimcore\Tool;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:locale:delete-unused-tables',
+    description: 'Delete unused locale(invalid language) tables & views'
+)]
 class DeleteUnusedLocaleDataCommand extends AbstractCommand
 {
     use DryRun;
@@ -34,8 +39,6 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:locale:delete-unused-tables')
-            ->setDescription('Delete unused locale(invalid language) tables & views')
             ->addOption(
                 'skip-locales',
                 's',
@@ -88,43 +91,38 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 
             //drop unused localized view e.g. object_localized_classId_*
             $existingViews = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_{$classId}\_%'");
+            foreach ($existingViews as $existingView) {
+                $localizedView = current($existingView);
+                $existingLanguage = str_replace('object_localized_'.$classId.'_', '', $localizedView);
 
-            if (is_array($existingViews)) {
-                foreach ($existingViews as $existingView) {
-                    $localizedView = current($existingView);
-                    $existingLanguage = str_replace('object_localized_'.$classId.'_', '', $localizedView);
+                if (!in_array($existingLanguage, $validLanguages)) {
+                    $sqlDropView = 'DROP VIEW IF EXISTS object_localized_' . $classId . '_' .$existingLanguage;
+                    $printLine = true;
 
-                    if (!in_array($existingLanguage, $validLanguages)) {
-                        $sqlDropView = 'DROP VIEW IF EXISTS object_localized_' . $classId . '_' .$existingLanguage;
-                        $printLine = true;
-
-                        if (!$this->isDryRun()) {
-                            $output->writeln($sqlDropView);
-                            $db->executeQuery($sqlDropView);
-                        } else {
-                            $output->writeln($this->dryRunMessage($sqlDropView));
-                        }
+                    if (!$this->isDryRun()) {
+                        $output->writeln($sqlDropView);
+                        $db->executeQuery($sqlDropView);
+                    } else {
+                        $output->writeln($this->dryRunMessage($sqlDropView));
                     }
                 }
             }
 
             //drop unused localized table e.g. object_localized_query_classId_*
             $existingTables = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_query\_{$classId}\_%'");
-            if (is_array($existingTables)) {
-                foreach ($existingTables as $existingTable) {
-                    $localizedTable = current($existingTable);
-                    $existingLanguage = str_replace('object_localized_query_'.$classId.'_', '', $localizedTable);
+            foreach ($existingTables as $existingTable) {
+                $localizedTable = current($existingTable);
+                $existingLanguage = str_replace('object_localized_query_'.$classId.'_', '', $localizedTable);
 
-                    if (!in_array($existingLanguage, $validLanguages)) {
-                        $sqlDropTable = 'DROP TABLE IF EXISTS object_localized_query_' . $classId . '_' .$existingLanguage;
-                        $printLine = true;
+                if (!in_array($existingLanguage, $validLanguages)) {
+                    $sqlDropTable = 'DROP TABLE IF EXISTS object_localized_query_' . $classId . '_' .$existingLanguage;
+                    $printLine = true;
 
-                        if (!$this->isDryRun()) {
-                            $output->writeln($sqlDropTable);
-                            $db->executeQuery($sqlDropTable);
-                        } else {
-                            $output->writeln($this->dryRunMessage($sqlDropTable));
-                        }
+                    if (!$this->isDryRun()) {
+                        $output->writeln($sqlDropTable);
+                        $db->executeQuery($sqlDropTable);
+                    } else {
+                        $output->writeln($this->dryRunMessage($sqlDropTable));
                     }
                 }
             }

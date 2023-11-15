@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Workflow\Dumper\GraphvizDumper;
 use Pimcore\Workflow\Dumper\StateMachineGraphvizDumper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,10 +29,13 @@ use Symfony\Component\Workflow\Marking;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:workflow:dump',
+    description: 'Dump a workflow'
+
+)]
 class WorkflowDumpCommand extends AbstractCommand
 {
-    protected static $defaultName = 'pimcore:workflow:dump';
-
     protected function configure(): void
     {
         $this
@@ -39,7 +43,6 @@ class WorkflowDumpCommand extends AbstractCommand
                 new InputArgument('name', InputArgument::REQUIRED, 'A workflow name'),
                 new InputArgument('marking', InputArgument::IS_ARRAY, 'A marking (a list of places)'),
             ])
-            ->setDescription('Dump a workflow')
             ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command dumps the graphical representation of a
 workflow in DOT format

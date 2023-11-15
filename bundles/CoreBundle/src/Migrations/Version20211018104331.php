@@ -91,7 +91,7 @@ final class Version20211018104331 extends AbstractMigration
     /**
      * @return string[]
      */
-    private function getForeignKeys(DataObject\ClassDefinition $class): array
+    private function getForeignKeys(DataObject\ClassDefinitionInterface $class): array
     {
         $foreignKeys = [
             'object_query_'.$class->getId() => 'oo_id',
@@ -108,16 +108,16 @@ final class Version20211018104331 extends AbstractMigration
         }
 
         $brickList = new DataObject\Objectbrick\Definition\Listing();
-        foreach ($brickList->load() as $brickDefinition) {
-            $foreignKeys['object_brick_query_'.$brickDefinition->getKey().'_'.$class->getId()] = 'o_id';
-            $foreignKeys['object_brick_localized_'.$brickDefinition->getKey().'_'.$class->getId()] = 'ooo_id';
-            $foreignKeys['object_brick_store_'.$brickDefinition->getKey().'_'.$class->getId()] = 'o_id';
+        foreach ($brickList->loadNames() as $brickName) {
+            $foreignKeys['object_brick_query_'.$brickName.'_'.$class->getId()] = 'o_id';
+            $foreignKeys['object_brick_localized_'.$brickName.'_'.$class->getId()] = 'ooo_id';
+            $foreignKeys['object_brick_store_'.$brickName.'_'.$class->getId()] = 'o_id';
         }
 
         $fieldCollectionList = new DataObject\Fieldcollection\Definition\Listing();
-        foreach ($fieldCollectionList->load() as $fieldCollectionDefinition) {
-            $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_'.$class->getId()] = 'o_id';
-            $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
+        foreach ($fieldCollectionList->loadNames() as $fieldCollectionName) {
+            $foreignKeys['object_collection_'.$fieldCollectionName.'_'.$class->getId()] = 'o_id';
+            $foreignKeys['object_collection_'.$fieldCollectionName.'_localized_'.$class->getId()] = 'ooo_id';
         }
 
         return $foreignKeys;

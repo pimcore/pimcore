@@ -130,18 +130,24 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
-            'image_thumbnails' => '/var/config/image_thumbnails',
-            'video_thumbnails' => '/var/config/video_thumbnails',
-            'document_types' => '/var/config/document_types',
-            'predefined_properties' => '/var/config/predefined_properties',
-            'predefined_asset_metadata' => '/var/config/predefined_asset_metadata',
-            'perspectives' => '/var/config/perspectives',
-            'custom_views' => '/var/config/custom_views',
-            'object_custom_layouts' => '/var/config/object_custom_layouts',
-            'system_settings' => '/var/config/system_settings',
+            'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
+            'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
+            'document_types' => PIMCORE_CONFIGURATION_DIRECTORY . '/document_types',
+            'predefined_properties' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_properties',
+            'predefined_asset_metadata' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined_asset_metadata',
+            'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
+            'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
+            'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
+            'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            'select_options' => PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
         ]);
 
-        ConfigurationHelper::addConfigLocationTargetNode($storageNode, 'system_settings', '/var/config/system_settings', [LocationAwareConfigRepository::READ_TARGET]);
+        ConfigurationHelper::addConfigLocationTargetNode(
+            $storageNode,
+            'system_settings',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            [LocationAwareConfigRepository::READ_TARGET]
+        );
 
         return $treeBuilder;
     }
@@ -447,7 +453,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => 50,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
@@ -524,6 +530,32 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultTrue()
                                     ->end()
                                 ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('document')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('thumbnails')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')
+                                        ->defaultTrue()
+                                        ->info('Process thumbnails for Asset documents.')
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->booleanNode('process_page_count')
+                                ->defaultTrue()
+                                ->info('Process & store page count for Asset documents. Internally required for thumbnails & text generation')
+                            ->end()
+                            ->booleanNode('process_text')
+                                ->defaultTrue()
+                                ->info('Process text for Asset documents (e.g. used by backend search).')
+                            ->end()
+                            ->booleanNode('scan_pdf')
+                                ->defaultTrue()
+                                ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
                         ->end()
                     ->end()
@@ -683,6 +715,31 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
                                             ->variableNode('layoutDefinitions')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('select_options')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('definitions')
+                                    ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('id')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('useTraits')->end()
+                                            ->scalarNode('implementsInterfaces')->end()
+                                            ->arrayNode('selectOptions')
+                                                ->prototype('array')
+                                                    ->children()
+                                                        ->scalarNode('value')->end()
+                                                        ->scalarNode('label')->end()
+                                                        ->scalarNode('name')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
                                         ->end()
                                     ->end()
                                 ->end()
@@ -855,6 +912,22 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('static_page_generator')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('use_main_domain')
+                            ->defaultFalse()
+                            ->info('Use main domain for static pages folder in tmp/pages')
+                        ->end()
+                        ->arrayNode('headers')
+                            ->normalizeKeys(false)
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->scalarNode('value')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         $this->addDocumentDefinition($documentsNode, 'type_definitions');
@@ -994,7 +1067,12 @@ final class Configuration implements ConfigurationInterface
                                 ->enumNode('algorithm')
                                     ->info('The hashing algorithm to use for backend users and objects containing a "password" field.')
                                     ->example('!php/const PASSWORD_BCRYPT')
-                                    ->values([PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
+                                    ->values(array_filter([
+                                        PASSWORD_DEFAULT,
+                                        PASSWORD_BCRYPT,
+                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                    ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
                                 ->arrayNode('options')
@@ -1598,6 +1676,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
+                                            ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
                                                     ->ifString()
@@ -1876,7 +1959,7 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('base_url')
-                            ->defaultValue('gotenberg:3000')
+                            ->defaultValue('http://gotenberg:3000')
                         ->end()
                     ->end()
                 ->end()

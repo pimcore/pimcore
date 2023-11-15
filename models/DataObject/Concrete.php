@@ -24,6 +24,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -129,10 +130,19 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                 if (method_exists($this, $getter)) {
                     $value = $this->$getter();
+
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
+                    // when adding a new object, skip check on mandatory fields with default value
+                    if (empty($value) && !$isUpdate && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
+                    ) {
+                        $omitMandatoryCheck = true;
+                    }
 
                     //check throws Exception
                     try {
+                        if ($fd instanceof Link) {
+                            $params['resetInvalidFields'] = true;
+                        }
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
@@ -458,7 +468,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param mixed $params
      *
      * @throws InheritanceParentNotFoundException
      */
@@ -801,7 +810,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $actualValue = $row[$column];
                 if (isset($likes[$column])) {
                     $expectedValue = $likes[$column];
-                    if (strpos($actualValue, $expectedValue) !== 0) {
+                    if (!str_starts_with($actualValue, $expectedValue)) {
                         return false;
                     }
                 } elseif ($actualValue != $expectedValue) {

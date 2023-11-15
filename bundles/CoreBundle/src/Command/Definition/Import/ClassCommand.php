@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\ModelInterface;
 
 /**
  * @internal
@@ -54,7 +54,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      *
      */
-    protected function loadDefinition(string $name): ?AbstractModel
+    protected function loadDefinition(string $name): ?ModelInterface
     {
         return ClassDefinition::getByName($name);
     }
@@ -77,7 +77,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      *
      */
-    protected function import(AbstractModel $definition, string $json): bool
+    protected function import(ModelInterface $definition, string $json): bool
     {
         if (!$definition instanceof ClassDefinition) {
             return false;

@@ -51,7 +51,7 @@ class PackageInfo
         }
 
         $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
-        if ($json && is_array($json)) {
+        if ($json) {
             return $this->installedPackages = $json['packages'] ?? $json;
         }
 

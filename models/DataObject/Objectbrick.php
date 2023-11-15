@@ -43,9 +43,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var Model\DataObject\Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * @internal
@@ -82,11 +81,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return $values;
         }
 
-        if (empty($this->items)) {
-            foreach ($this->getObjectVars() as $var) {
-                if ($var instanceof Objectbrick\Data\AbstractData) {
-                    $this->items[] = $var;
-                }
+        foreach ($this->getObjectVars() as $var) {
+            if ($var instanceof Objectbrick\Data\AbstractData &&
+                !in_array($var, $this->items, true)) {
+                $this->items[] = $var;
             }
         }
 
@@ -187,24 +185,18 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
     public function setObject(?Concrete $object): static
     {
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
 
         // update all items with the new $object
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->setObject($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->setObject($object);
             }
         }
 
@@ -213,11 +205,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function delete(Concrete $object): void
     {
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->delete($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->delete($object);
             }
         }
 
@@ -227,7 +217,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __sleep(): array
     {
         $finalVars = [];
-        $blockedVars = ['object'];
+        $blockedVars = ['object', 'brickGetters'];
         $vars = parent::__sleep();
 
         foreach ($vars as $value) {
@@ -255,12 +245,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
         }
 
-        if (is_array($this->items)) {
-            foreach ($this->items as $key => $item) {
-                if ($item instanceof \__PHP_Incomplete_Class) {
-                    unset($this->items[$key]);
-                    Logger::error('brick item ' . $key . ' does not exist anymore');
-                }
+        foreach ($this->items as $key => $item) {
+            if ($item instanceof \__PHP_Incomplete_Class) {
+                unset($this->items[$key]);
+                Logger::error('brick item ' . $key . ' does not exist anymore');
             }
         }
     }
@@ -312,19 +300,17 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function loadLazyData(): void
     {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
-        if (is_array($allowedBrickTypes)) {
-            foreach ($allowedBrickTypes as $allowedBrickType) {
-                $brickGetter = 'get' . ucfirst($allowedBrickType);
-                $brickData = $this->$brickGetter();
-                if ($brickData) {
-                    $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
-                    $fds = $brickDef->getFieldDefinitions();
-                    foreach ($fds as $fd) {
-                        $fieldGetter = 'get' . ucfirst($fd->getName());
-                        $fieldValue = $brickData->$fieldGetter();
-                        if ($fieldValue instanceof Localizedfield) {
-                            $fieldValue->loadLazyData();
-                        }
+        foreach ($allowedBrickTypes as $allowedBrickType) {
+            $brickGetter = 'get' . ucfirst($allowedBrickType);
+            $brickData = $this->$brickGetter();
+            if ($brickData) {
+                $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
+                $fds = $brickDef->getFieldDefinitions();
+                foreach ($fds as $fd) {
+                    $fieldGetter = 'get' . ucfirst($fd->getName());
+                    $fieldValue = $brickData->$fieldGetter();
+                    if ($fieldValue instanceof Localizedfield) {
+                        $fieldValue->loadLazyData();
                     }
                 }
             }

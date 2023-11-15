@@ -255,7 +255,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata = [];
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
         $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
         $diffdata['data'] = $thedata;
         $diffdata['title'] = !empty($this->title) ? $this->title : $this->name;

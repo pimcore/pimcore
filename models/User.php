@@ -25,13 +25,15 @@ use Pimcore\Tool;
 /**
  * @method User\Dao getDao()
  */
-final class User extends User\UserRole
+final class User extends User\UserRole implements UserInterface
 {
     use TemporaryFileHelperTrait;
 
     protected string $type = 'user';
 
     protected ?string $password = null;
+
+    protected ?string $passwordRecoveryToken = null;
 
     protected ?string $firstname = null;
 
@@ -104,6 +106,26 @@ final class User extends User\UserRole
         if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function getPasswordRecoveryToken(): ?string
+    {
+        return $this->passwordRecoveryToken;
+    }
+
+    /**
+     * @internal
+     *
+     * @return $this
+     */
+    public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static
+    {
+        $this->passwordRecoveryToken = $passwordRecoveryToken;
 
         return $this;
     }
@@ -439,7 +461,9 @@ final class User extends User\UserRole
         $storage = Tool\Storage::get('admin');
         if ($storage->fileExists($this->getOriginalImageStoragePath())) {
             if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
-                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
+                $originalImageStream = $storage->readStream($this->getOriginalImageStoragePath());
+                $localFile = self::getLocalFileFromStream($originalImageStream);
+                @fclose($originalImageStream);
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();

@@ -75,7 +75,7 @@ final class RedirectHandler
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?RedirectResponse
+    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?Response
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -111,7 +111,7 @@ final class RedirectHandler
         Request $request,
         RedirectUrlPartResolver $partResolver,
         Site $sourceSite = null
-    ): ?RedirectResponse {
+    ): ?Response {
         if (empty($redirect->getType())) {
             return null;
         }
@@ -146,7 +146,7 @@ final class RedirectHandler
      *
      * @throws \Exception
      */
-    protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?RedirectResponse
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?Response
     {
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
@@ -215,10 +215,15 @@ final class RedirectHandler
         }
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
-        $response = new RedirectResponse($url, $statusCode);
+        $response = new Response(null, $statusCode);
+
+        if ($response->isRedirect()) {
+            $response = new RedirectResponse($url, $statusCode);
+        }
+
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
-        $this->redirectLogger->info(Tool::getAnonymizedClientIp(), ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
+        $this->redirectLogger->info(Tool::getAnonymizedClientIp() ?? 'Anonymous', ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
 
         return $response;
     }

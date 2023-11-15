@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 
 /**
@@ -72,10 +73,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-            if (!is_array($this->config)) {
-                $this->config = [];
-            }
-
             $prefix = '';
             $suffix = '';
             $noText = false;
@@ -101,60 +98,30 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 unset($this->config['disabledFields']);
             }
 
-            // add attributes to link
-            $allowedAttributes = [
-                'charset',
-                'coords',
-                'hreflang',
-                'name',
-                'rel',
-                'rev',
-                'shape',
-                'target',
-                'accesskey',
-                'class',
-                'dir',
-                'draggable',
-                'dropzone',
-                'contextmenu',
-                'id',
-                'lang',
-                'style',
-                'tabindex',
-                'title',
-                'media',
-                'download',
-                'ping',
-                'type',
-                'referrerpolicy',
-                'xml:lang',
-            ];
-            $defaultAttributes = [];
-
-            if (!is_array($this->data)) {
-                $this->data = [];
-            }
-
-            $availableAttribs = array_merge($defaultAttributes, $this->data, $this->config);
+            $this->data = is_array($this->data) ? $this->data : [];
+            $availableAttribs = array_merge($this->data, $this->config);
 
             // add attributes to link
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if ((is_string($value) || is_numeric($value))
-                    && (strpos($key, 'data-') === 0 ||
-                        strpos($key, 'aria-') === 0 ||
-                        in_array($key, $allowedAttributes))) {
+                if (is_string($value) || is_numeric($value)) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
                         $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
-                    } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.htmlspecialchars($value).'"';
+                    } elseif ($value) {
+                        $attribs[] = (is_string($value)) ?
+                            $key . '="' . htmlspecialchars($value) . '"' :
+                            $key . '="' . $value . '"';
                     }
                 }
             }
-
             $attribs = array_unique($attribs);
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
+            $text = '';
+            if (!$noText) {
+                $text = htmlspecialchars($disabledText ? $url : ($this->data['text'] ?? $url));
+            }
+
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
         }
 
         return '';
@@ -207,7 +174,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
+            $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
@@ -403,11 +370,20 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_'.$asset->getId();
+                        $key = 'asset_' . $asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
                             'type' => 'asset',
+                        ];
+                    }
+                } elseif ($this->data['internalType'] == 'object') {
+                    if ($object = DataObject\Concrete::getById($this->data['internalId'])) {
+                        $key = 'object_' . $object->getId();
+
+                        $dependencies[$key] = [
+                            'id' => $object->getId(),
+                            'type' => 'object',
                         ];
                     }
                 }

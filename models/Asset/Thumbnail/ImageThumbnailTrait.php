@@ -124,7 +124,7 @@ trait ImageThumbnailTrait
         $this->realWidth = null;
     }
 
-    public function getWidth(): int
+    public function getWidth(): ?int
     {
         if (!$this->width) {
             $this->getDimensions();
@@ -133,7 +133,7 @@ trait ImageThumbnailTrait
         return $this->width;
     }
 
-    public function getHeight(): int
+    public function getHeight(): ?int
     {
         if (!$this->height) {
             $this->getDimensions();
@@ -142,7 +142,7 @@ trait ImageThumbnailTrait
         return $this->height;
     }
 
-    public function getRealWidth(): int
+    public function getRealWidth(): ?int
     {
         if (!$this->realWidth) {
             $this->getDimensions();
@@ -151,7 +151,7 @@ trait ImageThumbnailTrait
         return $this->realWidth;
     }
 
-    public function getRealHeight(): int
+    public function getRealHeight(): ?int
     {
         if (!$this->realHeight) {
             $this->getDimensions();
@@ -160,28 +160,30 @@ trait ImageThumbnailTrait
         return $this->realHeight;
     }
 
-    private function readDimensionsFromFile(): array
+    /**
+     * @internal
+     *
+     * @return array{width?: int, height?: int}
+     */
+    public function readDimensionsFromFile(): array
     {
         $dimensions = [];
         $pathReference = $this->getPathReference();
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile) {
-                    if ($imageInfo = @getimagesize($localFile)) {
-                        $dimensions = [
-                            'width' => $imageInfo[0],
-                            'height' => $imageInfo[1],
-                        ];
-                        if ($config = $this->getConfig()) {
-                            $this->getAsset()->getDao()->addToThumbnailCache(
-                                $config->getName(),
-                                basename($pathReference['storagePath']),
-                                filesize($localFile),
-                                $dimensions['width'],
-                                $dimensions['height']
-                            );
-                        }
+                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
+                    $asset = $this->getAsset();
+                    $filename = basename($pathReference['storagePath']);
+                    $asset->addThumbnailFileToCache(
+                        $localFile,
+                        $filename,
+                        $config
+                    );
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $filename);
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
                     }
                 }
             } catch (\Exception $e) {
@@ -192,6 +194,9 @@ trait ImageThumbnailTrait
         return $dimensions;
     }
 
+    /**
+     * @return array{width: ?int, height: ?int}
+     */
     public function getDimensions(): array
     {
         if (!$this->width || !$this->height) {
@@ -289,13 +294,13 @@ trait ImageThumbnailTrait
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail_deferred'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'thumbnail') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
-                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+                $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
@@ -328,7 +333,10 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        return self::getLocalFileFromStream($stream);
+        $localFile = self::getLocalFileFromStream($stream);
+        @fclose($stream);
+
+        return $localFile;
     }
 
     public function exists(): bool

@@ -51,23 +51,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $this->image = Asset\Image::getById($image);
         }
 
-        if (is_array($hotspots)) {
-            $this->hotspots = [];
-            foreach ($hotspots as $h) {
-                $this->hotspots[] = $h;
-            }
+        $this->hotspots = [];
+        foreach ($hotspots as $h) {
+            $this->hotspots[] = $h;
         }
 
-        if (is_array($marker)) {
-            $this->marker = [];
-            foreach ($marker as $m) {
-                $this->marker[] = $m;
-            }
+        $this->marker = [];
+        foreach ($marker as $m) {
+            $this->marker[] = $m;
         }
 
-        if (is_array($crop)) {
-            $this->crop = $crop;
-        }
+        $this->crop = $crop;
         $this->markMeDirty();
     }
 
@@ -143,7 +137,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->image;
     }
 
-    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $thumbnailName = null, bool $deferred = true): Asset\Image\Thumbnail|string
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $thumbnailName = null, bool $deferred = true): Asset\Image\ThumbnailInterface|string
     {
         if (!$this->getImage()) {
             return '';
@@ -154,7 +148,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $crop = $this->getCrop();
         }
 
-        $thumbConfig = $this->getImage()->getThumbnailConfig($thumbnailName);
+        $thumbConfig = $this->getImage()->getThumbnail($thumbnailName)->getConfig();
         if (!$thumbConfig && $crop) {
             $thumbConfig = new Asset\Image\Thumbnail\Config();
         }

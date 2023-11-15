@@ -21,13 +21,20 @@ use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
+use Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumperInterface;
 use Pimcore\Model\DataObject;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:build:classes',
+    description: 'rebuilds php files for classes, field collections and object bricks
+    based on updated var/classes/definition_*.php files'
+)]
 class ClassesDefinitionsBuildCommand extends AbstractCommand
 {
     public function __construct(
@@ -35,21 +42,15 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         protected PHPFieldCollectionClassDumperInterface $collectionClassDumper,
         protected PHPObjectBrickClassDumperInterface $brickClassDumper,
         protected PHPObjectBrickContainerClassDumperInterface $brickContainerClassDumper,
+        protected PHPSelectOptionsEnumDumperInterface $selectOptionsEnumDumper,
     ) {
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName('pimcore:build:classes')
-            ->setDescription(
-                'rebuilds php files for classes, field collections and object bricks based on updated var/classes/definition_*.php files'
-            );
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $cacheStatus = \Pimcore\Cache::isEnabled();
+        \Pimcore\Cache::disable();
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
@@ -75,6 +76,15 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         $list = $list->load();
         foreach ($list as $fcDefinition) {
             $this->collectionClassDumper->dumpPHPClass($fcDefinition);
+        }
+
+        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+        foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
+            $this->selectOptionsEnumDumper->dumpPHPEnum($selectOptionConfiguration);
+        }
+
+        if ($cacheStatus) {
+            \Pimcore\Cache::enable();
         }
 
         return 0;

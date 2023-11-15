@@ -900,7 +900,39 @@ pimcore.bundle.customreports.custom.item = Class.create({
         return allValues;
     },
 
+    checkMandatoryFields: function () {
+        let adapterValues = {};
+        let errorFields = [];
+        for (let i = 0; i < this.currentElements.length; i++) {
+            if (!this.currentElements[i].deleted) {
+                adapterValues = this.currentElements[i].adapter.getValues();
+                for(let field of this.currentElements[i].adapter.fieldsToCheck) {
+                    if(!adapterValues[field.name] || adapterValues[field.name] === '') {
+                        errorFields.push(field.label)
+                    }
+                }
+            }
+        }
+
+        if(errorFields.length > 0) {
+            throw new Error(`${t("mandatory_fields_missing")} ${errorFields.join(', ')}`)
+        }
+    },
+
     save: function () {
+
+        try {
+            this.checkMandatoryFields();
+        } catch (error) {
+            Ext.Msg.show({
+                title: t("error"),
+                msg: error,
+                buttons: Ext.Msg.OK,
+                icon: Ext.MessageBox.ERROR
+            });
+
+            return;
+        }
 
         let m = this.getValues();
         let error = false;

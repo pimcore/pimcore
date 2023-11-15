@@ -2,8 +2,6 @@
 
 Installation on Nginx is entirely possible, and in our experience quite a lot faster than apache. This section won't dive into how Nginx is installed etc, but will show a working Nginx configuration.
 
-_Note:_ At time of writing this config snippet doesn't care about WebDAV at all.
-
 ## Configuration
 
 Below is the configuration for a Nginx server (just the server part, the http etc. part can be kept default, as long as mime.types are included).
@@ -24,9 +22,6 @@ The following configuration is used with the assumption that it is for developme
 ```nginx
 # mime types are already covered in nginx.conf
 #include mime.types;
-types {
-    image/avif avif;
-}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
@@ -126,7 +121,7 @@ server {
     # Still use a allowlist approach to prevent each and every missing asset to go through the PHP Engine.
     # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
     # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin|/asset/webdav)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webp|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -201,9 +196,6 @@ The following configuration provides an approperiate base for a secure applicati
 ```nginx
 # mime types are already covered in nginx.conf
 #include mime.types;
-types {
-    image/avif avif;
-}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
@@ -412,7 +404,7 @@ server {
     # Still use a allowlist approach to prevent each and every missing asset to go through the PHP Engine.
     # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
     # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin|/asset/webdav)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webp|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
