@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class ClassDefinitionManager
 {
@@ -92,7 +93,7 @@ class ClassDefinitionManager
     /**
      * @return bool whether the class was saved or not
      */
-    public function saveClass(ClassDefinition $class, bool $saveDefinitionFile, bool $force = false): bool
+    public function saveClass(ClassDefinitionInterface $class, bool $saveDefinitionFile, bool $force = false): bool
     {
         $shouldSave = $force;
 
