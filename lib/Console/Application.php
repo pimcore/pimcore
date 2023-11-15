@@ -122,6 +122,10 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
     public function add(Command $command): ?Command
     {
+        if ($command instanceof LazyCommand) {
+            $command = $command->getCommand();
+        }
+        
         if ($command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();
 
