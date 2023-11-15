@@ -60,8 +60,10 @@ class ClassDefinitionManager
 
     /**
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
+     *
+     * @param bool $force whether to always update no matter if the model definition changed or not
      */
-    public function createOrUpdateClassDefinitions(): array
+    public function createOrUpdateClassDefinitions(bool $force = false): array
     {
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
@@ -77,10 +79,10 @@ class ClassDefinitionManager
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinitionInterface) {
-                        $classSaved = $this->saveClass($existingClass, false);
+                        $classSaved = $this->saveClass($existingClass, false, $force);
                         $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
-                        $classSaved = $this->saveClass($class, false);
+                        $classSaved = $this->saveClass($class, false, $force);
                         $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }
