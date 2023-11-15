@@ -102,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $data['lastRebuildDate'] = $this->model->getModificationDate();
+        $data['definitionModificationDate'] = $this->model->getModificationDate();
 
         $this->db->update('classes', $data, ['id' => $this->model->getId()]);
 
@@ -233,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
             [
                 'name' => $this->model->getName(),
                 'id' => $this->model->getId(),
-                'lastRebuildDate' => $this->model->getModificationDate()
+                'definitionModificationDate' => $this->model->getModificationDate()
             ]
         );
     }
