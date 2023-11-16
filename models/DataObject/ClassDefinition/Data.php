@@ -1030,13 +1030,33 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $code;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function getAsIntegerCast(mixed $number): ?int
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2',
+            'Using "%s" is deprecated and will be removed in Pimcore 12.',
+            __METHOD__
+        );
+
         return strlen((string) $number) === 0 ? null : (int)$number;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function getAsFloatCast(mixed $number): ?float
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2',
+            'Using "%s" is deprecated and will be removed in Pimcore 12.',
+            __METHOD__
+        );
+
         return strlen((string) $number) === 0 ? null : (float)$number;
     }
 
