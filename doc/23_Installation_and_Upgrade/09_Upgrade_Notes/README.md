@@ -2,6 +2,8 @@
 
 ## Pimcore 11.2.0
 ### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
 
