@@ -294,6 +294,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $result = [];
         $count = 0;
+        $context = $params['context'] ?? [];
 
         foreach ($data as $rawBlockElement) {
             $resultElement = [];
@@ -307,7 +308,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $invisible = $fd->getInvisible();
                 if ($invisible && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
-                    if (method_exists($object, $blockGetter)) {
+                    if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
                         if (isset($items[$oIndex])) {

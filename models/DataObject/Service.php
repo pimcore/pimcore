@@ -1363,6 +1363,12 @@ class Service extends Model\Element\Service
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
+                // Send information when we have block or similar element
+                if ($layout instanceof \Pimcore\Model\DataObject\ClassDefinition\Data && empty($context['subContainerType'])) {
+                    $context['subContainerKey'] = $layout->getName();
+                    $context['subContainerType'] = $layout->getFieldtype();
+                }
+
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);
                 }
