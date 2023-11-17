@@ -55,14 +55,6 @@ services:
         class: Pimcore\Document\Renderer\DocumentRenderer
         public: true
 
-    Pimcore\Document\Renderer\DocumentRenderer:
-        alias: Pimcore\Document\Renderer\DocumentRendererInterface
-        public: true
-        deprecated:
-            message: 'The "%alias_id%" alias is deprecated, use "Pimcore\Document\Renderer\DocumentRendererInterface" instead.'
-            package: pimcore/pimcore
-            version: 11.2
-
     Pimcore\Document\Editable\EditableUsageResolver:
         public: true
 
