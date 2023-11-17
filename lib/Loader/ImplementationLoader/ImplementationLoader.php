@@ -29,12 +29,9 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * @var LoaderInterface[]
      */
-    protected $loaders;
+    protected array $loaders;
 
-    /**
-     * @var array
-     */
-    private $loaderCache = [];
+    private array $loaderCache = [];
 
     /**
      * @param LoaderInterface[] $loaders
@@ -47,7 +44,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * @param LoaderInterface[] $loaders
      */
-    private function setLoaders(array $loaders)
+    private function setLoaders(array $loaders): void
     {
         $this->loaders = [];
         $this->loaderCache = [];
@@ -57,20 +54,12 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         }
     }
 
-    /**
-     * @param LoaderInterface $loader
-     */
-    public function addLoader(LoaderInterface $loader)
+    public function addLoader(LoaderInterface $loader): void
     {
         $this->loaders[] = $loader;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return LoaderInterface|null
-     */
-    private function getLoader(string $name)
+    private function getLoader(string $name): ?LoaderInterface
     {
         // loader cache contains index of loader previously found for given name
         if (isset($this->loaderCache[$name])) {
@@ -89,18 +78,12 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return null !== $this->getLoader($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(string $name, array $params = [])
+    public function build(string $name, array $params = []): mixed
     {
         $loader = $this->getLoader($name);
         if (null === $loader) {
@@ -110,9 +93,6 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return $loader->build($name, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsClassName(string $name): bool
     {
         $loader = $this->getLoader($name);
@@ -124,9 +104,6 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return $loader->supportsClassName($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassNameFor(string $name): string
     {
         $loader = $this->getLoader($name);

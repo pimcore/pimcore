@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,7 +19,6 @@ namespace Pimcore\Workflow\MarkingStore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Workflow\Manager;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
@@ -27,25 +27,13 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
     const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
 
-    /**
-     * @var string
-     */
-    private $workflowName;
+    private string $workflowName;
 
-    /**
-     * @var array
-     */
-    private $stateMapping;
+    private array $stateMapping;
 
-    /**
-     * @var PropertyAccessorInterface
-     */
-    private $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
     public function __construct(string $workflowName, array $places, array $stateMapping, PropertyAccessorInterface $propertyAccessor, Manager $workflowManager)
     {
@@ -58,14 +46,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         $this->workflowManager = $workflowManager;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return Marking
-     *
-     * @throws LogicException
-     */
-    public function getMarking($subject)// : Marking
+    public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -92,13 +73,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return new Marking($places);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws LogicException
-     * @throws \Exception
-     */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $places = array_keys($marking->getPlaces());
@@ -120,11 +95,10 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param string $fieldName
      *
      * @return string[]
      */
-    public function getMappedPlaces(string $fieldName)
+    public function getMappedPlaces(string $fieldName): array
     {
         $places = [];
         foreach ($this->stateMapping as $place => $_fieldName) {
@@ -136,13 +110,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return $places;
     }
 
-    /**
-     *
-     * @param string|PropertyPathInterface $property
-     * @param mixed $places
-     *
-     */
-    private function setProperty(Concrete $subject, $property, $places)
+    private function setProperty(Concrete $subject, string $property, mixed $places): void
     {
         $fd = $subject->getClass()->getFieldDefinition($property);
 
@@ -162,11 +130,9 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param object $subject
-     *
-     * @return Concrete
+     * @throws LogicException
      */
-    private function checkIfSubjectIsValid($subject): Concrete
+    private function checkIfSubjectIsValid(object $subject): Concrete
     {
         if (!$subject instanceof Concrete) {
             throw new LogicException('data_object_splitted_state marking store works for pimcore data objects only.');
@@ -175,7 +141,10 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return $subject;
     }
 
-    private function validateStateMapping(array $places, array $stateMapping)
+    /**
+     * @throws LogicException
+     */
+    private function validateStateMapping(array $places, array $stateMapping): void
     {
         $diff = array_diff($places, array_keys($stateMapping));
 

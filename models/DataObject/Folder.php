@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,17 +23,9 @@ use Pimcore\Model\DataObject;
  */
 class Folder extends DataObject
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $o_type = 'folder';
+    protected string $type = 'folder';
 
-    /**
-     * @param array $values
-     *
-     * @return Folder
-     */
-    public static function create($values)
+    public static function create(array $values): Folder
     {
         $object = new static();
         self::checkCreateData($values);
@@ -43,19 +36,13 @@ class Folder extends DataObject
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function update($isUpdate = null, $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         parent::update($isUpdate, $params);
         $this->getDao()->update($isUpdate);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete()
+    public function delete(): void
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');

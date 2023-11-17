@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,13 +24,10 @@ final class DefinitionModifier
     /**
      * appends valid $fieldsToAdd to a $layoutDefinition element with $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
      *
-     * @return bool
      */
-    public function appendFields(Layout $layoutDefinition, string $nameToFind, $fieldsToAdd): bool
+    public function appendFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
         $callable = function () use ($fieldsToAdd) {
             return $this->add($fieldsToAdd, true, func_get_args());
@@ -41,13 +39,10 @@ final class DefinitionModifier
     /**
      * prepends valid $fieldsToAdd to a $layoutDefinition element with $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
      *
-     * @return bool
      */
-    public function prependFields(Layout $layoutDefinition, string $nameToFind, $fieldsToAdd): bool
+    public function prependFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
         $callable = function () use ($fieldsToAdd) {
             return $this->add($fieldsToAdd, false, func_get_args());
@@ -59,13 +54,10 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element of type Layout that is given by $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
      *
-     * @return bool
      */
-    public function insertFieldsFront(Layout $layoutDefinition, string $nameToFind, $fieldsToInsert): bool
+    public function insertFieldsFront(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
         $callable = function () use ($fieldsToInsert) {
             return $this->insert($fieldsToInsert, false, func_get_args());
@@ -77,13 +69,10 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element of type Layout that is given by $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
      *
-     * @return bool
      */
-    public function insertFieldsBack(Layout $layoutDefinition, string $nameToFind, $fieldsToInsert): bool
+    public function insertFieldsBack(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
         $callable = function () use ($fieldsToInsert) {
             return $this->insert($fieldsToInsert, true, func_get_args());
@@ -95,13 +84,10 @@ final class DefinitionModifier
     /**
      * replaces a $layoutDefinition element, that is specified by $nameToFind, with $field
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldReplacements
      *
-     * @return bool
      */
-    public function replaceField(Layout $layoutDefinition, string $nameToFind, $fieldReplacements): bool
+    public function replaceField(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldReplacements): bool
     {
         $callable = function () use ($fieldReplacements) {
             return $this->replace($fieldReplacements, func_get_args());
@@ -110,12 +96,6 @@ final class DefinitionModifier
         return $this->findField($layoutDefinition, $nameToFind, $callable);
     }
 
-    /**
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
-     *
-     * @return bool
-     */
     public function removeField(Layout $layoutDefinition, string $nameToFind): bool
     {
         $callable = function () {
@@ -130,13 +110,9 @@ final class DefinitionModifier
      * callback is executed - passing the parent, its child which was found by name and the child-index it was found at
      * to edit upon.
      *
-     * @param Layout|Data\Localizedfields $layoutDefinition
-     * @param string $nameToFind
-     * @param callable $callback
      *
-     * @return bool
      */
-    public function findField($layoutDefinition, string $nameToFind, callable $callback): bool
+    public function findField(Data\Localizedfields|Layout $layoutDefinition, string $nameToFind, callable $callback): bool
     {
         $found = false;
         $index = null;
@@ -175,13 +151,10 @@ final class DefinitionModifier
     /**
      * appends/prepends $fieldsToAdd to a $layoutDefinition element at a given index
      *
-     * @param array $args
      * @param bool $append if set the element gets appended. Otherwise it will be prepended
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
-     *
-     * @return bool
      */
-    private function add($fieldsToAdd, bool $append, array $args): bool
+    private function add(array|Data|Layout $fieldsToAdd, bool $append, array $args): bool
     {
         $fieldsToAdd = is_array($fieldsToAdd) ? $fieldsToAdd : [$fieldsToAdd];
         $layoutDefinition = $args[0];
@@ -196,13 +169,10 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element at a given index
      *
-     * @param array $args
      * @param bool $append if set the element gets appended. Otherwise it will be prepended
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
-     *
-     * @return bool
      */
-    private function insert($fieldsToInsert, bool $append, array $args): bool
+    private function insert(array|Data|Layout $fieldsToInsert, bool $append, array $args): bool
     {
         $fieldsToInsert = is_array($fieldsToInsert) ? $fieldsToInsert : [$fieldsToInsert];
         $child = $args[1];
@@ -221,12 +191,9 @@ final class DefinitionModifier
     /**
      * replaces a $layoutDefinition element at a given index with valid $fieldsToAdd
      *
-     * @param array $args
      * @param Data|Data[]|Layout|Layout[] $fieldReplacements
-     *
-     * @return bool
      */
-    private function replace($fieldReplacements, array $args): bool
+    private function replace(array|Data|Layout $fieldReplacements, array $args): bool
     {
         $fieldReplacements = is_array($fieldReplacements) ? $fieldReplacements : [$fieldReplacements];
         $layoutDefinition = $args[0];
@@ -239,10 +206,6 @@ final class DefinitionModifier
 
     /**
      * removes a given field
-     *
-     * @param array $args
-     *
-     * @return bool
      */
     private function remove(array $args): bool
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,16 +24,14 @@ class Transliteration
     /**
      * @static
      *
-     * @param string $value
-     * @param string|null $language
      *
-     * @return string
      */
-    public static function toASCII($value, $language = null)
+    public static function toASCII(string $value, string $language = null): string
     {
-        $value = transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
-        $value = trim($value);
+        if ($language !== null && in_array($language.'-ASCII', transliterator_list_ids())) {
+            return transliterator_transliterate($language.'-ASCII; [^\u001F-\u007f] remove', $value);
+        }
 
-        return $value;
+        return transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
     }
 }

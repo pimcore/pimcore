@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
-use Doctrine\DBAL\Exception;
+use Carbon\Carbon;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -29,13 +29,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class NotificationService
 {
-    /** @var UserService */
-    private $userService;
+    private UserService $userService;
 
     /**
      * NotificationService constructor.
      *
-     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -43,11 +41,6 @@ class NotificationService
     }
 
     /**
-     * @param int $userId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -57,7 +50,7 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ) {
+    ): void {
         $this->beginTransaction();
 
         $sender = User::getById($fromUser);
@@ -87,11 +80,6 @@ class NotificationService
     }
 
     /**
-     * @param int $groupId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -101,7 +89,7 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ) {
+    ): void {
         $group = User\Role::getById($groupId);
 
         if (!$group instanceof User\Role) {
@@ -140,9 +128,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */
@@ -158,10 +144,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
-     * @param int|null $recipientId
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */
@@ -183,12 +166,6 @@ class NotificationService
         return $notification;
     }
 
-    /**
-     * @param array $filter
-     * @param array $options
-     *
-     * @return array
-     */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
@@ -221,14 +198,6 @@ class NotificationService
         return $result;
     }
 
-    /**
-     * @param int $user
-     * @param int $lastUpdate
-     *
-     * @return array
-     *
-     * @throws Exception
-     */
     public function findLastUnread(int $user, int $lastUpdate): array
     {
         $listing = new Listing();
@@ -255,13 +224,9 @@ class NotificationService
         return $result;
     }
 
-    /**
-     * @param Notification $notification
-     *
-     * @return array
-     */
     public function format(Notification $notification): array
     {
+        $carbonTs = new Carbon($notification->getCreationDate(), 'UTC');
         $data = [
             'id' => $notification->getId(),
             'type' => $notification->getType(),
@@ -270,6 +235,7 @@ class NotificationService
             'sender' => '',
             'read' => (int) $notification->isRead(),
             'date' => $notification->getCreationDate(),
+            'timestamp' => $carbonTs->getTimestamp(),
             'linkedElementType' => $notification->getLinkedElementType(),
             'linkedElementId' => null,
         ];
@@ -293,11 +259,6 @@ class NotificationService
         return $data;
     }
 
-    /**
-     * @param int $user
-     *
-     * @return int
-     */
     public function countAllUnread(int $user): int
     {
         $listing = new Listing();
@@ -306,10 +267,6 @@ class NotificationService
         return $listing->count();
     }
 
-    /**
-     * @param int $id
-     * @param int|null $recipientId
-     */
     public function delete(int $id, ?int $recipientId = null): void
     {
         $this->beginTransaction();
@@ -323,9 +280,6 @@ class NotificationService
         $this->commit();
     }
 
-    /**
-     * @param int $user
-     */
     public function deleteAll(int $user): void
     {
         $listing = new Listing();

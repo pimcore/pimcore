@@ -21,33 +21,18 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
-    /**
-     * @var DocumentRenderer
-     */
-    protected $documentRenderer;
-
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
-
-    public function __construct(DocumentRenderer $documentRenderer, LockFactory $lockFactory)
+    public function __construct(protected DocumentRenderer $documentRenderer, private LockFactory $lockFactory, protected SystemSettingsConfig $settingsConfig)
     {
-        $this->documentRenderer = $documentRenderer;
-        $this->lockFactory = $lockFactory;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return string
-     */
-    public function getStoragePath($document)
+    public function getStoragePath(Document\PageSnippet $document): string
     {
         $path = $document->getRealFullPath();
 
@@ -57,16 +42,36 @@ class StaticPageGenerator
             $path = '/%home';
         }
 
+        $useMainDomain = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['use_main_domain'];
+        if ($useMainDomain) {
+            $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
+            $mainDomain = '/' . $systemConfig['general']['domain'];
+            $returnPath = '';
+            $pathInfo = pathinfo($path);
+            if($pathInfo['dirname'] != '') {
+                $directories = explode('/', $pathInfo['dirname']);
+                $directories = array_filter($directories);
+                $pathString = '';
+                foreach ($directories as $directory) {
+                    $pathString .= '/' . $directory;
+                    $doc = Document::getByPath($pathString);
+                    $site = Site::getByRootId($doc->getId());
+                    if ($site instanceof Site) {
+                        $mainDomain = '/' . $site->getMainDomain();
+                    } else {
+                        $returnPath .= '/' . $directory;
+                    }
+                }
+                $returnPath .= '/' . $pathInfo['basename'];
+            }
+
+            return $mainDomain . $returnPath . '.html';
+        }
+
         return $path . '.html';
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function generate($document, $params = [])
+    public function generate(Document\PageSnippet $document, array $params = []): bool
     {
         $storagePath = $this->getStoragePath($document);
 
@@ -106,11 +111,10 @@ class StaticPageGenerator
     }
 
     /**
-     * @param Document\PageSnippet $document
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function remove($document)
+    public function remove(Document\PageSnippet $document): void
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');
@@ -118,12 +122,7 @@ class StaticPageGenerator
         $storage->delete($storagePath);
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return bool
-     */
-    public function pageExists($document)
+    public function pageExists(Document\PageSnippet $document): bool
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');
@@ -131,12 +130,7 @@ class StaticPageGenerator
         return $storage->fileExists($storagePath);
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return int|null
-     */
-    public function getLastModified($document)
+    public function getLastModified(Document\PageSnippet $document): ?int
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');

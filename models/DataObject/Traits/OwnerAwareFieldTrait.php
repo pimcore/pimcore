@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,54 +24,35 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  */
 trait OwnerAwareFieldTrait
 {
-    /**
-     * @var mixed
-     */
-    protected $_owner;
+    protected mixed $_owner = null;
+
+    protected ?string $_fieldname = null;
+
+    protected ?string $_language = null;
 
     /**
-     * @var string
-     */
-    protected $_fieldname;
-
-    /**
-     * @var string|null
-     */
-    protected $_language;
-
-    /**
+     *
+     * @return $this
+     *
      * @internal
-     *
-     * @param mixed $owner
-     *
-     * @return $this;
      */
-    public function _setOwner($owner)
+    public function _setOwner(mixed $owner): static
     {
         $this->_owner = $owner;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function _getOwner()
+    public function _getOwner(): mixed
     {
         return $this->_owner;
     }
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerFieldname(): ?string
     {
         return $this->_fieldname;
     }
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerLanguage(): ?string
     {
         return $this->_language;
@@ -79,11 +61,9 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      *
-     * @param string|null $fieldname
-     *
      * @return $this;
      */
-    public function _setOwnerFieldname(?string $fieldname)
+    public function _setOwnerFieldname(?string $fieldname): static
     {
         $this->_fieldname = $fieldname;
 
@@ -93,11 +73,9 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      *
-     * @param string|null $language
-     *
      * @return $this
      */
-    public function _setOwnerLanguage(?string $language)
+    public function _setOwnerLanguage(?string $language): static
     {
         $this->_language = $language;
 
@@ -107,7 +85,7 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      */
-    protected function markMeDirty($dirty = true)
+    protected function markMeDirty(bool $dirty = true): void
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
             $this->_owner->markFieldDirty($this->_fieldname, $dirty);

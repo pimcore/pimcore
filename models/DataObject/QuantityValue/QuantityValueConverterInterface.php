@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,9 +16,9 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
-use Pimcore\Model\DataObject\Data\QuantityValue;
+use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 
 interface QuantityValueConverterInterface
 {
-    public function convert(QuantityValue $quantityValue, Unit $toUnit): QuantityValue;
+    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue;
 }

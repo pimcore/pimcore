@@ -1,0 +1,8 @@
+pimcore_admin:
+    user:
+        default_key_bindings:
+            application_logger:
+                key: 'L'
+                action: applicationLogger
+                ctrl: true
+                alt: true

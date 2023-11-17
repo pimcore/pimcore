@@ -1,0 +1,55 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\DataObject\ClassBuilder\ClassBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\ClassBuilder
+
+    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder
+
+    Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\ListingClassBuilder
+
+    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder
+
+    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder
+
+    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface:
+        class: Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder
+
+    Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface:
+        class: Pimcore\DataObject\ClassBuilder\PHPClassDumper
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface:
+        class: Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumper
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface:
+        class: Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumper
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface:
+        class: Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumper'
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\SelectOptionsEnumBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\SelectOptionsEnumBuilder'

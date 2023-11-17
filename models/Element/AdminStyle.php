@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -26,31 +26,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminStyle
 {
-    /**
-     * @var string|bool|null
-     */
-    protected $elementCssClass = '';
+    protected string|bool|null $elementCssClass = '';
 
-    /**
-     * @var string|bool|null
-     */
-    protected $elementIcon;
+    protected string|bool|null $elementIcon = null;
 
-    /**
-     * @var string|bool|null
-     */
-    protected $elementIconClass;
+    protected string|bool|null $elementIconClass = null;
 
-    /**
-     * @var array|null
-     */
-    protected $elementQtipConfig;
+    protected ?array $elementQtipConfig = null;
 
-    /**
-     * @param ElementInterface $element
-     */
+    protected ?string $elementText = null;
+
     public function __construct(ElementInterface $element)
     {
+        $this->setElementText($element->getKey());
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
@@ -79,9 +67,9 @@ class AdminStyle
             } else {
                 $this->elementIconClass = 'pimcore_icon_asset_default';
 
-                $fileExt = File::getFileExtension($element->getFilename());
+                $fileExt = pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 if ($fileExt) {
-                    $this->elementIconClass .= ' pimcore_icon_' . File::getFileExtension($element->getFilename());
+                    $this->elementIconClass .= ' pimcore_icon_' . pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 }
             }
         } elseif ($element instanceof Document) {
@@ -119,44 +107,26 @@ class AdminStyle
         }
     }
 
-    /**
-     * @param string|bool|null $elementCssClass
-     *
-     * @return $this
-     */
-    public function setElementCssClass($elementCssClass)
+    public function setElementCssClass(bool|string|null $elementCssClass): static
     {
         $this->elementCssClass = $elementCssClass;
 
         return $this;
     }
 
-    /**
-     * @param string $elementCssClass
-     *
-     * @return $this
-     */
-    public function appendElementCssClass($elementCssClass)
+    public function appendElementCssClass(string $elementCssClass): static
     {
         $this->elementCssClass .= ' ' . $elementCssClass;
 
         return $this;
     }
 
-    /**
-     * @return string|bool|null
-     */
-    public function getElementCssClass()
+    public function getElementCssClass(): bool|string|null
     {
         return $this->elementCssClass;
     }
 
-    /**
-     * @param string|bool|null $elementIcon
-     *
-     * @return $this
-     */
-    public function setElementIcon($elementIcon)
+    public function setElementIcon(bool|string|null $elementIcon): static
     {
         $this->elementIcon = $elementIcon;
 
@@ -166,17 +136,12 @@ class AdminStyle
     /**
      * @return string|bool|null Return false if you don't want to overwrite the default.
      */
-    public function getElementIcon()
+    public function getElementIcon(): bool|string|null
     {
         return $this->elementIcon;
     }
 
-    /**
-     * @param string|bool|null $elementIconClass
-     *
-     * @return $this
-     */
-    public function setElementIconClass($elementIconClass)
+    public function setElementIconClass(bool|string|null $elementIconClass): static
     {
         $this->elementIconClass = $elementIconClass;
 
@@ -186,24 +151,28 @@ class AdminStyle
     /**
      * @return string|bool|null Return false if you don't want to overwrite the default.
      */
-    public function getElementIconClass()
+    public function getElementIconClass(): bool|string|null
     {
         return $this->elementIconClass;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getElementQtipConfig()
+    public function getElementQtipConfig(): ?array
     {
         return $this->elementQtipConfig;
     }
 
-    /**
-     * @param null|array $elementQtipConfig
-     */
-    public function setElementQtipConfig($elementQtipConfig)
+    public function setElementQtipConfig(?array $elementQtipConfig): void
     {
         $this->elementQtipConfig = $elementQtipConfig;
+    }
+
+    public function getElementText(): ?string
+    {
+        return $this->elementText;
+    }
+
+    public function setElementText(?string $elementText): void
+    {
+        $this->elementText = $elementText;
     }
 }

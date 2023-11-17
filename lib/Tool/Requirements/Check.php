@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,29 +27,14 @@ final class Check implements \ArrayAccess
 
     const STATE_ERROR = 3;
 
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
 
-    /**
-     * @var string|null
-     */
-    public $link;
+    public ?string $link = null;
 
-    /**
-     * @var int
-     */
-    public $state;
+    public int $state;
 
-    /**
-     * @var string|null
-     */
-    public $message;
+    public ?string $message = null;
 
-    /**
-     * @param array{name: string, link?: string, state: int, message?: string} $data
-     */
     public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
@@ -56,58 +42,37 @@ final class Check implements \ArrayAccess
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * @param string $link
-     */
-    public function setLink($link)
+    public function setLink(string $link): void
     {
         $this->link = $link;
     }
 
-    /**
-     * @return int
-     */
-    public function getState()
+    public function getState(): int
     {
         return $this->state;
     }
 
-    /**
-     * @param int $state
-     */
-    public function setState($state)
+    public function setState(int $state): void
     {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         if (empty($this->message)) {
             return $this->getName() . ' is required.';
@@ -116,10 +81,7 @@ final class Check implements \ArrayAccess
         return $this->message;
     }
 
-    /**
-     * @param string $message
-     */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }
@@ -127,7 +89,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -137,7 +98,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string|int|null
      */
     public function offsetGet($offset): string|int|null
     {

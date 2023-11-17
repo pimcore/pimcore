@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,15 +22,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait PositionSortTrait
 {
     /**
-     * @param array|string|null $a
-     * @param array|string|null $b
+     * @param array{position: int|string}|string|null $a If of type array must have key `position` with numeric value
+     * @param array{position: int|string}|string|null $b If of type array must have key `position` with numeric value
      *
-     * @return int
+     * @return -1|0|1
      */
-    protected function sort($a, $b): int
+    protected function sort(array|string|null $a, array|string|null $b): int
     {
         if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position'];
+            return $a['position'] <=> $b['position'];
         }
         if (is_string($a) && is_string($b)) {
             return strcmp($a, $b);

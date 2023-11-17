@@ -1,0 +1,54 @@
+services:
+    Pimcore\Messenger\Handler\VideoConvertHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\CleanupThumbnailsHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\AssetPreviewImageHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\MaintenanceTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\ScheduledTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\OptimizeImageHandler:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\GeneratePagePreviewHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\VersionDeleteHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\SanityCheckHandler:
+        tags:
+            - { name: messenger.message_handler }

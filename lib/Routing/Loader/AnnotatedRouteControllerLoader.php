@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,9 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader as Bas
  */
 class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method): string
     {
         $routeName = parent::getDefaultRouteName($class, $method);

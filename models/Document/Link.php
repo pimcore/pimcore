@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Link\Dao getDao()
@@ -32,34 +34,29 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var int|null
      */
-    protected $internal;
+    protected ?int $internal = null;
 
     /**
      * Contains the type of the internal ID
      *
      * @internal
      *
-     * @var string|null
      */
-    protected $internalType;
+    protected ?string $internalType = null;
 
     /**
      * Contains object of linked Document|Asset|DataObject
      *
      * @internal
      *
-     * @var Model\Element\ElementInterface|null
      */
-    protected $object;
+    protected Model\Element\ElementInterface|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * Contains the direct link as plain text
      *
      * @internal
-     *
-     * @var string
      */
     protected string $direct = '';
 
@@ -67,28 +64,18 @@ class Link extends Model\Document
      * Type of the link (internal/direct)
      *
      * @internal
-     *
-     * @var string
      */
     protected string $linktype = 'internal';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'link';
 
     /**
      * path of the link
      *
      * @internal
-     *
-     * @var string
      */
     protected string $href = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -109,9 +96,6 @@ class Link extends Model\Document
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -131,9 +115,8 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link
      *
-     * @return string
      */
-    public function getHref()
+    public function getHref(): string
     {
         $path = '';
         if ($this->getLinktype() === 'internal') {
@@ -165,9 +148,8 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link needed for the editmode
      *
-     * @return string
      */
-    public function getRawHref()
+    public function getRawHref(): string
     {
         $rawHref = '';
         if ($this->getLinktype() === 'internal') {
@@ -189,9 +171,8 @@ class Link extends Model\Document
     /**
      * Returns the path of the link including the anchor and parameters
      *
-     * @return string
      */
-    public function getLink()
+    public function getLink(): string
     {
         $path = $this->getHref();
 
@@ -211,9 +192,8 @@ class Link extends Model\Document
     /**
      * Returns the id of the internal document|asset which is linked
      *
-     * @return int
      */
-    public function getInternal()
+    public function getInternal(): ?int
     {
         return $this->internal;
     }
@@ -221,9 +201,8 @@ class Link extends Model\Document
     /**
      * Returns the direct link (eg. http://www.pimcore.org/test)
      *
-     * @return string
      */
-    public function getDirect()
+    public function getDirect(): string
     {
         return $this->direct;
     }
@@ -231,22 +210,16 @@ class Link extends Model\Document
     /**
      * Returns the type of the link (internal/direct)
      *
-     * @return string
      */
-    public function getLinktype()
+    public function getLinktype(): string
     {
         return $this->linktype;
     }
 
-    /**
-     * @param int $internal
-     *
-     * @return $this
-     */
-    public function setInternal($internal)
+    public function setInternal(?int $internal): static
     {
         if (!empty($internal)) {
-            $this->internal = (int) $internal;
+            $this->internal = $internal;
             $this->setObjectFromId();
         } else {
             $this->internal = null;
@@ -255,55 +228,37 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @param string $direct
-     *
-     * @return $this
-     */
-    public function setDirect($direct)
+    public function setDirect(string $direct): static
     {
         $this->direct = $direct;
 
         return $this;
     }
 
-    /**
-     * @param string $linktype
-     *
-     * @return $this
-     */
-    public function setLinktype($linktype)
+    public function setLinktype(string $linktype): static
     {
         $this->linktype = $linktype;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getInternalType()
+    public function getInternalType(): ?string
     {
         return $this->internalType;
     }
 
-    /**
-     * @param string|null $type
-     *
-     * @return $this
-     */
-    public function setInternalType($type)
+    public function setInternalType(?string $type): static
     {
         $this->internalType = $type;
 
         return $this;
     }
 
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getElement()
+    public function getElement(): ?Model\Element\ElementInterface
     {
+        if ($this->object instanceof Model\Element\ElementDescriptor) {
+            $this->object = Element\Service::getElementById($this->object->getType(), $this->object->getId());
+        }
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
         }
@@ -314,56 +269,14 @@ class Link extends Model\Document
         return null;
     }
 
-    /**
-     * @param Model\Element\ElementInterface|null $element
-     *
-     * @return $this
-     */
-    public function setElement($element)
+    public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->object = $element;
 
         return $this;
     }
 
-    /**
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     *
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getObject()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::getObject() method is deprecated, use Link::getElement() instead.'
-        );
-
-        return $this->getElement();
-    }
-
-    /**
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     *
-     * @param Model\Element\ElementInterface $object
-     *
-     * @return $this
-     */
-    public function setObject($object)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
-        );
-
-        return $this->setElement($object);
-    }
-
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
-    private function setObjectFromId()
+    private function setObjectFromId(): ?Model\Element\ElementInterface
     {
         try {
             if ($this->internal) {
@@ -391,9 +304,8 @@ class Link extends Model\Document
     /**
      * returns the ready-use html for this link
      *
-     * @return string
      */
-    public function getHtml()
+    public function getHtml(): string
     {
         $attributes = [
             'class',
@@ -419,17 +331,14 @@ class Link extends Model\Document
         return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
 
         $this->saveScheduledTasks();
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

@@ -24,18 +24,12 @@ use Pimcore\Loader\ImplementationLoader\AbstractClassNameLoader;
  */
 final class FallbackBuilder extends AbstractClassNameLoader
 {
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return class_exists($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getClassName(string $name)
+    protected function getClassName(string $name): string
     {
         return $name;
     }

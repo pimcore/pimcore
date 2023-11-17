@@ -30,25 +30,23 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Contains all valid columns in the database table
      *
-     * @var array
      */
-    protected $validColumns = [];
+    protected array $validColumns = [];
 
     /**
      * Get the valid columns from the database
      *
      */
-    public function init()
+    public function init(): void
     {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
     /**
-     * @param string $abbreviation
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByAbbreviation($abbreviation)
+    public function getByAbbreviation(string $abbreviation): void
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation=' . $this->db->quote($abbreviation));
         if (empty($classRaw)) {
@@ -58,11 +56,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $reference
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByReference($reference)
+    public function getByReference(string $reference): void
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference=' . $this->db->quote($reference));
         if (empty($classRaw)) {
@@ -72,11 +69,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
@@ -88,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $this->update();
     }
@@ -96,12 +92,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
 
-    public function update()
+    public function update(): void
     {
         if (!$this->model->getId()) {
             // mimic autoincrement
@@ -124,13 +120,13 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
+        Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
     }
 
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }

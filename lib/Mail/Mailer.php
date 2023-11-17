@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,29 +24,16 @@ use Symfony\Component\Mime\RawMessage;
 
 class Mailer implements MailerInterface
 {
-    /**
-     * @var MailerInterface
-     */
-    protected $mailer;
+    protected MailerInterface $mailer;
 
-    /**
-     * @var RedirectingPlugin
-     */
     protected RedirectingPlugin $redirectPlugin;
 
-    /**
-     * @param MailerInterface $mailer
-     * @param RedirectingPlugin $redirectPlugin
-     */
     public function __construct(MailerInterface $mailer, RedirectingPlugin $redirectPlugin)
     {
         $this->mailer = $mailer;
         $this->redirectPlugin = $redirectPlugin;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function send(RawMessage $message, Envelope $envelope = null): void
     {
         if ($message instanceof Mail) {

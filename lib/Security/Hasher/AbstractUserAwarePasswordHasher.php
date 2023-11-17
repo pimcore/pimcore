@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,15 +25,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher implements UserAwarePasswordHasherInterface
 {
-    /**
-     * @var UserInterface|null
-     */
-    protected $user;
+    protected ?UserInterface $user = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUser(UserInterface $user)
+    public function setUser(UserInterface $user): void
     {
         if ($this->user) {
             throw new RuntimeException('User was already set and can\'t be overwritten');
@@ -41,10 +36,7 @@ abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher i
         $this->user = $user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUser()
+    public function getUser(): UserInterface
     {
         if (!$this->user) {
             throw new RuntimeException('No user was set');

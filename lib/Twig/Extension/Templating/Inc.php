@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,35 +26,17 @@ class Inc implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var IncludeRenderer
-     */
-    protected $includeRenderer;
+    protected IncludeRenderer $includeRenderer;
 
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
+    protected EditmodeResolver $editmodeResolver;
 
-    /**
-     * @param IncludeRenderer $includeRenderer
-     * @param EditmodeResolver $editmodeResolver
-     */
     public function __construct(IncludeRenderer $includeRenderer, EditmodeResolver $editmodeResolver)
     {
         $this->includeRenderer = $includeRenderer;
         $this->editmodeResolver = $editmodeResolver;
     }
 
-    /**
-     * @param PageSnippet|int|string $include
-     * @param array $params
-     * @param bool $cacheEnabled
-     * @param bool|null $editmode
-     *
-     * @return string
-     */
-    public function __invoke($include, array $params = [], $cacheEnabled = true, $editmode = null)
+    public function __invoke(int|string|PageSnippet $include, array $params = [], bool $cacheEnabled = true, bool $editmode = null): string
     {
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();

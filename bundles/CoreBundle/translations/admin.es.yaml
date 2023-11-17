@@ -1,0 +1,5 @@
+---
+workflow_change_email_notification_text: workflow_change_email_notification_text
+workflow_change_email_notification_deeplink: enlace al elemento
+workflow_change_email_notification_note: workflow_change_email_notification_note
+...

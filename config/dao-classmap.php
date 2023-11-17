@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,6 +60,8 @@ return [
     'Pimcore\\Model\\DataObject\\Objectbrick\\Definition' => 'Pimcore\\Model\\DataObject\\Objectbrick\\Definition\\Dao',
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Dao',
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing\\Dao',
+    'Pimcore\\Model\\DataObject\\SelectOptions\\Config' => 'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Dao',
+    'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Listing' => 'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Listing\\Dao',
     'Pimcore\\Model\\DataObject\\Service' => 'Pimcore\\Model\\Element\\Dao',
     'Pimcore\\Model\\Dependency' => 'Pimcore\\Model\\Dependency\\Dao',
     'Pimcore\\Model\\Document' => 'Pimcore\\Model\\Document\\Dao',
@@ -99,7 +102,6 @@ return [
     'Pimcore\\Model\\Document\\Hardlink\\Wrapper\\Snippet' => 'Pimcore\\Model\\Document\\Hardlink\\Dao',
     'Pimcore\\Model\\Document\\Link' => 'Pimcore\\Model\\Document\\Link\\Dao',
     'Pimcore\\Model\\Document\\Listing' => 'Pimcore\\Model\\Document\\Listing\\Dao',
-    'Pimcore\\Model\\Document\\Newsletter' => 'Pimcore\\Model\\Document\\Newsletter\\Dao',
     'Pimcore\\Model\\Document\\Page' => 'Pimcore\\Model\\Document\\Page\\Dao',
     'Pimcore\\Model\\Document\\Printcontainer' => 'Pimcore\\Model\\Document\\Printcontainer\\Dao',
     'Pimcore\\Model\\Document\\Printpage' => 'Pimcore\\Model\\Document\\Printpage\\Dao',
@@ -118,12 +120,6 @@ return [
     'Pimcore\\Model\\Element\\WorkflowState\\Listing' => 'Pimcore\\Model\\Element\\WorkflowState\\Listing\\Dao',
     'Pimcore\\Model\\Glossary' => 'Pimcore\\Model\\Glossary\\Dao',
     'Pimcore\\Model\\Glossary\\Listing' => 'Pimcore\\Model\\Glossary\\Listing\\Dao',
-    'Pimcore\\Model\\GridConfig' => 'Pimcore\\Model\\GridConfig\\Dao',
-    'Pimcore\\Model\\GridConfigFavourite' => 'Pimcore\\Model\\GridConfigFavourite\\Dao',
-    'Pimcore\\Model\\GridConfigFavourite\\Listing' => 'Pimcore\\Model\\GridConfigFavourite\\Listing\\Dao',
-    'Pimcore\\Model\\GridConfigShare' => 'Pimcore\\Model\\GridConfigShare\\Dao',
-    'Pimcore\\Model\\GridConfigShare\\Listing' => 'Pimcore\\Model\\GridConfigShare\\Listing\\Dao',
-    'Pimcore\\Model\\GridConfig\\Listing' => 'Pimcore\\Model\\GridConfig\\Listing\\Dao',
     'Pimcore\\Model\\Metadata\\Predefined' => 'Pimcore\\Model\\Metadata\\Predefined\\Dao',
     'Pimcore\\Model\\Metadata\\Predefined\\Listing' => 'Pimcore\\Model\\Metadata\\Predefined\\Listing\\Dao',
     'Pimcore\\Model\\Notification' => 'Pimcore\\Model\\Notification\\Dao',
@@ -143,8 +139,8 @@ return [
     'Pimcore\\Model\\Staticroute\\Listing' => 'Pimcore\\Model\\Staticroute\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\CustomReport\\Config' => 'Pimcore\\Model\\Tool\\CustomReport\\Config\\Dao',
     'Pimcore\\Model\\Tool\\CustomReport\\Config\\Listing' => 'Pimcore\\Model\\Tool\\CustomReport\\Config\\Listing\\Dao',
-    'Pimcore\\Model\\Tool\\Email\\Blacklist' => 'Pimcore\\Model\\Tool\\Email\\Blacklist\\Dao',
-    'Pimcore\\Model\\Tool\\Email\\Blacklist\\Listing' => 'Pimcore\\Model\\Tool\\Email\\Blacklist\\Listing\\Dao',
+    'Pimcore\\Model\\Tool\\Email\\Blocklist' => 'Pimcore\\Model\\Tool\\Email\\Blocklist\\Dao',
+    'Pimcore\\Model\\Tool\\Email\\Blocklist\\Listing' => 'Pimcore\\Model\\Tool\\Email\\Blocklist\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Email\\Log' => 'Pimcore\\Model\\Tool\\Email\\Log\\Dao',
     'Pimcore\\Model\\Tool\\Email\\Log\\Listing' => 'Pimcore\\Model\\Tool\\Email\\Log\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\SettingsStore' => 'Pimcore\\Model\\Tool\\SettingsStore\\Dao',
@@ -153,8 +149,6 @@ return [
     'Pimcore\\Model\\Tool\\Targeting\\TargetGroup' => 'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Dao',
     'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing' => 'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\TmpStore' => 'Pimcore\\Model\\Tool\\TmpStore\\Dao',
-    'Pimcore\\Model\\Tool\\UUID' => 'Pimcore\\Model\\Tool\\UUID\\Dao',
-    'Pimcore\\Model\\Tool\\UUID\\Listing' => 'Pimcore\\Model\\Tool\\UUID\\Listing\\Dao',
     'Pimcore\\Model\\Translation' => 'Pimcore\\Model\\Translation\\Dao',
     'Pimcore\\Model\\Translation\\Listing' => 'Pimcore\\Model\\Translation\\Listing\\Dao',
     'Pimcore\\Model\\User' => 'Pimcore\\Model\\User\\Dao',
@@ -175,6 +169,4 @@ return [
     'Pimcore\\Model\\Version\\Listing' => 'Pimcore\\Model\\Version\\Listing\\Dao',
     'Pimcore\\Model\\WebsiteSetting' => 'Pimcore\\Model\\WebsiteSetting\\Dao',
     'Pimcore\\Model\\WebsiteSetting\\Listing' => 'Pimcore\\Model\\WebsiteSetting\\Listing\\Dao',
-    'Pimcore\\Model\\Workflow' => 'Pimcore\\Model\\Workflow\\Dao',
-    'Pimcore\\Model\\Workflow\\Listing' => 'Pimcore\\Model\\Workflow\\Listing\\Dao',
 ];

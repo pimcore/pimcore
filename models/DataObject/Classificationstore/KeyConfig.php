@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,69 +30,43 @@ final class KeyConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Store ID
      *
-     * @var int
      */
-    protected $storeId = 1;
+    protected int $storeId = 1;
 
     /** The key
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /** Pseudo column for title
-     * @var string|null
      */
-    protected $title;
+    protected ?string $title = null;
 
     /**
      * The key description.
-     *
-     * @var string
      */
-    protected $description;
+    protected ?string $description = null;
 
     /**
      * The key type ("text", "number", etc...)
      *
-     * @var string
      */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @var string
-     */
-    protected $definition;
+    protected string $definition;
 
-    /** @var bool */
-    protected $enabled;
+    protected bool $enabled;
 
-    /**
-     * @param int $id
-     * @param null|bool $force
-     *
-     * @return self|null
-     */
-    public static function getById($id, ?bool $force = false)
+    public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         try {
@@ -117,15 +92,10 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool $force
-     *
-     * @return self|null
      *
      * @throws \Exception
      */
-    public static function getByName($name, $storeId = 1, ?bool $force = false)
+    public static function getByName(string $name, int $storeId = 1, ?bool $force = false): ?KeyConfig
     {
         $cacheKey = self::getCacheKey($storeId, $name);
 
@@ -154,10 +124,7 @@ final class KeyConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\KeyConfig
-     */
-    public static function create()
+    public static function create(): KeyConfig
     {
         $config = new self();
         $config->save();
@@ -165,52 +132,34 @@ final class KeyConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * Returns the description.
-     *
-     * @return string
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -218,11 +167,9 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
-     *
-     * @return Model\DataObject\Classificationstore\KeyConfig
+     * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
@@ -232,7 +179,7 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Deletes the key value key configuration
      */
-    public function delete()
+    public function delete(): void
     {
         DefinitionCache::clear($this);
 
@@ -248,7 +195,7 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Saves the key config
      */
-    public function save()
+    public function save(): void
     {
         DefinitionCache::clear($this);
 
@@ -279,125 +226,78 @@ final class KeyConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getDefinition()
+    public function getDefinition(): string
     {
         return $this->definition;
     }
 
-    /**
-     * @param string $definition
-     */
-    public function setDefinition($definition)
+    public function setDefinition(string $definition): void
     {
         $this->definition = $definition;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnabled()
+    public function getEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return int
-     */
-    public function getStoreId()
+    public function getStoreId(): int
     {
         return $this->storeId;
     }
 
-    /**
-     * @param int $storeId
-     */
-    public function setStoreId($storeId)
+    public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
     }
 
     /**
      * Calculate cache key
-     *
-     * @param int $id
-     * @param string|null $name
-     *
-     * @return string
      */
     private static function getCacheKey(int $id, string $name = null): string
     {
@@ -409,9 +309,6 @@ final class KeyConfig extends Model\AbstractModel
         return $cacheKey;
     }
 
-    /**
-     * @internal
-     */
     private function removeCache(): void
     {
         // Remove runtime cache

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -29,18 +30,14 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DynamicRouteProvider implements RouteProviderInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
+    protected SiteResolver $siteResolver;
 
     /**
      * @var DynamicRouteHandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
     /**
-     * @param SiteResolver $siteResolver
      * @param DynamicRouteHandlerInterface[] $handlers
      */
     public function __construct(SiteResolver $siteResolver, array $handlers = [])
@@ -52,19 +49,13 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    /**
-     * @param DynamicRouteHandlerInterface $handler
-     */
-    public function addHandler(DynamicRouteHandlerInterface $handler)
+    public function addHandler(DynamicRouteHandlerInterface $handler): void
     {
         if (!in_array($handler, $this->handlers, true)) {
             $this->handlers[] = $handler;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
@@ -73,7 +64,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
             return $collection;
         }
 
-        $path = $originalPath = urldecode($request->getPathInfo());
+        $path = $originalPath = rawurldecode($request->getPathInfo());
 
         // site path handled by FrontendRoutingListener which runs before routing is started
         if (null !== $sitePath = $this->siteResolver->getSitePath($request)) {
@@ -87,10 +78,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         return $collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRouteByName($name): Route
+    public function getRouteByName(string $name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
             try {
@@ -103,10 +91,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRoutesByNames($names): array
+    public function getRoutesByNames(array $names = null): array
     {
         // TODO needs performance optimizations
         // TODO really return all routes here as documentation states? where is this used?

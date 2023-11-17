@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,6 @@ use Pimcore\Event\VersionEvents;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
@@ -39,94 +39,40 @@ final class Version extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected int $cid;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected string $ctype;
 
-    /**
-     * @var int
-     */
-    protected $userId;
+    protected int $userId;
 
-    /**
-     * @var User|null
-     */
     protected ?User $user = null;
 
-    /**
-     * @var string
-     */
-    protected $note;
+    protected string $note = '';
 
-    /**
-     * @var int
-     */
-    protected $date;
+    protected int $date;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var bool
-     */
-    protected $public = false;
+    protected bool $public = false;
 
-    /**
-     * @var bool
-     */
-    protected $serialized = false;
+    protected bool $serialized = false;
 
-    /**
-     * @var string|null
-     */
-    protected $stackTrace = '';
+    protected ?string $stackTrace = '';
 
-    /**
-     * @var bool
-     */
-    protected $generateStackTrace = true;
+    protected bool $generateStackTrace = true;
 
-    /**
-     * @var int
-     */
-    protected $versionCount = 0;
+    protected int $versionCount = 0;
 
-    /**
-     * @var string|null
-     */
-    protected $binaryFileHash;
+    protected ?string $binaryFileHash = null;
 
-    /**
-     * @var int|null
-     */
-    protected $binaryFileId;
+    protected ?int $binaryFileId = null;
 
-    /**
-     * @var bool
-     */
-    public static $disabled = false;
+    public static bool $disabled = false;
 
-    /**
-     * @var bool
-     */
     protected bool $autoSave = false;
 
-    /**
-     * @var string|null
-     */
     protected ?string $storageType = null;
 
     protected VersionStorageAdapterInterface $storageAdapter;
@@ -136,12 +82,7 @@ final class Version extends AbstractModel
         $this->storageAdapter = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Version|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Version
     {
         try {
             /**
@@ -162,7 +103,7 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function disable()
+    public static function disable(): void
     {
         self::$disabled = true;
     }
@@ -173,14 +114,11 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function enable()
+    public static function enable(): void
     {
         self::$disabled = false;
     }
 
-    /**
-     * @return bool
-     */
     public static function isEnabled(): bool
     {
         return !self::$disabled;
@@ -189,7 +127,7 @@ final class Version extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
@@ -260,12 +198,7 @@ final class Version extends AbstractModel
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function marshalData($data)
+    private function marshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -296,12 +229,7 @@ final class Version extends AbstractModel
         return $newData;
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function unmarshalData($data)
+    private function unmarshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -331,7 +259,7 @@ final class Version extends AbstractModel
     /**
      * Delete this Version
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
@@ -343,13 +271,11 @@ final class Version extends AbstractModel
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param bool $renewReferences
-     *
-     * @return mixed
      */
-    public function loadData($renewReferences = true)
+    public function loadData(bool $renewReferences = true): mixed
     {
         $data = $this->storageAdapter->loadMetaData($this);
 
@@ -361,9 +287,6 @@ final class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
-            // this makes it possible to restore data object versions from older Pimcore versions
-            @class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
-
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
             \Pimcore::collectGarbage();
@@ -396,131 +319,95 @@ final class Version extends AbstractModel
         return $data;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFileStream()
+    public function getFileStream(): mixed
     {
         return $this->storageAdapter->getFileStream($this);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBinaryFileStream()
+    public function getBinaryFileStream(): mixed
     {
         return $this->storageAdapter->getBinaryFileStream($this);
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getNote()
+    public function getNote(): string
     {
         return $this->note;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
     /**
-     * @param int $cid
-     *
      * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
     /**
-     * @param int $date
-     *
      * @return $this
      */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * @param int $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
     /**
-     * @param string $note
-     *
      * @return $this
      */
-    public function setNote($note)
+    public function setNote(string $note): static
     {
-        $this->note = (string) $note;
+        $this->note = $note;
 
         return $this;
     }
 
     /**
-     * @param int $userId
-     *
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId): static
     {
-        if (is_numeric($userId)) {
-            if ($user = User::getById($userId)) {
-                $this->userId = (int) $userId;
-                $this->setUser($user);
-            }
+        if ($user = User::getById($userId)) {
+            $this->userId = $userId;
+            $this->setUser($user);
         }
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         if (!$this->data) {
             $this->loadData();
@@ -530,214 +417,150 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @param mixed $data
-     *
      * @return $this
      */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSerialized()
+    public function getSerialized(): bool
     {
         return $this->serialized;
     }
 
     /**
-     * @param bool $serialized
-     *
      * @return $this
      */
-    public function setSerialized($serialized)
+    public function setSerialized(bool $serialized): static
     {
-        $this->serialized = (bool) $serialized;
+        $this->serialized = $serialized;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
     /**
-     * @param string $ctype
-     *
      * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
-        $this->ctype = (string) $ctype;
+        $this->ctype = $ctype;
 
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param User|null $user
-     *
      * @return $this
      */
-    public function setUser(?User $user)
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublic()
+    public function getPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function isPublic(): bool
     {
         return $this->public;
     }
 
     /**
-     * @return bool
-     */
-    public function isPublic()
-    {
-        return $this->public;
-    }
-
-    /**
-     * @param bool $public
-     *
      * @return $this
      */
-    public function setPublic($public)
+    public function setPublic(bool $public): static
     {
-        $this->public = (bool) $public;
+        $this->public = $public;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int
     {
-        return $this->versionCount ? $this->versionCount : 0;
+        return $this->versionCount ?: 0;
     }
 
-    /**
-     * @param int $versionCount
-     */
-    public function setVersionCount($versionCount): void
+    public function setVersionCount(int $versionCount): void
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBinaryFileHash(): ?string
     {
         return $this->binaryFileHash;
     }
 
-    /**
-     * @param string|null $binaryFileHash
-     */
     public function setBinaryFileHash(?string $binaryFileHash): void
     {
         $this->binaryFileHash = $binaryFileHash;
     }
 
-    /**
-     * @return int|null
-     */
     public function getBinaryFileId(): ?int
     {
         return $this->binaryFileId;
     }
 
-    /**
-     * @param int|null $binaryFileId
-     */
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
     }
 
-    /**
-     * @return bool
-     */
-    public function getGenerateStackTrace()
+    public function getGenerateStackTrace(): bool
     {
-        return (bool) $this->generateStackTrace;
+        return $this->generateStackTrace;
     }
 
-    /**
-     * @param bool $generateStackTrace
-     */
     public function setGenerateStackTrace(bool $generateStackTrace): void
     {
         $this->generateStackTrace = $generateStackTrace;
     }
 
-    /**
-     * @param string|null $stackTrace
-     */
     public function setStackTrace(?string $stackTrace): void
     {
         $this->stackTrace = $stackTrace;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoSave(): bool
     {
         return $this->autoSave;
     }
 
     /**
-     * @param bool $autoSave
+     * @return $this
      */
-    public function setAutoSave(bool $autoSave): self
+    public function setAutoSave(bool $autoSave): static
     {
         $this->autoSave = $autoSave;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStorageType(): ?string
     {
         return $this->storageType;
     }
 
-    /**
-     * @param string $storageType
-     */
     public function setStorageType(string $storageType): void
     {
         $this->storageType = $storageType;

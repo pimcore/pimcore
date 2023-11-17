@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,8 +16,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class ClassDefinitionManager
 {
@@ -70,10 +71,10 @@ class ClassDefinitionManager
             foreach ($files as $file) {
                 $class = include $file;
 
-                if ($class instanceof ClassDefinition) {
+                if ($class instanceof ClassDefinitionInterface) {
                     $existingClass = ClassDefinition::getByName($class->getName());
 
-                    if ($existingClass instanceof ClassDefinition) {
+                    if ($existingClass instanceof ClassDefinitionInterface) {
                         $changes[] = [$class->getName(), $class->getId(), self::SAVED];
                         $existingClass->save(false);
                     } else {

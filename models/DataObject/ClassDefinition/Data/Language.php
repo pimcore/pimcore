@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,27 +23,16 @@ use Pimcore\Tool;
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
      * @internal
-     *
-     * @var string
      */
-    public $fieldtype = 'language';
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $onlySystemLanguages = false;
+    public bool $onlySystemLanguages = false;
 
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
-        $validLanguages = (array) Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
         $options = [];
 
@@ -62,32 +52,19 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
-    public function getOnlySystemLanguages()
+    public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param int|bool $value
-     *
-     * @return $this
-     */
-    public function setOnlySystemLanguages($value)
+    public function setOnlySystemLanguages(bool|int $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
 
         return $this;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
@@ -95,22 +72,15 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
@@ -119,11 +89,13 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'language';
     }
 }

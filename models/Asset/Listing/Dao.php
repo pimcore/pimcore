@@ -31,13 +31,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Get the assets from database
      *
-     * @return array
      */
-    public function load()
+    public function load(): array
     {
         $assets = [];
 
-        $queryBuilder = $this->getQueryBuilder(['assets.id', 'assets.type']);
+        $queryBuilder = $this->getQueryBuilder('assets.id', 'assets.type');
         $assetsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($assetsData as $assetData) {
@@ -56,7 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
@@ -73,18 +71,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['assets.id']);
+        $queryBuilder = $this->getQueryBuilder('assets.id');
         $assetIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getAssets());
@@ -95,10 +90,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, 'assets.id');

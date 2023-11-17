@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,20 +20,14 @@ use Pimcore\Image\Adapter;
 
 class GD extends Adapter
 {
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $path;
 
     /**
      * @var resource|\GdImage|false
      */
-    protected $resource;
+    protected mixed $resource = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($imagePath, $options = [])
+    public function load(string $imagePath, array $options = []): static|false
     {
         $this->path = $imagePath;
         if (!$this->resource = @imagecreatefromstring(file_get_contents($this->path))) {
@@ -40,15 +35,15 @@ class GD extends Adapter
         }
 
         // set dimensions
-        list($width, $height) = getimagesize($this->path);
+        [$width, $height] = getimagesize($this->path);
         $this->setWidth($width);
         $this->setHeight($height);
 
         if (!$this->sourceImageFormat) {
-            $this->sourceImageFormat = \Pimcore\File::getFileExtension($imagePath);
+            $this->sourceImageFormat = pathinfo($imagePath, PATHINFO_EXTENSION);
         }
 
-        if (in_array(\Pimcore\File::getFileExtension($imagePath), ['png', 'gif'])) {
+        if (in_array(pathinfo($imagePath, PATHINFO_EXTENSION), ['png', 'gif'])) {
             // in GD only gif and PNG can have an alphachannel
             $this->setIsAlphaPossible(true);
         }
@@ -58,10 +53,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContentOptimizedFormat()
+    public function getContentOptimizedFormat(): string
     {
         $format = 'pjpeg';
         if ($this->hasAlphaChannel()) {
@@ -71,10 +63,7 @@ class GD extends Adapter
         return $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($path, $format = null, $quality = null)
+    public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format || $format == 'png32') {
             $format = 'png';
@@ -115,10 +104,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    private function hasAlphaChannel()
+    private function hasAlphaChannel(): bool
     {
         if ($this->isAlphaPossible) {
             $width = imagesx($this->resource); // Get the width of the image
@@ -139,23 +125,14 @@ class GD extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function destroy()
+    protected function destroy(): void
     {
         if ($this->resource) {
             imagedestroy($this->resource);
         }
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     *
-     * @return \GdImage|false
-     */
-    private function createImage($width, $height)
+    private function createImage(int $width, int $height): \GdImage
     {
         $newImg = imagecreatetruecolor($width, $height);
 
@@ -167,10 +144,7 @@ class GD extends Adapter
         return $newImg;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resize($width, $height)
+    public function resize(int $width, int $height): static
     {
         $this->preModify();
 
@@ -186,10 +160,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function crop($x, $y, $width, $height)
+    public function crop(int $x, int $y, int $width, int $height): static
     {
         $this->preModify();
 
@@ -211,10 +182,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function frame($width, $height, $forceResize = false)
+    public function frame(int $width, int $height, bool $forceResize = false): static
     {
         $this->preModify();
 
@@ -237,14 +205,11 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundColor($color)
+    public function setBackgroundColor(string $color): static
     {
         $this->preModify();
 
-        list($r, $g, $b) = $this->colorhex2colorarray($color);
+        [$r, $g, $b] = $this->colorhex2colorarray($color);
 
         // just imagefill() on the existing image doesn't work, so we have to create a new image, fill it and then merge
         // the source image with the background-image together
@@ -262,10 +227,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundImage($image, $mode = null)
+    public function setBackgroundImage(string $image, string $mode = null): static
     {
         $this->preModify();
 
@@ -274,7 +236,7 @@ class GD extends Adapter
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
-            list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+            [$backgroundImageWidth, $backgroundImageHeight] = getimagesize($image);
 
             $newImg = $this->createImage($this->getWidth(), $this->getHeight());
 
@@ -299,10 +261,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function grayscale()
+    public function grayscale(): static
     {
         $this->preModify();
 
@@ -313,10 +272,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sepia()
+    public function sepia(): static
     {
         $this->preModify();
 
@@ -328,10 +284,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
 
@@ -339,7 +292,7 @@ class GD extends Adapter
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
         if (is_file($image)) {
-            list($oWidth, $oHeight) = getimagesize($image);
+            [$oWidth, $oHeight] = getimagesize($image);
 
             if ($origin === 'top-right') {
                 $x = $this->getWidth() - $oWidth - $x;
@@ -363,10 +316,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function mirror($mode)
+    public function mirror(string $mode): static
     {
         $this->preModify();
 
@@ -381,10 +331,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rotate($angle)
+    public function rotate(int $angle): static
     {
         $this->preModify();
         $angle = 360 - $angle;
@@ -400,12 +347,12 @@ class GD extends Adapter
         return $this;
     }
 
-    protected static $supportedFormatsCache = [];
-
     /**
-     * {@inheritdoc}
+     * @var array<string, bool>
      */
-    public function supportsFormat(string $format, bool $force = false)
+    protected static array $supportedFormatsCache = [];
+
+    public function supportsFormat(string $format, bool $force = false): bool
     {
         if (!isset(self::$supportedFormatsCache[$format]) || $force) {
             $info = gd_info();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,81 +31,29 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @TODO if required?
-     *
-     * @var string
-     */
-    protected $key;
+    protected ?string $type = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected ?string $targetSubtype = null;
 
-    /**
-     * @var string|null
-     */
-    protected $targetSubtype;
+    protected mixed $data = null;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected ?string $config = null;
 
-    /**
-     * @var string|null
-     */
-    protected $config;
+    protected ?string $language = null;
 
-    /**
-     * @TODO if required?
-     *
-     * @var string
-     */
-    protected $ctype;
+    protected ?string $group = null;
 
-    /**
-     * @var string|null
-     */
-    protected $language;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var string|null
-     */
-    protected $group;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
-
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @param string $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(string $id): ?Predefined
     {
         try {
             $metadata = new self();
@@ -117,14 +66,9 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param string $language
-     *
-     * @return self|null
-     *
      * @throws \Exception
      */
-    public static function getByName($name, $language = '')
+    public static function getByName(string $name, string $language = ''): ?Predefined
     {
         try {
             $metadata = new self();
@@ -137,46 +81,32 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return self
-     */
-    public static function create()
+    public static function create(): Predefined
     {
         $type = new self();
 
         return $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = str_replace('~', '---', $name);
 
@@ -184,11 +114,9 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -196,31 +124,24 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $data
-     *
      * @return $this
      */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
     /**
-     * @param string $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
@@ -228,130 +149,111 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string|null $description
-     *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param int $creationDate
-     *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
     /**
-     * @param int $modificationDate
-     *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
     /**
-     * @param string|null $language
+     * @return $this
      */
-    public function setLanguage($language)
+    public function setLanguage(?string $language): static
     {
         $this->language = $language;
+
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
     /**
-     * @param string|null $group
+     * @return $this
      */
-    public function setGroup($group)
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
+
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
     /**
-     * @param string|null $targetSubtype
+     * @return $this
      */
-    public function setTargetSubtype($targetSubtype)
+    public function setTargetSubtype(?string $targetSubtype): static
     {
         $this->targetSubtype = $targetSubtype;
+
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getTargetSubtype()
+    public function getTargetSubtype(): ?string
     {
         return $this->targetSubtype;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getConfig()
+    public function getConfig(): ?string
     {
         return $this->config;
     }
 
     /**
-     * @param string|null $config
+     * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(?string $config): static
     {
         $this->config = $config;
+
+        return $this;
     }
 
-    public function minimize()
+    public function minimize(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -363,7 +265,7 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    public function expand()
+    public function expand(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -375,7 +277,7 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

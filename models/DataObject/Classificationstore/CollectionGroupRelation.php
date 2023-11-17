@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,46 +26,28 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class CollectionGroupRelation extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $colId;
+    protected int $colId;
+
+    protected int $groupId;
 
     /**
-     * @var int
+     * The key
      */
-    protected $groupId;
-
-    /** The key
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * The key description.
-     *
-     * @var string
      */
-    protected $description;
+    protected string $description = '';
 
-    /** @var int */
-    protected $sorter;
+    protected int $sorter;
 
-    /**
-     * @return Model\DataObject\Classificationstore\CollectionGroupRelation
-     */
-    public static function create()
+    public static function create(): self
     {
         return new self();
     }
 
-    /**
-     * @param int|null $groupId
-     * @param int|null $colId
-     *
-     * @return self|null
-     */
-    public static function getByGroupAndColId($groupId = null, $colId = null)
+    public static function getByGroupAndColId(int $groupId = null, int $colId = null): ?self
     {
         try {
             $config = new self();
@@ -76,83 +59,53 @@ final class CollectionGroupRelation extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return $this->groupId;
     }
 
-    /**
-     * @param int $groupId
-     */
-    public function setGroupId($groupId)
+    public function setGroupId(int $groupId): void
     {
         $this->groupId = $groupId;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return int
-     */
-    public function getColId()
+    public function getColId(): int
     {
         return $this->colId;
     }
 
-    /**
-     * @param int $colId
-     */
-    public function setColId($colId)
+    public function setColId(int $colId): void
     {
         $this->colId = $colId;
     }
 
-    /**
-     * @return int
-     */
-    public function getSorter()
+    public function getSorter(): int
     {
         return $this->sorter;
     }
 
-    /**
-     * @param int $sorter
-     */
-    public function setSorter($sorter)
+    public function setSorter(int $sorter): void
     {
-        $this->sorter = (int) $sorter;
+        $this->sorter = $sorter;
     }
 }

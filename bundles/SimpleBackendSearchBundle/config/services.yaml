@@ -1,0 +1,56 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CONTROLLERS
+    # (auto-register all controllers as services)
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    #
+    # Commands
+    # (auto-register all commands as services)
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\Command\:
+        resource: '../src/Command'
+        tags: ['console.command']
+
+
+    #
+    # INSTALLER
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreSimpleBackendSearchBundle')"
+
+    #
+    # EventListener
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\EventListener\SearchBackendListener: ~
+
+    #
+    # Message Handler
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler\SearchBackendHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+
+    #
+    # Maintenance Tasks
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }

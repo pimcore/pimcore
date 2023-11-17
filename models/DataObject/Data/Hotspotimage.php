@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,33 +26,24 @@ class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var Asset\Image|ElementDescriptor|null
-     */
-    protected $image;
+    protected ElementDescriptor|Asset\Image|null $image = null;
 
     /**
      * @var array[]|null
      */
-    protected $hotspots;
+    protected ?array $hotspots = null;
 
     /**
      * @var array[]|null
      */
-    protected $marker;
+    protected ?array $marker = null;
 
     /**
      * @var array[]|null
      */
-    protected $crop;
+    protected ?array $crop = null;
 
-    /**
-     * @param Asset\Image|int|null $image
-     * @param array $hotspots
-     * @param array $marker
-     * @param array $crop
-     */
-    public function __construct($image = null, $hotspots = [], $marker = [], $crop = [])
+    public function __construct(Asset\Image|int $image = null, array $hotspots = [], array $marker = [], array $crop = [])
     {
         if ($image instanceof Asset\Image) {
             $this->image = $image;
@@ -59,23 +51,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $this->image = Asset\Image::getById($image);
         }
 
-        if (is_array($hotspots)) {
-            $this->hotspots = [];
-            foreach ($hotspots as $h) {
-                $this->hotspots[] = $h;
-            }
+        $this->hotspots = [];
+        foreach ($hotspots as $h) {
+            $this->hotspots[] = $h;
         }
 
-        if (is_array($marker)) {
-            $this->marker = [];
-            foreach ($marker as $m) {
-                $this->marker[] = $m;
-            }
+        $this->marker = [];
+        foreach ($marker as $m) {
+            $this->marker[] = $m;
         }
 
-        if (is_array($crop)) {
-            $this->crop = $crop;
-        }
+        $this->crop = $crop;
         $this->markMeDirty();
     }
 
@@ -84,7 +70,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setHotspots($hotspots)
+    public function setHotspots(?array $hotspots): static
     {
         $this->hotspots = $hotspots;
         $this->markMeDirty();
@@ -95,7 +81,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @return array[]|null
      */
-    public function getHotspots()
+    public function getHotspots(): ?array
     {
         return $this->hotspots;
     }
@@ -105,7 +91,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setMarker($marker)
+    public function setMarker(?array $marker): static
     {
         $this->marker = $marker;
         $this->markMeDirty();
@@ -116,7 +102,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @return array[]|null
      */
-    public function getMarker()
+    public function getMarker(): ?array
     {
         return $this->marker;
     }
@@ -124,7 +110,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @param array[]|null $crop
      */
-    public function setCrop($crop)
+    public function setCrop(?array $crop): void
     {
         $this->crop = $crop;
         $this->markMeDirty();
@@ -133,17 +119,12 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @return array[]|null
      */
-    public function getCrop()
+    public function getCrop(): ?array
     {
         return $this->crop;
     }
 
-    /**
-     * @param Asset\Image|null $image
-     *
-     * @return $this
-     */
-    public function setImage($image)
+    public function setImage(?Asset\Image $image): static
     {
         $this->image = $image;
         $this->markMeDirty();
@@ -151,21 +132,12 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return Asset\Image|null
-     */
     public function getImage(): ?Asset\Image
     {
         return $this->image;
     }
 
-    /**
-     * @param string|array|Asset\Image\Thumbnail\Config $thumbnailName
-     * @param bool $deferred
-     *
-     * @return Asset\Image\Thumbnail|string
-     */
-    public function getThumbnail($thumbnailName = null, $deferred = true)
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $thumbnailName = null, bool $deferred = true): Asset\Image\ThumbnailInterface|string
     {
         if (!$this->getImage()) {
             return '';
@@ -176,7 +148,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $crop = $this->getCrop();
         }
 
-        $thumbConfig = $this->getImage()->getThumbnailConfig($thumbnailName);
+        $thumbConfig = $this->getImage()->getThumbnail($thumbnailName)->getConfig();
         if (!$thumbConfig && $crop) {
             $thumbConfig = new Asset\Image\Thumbnail\Config();
         }
@@ -202,17 +174,13 @@ class Hotspotimage implements OwnerAwareFieldInterface
                 'x' => $crop['cropLeft'],
             ]);
 
-            $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));
-            $thumbConfig->setName($thumbConfig->getName() . '_auto_' . $hash);
+            $thumbConfig->generateAutoName();
         }
 
         return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->image) {
             return $this->image->__toString();
@@ -221,7 +189,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return '';
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->image instanceof ElementDescriptor) {
             $image = Service::getElementById($this->image->getType(), $this->image->getId());

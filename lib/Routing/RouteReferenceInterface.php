@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,23 +23,20 @@ interface RouteReferenceInterface
     /**
      * Get route name
      *
-     * @return string
      */
-    public function getRoute();
+    public function getRoute(): string;
 
     /**
      * Get parameters to use when generating the route
      *
-     * @return array
      */
-    public function getParameters();
+    public function getParameters(): array;
 
     /**
      * Get route type - directly passed to URL generator
      *
      * @see UrlGeneratorInterface
      *
-     * @return int
      */
-    public function getType();
+    public function getType(): int;
 }

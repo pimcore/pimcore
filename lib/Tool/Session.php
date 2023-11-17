@@ -17,129 +17,34 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler;
-use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class Session
 {
     /**
-     * @var AdminSessionHandlerInterface
+     * @param callable(AttributeBagInterface, SessionInterface):mixed $func
      */
-    private static $handler;
-
-    public static function getHandler(): AdminSessionHandlerInterface
+    public static function useBag(SessionInterface $session, callable $func, string $namespace = 'pimcore_admin'): mixed
     {
-        if (null === static::$handler) {
-            static::$handler = \Pimcore::getContainer()->get(AdminSessionHandler::class);
+        $bag = $session->getBag($namespace);
+
+        if ($bag instanceof AttributeBagInterface) {
+            return $func($bag, $session);
         }
 
-        return static::$handler;
+        throw new \InvalidArgumentException(sprintf('The Bag "%s" is not a AttributeBagInterface.', $namespace));
     }
 
-    public static function setHandler(AdminSessionHandlerInterface $handler)
-    {
-        static::$handler = $handler;
-    }
-
-    /**
-     * @param callable $func
-     * @param string $namespace
-     *
-     * @return mixed
-     */
-    public static function useSession($func, string $namespace = 'pimcore_admin')
-    {
-        return static::getHandler()->useSessionAttributeBag($func, $namespace);
-    }
-
-    /**
-     * @return string
-     */
-    public static function getSessionId()
-    {
-        return static::getHandler()->getSessionId();
-    }
-
-    /**
-     * @return string
-     */
-    public static function getSessionName()
-    {
-        return static::getHandler()->getSessionName();
-    }
-
-    /**
-     * @return bool
-     */
-    public static function invalidate(): bool
-    {
-        return static::getHandler()->invalidate();
-    }
-
-    /**
-     * @return bool
-     */
-    public static function regenerateId(): bool
-    {
-        return static::getHandler()->regenerateId();
-    }
-
-    /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return bool
-     */
-    public static function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
-    {
-        return static::getHandler()->requestHasSessionId($request, $checkRequestParams);
-    }
-
-    /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return string
-     */
-    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false)
-    {
-        return static::getHandler()->getSessionIdFromRequest($request, $checkRequestParams);
-    }
-
-    /**
-     * Start session and get an attribute bag
-     *
-     * @param string $namespace
-     *
-     * @return AttributeBagInterface|null
-     */
-    public static function get(string $namespace = 'pimcore_admin')
-    {
-        $bag = static::getHandler()->loadAttributeBag($namespace);
+    public static function getSessionBag(
+        SessionInterface $session,
+        string $namespace = 'pimcore_admin'
+    ): ?AttributeBagInterface {
+        $bag = $session->getBag($namespace);
         if ($bag instanceof AttributeBagInterface) {
             return $bag;
         }
 
         return null;
-    }
-
-    /**
-     * @param string $namespace
-     *
-     * @return AttributeBagInterface
-     */
-    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
-    {
-        return static::getHandler()->getReadOnlyAttributeBag($namespace);
-    }
-
-    /**
-     * Saves the session if it is the last admin session which was opene
-     */
-    public static function writeClose()
-    {
-        return static::getHandler()->writeClose();
     }
 }

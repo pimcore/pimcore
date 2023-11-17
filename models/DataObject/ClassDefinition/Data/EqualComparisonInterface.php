@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ interface EqualComparisonInterface
     /**
      * Returns if old data and new data is equal
      *
-     * @param mixed $oldValue
-     * @param mixed $newValue
      *
-     * @return bool
      */
-    public function isEqual($oldValue, $newValue): bool;
+    public function isEqual(mixed $oldValue, mixed $newValue): bool;
 }

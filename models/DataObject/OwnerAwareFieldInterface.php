@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,38 +19,18 @@ namespace Pimcore\Model\DataObject;
 interface OwnerAwareFieldInterface
 {
     /**
-     * @param mixed $owner
      *
      * @return $this;
      */
-    public function _setOwner($owner);
+    public function _setOwner(mixed $owner): static;
 
-    /**
-     * @param string|null $fieldname
-     *
-     * @return $this
-     */
-    public function _setOwnerFieldname(?string $fieldname);
+    public function _setOwnerFieldname(?string $fieldname): static;
 
-    /**
-     * @param string|null $language
-     *
-     * @return $this
-     */
-    public function _setOwnerLanguage(?string $language);
+    public function _setOwnerLanguage(?string $language): static;
 
-    /**
-     * @return mixed
-     */
-    public function _getOwner();
+    public function _getOwner(): mixed;
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerFieldname(): ?string;
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerLanguage(): ?string;
 }

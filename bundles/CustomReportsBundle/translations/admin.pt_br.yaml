@@ -1,0 +1,8 @@
+---
+custom_reports: "Relat\xF3rios customizados"
+reports: "Relat\xF3rios"
+custom_report_permissions: "Permiss\xE3o"
+keybinding_customReports: Custom Reports
+keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

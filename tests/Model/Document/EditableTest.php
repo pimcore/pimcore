@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,11 +16,10 @@
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
-use Pimcore\Tests\Helper\Document\TestDataHelper;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ElementTest
@@ -30,26 +30,18 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class EditableTest extends ModelTestCase
 {
-    /**
-     * @var int
-     */
-    protected $seed = 1;
+    protected int $seed = 1;
 
-    /** @var Page */
-    protected $testPage;
+    protected Page $testPage;
 
-    /** @var TestDataHelper */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
-    public function _inject(TestDataHelper $testData)
+    public function _inject(TestDataHelper $testData): void
     {
         $this->testDataHelper = $testData;
     }
 
-    public function testAreablock()
+    public function testAreablock(): void
     {
         $this->createTestPage('areablock');
 
@@ -57,7 +49,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertAreablock($this->testPage, 'areablock', $this->seed);
     }
 
-    public function testCheckbox()
+    public function testCheckbox(): void
     {
         $this->createTestPage('checkbox');
 
@@ -65,7 +57,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $this->createTestPage('date');
 
@@ -73,7 +65,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
     }
 
-    public function testEmbed()
+    public function testEmbed(): void
     {
         $this->createTestPage('embed');
 
@@ -81,15 +73,16 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertEmbed($this->testPage, 'embed', $this->seed);
     }
 
-    public function testImage()
+    public function testImage(): void
     {
+        $returnData = [];
         $this->createTestPage('image', $returnData);
 
         $this->reloadPage();
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         $this->createTestPage('input');
 
@@ -97,8 +90,9 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertInput($this->testPage, 'input', $this->seed);
     }
 
-    public function testLink()
+    public function testLink(): void
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('link', $returnData);
 
@@ -106,7 +100,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertLink($this->testPage, 'link', $this->seed, $returnData);
     }
 
-    public function testMultiselect()
+    public function testMultiselect(): void
     {
         $this->createTestPage('multiselect');
 
@@ -114,7 +108,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
     }
 
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $this->createTestPage('numeric');
 
@@ -122,16 +116,18 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
     }
 
-    public function testPdf()
+    public function testPdf(): void
     {
+        $returnData = [];
         $this->createTestPage('pdf', $returnData);
 
         $this->reloadPage();
         $this->testDataHelper->assertPdf($this->testPage, 'pdf', $this->seed, $returnData);
     }
 
-    public function testRelation()
+    public function testRelation(): void
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relation', $returnData);
 
@@ -139,8 +135,9 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertRelation($this->testPage, 'relation', $this->seed, $returnData);
     }
 
-    public function testRelations()
+    public function testRelations(): void
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relations', $returnData);
 
@@ -148,7 +145,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertRelations($this->testPage, 'relations', $this->seed, $returnData);
     }
 
-    public function testScheduledblock()
+    public function testScheduledblock(): void
     {
         $this->createTestPage('scheduledblock');
 
@@ -156,7 +153,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
     }
 
-    protected function createTestPage($fields = [], &$returnData = [])
+    protected function createTestPage(array|string $fields = [], array &$returnData = []): Page|\Pimcore\Model\Document
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -172,11 +169,8 @@ class EditableTest extends ModelTestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Page $document
-     * @param array|string $fields
-     * @param array $returnData
      */
-    protected function fillPage(Page $document, $fields = [], &$returnData = [])
+    protected function fillPage(Page $document, array|string $fields = [], array &$returnData = []): void
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -216,12 +210,12 @@ class EditableTest extends ModelTestCase
         }
     }
 
-    public function reloadPage()
+    public function reloadPage(): void
     {
         $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $this->createTestPage('select');
 
@@ -229,7 +223,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertSelect($this->testPage, 'select', $this->seed);
     }
 
-    public function testTable()
+    public function testTable(): void
     {
         $this->createTestPage('table');
 
@@ -237,7 +231,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertTable($this->testPage, 'table', $this->seed);
     }
 
-    public function testTextarea()
+    public function testTextarea(): void
     {
         $this->createTestPage('textarea');
 
@@ -245,8 +239,9 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertTextarea($this->testPage, 'textarea', $this->seed);
     }
 
-    public function testVideo()
+    public function testVideo(): void
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('video', $returnData);
 
@@ -254,7 +249,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertVideo($this->testPage, 'video', $this->seed, $returnData);
     }
 
-    public function testWysiwyg()
+    public function testWysiwyg(): void
     {
         $this->createTestPage('wysiwyg');
 
@@ -262,7 +257,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
     }
 
-    public function testBlock()
+    public function testBlock(): void
     {
         $this->createTestPage('block');
 

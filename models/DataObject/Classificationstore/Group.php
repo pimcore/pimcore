@@ -21,37 +21,21 @@ use Pimcore\Model\DataObject\Classificationstore;
 
 final class Group
 {
-    /**
-     * @var GroupConfig
-     */
-    protected $configuration;
+    protected GroupConfig $configuration;
 
-    /**
-     * @var Classificationstore
-     */
-    protected $classificationStore;
+    protected Classificationstore $classificationStore;
 
-    /**
-     * @param Classificationstore $classificationStore
-     * @param GroupConfig $configuration
-     */
     public function __construct(Classificationstore $classificationStore, GroupConfig $configuration)
     {
         $this->configuration = $configuration;
         $this->classificationStore = $classificationStore;
     }
 
-    /**
-     * @return GroupConfig
-     */
     public function getConfiguration(): GroupConfig
     {
         return $this->configuration;
     }
 
-    /**
-     * @return Classificationstore
-     */
     public function getClassificationStore(): Classificationstore
     {
         return $this->classificationStore;
@@ -81,16 +65,12 @@ final class Group
             ->load();
     }
 
-    /**
-     * @return KeyGroupRelation\Listing
-     */
     protected function getKeyGroupRelationListing(): KeyGroupRelation\Listing
     {
         return new KeyGroupRelation\Listing();
     }
 
     /**
-     * @param KeyGroupRelation ...$keyGroupRelations
      *
      * @return Key[]
      */
@@ -99,23 +79,13 @@ final class Group
         return array_map([$this, 'getKeyByKeyGroupRelation'], $keyGroupRelations);
     }
 
-    /**
-     * @param KeyGroupRelation $keyGroupRelation
-     *
-     * @return Key
-     */
     protected function getKeyByKeyGroupRelation(KeyGroupRelation $keyGroupRelation): Key
     {
-        $keyConfig = $this->getKeyConfigById((int)$keyGroupRelation->getKeyId());
+        $keyConfig = $this->getKeyConfigById($keyGroupRelation->getKeyId());
 
         return new Key($this, $keyConfig);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return KeyConfig
-     */
     public function getKeyConfigById(int $id): KeyConfig
     {
         return KeyConfig::getById($id);

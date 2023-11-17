@@ -1,7 +1,7 @@
-class_name: ServiceTester
+actor: ServiceTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
             connect_db: true
-        - \Pimcore\Tests\Helper\ClassManager
-        - \Pimcore\Tests\Helper\Model
+        - \Pimcore\Tests\Support\Helper\ClassManager
+        - \Pimcore\Tests\Support\Helper\Model

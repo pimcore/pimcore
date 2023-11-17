@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: "%s i\xE7in %s ID ile \"%s\" eylemi, '%s'
+  i\u015F ak\u0131\u015F\u0131nda tetiklendi."
+workflow_change_email_notification_deeplink: "Element i\xE7in Deeplink."
+workflow_change_email_notification_note: 'Not Eklendi:'
+...

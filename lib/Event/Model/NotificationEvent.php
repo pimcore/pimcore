@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,16 +24,11 @@ class NotificationEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Notification
-     */
-    protected $notification;
+    protected Notification $notification;
 
     /**
      * DataObjectEvent constructor.
      *
-     * @param Notification $notification
-     * @param array $arguments
      */
     public function __construct(Notification $notification, array $arguments = [])
     {
@@ -40,18 +36,12 @@ class NotificationEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Notification
-     */
-    public function getNotification()
+    public function getNotification(): Notification
     {
         return $this->notification;
     }
 
-    /**
-     * @param Notification $notification
-     */
-    public function setNotification($notification)
+    public function setNotification(Notification $notification): void
     {
         $this->notification = $notification;
     }

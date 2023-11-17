@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,32 +21,21 @@ namespace Pimcore\Maintenance;
  */
 interface ExecutorInterface
 {
-    public function executeTask(string $name, bool $force = false);
+    public function executeTask(string $name): void;
 
     /**
      * Execute the Maintenance Task
      *
-     * @param array $validJobs
-     * @param array $excludedJobs
-     * @param bool $force
+     * @param string[] $validJobs
+     * @param string[] $excludedJobs
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false);
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void;
 
-    /**
-     * @param string $name
-     * @param TaskInterface $task
-     */
-    public function registerTask($name, TaskInterface $task);
+    public function registerTask(string $name, TaskInterface $task, ?string $messengerMessageClass = null): void;
 
-    /**
-     * @return array
-     */
-    public function getTaskNames();
+    public function getTaskNames(): array;
 
-    /**
-     * @return int
-     */
-    public function getLastExecution();
+    public function getLastExecution(): int;
 
-    public function setLastExecution();
+    public function setLastExecution(): void;
 }

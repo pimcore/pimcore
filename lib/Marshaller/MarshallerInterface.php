@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,22 +19,16 @@ namespace Pimcore\Marshaller;
 interface MarshallerInterface
 {
     /**
-     * @param mixed $value
-     * @param array $params
      *
-     * @return mixed
      *
      * @throws \Exception
      */
-    public function marshal($value, $params = []);
+    public function marshal(mixed $value, array $params = []): mixed;
 
     /**
-     * @param mixed $value
-     * @param array $params
      *
-     * @return mixed
      *
      * @throws  \Exception
      */
-    public function unmarshal($value, $params = []);
+    public function unmarshal(mixed $value, array $params = []): mixed;
 }

@@ -1,0 +1,26 @@
+
+name: "Trigger POEditor Translations Export"
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - "[0-9]+.x"
+        paths:
+            - 'bundles/CoreBundle/Resources/translations/admin.en.yaml'
+            - 'bundles/GlossaryBundle/translations/admin.en.yaml'
+            - 'bundles/SeoBundle/translations/admin.en.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+    poeditor:
+        runs-on: ubuntu-latest
+        if: ${{ github.repository == 'pimcore/pimcore' }}
+        steps:
+            - name: Trigger workflow in pimcore/poeditor-export-action
+              env:
+                  GH_TOKEN: ${{ secrets.POEDITOR_ACTION_TRIGGER_TOKEN }}
+              run: |
+                  gh workflow run -R pimcore/poeditor-export-action poeditor-export.yaml

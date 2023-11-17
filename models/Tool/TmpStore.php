@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,55 +27,44 @@ final class TmpStore extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
-    protected $id;
+    protected string $id;
+
+    /**
+     * @internal
+     */
+    protected ?string $tag = null;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $tag;
+    protected mixed $data = null;
 
     /**
      * @internal
      *
-     * @var mixed
      */
-    protected $data;
+    protected int $date;
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $date;
+    protected int $expiryDate;
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $expiryDate;
+    protected bool $serialized = false;
 
     /**
      * @internal
      *
-     * @var bool
-     */
-    protected $serialized = false;
-
-    /**
-     * @internal
-     *
-     * @var self|null
      */
     protected static ?self $instance = null;
 
-    /**
-     * @return self
-     */
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -84,23 +74,12 @@ final class TmpStore extends Model\AbstractModel
         return self::$instance;
     }
 
-    /**
-     * @return int
-     */
-    private static function getDefaultLifetime()
+    private static function getDefaultLifetime(): int
     {
         return 86400 * 7;
     }
 
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string|null $tag
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
-    public static function add($id, $data, $tag = null, $lifetime = null)
+    public static function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -115,15 +94,7 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string|null $tag
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
-    public static function set($id, $data, $tag = null, $lifetime = null)
+    public static function set(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -134,23 +105,13 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return void
-     */
-    public static function delete($id)
+    public static function delete(string $id): void
     {
         $instance = self::getInstance();
         $instance->getDao()->delete($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return null|TmpStore
-     */
-    public static function get($id)
+    public static function get(string $id): ?TmpStore
     {
         $item = new self();
         if ($item->getById($id)) {
@@ -164,12 +125,7 @@ final class TmpStore extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return array
-     */
-    public static function getIdsByTag($tag)
+    public static function getIdsByTag(string $tag): array
     {
         $instance = self::getInstance();
         $items = $instance->getDao()->getIdsByTag($tag);
@@ -177,108 +133,67 @@ final class TmpStore extends Model\AbstractModel
         return $items;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): ?string
     {
         return $this->tag;
     }
 
-    /**
-     * @param string $tag
-     */
-    public function setTag($tag)
+    public function setTag(?string $tag): void
     {
         $this->tag = $tag;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     */
-    public function setDate($date)
+    public function setDate(int $date): void
     {
         $this->date = $date;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSerialized()
+    public function isSerialized(): bool
     {
         return $this->serialized;
     }
 
-    /**
-     * @param bool $serialized
-     */
-    public function setSerialized($serialized)
+    public function setSerialized(bool $serialized): void
     {
         $this->serialized = $serialized;
     }
 
-    /**
-     * @return int
-     */
-    public function getExpiryDate()
+    public function getExpiryDate(): int
     {
         return $this->expiryDate;
     }
 
-    /**
-     * @param int $expiryDate
-     */
-    public function setExpiryDate($expiryDate)
+    public function setExpiryDate(int $expiryDate): void
     {
         $this->expiryDate = $expiryDate;
     }
 
-    /**
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
-    public function update($lifetime = null)
+    public function update(int $lifetime = null): bool
     {
         if (!$lifetime) {
             $lifetime = 86400;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,23 +27,14 @@ use Sabre\DAV;
  */
 class File extends DAV\File
 {
-    /**
-     * @var Asset
-     */
-    private $asset;
+    private Asset $asset;
 
-    /**
-     * @param Asset $asset
-     */
-    public function __construct($asset)
+    public function __construct(Asset $asset)
     {
         $this->asset = $asset;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->asset->getFilename();
     }
@@ -55,7 +47,7 @@ class File extends DAV\File
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function setName($name)
+    public function setName($name): static
     {
         if ($this->asset->isAllowed('rename')) {
             $user = AdminTool::getCurrentUser();
@@ -74,7 +66,7 @@ class File extends DAV\File
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             Asset\Service::loadAllFields($this->asset);
@@ -99,10 +91,7 @@ class File extends DAV\File
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getLastModified()
+    public function getLastModified(): int
     {
         return $this->asset->getModificationDate();
     }
@@ -157,9 +146,8 @@ class File extends DAV\File
     /**
      * Get a hash of the file for an unique identifier
      *
-     * @return string
      */
-    public function getETag()
+    public function getETag(): string
     {
         return '"' . md5($this->asset->getRealFullPath() . $this->asset->getModificationDate()) . '"';
     }
@@ -167,9 +155,8 @@ class File extends DAV\File
     /**
      * Returns the mimetype of the asset
      *
-     * @return string
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->asset->getMimeType();
     }
@@ -177,9 +164,8 @@ class File extends DAV\File
     /**
      * Get size of file in bytes
      *
-     * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->asset->getFileSize();
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,25 +24,18 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Localizedfields implements MarshallerInterface
 {
-    /**
-     * @var MarshallerService
-     */
-    protected $marshallerService;
+    protected MarshallerService $marshallerService;
 
     /**
      * Localizedfields constructor.
      *
-     * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
     {
         $this->marshallerService = $marshallerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
@@ -72,10 +66,7 @@ class Localizedfields implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */

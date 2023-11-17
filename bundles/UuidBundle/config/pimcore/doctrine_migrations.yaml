@@ -1,0 +1,3 @@
+doctrine_migrations:
+    migrations_paths:
+        Pimcore\Bundle\UuidBundle\Migrations: '@PimcoreUuidBundle/src/Migrations'

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,9 +16,9 @@
 
 namespace Pimcore\Model\Metadata\Predefined;
 
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
-use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
@@ -27,7 +28,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;
@@ -35,12 +36,12 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     /**
      * @var \Pimcore\Model\Metadata\Predefined[]|null
      */
-    protected $definitions = null;
+    protected ?array $definitions = null;
 
     /**
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         if ($this->definitions === null) {
             $this->getDao()->loadList();
@@ -54,7 +55,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
      *
      * @return $this
      */
-    public function setDefinitions($definitions)
+    public function setDefinitions(?array $definitions): static
     {
         $this->definitions = $definitions;
 
@@ -62,14 +63,12 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     }
 
     /**
-     * @param string $type
-     * @param array|string|null $subTypes
      *
      * @return \Pimcore\Model\Metadata\Predefined[]|null
      *
      * @throws \Exception
      */
-    public static function getByTargetType($type, $subTypes = null)
+    public static function getByTargetType(string $type, array|string $subTypes = null): ?array
     {
         if ($type !== 'asset') {
             throw new \Exception('other types than assets are currently not supported');
@@ -98,14 +97,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
         return $list->load();
     }
 
-    /**
-     * @param string $key
-     * @param string $language
-     * @param string|null $targetSubtype
-     *
-     * @return \Pimcore\Model\Metadata\Predefined|null
-     */
-    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)
+    public static function getByKeyAndLanguage(string $key, ?string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
     {
         $list = new self();
 
@@ -131,7 +123,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     /**
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getDefinitions();
     }

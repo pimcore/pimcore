@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,9 +24,9 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 /**
  * @template TItem of Model\DataObject\Fieldcollection\Data\AbstractData
  *
- * @method array delete(Concrete $object, $saveMode = false)
+ * @method array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true} delete(Concrete $object, bool $saveMode = false)
  * @method Fieldcollection\Dao getDao()
- * @method array load(Concrete $object)
+ * @method TItem[] load(Concrete $object)
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
@@ -36,20 +37,18 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @var array<TItem|\__PHP_Incomplete_Class>
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @param TItem[] $items
-     * @param string|null $fieldname
      */
-    public function __construct($items = [], $fieldname = null)
+    public function __construct(array $items = [], string $fieldname = null)
     {
         if (!empty($items)) {
             $this->setItems($items);
@@ -64,7 +63,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
@@ -74,7 +73,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
@@ -82,20 +81,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -107,7 +98,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Definition[]
      */
-    public function getItemDefinitions()
+    public function getItemDefinitions(): array
     {
         $definitions = [];
         foreach ($this->getItems() as $item) {
@@ -118,12 +109,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Concrete $object
-     * @param array $params
+     * @param array<string, mixed> $params
      *
      * @throws \Exception
      */
-    public function save($object, $params = [])
+    public function save(Concrete $object, array $params = []): void
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
@@ -132,48 +122,37 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $allowedTypes = $fieldDef->getAllowedTypes();
 
         $collectionItems = $this->getItems();
-        if (is_array($collectionItems)) {
-            $index = 0;
-            foreach ($collectionItems as $collection) {
-                if ($collection instanceof Fieldcollection\Data\AbstractData) {
-                    if (in_array($collection->getType(), $allowedTypes)) {
-                        $collection->setFieldname($this->getFieldname());
-                        $collection->setIndex($index++);
-                        $params['owner'] = $collection;
+        $index = 0;
+        foreach ($collectionItems as $collection) {
+            if ($collection instanceof Fieldcollection\Data\AbstractData) {
+                if (in_array($collection->getType(), $allowedTypes)) {
+                    $collection->setFieldname($this->getFieldname());
+                    $collection->setIndex($index++);
+                    $params['owner'] = $collection;
 
-                        // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
-                        $collection->setObject($object);
-                        $collection->getDao()->save($object, $params, $saveRelationalData);
-                    } else {
-                        throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
-                    }
+                    // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
+                    $collection->setObject($object);
+                    $collection->getDao()->save($object, $params, $saveRelationalData);
+                } else {
+                    throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                 }
             }
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return count($this->getItems()) < 1;
     }
 
-    /**
-     * @param TItem $item
-     */
-    public function add($item)
+    public function add(Fieldcollection\Data\AbstractData $item): void
     {
         $this->items[] = $item;
 
         $this->markFieldDirty('_self', true);
     }
 
-    /**
-     * @param int $index
-     */
-    public function remove($index)
+    public function remove(int $index): void
     {
         if (isset($this->items[$index])) {
             array_splice($this->items, $index, 1);
@@ -183,41 +162,32 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param int $index
-     *
-     * @return Fieldcollection\Data\AbstractData|null
+     * @return TItem|null
      */
-    public function get($index)
+    public function get(int $index): ?Fieldcollection\Data\AbstractData
     {
         return $this->items[$index] ?? null;
     }
 
     /**
-     * @param int|null $index
-     *
-     * @return Fieldcollection\Data\AbstractData|null
+     * @return TItem|null
      */
-    private function getByOriginalIndex($index)
+    private function getByOriginalIndex(?int $index): ?Fieldcollection\Data\AbstractData
     {
         if ($index === null) {
             return null;
         }
 
-        if (is_array($this->items)) {
-            foreach ($this->items as $item) {
-                if ($item->getIndex() === $index) {
-                    return $item;
-                }
+        foreach ($this->items as $item) {
+            if ($item->getIndex() === $index) {
+                return $item;
             }
         }
 
         return null;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         return count($this->getItems());
     }
@@ -225,12 +195,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * Methods for Iterator
      */
-
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         reset($this->items);
     }
@@ -238,51 +203,33 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()// : Model\DataObject\Fieldcollection\Data\AbstractData|false
+    public function current(): Fieldcollection\Data\AbstractData|false
     {
         return current($this->items);
     }
 
-    /**
-     * @return int|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int
     {
         return key($this->items);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         next($this->items);
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         return $this->current() !== false;
     }
 
     /**
-     * @param Concrete $object
-     * @param string $type
-     * @param string $fcField
-     * @param int $index
-     * @param string $field
      *
      * @throws \Exception
      *
      * @internal
      */
-    public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
+    public function loadLazyField(Concrete $object, string $type, string $fcField, int $index, string $field): void
     {
         // lazy loading existing can be data if the item already had an index
         $item = $this->getByOriginalIndex($index);
@@ -312,9 +259,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
     }
 
-    /**
-     * @return Concrete|null
-     */
     protected function getObject(): ?Concrete
     {
         $this->rewind();
@@ -326,19 +270,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return null;
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         // update all items with the new $object
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $item) {
-                if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
-                    $item->setObject($object);
-                }
+        foreach ($this->getItems() as $item) {
+            if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+                $item->setObject($object);
             }
         }
 
@@ -348,34 +285,30 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      */
-    public function loadLazyData()
+    public function loadLazyData(): void
     {
         $items = $this->getItems();
-        if (is_array($items)) {
-            /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
-            foreach ($items as $item) {
-                $fcType = $item->getType();
-                $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
-                $fds = $fieldcolDef->getFieldDefinitions();
-                foreach ($fds as $fd) {
-                    $fieldGetter = 'get' . ucfirst($fd->getName());
-                    $fieldValue = $item->$fieldGetter();
-                    if ($fieldValue instanceof Localizedfield) {
-                        $fieldValue->loadLazyData();
-                    }
+        /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
+        foreach ($items as $item) {
+            $fcType = $item->getType();
+            $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
+            $fds = $fieldcolDef->getFieldDefinitions();
+            foreach ($fds as $fd) {
+                $fieldGetter = 'get' . ucfirst($fd->getName());
+                $fieldValue = $item->$fieldGetter();
+                if ($fieldValue instanceof Localizedfield) {
+                    $fieldValue->loadLazyData();
                 }
             }
         }
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
-        if (is_array($this->items)) {
-            foreach ($this->items as $key => $item) {
-                if ($item instanceof \__PHP_Incomplete_Class) {
-                    unset($this->items[$key]);
-                    Logger::error('fieldcollection item ' . $key . ' does not exist anymore');
-                }
+        foreach ($this->items as $key => $item) {
+            if ($item instanceof \__PHP_Incomplete_Class) {
+                unset($this->items[$key]);
+                Logger::error('fieldcollection item ' . $key . ' does not exist anymore');
             }
         }
     }

@@ -24,25 +24,16 @@ use Symfony\Bridge\Twig\Extension\WebLinkExtension;
  */
 trait WebLinksTrait
 {
-    /**
-     * @var WebLinkExtension
-     */
-    protected $webLinkExtension;
+    protected WebLinkExtension $webLinkExtension;
 
     /**
      * Whether to use WebLinks (HTTP/2 push) for every item. Can be
      * overridden on an item level.
      *
-     * @var bool
      */
-    protected $webLinksEnabled = false;
+    protected bool $webLinksEnabled = false;
 
-    /**
-     * @param bool|null $enabled
-     *
-     * @return bool
-     */
-    public function webLinksEnabled(?bool $enabled = null)
+    public function webLinksEnabled(?bool $enabled = null): bool
     {
         if (null !== $enabled) {
             $this->webLinksEnabled = $enabled;
@@ -51,7 +42,7 @@ trait WebLinksTrait
         return $this->webLinksEnabled;
     }
 
-    public function enableWebLinks(): self
+    public function enableWebLinks(): static
     {
         $this->webLinksEnabled(true);
 
@@ -63,12 +54,12 @@ trait WebLinksTrait
         return $this->webLinkAttributes;
     }
 
-    public function setWebLinkAttributes(array $webLinkAttributes)
+    public function setWebLinkAttributes(array $webLinkAttributes): void
     {
         $this->webLinkAttributes = $webLinkAttributes;
     }
 
-    protected function handleWebLink(\stdClass $item, string $source, array $itemAttributes)
+    protected function handleWebLink(\stdClass $item, string $source, array $itemAttributes): void
     {
         if (empty($source)) {
             return;

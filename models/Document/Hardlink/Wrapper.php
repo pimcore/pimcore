@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Listing;
 
 /**
  * @internal
@@ -24,14 +26,8 @@ use Pimcore\Model\Document;
  */
 trait Wrapper
 {
-    /**
-     * @var Document\Hardlink
-     */
-    protected $hardLinkSource;
+    protected Document\Hardlink $hardLinkSource;
 
-    /**
-     * @var Document|null
-     */
     protected ?Document $sourceDocument = null;
 
     /**
@@ -39,17 +35,16 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         throw $this->getHardlinkError();
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         throw $this->getHardlinkError();
     }
@@ -57,15 +52,12 @@ trait Wrapper
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         throw $this->getHardlinkError();
     }
 
-    /**
-     * @return array|null
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         if ($this->properties == null) {
             $hardLink = $this->getHardLinkSource();
@@ -110,12 +102,12 @@ trait Wrapper
         return $this->properties;
     }
 
-    public function getProperty($name, $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {
             $hardLink = $this->getHardLinkSource();
-            if (strpos($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/') === 0
+            if (str_starts_with($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/')
                 || $hardLink->getSourceDocument()->getRealFullPath() === $result->getRealFullPath()
             ) {
                 $c = Service::wrap($result);
@@ -132,12 +124,7 @@ trait Wrapper
         return $result;
     }
 
-    /**
-     * @param bool $includingUnpublished
-     *
-     * @return Document[]
-     */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -155,69 +142,51 @@ trait Wrapper
                 }
             }
 
-            $this->setChildren($children, $includingUnpublished);
+            $listing = new Listing;
+            $listing->setData($children);
+            $this->setChildren($listing, $includingUnpublished);
         }
 
         return $this->children[$cacheKey];
     }
 
-    /**
-     * @param bool $unpublished
-     *
-     * @return bool
-     */
-    public function hasChildren($unpublished = false)
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren($unpublished);
+            return parent::hasChildren($includingUnpublished);
         }
 
         return false;
     }
 
-    /**
-     * @return \Exception
-     */
     protected function getHardlinkError(): \Exception
     {
         return new \Exception('Method not supported by hard linked documents');
     }
 
-    /**
-     * @param Document\Hardlink $hardLinkSource
-     *
-     * @return $this
-     */
-    public function setHardLinkSource($hardLinkSource)
+    public function setHardLinkSource(Document\Hardlink $hardLinkSource): static
     {
         $this->hardLinkSource = $hardLinkSource;
 
         return $this;
     }
 
-    /**
-     * @return Document\Hardlink
-     */
-    public function getHardLinkSource()
+    public function getHardLinkSource(): Document\Hardlink
     {
         return $this->hardLinkSource;
     }
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         return $this->sourceDocument;
     }
 
-    /**
-     * @param Document $sourceDocument
-     */
-    public function setSourceDocument(Document $sourceDocument): void
+    public function setSourceDocument(Document $sourceDocument): static
     {
         $this->sourceDocument = $sourceDocument;
+
+        return $this;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,33 +18,26 @@ namespace Pimcore\Controller\ArgumentValueResolver;
 
 use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
+ * Adds support for type hinting controller actions and getting the current website config.
+ *
  * @internal
  */
-final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
+final class WebsiteConfigValueResolver implements ValueResolverInterface
 {
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return bool
-     */
-    public function supports(Request $request, ArgumentMetadata $argument): bool
-    {
-        return $argument->getType() === Config\Config::class && $argument->getName() === 'websiteConfig';
-    }
-
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return iterable
-     */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        yield Config::getWebsiteConfig();
+        if ($argument->getType() !== 'array') {
+            return [];
+        }
+
+        if ($argument->getName() !== 'websiteConfig') {
+            return [];
+        }
+
+        return [Config::getWebsiteConfig()];
     }
 }

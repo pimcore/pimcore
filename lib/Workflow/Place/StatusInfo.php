@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,20 +22,11 @@ use Twig\Environment;
 
 class StatusInfo
 {
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
-    /**
-     * @var Environment
-     */
-    private $twig;
+    private Environment $twig;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(Manager $workflowManager, Environment $twig, TranslatorInterface $translator)
     {
@@ -43,10 +35,7 @@ class StatusInfo
         $this->translator = $translator;
     }
 
-    /**
-     * @param object $subject
-     */
-    public function getToolbarHtml($subject): string
+    public function getToolbarHtml(object $subject): string
     {
         $places = $this->getAllPlaces($subject, true);
 
@@ -59,11 +48,7 @@ class StatusInfo
         );
     }
 
-    /**
-     * @param object $subject
-     * @param string|null $workflowName
-     */
-    public function getAllPalacesHtml($subject, string $workflowName = null): string
+    public function getAllPalacesHtml(object $subject, string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);
 
@@ -76,10 +61,7 @@ class StatusInfo
         );
     }
 
-    /**
-     * @param object $subject
-     */
-    public function getAllPlacesForCsv($subject, string $workflowName = null): string
+    public function getAllPlacesForCsv(object $subject, string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);
         $result = [];
@@ -92,12 +74,9 @@ class StatusInfo
     }
 
     /**
-     * @param object $subject
-     * @param bool $visibleInHeaderOnly
-     *
      * @return PlaceConfig[]
      */
-    private function getAllPlaces($subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
+    private function getAllPlaces(object $subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
     {
         $places = [];
 

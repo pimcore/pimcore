@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,11 +23,12 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
+use Pimcore\Model\DataObject\Service;
 
 /**
  * @method Dao getDao()
- * @method void save(Concrete $object, $params = [])
- * @method array getRelationData($field, $forOwner, $remoteClassId)
+ * @method void save(Concrete $object, array $params = [])
+ * @method array getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null)
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
@@ -37,109 +39,65 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * Will be overriden by the actual ObjectBrick
      *
-     * @var string
      */
-    protected $type;
+    protected string $type = '';
 
-    /**
-     * @var string|null
-     */
-    protected $fieldname;
+    protected ?string $fieldname = null;
 
-    /**
-     * @var bool
-     */
-    protected $doDelete = false;
+    protected bool $doDelete = false;
 
-    /**
-     * @var Concrete|Model\Element\ElementDescriptor|null
-     */
-    protected $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
-    /**
-     * @var int|null
-     */
     protected ?int $objectId = null;
 
-    /**
-     * @param Concrete $object
-     */
     public function __construct(Concrete $object)
     {
         $this->setObject($object);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFieldname()
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string|null $fieldname
-     *
-     * @return $this
-     */
-    public function setFieldname($fieldname)
+    public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return DataObject\Objectbrick\Definition
-     */
-    public function getDefinition()
+    public function getDefinition(): DataObject\Objectbrick\Definition
     {
         $definition = DataObject\Objectbrick\Definition::getByKey($this->getType());
 
         return $definition;
     }
 
-    /**
-     * @param bool $doDelete
-     *
-     * @return $this
-     */
-    public function setDoDelete($doDelete)
+    public function setDoDelete(bool $doDelete): static
     {
         $this->flushContainer();
-        $this->doDelete = (bool)$doDelete;
+        $this->doDelete = $doDelete;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getDoDelete()
+    public function getDoDelete(): bool
     {
         return $this->doDelete;
     }
 
-    /**
-     * @return DataObject\Concrete
-     */
-    public function getBaseObject()
+    public function getBaseObject(): ?Concrete
     {
         return $this->getObject();
     }
 
-    /**
-     * @param Concrete $object
-     */
-    public function delete($object)
+    public function delete(Concrete $object): void
     {
         $this->doDelete = true;
         $this->getDao()->delete($object);
@@ -150,7 +108,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      * @internal
      * Flushes the already collected items of the container object
      */
-    protected function flushContainer()
+    protected function flushContainer(): void
     {
         $object = $this->getObject();
         if ($object) {
@@ -164,13 +122,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param string $key
      *
-     * @return mixed
      *
      * @throws InheritanceParentNotFoundException
      */
-    public function getValueFromParent($key)
+    public function getValueFromParent(string $key): mixed
     {
         $object = $this->getObject();
         if ($object) {
@@ -190,68 +146,47 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         throw new InheritanceParentNotFoundException('No parent object available to get a value from');
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
 
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
-            $this->localizedfields->setObject($object, false);
+            $this->localizedfields->setObjectOmitDirty($object);
         }
 
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getValueForFieldName($key)
+    public function getValueForFieldName(string $key): mixed
     {
         if ($this->$key) {
             return $this->$key;
         }
 
-        return false;
+        $definition = $this->getDefinition();
+        $fd = $definition->getFieldDefinition($key);
+        if ($fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+            $value = new Model\DataObject\Data\CalculatedValue($key);
+            $value->setContextualData('objectbrick', $this->getFieldname(), $definition->getKey(), $fd->getName(), null, null, $fd);
+
+            return Service::getCalculatedFieldValue($this, $value);
+        }
+
+        return null;
     }
 
-    /**
-     * @param string $fieldName
-     * @param string|null $language
-     *
-     * @return mixed
-     */
-    public function get($fieldName, $language = null)
+    public function get(string $fieldName, string $language = null): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}($language);
     }
 
-    /**
-     * @param string $fieldName
-     * @param mixed $value
-     * @param string|null $language
-     *
-     * @return mixed
-     */
-    public function set($fieldName, $value, $language = null)
+    public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
@@ -259,14 +194,15 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @internal
      *
-     * @return array
      */
     protected function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field instanceof DataObject\ClassDefinition\Data
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -274,9 +210,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $lazyLoadedFieldNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();
@@ -287,10 +220,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return true;
     }
 
-    /**
-     * @return array
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];
@@ -310,7 +240,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface DataContainerAwareInterface
 {
-    /**
-     * @param mixed $containerDefinition
-     * @param array $params
-     */
-    public function preSave($containerDefinition, $params = []);
+    public function preSave(mixed $containerDefinition, array $params = []): void;
 
-    /**
-     * @param mixed $containerDefinition
-     * @param array $params
-     */
-    public function postSave($containerDefinition, $params = []);
+    public function postSave(mixed $containerDefinition, array $params = []): void;
 }

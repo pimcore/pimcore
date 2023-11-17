@@ -15,18 +15,15 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\Cache;
+namespace Pimcore\Tests\Unit\Mail;
 
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
 class MailTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $defaultSettings = [
+    private array $defaultSettings = [
         'from' => 'jane@doe.com',
         'to' => 'john@doe.com',
         'cc' => 'john-cc@doe.com',
@@ -40,7 +37,7 @@ class MailTest extends TestCase
     /**
      * Test: Mail generate with header and body param
      */
-    public function testGenerateMail()
+    public function testGenerateMail(): void
     {
         $headers = (new Headers())
             ->addMailboxListHeader('From', [$this->defaultSettings['from']])
@@ -58,7 +55,7 @@ class MailTest extends TestCase
     /**
      * Test: Mail generate with array param
      */
-    public function testGenerateMailWithArray()
+    public function testGenerateMailWithArray(): void
     {
         $headers = (new Headers())
             ->addMailboxListHeader('From', [$this->defaultSettings['from']])
@@ -82,10 +79,9 @@ class MailTest extends TestCase
     /**
      * Test: Initializes the mailer with the settings form Settings -> System -> Email Settings
      */
-    public function testMailInit()
+    public function testMailInit(): void
     {
         $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
-
         $mail = new \Pimcore\Mail();
 
         $this->assertEquals($emailConfig['sender']['email'], $mail->getFrom()[0]->getAddress(), 'From recipient not initialized from system settings');
@@ -97,7 +93,7 @@ class MailTest extends TestCase
     /**
      * Test: Add Recipients to Mail with params email, name
      */
-    public function testAddRecipientsToMail()
+    public function testAddRecipientsToMail(): void
     {
         $mail = new \Pimcore\Mail();
         $mail->clearRecipients();
@@ -115,7 +111,7 @@ class MailTest extends TestCase
     /**
      * Test: Clear Recipients from Mail
      */
-    public function testClearRecipientsFromMail()
+    public function testClearRecipientsFromMail(): void
     {
         $mail = new \Pimcore\Mail();
         $mail->addTo($this->defaultSettings['to'])
@@ -134,7 +130,7 @@ class MailTest extends TestCase
     /**
      * Test: Text body render with Params
      */
-    public function testTextBodyRenderedWithParams()
+    public function testTextBodyRenderedWithParams(): void
     {
         $mail = new \Pimcore\Mail();
         $mail->text('Hi, {{ firstname }} {{ lastname }}.');
@@ -149,7 +145,7 @@ class MailTest extends TestCase
     /**
      * Test: Html body render with Params
      */
-    public function testHtmlBodyRenderedWithParams()
+    public function testHtmlBodyRenderedWithParams(): void
     {
         $mail = new \Pimcore\Mail();
         $mail->html('Hi, {{ firstname }} {{ lastname }}.');

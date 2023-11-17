@@ -1,0 +1,106 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Maintenance\Executor:
+        arguments:
+            - 'maintenance.pid'
+            - '@logger'
+            - '@messenger.bus.pimcore-core'
+
+    Pimcore\Maintenance\Tasks\ScheduledTasksTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: scheduledtasks, messengerMessageClass: '\Pimcore\Messenger\ScheduledTaskMessage' }
+
+    Pimcore\Maintenance\Tasks\LogCleanupTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanuplogfiles }
+
+    Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper:
+        arguments:
+            - '@logger'
+            - '@doctrine.dbal.default_connection'
+
+    Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
+            - '@doctrine.dbal.default_connection'
+
+
+    Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
+        arguments:
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupBrickTables }
+
+    Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupClassificationstoreTables }
+
+    Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
+            - '@doctrine.dbal.default_connection'
+
+    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+        arguments:
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupFieldcollectionTables }
+
+    Pimcore\Maintenance\Tasks\VersionsCleanupTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: versioncleanup }
+
+    Pimcore\Maintenance\Tasks\VersionsCleanupStackTraceDbTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: VersionsCleanupStackTraceDb }
+
+    Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupbrokenviews }
+
+    Pimcore\Maintenance\Tasks\TmpStoreCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: tmpstorecleanup }
+
+
+    Pimcore\Maintenance\Tasks\HousekeepingTask:
+        arguments:
+            - '%pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than%'
+            - '%pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than%'
+        tags:
+            - { name: pimcore.maintenance.task, type: housekeeping }
+
+    Pimcore\Maintenance\Tasks\LowQualityImagePreviewTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: low_quality_image_preview }
+
+    Pimcore\Maintenance\Tasks\PruningCacheItemsTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: pruning_cache_items }
+
+    Pimcore\Maintenance\Tasks\StaticPagesGenerationTask:
+        arguments:
+            - '@Pimcore\Document\StaticPageGenerator'
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: documents_static_page_generate }

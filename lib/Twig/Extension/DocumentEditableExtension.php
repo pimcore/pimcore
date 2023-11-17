@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,22 +27,13 @@ use Twig\TwigFunction;
  */
 class DocumentEditableExtension extends AbstractExtension
 {
-    /**
-     * @var EditableRenderer
-     */
-    protected $editableRenderer;
+    protected EditableRenderer $editableRenderer;
 
-    /**
-     * @param EditableRenderer $editableRenderer
-     */
     public function __construct(EditableRenderer $editableRenderer)
     {
         $this->editableRenderer = $editableRenderer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -80,22 +72,15 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * @internal
      *
-     * @param array $context
-     * @param string $type
-     * @param string $name
-     * @param array $options
-     *
-     * @return \Pimcore\Model\Document\Editable\EditableInterface|string
-     *
      * @throws \Exception
      */
-    public function renderEditable(array $context, string $type, string $name, array $options = [])
+    public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
     {
-        $document = $context['document'];
-        $editmode = $context['editmode'];
+        $document = $context['document'] ?? null;
         if (!($document instanceof PageSnippet)) {
             return '';
         }
+        $editmode = $context['editmode'] ?? false;
 
         return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
     }
@@ -105,9 +90,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @internal
      *
-     * @param BlockInterface $block
      *
-     * @return \Generator
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {

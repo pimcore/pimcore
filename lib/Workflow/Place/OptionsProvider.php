@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OptionsProvider implements SelectOptionsProviderInterface
 {
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(Manager $workflowManager, TranslatorInterface $translator)
     {
@@ -43,16 +38,16 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Select|Multiselect $fieldDefinition
      *
-     * @return array
      *
      * @throws \Exception
      */
-    public function getOptions($context, $fieldDefinition)
+    public function getOptions(array $context, Data $fieldDefinition): array
     {
-        $workflowName = $fieldDefinition->getOptionsProviderData();
+        $workflowName = null;
+        if ($fieldDefinition instanceof Select || $fieldDefinition instanceof Multiselect) {
+            $workflowName = $fieldDefinition->getOptionsProviderData();
+        }
         if (!$workflowName) {
             throw new \Exception('setup workflow name as options provider data');
         }
@@ -82,9 +77,6 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
-        if (!method_exists($this->translator, 'getLocale')) {
-            return '';
-        }
         // do not translate or format options when not in admin context
         if (empty($this->translator->getLocale())) {
             return $placeConfig->getLabel();
@@ -98,24 +90,12 @@ class OptionsProvider implements SelectOptionsProviderInterface
         );
     }
 
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return bool
-     */
-    public function hasStaticOptions($context, $fieldDefinition)
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;
     }
 
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return null
-     */
-    public function getDefaultValue($context, $fieldDefinition)
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
         return null;
     }

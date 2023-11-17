@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,13 +28,8 @@ trait ContextPersistenceTrait
     /**
      * Enrich relation / slug with type-specific data.
      *
-     * @param Concrete|Localizedfield|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|AbstractData $object
-     * @param array $params
-     * @param string|null $classId
-     * @param array $row
-     * @param string $srcCol
      */
-    protected function enrichDataRow($object, array $params, ?string &$classId, &$row = [], string $srcCol = 'src_id')
+    protected function enrichDataRow(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params, ?string &$classId, array &$row = [], string $srcCol = 'src_id'): void
     {
         if (!$row) {
             $row = [];
@@ -58,7 +54,7 @@ trait ContextPersistenceTrait
             $context = $object->getContext();
             if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
                 $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? null;
+                $index = $context['index'] ?? $context['containerKey'] ?? null;
                 $row['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $row['ownername'];
             }
 

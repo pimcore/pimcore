@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,86 +16,78 @@
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Event\ElementEvents;
-use Pimcore\Event\Model\ElementEvent;
+use Pimcore\Event\Model\ModelEvent;
+use Pimcore\Event\NoteEvents;
 use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
+ * @method void delete()
  */
 final class Note extends Model\AbstractModel
 {
     /**
      * @internal
      *
-     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
+
+    /**
+     * @internal
+     */
+    protected string $type;
+
+    /**
+     * @internal
+     */
+    protected int $cid;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $type;
+    protected string $ctype;
+
+    /**
+     * @internal
+     */
+    protected int $date;
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $cid;
+    protected ?int $user = null;
+
+    /**
+     * @internal
+     */
+    protected string $title = '';
+
+    /**
+     * @internal
+     */
+    protected string $description = '';
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $ctype;
+    protected array $data = [];
 
     /**
-     * @internal
+     * If the note is locked, it can't be deleted in the admin interface
      *
-     * @var int
-     */
-    protected $date;
-
-    /**
      * @internal
-     *
-     * @var int|null
      */
-    protected $user;
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * @internal
-     *
-     * @var array
-     */
-    protected $data = [];
+    protected bool $locked = true;
 
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Note
     {
         try {
             $note = new self();
@@ -106,14 +99,7 @@ final class Note extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function addData($name, $type, $data)
+    public function addData(string $name, string $type, mixed $data): static
     {
         $this->data[$name] = [
             'type' => $type,
@@ -123,12 +109,7 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return $this
-     */
-    public function setElement(ElementInterface $element)
+    public function setElement(ElementInterface $element): static
     {
         $this->setCid($element->getId());
         $this->setCtype(Service::getElementType($element));
@@ -139,7 +120,7 @@ final class Note extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         // check if there's a valid user
         if (!$this->getUser()) {
@@ -155,187 +136,130 @@ final class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
+            \Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_ADD);
         }
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(array $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param int $user
-     *
-     * @return $this
-     */
-    public function setUser($user)
+    public function setUser(int $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUser()
+    public function getUser(): ?int
     {
         return $this->user;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLocked(bool $locked): static
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    public function getLocked(): bool
+    {
+        return $this->locked;
     }
 }

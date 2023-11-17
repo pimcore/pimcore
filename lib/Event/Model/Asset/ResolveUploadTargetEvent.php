@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,79 +23,50 @@ class ResolveUploadTargetEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var string
-     */
-    protected $filename;
+    protected string $filename;
 
-    /**
-     * @var array
-     */
-    protected $context;
+    protected array $context;
 
-    /**
-     * @var int
-     */
-    protected $parentId;
+    protected int $parentId;
 
     /**
      * ResolveUploadTargetEvent constructor.
      *
-     * @param int $parentId
-     * @param string $filename
      * @param array $context contextual information
      */
-    public function __construct($parentId, string $filename, $context)
+    public function __construct(int $parentId, string $filename, array $context)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
         $this->context = $context;
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
-    /**
-     * @param string $filename
-     */
     public function setFilename(string $filename): void
     {
         $this->filename = $filename;
     }
 
-    /**
-     * @return array
-     */
     public function getContext(): array
     {
         return $this->context;
     }
 
-    /**
-     * @param array $context
-     */
     public function setContext(array $context): void
     {
         $this->context = $context;
     }
 
-    /**
-     * @return int
-     */
-    public function getParentId()
+    public function getParentId(): int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     */
-    public function setParentId($parentId): void
+    public function setParentId(int $parentId): void
     {
         $this->parentId = $parentId;
     }

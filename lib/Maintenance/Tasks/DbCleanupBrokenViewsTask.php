@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,30 +25,17 @@ use Psr\Log\LoggerInterface;
  */
 class DbCleanupBrokenViewsTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param Connection $db
-     * @param LoggerInterface $logger
-     */
     public function __construct(Connection $db, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function execute()
+    public function execute(): void
     {
         $tables = $this->db->fetchAllAssociative('SHOW FULL TABLES');
         foreach ($tables as $table) {
@@ -59,7 +47,7 @@ class DbCleanupBrokenViewsTask implements TaskInterface
                 try {
                     $createStatement = $this->db->fetchAssociative('SHOW FIELDS FROM '.$name);
                 } catch (\Exception $e) {
-                    if (strpos($e->getMessage(), 'references invalid table') !== false) {
+                    if (str_contains($e->getMessage(), 'references invalid table')) {
                         $this->logger->error('view '.$name.' seems to be a broken one, it will be removed');
                         $this->logger->error('error message was: '.$e->getMessage());
 

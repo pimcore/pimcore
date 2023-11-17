@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,15 +22,9 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 
 abstract class BundleAwareMigration extends AbstractMigration
 {
-    /**
-     * @return string
-     */
     abstract protected function getBundleName(): string;
 
-    /**
-     * @return bool
-     */
-    protected function checkBundleInstalled()
+    protected function checkBundleInstalled(): bool
     {
         $bundle = \Pimcore::getKernel()->getBundle($this->getBundleName());
         if ($bundle instanceof PimcoreBundleInterface) {
@@ -40,18 +35,12 @@ abstract class BundleAwareMigration extends AbstractMigration
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preUp(Schema $schema): void
     {
         $this->checkBundleInstalled();
         parent::preUp($schema);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preDown(Schema $schema): void
     {
         $this->checkBundleInstalled();

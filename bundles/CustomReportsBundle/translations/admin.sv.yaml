@@ -1,0 +1,8 @@
+---
+custom_reports: Anpassade rapporter
+reports: Rapporter
+custom_report_permissions: "Beh\xF6righet"
+keybinding_customReports: Anpassade rapporter
+keybinding_reports: Rapportera
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

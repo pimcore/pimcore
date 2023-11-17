@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
@@ -24,44 +26,37 @@ use Pimcore\Model;
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
  */
-class AbstractUser extends Model\AbstractModel
+abstract class AbstractUser extends Model\AbstractModel implements AbstractUserInterface
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var int|null
-     */
-    protected $parentId;
+    protected ?int $parentId = null;
 
-    /**
-     * @var string|null
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type = '';
 
-    /**
-     * @param int $id
-     *
-     * @return static|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): static|null
     {
+        if ($id < 0) {
+            return null;
+        }
+
         $cacheKey = 'user_' . $id;
 
         try {
-            if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-                $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                $user = RuntimeCache::get($cacheKey);
             } else {
-                $user = new static();
+                $reflectionClass = new \ReflectionClass(static::class);
+                if ($reflectionClass->isAbstract()) {
+                    $user = new Model\User();
+                    $user->setType('');
+                } else {
+                    $user = new static();
+                }
                 $user->getDao()->getById($id);
                 $className = Service::getClassNameForType($user->getType());
 
@@ -70,7 +65,7 @@ class AbstractUser extends Model\AbstractModel
                     $user = $className::getById($user->getId());
                 }
 
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $user);
+                RuntimeCache::set($cacheKey, $user);
             }
         } catch (Model\Exception\NotFoundException $e) {
             return null;
@@ -83,12 +78,7 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return static
-     */
-    public static function create($values = [])
+    public static function create(array $values = []): static
     {
         $user = new static();
         self::checkCreateData($values);
@@ -98,12 +88,7 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return static|null
-     */
-    public static function getByName($name)
+    public static function getByName(string $name): ?static
     {
         try {
             $user = new static();
@@ -115,70 +100,52 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
     /**
-     * @param int $parentId
-     *
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId): static
     {
-        $this->parentId = (int)$parentId;
+        $this->parentId = $parentId;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -188,7 +155,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): static
     {
         $isUpdate = false;
         if ($this->getId()) {
@@ -230,11 +197,12 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
         }
+        $parentUserId = $this->getParentId();
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
 
@@ -254,7 +222,18 @@ class AbstractUser extends Model\AbstractModel
 
         // now delete the current user
         $this->getDao()->delete();
-        \Pimcore\Cache::clearAll();
+
+        $cacheKey = 'user_' . $this->getId();
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::set($cacheKey, null);
+        }
+
+        if ($parentUserId && $parentUserId > 1) {
+            $parentCacheKey = 'user_' . $parentUserId;
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
+                RuntimeCache::set($parentCacheKey, null);
+            }
+        }
 
         $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
     }
@@ -264,7 +243,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    private function cleanupUserRoleRelations()
+    private function cleanupUserRoleRelations(): void
     {
         $userRoleListing = new Listing();
         $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
@@ -272,24 +251,20 @@ class AbstractUser extends Model\AbstractModel
         if (count($userRoleListing)) {
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
-                if (is_array($userRoles)) {
-                    $key = array_search($this->getId(), $userRoles);
-                    if (false !== $key) {
-                        unset($userRoles[$key]);
-                        $relatedUser->setRoles($userRoles);
-                        $relatedUser->save();
-                    }
+                $key = array_search($this->getId(), $userRoles);
+                if (false !== $key) {
+                    unset($userRoles[$key]);
+                    $relatedUser->setRoles($userRoles);
+                    $relatedUser->save();
                 }
             }
         }
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -299,17 +274,13 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
     }
 
     /**
      * @internal
-     *
-     * @param AbstractUser $user
-     *
-     * @return bool
      */
     protected static function typeMatch(AbstractUser $user): bool
     {

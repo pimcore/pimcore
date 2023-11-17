@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,14 +32,8 @@ class PimcoreContextResolver extends AbstractRequestResolver
 
     const CONTEXT_DEFAULT = 'default';
 
-    /**
-     * @var PimcoreContextGuesser
-     */
-    protected $guesser;
+    protected PimcoreContextGuesser $guesser;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {
         $this->guesser = $guesser;
@@ -49,11 +44,9 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Get pimcore context from request
      *
-     * @param Request|null $request
      *
-     * @return string|null
      */
-    public function getPimcoreContext(Request $request = null)
+    public function getPimcoreContext(Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -72,10 +65,8 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Sets the pimcore context on the request
      *
-     * @param Request $request
-     * @param string $context
      */
-    public function setPimcoreContext(Request $request, string $context)
+    public function setPimcoreContext(Request $request, string $context): void
     {
         $request->attributes->set(self::ATTRIBUTE_PIMCORE_CONTEXT, $context);
     }
@@ -84,12 +75,9 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * Tests if the request matches a given contect. $context can also be an array of contexts. If one
      * of the contexts matches, the method will return true.
      *
-     * @param Request $request
-     * @param string|array $context
      *
-     * @return bool
      */
-    public function matchesPimcoreContext(Request $request, $context): bool
+    public function matchesPimcoreContext(Request $request, array|string $context): bool
     {
         if (!is_array($context)) {
             if (!empty($context)) {

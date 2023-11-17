@@ -28,18 +28,9 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     *
-     * @return string
-     */
-    public function getTableName(DataObject\ClassDefinition $class, $query = false)
+    public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {
         if ($query) {
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
@@ -48,14 +39,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     * @param string $language
-     *
-     * @return string
-     */
-    public function getLocalizedTableName(DataObject\ClassDefinition $class, $query = false, $language = 'en')
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en'): string
     {
         if ($query) {
             return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;
@@ -64,10 +48,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
-    public function delete(DataObject\ClassDefinition $class)
+    public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class, false);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
@@ -76,30 +57,27 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
-    public function createUpdateTable(DataObject\ClassDefinition $class)
+    public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
-		  `o_id` int(11) UNSIGNED NOT NULL default '0',
+		  `id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
-          PRIMARY KEY (`o_id`,`fieldname`),
-          INDEX `o_id` (`o_id`),
+          PRIMARY KEY (`id`,`fieldname`),
+          INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `".self::getForeignKeyName($tableStore, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+          CONSTRAINT `".self::getForeignKeyName($tableStore, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
-		  `o_id` int(11) UNSIGNED NOT NULL default '0',
+		  `id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
-          PRIMARY KEY (`o_id`,`fieldname`),
-          INDEX `o_id` (`o_id`),
+          PRIMARY KEY (`id`,`fieldname`),
+          INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;');
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
@@ -107,8 +85,8 @@ class Dao extends Model\Dao\AbstractDao
         $existingColumnsQuery = $this->getValidTableColumns($tableQuery, false); // no caching of table definition
         $columnsToRemoveQuery = $existingColumnsQuery;
 
-        $protectedColumnsStore = ['o_id', 'fieldname'];
-        $protectedColumnsQuery = ['o_id', 'fieldname'];
+        $protectedColumnsStore = ['id', 'fieldname'];
+        $protectedColumnsQuery = ['id', 'fieldname'];
 
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
 
@@ -118,7 +96,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -135,7 +114,8 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
@@ -167,10 +147,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     */
-    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    public function classSaved(DataObject\ClassDefinition $classDefinition): void
     {
         $tableStore = $this->getTableName($classDefinition, false);
         $tableQuery = $this->getTableName($classDefinition, true);
@@ -178,14 +155,9 @@ class Dao extends Model\Dao\AbstractDao
         $this->handleEncryption($classDefinition, [$tableQuery, $tableStore]);
     }
 
-    /**
-     * @param string $table
-     * @param array $columnsToRemove
-     * @param array $protectedColumns
-     */
-    protected function removeIndices($table, $columnsToRemove, $protectedColumns)
+    protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+        if ($columnsToRemove) {
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $protectedColumns)) {

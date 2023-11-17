@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,118 +20,74 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementInterface;
 
 class Video implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var Asset|string|int
-     */
-    protected $data;
+    protected string|int|ElementInterface|Asset|\Pimcore\Model\Element\ElementDescriptor $data;
 
-    /**
-     * @var Asset|string|int
-     */
-    protected $poster;
+    protected string|int|Asset|\Pimcore\Model\Element\ElementDescriptor|null $poster = null;
 
-    /**
-     * @var string
-     */
-    protected $title;
+    protected ?string $title = null;
 
-    /**
-     * @var string
-     */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @param Asset|string|int $data
-     */
-    public function setData($data)
+    public function setData(Asset|int|string $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    /**
-     * @return Asset|string|int
-     */
-    public function getData()
+    public function getData(): Asset|int|string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param Asset|string|int $poster
-     */
-    public function setPoster($poster)
+    public function setPoster(Asset|int|string|null $poster): void
     {
         $this->poster = $poster;
         $this->markMeDirty();
     }
 
-    /**
-     * @return Asset|string|int
-     */
-    public function getPoster()
+    public function getPoster(): Asset|int|string|null
     {
         return $this->poster;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }

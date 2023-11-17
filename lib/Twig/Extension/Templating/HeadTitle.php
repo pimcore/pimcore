@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,24 +49,20 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Registry key for placeholder
      *
-     * @var string
      */
-    protected $_regKey = 'HeadTitle';
+    protected string $_regKey = 'HeadTitle';
 
     /**
      * Default title rendering order (i.e. order in which each title attached)
      *
-     * @var string|null
      */
-    protected $_defaultAttachOrder = null;
+    protected ?string $_defaultAttachOrder = null;
 
     /**
-     * @param string|null $title
-     * @param string|null $setType
      *
      * @return $this
      */
-    public function __invoke($title = null, $setType = null)
+    public function __invoke(string $title = null, string $setType = null): static
     {
         if (null === $setType) {
             $setType = (null === $this->getDefaultAttachOrder())
@@ -91,11 +88,10 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Set a default order to add titles
      *
-     * @param string $setType
      *
      * @return $this
      */
-    public function setDefaultAttachOrder($setType)
+    public function setDefaultAttachOrder(string $setType): static
     {
         if (!in_array($setType, [
             Container::APPEND,
@@ -113,9 +109,8 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Get the default attach order, if any.
      *
-     * @return string|null
      */
-    public function getDefaultAttachOrder()
+    public function getDefaultAttachOrder(): ?string
     {
         return $this->_defaultAttachOrder;
     }
@@ -123,12 +118,9 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Turn helper into string
      *
-     * @param  string|null $indent
-     * @param  string|null $locale
      *
-     * @return string
      */
-    public function toString($indent = null, $locale = null)
+    public function toString(string $indent = null, string $locale = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
@@ -153,9 +145,8 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Get container content without indentation, prefix or postfix
      *
-     * @return string
      */
-    public function getRawContent()
+    public function getRawContent(): string
     {
         return implode(
             $this->getContainer()->getSeparator(),

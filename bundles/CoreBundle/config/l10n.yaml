@@ -1,0 +1,27 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # TRANSLATOR
+    #
+
+    Pimcore\Translation\Translator:
+        decorates: translator
+        arguments:
+            - '@Pimcore\Translation\Translator.inner'
+        calls:
+            - [setKernel, ['@kernel']]
+
+    #
+    # LOCALE
+    #
+
+    Pimcore\Localization\LocaleServiceInterface:
+        public: true
+        class: Pimcore\Localization\LocaleService
+
+    # formatting service for dates, times and numbers
+    Pimcore\Localization\IntlFormatter:
+        public: true

@@ -1,0 +1,8 @@
+---
+custom_reports: "Vlastn\xED reporty"
+reports: Reporty
+custom_report_permissions: "Opr\xE1vn\u011Bn\xED"
+keybinding_customReports: Custom Reports
+keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

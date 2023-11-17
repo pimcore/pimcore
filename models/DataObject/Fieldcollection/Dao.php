@@ -30,23 +30,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function save(DataObject\Concrete $object, $params = [])
+    public function save(DataObject\Concrete $object, array $params = []): array
     {
         return $this->delete($object, true);
     }
 
     /**
-     * @param DataObject\Concrete $object
-     *
-     * @return array
+     * @return DataObject\Fieldcollection\Data\AbstractData[]
      */
-    public function load(DataObject\Concrete $object)
+    public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
@@ -62,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -145,12 +137,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
+     * @return array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true}
      */
-    public function delete(DataObject\Concrete $object, $saveMode = false)
+    public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
         // empty or create all relevant tables
 
@@ -170,11 +161,10 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$tableName."` WHERE
-         `o_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
                 if ($dataExists) {
                     $this->db->delete($tableName, [
-                        'o_id' => $object->getId(),
+                        'id' => $object->getId(),
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                 }
@@ -202,29 +192,27 @@ class Dao extends Model\Dao\AbstractDao
 
             $childDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
 
-            if (is_array($childDefinitions)) {
-                foreach ($childDefinitions as $fd) {
-                    if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                            '_self'
-                        )) {
-                            continue;
-                        }
+            foreach ($childDefinitions as $fd) {
+                if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
+                        '_self'
+                    )) {
+                        continue;
                     }
+                }
 
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        $fd->delete(
-                            $object,
-                            [
-                                'isUpdate' => $saveMode,
-                                'context' => [
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $type,
-                                    'fieldname' => $this->model->getFieldname(),
-                                ],
-                            ]
-                        );
-                    }
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $fd->delete(
+                        $object,
+                        [
+                            'isUpdate' => $saveMode,
+                            'context' => [
+                                'containerType' => 'fieldcollection',
+                                'containerKey' => $type,
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                        ]
+                    );
                 }
             }
         }

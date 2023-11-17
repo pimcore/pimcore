@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,6 @@ interface PasswordHasherFactoryAwareInterface
      * If the method returns null, the standard way to retrieve the hasher
      * will be used instead.
      *
-     * @return string
      */
-    public function getHasherFactoryName();
+    public function getHasherFactoryName(): string;
 }

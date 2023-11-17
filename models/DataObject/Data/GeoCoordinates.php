@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,21 +23,11 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var float
-     */
-    protected $longitude;
+    protected ?float $longitude = null;
 
-    /**
-     * @var float
-     */
-    protected $latitude;
+    protected ?float $latitude = null;
 
-    /**
-     * @param float|null $latitude
-     * @param float|null $longitude
-     */
-    public function __construct($latitude = null, $longitude = null)
+    public function __construct(?float $latitude = null, ?float $longitude = null)
     {
         if ($latitude !== null) {
             $this->setLatitude($latitude);
@@ -49,24 +40,17 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return float
-     */
-    public function getLongitude()
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
     /**
-     * @param float $longitude
-     *
      * @return $this
      */
-    public function setLongitude($longitude)
+    public function setLongitude(?float $longitude): static
     {
-        $longitude = (float)$longitude;
-
-        if ($this->longitude != $longitude) {
+        if ($this->longitude !== $longitude) {
             $this->longitude = $longitude;
             $this->markMeDirty();
         }
@@ -74,23 +58,17 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getLatitude()
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
     /**
-     * @param float $latitude
-     *
      * @return $this
      */
-    public function setLatitude($latitude)
+    public function setLatitude(?float $latitude): static
     {
-        $latitude = (float)$latitude;
-        if ($this->latitude != $latitude) {
+        if ($this->latitude !== $latitude) {
             $this->latitude = $latitude;
             $this->markMeDirty();
         }
@@ -98,10 +76,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->latitude . '; ' . $this->longitude;
     }

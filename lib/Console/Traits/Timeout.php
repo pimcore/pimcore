@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,19 +29,15 @@ use Symfony\Component\Console\Input\InputOption;
  */
 trait Timeout
 {
-    /** @var int */
-    private $timeout = -1;
+    private int $timeout = -1;
 
-    /** @var int|null */
-    private $startTimeCurrentStep = null;
+    private ?int $startTimeCurrentStep = null;
 
-    /** @var int|null */
-    private $startTime = null;
+    private ?int $startTime = null;
 
     /**
      * Add timeout option to command.
      *
-     * @param Command $command
      */
     protected static function configureTimeout(Command $command): void
     {
@@ -50,9 +47,8 @@ trait Timeout
     /**
      * Init the timeout. Should be called in the beginning of a command or process.
      *
-     * @param InputInterface $input
      */
-    protected function initTimeout(InputInterface $input)
+    protected function initTimeout(InputInterface $input): void
     {
         $timeout = (int)$input->getOption('timeout');
         $timeout = $timeout > 0 ? $timeout : -1;
@@ -64,7 +60,7 @@ trait Timeout
      *
      * @param int $minutes the timeout in minutes.
      */
-    protected function initTimeoutInMinutes(int $minutes)
+    protected function initTimeoutInMinutes(int $minutes): void
     {
         $this->setTimeout($minutes);
         $this->startTime = time();
@@ -80,7 +76,7 @@ trait Timeout
      *
      * @throws \Exception is thrown in the default implementation when the timeout happens
      */
-    protected function handleTimeout(?\Closure $abortClosure = null)
+    protected function handleTimeout(?\Closure $abortClosure = null): void
     {
         $oldStartTime = $this->startTimeCurrentStep;
         $this->startTimeCurrentStep = time();
@@ -103,7 +99,6 @@ trait Timeout
     /**
      * Get the timeout in minutes. If <= 0 then no timeout is given.
      *
-     * @return int
      */
     public function getTimeout(): int
     {
@@ -113,7 +108,6 @@ trait Timeout
     /**
      * Set the timeout in minutes. If not set, no timeout happens
      *
-     * @param int $timeout
      *
      * @return $this
      */
@@ -127,7 +121,6 @@ trait Timeout
     /**
      * Get the start time of the current step in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTimeCurrentStep(): ?int
     {
@@ -137,7 +130,6 @@ trait Timeout
     /**
      * Get the start time of the current (overall) process in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTime(): ?int
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,39 +23,26 @@ class ExternalImage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string|null */
-    protected $url;
+    protected ?string $url = null;
 
-    /**
-     * @param string|null $url
-     */
-    public function __construct($url = null)
+    public function __construct(string $url = null)
     {
         $this->url = $url;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    /**
-     * @param string|null $url
-     */
-    public function setUrl($url)
+    public function setUrl(?string $url): void
     {
         $this->url = $url;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (is_null($this->url)) ? '' : $this->url;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,50 +21,34 @@ abstract class AbstractArea
     /**
      * @internal
      *
-     * @var \Pimcore\Config\Config
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @internal
      *
-     * @var Info
      */
-    protected $brick;
+    protected Info $brick;
 
     /**
      * @internal
      *
-     * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
-    /**
-     * @param \Pimcore\Config\Config $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @return \Pimcore\Config\Config
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParam($key)
+    public function getParam(string $key): mixed
     {
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
@@ -72,51 +57,31 @@ abstract class AbstractArea
         return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllParams()
+    public function getAllParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function addParam($key, $value)
+    public function addParam(string $key, mixed $value): void
     {
         $this->params[$key] = $value;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
-    public function setParams($params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
         return $this;
     }
 
-    /**
-     * @param Info $brick
-     *
-     * @return $this
-     */
-    public function setBrick($brick)
+    public function setBrick(Info $brick): static
     {
         $this->brick = $brick;
 
         return $this;
     }
 
-    /**
-     * @return Info
-     */
-    public function getBrick()
+    public function getBrick(): Info
     {
         return $this->brick;
     }

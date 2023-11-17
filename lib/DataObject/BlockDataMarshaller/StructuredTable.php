@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,10 +23,7 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class StructuredTable implements MarshallerInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $table = new \Pimcore\Model\DataObject\Data\StructuredTable();
@@ -37,10 +35,7 @@ class StructuredTable implements MarshallerInterface
         return null;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
             return $value->getData();

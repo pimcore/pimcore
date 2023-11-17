@@ -1,0 +1,8 @@
+flysystem:
+    storages:
+        pimcore.application_log.storage:
+            # Storage for application logs
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: "%kernel.project_dir%/var/application-logger"

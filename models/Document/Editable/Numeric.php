@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,23 +27,15 @@ class Numeric extends Model\Document\Editable
      * Contains the current number, or an empty string if not set
      *
      * @internal
-     *
-     * @var string
      */
-    protected $number = '';
+    protected ?string $number = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'numeric';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->number;
     }
@@ -50,45 +43,32 @@ class Numeric extends Model\Document\Editable
     /**
      * @see EditableInterface::getData
      *
-     * @return string
      */
-    public function getNumber()
+    public function getNumber(): string
     {
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         return $this->number;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->number = $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
-        $this->number = $data;
+        $this->number = (string)$data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if (is_numeric($this->number)) {
             return false;

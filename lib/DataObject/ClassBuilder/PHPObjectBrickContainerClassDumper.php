@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,17 +16,20 @@
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClassDumperInterface
 {
-    public function __construct(protected ObjectBrickContainerClassBuilderInterface $classBuilder)
-    {
+    public function __construct(
+        protected ObjectBrickContainerClassBuilderInterface $classBuilder,
+        protected Filesystem $filesystem
+    ) {
     }
 
     public function dumpContainerClasses(Definition $definition): void
     {
+        $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
         $containerDefinition = [];
 
         foreach ($definition->getClassDefinitions() as $cl) {
@@ -46,27 +50,29 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
         }
 
         foreach ($containerDefinition as $classId => $cd) {
-            $file = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/definition_' . $classId . '.php';
-            if (!file_exists($file)) {
-                continue;
-            }
-
-            $class = include $file;
-
-            if (!$class) {
-                continue;
-            }
-
-            foreach ($cd as $fieldname => $brickKeys) {
-                $cd = $this->classBuilder->buildContainerClass($definition, $class, $fieldname, $brickKeys);
-                $folder = $definition->getContainerClassFolder($class->getName());
-
-                if (!is_dir($folder)) {
-                    File::mkdir($folder);
+            foreach ($objectClassesFolders as $objectClassesFolder) {
+                $file = $objectClassesFolder . '/definition_' . $classId . '.php';
+                if (!file_exists($file)) {
+                    continue;
                 }
 
-                $file = $folder . '/' . ucfirst($fieldname) . '.php';
-                File::put($file, $cd);
+                $class = include $file;
+
+                if (!$class) {
+                    continue;
+                }
+
+                foreach ($cd as $fieldname => $brickKeys) {
+                    $cd = $this->classBuilder->buildContainerClass($definition, $class, $fieldname, $brickKeys);
+                    $folder = $definition->getContainerClassFolder($class->getName());
+
+                    if (!is_dir($folder)) {
+                        $this->filesystem->mkdir($folder, 0775);
+                    }
+
+                    $file = $folder . '/' . ucfirst($fieldname) . '.php';
+                    $this->filesystem->dumpFile($file, $cd);
+                }
             }
         }
     }

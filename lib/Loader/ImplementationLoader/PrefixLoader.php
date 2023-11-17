@@ -29,34 +29,19 @@ use Pimcore\Tool;
  */
 class PrefixLoader extends AbstractClassNameLoader
 {
-    /**
-     * @var Inflector
-     */
-    private $inflector;
+    private Inflector $inflector;
 
-    /**
-     * @var array
-     */
-    private $prefixes = [];
+    private array $prefixes = [];
 
-    /**
-     * @var array
-     */
-    private $cache = [];
+    private array $cache = [];
 
-    /**
-     * @param array $prefixes
-     */
     public function __construct(array $prefixes = [])
     {
         $this->inflector = InflectorFactory::create()->build();
         $this->setPrefixes($prefixes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    private function setPrefixes(array $prefixes)
+    private function setPrefixes(array $prefixes): void
     {
         if (empty($prefixes)) {
             throw new InvalidArgumentException('Prefix loader needs a list of prefixes, empty array given');
@@ -74,36 +59,25 @@ class PrefixLoader extends AbstractClassNameLoader
         $this->prefixes = array_unique($this->prefixes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return null !== $this->findClassName($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getClassName(string $name)
+    protected function getClassName(string $name): string
     {
         return $this->findClassName($name);
     }
 
     /**
      * Iterates prefixes and tries to find the class name
-     *
-     * @param string $name
-     *
-     * @return string|null
      */
-    private function findClassName(string $name)
+    private function findClassName(string $name): ?string
     {
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
         }
 
-        $result = null;
         foreach ($this->prefixes as $prefix) {
             $className = $this->buildClassName($prefix, $name);
 
@@ -117,22 +91,11 @@ class PrefixLoader extends AbstractClassNameLoader
         return null;
     }
 
-    /**
-     * @param string $prefix
-     * @param string $name
-     *
-     * @return string
-     */
     protected function buildClassName(string $prefix, string $name): string
     {
         return $prefix . $this->normalizeName($name);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     protected function normalizeName(string $name): string
     {
         return $this->inflector->classify($name);

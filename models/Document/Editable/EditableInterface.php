@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,45 +21,37 @@ interface EditableInterface
     /**
      * Renders the editable, calls either frontend() or admin() depending on the context
      *
-     * @return mixed
      */
-    public function render();
+    public function render(): mixed;
 
     /**
      * Get the current data stored for the element
      * this is used as general fallback for the methods getDataForResource(), admin(), getValue()
      *
-     * @return mixed
      */
-    public function getData();
+    public function getData(): mixed;
 
     /**
      * Return the type of the element
      *
-     * @return string
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Receives the data from the editmode and convert this to the internal data in the object eg. image-id to Asset\Image
      *
-     * @param mixed $data
      *
      * @return $this
      */
-    public function setDataFromEditmode($data);
+    public function setDataFromEditmode(mixed $data): static;
 
     /**
      * Receives the data from the resource, an convert to the internal data in the object eg. image-id to Asset\Image
      *
-     * @param mixed $data
      *
      * @return $this
      */
-    public function setDataFromResource($data);
+    public function setDataFromResource(mixed $data): static;
 
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    public function isEmpty(): bool;
 }

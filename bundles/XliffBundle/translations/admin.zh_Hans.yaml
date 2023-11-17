@@ -1,0 +1,19 @@
+---
+xliff_export_documents: If you want to translate eg. the whole /en tree to a different
+  language, first create a copy of the /en tree. Afterwards use the copied tree in
+  the export and select the source language 'en' and the target language 'de'. When
+  importing the translated XLIFF file, the contents of the exported documents (in
+  this case the copied tree documents) will be overwritten by the German translations
+  in the XLIFF file.
+xliff_export_objects: Only fields inside a Localized Fields container are recognized.
+  When importing the translated XLIFF the source language will be untouched, only
+  the target language fields will be overwritten. Use Relations checkbox to include
+  Objects & Documents from Dependencies e.g. Relation fields, Properties etc.
+xliff_export_notice: Here you can select the documents and objects you want to export
+  for external translation.
+xliff_import_notice: Select a translated XLIFF file which was previously exported
+  by pimcore and then translated by a localization service provider (LSP) or by a
+  CAT application. Please aware that the import will overwrite the elements which
+  were selected by the import (read also export).
+xliff_import_export: Xliff Import/Export
+...

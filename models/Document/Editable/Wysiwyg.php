@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,49 +19,43 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
 class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
+    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
+
     /**
      * Contains the text
      *
      * @internal
-     *
-     * @var string
      */
-    protected $text;
+    protected ?string $text = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    private static function getWysiwygSanitizer(): HtmlSanitizer
+    {
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+    }
+
+    public function getType(): string
     {
         return 'wysiwyg';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?string
     {
         $document = $this->getDocument();
 
@@ -70,9 +65,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $document = $this->getDocument();
@@ -83,54 +75,36 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
             ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->text = $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->text = $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         return Text::getDependenciesOfWysiwygText($this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($this->text, $tags);
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         $html = new DomCrawler($this->text);
 
@@ -152,5 +126,14 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
         $html->clear();
         unset($html);
+    }
+
+    public function save(): void
+    {
+        if(is_string($this->text)) {
+            $helper = self::getWysiwygSanitizer();
+            $this->text = $helper->sanitizeFor('body', $this->text);
+        }
+        $this->getDao()->save();
     }
 }

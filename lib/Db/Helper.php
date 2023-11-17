@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,45 +16,39 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
+    /**
+     *
+     * @param array<string, mixed> $data The data to be inserted or updated into the database table.
+     * Array key corresponds to the database column, array value to the actual value.
+     * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
+     * Typically, these are the primary key columns.
+     * The values for the specified keys are read from the $data parameter.
+     */
+    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
-        // extract and quote col names from the array keys
-        $i = 0;
-        $bind = [];
-        $cols = [];
-        $vals = [];
-        foreach ($data as $col => $val) {
-            $cols[] = $connection->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
-            $vals[] = ':col' . $i;
-            $i++;
+        try {
+            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+            return $connection->insert($table, $data);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
+            $critera = [];
+            foreach ($keys as $key) {
+                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+            }
+
+            return $connection->update($table, $data, $critera);
         }
-
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
-        }
-
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
-            $connection->quoteIdentifier($table),
-            implode(', ', $cols),
-            implode(', ', $vals),
-            implode(', ', $set)
-        );
-
-        $bind = array_merge($bind, $bind);
-
-        return $connection->executeStatement($sql, $bind);
     }
 
-    public static function fetchPairs(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
+    public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
@@ -66,7 +61,7 @@ class Helper
         return $data;
     }
 
-    public static function selectAndDeleteWhere(ConnectionInterface|\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
+    public static function selectAndDeleteWhere(Connection $db, string $table, string $idColumn = 'id', string $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -85,7 +80,7 @@ class Helper
         }
     }
 
-    public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
+    public static function queryIgnoreError(Connection $db, string $sql, array $exclusions = []): ?\Doctrine\DBAL\Result
     {
         try {
             return $db->executeQuery($sql);
@@ -101,7 +96,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(ConnectionInterface|\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
+    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);
@@ -113,5 +108,15 @@ class Helper
     public static function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
+    }
+
+    public static function quoteDataIdentifiers(Connection $db, array $data): array
+    {
+        $newData = [];
+        foreach ($data as $key => $value) {
+            $newData[$db->quoteIdentifier($key)] = $value;
+        }
+
+        return $newData;
     }
 }

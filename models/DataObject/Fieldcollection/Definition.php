@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,9 @@ use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -35,17 +38,16 @@ class Definition extends Model\AbstractModel
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * {@inheritdoc}
+     * @var array
      */
-    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected const FORBIDDEN_NAMES = [
+        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
+        'object', 'interface', 'default',
+    ];
+
+    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'fieldcollection';
             $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -57,9 +59,8 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    protected function extractDataDefinitions($def)
+    protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -83,13 +84,11 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
+     *
      *
      * @throws \Exception
-     *
-     * @return self|null
      */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Definition
     {
         /** @var Definition $fc */
         $fc = null;
@@ -119,17 +118,16 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
-    public function save($saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
@@ -154,15 +152,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -170,14 +166,13 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
-     * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
+     *
+     * @internal
      */
-    protected function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -201,7 +196,8 @@ class Definition extends Model\AbstractModel
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($definitionFile, $data);
         }
 
         \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
@@ -214,7 +210,7 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -222,15 +218,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->delete($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->delete($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -239,22 +233,18 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param string|null $key
-     *
-     * @return string
      */
-    public function getDefinitionFile($key = null)
+    public function getDefinitionFile(string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
@@ -262,9 +252,8 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
-    public function getPhpClassFile()
+    public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
     }
@@ -272,7 +261,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {
@@ -287,5 +275,10 @@ class Definition extends Model\AbstractModel
         $cd .= ' */';
 
         return $cd;
+    }
+
+    public function isForbiddenName(): bool
+    {
+        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
     }
 }

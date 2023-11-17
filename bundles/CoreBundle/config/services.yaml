@@ -1,0 +1,184 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # SECURITY
+    #
+
+    # Only use with Symfony ver 5.3 or higher
+    # Decorate the symfony encoder factory with our own. Encoders operating on pimcore admin users and pimcore objects using
+    # the password field definition need access to the user instance while encoding the password. Our factory allows delegating
+    # encoder building to sub-factories which are able to build and cache an encoder per user object.
+    #
+    # See UserAwareEncoderFactory which is used from the admin bundle and from CMS demo profile.
+    #
+    # The second argument (factory mapping) is read from config (pimcore.security.password_hasher_factories) and set by the extension.
+    pimcore.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\PasswordHasherFactory
+        decorates: security.password_hasher_factory
+        arguments: ['@.inner', '@?']
+
+    #
+    # INFRASTRUCTURE
+    #
+
+    # creates needed pimcore directories
+    Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
+        tags:
+            - { name: kernel.cache_warmer }
+
+    Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
+        tags:
+            - { name: kernel.cache_warmer }
+
+    Pimcore\Cache\Symfony\CacheClearer:
+        public: true
+
+    Pimcore\Helper\LongRunningHelper:
+        public: true
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore }
+
+    #
+    # CONFIG
+    #
+    Pimcore\Config:
+        public: true
+
+    Pimcore\Config\ReportConfigWriter: ~
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\CoreBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Pimcore\Controller\Config\ControllerDataProvider:
+        public : true
+        arguments:
+            $serviceControllers: '%pimcore.service_controllers%'
+
+    #
+    # HTTP/REST clients
+    #
+
+    Pimcore\Http\ClientFactory:
+        # keep this public until static method was removed
+        public: true
+
+    pimcore.http_client:
+        alias: GuzzleHttp\Client
+        public: true
+
+    GuzzleHttp\Client:
+        public: true
+        class: \GuzzleHttp\Client
+        factory: ['@Pimcore\Http\ClientFactory', createClient]
+
+    # DataObject Consent Service
+    Pimcore\DataObject\Consent\Service:
+        public: true
+
+    Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
+        public: true
+
+    Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
+        public: true
+
+    Pimcore\Mail\Plugins\RedirectingPlugin: ~
+
+    # Decorates Symfony Mailer
+    Pimcore\Mail\Mailer:
+        decorates: mailer
+        arguments:
+            - '@Pimcore\Mail\Mailer.inner'
+            - '@Pimcore\Mail\Plugins\RedirectingPlugin'
+        public: true
+
+    Pimcore\Translation\TranslationEntriesDumper: ~
+
+    Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
+        public: true
+    Pimcore\Model\DataObject\QuantityValue\Service: ~
+
+    Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
+        public: true
+        class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
+
+    Pimcore\Bundle\CoreBundle\Request\ParamResolver\DataObjectParamResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 101}
+
+    Symfony\Component\Lock\PersistingStoreInterface:
+        class: Symfony\Component\Lock\Store\DoctrineDbalStore
+        arguments:
+            - '@doctrine.dbal.default_connection'
+
+    Symfony\Component\Lock\LockFactory:
+        public: true
+        class: Symfony\Component\Lock\LockFactory
+        arguments:
+            - '@Symfony\Component\Lock\PersistingStoreInterface'
+
+    Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
+
+    Pimcore\Tool\Storage:
+        public: true
+        arguments:
+            $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Image\Adapter\Imagick:
+        shared: false
+        public: true
+
+    Pimcore\Image\Adapter\GD:
+        shared: false
+        public: true
+
+    Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+        public: true
+        alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
+
+    Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+    #
+    # SECURITY
+    #
+
+    # standard user provider returning admin users wrapped in a Pimcore\Security\User\User proxy object.
+    # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
+    Pimcore\Security\User\UserProvider:
+        public: true
+
+    Pimcore\Security\User\TokenStorageUserResolver:
+        public: true
+        arguments:
+            - '@security.token_storage'
+
+    Pimcore\Security\User\UserLoader: ~
+
+    # user-checker checking pimcore users for validity
+    Pimcore\Security\User\UserChecker: ~
+
+    #
+    # System Settings Services
+    #
+    Pimcore\SystemSettingsConfig:
+        public: true
+
+
+    #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+
+    Pimcore\Model\Notification\Service\UserService: ~

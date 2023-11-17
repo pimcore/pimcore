@@ -28,11 +28,10 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
 
@@ -40,17 +39,19 @@ class Dao extends Model\Dao\AbstractDao
             throw new NotFoundException('version with id ' . $id . ' not found');
         }
 
+        $data['public'] = (bool)$data['public'];
+        $data['serialized'] = (bool)$data['serialized'];
+        $data['autoSave'] = (bool)$data['autoSave'];
         $this->assignVariablesToModel($data);
     }
 
     /**
      * Save object to database
      *
-     * @return int
      *
      * @todo: $data could be undefined
      */
-    public function save()
+    public function save(): int
     {
         $version = $this->model->getObjectVars();
         $data = [];
@@ -65,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'versions', $data);
+        Helper::upsert($this->db, 'versions', $data, $this->getPrimaryKey('versions'));
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
@@ -78,28 +79,18 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param Model\Version $version
-     *
-     * @return bool
-     */
-    public function isVersionUsedInScheduler($version)
+    public function isVersionUsedInScheduler(Model\Version $version): bool
     {
         $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
 
         return (bool) $exists;
     }
 
-    /**
-     * @param string $hash
-     *
-     * @return int|null
-     */
     public function getBinaryFileIdForHash(string $hash): ?int
     {
         $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid(), $this->model->getStorageType()]);
@@ -110,11 +101,6 @@ class Dao extends Model\Dao\AbstractDao
         return (int)$id;
     }
 
-    /**
-     * @param string|null $hash
-     *
-     * @return bool
-     */
     public function isBinaryHashInUse(?string $hash): bool
     {
         $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);
@@ -124,12 +110,12 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $elementTypes
-     * @param array $ignoreIds
+     * @param list<array{elementType: string, days?: int, steps?: int}> $elementTypes
+     * @param int[] $ignoreIds
      *
-     * @return array
+     * @return int[]
      */
-    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])
+    public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);
         if (!$ignoreIdsList) {
@@ -143,25 +129,25 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days']) && !is_null($elementType['days'])) {
+                if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
-                    while ($versionInfo = $versionData->fetch()) {
+                    $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
+                    while ($versionInfo = $versionData->fetchAssociative()) {
                         $count++;
-                        Logger::info($versionInfo['cid'] . '(object ' . $count . ') Vcount ' . count($versionIds));
-                        $elementVersions = \array_slice(explode(',', $versionInfo['versions']), $elementType['steps']);
+                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE cid=? AND ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$versionInfo['cid'], $elementType['elementType']]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
+
+                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
 
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
-                            sleep(1);
                         }
 
                         if (count($versionIds) > 1000) {
@@ -179,6 +165,6 @@ class Dao extends Model\Dao\AbstractDao
         }
         Logger::info('return ' .  count($versionIds) . " ids\n");
 
-        return $versionIds;
+        return array_map('intval', $versionIds);
     }
 }

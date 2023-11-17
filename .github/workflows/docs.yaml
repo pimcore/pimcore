@@ -1,0 +1,66 @@
+
+name: "Documentation"
+
+on:
+    pull_request_target:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+        paths:
+            - 'doc/**'
+            - '.github/workflows/docs.yaml'
+    push:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+            - "*_actions"
+        paths:
+            - 'doc/**'
+            - '.github/workflows/docs.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+    docs:
+        name: "Generate docs Pimcore Docs Generator"
+        runs-on: "ubuntu-latest"
+        if: ${{ github.repository == 'pimcore/pimcore' }}
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v3"
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}  
+
+            - name: "Checkout Docs Generator"
+              uses: "actions/checkout@v3"
+              with:
+                  repository: "pimcore/docs-generator"
+                  ref: "main"
+                  path: "./docs-generator"
+                  token: ${{ secrets.DOCS_GENERATOR_ACCESS_TOKEN }}
+
+            - name: "Install Node"
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 19.x
+                  registry-url: 'https://registry.npmjs.org'
+
+            - name: Prepare Docs
+              working-directory: "./docs-generator"
+              run: |
+                  mkdir docs
+                  # copy docs to working directory
+                  cp -r ../doc ./docs/
+                  
+                  # copy index page
+                  cp bin/resources/00_index_empty.md  ./docs/00_index.md
+                  
+                  # use special docusaurus config (to exclude search plugin) and check for broken links
+                  mv docusaurus.config.js.repos-tests docusaurus.config.js
+                  
+            - name: Build Docs
+              working-directory: "./docs-generator"
+              run: |
+                  npm install
+                  npm run build

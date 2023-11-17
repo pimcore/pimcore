@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,22 +25,13 @@ use Twig\TwigFunction;
  */
 class SubrequestExtension extends AbstractExtension
 {
-    /**
-     * @var Inc
-     */
-    protected $incHelper;
+    protected Inc $incHelper;
 
-    /**
-     * @param Inc $incHelper
-     */
     public function __construct(Inc $incHelper)
     {
         $this->incHelper = $incHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         // as runtime extension classes are invokable, we can pass them directly as callable

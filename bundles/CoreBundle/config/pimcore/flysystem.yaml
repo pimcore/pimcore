@@ -1,0 +1,56 @@
+flysystem:
+    storages:
+        pimcore.document_static.storage:
+            # Storage for generated static document pages, e.g. .html files generated out of Pimcore documents
+            # which are then delivered directly by the web-server
+            adapter: 'local'
+            visibility: public
+            directory_visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/pages'
+        pimcore.asset.storage:
+            # Storage for asset source files, directory structure is equal to the asset tree structure
+            adapter: 'local'
+            visibility: public
+            directory_visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/assets'
+        pimcore.asset_cache.storage:
+            # Storage for cached asset files, e.g. PDF and image files generated out of Office files or videos
+            # which are then used by the thumbnail engine as source files
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/asset-cache'
+        pimcore.thumbnail.storage:
+            # Storage for image and video thumbnails, directory structure is equal to the source asset tree
+            adapter: 'local'
+            visibility: public
+            directory_visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
+        pimcore.version.storage:
+            # Storage for serialized versioning data of documents/asset/data objects
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/versions'
+        pimcore.recycle_bin.storage:
+            # Storage for serialized recycle bin data of documents/asset/data objects
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/recyclebin'
+        pimcore.email_log.storage:
+            # Storage for email logs
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/email'
+        pimcore.temp.storage:
+            # Storage for temporary files that work under a batch process, such as export csv
+            # must not be `local` for stateless environment
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/tmp'

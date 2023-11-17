@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: For %s with ID %s the action "%s" was triggered
+  in workflow '%s'.
+workflow_change_email_notification_deeplink: Deeplink k elementu
+workflow_change_email_notification_note: "Pozn\xE1mka p\u0159\xEDd\xE1na:"
+...

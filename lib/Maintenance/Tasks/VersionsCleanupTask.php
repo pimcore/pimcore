@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,36 +30,23 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param LoggerInterface $logger
-     * @param Config $config
-     */
     public function __construct(LoggerInterface $logger, Config $config)
     {
         $this->logger = $logger;
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function execute()
+    public function execute(): void
     {
         $this->doVersionCleanup();
         $this->doAutoSaveVersionCleanup();
     }
 
-    private function doAutoSaveVersionCleanup()
+    private function doAutoSaveVersionCleanup(): void
     {
         $date = \Carbon\Carbon::now();
         $date->subHours(72);
@@ -76,7 +64,7 @@ class VersionsCleanupTask implements TaskInterface
         }
     }
 
-    private function doVersionCleanup()
+    private function doVersionCleanup(): void
     {
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;
@@ -96,7 +84,7 @@ class VersionsCleanupTask implements TaskInterface
             }
             $value = $tConf['steps'] ?? 10;
 
-            if (isset($tConf['days']) && !is_null($tConf['days'])) {
+            if (isset($tConf['days'])) {
                 $versioningType = 'days';
                 $value = (int)$tConf['days'];
             }
@@ -125,63 +113,61 @@ class VersionsCleanupTask implements TaskInterface
 
             $this->logger->debug('versions to check: ' . count($versions));
 
-            if (is_array($versions)) {
-                $totalCount = count($versions);
-                foreach ($versions as $index => $id) {
-                    if (!$version = Version::getById($id)) {
-                        $ignoredIds[] = $id;
-                        $this->logger->debug('Version with ' . $id . " not found\n");
+            $totalCount = count($versions);
+            foreach ($versions as $index => $id) {
+                if (!$version = Version::getById($id)) {
+                    $ignoredIds[] = $id;
+                    $this->logger->debug('Version with ' . $id . " not found\n");
 
-                        continue;
-                    }
+                    continue;
+                }
 
-                    $counter++;
+                $counter++;
 
-                    // do not delete public versions
-                    if ($version->getPublic()) {
-                        $ignoredIds[] = $version->getId();
+                // do not delete public versions
+                if ($version->getPublic()) {
+                    $ignoredIds[] = $version->getId();
 
-                        continue;
-                    }
+                    continue;
+                }
 
-                    // do not delete versions referenced in the scheduler
-                    if ($dao->isVersionUsedInScheduler($version)) {
-                        $ignoredIds[] = $version->getId();
+                // do not delete versions referenced in the scheduler
+                if ($dao->isVersionUsedInScheduler($version)) {
+                    $ignoredIds[] = $version->getId();
 
-                        continue;
-                    }
+                    continue;
+                }
 
-                    $element = null;
+                $element = null;
 
-                    if ($version->getCtype() === 'document') {
-                        $element = Document::getById($version->getCid());
-                    } elseif ($version->getCtype() === 'asset') {
-                        $element = Asset::getById($version->getCid());
-                    } elseif ($version->getCtype() === 'object') {
-                        $element = DataObject::getById($version->getCid());
-                    }
+                if ($version->getCtype() === 'document') {
+                    $element = Document::getById($version->getCid());
+                } elseif ($version->getCtype() === 'asset') {
+                    $element = Asset::getById($version->getCid());
+                } elseif ($version->getCtype() === 'object') {
+                    $element = DataObject::getById($version->getCid());
+                }
 
-                    if ($element instanceof Element\ElementInterface) {
-                        $this->logger->debug('currently checking Element-ID: ' . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element) . ' in cycle: ' . $counter . '/' . $totalCount);
+                if ($element instanceof Element\ElementInterface) {
+                    $this->logger->debug('currently checking Element-ID: ' . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element) . ' in cycle: ' . $counter . '/' . $totalCount);
 
-                        if ($element->getModificationDate() >= $version->getDate()) {
-                            // delete version if it is outdated
-                            $this->logger->debug('delete version: ' . $version->getId() . ' because it is outdated');
-                            $version->delete();
-                        } else {
-                            $ignoredIds[] = $version->getId();
-                            $this->logger->debug('do not delete version (' . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element));
-                        }
-                    } else {
-                        // delete version if the corresponding element doesn't exist anymore
-                        $this->logger->debug('delete version (' . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                    if ($element->getModificationDate() >= $version->getDate()) {
+                        // delete version if it is outdated
+                        $this->logger->debug('delete version: ' . $version->getId() . ' because it is outdated');
                         $version->delete();
+                    } else {
+                        $ignoredIds[] = $version->getId();
+                        $this->logger->debug('do not delete version (' . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element));
                     }
+                } else {
+                    // delete version if the corresponding element doesn't exist anymore
+                    $this->logger->debug('delete version (' . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                    $version->delete();
+                }
 
-                    // call the garbage collector if memory consumption is > 100MB
-                    if (memory_get_usage() > 100000000) {
-                        \Pimcore::collectGarbage();
-                    }
+                // call the garbage collector if memory consumption is > 100MB
+                if (memory_get_usage() > 100000000) {
+                    \Pimcore::collectGarbage();
                 }
             }
         }

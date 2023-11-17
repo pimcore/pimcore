@@ -20,12 +20,13 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-final class Thumbnail
+final class Thumbnail implements ThumbnailInterface
 {
     use ImageThumbnailTrait;
 
@@ -34,28 +35,22 @@ final class Thumbnail
      *
      * @var bool[]
      */
-    protected static $hasListenersCache = [];
+    protected static array $hasListenersCache = [];
 
-    /**
-     * @param Image $asset
-     * @param string|array|Thumbnail\Config|null $config
-     * @param bool $deferred
-     */
-    public function __construct($asset, $config = null, $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
     }
 
-    /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $cacheBuster = $args['cacheBuster'] ?? false;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
@@ -72,7 +67,7 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference);
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
@@ -90,11 +85,6 @@ final class Thumbnail
         return $path;
     }
 
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
@@ -104,12 +94,7 @@ final class Thumbnail
         return self::$hasListenersCache[$eventName];
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    protected function useOriginalFile($filename)
+    protected function useOriginalFile(string $filename): bool
     {
         if ($this->getConfig()) {
             if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
@@ -122,10 +107,8 @@ final class Thumbnail
 
     /**
      * @internal
-     *
-     * @param bool $deferredAllowed
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = false;
         $generated = false;
@@ -142,8 +125,7 @@ final class Thumbnail
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
-                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    Logger::error($e->getMessage());
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath() . ': ' . $e);
                 }
             }
         }
@@ -167,18 +149,11 @@ final class Thumbnail
     /**
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getPath(true);
+        return $this->getPath();
     }
 
-    /**
-     * @param string $path
-     * @param array $options
-     * @param Asset $asset
-     *
-     * @return string
-     */
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
@@ -190,7 +165,7 @@ final class Thumbnail
         return $path;
     }
 
-    private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
+    private function getSourceTagHtml(Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
         $sourceTagAttributes = [];
         $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
@@ -231,28 +206,22 @@ final class Thumbnail
      *
      * @param array $options Custom configuration
      *
-     * @return string
      */
-    public function getHtml($options = [])
+    public function getHtml(array $options = []): string
     {
+        $emptyGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         /** @var Image $image */
         $image = $this->getAsset();
         $thumbConfig = $this->getConfig();
 
         $pictureTagAttributes = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
-        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
-            $previewDataUri = $image->getLowQualityPreviewDataUri();
-            if (!$previewDataUri) {
-                // use a 1x1 transparent GIF as a fallback if no LQIP exists
-                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-            }
-
-            // this gets used in getImagTag() later
-            $options['previewDataUri'] = $previewDataUri;
+        if (($options['lowQualityPlaceholder'] ?? false) && !Tool::isFrontendRequestByAdmin()) {
+            // this gets used in getImagTag() later, use a 1x1 transparent GIF as a fallback if no LQIP exists
+            $options['previewDataUri'] =  $image->getLowQualityPreviewDataUri() ?: $emptyGif;
         }
 
-        $isAutoFormat = $thumbConfig instanceof Image\Thumbnail\Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
+        $isAutoFormat = $thumbConfig instanceof Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
@@ -266,28 +235,9 @@ final class Thumbnail
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
 
-        if ($thumbConfig instanceof Image\Thumbnail\Config) {
-            $mediaConfigs = $thumbConfig->getMedias();
-
-            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-            ksort($mediaConfigs, SORT_NUMERIC);
-            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
-
-            foreach ($mediaConfigs as $mediaQuery => $config) {
-                $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
-                if (!empty($sourceHtml)) {
-                    if ($isAutoFormat) {
-                        foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
-                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
-                            if (!empty($autoFormatThumbnailHtml)) {
-                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
-                            }
-                        }
-                    }
-
-                    $html .= "\t" . $sourceHtml . "\n";
-                }
-            }
+        if ($thumbConfig instanceof Config) {
+            $thumbConfigRes = clone $thumbConfig;
+            $html.= $this->getMediaConfigHtml($thumbConfigRes, $image, $options, $isAutoFormat);
         }
 
         if (!($options['disableImgTag'] ?? null)) {
@@ -296,19 +246,42 @@ final class Thumbnail
 
         $html .= '</picture>' . "\n";
 
-        if (isset($options['useDataSrc']) && $options['useDataSrc']) {
+        if ($options['useDataSrc'] ?? false) {
             $html = preg_replace('/ src(set)?=/i', ' data-src$1=', $html);
         }
 
         return $html;
     }
 
-    /**
-     * @param array $options
-     * @param array $removeAttributes
-     *
-     * @return string
-     */
+    protected function getMediaConfigHtml(Config $thumbConfig, Image $image, array $options, bool $isAutoFormat): string
+    {
+        $html = '';
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+        ksort($mediaConfigs, SORT_NUMERIC);
+        array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+
+        foreach ($mediaConfigs as $mediaQuery => $config) {
+            $thumbConfig->setItems($config);
+            $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
+            if (!empty($sourceHtml)) {
+                if ($isAutoFormat) {
+                    foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                        $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                        if (!empty($autoFormatThumbnailHtml)) {
+                            $html .= "\t" . $autoFormatThumbnailHtml . "\n";
+                        }
+                    }
+                }
+
+                $html .= "\t" . $sourceHtml . "\n";
+            }
+        }
+
+        return $html;
+    }
+
     public function getImageTag(array $options = [], array $removeAttributes = []): string
     {
         /** @var Image $image */
@@ -319,7 +292,7 @@ final class Thumbnail
         if (isset($options['previewDataUri'])) {
             $attributes['src'] = $options['previewDataUri'];
         } else {
-            $path = $this->getPath(true);
+            $path = $this->getPath();
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
 
@@ -397,14 +370,11 @@ final class Thumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): ?ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
@@ -429,11 +399,9 @@ final class Thumbnail
      *
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
-     * @return Thumbnail\Config
-     *
      * @throws NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Thumbnail\Config $selector): Thumbnail\Config
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
@@ -447,14 +415,11 @@ final class Thumbnail
     /**
      * Get value that can be directly used ina srcset HTML attribute for images.
      *
-     * @param Image\Thumbnail\Config $thumbConfig
-     * @param Image $image
-     * @param array $options
      * @param string|null $mediaQuery Can be empty string if no media queries are defined.
      *
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution
      */
-    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
+    private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
         foreach ([1, 2] as $highRes) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,10 +23,7 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Consent implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             return new \Pimcore\Model\DataObject\Data\Consent($value['consent'], $value['noteId']);
@@ -34,10 +32,7 @@ class Consent implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\Consent) {
             return [

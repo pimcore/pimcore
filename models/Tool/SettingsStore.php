@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,46 +24,51 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
  */
 final class SettingsStore extends Model\AbstractModel
 {
-    protected static $allowedTypes = ['bool', 'int', 'float', 'string'];
+    public const TYPE_BOOLEAN = 'bool';
+
+    public const TYPE_FLOAT = 'float';
+
+    public const TYPE_INTEGER = 'int';
+
+    public const TYPE_STRING = 'string';
+
+    protected const ALLOWED_TYPES = [
+        self::TYPE_BOOLEAN,
+        self::TYPE_FLOAT,
+        self::TYPE_INTEGER,
+        self::TYPE_STRING,
+    ];
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $scope;
+    protected ?string $scope = null;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $type;
+    protected string $type = '';
 
     /**
      * @internal
      *
-     * @var mixed
      */
-    protected $data;
+    protected mixed $data = null;
 
     /**
      * @internal
      *
-     * @var self|null
      */
     protected static ?self $instance = null;
 
-    /**
-     * @return self
-     */
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -73,32 +79,23 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     private static function validateType(string $type): bool
     {
-        if (!in_array($type, self::$allowedTypes)) {
-            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));
+        if (!in_array($type, self::ALLOWED_TYPES)) {
+            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::ALLOWED_TYPES)));
         }
 
         return true;
     }
 
     /**
-     * @param string $id
-     * @param int|string|bool|float $data
-     * @param string $type
-     * @param string|null $scope
      *
-     * @return bool
      *
      * @throws \Exception
      */
-    public static function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
+    public static function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
@@ -106,25 +103,13 @@ final class SettingsStore extends Model\AbstractModel
         return $instance->getDao()->set($id, $data, $type, $scope);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return mixed
-     */
-    public static function delete(string $id, ?string $scope = null)
+    public static function delete(string $id, ?string $scope = null): int|string
     {
         $instance = self::getInstance();
 
         return $instance->getDao()->delete($id, $scope);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return SettingsStore|null
-     */
     public static function get(string $id, ?string $scope = null): ?SettingsStore
     {
         $item = new self();
@@ -136,7 +121,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $scope
      *
      * @return string[]
      */
@@ -147,48 +131,32 @@ final class SettingsStore extends Model\AbstractModel
         return $instance->getDao()->getIdsByScope($scope);
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getScope(): ?string
     {
         return $this->scope;
     }
 
-    /**
-     * @param string|null $scope
-     */
     public function setScope(?string $scope): void
     {
         $this->scope = (string) $scope;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @param string $type
      *
      * @throws \Exception
      */
@@ -198,18 +166,12 @@ final class SettingsStore extends Model\AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * @return int|string|bool|float
-     */
-    public function getData()
+    public function getData(): float|bool|int|string
     {
         return $this->data;
     }
 
-    /**
-     * @param int|string|bool|float $data
-     */
-    public function setData($data): void
+    public function setData(float|bool|int|string $data): void
     {
         if (!empty($this->getType())) {
             settype($data, $this->getType());

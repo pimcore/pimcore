@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,19 +22,9 @@ use Pimcore\Model;
 
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'email';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && strlen($data) > 0) {
+        if (!$omitMandatoryCheck && is_string($data) && strlen($data) > 0) {
             $validator = new EmailValidator();
             if (!$validator->isValid($data, new RFCValidation())) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] isn't a valid email address");
@@ -41,5 +32,10 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);
+    }
+
+    public function getFieldType(): string
+    {
+        return 'email';
     }
 }

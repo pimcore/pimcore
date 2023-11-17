@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,188 +23,71 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
 {
     use SimpleNormalizerTrait;
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     *
-     * @deprecated use normalize() instead, will be removed in Pimcore 11
-     */
-    public function marshal($value, $params = [])
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use normalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $this->normalize($value, $params);
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal($value, $params = [])
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $this->denormalize($value, $params);
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return get_class($this);
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformGetterData($data, $params = [])
+    public function transformGetterData(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformSetterData($data, $params = [])
+    public function transformSetterData(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromEditMode($data, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForResource($data, $params = [])
+    public function getDataForResource(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromResource($data, $params = [])
+    public function getDataFromResource(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForEditMode($data, $params = [])
+    public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function isEmpty($data, $params = [])
+    public function isEmpty(mixed $data, array $params = []): bool
     {
         return empty($data);
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     */
-    public function checkValidity($data, $params = [])
+    public function checkValidity(mixed $data, array $params = []): void
     {
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForListfolderGrid($data, $params = [])
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromListfolderGrid($data, $params = [])
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
-    public function resolveDependencies($data, $params = [])
+    public function resolveDependencies(mixed $data, array $params = []): array
     {
         return [];
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getVersionPreview($value, $params = [])
+    public function getVersionPreview(mixed $value, array $params = []): string
     {
         return (string)$value;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public function getDataForSearchIndex($data, $params = [])
+    public function getDataForSearchIndex(mixed $data, array $params = []): ?string
     {
         if (is_scalar($data)) {
             return $params['name'] . ':' . $data;

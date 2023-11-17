@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,9 +26,8 @@ class Service
      * @param array $fc - The field configuration from the Workflow
      * @param mixed $value - The value
      *
-     * @return array
      */
-    public static function createNoteData($fc, $value)
+    public static function createNoteData(array $fc, mixed $value): array
     {
         $data = [];
 
@@ -70,13 +70,7 @@ class Service
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param string $pimcoreTagName
-     *
-     * @return mixed
-     */
-    public static function getDataFromEditmode($data, $pimcoreTagName)
+    public static function getDataFromEditmode(mixed $data, string $pimcoreTagName): mixed
     {
         $tagClass = '\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($pimcoreTagName);
         if (\Pimcore\Tool::classExists($tagClass)) {
@@ -97,16 +91,10 @@ class Service
     /**
      * Creates a note for an action with a transition
      *
-     * @param Element\ElementInterface $element
-     * @param string $type
-     * @param string $title
-     * @param string $description
-     * @param array $noteData
-     * @param User|null $user
      *
      * @return Element\Note $note
      */
-    public static function createActionNote(Element\ElementInterface $element, $type, $title, $description, $noteData, $user = null)
+    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, User $user = null): Element\Note
     {
         //prepare some vars for creating the note
         if (!$user) {
@@ -121,17 +109,15 @@ class Service
         $note->setDescription($description);
         $note->setUser($user ? $user->getId() : 0);
 
-        if (is_array($noteData)) {
-            foreach ($noteData as $row) {
-                if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
-                    /**
-                     * @var \DateTime $date
-                     */
-                    $date = $row['value'];
-                    $note->setDate($date->getTimestamp());
-                } else {
-                    $note->addData($row['key'], $row['type'], $row['value']);
-                }
+        foreach ($noteData as $row) {
+            if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
+                /**
+                 * @var \DateTime $date
+                 */
+                $date = $row['value'];
+                $note->setDate($date->getTimestamp());
+            } else {
+                $note->addData($row['key'], $row['type'], $row['value']);
             }
         }
 
