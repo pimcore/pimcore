@@ -451,9 +451,9 @@ final class Config implements ArrayAccess
         if ($naming === 'filename') {
             return $filename;
         } elseif ($naming === 'lowercase') {
-            $downloadFilename = strtolower($downloadFilename);
+            $downloadFilename = mb_strtolower($downloadFilename);
         } elseif ($naming === 'uppercase') {
-            $downloadFilename = strtoupper($downloadFilename);
+            $downloadFilename = mb_strtoupper($downloadFilename);
         }
 
         return $downloadFilename . end($file);
