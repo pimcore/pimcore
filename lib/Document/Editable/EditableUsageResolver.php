@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-use Pimcore\Document\Renderer\DocumentRenderer;
+use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Block;
@@ -32,9 +32,9 @@ class EditableUsageResolver
 
     protected EventDispatcherInterface $dispatcher;
 
-    protected DocumentRenderer $renderer;
+    protected DocumentRendererInterface $renderer;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)
+    public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRendererInterface $documentRenderer)
     {
         $this->dispatcher = $eventDispatcher;
         $this->renderer = $documentRenderer;
