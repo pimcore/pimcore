@@ -293,7 +293,7 @@ class NavigationExtension extends AbstractExtension
     public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
     {
         $this->navigationHelper = $navigationHelper;
-        $this->$newsLinkGenerator = $newsLinkGenerator;
+        $this->newsLinkGenerator = $newsLinkGenerator;
     }
 
     /**
@@ -302,7 +302,7 @@ class NavigationExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
+            new TwigFunction('app_navigation_news_links', [$this, 'getNewsLinks'])
         ];
     }
 
@@ -354,6 +354,70 @@ class NavigationExtension extends AbstractExtension
         }
     }) }}
 </div>
+```
+
+## Adding Custom Items to the Root Navigation
+
+In the following example we're adding news categories (objects) to the root navigation (1st level).
+```php
+<?php
+
+namespace App\Twig\Extension;
+
+use App\Website\LinkGenerator\NewsCategoryLinkGenerator;
+use Pimcore\Model\Document;
+use Pimcore\Navigation\Container;
+use Pimcore\Twig\Extension\Templating\Navigation;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class NavigationExtension extends AbstractExtension
+{
+    protected Navigation $navigationHelper;
+    protected NewsCategoryLinkGenerator $newsCategoryLinkGenerator;
+
+    public function __construct(Navigation $navigationHelper, NewsCategoryLinkGenerator $newsCategoryLinkGenerator)
+    {
+        $this->navigationHelper = $navigationHelper;
+        $this->newsCategoryLinkGenerator = $newsCategoryLinkGenerator;
+    }
+
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('app_navigation_news_categories', [$this, 'newsCategoryNavigation'])
+        ];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function newsCategoryNavigation(Document $document, Document $startNode): Container
+    {
+        $navigation = $this->navigationHelper->build([
+            'active' => $document,
+            'root' => $startNode,
+            'rootCallback' => function(Container $navigation) {
+                $list = new \Pimcore\Model\DataObject\NewsCategory\Listing;
+                $list->load();
+                foreach($list as $category) {
+                    $detailLink = $this->newsCategoryLinkGenerator->generate($category);
+                    $newsCategoryDocument = new \Pimcore\Navigation\Page\Document([
+                        "label" => $category->getTitle(),
+                        "id" => "object-" . $category->getId(),
+                        "uri" => $detailLink,
+                    ]);
+                    $navigation->addPage($newsCategoryDocument);
+                }
+            }
+        ]);
+
+        return $navigation;
+    }
+}
 ```
 
 ## Caching / High-Performance Navigation

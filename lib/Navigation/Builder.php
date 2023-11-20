@@ -95,6 +95,7 @@ class Builder
      *     root?: ?Document,
      *     htmlMenuPrefix?: ?string,
      *     pageCallback?: ?callable,
+     *     rootCallback?: ?callable,
      *     cache?: string|bool,
      *     cacheLifetime?: ?int,
      *     maxDepth?: ?int,
