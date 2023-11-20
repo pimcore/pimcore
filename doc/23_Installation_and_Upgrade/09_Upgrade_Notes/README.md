@@ -1,5 +1,12 @@
 # Upgrade Notes
 
+## Pimcore 11.2.0
+### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+#### [Data Objects]:
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+
 ## Pimcore 11.1.0
 ### Elements
 
@@ -597,7 +604,7 @@ pimcore_seo:
 #### [Cache] :
 
 -  Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
--  Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+-  Responses containing a header `Cache-Control: no-store` will no longer be cached by the full page cache.
 -  Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 
 #### [Console] :
