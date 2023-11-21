@@ -362,13 +362,9 @@ class FullPageCacheListener
     {
         $cache = true;
 
-        // do not cache when the application indicated one of the 'no-cache' directives in the response Cache-Control header
-        foreach (['no-cache', 'private', 'no-store'] as $directive) {
-            if ($response->headers->getCacheControlDirective($directive)) {
-                $cache = false;
-
-                break;
-            }
+        // do not cache when the application indicated the 'no-store' directives in the response Cache-Control header
+        if ($response->headers->hasCacheControlDirective('no-store')) {
+            $cache = false;
         }
 
         // do not cache common responses

@@ -557,7 +557,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
         $targetGroupEditableName = null;
-        if ($document && class_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface) {
+        if ($document && interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface) {
             $targetGroupEditableName = $document->getTargetGroupEditableName($name);
 
             if (!$blockState->hasBlocks()) {
@@ -670,7 +670,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        if (class_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+        if (interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
             $name = $document->getTargetGroupEditableName($name);
         }
 
