@@ -121,7 +121,6 @@ class LibreOffice extends Ghostscript
             $cmd = [
                 self::getLibreOfficeCli(),
                 '--headless', '--nologo', '--nofirststartwizard',
-                '-env:UserInstallation=file:///' . ltrim(PIMCORE_SYSTEM_TEMP_DIRECTORY, '/') . '/libreoffice',
                 '--norestore', '--convert-to', 'pdf:writer_web_pdf_Export',
                 '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $localAssetTmpPath,
             ];
