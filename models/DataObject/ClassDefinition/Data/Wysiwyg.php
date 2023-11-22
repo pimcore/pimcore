@@ -98,7 +98,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
         }
 
-        return Text::wysiwygText($data);
+        return Text::wysiwygText($data, [
+            'object' => $params['owner'] ?? null,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ]);
     }
 
     /**
@@ -108,7 +112,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data);
+        return Text::wysiwygText($data, [
+            'object' => $params['owner'] ?? null,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ]);
     }
 
     /**
