@@ -126,7 +126,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         if ($command instanceof LazyCommand && str_starts_with($command->getName(), 'doctrine:')) {
             $command = $command->getCommand();
         }
-        
+
         if ($command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();
 
