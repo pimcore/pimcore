@@ -1,0 +1,30 @@
+name: Propagate release from EE to CE
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name'
+        required: true
+      release_body:
+        description: 'Release body contents'
+        required: true
+      release_name:
+        description: 'Release name'
+        required: true
+      sha:
+        description: 'SHA hash of the release tag'
+        required: true
+
+jobs:
+  propagate-release-to-ce:
+    if: github.repository == 'pimcore/ee-pimcore'
+    uses: pimcore/workflows-centralized/.github/workflows/parent-release-propagate.yml@v1.0.0-rc.1
+    with:
+      tag_name: ${{ inputs.tag_name }}
+      release_body : ${{ inputs.release_body}}
+      release_name: ${{ inputs.release_name }}
+      sha: ${{ inputs.sha }}
+      target_repo: 'pimcore'
+    secrets:
+      token: ${{ secrets.SYNC_TOKEN }}
