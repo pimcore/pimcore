@@ -15,6 +15,7 @@
 
 namespace Pimcore;
 
+use Doctrine\DBAL\Exception\ConnectionException;
 use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\LocationAwareConfigRepository;
@@ -67,16 +68,20 @@ class SystemSettingsConfig
     {
         $repository = self::getRepository();
 
-        $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+        try {
+            $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
+            $loadType = $repository->getReadTargets()[0] ?? null;
 
-        $loadType = $repository->getReadTargets()[0] ?? null;
-
-        // If the read target is settings-store and no data is found there,
-        // load the data from the container config
-        // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
-            $data = self::getConfigValuesFromContainer()['config'];
-            $data['writeable'] = $repository->isWriteable();
+            // If the read target is settings-store and no data is found there,
+            // load the data from the container config
+            // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
+            if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+                $data = self::getConfigValuesFromContainer()['config'];
+                $data['writeable'] = $repository->isWriteable();
+            }
+        } catch (ConnectionException) {
+            //return empty when db not available using settings-store
+            $data = ['general' => []];
         }
 
         return $data;

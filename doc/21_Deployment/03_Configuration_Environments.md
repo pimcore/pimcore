@@ -112,6 +112,8 @@ pimcore:
 	          type: 'settings-store'
 ```
 
+> **Note:** In certain scenarios, such as when generating select options definitions, the `settings-store` config location requires a db service in the deployment setup.
+
 #### Revalidate existing configuration on production
 With `settings-store` target, one can update/change configurations in production environment, which in turn revalidates the generated files e.g. Image Thumbnails, Video thumbnails for subsequent requests.
 

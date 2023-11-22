@@ -258,8 +258,14 @@ class LocationAwareConfigRepository
 
     public function fetchAllKeys(): array
     {
+        try {
+            $settingsStoreKeys = SettingsStore::getIdsByScope($this->settingsStoreScope);
+        } catch (\Exception) {
+            $settingsStoreKeys = [];
+        }
+
         return array_unique(array_merge(
-            SettingsStore::getIdsByScope($this->settingsStoreScope),
+            $settingsStoreKeys,
             array_keys($this->containerConfig)
         ));
     }
