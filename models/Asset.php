@@ -1403,7 +1403,17 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
+    public function getMetadataAsArray(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): mixed
+    {
+        $result = $this->getMetadata($name, $language, $strictMatchLanguage, $raw);
+        if(!is_array($result)) {
+            $result = [$result];
+        }
+
+        return array_filter($result);
+    }
+
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false, bool $alwaysArray = false): mixed
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1411,7 +1421,11 @@ class Asset extends Element\AbstractElement
         $this->metadata = $preEvent->getArgument('metadata');
 
         if ($name) {
-            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
+            $metadataByName = $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
+            if($alwaysArray && !is_array($metadataByName)) {
+                $metadataByName = [$metadataByName];
+            }
+            return $metadataByName;
         }
 
         $metaData = $this->getObjectVar('metadata');
