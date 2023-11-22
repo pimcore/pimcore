@@ -74,6 +74,9 @@ class Multiselect extends Data implements
         return $this->options;
     }
 
+    /**
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         $this->options = $options;
@@ -81,9 +84,12 @@ class Multiselect extends Data implements
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -93,6 +99,9 @@ class Multiselect extends Data implements
         return $this->maxItems;
     }
 
+    /**
+     * @return $this
+     */
     public function setRenderType(?string $renderType): static
     {
         $this->renderType = $renderType;
@@ -302,8 +311,8 @@ class Multiselect extends Data implements
             }
 
             $value = $operator === '='
-                ? "'%,".$value.",%'"
-                : "'%,%".$value."%,%'";
+                ? $db->quote('%,'. $value . ',%')
+                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }
@@ -468,6 +477,9 @@ class Multiselect extends Data implements
         // nothing to do
     }
 
+    /**
+     * @return $this
+     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
