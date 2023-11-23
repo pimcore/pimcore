@@ -28,7 +28,7 @@ jobs:
     - name: Check tag format to accept major and minor and exclude patches
       id: check
       run: |
-        if [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+(\.0)?$ ]]; then
+        if [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+(\.[0-9])?$ ]]; then
           echo "isTagValid=true" >> $GITHUB_OUTPUT
         else
           echo "isTagValid=false" >> $GITHUB_OUTPUT
