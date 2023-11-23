@@ -179,11 +179,13 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     private function resetSourceDocument(Document &$document, AttributeSet $result, array $translations): void
     {
         if ($result->getSourceLanguage() != $result->getTargetLanguages()) {
-            $sourceDocumentId = $translations[$result->getSourceLanguage()];
-            $sourceDocument = Document::getById($sourceDocumentId);
+            $sourceDocumentId = $translations[$result->getSourceLanguage()] ?? false;
+            if ($sourceDocumentId) {
+                $sourceDocument = Document::getById($sourceDocumentId);
 
-            if ($sourceDocument instanceof Document\PageSnippet) {
-                $document = $sourceDocument;
+                if ($sourceDocument instanceof Document\PageSnippet) {
+                    $document = $sourceDocument;
+                }
             }
         }
     }
