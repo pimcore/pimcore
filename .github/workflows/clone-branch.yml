@@ -1,23 +1,20 @@
 name: Clone branch
 on:
   workflow_dispatch:
-    inputs:
-      base_ref:
-        required: true
-        type: string
-        description: Base branch name for cloning
-      ref_name:
-        required: true
-        type: string
-        description: Branch name on destination repo
+  schedule:
+    - cron:  '30 21 * * *'
 
 jobs:
   clone-branch:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-clone-branch.yaml@v1.0.0-rc.2
-    if: github.repository == 'pimcore/pimcore' 
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-clone-branch.yaml@v1.0.0-rc.3
+    if: github.repository == 'pimcore/pimcore'
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [{'base': '11.x', 'destination': '11.x'}, {'base': '11.1', 'destination': '11.1'}, {'base': '10.6', 'destination': '10.6'}]
     with:
-      base_ref: ${{ inputs.base_ref }}
-      ref_name: ${{ inputs.ref_name }}
+      base_ref: ${{ matrix.ref.base }}
+      ref_name: ${{ matrix.ref.destination }}
       target_repo: 'ee-pimcore'
     secrets:
       SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
