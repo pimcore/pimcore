@@ -265,12 +265,7 @@ class Text
 
     public static function convertToUTF8(string $text): string
     {
-        $encoding = self::detectEncoding($text);
-        if ($encoding) {
-            $text = iconv($encoding, 'UTF-8', $text);
-        }
-
-        return $text;
+        return \ForceUTF8\Encoding::toUTF8($text);
     }
 
     public static function detectEncoding(string $text): string
