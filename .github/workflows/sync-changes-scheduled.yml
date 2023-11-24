@@ -1,4 +1,4 @@
-name: Clone branch
+name: Sync changes scheduled
 on:
   workflow_dispatch:
   schedule:
