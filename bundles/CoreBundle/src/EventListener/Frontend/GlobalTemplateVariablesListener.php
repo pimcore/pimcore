@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -35,6 +36,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
+    use RequestController;
 
     protected array $globalsStack = [];
 
@@ -55,6 +57,9 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
 
     public function onKernelController(ControllerEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
@@ -75,6 +80,9 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
             if ($globals !== false) {

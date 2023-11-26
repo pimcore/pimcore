@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
@@ -42,6 +43,7 @@ class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
+    use RequestController;
 
     public function __construct(
         protected RequestHelper $requestHelper,
@@ -60,6 +62,9 @@ class RoutingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (!$event->isMainRequest()) {
             return;
         }

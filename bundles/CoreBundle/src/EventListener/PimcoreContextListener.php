@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
+    use RequestController;
     use LoggerAwareTrait;
 
     const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
@@ -54,7 +56,9 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         if ($event->isMainRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
             $context = $this->resolver->getPimcoreContext($request);
 

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Http\ResponseStack;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -27,6 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ResponseStackListener implements EventSubscriberInterface
 {
+    use RequestController;
     public function __construct(private ResponseStack $responseStack)
     {
     }

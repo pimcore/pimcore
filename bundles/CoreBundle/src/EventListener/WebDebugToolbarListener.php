@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
+    use RequestController;
     protected ?array $excludeMatchers = null;
 
     public function __construct(
@@ -57,7 +59,9 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         // do not show toolbar on frontend-admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
             $this->disableWebDebugToolbar();

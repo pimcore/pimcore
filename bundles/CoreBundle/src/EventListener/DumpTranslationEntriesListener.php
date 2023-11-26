@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class DumpTranslationEntriesListener implements EventSubscriberInterface
 {
+    use RequestController;
     private TranslationEntriesDumper $dumper;
 
     public function __construct(TranslationEntriesDumper $dumper)

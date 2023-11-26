@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class MaintenancePageListener implements EventSubscriberInterface
 {
+    use RequestController;
     use ResponseInjectionTrait;
 
     protected ?string $templateCode = null;
@@ -80,7 +82,9 @@ class MaintenancePageListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         $maintenance = false;
         $requestSessionId = $request->getSession()->getId();
 

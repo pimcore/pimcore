@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Controller\Attribute\ResponseHeader;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ResponseHeaderListener implements EventSubscriberInterface
 {
+    use RequestController;
     public function __construct(private ResponseHeaderResolver $responseHeaderResolver)
     {
     }
@@ -60,6 +62,9 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
     {
         $request = $event->getRequest();
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         if (!\is_array($attributes = $event->getAttributes()[ResponseHeader::class] ?? null)) {
             return;
         }

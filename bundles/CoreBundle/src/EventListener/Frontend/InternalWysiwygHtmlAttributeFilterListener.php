@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -33,6 +34,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
     use StaticPageContextAwareTrait;
+    use RequestController;
 
     public static function getSubscribedEvents(): array
     {
@@ -43,6 +45,9 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
 
         if (!$event->isMainRequest() && !$this->matchesStaticPageContext($request)) {

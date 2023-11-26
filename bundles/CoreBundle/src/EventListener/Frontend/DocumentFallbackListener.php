@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
@@ -41,6 +42,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DocumentFallbackListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+    use RequestController;
 
     protected array $options;
 
@@ -86,6 +88,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
@@ -140,6 +145,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $controller = $event->getController();
         if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
             // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704

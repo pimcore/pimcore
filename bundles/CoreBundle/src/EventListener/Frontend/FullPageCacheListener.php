@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
@@ -39,6 +40,7 @@ class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
     use StaticPageContextAwareTrait;
+    use RequestController;
 
     protected bool $enabled = true;
 
@@ -112,7 +114,9 @@ class FullPageCacheListener
         if (!$this->isEnabled()) {
             return;
         }
-
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
 
         if (!$event->isMainRequest()) {
@@ -286,7 +290,9 @@ class FullPageCacheListener
         if (!$event->isMainRequest()) {
             return;
         }
-
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
         if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
             return;

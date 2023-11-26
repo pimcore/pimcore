@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -38,6 +39,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class HardlinkCanonicalListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+    use RequestController;
 
     public function __construct(protected DocumentResolver $documentResolver)
     {
@@ -52,6 +54,9 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
 
         if (!$event->isMainRequest()) {

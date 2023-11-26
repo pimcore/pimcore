@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class PimcoreHeaderListener implements EventSubscriberInterface
 {
+    use RequestController;
     public static function getSubscribedEvents(): array
     {
         return [

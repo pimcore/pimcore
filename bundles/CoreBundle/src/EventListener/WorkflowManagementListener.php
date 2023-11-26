@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
@@ -36,6 +37,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class WorkflowManagementListener implements EventSubscriberInterface
 {
+    use RequestController;
     protected bool $enabled = true;
 
     public function __construct(

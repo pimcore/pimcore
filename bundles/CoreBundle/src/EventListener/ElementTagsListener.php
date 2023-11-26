@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
@@ -29,6 +30,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ElementTagsListener implements EventSubscriberInterface
 {
+    use RequestController;
     public static function getSubscribedEvents(): array
     {
         return [

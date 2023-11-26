@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
@@ -24,6 +26,7 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Security\User\UserLoader;
+use Pimcore\Tool\Admin;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,6 +45,7 @@ class EditmodeListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
+    use RequestController;
 
     protected array $contentTypes = [
         'text/html',
@@ -68,7 +72,9 @@ class EditmodeListener implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (!$event->isMainRequest()) {
             return; // only resolve editmode in frontend
         }
@@ -85,6 +91,9 @@ class EditmodeListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $response = $event->getResponse();
 
         if (!$event->isMainRequest()) {
@@ -216,7 +225,7 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         // combine the pimcore scripts in non-devmode
-        if (\Pimcore::disableMinifyJs()) {
+        if (Pimcore::disableMinifyJs()) {
             foreach ($scripts as $script) {
                 $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
                 $headHtml .= "\n";
@@ -227,7 +236,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
-            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents)) . '"></script>' . "\n";
+            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', Admin::getMinimizedScriptPath($scriptContents)) . '"></script>' . "\n";
         }
         $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
             'language' => $language,
@@ -251,7 +260,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     protected function getEditmodeLibraries(): array
     {
-        $disableMinifyJs = \Pimcore::disableMinifyJs();
+        $disableMinifyJs = Pimcore::disableMinifyJs();
 
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',

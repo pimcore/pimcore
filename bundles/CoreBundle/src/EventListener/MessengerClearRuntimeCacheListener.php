@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Cache\RuntimeCache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
@@ -26,6 +27,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
  */
 class MessengerClearRuntimeCacheListener implements EventSubscriberInterface
 {
+    use RequestController;
     public static function getSubscribedEvents(): array
     {
         return [

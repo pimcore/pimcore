@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class EventedControllerListener implements EventSubscriberInterface
 {
+    use RequestController;
     public static function getSubscribedEvents(): array
     {
         return [
@@ -44,6 +46,9 @@ class EventedControllerListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
+        if(!$this->isPimcoreController($request)) {
+            return;
+        }
         $controller = $callable[0];
 
         $request->attributes->set('_event_controller', $controller);

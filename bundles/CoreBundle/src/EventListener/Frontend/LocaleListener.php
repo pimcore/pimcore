@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class LocaleListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+    use RequestController;
 
     protected ?string $lastLocale = null;
 
@@ -41,6 +43,9 @@ class LocaleListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         $request = $event->getRequest();
 
         $locale = $request->getLocale();
@@ -73,6 +78,9 @@ class LocaleListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if ($this->lastLocale && $event->isMainRequest()) {
             $response = $event->getResponse();
             $response->headers->set('Content-Language', strtolower(str_replace('_', '-', $this->lastLocale)), true);

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Document\StaticPageGenerator;
@@ -44,6 +45,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
     use StaticPageContextAwareTrait;
+    use RequestController;
 
     public function __construct(
         protected StaticPageGenerator $staticPageGenerator,
@@ -66,6 +68,9 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (!$event->isMainRequest()) {
             return;
         }
@@ -120,6 +125,9 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (!$event->isMainRequest()) {
             return;
         }

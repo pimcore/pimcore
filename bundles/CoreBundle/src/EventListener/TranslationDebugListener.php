@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\RequestController;
 use Pimcore\Tool\Authentication;
 use Pimcore\Translation\Translator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class TranslationDebugListener implements EventSubscriberInterface
 {
+    use RequestController;
     public function __construct(
         private Translator $translator,
         private string $parameterName
@@ -46,7 +48,9 @@ class TranslationDebugListener implements EventSubscriberInterface
         if (!$event->isMainRequest()) {
             return;
         }
-
+        if(!$this->isPimcoreController($event->getRequest())) {
+            return;
+        }
         if (empty($this->parameterName)) {
             return;
         }
