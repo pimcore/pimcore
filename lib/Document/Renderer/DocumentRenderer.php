@@ -20,7 +20,7 @@ namespace Pimcore\Document\Renderer;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Localization\LocaleService;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
@@ -43,7 +43,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
     private EventDispatcherInterface $eventDispatcher;
 
-    private LocaleService $localeService;
+    private LocaleServiceInterface $localeService;
 
     public function __construct(
         RequestHelper $requestHelper,
@@ -51,7 +51,7 @@ class DocumentRenderer implements DocumentRendererInterface
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
         EventDispatcherInterface $eventDispatcher,
-        LocaleService $localeService
+        LocaleServiceInterface $localeService
     ) {
         $this->requestHelper = $requestHelper;
         $this->actionRenderer = $actionRenderer;

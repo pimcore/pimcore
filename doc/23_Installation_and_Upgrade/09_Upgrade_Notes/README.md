@@ -9,6 +9,8 @@
 -----------------
 ### General
 - Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+### [Navigation]
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 
 ## Pimcore 11.1.0
 ### Elements
