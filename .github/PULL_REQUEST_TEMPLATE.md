@@ -20,11 +20,3 @@ Before working on a contribution, you must determine on which branch you need to
 Resolves #
 
 ## Additional info
-
-### WHAT
-copilot:summary
-
-copilot:poem
-
-### HOW
-copilot:walkthrough

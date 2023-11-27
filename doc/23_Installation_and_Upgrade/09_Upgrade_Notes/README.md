@@ -6,9 +6,12 @@
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+
 -----------------
 ### General
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
+### [Navigation]
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 
 ## Pimcore 11.1.0
 ### Elements

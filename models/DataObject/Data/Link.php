@@ -421,7 +421,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function isEmpty(): bool
     {
-        $vars = get_object_vars($this);
+        $vars = $this->getObjectVars();
         foreach ($vars as $value) {
             if (!empty($value)) {
                 return false;
