@@ -164,6 +164,7 @@ class Asset extends Element\AbstractElement
                     // do not store big metadata items in cache because it will blast cache database size and slow down element loading (esp. with remote cache storage)
                     if(is_string($embeddedMetaDataItem) && strlen($embeddedMetaDataItem) > 10e6) {
                         $embeddedMetaDataItem = null;
+                        $this->customSettings['embeddedMetaDataExtracted'] = false;
                     }
                 }
                 unset($embeddedMetaDataItem);
