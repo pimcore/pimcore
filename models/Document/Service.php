@@ -46,7 +46,7 @@ class Service extends Model\Element\Service
 {
     protected ?Model\User $_user;
 
-    protected array $_copyRecursiveIds;
+    protected array $_copyRecursiveIds = [];
 
     /**
      * @var Document[]
@@ -90,9 +90,6 @@ class Service extends Model\Element\Service
     public function copyRecursive(Document $target, Document $source): Page|Document|null
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = [];
-        }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return null;
         }

@@ -47,7 +47,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
-    protected array $_copyRecursiveIds;
+    protected array $_copyRecursiveIds = [];
 
     protected ?Model\User $_user;
 
@@ -118,9 +118,6 @@ class Service extends Model\Element\Service
     public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = [];
-        }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return null;
         }

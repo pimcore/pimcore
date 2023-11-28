@@ -55,7 +55,7 @@ class Service extends Model\Element\Service
      * @internal
      *
      */
-    protected array $_copyRecursiveIds;
+    protected array $_copyRecursiveIds = [];
 
     public function __construct(Model\User $user = null)
     {
@@ -71,9 +71,6 @@ class Service extends Model\Element\Service
     public function copyRecursive(Asset $target, Asset $source): Asset|Folder|null
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = [];
-        }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return null;
         }
