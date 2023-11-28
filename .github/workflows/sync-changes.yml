@@ -13,7 +13,7 @@ on:
 
 jobs:
   sync-changes-to-ee: 
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-clone-branch.yaml@v1.0.0-rc.3
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0
     if: github.repository == 'pimcore/pimcore' 
     with:
       base_ref: ${{ inputs.base_ref }}
@@ -25,7 +25,7 @@ jobs:
       GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
 
   sync-changes-to-ce: 
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-clone-branch.yaml@v1.0.0-rc.3
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0
     if: github.repository == 'pimcore/ee-pimcore' 
     with:
       base_ref: ${{ inputs.base_ref }}
