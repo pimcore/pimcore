@@ -32,13 +32,11 @@ class Builder
 
     /**
      * @internal
-     *
      */
     protected ?string $htmlMenuIdPrefix = null;
 
     /**
      * @internal
-     *
      */
     protected string $pageClass = DocumentPage::class;
 
@@ -76,8 +74,8 @@ class Builder
 
         $options->setAllowedTypes('root', [Document::class, 'null']);
         $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
-        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
-        $options->setAllowedTypes('rootCallback', ['callable', 'null']);
+        $options->setAllowedTypes('pageCallback', [\Closure::class, 'null']);
+        $options->setAllowedTypes('rootCallback', [\Closure::class, 'null']);
         $options->setAllowedTypes('cache', ['string', 'bool']);
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
@@ -94,8 +92,8 @@ class Builder
      * @param array{
      *     root?: ?Document,
      *     htmlMenuPrefix?: ?string,
-     *     pageCallback?: ?callable,
-     *     rootCallback?: ?callable,
+     *     pageCallback?: ?\Closure,
+     *     rootCallback?: ?\Closure,
      *     cache?: string|bool,
      *     cacheLifetime?: ?int,
      *     maxDepth?: ?int,
@@ -184,8 +182,6 @@ class Builder
 
     /**
      * @internal
-     *
-     *
      */
     protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
     {
@@ -272,7 +268,6 @@ class Builder
     }
 
     /**
-     *
      * @throws \Exception
      *
      * @internal
@@ -316,7 +311,6 @@ class Builder
 
     /**
      * Returns the name of the pageclass
-     *
      */
     public function getPageClass(): string
     {
@@ -324,7 +318,6 @@ class Builder
     }
 
     /**
-     *
      * @return Document[]
      */
     protected function getChildren(Document $parentDocument): array
@@ -339,7 +332,6 @@ class Builder
     }
 
     /**
-     *
      * @return Page[]
      *
      * @throws \Exception
