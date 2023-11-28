@@ -47,8 +47,14 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
+    /**
+     * @internal
+     */
     protected array $_copyRecursiveIds = [];
 
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
     /**

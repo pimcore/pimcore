@@ -44,8 +44,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Service extends Model\Element\Service
 {
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
+    /**
+     * @internal
+     */
     protected array $_copyRecursiveIds = [];
 
     /**
