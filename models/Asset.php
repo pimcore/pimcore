@@ -1587,7 +1587,7 @@ class Asset extends Element\AbstractElement
             $this->renewInheritedProperties();
         }
 
-        if(!$this->isInDumpState() && $this->cacheCustomSettings === false) {
+        if(!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }
 
