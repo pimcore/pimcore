@@ -123,9 +123,9 @@ class Asset extends Element\AbstractElement
     protected bool $customSettingsCanBeCached = true;
 
     /**
-     *
+     * @internal
      */
-    private bool $customSettingsNeedRefresh = false;
+    protected bool $customSettingsNeedRefresh = false;
 
     /**
      * @internal
