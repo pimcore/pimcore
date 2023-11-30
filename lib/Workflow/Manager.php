@@ -220,8 +220,7 @@ class Manager
         string $transition,
         array $additionalData,
         bool $saveSubject = false
-    ): Marking
-    {
+    ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $marking = $workflow->apply($subject, $transition, $additionalData);
@@ -253,8 +252,7 @@ class Manager
         string $globalAction,
         array $additionalData,
         bool $saveSubject = false
-    ): Marking
-    {
+    ): Marking {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if (!$globalActionObj) {
             throw new LogicException(sprintf('global action %s not found', $globalAction));
