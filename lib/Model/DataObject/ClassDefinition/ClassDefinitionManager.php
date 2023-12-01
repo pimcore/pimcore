@@ -30,7 +30,7 @@ class ClassDefinitionManager
     /**
      * Delete all classes from db
      *
-     * @return array<int, array{string, string, string}>
+     * @return list<array{string, string, string}>
      */
     public function cleanUpDeletedClassDefinitions(): array
     {
@@ -61,7 +61,7 @@ class ClassDefinitionManager
     /**
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      *
-     * @return array<int, array{string, string, string}>
+     * @return list<array{string, string, string}>
      */
     public function createOrUpdateClassDefinitions(): array
     {
