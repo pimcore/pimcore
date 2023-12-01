@@ -396,9 +396,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Returns a uniqe key for the element in the $target-Path (recursive)
-     *
-     *
+     * Returns a unique key for the element in the $target-Path (recursive)
      */
     public static function getSafeCopyName(string $sourceKey, ElementInterface $target): string
     {
@@ -406,6 +404,7 @@ class Service extends Model\AbstractModel
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist)
             // not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
+            $fileExtension = '';
             if ($type === 'asset' && $fileExtension = pathinfo($sourceKey, PATHINFO_EXTENSION)) {
                 // temporary remove file extension from sourceKey
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '', $sourceKey);
@@ -425,7 +424,7 @@ class Service extends Model\AbstractModel
             }
 
             // restore file extension that got previously removed from sourceKey, if it was present
-            if ($fileExtension ?? '') {
+            if ($fileExtension) {
                 $sourceKey .= '.' . $fileExtension;
             }
 

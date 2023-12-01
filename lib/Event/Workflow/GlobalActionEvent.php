@@ -18,14 +18,14 @@ namespace Pimcore\Event\Workflow;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Workflow\GlobalAction;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class GlobalActionEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    protected Workflow $workflow;
+    protected WorkflowInterface $workflow;
 
     protected mixed $subject = null;
 
@@ -35,7 +35,11 @@ class GlobalActionEvent extends Event
      * DocumentEvent constructor.
      *
      */
-    public function __construct(Workflow $workflow, mixed $subject, GlobalAction $globalAction, array $arguments = [])
+    public function __construct(
+        WorkflowInterface $workflow,
+        mixed $subject,
+        GlobalAction $globalAction,
+        array $arguments = [])
     {
         $this->workflow = $workflow;
         $this->subject = $subject;
@@ -43,7 +47,7 @@ class GlobalActionEvent extends Event
         $this->arguments = $arguments;
     }
 
-    public function getWorkflow(): Workflow
+    public function getWorkflow(): WorkflowInterface
     {
         return $this->workflow;
     }
