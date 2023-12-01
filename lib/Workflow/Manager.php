@@ -32,7 +32,7 @@ use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Manager
@@ -116,7 +116,7 @@ class Manager
      *
      * @return PlaceConfig[];
      */
-    public function getOrderedPlaceConfigs(Workflow $workflow, Marking $marking = null): array
+    public function getOrderedPlaceConfigs(WorkflowInterface $workflow, Marking $marking = null): array
     {
         if (is_null($marking)) {
             return $this->placeConfigs[$workflow->getName()] ?? [];
@@ -170,7 +170,7 @@ class Manager
 
     /**
      *
-     * @return Workflow[]
+     * @return WorkflowInterface[]
      */
     public function getAllWorkflowsForSubject(object $subject): array
     {
@@ -189,7 +189,7 @@ class Manager
         return $workflows;
     }
 
-    public function getWorkflowIfExists(object $subject, string $workflowName): ?Workflow
+    public function getWorkflowIfExists(object $subject, string $workflowName): ?WorkflowInterface
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
@@ -214,8 +214,13 @@ class Manager
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, Asset|PageSnippet|Concrete $subject, string $transition, array $additionalData, bool $saveSubject = false): Marking
-    {
+    public function applyWithAdditionalData(
+        WorkflowInterface $workflow,
+        Asset|PageSnippet|Concrete $subject,
+        string $transition,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $marking = $workflow->apply($subject, $transition, $additionalData);
@@ -241,8 +246,13 @@ class Manager
      *
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, object $subject, string $globalAction, array $additionalData, bool $saveSubject = false): Marking
-    {
+    public function applyGlobalAction(
+        WorkflowInterface $workflow,
+        object $subject,
+        string $globalAction,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if (!$globalActionObj) {
             throw new LogicException(sprintf('global action %s not found', $globalAction));
@@ -345,7 +355,7 @@ class Manager
         return false;
     }
 
-    public function getInitialPlacesForWorkflow(Workflow $workflow): array
+    public function getInitialPlacesForWorkflow(WorkflowInterface $workflow): array
     {
         $definition = $workflow->getDefinition();
 
