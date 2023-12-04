@@ -311,7 +311,12 @@ final class Tag extends Model\AbstractModel
         if ($this->children){
             return true;
         }
-
+        
+        //skip getTotalCount if array is empty fro getChildren
+        if (is_array($this->children)){
+            return false;
+        }
+        
         $listing = new Tag\Listing();
         $listing->setCondition('parentId = ?', $this->getId());
         return $listing->getTotalCount() > 0;
