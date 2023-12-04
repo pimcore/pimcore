@@ -309,7 +309,7 @@ final class Tag extends Model\AbstractModel
     public function hasChildren(): bool
     {
         if ($this->children){
-            return count($this->children) > 0;
+            return true;
         }
 
         $listing = new Tag\Listing();
