@@ -308,7 +308,13 @@ final class Tag extends Model\AbstractModel
 
     public function hasChildren(): bool
     {
-        return count($this->getChildren()) > 0;
+        if ($this->children){
+            return count($this->children) > 0;
+        }
+
+        $listing = new Tag\Listing();
+        $listing->setCondition('parentId = ?', $this->getId());
+         return $listing->getTotalCount() > 0;
     }
 
     public function correctPath(): void
