@@ -292,7 +292,7 @@ final class Tag extends Model\AbstractModel
      */
     public function getChildren(): array
     {
-        if ($this->children == null) {
+        if ($this->children === null) {
             if ($this->getId()) {
                 $listing = new Tag\Listing();
                 $listing->setCondition('parentId = ?', $this->getId());
