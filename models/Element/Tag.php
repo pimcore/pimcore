@@ -314,7 +314,7 @@ final class Tag extends Model\AbstractModel
 
         $listing = new Tag\Listing();
         $listing->setCondition('parentId = ?', $this->getId());
-         return $listing->getTotalCount() > 0;
+        return $listing->getTotalCount() > 0;
     }
 
     public function correctPath(): void
