@@ -312,7 +312,7 @@ final class Tag extends Model\AbstractModel
             return true;
         }
         
-        //skip getTotalCount if array is empty fro getChildren
+        //skip getTotalCount if array is empty
         if (is_array($this->children)){
             return false;
         }
