@@ -469,7 +469,7 @@ final class Tool
             if ($response->getStatusCode() < 300) {
                 return (string)$response->getBody();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         return false;

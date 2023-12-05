@@ -80,7 +80,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             $tmpStore = TmpStore::get(self::ENTRY_ID);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             //nothing to log as the tmp doesn't exist
             return null;
         }
@@ -92,7 +92,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             TmpStore::delete(self::ENTRY_ID);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             //nothing to log as the tmp doesn't exist
         }
     }

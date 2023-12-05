@@ -402,7 +402,7 @@ class Data extends AbstractModel
                             $contentText = preg_replace('/[ ]+/', ' ', $contentText);
                             $this->data .= ' ' . $contentText;
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         Logger::error((string) $e);
                     }
                 }
@@ -414,7 +414,7 @@ class Data extends AbstractModel
                         $contentText = Encoding::toUTF8($contentText);
                         $this->data .= ' ' . $contentText;
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::error((string) $e);
                 }
             } elseif ($element instanceof Asset\Image) {
@@ -427,7 +427,7 @@ class Data extends AbstractModel
                             $this->data .= ' ' . $key . ' : ' . $value;
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::error((string) $e);
                 }
             }
@@ -528,7 +528,7 @@ class Data extends AbstractModel
                     $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     try {
                         $this->rollBack();
                     } catch (\Exception $er) {

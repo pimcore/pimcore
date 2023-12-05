@@ -108,7 +108,7 @@ class Video extends Model\Asset
 
                     return $customSetting[$thumbnail->getName()];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath() . ': ' . $e);
             }
         }

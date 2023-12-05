@@ -225,7 +225,7 @@ final class Redirect extends AbstractModel
         // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Cache::clearTag('redirect');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::crit((string) $e);
         }
     }

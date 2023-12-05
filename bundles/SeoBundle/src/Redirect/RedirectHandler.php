@@ -257,7 +257,7 @@ final class RedirectHandler
                     $this->redirects = $list->load();
 
                     Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998, true);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->error('Failed to load redirects');
                 }
             }

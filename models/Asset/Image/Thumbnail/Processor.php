@@ -242,7 +242,7 @@ class Processor
             } else {
                 $fileExists = true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::debug($e->getMessage());
         }
 

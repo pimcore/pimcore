@@ -257,7 +257,7 @@ class RedirectsController extends UserAwareController
             }
 
             return $this->jsonResponse(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error($e->getMessage());
 
             return $this->jsonResponse(['success' => false]);

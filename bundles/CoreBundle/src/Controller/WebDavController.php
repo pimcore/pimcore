@@ -47,7 +47,7 @@ class WebDavController extends Controller
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
 
             $server->start();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string)$e);
         }
 

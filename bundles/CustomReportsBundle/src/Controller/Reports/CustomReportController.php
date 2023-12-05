@@ -248,7 +248,7 @@ class CustomReportController extends UserAwareController
             }
 
             $success = true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
         }
 

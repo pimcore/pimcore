@@ -151,7 +151,7 @@ EOT;
 
         try {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $dataUri = null;
         }
 
@@ -198,7 +198,7 @@ EOT;
     {
         try {
             $image = \Pimcore\Image::getInstance();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $image = null;
         }
 

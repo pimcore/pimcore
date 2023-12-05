@@ -55,7 +55,7 @@ class UninstallCommand extends AbstractBundleCommand
             $this->bundleManager->uninstall($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully uninstalled', $bundle->getName()));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handlePrerequisiteError($e->getMessage());
         }
 

@@ -82,7 +82,7 @@ final class Console
             if (!empty($systemConfig['path_variable'])) {
                 $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::warning((string) $e);
         }
 
@@ -112,7 +112,7 @@ final class Console
                         return $fullQualifiedPath;
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // nothing to do ...
             }
         }
@@ -158,7 +158,7 @@ final class Console
             if (!$phpPath) {
                 throw new NotFoundException('No PHP executable found, get from getExecutable()');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $phpPath = self::getExecutable('php', true, false);
         }
 

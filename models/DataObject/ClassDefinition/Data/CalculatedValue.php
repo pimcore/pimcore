@@ -238,7 +238,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t\t\t" . '} else {'  . "\n";
         $code .= "\t\t\t\t" . 'throw new \Exception("Not supported language");'  . "\n";
         $code .= "\t\t\t" . '}'  . "\n";
-        $code .= "\t\t" . '} catch (\Exception $e) {' . "\n";
+        $code .= "\t\t" . '} catch (\Throwable $e) {' . "\n";
         $code .= "\t\t\t" . '$language = \Pimcore\Tool::getDefaultLanguage();' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}'  . "\n";

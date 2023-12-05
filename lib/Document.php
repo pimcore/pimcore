@@ -43,7 +43,7 @@ class Document
                     return $adapter;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::crit('Unable to load document adapter: ' . $e->getMessage());
 
             throw $e;
@@ -95,7 +95,7 @@ class Document
                     if ($adapter->isAvailable()) {
                         return $adapter;
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::warning((string) $e);
                 }
             }

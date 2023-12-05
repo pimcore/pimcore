@@ -116,7 +116,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                     try {
                         $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
                         $image->generateLowQualityPreview($generator);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $this->output->writeln('<error>'.$e->getMessage().'</error>');
                     }
                 }

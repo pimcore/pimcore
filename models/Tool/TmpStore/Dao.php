@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
             ], $this->getPrimaryKey('tmp_store'));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

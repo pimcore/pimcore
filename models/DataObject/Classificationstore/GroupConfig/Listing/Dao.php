@@ -57,7 +57,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ' '. $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

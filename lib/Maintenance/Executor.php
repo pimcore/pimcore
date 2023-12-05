@@ -58,7 +58,7 @@ final class Executor implements ExecutorInterface
             $this->logger->info('Finished job with ID {id}', [
                 'id' => $name,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to execute job with ID {id}: {exception}', [
                 'id' => $name,
                 'exception' => $e,

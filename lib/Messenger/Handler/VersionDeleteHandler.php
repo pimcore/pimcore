@@ -49,7 +49,7 @@ class VersionDeleteHandler implements BatchHandlerInterface
                 foreach ($versions as $version) {
                     try {
                         $version->delete();
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s', $version->getId(), $e->getMessage()));
                     }
                 }

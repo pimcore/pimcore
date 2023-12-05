@@ -220,7 +220,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             if (!$class) {
                 throw new \Exception('Class in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
@@ -238,7 +238,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
                 $class->setId($id);
 
                 RuntimeCache::set($cacheKey, $class);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::info($e->getMessage());
 
                 return null;
@@ -389,7 +389,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         // empty object cache
         try {
             Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         foreach ($fieldDefinitions as $fd) {
@@ -501,13 +501,13 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         // empty object cache
         try {
             Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         // empty output cache
         try {
             Cache::clearTag('output');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
@@ -1201,7 +1201,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             }
 
             $class->setId($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::info($e->getMessage());
 
             return null;

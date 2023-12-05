@@ -491,7 +491,7 @@ class Mail extends Email
             try {
                 //if no mailer given, get default mailer from container
                 $mailer = \Pimcore::getContainer()->get(Mailer::class);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $sendingFailedException = $e;
             }
         }
@@ -512,7 +512,7 @@ class Mail extends Email
 
             try {
                 $mailer->send($this);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
             }
         }
@@ -526,7 +526,7 @@ class Mail extends Email
 
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::emerg("Couldn't log Email");
             }
         }
@@ -697,7 +697,7 @@ class Mail extends Email
                 unset($html);
 
                 $content = $this->html2Text($htmlContent);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::err((string) $e);
                 $content = '';
             }
@@ -786,7 +786,7 @@ class Mail extends Email
                 $converter = new HtmlConverter();
                 $converter->getConfig()->merge($this->getHtml2TextOptions());
                 $content = $converter->convert($htmlContent);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::warning('Converting HTML to plain text failed, no plain text part will be attached to the sent email');
             }
         }

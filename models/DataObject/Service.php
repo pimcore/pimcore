@@ -847,7 +847,7 @@ class Service extends Model\Element\Service
 
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         return false;

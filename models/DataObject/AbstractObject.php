@@ -478,7 +478,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $parent->setChildren(null);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $this->rollBack();
             } catch (\Exception $er) {
@@ -567,7 +567,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     try {
                         $this->rollBack();
                     } catch (\Exception $er) {
@@ -626,7 +626,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $failureEvent = new DataObjectEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
@@ -760,7 +760,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::crit((string) $e);
         }
     }

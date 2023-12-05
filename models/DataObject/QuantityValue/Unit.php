@@ -98,7 +98,7 @@ class Unit extends Model\AbstractModel
                 Cache::save($table, self::CACHE_KEY, [], null, 995, true);
                 Cache\RuntimeCache::set(self::CACHE_KEY, $table);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
 

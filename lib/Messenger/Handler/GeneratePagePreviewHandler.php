@@ -34,7 +34,7 @@ class GeneratePagePreviewHandler
     {
         try {
             Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::err(sprintf('Unable to generate preview of document: %s, reason: %s ', $message->getPageId(), $e->getMessage()));
         }
     }

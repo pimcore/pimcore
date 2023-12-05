@@ -75,7 +75,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if (!$brick) {
                 throw new \Exception('ObjectBrick in Registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $def = new Definition();
             $def->setKey($key);
             $fieldFile = $def->getDefinitionFile();

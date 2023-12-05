@@ -226,7 +226,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
                     Cache::save($table, Model\DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
                     RuntimeCache::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error((string) $e);
             }
 

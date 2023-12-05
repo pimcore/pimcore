@@ -88,7 +88,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
         try {
             $request = $this->requestHelper->getCurrentRequest();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
 
             $host = null;
             if($site = Frontend::getSiteForDocument($document)) {

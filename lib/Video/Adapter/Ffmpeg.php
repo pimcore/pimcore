@@ -44,7 +44,7 @@ class Ffmpeg extends Adapter
             if ($ffmpeg && $phpCli) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::warning((string) $e);
         }
 
@@ -263,7 +263,7 @@ class Ffmpeg extends Adapter
             throw new \Exception(
                 'Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error($e->getMessage());
         }
 
@@ -285,7 +285,7 @@ class Ffmpeg extends Adapter
             throw new \Exception(
                 'Could not read dimensions with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error($e->getMessage());
         }
 

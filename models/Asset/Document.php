@@ -71,7 +71,7 @@ class Document extends Model\Asset
             // read from blob here, because in $this->update() $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
             $this->setCustomSetting('document_page_count', $pageCount);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
             $this->setCustomSetting('document_page_count', 'failed');
         }

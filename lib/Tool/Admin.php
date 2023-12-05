@@ -103,7 +103,7 @@ class Admin
         try {
             $sniffer = new Csv();
             $dialect = $sniffer->detect($sample);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // use default settings
             $dialect = new \stdClass();
             $dialect->delimiter = ';';

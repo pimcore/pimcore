@@ -145,7 +145,7 @@ class XliffTranslationController extends UserAwareController
             } else {
                 Logger::warning(sprintf('Could not resolve element %s', $id));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::err($e->getMessage());
 
             return $this->jsonResponse([

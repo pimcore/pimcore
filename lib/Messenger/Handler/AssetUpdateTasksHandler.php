@@ -123,7 +123,7 @@ class AssetUpdateTasksHandler
                 $image->setCustomSetting('imageHeight', $dimensions['height']);
                 $imageDimensionsCalculated = true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning('Problem getting the dimensions of the image with ID ' . $image->getId());
         }
 
@@ -136,7 +136,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->handleEmbeddedMetaData(true);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning($e->getMessage());
         }
 
@@ -148,7 +148,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->generateLowQualityPreview();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning($e->getMessage());
         }
     }

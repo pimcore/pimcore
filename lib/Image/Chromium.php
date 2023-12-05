@@ -37,7 +37,7 @@ class Chromium
         if (!empty($chromiumUri)) {
             try {
                 return (new Connection($chromiumUri))->connect();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::debug((string) $e);
 
                 return false;
@@ -68,7 +68,7 @@ class Chromium
         if (!empty($chromiumUri)) {
             try {
                 $browser = BrowserFactory::connectToBrowser($chromiumUri);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::debug((string) $e);
 
                 return false;

@@ -41,7 +41,7 @@ class Ghostscript extends Adapter
             if ($ghostscript && $phpCli) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::notice($e->getMessage());
         }
 
@@ -180,7 +180,7 @@ class Ghostscript extends Adapter
             $process->run();
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
 
             return false;
@@ -205,7 +205,7 @@ class Ghostscript extends Adapter
             }
 
             return $this->convertPdfToText($page, $path);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
 
             return false;
@@ -219,7 +219,7 @@ class Ghostscript extends Adapter
     {
         try {
             $pdftotextBin = self::getPdftotextCli();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $pdftotextBin = false;
         }
 

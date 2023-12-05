@@ -80,7 +80,7 @@ class Pimcore
             \Pimcore\Db::get()->fetchOne('SELECT id FROM assets LIMIT 1');
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

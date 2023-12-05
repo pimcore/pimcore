@@ -99,7 +99,7 @@ class Definition extends Model\AbstractModel
             if (!$fc) {
                 throw new \Exception('FieldCollection in registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $def = new Definition();
             $def->setKey($key);
             $fieldFile = $def->getDefinitionFile();

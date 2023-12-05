@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->update(self::$dbTable, $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }

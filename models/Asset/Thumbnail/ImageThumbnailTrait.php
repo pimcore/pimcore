@@ -186,7 +186,7 @@ trait ImageThumbnailTrait
                         $dimensions['height'] = $thumbnail['height'];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // noting to do
             }
         }

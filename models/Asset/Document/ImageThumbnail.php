@@ -92,7 +92,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                         $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath() . ': ' . $e);
             }
         }

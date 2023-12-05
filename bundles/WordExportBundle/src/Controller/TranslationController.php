@@ -234,7 +234,7 @@ class TranslationController extends UserAwareController
                     fwrite($f, $output);
                     fclose($f);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error('Word Export: ' . $e);
 
                 throw $e;

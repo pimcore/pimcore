@@ -177,7 +177,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

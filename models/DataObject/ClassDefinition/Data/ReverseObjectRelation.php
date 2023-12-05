@@ -75,7 +75,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                 if($class instanceof DataObject\ClassDefinition) {
                     $this->ownerClassName = $class->getName();
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error($e->getMessage());
             }
         }
@@ -94,7 +94,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $this->ownerClassId = $class->getId();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error($e->getMessage());
             }
         }

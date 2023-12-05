@@ -72,7 +72,7 @@ final class Predefined extends Model\AbstractModel
             if (!$property) {
                 throw new \Exception('Predefined property in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $property = new self();
                 $property->getDao()->getByKey($key);
