@@ -66,9 +66,12 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public function copyRecursive(Asset $target, Asset $source): Asset|Folder|null
+    public function copyRecursive(Asset $target, Asset $source, bool $initial = true): Asset|Folder|null
     {
         // avoid recursion
+        if ($initial) {
+            $this->_copyRecursiveIds = [];
+        }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return null;
         }
@@ -103,7 +106,7 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         foreach ($source->getChildren() as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         if ($target instanceof Asset\Folder) {
