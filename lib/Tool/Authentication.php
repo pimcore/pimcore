@@ -160,9 +160,7 @@ class Authentication
             return false;
         }
 
-        $password = self::preparePlainTextPassword($user->getName(), $password);
-
-        if (!password_verify($password, $user->getPassword())) {
+        if (!password_verify(self::preparePlainTextPassword($user->getName(), $password), $user->getPassword())) {
             return false;
         }
 

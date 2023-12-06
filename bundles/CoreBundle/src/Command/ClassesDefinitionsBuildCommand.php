@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
@@ -49,14 +50,12 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $cacheStatus = \Pimcore\Cache::isEnabled();
-        \Pimcore\Cache::disable();
+        $cacheStatus = Cache::isEnabled();
+        Cache::disable();
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
             $files = glob($objectClassesFolder.'/*.php');
-
-            $changes = [];
 
             foreach ($files as $file) {
                 $class = include $file;
@@ -84,7 +83,7 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         }
 
         if ($cacheStatus) {
-            \Pimcore\Cache::enable();
+            Cache::enable();
         }
 
         return 0;
