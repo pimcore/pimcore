@@ -5,7 +5,7 @@ on:
       base_ref:
         required: true
         type: string
-        description: Base branch name for cloning
+        description: Base branch name for syncing
       ref_name:
         required: true
         type: string
