@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 {
-    protected const ENTRY_ID = 'maintenace_mode';
+    protected const ENTRY_ID = 'maintenance_mode';
 
     public function __construct(protected RequestStack $requestStack, protected Connection $db)
     {
