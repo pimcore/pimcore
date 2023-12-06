@@ -1,4 +1,4 @@
-name: Sync changes scheduled
+name: Sync changes scheduled from CE to EE
 on:
   workflow_dispatch:
   schedule:
