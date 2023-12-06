@@ -6,7 +6,7 @@ on:
 
 jobs:
   clone-branch:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-clone-branch.yaml@v1.0.0-rc.4
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0-rc.4
     if: github.repository == 'pimcore/pimcore'
     strategy:
       fail-fast: false
