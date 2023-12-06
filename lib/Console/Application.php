@@ -88,8 +88,9 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             }
 
             if ($event->getCommand() instanceof DoctrineCommand &&
-                $prefix = $event->getInput()->getOption('prefix')
+                $event->getInput()->hasOption('prefix')
             ) {
+                $prefix = $event->getInput()->getOption('prefix');
                 $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
                 $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
             }
