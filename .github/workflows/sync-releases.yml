@@ -1,4 +1,4 @@
-name: Sync releases
+name: Sync releases to CE from EE
 
 on:
   workflow_dispatch:
