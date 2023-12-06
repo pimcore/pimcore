@@ -82,7 +82,7 @@ registered via config. `generator_id` in the config below references a generator
 as service. As you can see, generators can be enabled/disabled and ordered by priority.
 
 ```yaml
-pimcore:
+pimcore_seo:
     sitemaps:
         generators:
             app_news:
@@ -262,7 +262,7 @@ Make the generator available to the core listener by registering it on the confi
 ```yaml
 # config.yaml
 
-pimcore:
+pimcore_seo:
     sitemaps:
         generators:
             app_blog:

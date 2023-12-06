@@ -228,7 +228,7 @@ class SearchController extends UserAwareController
 
             foreach ($tagIds as $tagId) {
                 if (($allParams['considerChildTags'] ?? 'false') === 'true') {
-                    $tag = Element\Tag::getById($tagId);
+                    $tag = Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
                         $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote(Helper::escapeLike($tagPath) . '%') . '))';

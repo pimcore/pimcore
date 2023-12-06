@@ -230,7 +230,7 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if ($foundDepth > $maxDepth) {
+        if (is_int($maxDepth) && $foundDepth > $maxDepth) {
             while ($foundDepth > $maxDepth) {
                 if (--$foundDepth < $minDepth) {
                     $found = null;

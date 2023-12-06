@@ -131,18 +131,15 @@
   },
   "conflict": {
     "symfony/symfony": "*",
-    "doctrine/doctrine-migrations-bundle": "3.1.0",
     "sabre/dav": "4.2.2",
-    "thecodingmachine/safe": "<2.0",
-    "pimcore/admin-ui-classic-bundle": "<1.2"
+    "thecodingmachine/safe": "<2.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
-    "codeception/phpunit-wrapper": "^9",
     "ergebnis/phpstan-rules": "^2.0",
-    "phpstan/phpstan": "1.10.39",
-    "phpstan/phpstan-symfony": "^1.3.2",
+    "phpstan/phpstan": "1.10.46",
+    "phpstan/phpstan-symfony": "^1.3.5",
     "phpunit/phpunit": "^9.3",
     "gotenberg/gotenberg-php": "^1.1",
     "composer/composer": "*",
@@ -158,7 +155,8 @@
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
     "chrome-php/chrome": "Required for Documents Page Previews",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
-    "symfony/dotenv": "Required for loading environment vars from .env files"
+    "symfony/dotenv": "Required for loading environment vars from .env files",
+    "pimcore/admin-ui-classic-bundle": "^1.2.0"
   },
   "autoload": {
     "files": [

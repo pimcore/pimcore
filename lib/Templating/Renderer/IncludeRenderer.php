@@ -91,7 +91,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if (method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
+            if (is_object($include) && method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 
