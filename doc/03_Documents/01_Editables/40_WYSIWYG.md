@@ -65,5 +65,5 @@ framework:
 ```
 If you want to adapt this configuration please have a look at the [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html). Add your custom configuration to you project, e.g. to `config/packages/html_sanitizer.yaml`
 
-> Note: When using API to set WYSIWYG data, please pass encoded characters for html entities e.g. <,>, & etc.
+> Note: When using API to set WYSIWYG data, please pass encoded characters for html entities e.g. `<`,`>`, `&` etc.
 > The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.

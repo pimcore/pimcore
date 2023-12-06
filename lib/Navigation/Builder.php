@@ -66,6 +66,7 @@ class Builder
             'root' => null,
             'htmlMenuPrefix' => null,
             'pageCallback' => null,
+            'rootCallback' => null,
             'cache' => true,
             'cacheLifetime' => null,
             'maxDepth' => null,
@@ -76,6 +77,7 @@ class Builder
         $options->setAllowedTypes('root', [Document::class, 'null']);
         $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
         $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('rootCallback', ['callable', 'null']);
         $options->setAllowedTypes('cache', ['string', 'bool']);
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
@@ -93,6 +95,7 @@ class Builder
      *     root?: ?Document,
      *     htmlMenuPrefix?: ?string,
      *     pageCallback?: ?callable,
+     *     rootCallback?: ?callable,
      *     cache?: string|bool,
      *     cacheLifetime?: ?int,
      *     maxDepth?: ?int,
@@ -108,6 +111,7 @@ class Builder
             'root' => $navigationRootDocument,
             'htmlMenuPrefix' => $htmlMenuIdPrefix,
             'pageCallback' => $pageCallback,
+            'rootCallback' => $rootCallback,
             'cache' => $cache,
             'cacheLifetime' => $cacheLifetime,
             'maxDepth' => $maxDepth,
@@ -158,6 +162,10 @@ class Builder
                 $this->currentLevel = 0;
                 $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback, [], $maxDepth);
                 $navigation->addPages($rootPage);
+            }
+
+            if ($rootCallback instanceof \Closure) {
+                $rootCallback($navigation);
             }
 
             // we need to force caching here, otherwise the active classes and other settings will be set and later
