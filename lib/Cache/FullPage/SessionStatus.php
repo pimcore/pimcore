@@ -47,6 +47,12 @@ class SessionStatus
         if (!$request->hasSession() || empty($request->getSession()->getId())) {
             return false;
         }
+        
+        // Ensure the session is properly initalized. If not, start the session
+        // now otherwise the data checks run on a session that's not populated.
+        if (!$request->getSession()->isStarted()) {
+            $request->getSession()->start();
+        }
 
         // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
         $sessionData = $_SESSION ?? null;
