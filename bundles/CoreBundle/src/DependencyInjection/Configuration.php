@@ -138,14 +138,19 @@ final class Configuration implements ConfigurationInterface
             'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
             'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
             'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
-            'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
-            'select_options' => PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
         ]);
 
         ConfigurationHelper::addConfigLocationTargetNode(
             $storageNode,
             'system_settings',
             PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            [LocationAwareConfigRepository::READ_TARGET]
+        );
+
+        ConfigurationHelper::addConfigLocationTargetNode(
+            $storageNode,
+            'select_options',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
             [LocationAwareConfigRepository::READ_TARGET]
         );
 
