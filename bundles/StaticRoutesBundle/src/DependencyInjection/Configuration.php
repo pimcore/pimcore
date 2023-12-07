@@ -56,7 +56,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['staticroutes' => '/var/config/staticroutes']);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['staticroutes' => PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes']);
 
         return $treeBuilder;
     }
