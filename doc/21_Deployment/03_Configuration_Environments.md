@@ -13,8 +13,8 @@ or (e.g. in *prod* environments) you can configure everything via real environme
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/11.x/var/config>
+* [https://github.com/pimcore/demo/tree/11.x/config/pimcore](https://github.com/pimcore/demo/tree/11.x/config/pimcore) 
+* [https://github.com/pimcore/demo/tree/11.x/var/config](https://github.com/pimcore/demo/tree/11.x/var/config)
 
 
 ## Configuration Storage Locations & Fallbacks

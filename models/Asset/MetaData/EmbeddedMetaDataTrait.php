@@ -354,7 +354,7 @@ trait EmbeddedMetaDataTrait
                     $iptcRaw = iptcparse($info['APP13']);
                     if (is_array($iptcRaw)) {
                         foreach ($iptcRaw as $key => $value) {
-                            if (is_array($value) && count($value) === 1) {
+                            if (count($value) === 1) {
                                 $value = $value[0];
                             }
 

@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Pimcore 11.2.0
+### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+#### [Data Objects]:
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+#### [Navigation]
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+
 ## Pimcore 11.1.0
 ### Elements
 
@@ -174,7 +183,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 -  Enabled Content Security Policy by default.
 -  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
-Also, when using API to set WYSIWYG data, please pass encoded characters for html entities <,>, & etc.
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
 The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
 
 
@@ -597,7 +606,7 @@ pimcore_seo:
 #### [Cache] :
 
 -  Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
--  Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+-  Responses containing a header `Cache-Control: no-store` will no longer be cached by the full page cache.
 -  Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 
 #### [Console] :

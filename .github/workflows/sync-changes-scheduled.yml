@@ -1,0 +1,22 @@
+name: Sync changes scheduled from CE to EE
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '30 21 * * *'
+
+jobs:
+  clone-branch:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0-rc.4
+    if: github.repository == 'pimcore/pimcore'
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [{'base': '11.x', 'destination': '11.x'}, {'base': '11.1', 'destination': '11.1'}, {'base': '10.6', 'destination': '10.6'}]
+    with:
+      base_ref: ${{ matrix.ref.base }}
+      ref_name: ${{ matrix.ref.destination }}
+      target_repo: 'ee-pimcore'
+    secrets:
+      SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+      GIT_NAME: ${{ secrets.GIT_NAME }}
+      GIT_EMAIL: ${{ secrets.GIT_EMAIL }}

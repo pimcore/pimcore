@@ -3,9 +3,9 @@ name: "LTS repository sync"
 
 on:
     workflow_dispatch:
-    push:
-        branches:
-            - 11.x
+    #push:
+    #    branches:
+    #        - 11.x
 
 permissions:
   contents: read

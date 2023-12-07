@@ -35,7 +35,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public string|int $unitWidth;
+    public string|int|null $unitWidth = null;
 
     /**
      * @internal
@@ -45,7 +45,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public ?array $validUnits = null;
+    public array $validUnits = [];
 
     /**
      * @internal
@@ -57,12 +57,12 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      */
     public bool $autoConvert = false;
 
-    public function getUnitWidth(): int|string
+    public function getUnitWidth(): int|string|null
     {
         return $this->unitWidth;
     }
 
-    public function setUnitWidth(int|string $unitWidth): void
+    public function setUnitWidth(int|string|null $unitWidth): void
     {
         if (is_numeric($unitWidth)) {
             $unitWidth = (int)$unitWidth;
@@ -85,7 +85,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return $this->defaultUnit;
     }
 
-    public function setDefaultUnit(string $defaultUnit): void
+    public function setDefaultUnit(?string $defaultUnit): void
     {
         $this->defaultUnit = $defaultUnit;
     }

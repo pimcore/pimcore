@@ -68,7 +68,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         if ($this->snippet instanceof Document\Snippet) {
             return [
                 'id' => $this->id,
-                'path' => $this->snippet->getFullPath(),
+                'path' => $this->snippet->getPath() . $this->snippet->getKey(),
             ];
         }
 

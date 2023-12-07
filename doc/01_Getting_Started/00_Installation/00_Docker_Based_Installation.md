@@ -43,9 +43,9 @@ If you choose to install backend search (which is installed by default), you mus
 :::
 
 5. :heavy_check_mark: DONE - You can now visit your pimcore instance:
-    * The frontend: <http://localhost>
+    * The frontend: [localhost](http://localhost)
     * The admin interface, using the credentials you have chosen above:
-      <http://localhost/admin>
+      [Admin interface](http://localhost/admin)
 
 
 ## Caching
