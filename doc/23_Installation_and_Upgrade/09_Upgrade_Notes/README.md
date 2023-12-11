@@ -9,8 +9,9 @@
 
 -----------------
 ### General
+#### [Localization]
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
-### [Navigation]
+#### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 
 ## Pimcore 11.1.0
