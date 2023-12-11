@@ -77,6 +77,7 @@ class QuantityValueRange extends AbstractQuantityValue
         return [
             'minimum' => $this->getMinimum(),
             'maximum' => $this->getMaximum(),
+            'unitId' => $this->getUnitId(),
         ];
     }
 
