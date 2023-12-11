@@ -245,7 +245,7 @@ class Service extends Model\Element\Service
 
                     $metaData = $rawMetaData['data'] ?? null;
 
-                    if ($rawMetaData) {                preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                    if ($rawMetaData) {
                         $type = $rawMetaData['type'];
                         if (!$loader) {
                             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
