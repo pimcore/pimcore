@@ -77,7 +77,8 @@ with details about calculated-value field is affected and where it is located at
 
 ```php
 namespace App;
- 
+
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
@@ -88,9 +89,10 @@ class Calculator implements CalculatorClassInterface
     {
         if ($context->getFieldname() == "sum") {
             $language = $context->getPosition();
-            return $object->getXValue($language) +  $object->getYValue($language);
+            return $object->getXValue($language) + $object->getYValue($language);
         } else {
-            \Logger::error("unknown field");
+            Logger::error("unknown field");
+            return '';
         }
     }
 } 
@@ -102,7 +104,8 @@ In addition to the `compute` method you need to implement the `getCalculatedValu
 This method is used to display the value in object edit mode:
 
 ```php
-public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string {
+public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string
+{
     $language = $context->getPosition();
     $result = $object->getXValue($language) . " + " . $object->getYValue($language) . " = " . $this->compute($object, $context);
     return $result;
