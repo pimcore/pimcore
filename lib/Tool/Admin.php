@@ -73,7 +73,7 @@ class Admin
                 $languages[] = $adminLanguage;
             }
         }
-        
+
         if (empty($languages)) {
             $languages = $translatedLanguages;
         }
