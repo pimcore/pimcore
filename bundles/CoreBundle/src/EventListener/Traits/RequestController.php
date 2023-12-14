@@ -13,15 +13,20 @@ trait RequestController
      *
      * @return string
      */
-    public function getActionName(Request $request)
+    public function getActionName(Request $request): ?string
     {
         $action = $request->attributes->get('_controller');
-        $action = explode('::', $action);
+        if($action !== null) {
+            $action = explode('::', $action);
 
-        // use this line if you want to remove the trailing "Action" string
-        //return isset($action[1]) ? preg_replace('/Action$/', '', $action[1]) : false;
 
-        return $action[1];
+            // use this line if you want to remove the trailing "Action" string
+            //return isset($action[1]) ? preg_replace('/Action$/', '', $action[1]) : false;
+
+            return $action[1];
+        }
+
+        return null;
     }
 
     /**
@@ -32,14 +37,16 @@ trait RequestController
     public function getControllerName(Request $request): ?string
     {
         $controller = $request->attributes->get('_controller');
-        $controller = explode('::', $controller);
+        if($controller !== null) {
+            $controller = explode('::', $controller);
 
-        // use this line if you want to remove the trailing "Controller" string
-        //return isset($controller[4]) ? preg_replace('/Controller$/', '', $controller[4]) : false;
+            // use this line if you want to remove the trailing "Controller" string
+            //return isset($controller[4]) ? preg_replace('/Controller$/', '', $controller[4]) : false;
 
-        if(isset($controller[0]) ) {
-            if(strstr($controller[0], '\\')) {
-                return $controller[0];
+            if (isset($controller[0])) {
+                if (str_contains($controller[0], '\\')) {
+                    return $controller[0];
+                }
             }
         }
 
