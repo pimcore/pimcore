@@ -46,12 +46,12 @@ trait ElementWithMetadataComparisonTrait
                 return !$container1 && !$container2;
             }
 
-            /** @var ElementInterface $el1 */
+            /** @var ElementInterface|null $el1 */
             $el1 = $container1->getElement();
-            /** @var ElementInterface $el2 */
+            /** @var ElementInterface|null $el2 */
             $el2 = $container2->getElement();
 
-            if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
+            if (! ($el1?->getType() == $el2?->getType() && ($el1?->getId() == $el2?->getId()))) {
                 return false;
             }
 
