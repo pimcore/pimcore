@@ -415,7 +415,7 @@ class Dao extends Listing\Dao\AbstractDao
     public function loadIdList(): array
     {
         $query = $this->getQueryBuilder();
-        $objectIds = $this->db->fetchFirstColumn((string) $query, $query->getParameters(), $query->getParameterTypes());
+        $objectIds = $this->db->fetchFirstColumn($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
         $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
 
         return array_map('intval', $objectIds);

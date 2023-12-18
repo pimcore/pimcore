@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = [];
         $select = $this->getQueryBuilder('documents.id', 'documents.type');
 
-        $documentsData = $this->db->fetchAllAssociative((string) $select, $select->getParameters(), $select->getParameterTypes());
+        $documentsData = $this->db->fetchAllAssociative($select->getSQL(), $select->getParameters(), $select->getParameterTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
