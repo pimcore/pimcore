@@ -76,11 +76,11 @@ class DocumentEditableExtension extends AbstractExtension
      */
     public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
     {
-        $document = $context['document'];
-        $editmode = $context['editmode'];
+        $document = $context['document'] ?? null;
         if (!($document instanceof PageSnippet)) {
             return '';
         }
+        $editmode = $context['editmode'] ?? false;
 
         return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
     }

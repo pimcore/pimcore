@@ -13,8 +13,8 @@ or (e.g. in *prod* environments) you can configure everything via real environme
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/11.x/var/config>
+* [https://github.com/pimcore/demo/tree/11.x/config/pimcore](https://github.com/pimcore/demo/tree/11.x/config/pimcore) 
+* [https://github.com/pimcore/demo/tree/11.x/var/config](https://github.com/pimcore/demo/tree/11.x/var/config)
 
 
 ## Configuration Storage Locations & Fallbacks
@@ -50,7 +50,7 @@ The following options are available:
 
 #### Storage directory for symfony Config files
 
-The default storage directory for Symfony Config files is `/var/config/...`.
+The default storage directory for Symfony Config files is defined by `PIMCORE_CONFIGURATION_DIRECTORY`.
 If there is no read target set, the config of write target is used.
 
 Available options for write targets and directory & read targets and directory for Symfony Config files are: 
@@ -91,6 +91,11 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/object_custom_layouts'
+        select_options:
+            write_target:
+                type: 'symfony-config'
+                options:
+                    directory: '/var/www/html/var/config/select_options'
 ```
 
 #### Production environment with `symfony-config`

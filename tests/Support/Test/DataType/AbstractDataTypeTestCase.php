@@ -803,7 +803,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->assertNotNull($this->testObject->getVideo());
 
-        $this->testDataHelper->assertVideo($this->testObject, 'video', $this->seed, $returnData);
+        $this->testDataHelper->assertVideo($this->testObject, 'video', $returnData, $this->seed);
     }
 
     public function testWysiwyg(): void

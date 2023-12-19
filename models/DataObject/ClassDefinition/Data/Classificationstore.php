@@ -296,17 +296,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
-    {
+    public function getDataFromEditmode(
+        mixed $data,
+        DataObject\Concrete $object = null,
+        array $params = []
+    ): DataObject\Classificationstore {
         $classificationStore = $this->getDataFromObjectParam($object);
 
         if (!$classificationStore instanceof DataObject\Classificationstore) {
             $classificationStore = new DataObject\Classificationstore();
         }
 
+        $activeGroups = $data['activeGroups'];
+        $groupCollectionMapping = $data['groupCollectionMapping'];
         $data = $data['data'];
-        $activeGroups = $data['activeGroups'] ?? [];
-        $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
 
         $correctedMapping = [];
 
@@ -324,7 +327,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($keys as $keyId => $value) {
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
+                            $keyConfig
+                        );
 
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
@@ -424,6 +429,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -532,6 +540,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $keyConfig;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -556,6 +567,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setRegion(?string $region): static
     {
         $this->region = $region;
@@ -720,7 +734,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setMaxItems(?int $maxItems): void
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
     }
 
     public function getMaxItems(): ?int
@@ -939,6 +953,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->storeId ? $this->storeId : 1;
     }
 
+    /**
+     * @return $this
+     */
     public function setStoreId(int $storeId): static
     {
         $this->storeId = $storeId ? $storeId : 1;
@@ -966,6 +983,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->hideEmptyData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHideEmptyData(bool $hideEmptyData): static
     {
         $this->hideEmptyData = $hideEmptyData;
@@ -978,6 +998,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->disallowAddRemove;
     }
 
+    /**
+     * @return $this
+     */
     public function setDisallowAddRemove(bool $disallowAddRemove): static
     {
         $this->disallowAddRemove = $disallowAddRemove;

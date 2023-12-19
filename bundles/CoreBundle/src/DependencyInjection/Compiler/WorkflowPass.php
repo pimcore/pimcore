@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Transition;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -27,7 +28,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 
@@ -181,6 +181,7 @@ final class WorkflowPass implements CompilerPassInterface
             if (isset($markingStoreDefinition)) {
                 $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             }
+            $workflowDefinition->setPublic(true);
             $workflowDefinition->replaceArgument(3, $workflowName);
             $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);
 

@@ -50,8 +50,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         \Pimcore::disableShutdown();
 
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
-        if (!$container->hasParameter('container.dumper.inline_class_loader')) {
-            $container->setParameter('container.dumper.inline_class_loader', true);
+        if (!$container->hasParameter('.container.dumper.inline_class_loader')) {
+            $container->setParameter('.container.dumper.inline_class_loader', true);
         }
 
         // bundle manager/locator config

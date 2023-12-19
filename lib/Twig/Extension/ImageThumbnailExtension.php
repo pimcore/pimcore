@@ -43,7 +43,7 @@ class ImageThumbnailExtension extends AbstractExtension
         ];
     }
 
-    public function getImageThumbnail(Image $image, string $thumbnail, bool $deferred = true): Image\Thumbnail
+    public function getImageThumbnail(Image $image, string $thumbnail, bool $deferred = true): Image\ThumbnailInterface
     {
         return $image->getThumbnail($thumbnail, $deferred);
     }

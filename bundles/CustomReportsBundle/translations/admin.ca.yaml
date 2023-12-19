@@ -4,4 +4,5 @@ reports: Informes
 custom_report_permissions: "Perm\xEDs"
 keybinding_customReports: Custom Reports
 keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
 ...

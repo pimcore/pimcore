@@ -120,6 +120,8 @@ class Admin
     }
 
     /**
+     * @deprecated and will be removed in Pimcore 12
+     *
      * @static
      *
      */
@@ -128,12 +130,16 @@ class Admin
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function getMaintenanceModeScheduleLoginFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
 
     /**
+     * @deprecated Use MaintenanceModeHelper::activate instead.
      *
      * @throws \Exception
      */
@@ -157,6 +163,8 @@ class Admin
     }
 
     /**
+     * @deprecated Use MaintenanceModeHelperInterface::deactivate instead.
+     *
      * @static
      */
     public static function deactivateMaintenanceMode(): void
@@ -167,6 +175,8 @@ class Admin
     }
 
     /**
+     * @deprecated use MaintenanceModeHelperInterface::isActive instead.
+     *
      * @static
      *
      */
@@ -175,6 +185,13 @@ class Admin
         $file = self::getMaintenanceModeFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::activateMaintenanceMode or using maintenance mode file %s is deprecated.
+                    \tUse MaintenanceModeHelperInterface::active instead.", $file)
+            );
             $conf = include($file);
             if (isset($conf['sessionId'])) {
                 return true;
@@ -186,11 +203,21 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function isMaintenanceModeScheduledForLogin(): bool
     {
         $file = self::getMaintenanceModeScheduleLoginFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::scheduleMaintenanceModeOnLogin or using maintenance mode file %s is deprecated.
+                    \tThe maintenance mode schedule on login will not work in Pimcore 12", $file)
+            );
             $conf = include($file);
             if (isset($conf['schedule']) && $conf['schedule']) {
                 return true;
@@ -202,6 +229,9 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function scheduleMaintenanceModeOnLogin(): void
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
@@ -213,6 +243,9 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function unscheduleMaintenanceModeOnLogin(): void
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());

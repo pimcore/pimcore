@@ -432,7 +432,7 @@ final class Tool
         return $mail;
     }
 
-    public static function getHttpData(string $url, array $paramsGet = [], array $paramsPost = [], array $options = []): bool|string
+    public static function getHttpData(string $url, array $paramsGet = [], array $paramsPost = [], array $options = []): false|string
     {
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';
@@ -549,6 +549,8 @@ final class Tool
      * @internal
      *
      * @return string[]
+     *
+     * @deprecated. Remove in Pimcore 12
      */
     public static function getCachedSymfonyEnvironments(): array
     {

@@ -194,13 +194,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
-        $return = [];
+        $idIndex = $this->getName() . '__id';
+        $typeIndex = $this->getName() . '__type';
+
+        $return = [$idIndex => null, $typeIndex => null];
 
         if ($data != null) {
             $rData = $this->prepareDataForPersistence($data, $object, $params);
 
-            $return[$this->getName() . '__id'] = isset($rData[0]['dest_id']) ? $rData[0]['dest_id'] : null;
-            $return[$this->getName() . '__type'] = isset($rData[0]['type']) ? $rData[0]['type'] : null;
+            $return = [
+                $idIndex => $rData[0]['dest_id'] ?? null,
+                $typeIndex => $rData[0]['type'] ?? null,
+            ];
         }
 
         return $return;
@@ -278,7 +283,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -288,7 +293,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $allow = $this->allowAssetRelation($data);
         } elseif ($data instanceof DataObject\AbstractObject) {
             $allow = $this->allowObjectRelation($data);
-        } elseif (empty($data)) {
+        } elseif ($data === null) {
             $allow = true;
         } else {
             Logger::error(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));

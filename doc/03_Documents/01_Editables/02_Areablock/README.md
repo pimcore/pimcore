@@ -70,7 +70,7 @@ And you can see the effect, below:
 | `manual`            | bool   | Forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                          |
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
-| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. {"iframe": 1, "teasers": 2}                                                                     |
+| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. \{"iframe": 1, "teasers": 2\}                                                                     |
 | `areablock_toolbar` | array  | Array with option that allows you to configure the toolbar. Possible options are `width`, `buttonWidth` and `buttonMaxCharacters`                                                            |
 | `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
 | `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                              |

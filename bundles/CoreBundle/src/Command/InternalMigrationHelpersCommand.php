@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Doctrine\Migrations\DependencyFactory;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'internal:migration-helpers',
+    description: 'For internal use only',
+    hidden: true
+)]
 class InternalMigrationHelpersCommand extends AbstractCommand
 {
     public function __construct(private DependencyFactory $dependencyFactory, private FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
@@ -36,9 +42,6 @@ class InternalMigrationHelpersCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setHidden(true)
-            ->setName('internal:migration-helpers')
-            ->setDescription('For internal use only')
             ->addOption(
                 'is-installed',
                 null,

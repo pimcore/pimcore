@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,14 +28,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:image:low-quality-preview',
+    description: 'Regenerates low quality image previews for all image assets',
+    aliases: ['pimcore:image:svg-preview']
+
+)]
 class LowQualityImagePreviewCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:image:low-quality-preview')
-            ->setAliases(['pimcore:image:svg-preview'])
-            ->setDescription('Regenerates low quality image previews for all image assets')
             ->addOption(
                 'id',
                 null,

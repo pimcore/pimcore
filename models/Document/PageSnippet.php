@@ -275,6 +275,9 @@ abstract class PageSnippet extends Model\Document
         return $this->template;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(?string $controller): static
     {
         $this->controller = $controller;
@@ -282,6 +285,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(?string $template): static
     {
         $this->template = $template;
@@ -331,6 +337,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeEditable(string $name): static
     {
         $this->getEditables();
@@ -427,6 +436,9 @@ abstract class PageSnippet extends Model\Document
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setContentMainDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
@@ -463,6 +475,9 @@ abstract class PageSnippet extends Model\Document
         return $this->editables;
     }
 
+    /**
+     * @return $this
+     */
     public function setEditables(?array $editables): static
     {
         $this->editables = $editables;
@@ -482,7 +497,10 @@ abstract class PageSnippet extends Model\Document
         return $this->versions;
     }
 
-    public function setVersions(array $versions): static
+    /**
+     * @return $this
+     */
+    public function setVersions(?array $versions): static
     {
         $this->versions = $versions;
 
@@ -564,6 +582,9 @@ abstract class PageSnippet extends Model\Document
         return $this->missingRequiredEditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
         $this->missingRequiredEditable = $missingRequiredEditable;

@@ -2,6 +2,7 @@
 custom_reports: Individueller Bericht
 reports: Berichte
 custom_report_permissions: Berechtigung
-keybinding_customReports: Custom Reports
-keybinding_reports: Report
+keybinding_customReports: Benutzerdefinierte Berichte
+keybinding_reports: Bericht
+mandatory_fields_missing: "Bitte f\xFCllen Sie die folgenden Pflichtfelder aus:"
 ...

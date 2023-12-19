@@ -34,13 +34,15 @@ class Multiselect extends Data implements
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,
-    DataContainerAwareInterface
+    DataContainerAwareInterface,
+    OptionsProviderInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
+    use OptionsProviderTrait;
 
     /**
      * Available options to select
@@ -63,22 +65,6 @@ class Multiselect extends Data implements
     public ?string $renderType = null;
 
     /**
-     * Options provider class
-     *
-     * @internal
-     *
-     */
-    public ?string $optionsProviderClass = null;
-
-    /**
-     * Options provider data
-     *
-     * @internal
-     *
-     */
-    public ?string $optionsProviderData = null;
-
-    /**
      * @internal
      */
     public bool $dynamicOptions = false;
@@ -88,6 +74,9 @@ class Multiselect extends Data implements
         return $this->options;
     }
 
+    /**
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         $this->options = $options;
@@ -95,9 +84,12 @@ class Multiselect extends Data implements
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -107,6 +99,9 @@ class Multiselect extends Data implements
         return $this->maxItems;
     }
 
+    /**
+     * @return $this
+     */
     public function setRenderType(?string $renderType): static
     {
         $this->renderType = $renderType;
@@ -182,7 +177,7 @@ class Multiselect extends Data implements
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
 
-        if ($optionsProvider === null) {
+        if ($this->useConfiguredOptions() || $optionsProvider === null) {
             return $this->getDataForEditmode($data, $object, $params);
         }
 
@@ -316,8 +311,8 @@ class Multiselect extends Data implements
             }
 
             $value = $operator === '='
-                ? "'%,".$value.",%'"
-                : "'%,%".$value."%,%'";
+                ? $db->quote('%,'. $value . ',%')
+                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }
@@ -374,26 +369,6 @@ class Multiselect extends Data implements
         $this->options = $mainDefinition->options;
     }
 
-    public function getOptionsProviderClass(): ?string
-    {
-        return $this->optionsProviderClass;
-    }
-
-    public function setOptionsProviderClass(?string $optionsProviderClass): void
-    {
-        $this->optionsProviderClass = $optionsProviderClass;
-    }
-
-    public function getOptionsProviderData(): ?string
-    {
-        return $this->optionsProviderData;
-    }
-
-    public function setOptionsProviderData(?string $optionsProviderData): void
-    {
-        $this->optionsProviderData = $optionsProviderData;
-    }
-
     public function appendData(?array $existingData, array $additionalData): array
     {
         if (!is_array($existingData)) {
@@ -428,7 +403,7 @@ class Multiselect extends Data implements
 
     public function jsonSerialize(): mixed
     {
-        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
@@ -439,7 +414,7 @@ class Multiselect extends Data implements
     {
         $blockedVars = parent::resolveBlockedVars();
 
-        if ($this->getOptionsProviderClass()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass()) {
             $blockedVars[] = 'options';
         }
 
@@ -477,7 +452,7 @@ class Multiselect extends Data implements
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context = [];
             $context['fieldname'] = $this->getName();
 
@@ -502,6 +477,9 @@ class Multiselect extends Data implements
         // nothing to do
     }
 
+    /**
+     * @return $this
+     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),

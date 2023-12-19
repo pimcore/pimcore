@@ -191,7 +191,7 @@ class BooleanSelect extends Data implements
         $diffdata['disabled'] = false;
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         $value = '';
         foreach ($this->options as $option) {
@@ -323,7 +323,7 @@ class BooleanSelect extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?bool
+    public function getDataFromGridEditor(mixed $data, Concrete $object = null, array $params = []): ?bool
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }

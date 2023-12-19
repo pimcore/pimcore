@@ -31,7 +31,7 @@ class Link implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    protected ?string $text = '';
+    protected string $text = '';
 
     protected ?string $internalType = null;
 
@@ -43,25 +43,25 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?string $target = null;
 
-    protected ?string $parameters = '';
+    protected string $parameters = '';
 
-    protected ?string $anchor = '';
+    protected string $anchor = '';
 
-    protected ?string $title = '';
+    protected string $title = '';
 
-    protected ?string $accesskey = '';
+    protected string $accesskey = '';
 
-    protected ?string $rel = '';
+    protected string $rel = '';
 
-    protected ?string $tabindex = '';
+    protected string $tabindex = '';
 
-    protected ?string $class = '';
+    protected string $class = '';
 
-    protected ?string $attributes = '';
+    protected string $attributes = '';
 
     public function getText(): string
     {
-        return $this->text ?? '';
+        return $this->text;
     }
 
     /**
@@ -157,7 +157,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getParameters(): string
     {
-        return $this->parameters ?? '';
+        return $this->parameters;
     }
 
     /**
@@ -173,7 +173,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAnchor(): string
     {
-        return $this->anchor ?? '';
+        return $this->anchor;
     }
 
     /**
@@ -189,7 +189,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getTitle(): string
     {
-        return $this->title ?? '';
+        return $this->title;
     }
 
     /**
@@ -205,7 +205,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAccesskey(): string
     {
-        return $this->accesskey ?? '';
+        return $this->accesskey;
     }
 
     /**
@@ -221,7 +221,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getRel(): string
     {
-        return $this->rel ?? '';
+        return $this->rel;
     }
 
     /**
@@ -237,7 +237,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getTabindex(): string
     {
-        return $this->tabindex ?? '';
+        return $this->tabindex;
     }
 
     /**
@@ -264,7 +264,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getAttributes(): string
     {
-        return $this->attributes ?? '';
+        return $this->attributes;
     }
 
     /**
@@ -280,7 +280,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function getClass(): string
     {
-        return $this->class ?? '';
+        return $this->class;
     }
 
     /**
@@ -421,7 +421,7 @@ class Link implements OwnerAwareFieldInterface
 
     public function isEmpty(): bool
     {
-        $vars = get_object_vars($this);
+        $vars = $this->getObjectVars();
         foreach ($vars as $value) {
             if (!empty($value)) {
                 return false;
@@ -450,5 +450,21 @@ class Link implements OwnerAwareFieldInterface
     public function __toString(): string
     {
         return $this->getHtml();
+    }
+
+    /**
+     * @internal
+     *
+     * https://github.com/pimcore/pimcore/pull/15926
+     * used for non-nullable properties stored with null
+     *
+     * @TODO: Remove in Pimcore 12
+     *
+     */
+    public function __unserialize(array $data): void
+    {
+        foreach (get_object_vars($this) as $property => $value) {
+            $this->$property = $data["\0*\0".$property] ?? $value;
+        }
     }
 }

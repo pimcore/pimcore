@@ -41,3 +41,6 @@ pimcore:
                 type: 'settings-store'
             read_target:
                 type: 'settings-store'
+        select_options:
+            write_target:
+                type: 'settings-store'

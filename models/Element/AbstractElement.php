@@ -244,7 +244,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                 Cache::save($properties, $cacheKey, $cacheTags);
             }
 
-            $this->setProperties($properties);
+            $this->properties = $properties;
         }
 
         return $this->properties;
@@ -252,14 +252,20 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setProperties(?array $properties): static
     {
+        $this->markFieldDirty('properties');
         $this->properties = $properties;
 
         return $this;
     }
 
-    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static
-    {
-        $this->getProperties();
+    public function setProperty(
+        string $name,
+        string $type,
+        mixed $data,
+        bool $inherited = false,
+        bool $inheritable = false
+    ): static {
+        $properties = $this->getProperties();
 
         $id = $this->getId();
         $property = new Model\Property();
@@ -269,11 +275,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
         $property->setName($name);
         $property->setCtype(Service::getElementType($this));
+        $property->setCpath($this->getRealFullPath());
         $property->setData($data);
         $property->setInherited($inherited);
         $property->setInheritable($inheritable);
 
-        $this->properties[$name] = $property;
+        $properties[$name] = $property;
+
+        $this->setProperties($properties);
 
         return $this;
     }
@@ -285,6 +294,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         if (Model\Version::isEnabled() === true) {
             $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        } else {
+            $this->setVersionCount($this->getDao()->getVersionCountForUpdate());
         }
 
         if ($this->getVersionCount() > 4200000000) {

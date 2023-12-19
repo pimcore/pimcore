@@ -28,13 +28,11 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 | Version  | Supported | LTS** | CE End of life*** |
 |----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
+| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
 | `5.x`    |     ❌     |   ❌   |   `2019-12-09`    |
 | `6.x`    |     ❌     |   ❌   |   `2021-06-23`    |
-| `10.5`   |     ❌     |   ❌   |    `2023-06-21`    |
-| `10.6`   |     ✅     |   ☑   |    `2023-08-16`    |
-| `11.0`   |     ✅     |   ☑   |                    |
-| `11.x`   |     ✅     |   ☑   |                    |
+| `10.6`   |     ❌     |   ☑   |   `2023-08-21`    |
+| `11.x`   |     ✅     |   ☑   |                   |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
 *** Community Edition end of life date, this doesn't affect the commercial LTS offering. 

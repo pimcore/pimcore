@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -104,27 +105,29 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         // is already a hashed string? Then do not re-hash
-        $info = password_get_info($data);
-        if ($info['algo'] !== null && $info['algo'] !== 0) {
-            return $data;
-        }
+        if($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
+            $info = password_get_info($data);
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
+                return $data;
+            }
+        } else {
+            // password_get_info() will not detect older, less secure, hashing algos.
+            // It might not detect some less common ones as well.
+            $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
+            $hashLenghts = [
+                32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
+                40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
+                48,  // Tiger/192, HAVAL192
+                56,  // SHA-224, HAVAL224
+                64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
+                96,  // SHA-384
+                128, // SHA-512, BLAKE-512, SWIFFT
+            ];
 
-        // password_get_info() will not detect older, less secure, hashing algos.
-        // It might not detect some less common ones as well.
-        $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
-        $hashLenghts = [
-            32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
-            40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
-            48,  // Tiger/192, HAVAL192
-            56,  // SHA-224, HAVAL224
-            64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
-            96,  // SHA-384
-            128, // SHA-512, BLAKE-512, SWIFFT
-        ];
-
-        if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
-            // Probably already a hashed string
-            return $data;
+            if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
+                // Probably already a hashed string
+                return $data;
+            }
         }
 
         $hashed = $this->calculateHash($data);
@@ -156,7 +159,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function calculateHash(string $data): string
     {
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+            $config = Config::getSystemConfiguration()['security']['password'];
 
             $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
@@ -199,7 +202,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+                $config = Config::getSystemConfiguration()['security']['password'];
 
                 if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);
@@ -295,7 +298,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);

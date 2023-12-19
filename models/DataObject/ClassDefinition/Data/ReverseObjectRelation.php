@@ -28,7 +28,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 {
     /**
      * @internal
-     *
      */
     public ?string $ownerClassName = null;
 
@@ -73,7 +72,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
-                $this->ownerClassName = $class->getName();
+                if($class instanceof DataObject\ClassDefinition) {
+                    $this->ownerClassName = $class->getName();
+                }
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
             }
@@ -178,11 +179,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return [];
     }
 
-    public function isOptimizedAdminLoading(): bool
-    {
-        return true;
-    }
-
     public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);
@@ -199,5 +195,14 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function getFieldType(): string
     {
         return 'reverseObjectRelation';
+    }
+
+    public function getClasses(): array
+    {
+        if($this->ownerClassId) {
+            return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
+        }
+
+        return [];
     }
 }

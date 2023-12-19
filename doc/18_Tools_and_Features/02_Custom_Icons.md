@@ -8,6 +8,7 @@ be changed.
 * Element icon
 * Element icon class
 * Tree node tooltip
+* Element Text
 
 ## How to override the default style
  

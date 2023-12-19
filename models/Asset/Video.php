@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -121,7 +122,7 @@ class Video extends Model\Asset
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -134,7 +135,7 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');
@@ -212,7 +213,6 @@ class Video extends Model\Asset
 
     public function getDimensions(): ?array
     {
-        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
         if (!$width || !$height) {
@@ -261,6 +261,15 @@ class Video extends Model\Asset
      */
     public function getSphericalMetaData(): array
     {
+        return $this->getCustomSetting('SphericalMetaData') ?? [];
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function getSphericalMetaDataFromBackend(): array
+    {
         $data = [];
 
         if (in_array(pathinfo($this->getFilename(), PATHINFO_EXTENSION), ['mp4', 'webm'])) {
@@ -294,17 +303,16 @@ class Video extends Model\Asset
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
                     $chunkSize)) !== false && !empty($chunk)) {
-                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $offset = strlen($buffer) - $tagLength; //subtract the tag size for case it's split between chunks
                     $buffer .= $chunk;
                 }
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
                     throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
-                } else {
-                    $buffer = substr($buffer, 0, $position + $tagLength);
                 }
 
+                $buffer = substr($buffer, 0, $position + $tagLength);
                 $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
                 $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
 

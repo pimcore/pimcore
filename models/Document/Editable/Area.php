@@ -79,12 +79,27 @@ class Area extends Model\Document\Editable
         $this->outputEditmode('</div>');
     }
 
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId): void
+    private function renderDialogBoxEditables(array|Model\Document\Editable $config, EditableRenderer $editableRenderer, string $dialogId): array
     {
+        if ($config instanceof BlockInterface || $config instanceof Area) {
+            // Unsupported element was passed (e.g., Block, Areablock, ...)
+            // or an Areas was passed, which is not supported to avoid too long editable names
+            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
+        } elseif ($config instanceof Model\Document\Editable) {
+            // Map editable to array config
+            $config = [
+                'type' => $config->getType(),
+                'name' => $config->getName(),
+                'label' => $config->getLabel(),
+                'config' => $config->getConfig(),
+                'description' => $config->getDialogDescription(),
+            ];
+        }
+
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
-            foreach ($config['items'] as $child) {
-                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+            foreach ($config['items'] as $index => $child) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
@@ -96,10 +111,12 @@ class Area extends Model\Document\Editable
             $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->render());
         } else {
-            foreach ($config as $item) {
-                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+            foreach ($config as $index => $item) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
             }
         }
+
+        return $config;
     }
 
     private function buildInfoObject(): Area\Info
@@ -177,8 +194,9 @@ class Area extends Model\Document\Editable
 
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $items = $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+            $dialogConfig->setItems($items);
             $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
         }
 
         echo $editableHandler->renderAreaFrontend($info);
@@ -190,11 +208,13 @@ class Area extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (strlen($data) > 2) {
+        if (is_string($data) && strlen($data) > 2) {
             $data = Serialize::unserialize($data);
         }
 
-        $this->type = $data['type'] ?? null;
+        if (is_array($data)) {
+            $this->type = $data['type'] ?? null;
+        }
 
         return $this;
     }

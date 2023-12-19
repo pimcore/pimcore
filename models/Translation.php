@@ -94,6 +94,9 @@ final class Translation extends AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -121,6 +124,9 @@ final class Translation extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
         $this->setModificationDate($date);
@@ -133,6 +139,9 @@ final class Translation extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $date): static
     {
         $this->creationDate = $date;
@@ -145,6 +154,9 @@ final class Translation extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $date): static
     {
         $this->modificationDate = $date;
@@ -201,9 +213,9 @@ final class Translation extends AbstractModel
         $this->translations[$language] = $text;
     }
 
-    public function getTranslation(string $language): string
+    public function getTranslation(string $language): ?string
     {
-        return $this->translations[$language];
+        return $this->translations[$language] ?? null;
     }
 
     public function hasTranslation(string $language): bool
@@ -416,6 +428,7 @@ final class Translation extends AbstractModel
                 $data = array_slice($data, 1);
                 foreach ($data as $row) {
                     $keyValueArray = [];
+                    $row = Service::unEscapeCsvRecord($row);
                     for ($counter = 0; $counter < count($row); $counter++) {
                         $rd = str_replace('&quot;', '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
@@ -426,9 +439,8 @@ final class Translation extends AbstractModel
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
-                            $value = Service::unEscapeCsvField($value);
                             if (in_array($key, $languages)) {
-                                $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
+                                $currentTranslation = $t->getTranslation($key);
                                 if ($replaceExistingTranslations) {
                                     $t->addTranslation($key, $value);
                                     if ($currentTranslation != $value) {

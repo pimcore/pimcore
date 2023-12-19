@@ -12,7 +12,7 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 
 ## Option 1: Use Doctrine ORM
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities.
-Please check <https://symfony.com/doc/current/doctrine.html> for more details.
+Please check [https://symfony.com/doc/current/doctrine.html](https://symfony.com/doc/current/doctrine.html) for more details.
 
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
@@ -376,7 +376,7 @@ class Dao extends Listing\Dao\AbstractDao
     {
         $queryBuilder = $this->db->createQueryBuilder();
         $field = $this->getTableName().'.id';
-        $queryBuilder->select([sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)]);
+        $queryBuilder->select(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field));
         $queryBuilder->from($this->getTableName());
 
         $this->applyListingParametersToQueryBuilder($queryBuilder);

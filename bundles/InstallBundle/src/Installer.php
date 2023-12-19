@@ -454,6 +454,7 @@ class Installer
         $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('complete');
 
         return $errors;
     }
@@ -807,6 +808,7 @@ class Installer
         $userPermissions = [
             'assets',
             'classes',
+            'selectoptions',
             'clear_cache',
             'clear_fullpage_cache',
             'clear_temp_files',

@@ -124,6 +124,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $objects['dirty'] = true;
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $objects;
     }
@@ -206,6 +207,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 }
             }
         }
+
         //must return array if data shall be set
         return $objects;
     }
@@ -361,9 +363,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $data;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }

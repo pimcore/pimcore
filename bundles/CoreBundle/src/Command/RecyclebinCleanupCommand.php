@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Pimcore\Model\Element\Recyclebin;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,13 +27,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:recyclebin:cleanup',
+    description: 'Cleanup recyclebin entries'
+)]
 class RecyclebinCleanupCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:recyclebin:cleanup')
-            ->setDescription('Cleanup recyclebin entries')
             ->addOption(
                 'older-than-days',
                 'd',

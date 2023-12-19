@@ -21,19 +21,15 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
-    protected DocumentRenderer $documentRenderer;
-
-    private LockFactory $lockFactory;
-
-    public function __construct(DocumentRenderer $documentRenderer, LockFactory $lockFactory)
+    public function __construct(protected DocumentRenderer $documentRenderer, private LockFactory $lockFactory, protected SystemSettingsConfig $settingsConfig)
     {
-        $this->documentRenderer = $documentRenderer;
-        $this->lockFactory = $lockFactory;
     }
 
     public function getStoragePath(Document\PageSnippet $document): string
@@ -44,6 +40,32 @@ class StaticPageGenerator
             $path = $document->getPrettyUrl();
         } elseif ($path === '/') {
             $path = '/%home';
+        }
+
+        $useMainDomain = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['use_main_domain'];
+        if ($useMainDomain) {
+            $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
+            $mainDomain = '/' . $systemConfig['general']['domain'];
+            $returnPath = '';
+            $pathInfo = pathinfo($path);
+            if($pathInfo['dirname'] != '') {
+                $directories = explode('/', $pathInfo['dirname']);
+                $directories = array_filter($directories);
+                $pathString = '';
+                foreach ($directories as $directory) {
+                    $pathString .= '/' . $directory;
+                    $doc = Document::getByPath($pathString);
+                    $site = Site::getByRootId($doc->getId());
+                    if ($site instanceof Site) {
+                        $mainDomain = '/' . $site->getMainDomain();
+                    } else {
+                        $returnPath .= '/' . $directory;
+                    }
+                }
+                $returnPath .= '/' . $pathInfo['basename'];
+            }
+
+            return $mainDomain . $returnPath . '.html';
         }
 
         return $path . '.html';

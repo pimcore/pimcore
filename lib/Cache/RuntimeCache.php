@@ -24,6 +24,8 @@ class RuntimeCache extends \ArrayObject
 
     protected static ?RuntimeCache $instance = null;
 
+    private static bool $disabled = false;
+
     /**
      * Retrieves the default registry instance.
      *
@@ -68,6 +70,33 @@ class RuntimeCache extends \ArrayObject
         }
 
         return self::$tempInstance;
+    }
+
+    /**
+     * disables the caching for the current process, this is useful for importers, ...
+     * There are no new objects will be cached after that
+     *
+     * @static
+     */
+    public static function disable(): void
+    {
+        self::$disabled = true;
+    }
+
+    /**
+     * see @ self::disable()
+     * just enabled the caching in the current process
+     *
+     * @static
+     */
+    public static function enable(): void
+    {
+        self::$disabled = false;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return !self::$disabled;
     }
 
     /**
@@ -137,6 +166,11 @@ class RuntimeCache extends \ArrayObject
 
     public function offsetSet($index, $value): void
     {
+        // check if caching is disabled for this process
+        if (self::$disabled) {
+            return;
+        }
+
         parent::offsetSet($index, $value);
     }
 

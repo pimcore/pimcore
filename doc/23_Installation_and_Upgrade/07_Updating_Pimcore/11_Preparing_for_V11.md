@@ -3,6 +3,24 @@
 ## Upgrade to Pimcore 10.6
 - Upgrade to version 10.6.x, if you are using a lower version.
 
+## Migrate PHP Templates to Twig
+
+With Pimcore 11, it is required to update your PHP templates to Twig.
+
+:::caution
+
+Be aware that Pimcore 11 does not support `installing pimcore/php-templating-engine-bundle` anymore. The migration to Twig is then required even for enterprise customers.
+
+:::
+
+You can use a [RegEx](https://gist.github.com/putzflorian/219f582377b20d64d97ea9d8751dbb89) to replace strings in your template files. For example, rewrite `{% extends ':Layout:default.html.twig' %}` to `{% extends 'Layout/default.html.twig' %}`.
+
+:::tip 
+
+Better replace the strings manually with your IDE instead of as a batch process.
+
+:::
+
 ## Code Changes
 - [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
   The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
@@ -132,6 +150,10 @@ If you are sure you can run all available migrations after `composer update`, in
     ```
     
     You might also adapt the `config_location` from other extensions, like Datahub.
+
+### Migrate o_ prefix properties in the stored data
+As `o_` prefix will be removed from data objects system properties in v11. It is recommended to migrate the stored data to use new properties (without o_ prefix).
+Please adapt and use these [scripts](https://gist.github.com/dvesh3/50a1a99fd337d461e1652f2fd3b4d6cd) to migrate versions and recycle-bin data.
 
 ## Additional Things to Consider
 
