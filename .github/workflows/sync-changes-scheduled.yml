@@ -5,8 +5,8 @@ on:
     - cron:  '30 21 * * *'
 
 jobs:
-  clone-branch:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0-rc.4
+  sync-branches:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0
     if: github.repository == 'pimcore/pimcore'
     strategy:
       fail-fast: false
@@ -16,6 +16,7 @@ jobs:
       base_ref: ${{ matrix.ref.base }}
       ref_name: ${{ matrix.ref.destination }}
       target_repo: 'ee-pimcore'
+      auto_merge: true
     secrets:
       SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
       GIT_NAME: ${{ secrets.GIT_NAME }}
