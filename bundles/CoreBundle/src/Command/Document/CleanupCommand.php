@@ -68,7 +68,11 @@ class CleanupCommand extends AbstractCommand
 
             try {
                 // remove all documents with certain types
-                $db->executeQuery('DELETE FROM documents WHERE type IN (:types)', ['types' => $filteredDocumentTypes], ['types' => ArrayParameterType::STRING]);
+                $db->executeQuery(
+                    'DELETE FROM documents WHERE type IN (:types)',
+                    ['types' => $filteredDocumentTypes],
+                    ['types' => ArrayParameterType::STRING]
+                );
             } catch (\Exception) {
                 $output->writeln('Could not delete all document types from documents table');
             }
@@ -113,6 +117,10 @@ class CleanupCommand extends AbstractCommand
     private function modifyEnumTypes(array $enums): void
     {
         $db = Db::get();
-        $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
+        $db->executeQuery(
+            'ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);',
+            ['enums' => $enums],
+            ['enums' => ArrayParameterType::STRING]
+        );
     }
 }
