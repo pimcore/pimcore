@@ -30,7 +30,7 @@ The Editor als needs to dispatch the `pimcore.events.changeWysiwyg` to set the v
 document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
     detail: {
         e: eChange,
-        data: tinymce.activeEditor.contentAreaContainer.innerHTML, //text of the editor-field
+        data: tinymce.activeEditor.getContent(), //text of the editor-field
         context: e.detail.context //the context in which the editor is registered (object, document ...) 
     }
 }));
