@@ -106,7 +106,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
-                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
+                            data: tinymce.activeEditor.getContent(),
                             context: e.detail.context
                         }
                     }));
@@ -115,7 +115,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
-                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
+                            data: tinymce.activeEditor.getContent(),
                             context: e.detail.context
                         }
                     }));
