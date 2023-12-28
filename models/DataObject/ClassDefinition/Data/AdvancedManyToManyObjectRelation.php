@@ -903,8 +903,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @internal
      */
-    protected function buildUniqueKeyForAppending(ElementInterface $item): string
+    protected function buildUniqueKeyForAppending(DataObject\Data\ObjectMetadata|ElementInterface $item): string
     {
+        if ($item instanceof DataObject\Data\ObjectMetadata) {
+            // relation is always wrapped in a "ObjectMetadata"
+            // fix problem made by https://github.com/pimcore/pimcore/pull/13474
+            $item = $item->getElement();
+        }
+
         $elementType = Element\Service::getElementType($item);
         $id = $item->getId();
 
