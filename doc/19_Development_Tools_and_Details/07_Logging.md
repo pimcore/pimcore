@@ -44,7 +44,7 @@ pimcore:
 | 2                                                                                | User-ID                                   |
 | Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController::saveAction  | Module\Controller::Action                 |
 | pimcore_admin_document_page_save                                                 | Route name                                |
-| {"task":"pub ....                                                                | Request Parameters (shortened & censored) |
+| \{"task":"pub .... \}                                                                | Request Parameters (shortened & censored) |
 
 ## redirect.log
 Sometimes it's necessary to debug redirects, for example when a redirect ends in an infinite loop. 

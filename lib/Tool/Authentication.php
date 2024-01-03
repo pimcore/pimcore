@@ -53,7 +53,10 @@ class Authentication
             $user = $token->getUser();
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
-                return $user->getUser();
+                $pimcoreUser = $user->getUser();
+                $pimcoreUser->setLastLoginDate(); //set user current login date
+
+                return $pimcoreUser;
             }
         }
 
@@ -157,9 +160,7 @@ class Authentication
             return false;
         }
 
-        $password = self::preparePlainTextPassword($user->getName(), $password);
-
-        if (!password_verify($password, $user->getPassword())) {
+        if (!password_verify(self::preparePlainTextPassword($user->getName(), $password), $user->getPassword())) {
             return false;
         }
 

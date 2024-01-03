@@ -294,6 +294,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $result = [];
         $count = 0;
+        $context = $params['context'] ?? [];
 
         foreach ($data as $rawBlockElement) {
             $resultElement = [];
@@ -307,7 +308,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $invisible = $fd->getInvisible();
                 if ($invisible && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
-                    if (method_exists($object, $blockGetter)) {
+                    if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
                         if (isset($items[$oIndex])) {
@@ -498,6 +499,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -523,6 +527,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->setFieldDefinitions(null);
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(?array $layout): static
     {
         $this->layout = $layout;
@@ -819,7 +826,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setMaxItems(?int $maxItems): void
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
     }
 
     public function isDisallowAddRemove(): bool

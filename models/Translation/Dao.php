@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Translation;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAllAssociative($sql,
             ['key' => $key, 'languages' => $languages],
-            ['languages' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+            ['languages' => ArrayParameterType::STRING]
         );
 
         if (!empty($data)) {

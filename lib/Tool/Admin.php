@@ -39,11 +39,11 @@ class Admin
     {
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
-        $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
+        $adminLanguages = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
         $appDefaultPath = \Pimcore::getContainer()->getParameter('translator.default_path');
 
-        $languages = [];
         $languageDirs = [$languageDir, $appDefaultPath];
+        $translatedLanguages = [];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
@@ -57,16 +57,25 @@ class Admin
                             $languageCode = $parts[1];
                         }
 
-                        if (($adminLang != null && in_array($languageCode, array_values($adminLang))) || $adminLang == null) {
-                            if ($parts[1] === 'json' || $parts[0] === 'admin') {
-                                if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
-                                    $languages[] = $languageCode;
-                                }
+                        if ($parts[1] === 'json' || $parts[0] === 'admin') {
+                            if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
+                                $translatedLanguages[] = $languageCode;
                             }
                         }
                     }
                 }
             }
+        }
+
+        $languages = [];
+        foreach ($adminLanguages as $adminLanguage) {
+            if (in_array($adminLanguage, $translatedLanguages, true) || in_array(\Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)) {
+                $languages[] = $adminLanguage;
+            }
+        }
+
+        if (empty($languages)) {
+            $languages = $translatedLanguages;
         }
 
         return array_unique($languages);
