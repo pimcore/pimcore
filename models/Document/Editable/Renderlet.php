@@ -158,14 +158,18 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         if (is_array($data)) {
             $processedData = $data;
         } elseif (is_string($data)) {
-            $processedData = \Pimcore\Tool\Serialize::unserialize($data);
+            $unserializedData = \Pimcore\Tool\Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException("Unserialized data must be an array.");
+            }
+            $processedData = $unserializedData;
         } else {
-            throw new \InvalidArgumentException("\$data must be a string or an array.");
+            throw new \InvalidArgumentException("Data must be a string or an array.");
         }
 
         foreach (['id', 'type', 'subtype'] as $key) {
             if (!array_key_exists($key, $processedData)) {
-                throw new \InvalidArgumentException("Key '{$key}' is missing for setDataFromResource.");
+                throw new \InvalidArgumentException("Key '{$key}' is missing in the data array.");
             }
         }
 
