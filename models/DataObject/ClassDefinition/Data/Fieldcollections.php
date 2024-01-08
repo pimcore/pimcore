@@ -481,7 +481,42 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
     {
-        return 'NOT SUPPORTED';
+        // todo: also need to change vendor/pimcore/admin-ui-classic-bundle/public/js/pimcore/object/tags/fieldcollections.js:52
+        // method getGridColumnConfig; instead of return t("not_supported"); -> return record.data[key];
+
+        if (null === $data) return '';
+
+        $html = '<table>';
+        foreach ($data as $item) {
+            if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                continue;
+            }
+
+            $type = $item->getType();
+            $html .= '<tr><th colspan="2"><b>' . $type . '</b></th></tr>';
+
+            if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
+                            $title = $localizedFieldDefinition->title ?? $localizedFieldDefinition->getName();
+                            $html .= '<tr><td>' . $title . ':</td><td>';
+                            $html .= $item->get($localizedFieldDefinition->getName());
+                            $html .= '</td></tr>';
+                        }
+                    } else {
+                        $title = $fd->title ?? $fd->getName();
+                        $html .= '<tr><td>' . $title . ':</td><td>';
+                        $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
+                        $html .= '</td></tr>';
+                    }
+                }
+            }
+        }
+
+        $html .= '</table>';
+
+        return $html;
     }
 
     /**
