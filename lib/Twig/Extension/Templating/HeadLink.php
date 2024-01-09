@@ -389,8 +389,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for stylesheet link item
      *
-     *
-     * @return \stdClass|false Returns fals if stylesheet is a duplicate
+     * @return \stdClass|false Returns false if stylesheet is a duplicate
      */
     public function createDataStylesheet(array $args): bool|\stdClass
     {
@@ -415,9 +414,7 @@ class HeadLink extends CacheBusterAware
         }
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
-            if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
-                $conditionalStylesheet = $conditionalStylesheet;
-            } else {
+            if (empty($conditionalStylesheet) || !is_string($conditionalStylesheet)) {
                 $conditionalStylesheet = null;
             }
         }

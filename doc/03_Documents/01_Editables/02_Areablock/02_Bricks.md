@@ -92,7 +92,7 @@ as registered on the areabrick manager (see below).
 | Location | Path                                                                                                                                                                                       |
 |----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | global   | `templates/areas/<brickId>/`                                                                                                                                                               |
-| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony <= 4) bundle structure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
+| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony \<= 4) bundle structure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
 implementing the methods for templates and icon yourself (see `AreabrickInterface`):

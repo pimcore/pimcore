@@ -343,7 +343,7 @@ class NavigationExtension extends AbstractExtension
                 foreach($list as $category) {
                     $detailLink = $this->categoryLinkGenerator->generate($category);
                     $categoryDocument = new \Pimcore\Navigation\Page\Document([
-                        "label" => $category->getTitle(),
+                        "label" => $category->getName(),
                         "id" => "object-" . $category->getId(),
                         "uri" => $detailLink,
                     ]);

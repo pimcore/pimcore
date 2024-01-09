@@ -4,12 +4,15 @@
 ### Elements
 #### [Documents]:
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+
 -----------------
 ### General
-- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
-### [Navigation]
+#### [Localization]
+- Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
+#### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 
 ## Pimcore 11.1.0
@@ -186,7 +189,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 -  Enabled Content Security Policy by default.
 -  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
-Also, when using API to set WYSIWYG data, please pass encoded characters for html entities <,>, & etc.
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
 The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
 
 
