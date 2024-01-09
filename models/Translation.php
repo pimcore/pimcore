@@ -315,7 +315,7 @@ final class Translation extends AbstractModel
             }
 
             if (!$language) {
-                $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
 
             if (!in_array($language, Tool\Admin::getLanguages())) {
