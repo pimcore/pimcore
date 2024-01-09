@@ -28,8 +28,11 @@ use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
-    public function __construct(protected DocumentRendererInterface $documentRenderer, private LockFactory $lockFactory, protected SystemSettingsConfig $settingsConfig)
-    {
+    public function __construct(
+        protected DocumentRendererInterface $documentRenderer,
+        private LockFactory $lockFactory,
+        protected SystemSettingsConfig $settingsConfig
+    ) {
     }
 
     public function getStoragePath(Document\PageSnippet $document): string
