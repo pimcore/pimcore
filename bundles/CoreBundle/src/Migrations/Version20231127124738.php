@@ -56,7 +56,6 @@ final class Version20231127124738 extends AbstractMigration implements Container
         $brickContainerClassDumper = $this->container->get(PHPObjectBrickContainerClassDumperInterface::class);
         $collectionClassDumper = $this->container->get(PHPFieldCollectionClassDumperInterface::class);
 
-
         $listing = new DataObject\ClassDefinition\Listing();
         foreach ($listing->getClasses() as $class) {
             $this->write(sprintf('Saving php files for class: %s', $class->getName()));
