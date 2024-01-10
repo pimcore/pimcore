@@ -483,32 +483,38 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         if (null === $data) return '';
 
+        $dataTable = [];
         $html = '<table>';
         foreach ($data as $item) {
             if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
                 continue;
             }
 
-            $type = $item->getType();
-            $html .= '<tr><th colspan="2"><b>' . $type . '</b></th></tr>';
-
             if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                $dataTable[$item->getType()] = [];
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
-                            $title = $localizedFieldDefinition->title ?? $localizedFieldDefinition->getName();
-                            $html .= '<tr><td>' . $title . ':</td><td>';
-                            $html .= $item->get($localizedFieldDefinition->getName());
-                            $html .= '</td></tr>';
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefnition) {
+                            $title = $localizedFieldDefnition->title ?? $localizedFieldDefnition->getName();
+                            $htmlCell = '<tr><td>' . $title . ':</td><td>';
+                            $htmlCell .= $item->get($localizedFieldDefnition->getName());
+                            $htmlCell .= '</td></tr>';
+                            $dataTable[$item->getType()][] = $htmlCell;
                         }
                     } else {
                         $title = $fd->title ?? $fd->getName();
-                        $html .= '<tr><td>' . $title . ':</td><td>';
-                        $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
-                        $html .= '</td></tr>';
+                        $htmlCell = '<tr><td>' . $title . ':</td><td>';
+                        $htmlCell .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
+                        $htmlCell .= '</td></tr>';
+                        $dataTable[$item->getType()][] = $htmlCell;
                     }
                 }
             }
+        }
+
+        foreach ($dataTable as $type => $cells) {
+            $html .= '<tr><th colspan="2"><b>' . $type . '</b></th></tr>';
+            $html .= implode('', $cells);
         }
 
         $html .= '</table>';
