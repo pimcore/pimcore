@@ -481,9 +481,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
     {
-        // todo: also need to change vendor/pimcore/admin-ui-classic-bundle/public/js/pimcore/object/tags/fieldcollections.js:52
-        // method getGridColumnConfig; instead of return t("not_supported"); -> return record.data[key];
-
         if (null === $data) return '';
 
         $html = '<table>';
