@@ -177,15 +177,16 @@ class Document extends Model\Asset
         );
 
         $chunkSize = 1024;
-        $filePointer = $this->getStream();
+        $stream = $this->getStream();
+        $streamSize = fstat($stream)['size'];
 
-        $tagLength = strlen('/JS');
+        while (!feof($stream) && ($pointer = ftell($stream)) <= $streamSize) {
 
-        while ($chunk = fread($filePointer, $chunkSize)) {
-            if (strlen($chunk) <= $tagLength) {
-                break;
+            if ($pointer + $chunkSize > $streamSize) {
+                $chunkSize = $streamSize - $pointer + 1;
             }
 
+            $chunk = fread($stream, $chunkSize);
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
                 $this->setCustomSetting(
                     self::CUSTOM_SETTING_PDF_SCAN_STATUS,
