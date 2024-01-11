@@ -175,7 +175,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 -  Enabled Content Security Policy by default.
 -  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
 Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
-The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 
 -----------------
