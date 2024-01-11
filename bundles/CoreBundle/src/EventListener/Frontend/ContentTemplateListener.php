@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -23,7 +24,6 @@ use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
@@ -53,7 +53,6 @@ class ContentTemplateListener implements EventSubscriberInterface
      * If there's a contentTemplate attribute set on the request, it was read from the document template setting from
      * the router or from the sub-action renderer and takes precedence over the auto-resolved and manually configured
      * template.
-     *
      */
     public function onKernelView(ViewEvent $event): void
     {
@@ -70,7 +69,7 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute?->vars);
+        $parameters = $this->resolveParameters($event, $attribute?->vars);
         $status = 200;
 
         if (interface_exists('Symfony\\Component\\Form\\FormInterface')) {
@@ -91,14 +90,18 @@ class ContentTemplateListener implements EventSubscriberInterface
         );
     }
 
-    private function resolveParameters(ControllerArgumentsEvent $event, ?array $vars): array
+    private function resolveParameters(ViewEvent $event, ?array $vars): array
     {
-        $parameters = $event->getNamedArguments();
+        $controllerArguments = $event->controllerArgumentsEvent?->getNamedArguments() ?? [];
+        $controllerResults = is_array($event->getControllerResult()) ? $event->getControllerResult() : [];
 
-        if (null !== $vars) {
-            $parameters = array_intersect_key($parameters, array_flip($vars));
+        $mergedArray = array_merge(array_keys($controllerArguments), array_keys($controllerResults), array_keys($vars));
+        $duplicateKeys = array_unique(array_diff_assoc($mergedArray, array_unique($mergedArray)));
+
+        if (empty($duplicateKeys)) {
+            return array_merge($controllerArguments, $controllerResults, $vars);
+        } else {
+            throw new \Exception('Duplicate keys found: '.implode(', ', array_values($duplicateKeys)).'. Please use unique names for your controller arguments, controller results and template variables.');
         }
-
-        return $parameters;
     }
 }
