@@ -54,10 +54,10 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
+use function strlen;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
-use function strlen;
 
 /**
  * @method Dao getDao()
@@ -118,6 +118,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @var bool whether custom settings should go into the cache or not -> depending on the size of the data stored there
      */
     protected bool $customSettingsCanBeCached = true;
@@ -1273,6 +1274,7 @@ class Asset extends Element\AbstractElement
     public function getCustomSetting(string $key): mixed
     {
         $this->refreshCustomSettings();
+
         return $this->customSettings[$key] ?? null;
     }
 
@@ -1285,6 +1287,7 @@ class Asset extends Element\AbstractElement
     public function getCustomSettings(): array
     {
         $this->refreshCustomSettings();
+
         return $this->customSettings;
     }
 
