@@ -279,7 +279,7 @@ abstract class AbstractRelations extends Data implements
         return $newData;
     }
 
-    public function removeData(?array $existingData, array $removeData): ?array
+    public function removeData(?array $existingData, array $removeData): mixed
     {
         $newData = [];
         if (!is_array($existingData)) {

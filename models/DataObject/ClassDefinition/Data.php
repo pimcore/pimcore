@@ -1247,7 +1247,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * TODO Change return type to array in Pimcore 12
      */
-    public function removeData(?array $existingData, array $removeData): ?array
+    public function removeData(?array $existingData, array $removeData): mixed
     {
         return $existingData;
     }
