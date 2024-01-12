@@ -360,7 +360,7 @@ class Multiselect extends Data implements
         $this->options = $mainDefinition->options;
     }
 
-    public function appendData(?array $existingData, array $additionalData): ?array
+    public function appendData(?array $existingData, array $additionalData): array
     {
         if (!is_array($existingData)) {
             $existingData = [];
@@ -371,7 +371,7 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    public function removeData(?array $existingData, array $removeData): mixed
+    public function removeData(?array $existingData, array $removeData): array
     {
         if (!is_array($existingData)) {
             $existingData = [];
