@@ -98,10 +98,10 @@ class ContentTemplateListener implements EventSubscriberInterface
         $mergedArray = array_merge(array_keys($controllerArguments), array_keys($controllerResults), array_keys($vars));
         $duplicateKeys = array_unique(array_diff_assoc($mergedArray, array_unique($mergedArray)));
 
-        if (empty($duplicateKeys)) {
-            return array_merge($controllerArguments, $controllerResults, $vars);
-        } else {
+        if ($duplicateKeys) {
             throw new \Exception('Duplicate keys found: '.implode(', ', array_values($duplicateKeys)).'. Please use unique names for your controller arguments, controller results and template variables.');
         }
+
+        return array_merge($controllerArguments, $controllerResults, $vars);
     }
 }
