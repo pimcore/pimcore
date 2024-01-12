@@ -1232,12 +1232,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
     }
 
-    public function appendData(?array $existingData, array $additionalData): ?array
+    /**
+     * @throws \LogicException
+     */
+    public function appendData(?array $existingData, array $additionalData): array
     {
         return $existingData;
     }
 
-    public function removeData(mixed $existingData, mixed $removeData): mixed
+    /**
+     * @throws \LogicException
+     */
+    public function removeData(?array $existingData, array $removeData): array
     {
         return $existingData;
     }
