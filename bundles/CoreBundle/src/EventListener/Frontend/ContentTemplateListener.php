@@ -90,7 +90,7 @@ class ContentTemplateListener implements EventSubscriberInterface
         );
     }
 
-    private function resolveParameters(ViewEvent $event, ?array $vars): array
+    private function resolveParameters(ViewEvent $event, array $vars): array
     {
         $controllerArguments = $event->controllerArgumentsEvent?->getNamedArguments() ?? [];
         $controllerResults = is_array($event->getControllerResult()) ? $event->getControllerResult() : [];
