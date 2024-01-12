@@ -254,7 +254,7 @@ abstract class AbstractRelations extends Data implements
         return '';
     }
 
-    public function appendData(?array $existingData, array $additionalData): array
+    public function appendData(?array $existingData, array $additionalData): ?array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -279,7 +279,7 @@ abstract class AbstractRelations extends Data implements
         return $newData;
     }
 
-    public function removeData(?array $existingData, array $removeData): array
+    public function removeData(?array $existingData, array $removeData): ?array
     {
         $newData = [];
         if (!is_array($existingData)) {

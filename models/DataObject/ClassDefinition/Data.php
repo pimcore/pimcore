@@ -1234,16 +1234,20 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * @throws \LogicException
+     *
+     * TODO Change return type to array in Pimcore 12
      */
-    public function appendData(?array $existingData, array $additionalData): array
+    public function appendData(?array $existingData, array $additionalData): ?array
     {
         return $existingData;
     }
 
     /**
      * @throws \LogicException
+     *
+     * TODO Change return type to array in Pimcore 12
      */
-    public function removeData(?array $existingData, array $removeData): array
+    public function removeData(?array $existingData, array $removeData): ?array
     {
         return $existingData;
     }
