@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Element\ElementInterface;
 
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
@@ -892,19 +891,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
 
         return null;
-    }
-
-    /**
-     *
-     *
-     * @internal
-     */
-    protected function buildUniqueKeyForAppending(ElementInterface $item): string
-    {
-        $elementType = Element\Service::getElementType($item);
-        $id = $item->getId();
-
-        return $elementType . $id;
     }
 
     public function isOptimizedAdminLoading(): bool

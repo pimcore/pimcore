@@ -47,8 +47,14 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
-    protected array $_copyRecursiveIds;
+    /**
+     * @internal
+     */
+    protected array $_copyRecursiveIds = [];
 
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
     /**
@@ -115,10 +121,10 @@ class Service extends Model\Element\Service
         return \array_merge(...$userObjects);
     }
 
-    public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
+    public function copyRecursive(AbstractObject $target, AbstractObject $source, bool $initial = true): ?AbstractObject
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
+        if ($initial) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
@@ -148,7 +154,7 @@ class Service extends Model\Element\Service
         ], true);
 
         foreach ($children as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         $this->updateChildren($target, $new);
