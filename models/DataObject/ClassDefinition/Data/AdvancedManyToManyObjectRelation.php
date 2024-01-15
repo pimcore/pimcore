@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
-use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()
