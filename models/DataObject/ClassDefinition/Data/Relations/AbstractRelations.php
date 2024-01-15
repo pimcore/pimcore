@@ -321,7 +321,7 @@ abstract class AbstractRelations extends Data implements
             return $elementType . $id;
         }
 
-        throw new \LogicException('Unexpected item type: ' . get_class($item));
+        throw new \LogicException('Unexpected item type: ' . get_debug_type($item));
     }
 
     public function isEqual(mixed $array1, mixed $array2): bool
