@@ -371,7 +371,7 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    public function removeData(mixed $existingData, mixed $removeData): array
+    public function removeData(?array $existingData, array $removeData): array
     {
         if (!is_array($existingData)) {
             $existingData = [];

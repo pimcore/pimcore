@@ -898,19 +898,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     *
-     *
-     * @internal
-     */
-    protected function buildUniqueKeyForAppending(ElementInterface $item): string
-    {
-        $elementType = Element\Service::getElementType($item);
-        $id = $item->getId();
-
-        return $elementType . $id;
-    }
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
