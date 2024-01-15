@@ -44,9 +44,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Service extends Model\Element\Service
 {
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
-    protected array $_copyRecursiveIds;
+    /**
+     * @internal
+     */
+    protected array $_copyRecursiveIds = [];
 
     /**
      * @var Document[]
@@ -87,10 +93,10 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public function copyRecursive(Document $target, Document $source): Page|Document|null
+    public function copyRecursive(Document $target, Document $source, bool $initial = true): Page|Document|null
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
+        if ($initial) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
@@ -131,7 +137,7 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         foreach ($source->getChildren(true) as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         $this->updateChildren($target, $new);

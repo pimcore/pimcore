@@ -1272,7 +1272,6 @@ class Service extends Model\AbstractModel
 
     public static function getElementFromSession(string $type, int $elementId, string $sessionId, ?string $postfix = ''): Asset|Document|AbstractObject|null
     {
-        $element = null;
         $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
 
         $tmpStore = TmpStore::get($tmpStoreKey);
@@ -1286,7 +1285,7 @@ class Service extends Model\AbstractModel
                     'conversion' => 'unmarshal',
                 ];
 
-                $copier = Self::getDeepCopyInstance($element, $context);
+                $copier = self::getDeepCopyInstance($element, $context);
 
                 if ($element instanceof Concrete) {
                     $copier->addFilter(
@@ -1307,7 +1306,7 @@ class Service extends Model\AbstractModel
             }
         }
 
-        return $element;
+        return null;
     }
 
     /**
