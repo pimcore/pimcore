@@ -1782,7 +1782,7 @@ class Service extends Model\Element\Service
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);
             if ($fieldDefinition) {
-                return $fieldDefinition->getForCsvExport($object);
+                return $fieldDefinition->getForCsvExport($object, ['language' => $requestedLanguage]);
             } else {
                 $fieldParts = explode('~', $field);
 
