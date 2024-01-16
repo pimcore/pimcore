@@ -488,7 +488,7 @@ class Service extends Model\Element\Service
             if (!$thumbnailConfig) {
                 // check if there's an item in the TmpStore
                 // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
-                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $config['prefix']) . $config['thumbnail_name'] . '/' . $config['filename'];
+                $pathInfo = preg_replace('@^cache-buster\-[\d]+/@', '', $config['prefix']) . $config['thumbnail_name'] . '/' . $config['filename'];
                 $deferredConfigId = 'thumb_' . $config['asset_id'] . '__' . md5(urldecode($pathInfo));
 
                 if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
