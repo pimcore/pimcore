@@ -129,8 +129,11 @@ abstract class AbstractRelations extends Data implements
         	$object instanceof AbstractData => $object->getObject()->getClassId(),
         	$object instanceof Localizedfield => $object->getObject()->getClassId(),
         	$object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
-        	default => throw new \Exception('Invalid object type'),
         };
+
+        if (null === $classId) {
+            throw new \Exception('Invalid object type');
+        }
 
         if ($data !== null) {
             $relations = $this->prepareDataForPersistence($data, $object, $params);
