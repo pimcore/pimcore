@@ -68,7 +68,7 @@ class DefaultConverter implements QuantityValueConverterInterface
             throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
         }
 
-        $convertedValue = ($quantityValue->getValue() * $fromUnit->getFactor() - $fromUnit->getConversionOffset()) / $toUnit->getFactor() + $toUnit->getConversionOffset();
+        $convertedValue = ($quantityValue->getValue() - $fromUnit->getConversionOffset()) / $fromUnit->getFactor() * $toUnit->getFactor() + $toUnit->getConversionOffset();
 
         return new QuantityValue($convertedValue, $toUnit->getId());
     }
