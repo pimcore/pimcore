@@ -170,7 +170,8 @@ abstract class AbstractRelations extends Data implements
                     $relation['ownername'] === $existingRelation['ownername'] &&
                     $relation['position'] === $existingRelation['position']) {
 
-                    if ($relation['index'] !== $existingRelation['index']) {
+                    //Index does not exist for OneToMany relations
+                    if (array_key_exists('index', $relation) && $relation['index'] !== $existingRelation['index']) {
                         $updatedRelation = $relation;
                         $updatedRelation['id'] = $existingRelation['id'];
 
