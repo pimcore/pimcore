@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Localizedfield;
  */
 trait ContextPersistenceTrait
 {
-    protected function getMyCurrencRawRelations(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object)
+    protected function prepareMyCurrentRelations(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params): array
     {
         if ($object instanceof Concrete) {
             $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);

@@ -121,15 +121,29 @@ abstract class AbstractRelations extends Data implements
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
-        $myCurrentRawRelations = $this->prepareMyCurrentRelations($object);
+        $myCurrentRawRelations = $this->prepareMyCurrentRelations($object, $params);
         $myNewRawRelations = [];
+        $ignoreClassId = null;
+        $classId = null;
+
+        if ($object instanceof Concrete) {
+            $classId = $object->getClassId();
+        } elseif ($object instanceof AbstractData) {
+            $classId = $object->getObject()->getClassId();
+        } elseif ($object instanceof Localizedfield) {
+            $classId = $object->getObject()->getClassId();
+        } elseif ($object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData) {
+            $classId = $object->getObject()->getClassId();
+        } else {
+            throw new \Exception('Invalid object type');
+        }
 
         if ($data !== null) {
             $relations = $this->prepareDataForPersistence($data, $object, $params);
 
             if (is_array($relations) && !empty($relations)) {
                 foreach ($relations as $relation) {
-                    $this->enrichDataRow($object, $params, $classId, $relation);
+                    $this->enrichDataRow($object, $params, $ignoreClassId, $relation);
                     $myNewRawRelations[] = $relation;
                 }
             }
