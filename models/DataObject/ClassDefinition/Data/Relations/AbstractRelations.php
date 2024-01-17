@@ -121,30 +121,82 @@ abstract class AbstractRelations extends Data implements
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
+        $myCurrentRawRelations = $this->prepareMyCurrentRelations($object);
+        $myNewRawRelations = [];
+
         if ($data !== null) {
             $relations = $this->prepareDataForPersistence($data, $object, $params);
 
             if (is_array($relations) && !empty($relations)) {
-                $db = Db::get();
-
                 foreach ($relations as $relation) {
                     $this->enrichDataRow($object, $params, $classId, $relation);
-
-                    // relation needs to be an array with src_id, dest_id, type, fieldname
-                    try {
-                        $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $relation));
-                    } catch (\Exception $e) {
-                        Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
-                            . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
-                        Logger::error((string)$e);
-
-                        // try it again with an update if the insert fails, shouldn't be the case, but it seems that
-                        // sometimes the insert throws an exception
-
-                        throw $e;
-                    }
+                    $myNewRawRelations[] = $relation;
                 }
             }
+        }
+
+        $newRelations = [];
+        $existingRelations = [];
+        $removedRelations = [];
+        //Updates can happen to the index
+        $updatedRelations = [];
+
+        foreach ($myNewRawRelations as $relation) {
+            foreach ($myCurrentRawRelations as $existingRelation) {
+                if ($relation['dest_id'] === $existingRelation['dest_id'] &&
+                    $relation['type'] === $existingRelation['type'] &&
+                    $relation['fieldname'] === $existingRelation['fieldname'] &&
+                    $relation['ownertype'] === $existingRelation['ownertype'] &&
+                    $relation['ownername'] === $existingRelation['ownername'] &&
+                    $relation['position'] === $existingRelation['position']) {
+
+                    if ($relation['index'] !== $existingRelation['index']) {
+                        $updatedRelation = $relation;
+                        $updatedRelation['id'] = $existingRelation['id'];
+
+                        $updatedRelations[] = $updatedRelation;
+                    } else {
+                        $existingRelations[] = $relation;
+                    }
+                    continue 2;
+                }
+            }
+
+            $newRelations[] = $relation;
+        }
+
+        foreach ($myCurrentRawRelations as $existingRelation) {
+            foreach ($myNewRawRelations as $relation) {
+                if ($relation['dest_id'] === $existingRelation['dest_id'] &&
+                    $relation['type'] === $existingRelation['type'] &&
+                    $relation['fieldname'] === $existingRelation['fieldname'] &&
+                    $relation['ownertype'] === $existingRelation['ownertype'] &&
+                    $relation['ownername'] === $existingRelation['ownername'] &&
+                    $relation['position'] === $existingRelation['position']) {
+                    continue 2;
+                }
+            }
+
+            $removedRelations[] = $existingRelation;
+        }
+
+        //Nothing changed, no need to update
+        if (count($updatedRelations) === 0 && count($newRelations) === 0 && count($removedRelations) === 0) {
+            return;
+        }
+
+        $db = Db::get();
+
+        foreach ($updatedRelations as $updatedRelation) {
+            $db->update('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $updatedRelation), ['id' => $updatedRelation['id']]);
+        }
+
+        foreach ($removedRelations as $removedRelation) {
+            $db->delete('object_relations_' . $classId, ['id' => $removedRelation['id']]);
+        }
+
+        foreach ($newRelations as $newRelation) {
+            $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $newRelation));
         }
     }
 

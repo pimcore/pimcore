@@ -25,6 +25,35 @@ use Pimcore\Model\DataObject\Localizedfield;
  */
 trait ContextPersistenceTrait
 {
+    protected function getMyCurrencRawRelations(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object)
+    {
+        if ($object instanceof Concrete) {
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
+        } elseif ($object instanceof AbstractData) {
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
+        } elseif ($object instanceof Localizedfield) {
+            $context = $params['context'] ?? null;
+            if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
+                $fieldname = $context['fieldname'] ?? null;
+                if ($context['containerType'] === 'fieldcollection') {
+                    $index = $context['index'] ?? null;
+                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
+                } else {
+                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
+                }
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
+            } else {
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
+            }
+        } elseif ($object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData) {
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'objectbrick', 'ownername' => $object->getFieldname(), 'position' => $object->getType()]);
+        } else {
+            throw new \Exception('Invalid object type');
+        }
+
+        return $relations;
+    }
+
     /**
      * Enrich relation / slug with type-specific data.
      *
@@ -38,6 +67,8 @@ trait ContextPersistenceTrait
         if ($object instanceof Concrete) {
             $row[$srcCol] = $object->getId();
             $row['ownertype'] = 'object';
+            $row['ownername'] = '';  //default in db
+            $row['position'] = '0'; //default in db
 
             $classId = $object->getClassId();
         } elseif ($object instanceof AbstractData) {

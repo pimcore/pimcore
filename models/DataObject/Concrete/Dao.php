@@ -215,12 +215,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
         }
 
-        $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
-        WHERE '.$condition .' LIMIT 1');
-        if ($dataExists) {
-            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
-        }
-
         $inheritedValues = DataObject::doGetInheritedValues();
         DataObject::setGetInheritedValues(false);
 
