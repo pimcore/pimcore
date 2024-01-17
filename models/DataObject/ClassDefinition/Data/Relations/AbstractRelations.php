@@ -195,22 +195,26 @@ abstract class AbstractRelations extends Data implements
         }
 
         //Nothing changed, no need to update
-        if (count($updatedRelations) === 0 && count($newRelations) === 0 && count($removedRelations) === 0) {
+        if (empty($updatedRelations) && empty($newRelations) && empty($removedRelations)) {
             return;
         }
 
         $db = Db::get();
 
         foreach ($updatedRelations as $updatedRelation) {
-            $db->update('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $updatedRelation), ['id' => $updatedRelation['id']]);
+            $db->update(
+                'object_relations_'.$classId,
+                Db\Helper::quoteDataIdentifiers($db, $updatedRelation),
+                ['id' => $updatedRelation['id']]
+            );
         }
 
         foreach ($removedRelations as $removedRelation) {
-            $db->delete('object_relations_' . $classId, ['id' => $removedRelation['id']]);
+            $db->delete('object_relations_'.$classId, ['id' => $removedRelation['id']]);
         }
 
         foreach ($newRelations as $newRelation) {
-            $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $newRelation));
+            $db->insert('object_relations_'.$classId, Db\Helper::quoteDataIdentifiers($db, $newRelation));
         }
     }
 

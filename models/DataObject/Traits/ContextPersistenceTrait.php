@@ -25,28 +25,58 @@ use Pimcore\Model\DataObject\Localizedfield;
  */
 trait ContextPersistenceTrait
 {
-    protected function prepareMyCurrentRelations(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params): array
-    {
+    protected function prepareMyCurrentRelations(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params
+    ): array {
         if ($object instanceof Concrete) {
             $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof AbstractData) {
-            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
+            $relations = $object->getObject()->retrieveRelationData(
+                [
+                    'fieldname' => $this->getName(),
+                    'ownertype' => 'fieldcollection',
+                    'ownername' => $object->getFieldname(),
+                    'position' => $object->getIndex(),
+                ]
+            );
         } elseif ($object instanceof Localizedfield) {
             $context = $params['context'] ?? null;
-            if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
+            if (isset($context['containerType']) &&
+                ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
                 $fieldname = $context['fieldname'] ?? null;
                 if ($context['containerType'] === 'fieldcollection') {
                     $index = $context['index'] ?? null;
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
+                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/'.$index.'/%';
                 } else {
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
+                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/%';
                 }
-                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
+                $relations = $object->getObject()->retrieveRelationData(
+                    [
+                        'fieldname' => $this->getName(),
+                        'ownertype' => 'localizedfield',
+                        'ownername' => $filter,
+                        'position' => $params['language'],
+                    ]
+                );
             } else {
-                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
+                $relations = $object->getObject()->retrieveRelationData(
+                    [
+                        'fieldname' => $this->getName(),
+                        'ownertype' => 'localizedfield',
+                        'position' => $params['language'],
+                    ]
+                );
             }
         } elseif ($object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData) {
-            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'objectbrick', 'ownername' => $object->getFieldname(), 'position' => $object->getType()]);
+            $relations = $object->getObject()->retrieveRelationData(
+                [
+                    'fieldname' => $this->getName(),
+                    'ownertype' => 'objectbrick',
+                    'ownername' => $object->getFieldname(),
+                    'position' => $object->getType(),
+                ]
+            );
         } else {
             throw new \Exception('Invalid object type');
         }
