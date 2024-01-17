@@ -248,12 +248,20 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
-            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
+        if (!$saveMode) {
+            $where = "(ownertype = 'fieldcollection' AND ".Helper::quoteInto(
+                    $this->db,
+                    'ownername = ?',
+                    $this->model->getFieldname()
+                )
+                .' AND '.Helper::quoteInto($this->db, 'src_id = ?', $object->getId()).')';
 
-        // empty relation table
-        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
-        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
+            // empty relation table
+            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$where);
+            $this->db->executeStatement(
+                'DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$whereLocalizedFields
+            );
+        }
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }
