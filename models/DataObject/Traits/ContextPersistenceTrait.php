@@ -97,8 +97,6 @@ trait ContextPersistenceTrait
         if ($object instanceof Concrete) {
             $row[$srcCol] = $object->getId();
             $row['ownertype'] = 'object';
-            $row['ownername'] = '';  //default in db
-            $row['position'] = '0'; //default in db
 
             $classId = $object->getClassId();
         } elseif ($object instanceof AbstractData) {

@@ -144,6 +144,12 @@ abstract class AbstractRelations extends Data implements
             if (is_array($relations) && !empty($relations)) {
                 foreach ($relations as $relation) {
                     $this->enrichDataRow($object, $params, $ignoreClassId, $relation);
+
+                    if ($object instanceof Concrete) {
+                        $relation['ownername'] = '';  //default in db
+                        $relation['position'] = '0'; //default in db
+                    }
+
                     $myNewRawRelations[] = $relation;
                 }
             }
