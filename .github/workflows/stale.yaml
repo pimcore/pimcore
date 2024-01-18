@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
     stale:
@@ -16,13 +17,14 @@ jobs:
             - uses: actions/stale@v9
               with:
                 days-before-stale: 20
-                days-before-close: 365
+                #days-before-close: 365
                 days-before-pr-stale: -1
                 days-before-pr-close: -1
                 exempt-all-milestones: true
                 exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog,Pimcore:ToDo'
                 remove-stale-when-updated: false
                 stale-issue-label: 'PR Welcome'
+                operations-per-run: 100
                 stale-issue-message: >
                     Thanks a lot for reporting the issue.
                     We did not consider the issue as "Priority" or "Backlog",
