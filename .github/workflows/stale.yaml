@@ -20,7 +20,7 @@ jobs:
                 days-before-pr-stale: -1
                 days-before-pr-close: -1
                 exempt-all-milestones: true
-                exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog'
+                exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog,Pimcore:ToDo'
                 remove-stale-when-updated: false
                 stale-issue-label: 'PR Welcome'
                 stale-issue-message: >
