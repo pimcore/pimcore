@@ -23,7 +23,6 @@ jobs:
                 exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog,Pimcore:ToDo'
                 remove-stale-when-updated: false
                 stale-issue-label: 'PR Welcome'
-                operations-per-run: 200
                 stale-issue-message: >
                     Thanks a lot for reporting the issue.
                     We did not consider the issue as "Priority" or "Backlog",
