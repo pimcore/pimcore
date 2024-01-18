@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
     stale:
@@ -13,16 +14,17 @@ jobs:
           issues: write  # for actions/stale to close stale issues
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/stale@v4
+            - uses: actions/stale@v9
               with:
-                days-before-stale: 20
-                days-before-close: 180
+                days-before-issue-stale: 20
+                days-before-issue-close: -1
                 days-before-pr-stale: -1
                 days-before-pr-close: -1
                 exempt-all-milestones: true
-                exempt-issue-labels: 'Priority,Backlog'
+                exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog,Pimcore:ToDo'
                 remove-stale-when-updated: false
                 stale-issue-label: 'PR Welcome'
+                operations-per-run: 100
                 stale-issue-message: >
                     Thanks a lot for reporting the issue.
                     We did not consider the issue as "Priority" or "Backlog",
@@ -34,9 +36,8 @@ jobs:
                     we'd accept it or not.
                     Thanks for your understanding.
                 close-issue-message: >
-                    Closed due to inactivity (180 days).
+                    Closed due to inactivity (365 days).
                     Please feel free to continue the discussion or provide the missing information on this issue,
                     we'll then reopen it if necessary.
-                    Thanks a lot! 
-
-
+                    Thanks a lot!
+                
