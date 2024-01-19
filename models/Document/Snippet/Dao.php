@@ -16,21 +16,17 @@
 namespace Pimcore\Model\Document\Snippet;
 
 use Pimcore\Model;
-use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Document\Snippet $model
  */
-class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
+class Dao extends Model\Document\PageSnippet\Dao
 {
-    use Model\Document\Targeting\TargetingDocumentDaoTrait;
-
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -46,6 +42,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Snippet with the ID ' . $this->model->getId() . " doesn't exists");

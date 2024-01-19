@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -66,6 +65,8 @@ class ClassDefinitionTest extends ModelTestCase
 */
 public function setInput(?string $input): static
 {
+	$this->markFieldDirty("input", true);
+
 	$this->input = $input;
 
 	return $this;
@@ -134,6 +135,8 @@ public function setMybricks(?\Pimcore\Model\DataObject\Objectbrick $mybricks): s
 */
 public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $quantityValue): static
 {
+	$this->markFieldDirty("quantityValue", true);
+
 	$this->quantityValue = $quantityValue;
 
 	return $this;
@@ -156,6 +159,8 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 */
 public function setLinput(?string $linput): static
 {
+	$this->markFieldDirty("linput", true);
+
 	$this->linput = $linput;
 
 	return $this;

@@ -16,19 +16,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Doctrine\DBAL\Exception\SyntaxErrorException;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\AdminStyle;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,15 +45,19 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class SearchController extends AdminController
+class SearchController extends UserAwareController
 {
-    use AdminStyleTrait;
+    use JsonHelperTrait;
 
     /**
      * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
+     *
      * @todo: $conditionTypeParts could be undefined
+     *
      * @todo: $conditionSubtypeParts could be undefined
+     *
      * @todo: $conditionClassnameParts could be undefined
+     *
      * @todo: $data could be undefined
      */
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
@@ -65,15 +74,15 @@ class SearchController extends AdminController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminSearchEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $query = $this->filterQueryParam($allParams['query'] ?? '');
 
-        $types = explode(',', $allParams['type'] ?? '');
-        $subtypes = explode(',', $allParams['subtype'] ?? '');
-        $classnames = explode(',', $allParams['class'] ?? '');
+        $types = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['type'] ?? ''));
+        $subtypes = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['subtype'] ?? ''));
+        $classnames = explode(',', preg_replace('/[^a-z0-9_,]/i', '', $allParams['class'] ?? ''));
 
         $offset = (int)$allParams['start'];
         $limit = (int)$allParams['limit'];
@@ -105,13 +114,15 @@ class SearchController extends AdminController
         $bricks = [];
         if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
+            //remove sql comments
+            $fields = str_replace('--', '', $fields);
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
+                if (str_starts_with($f, '~')) {
                     //                    $type = $parts[1];
-//                    $field = $parts[2];
-//                    $keyid = $parts[3];
+                    //                    $field = $parts[2];
+                    //                    $keyid = $parts[3];
                     // key value, ignore for now
                 } elseif (count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
@@ -176,7 +187,7 @@ class SearchController extends AdminController
             }
         }
 
-        if (is_array($types) && !empty($types[0])) {
+        if ($types[0]) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -187,7 +198,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) && !empty($subtypes[0])) {
+        if ($subtypes[0]) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -195,7 +206,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) && !empty($classnames[0])) {
+        if ($classnames[0]) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -211,15 +222,13 @@ class SearchController extends AdminController
             $tagIds = $allParams['tagIds'];
 
             $tagsTypeCondition = '';
-            if (is_array($types) && !empty($types[0])) {
+            if ($types[0]) {
                 $tagsTypeCondition = 'ctype IN (\'' . implode('\',\'', $types) . '\') AND';
-            } elseif (!is_array($types)) {
-                $tagsTypeCondition = 'ctype = ' . $db->quote($types) . ' AND ';
             }
 
             foreach ($tagIds as $tagId) {
                 if (($allParams['considerChildTags'] ?? 'false') === 'true') {
-                    $tag = Element\Tag::getById($tagId);
+                    $tag = Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
                         $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote(Helper::escapeLike($tagPath) . '%') . '))';
@@ -238,8 +247,9 @@ class SearchController extends AdminController
         $searcherList->setOrderKey($queryCondition, false);
         $searcherList->setOrder('DESC');
 
-        $sortingSettings = QueryParams::extractSortingSettings($allParams);
-        if ($sortingSettings['orderKey']) {
+        $sortingSettings = $this->extractSortingSettings($allParams);
+
+        if ($sortingSettings['orderKey'] ?? false) {
             // Order by key column instead of filename
             $orderKeyQuote = true;
             if ($sortingSettings['orderKey'] === 'filename') {
@@ -258,7 +268,8 @@ class SearchController extends AdminController
             }
             $searcherList->setOrderKey($sort, $orderKeyQuote);
         }
-        if ($sortingSettings['order']) {
+
+        if ($sortingSettings['order'] ?? false) {
             $searcherList->setOrder($sortingSettings['order']);
         }
 
@@ -266,7 +277,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::SEARCH_LIST_BEFORE_LIST_LOAD);
         /** @var Data\Listing $searcherList */
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
@@ -276,12 +287,15 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
-        if (in_array('document', $types)) {
+        if (in_array('document', $types) && class_exists(AdminEvents::class)) {
             // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
@@ -298,12 +312,19 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var Data\Listing $searcherList */
-            $searcherList = $beforeListLoadEvent->getArgument('list');
+
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
+                /** @var Data\Listing $searcherList */
+                $searcherList = $beforeListLoadEvent->getArgument('list');
+            }
         }
 
-        $hits = $searcherList->load();
+        try {
+            $hits = $searcherList->load();
+        } catch (SyntaxErrorException $syntaxErrorException) {
+            throw new \InvalidArgumentException('Check your arguments.');
+        }
 
         $elements = [];
         foreach ($hits as $hit) {
@@ -340,22 +361,32 @@ class SearchController extends AdminController
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::SEARCH_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
     }
 
     /**
-     * @param array $types
+     * @throws AdminClassicBundleNotFoundException
+     */
+    protected function extractSortingSettings(array $params): array
+    {
+        if (!class_exists(QueryParams::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
+
+        return QueryParams::extractSortingSettings($params);
+    }
+
+    /**
      *
-     * @return string
      *
      * @internal
      */
     protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
     {
-        $user = $this->getAdminUser();
+        $user = $this->getPimcoreUser();
         $db = \Pimcore\Db::get();
 
         $allowedTypes = [];
@@ -402,7 +433,7 @@ class SearchController extends AdminController
             }
         }
 
-        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any main permissions set
         // by setting a `false` condition in the query makes sure that nothing would be displayed.
         if (!$allowedTypes) {
             $allowedTypes = ['false'];
@@ -436,10 +467,7 @@ class SearchController extends AdminController
     /**
      * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return JsonResponse
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -471,7 +499,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'query' => $query,
         ]);
-        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD);
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         $hits = $searcherList->load();
@@ -488,7 +516,9 @@ class SearchController extends AdminController
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                 ];
 
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                if (class_exists(ElementAdminStyleEvent::class)) {
+                    $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                }
 
                 $elements[] = $data;
             }
@@ -498,21 +528,18 @@ class SearchController extends AdminController
             'list' => $elements,
             'context' => $query,
         ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminSearchEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD);
         $elements = $afterListLoadEvent->getArgument('list');
 
         $result = ['data' => $elements, 'success' => true];
 
-        return $this->adminJson($result);
+        return $this->jsonResponse($result);
     }
 
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
      *
-     * @param Request $request
-     * @param Config $config
      *
-     * @return JsonResponse
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
@@ -557,7 +584,7 @@ class SearchController extends AdminController
             }
         }
 
-        return $this->adminJson($data);
+        return $this->jsonResponse($data);
     }
 
     protected function shortenPath(string $path): string
@@ -578,5 +605,30 @@ class SearchController extends AdminController
         }
 
         return $shortPath;
+    }
+
+    /**
+     *
+     * @throws \Exception
+     */
+    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
+    {
+        $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        $adminStyle = $event->getAdminStyle();
+
+        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
+        if (!$data['iconCls']) {
+            $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        } else {
+            $data['icon'] = null;
+        }
+        if ($adminStyle->getElementCssClass() !== false) {
+            if (!isset($data['cls'])) {
+                $data['cls'] = '';
+            }
+            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
+        }
+        $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
     }
 }

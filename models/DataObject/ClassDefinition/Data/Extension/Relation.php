@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
+use Pimcore\Model\Factory;
+use Pimcore\Resolver\ClassResolver;
 
 trait Relation
 {
@@ -30,12 +33,19 @@ trait Relation
     protected function getPhpDocClassString(bool $asArray = false): string
     {
         $types = [];
+        $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
         // add documents
         if ($this->getDocumentsAllowed()) {
             if ($documentTypes = $this->getDocumentTypes()) {
+                $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.document');
                 foreach ($documentTypes as $item) {
-                    $types[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']));
+                    if ($className = $this->resolveClassName($factory, $resolver, $item['documentTypes'])) {
+                        if (str_starts_with($className, '\\') === false) {
+                            $className = '\\' . $className;
+                        }
+                        $types[] = $className;
+                    }
                 }
             } else {
                 $types[] = '\\' . Page::class;
@@ -47,8 +57,14 @@ trait Relation
         // add assets
         if ($this->getAssetsAllowed()) {
             if ($assetTypes = $this->getAssetTypes()) {
+                $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.asset');
                 foreach ($assetTypes as $item) {
-                    $types[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']));
+                    if ($className = $this->resolveClassName($factory, $resolver, $item['assetTypes'])) {
+                        if (str_starts_with($className, '\\') === false) {
+                            $className = '\\' . $className;
+                        }
+                        $types[] = $className;
+                    }
                 }
             } else {
                 $types[] = '\\' . Asset::class;
@@ -58,8 +74,20 @@ trait Relation
         // add objects
         if ($this->getObjectsAllowed()) {
             if ($classes = $this->getClasses()) {
+                $classMap = $factory->getClassMap();
                 foreach ($classes as $item) {
-                    $types[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
+                    /**
+                     * Don´t use the factory method getClassNameFor here, because it will actually load the requested class and this could
+                     * lead to problems during classes-rebuild command.
+                     */
+                    $className = sprintf('Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
+                    $className = $classMap[$className] ?? $className;
+
+                    if (str_starts_with($className, '\\') === false) {
+                        $className = '\\' . $className;
+                    }
+
+                    $types[] = $className;
                 }
             } else {
                 $types[] = '\\' . AbstractObject::class;
@@ -110,5 +138,18 @@ trait Relation
     public function getObjectsAllowed(): bool
     {
         return false;
+    }
+
+    private function resolveClassName(Factory $factory, ClassResolver $resolver, string $type): ?string
+    {
+        if ($className = $resolver->resolve($type)) {
+            try {
+                return $factory->getClassNameFor($className);
+            } catch (UnsupportedException) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }

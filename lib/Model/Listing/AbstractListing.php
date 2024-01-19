@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Listing;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
@@ -113,7 +113,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        $this->offset = (int)$offset;
+        $this->offset = $offset;
 
         return $this;
     }
@@ -178,10 +178,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $condition
-     * @param mixed $value
-     * @param string $concatenator
-     *
      * @return $this
      */
     public function addConditionParam(string $condition, mixed $value = null, string $concatenator = 'AND'): static
@@ -261,9 +257,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         foreach ($params as $pkey => $param) {
             if (is_array($param)) {
                 if (isset($param[0]) && is_string($param[0])) {
-                    $conditionVariableTypes[$pkey] = Connection::PARAM_STR_ARRAY;
+                    $conditionVariableTypes[$pkey] = ArrayParameterType::STRING;
                 } else {
-                    $conditionVariableTypes[$pkey] = Connection::PARAM_INT_ARRAY;
+                    $conditionVariableTypes[$pkey] = ArrayParameterType::INTEGER;
                 }
             } else {
                 if (is_bool($param)) {
@@ -286,7 +282,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $condition
      * @param array|scalar|null $conditionVariables
      *
      * @return $this
@@ -358,12 +353,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $db->quoteIdentifier($value);
     }
 
-    /**
-     * @param mixed $value
-     * @param int|null $type
-     *
-     * @return string
-     */
     public function quote(mixed $value, int $type = null): string
     {
         $db = Db::get();

@@ -35,7 +35,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
@@ -44,7 +43,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * The collection description.
      *
-     * @var string
      */
     protected string $description = '';
 
@@ -54,7 +52,6 @@ final class CollectionConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?CollectionConfig
     {
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         try {
@@ -80,11 +77,7 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool|null $force
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -127,7 +120,7 @@ final class CollectionConfig extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -152,7 +145,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -162,7 +154,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\CollectionConfig
      */
@@ -214,7 +205,7 @@ final class CollectionConfig extends Model\AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -226,7 +217,7 @@ final class CollectionConfig extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

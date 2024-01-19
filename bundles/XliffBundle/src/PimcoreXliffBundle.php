@@ -18,11 +18,14 @@ namespace Pimcore\Bundle\XliffBundle;
 
 use Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler\TranslationServicesPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcoreXliffBundle extends AbstractPimcoreBundle
+class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
+    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function getJsPaths(): array

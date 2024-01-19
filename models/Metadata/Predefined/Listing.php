@@ -63,8 +63,6 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @param string $type
-     * @param array|string|null $subTypes
      *
      * @return \Pimcore\Model\Metadata\Predefined[]|null
      *
@@ -99,13 +97,6 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
         return $list->load();
     }
 
-    /**
-     * @param string $key
-     * @param string|null $language
-     * @param string|null $targetSubtype
-     *
-     * @return \Pimcore\Model\Metadata\Predefined|null
-     */
     public static function getByKeyAndLanguage(string $key, ?string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
     {
         $list = new self();

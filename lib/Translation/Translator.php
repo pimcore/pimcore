@@ -43,7 +43,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * the message. Can be useful for debugging and to get an overview over used translation keys on
      * a page.
      *
-     * @var bool
      */
     protected bool $disableTranslations = false;
 
@@ -58,11 +57,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $id = trim($id);
@@ -107,9 +101,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $term;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLocale(string $locale): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -117,11 +108,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -131,11 +117,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return MessageCatalogueInterface
-     */
     public function getCatalogue(string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
@@ -152,8 +133,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @param string $domain
-     * @param string $locale
      */
     public function lazyInitialize(string $domain, string $locale): void
     {
@@ -197,17 +176,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                // aliases support
-                if ($domain === 'admin' || $domain === 'admin_ext') {
-                    $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
-                    $aliases = json_decode(file_get_contents($aliasesPath), true);
-                    foreach ($aliases as $aliasTarget => $aliasSource) {
-                        if (isset($data[$aliasSource]) && (!isset($data[$aliasTarget]) || empty($data[$aliasTarget]))) {
-                            $data[$aliasTarget] = $data[$aliasSource];
-                        }
-                    }
-                }
-
                 $data = [
                     $domain => $data,
                     $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl,
@@ -226,10 +194,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * Resets the initialization of a specific catalogue
      *
-     * @param string $domain
-     * @param string $locale
      *
-     * @return void
      */
     public function resetInitialization(string $domain, string $locale): void
     {
@@ -257,7 +222,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $normalizedId = $id;
 
         //translate only plural form(seperated by pipe "|") with count param
-        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
+        if (isset($parameters['%count%']) && $translated && str_contains($normalizedId, '|')) {
             $normalizedId = $id = $translated;
             $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
@@ -292,8 +257,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         $t->setKey($id);
 
                         // add all available languages
-                        $availableLanguages = (array)Translation::getValidLanguages();
-                        foreach ($availableLanguages as $language) {
+                        foreach (Translation::getValidLanguages() as $language) {
                             $t->addTranslation($language, '');
                         }
                     }
@@ -334,7 +298,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return string
      */
     public function getAdminPath(): string
     {
@@ -342,7 +305,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param string $adminPath
      *
      * @internal
      */
@@ -354,7 +316,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return array
      */
     public function getAdminTranslationMapping(): array
     {
@@ -364,7 +325,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @param array $adminTranslationMapping
      */
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
     {
@@ -374,7 +334,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return Kernel
      */
     public function getKernel(): Kernel
     {
@@ -382,7 +341,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param Kernel $kernel
      *
      * @internal
      */
@@ -424,7 +382,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param string $cacheDir
      *
      * @return string[]
      */

@@ -19,10 +19,7 @@ namespace Pimcore\Model\Document;
 /**
  * @method \Pimcore\Model\Document\Snippet\Dao getDao()
  */
-class Snippet extends TargetingDocument
+class Snippet extends \Pimcore\Model\Document\PageSnippet
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'snippet';
 }

@@ -30,22 +30,10 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'table';
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $cols = null;
 
@@ -57,7 +45,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $rows = null;
 
@@ -71,7 +58,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @internal
      *
-     * @var string
      */
     public string $data = '';
 
@@ -83,36 +69,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @internal
      *
-     * @var array
      */
     public array $columnConfig = [];
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     public function getCols(): ?int
     {
         return $this->cols;
     }
 
+    /**
+     * @return $this
+     */
     public function setCols(?int $cols): static
     {
-        $this->cols = $this->getAsIntegerCast($cols);
+        $this->cols = $cols;
 
         return $this;
     }
@@ -122,9 +92,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->rows;
     }
 
+    /**
+     * @return $this
+     */
     public function setRows(?int $rows): static
     {
-        $this->rows = $this->getAsIntegerCast($rows);
+        $this->rows = $rows;
 
         return $this;
     }
@@ -134,9 +107,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->rowsFixed;
     }
 
+    /**
+     * @return $this
+     */
     public function setRowsFixed(bool $rowsFixed): static
     {
-        $this->rowsFixed = (bool)$rowsFixed;
+        $this->rowsFixed = $rowsFixed;
 
         return $this;
     }
@@ -146,9 +122,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->colsFixed;
     }
 
+    /**
+     * @return $this
+     */
     public function setColsFixed(bool $colsFixed): static
     {
-        $this->colsFixed = (bool)$colsFixed;
+        $this->colsFixed = $colsFixed;
 
         return $this;
     }
@@ -158,6 +137,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(string $data): static
     {
         $this->data = $data;
@@ -200,11 +182,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -224,11 +202,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -268,11 +242,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -295,11 +265,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -320,11 +286,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -350,11 +312,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
@@ -362,11 +321,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -381,9 +336,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -395,14 +347,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            return base64_encode(Serialize::serialize($data));
+            return json_encode($data);
         }
 
         return '';
@@ -428,9 +377,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -439,11 +385,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array|string
     {
@@ -470,7 +413,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
-                        $html .= htmlspecialchars($cell, ENT_QUOTES, 'UTF-8');
+                        $html .= htmlspecialchars($cell ?? '', ENT_QUOTES, 'UTF-8');
                         $html .= '</td>';
                     }
                 }
@@ -489,15 +432,15 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Table $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Table $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->cols = $masterDefinition->cols;
-        $this->colsFixed = $masterDefinition->colsFixed;
-        $this->rows = $masterDefinition->rows;
-        $this->rowsFixed = $masterDefinition->rowsFixed;
-        $this->data = $masterDefinition->data;
+        $this->cols = $mainDefinition->cols;
+        $this->colsFixed = $mainDefinition->colsFixed;
+        $this->rows = $mainDefinition->rows;
+        $this->rowsFixed = $mainDefinition->rowsFixed;
+        $this->data = $mainDefinition->data;
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
@@ -525,9 +468,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return 'array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -574,9 +514,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
@@ -621,9 +558,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
@@ -661,9 +595,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -697,5 +628,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'table';
     }
 }

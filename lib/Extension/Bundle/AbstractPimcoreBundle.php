@@ -22,68 +22,24 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 {
     protected static ?PimcoreBundleManager $bundleManager = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNiceName(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersion(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getInstaller(): ?Installer\InstallerInterface
     {
         return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeCssPaths(): array
-    {
-        return [];
     }
 
     public static function isInstalled(): bool

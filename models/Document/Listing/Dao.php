@@ -37,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $documents = [];
-        $select = $this->getQueryBuilder(['documents.id', 'documents.type']);
+        $select = $this->getQueryBuilder('documents.id', 'documents.type');
 
         $documentsData = $this->db->fetchAllAssociative((string) $select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
@@ -57,7 +57,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
@@ -76,7 +75,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['documents.id']);
+        $queryBuilder = $this->getQueryBuilder('documents.id');
         $documentIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
@@ -87,7 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as `path`']);
+        $queryBuilder = $this->getQueryBuilder('documents.id', 'CONCAT(documents.path, documents.key) as `path`');
         $documentIds = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;

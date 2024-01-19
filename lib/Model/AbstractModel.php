@@ -166,10 +166,8 @@ abstract class AbstractModel implements ModelInterface
      */
     public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key, $value, $ignoreEmptyValues);
-            }
+        foreach ($data as $key => $value) {
+            $this->setValue($key, $value, $ignoreEmptyValues);
         }
 
         return $this;
@@ -195,9 +193,6 @@ abstract class AbstractModel implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $blockedVars = ['dao', 'dirtyFields', 'activeDispatchingEvents'];
@@ -237,15 +232,12 @@ abstract class AbstractModel implements ModelInterface
         }
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         $this->dao = null;
     }
 
-    /**
-     * @return array
-     */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $result = get_object_vars($this);
         unset($result['dao']);
@@ -260,8 +252,6 @@ abstract class AbstractModel implements ModelInterface
 
     /**
      * @internal
-     *
-     * @param array $data
      *
      * @throws \Exception
      */

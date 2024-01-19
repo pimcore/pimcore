@@ -1,0 +1,25 @@
+---
+log_relatedobject: "Powi\u0105zany obiekt"
+log_component: Komponent
+log_search_form: Szukaj parametru
+log_search_type: Typ logowania
+log_search_relatedobject: "Obiekt powi\u0105zany (id)"
+log_timestamp: Timestamp
+log_fileobject: Plik obiektu
+log_detailinformation: "Szczeg\xF3\u0142y"
+log_pid: PID
+log_refresh_label: "Od\u015Bwie\u017C co"
+log_applicationlog: Application Logger
+log_search_component: Component
+log_search_pid: PID
+log_refresh_seconds: Seconds
+log_search_from: From
+log_search_to: To
+log_type: Type
+log_source: Source
+log_message: Message
+log_reset_search: Reset
+log_search: Search
+log_search_message: Message
+keybinding_applicationLogger: Application logger
+...

@@ -26,6 +26,10 @@ trait SelectionProviderTrait
 {
     protected function doEnrichDefinitionDefinition(/*?Concrete */ ?DataObject\Concrete $object, string $fieldname, string $purpose, int $mode, /**  array */ array $context = []): void
     {
+        if ($this->getOptionsProviderType() === Data\OptionsProviderInterface::TYPE_CONFIGURE) {
+            return;
+        }
+
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             $mode
@@ -41,10 +45,10 @@ trait SelectionProviderTrait
                 $context['purpose'] = $purpose;
             }
 
-            $inheritanceEnabled = DataObject::getGetInheritedValues();
-            DataObject::setGetInheritedValues(true);
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            DataObject::setGetInheritedValues($inheritanceEnabled);
+            $options = DataObject\Service::useInheritedValues(true,
+                fn () => $optionsProvider->getOptions($context, $this),
+            );
+
             $this->setOptions($options);
 
             if ($this instanceof Data\Select) {

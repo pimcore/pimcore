@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
@@ -32,6 +32,7 @@ final class Requirements
      */
     public static function checkFilesystem(): array
     {
+        $filesystem = new Filesystem();
         $checks = [];
 
         // filesystem checks
@@ -40,7 +41,7 @@ final class Requirements
 
             try {
                 if (!is_dir($varDir)) {
-                    File::mkdir($varDir);
+                    $filesystem->mkdir($varDir, 0775);
                 }
 
                 $files = self::rscandir($varDir);
@@ -68,7 +69,6 @@ final class Requirements
     }
 
     /**
-     * @param Connection $db
      *
      * @return Check[]
      */
@@ -458,17 +458,6 @@ final class Requirements
         ]);
 
         try {
-            $facedetectAvailable = \Pimcore\Tool\Console::getExecutable('facedetect');
-        } catch (\Exception $e) {
-            $facedetectAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'facedetect',
-            'state' => $facedetectAvailable ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
             $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
         } catch (\Exception $e) {
             $graphvizAvailable = false;
@@ -519,14 +508,6 @@ final class Requirements
             'name' => 'PDO MySQL',
             'link' => 'http://www.php.net/pdo_mysql',
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
-        ]);
-
-        // Mysqli
-        $checks[] = new Check([
-            'name' => 'Mysqli',
-            'link' => 'http://www.php.net/mysqli',
-            'state' => class_exists('mysqli') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "Mysqli can be used instead of PDO MySQL, though it isn't a requirement.",
         ]);
 
         // iconv
@@ -609,6 +590,17 @@ final class Requirements
                 'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all).",
             ]);
         }
+
+        $checks[] = new Check([
+            'name' => 'locales-utf8',
+            'link' => 'https://packages.debian.org/en/stable/locales-all',
+            'state' => setlocale(LC_ALL, [
+                           'en.utf8', 'en.UTF-8', 'en_US.utf8', 'en_US.UTF-8', 'en_GB.utf8', 'en_GB.UTF-8',
+                       ]) === false
+                       ? Check::STATE_ERROR
+                       : Check::STATE_OK,
+            'message' => 'It is recommended to install UTF-8 locale, otherwise all CLI calls which use escapeshellarg() will strip multibyte characters',
+        ]);
 
         // Imagick
         $checks[] = new Check([
@@ -697,10 +689,7 @@ final class Requirements
     }
 
     /**
-     * @param string $base
-     * @param array $data
      *
-     * @return array
      *
      * @throws \Exception
      */

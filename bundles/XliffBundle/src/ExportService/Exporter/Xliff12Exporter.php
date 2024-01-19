@@ -20,7 +20,7 @@ use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent;
 use Pimcore\Bundle\XliffBundle\Event\XliffEvents;
-use Pimcore\File;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Xliff12Exporter implements ExporterInterface
 {
@@ -30,14 +30,13 @@ class Xliff12Exporter implements ExporterInterface
 
     private ?\SimpleXMLElement $xliffFile = null;
 
-    public function __construct(Xliff12Escaper $xliffEscaper)
-    {
+    public function __construct(
+        Xliff12Escaper $xliffEscaper,
+        protected Filesystem $filesystem
+    ) {
         $this->xliffEscaper = $xliffEscaper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function export(AttributeSet $attributeSet, string $exportId = null): string
     {
         $exportId = $exportId ?: uniqid();
@@ -88,7 +87,7 @@ class Xliff12Exporter implements ExporterInterface
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportId . '.xliff';
         if (!is_file($exportFile)) {
             // create initial xml file structure
-            File::put($exportFile, '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL . '<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2"></xliff>');
+            $this->filesystem->dumpFile($exportFile, '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL . '<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2"></xliff>');
         }
 
         return $exportFile;

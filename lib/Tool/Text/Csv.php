@@ -35,7 +35,7 @@ class Csv
         if ($count < 10) {
             throw new \Exception('You must provide at least ten lines in your sample data');
         }
-        list($quote, $delim) = $this->guessQuoteAndDelim($data);
+        [$quote, $delim] = $this->guessQuoteAndDelim($data);
         if (!$quote) {
             $quote = '"';
         }
@@ -120,7 +120,7 @@ class Csv
     /**
      * @phpstan-param non-empty-string $linefeed
      */
-    protected function guessDelim(string $data, string $linefeed, string $quotechar): bool|string
+    protected function guessDelim(string $data, string $linefeed, string $quotechar): false|string
     {
         $charcount = count_chars($data, 1);
 

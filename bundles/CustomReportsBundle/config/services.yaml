@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -14,9 +13,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Bundle\CustomReportsBundle\EventListener\IndexSettingsListener:
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
 
     pimcore.custom_report.adapter.factory.sql:
         class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
@@ -27,8 +23,3 @@ services:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         public: true
         tags: [ 'container.service_locator' ]
-
-    pimcore.document.newsletter.factory.report:
-        class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\ReportAddressSourceAdapterFactory
-        arguments:
-            - '@pimcore.custom_report.adapter.factories'

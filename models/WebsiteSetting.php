@@ -28,11 +28,11 @@ final class WebsiteSetting extends AbstractModel
 {
     protected ?int $id = null;
 
-    protected string $name;
+    protected string $name = '';
 
-    protected string $language;
+    protected string $language = '';
 
-    protected string $type;
+    protected ?string $type = null;
 
     protected mixed $data = null;
 
@@ -49,13 +49,6 @@ final class WebsiteSetting extends AbstractModel
      */
     protected static array $nameIdMappingCache = [];
 
-    /**
-     * @param string $name
-     * @param int|null $siteId
-     * @param string|null $language
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
@@ -73,7 +66,7 @@ final class WebsiteSetting extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $setting = new self();
-                $setting->getDao()->getById((int)$id);
+                $setting->getDao()->getById($id);
                 \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
             } catch (NotFoundException $e) {
                 return null;
@@ -88,8 +81,6 @@ final class WebsiteSetting extends AbstractModel
      * @param int|null $siteId site ID
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
-     *
-     * @return WebsiteSetting|null
      *
      * @throws \Exception
      */
@@ -138,7 +129,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -163,7 +154,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -192,7 +183,7 @@ final class WebsiteSetting extends AbstractModel
     {
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
-            return Element\Service::getElementById($this->getType(), $this->data);
+            return Element\Service::getElementById($this->getType(), (int) $this->data);
         }
 
         return $this->data;
@@ -203,7 +194,7 @@ final class WebsiteSetting extends AbstractModel
      */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -216,9 +207,9 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @return $this
      */
-    public function setSiteId(int $siteId): static
+    public function setSiteId(?int $siteId): static
     {
-        $this->siteId = (int) $siteId;
+        $this->siteId = $siteId;
 
         return $this;
     }
@@ -231,11 +222,10 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @param string $type
      *
      * @return $this
      */
-    public function setType(string $type): static
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
@@ -245,9 +235,8 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @return string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -257,9 +246,14 @@ final class WebsiteSetting extends AbstractModel
         return $this->language;
     }
 
-    public function setLanguage(string $language): void
+    /**
+     * @return $this
+     */
+    public function setLanguage(string $language): static
     {
         $this->language = $language;
+
+        return $this;
     }
 
     /**

@@ -24,7 +24,7 @@ interface BlockInterface
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return void|string
+     * @return void|string|$this
      */
     public function start();
 
@@ -62,21 +62,18 @@ interface BlockInterface
     /**
      * Return the amount of block elements
      *
-     * @return int
      */
     public function getCount(): int;
 
     /**
      * Return current iteration step
      *
-     * @return int
      */
     public function getCurrent(): int;
 
     /**
      * Return current index
      *
-     * @return int
      */
     public function getCurrentIndex(): int;
 

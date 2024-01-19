@@ -26,9 +26,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class RegisterMaintenanceTaskPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition(Executor::class)) {
@@ -42,7 +39,7 @@ final class RegisterMaintenanceTaskPass implements CompilerPassInterface
                 throw new \InvalidArgumentException('Tagged Maintenance Task `'.$id.'` needs to a `type` attribute.');
             }
 
-            $definition->addMethodCall('registerTask', [$tags[0]['type'], new Reference($id)]);
+            $definition->addMethodCall('registerTask', [$tags[0]['type'], new Reference($id), $tags[0]['messengerMessageClass'] ?? null]);
         }
     }
 }

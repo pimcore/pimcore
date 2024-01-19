@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -24,6 +23,7 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
+use Pimcore\Security\User\UserLoader;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -57,9 +57,6 @@ class EditmodeListener implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -91,7 +88,7 @@ class EditmodeListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         if (!$event->isMainRequest()) {
-            return; // only master requests inject editmode assets
+            return; // only main requests inject editmode assets
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
@@ -130,7 +127,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // check for substring as the content type could define attributes (e.g. charset)
         foreach ($this->contentTypes as $ct) {
-            if (false !== strpos($contentType, $ct)) {
+            if (str_contains($contentType, $ct)) {
                 return true;
             }
         }
@@ -141,8 +138,6 @@ class EditmodeListener implements EventSubscriberInterface
     /**
      * Inject editmode assets into response HTML
      *
-     * @param Document $document
-     * @param Response $response
      */
     protected function addEditmodeAssets(Document $document, Response $response): void
     {
@@ -262,7 +257,6 @@ class EditmodeListener implements EventSubscriberInterface
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',
             '/bundles/pimcoreadmin/extjs/js/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-            '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js',
         ];
     }
 

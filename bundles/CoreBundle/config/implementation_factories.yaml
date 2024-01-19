@@ -13,10 +13,6 @@ services:
     Pimcore\Model\Document\Editable\Loader\EditableLoader:
         public: true
 
-    # document data loader
-    Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader:
-        public: true
-
     # object data loader
     pimcore.implementation_loader.object.data:
         class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
@@ -34,6 +30,7 @@ services:
 
     # model factory
     Pimcore\Model\FactoryInterface: '@Pimcore\Model\Factory'
+
     Pimcore\Model\Factory:
         calls:
             - [addLoader, ['@Pimcore\Model\Factory\FallbackBuilder']]
@@ -45,5 +42,4 @@ services:
         public: true
 
     # fallback model builder for pimcore model factory
-    Pimcore\Model\Factory\FallbackBuilder:
-        public: false
+    Pimcore\Model\Factory\FallbackBuilder: ~

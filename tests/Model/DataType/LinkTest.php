@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -29,6 +32,12 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class LinkTest extends ModelTestCase
 {
+    protected Asset $testAsset;
+
+    protected Link $link;
+
+    protected Data $linkDefinition;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -47,7 +56,25 @@ class LinkTest extends ModelTestCase
     }
 
     /**
-     * @return unittestLink
+     * Prepares objects for internal link tests
+     *
+     * @throws \Exception
+     */
+    protected function setupInternalLinkObjects(): void
+    {
+        $this->testAsset = TestHelper::createImageAsset();
+
+        $link = new Link();
+        $link->setInternal($this->testAsset->getId());
+        $link->setInternalType('asset');
+        $this->link = $link;
+
+        $linkObject = $this->createLinkObject();
+        $linkObject->setTestlink($link);
+        $this->linkDefinition = $linkObject->getClass()->getFieldDefinition('testlink');
+    }
+
+    /**
      *
      * @throws \Exception
      */
@@ -79,6 +106,36 @@ class LinkTest extends ModelTestCase
 
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
+    }
+
+    /**
+     * Verifies that checkValidity method throws correct exception if invalid data is provided
+     *
+     */
+    public function testInternalCheckValidity(): void
+    {
+        $this->setupInternalLinkObjects();
+        $this->testAsset->delete();
+
+        //Should return validation exception as asset was deleted
+        $this->expectException(ValidationException::class);
+        $this->linkDefinition->checkValidity($this->link);
+    }
+
+    /**
+     * Verifies that checkValidity method sanitize the link data if invalid data is provided
+     *
+     */
+    public function testInternalCheckValidityParam(): void
+    {
+        $this->setupInternalLinkObjects();
+        $this->testAsset->delete();
+        //Should not return validation exception as parameter is set
+        $this->linkDefinition->checkValidity($this->link, true, ['resetInvalidFields' => true]);
+
+        //Should return sanitized link data
+        $this->assertTrue($this->link->getInternal() === null);
+        $this->assertTrue($this->link->getInternalType() === null);
     }
 
     /**

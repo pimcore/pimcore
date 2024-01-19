@@ -31,9 +31,7 @@ class Definition extends Model\AbstractModel
 
     public function __construct(array $data = [])
     {
-        if (is_array($data) && !empty($data)) {
-            $this->setValues($data);
-        }
+        $this->setValues($data);
     }
 
     public function getKey(): ?string
@@ -41,6 +39,9 @@ class Definition extends Model\AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -53,7 +54,10 @@ class Definition extends Model\AbstractModel
         return $this->category;
     }
 
-    public function setCategory(string $category): Definition
+    /**
+     * @return $this
+     */
+    public function setCategory(string $category): static
     {
         $this->category = $category;
 
@@ -61,9 +65,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return Definition|null
      *
      * @throws \Exception
      */
@@ -85,9 +87,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $permission
      *
-     * @return self|static
      *
      * @throws \Exception
      */

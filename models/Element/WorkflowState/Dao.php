@@ -26,9 +26,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $cid
-     * @param string $ctype
-     * @param string $workflow
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -45,7 +42,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */
@@ -60,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'element_workflow_state', $data);
+        Helper::upsert($this->db, 'element_workflow_state', $data, $this->getPrimaryKey('element_workflow_state'));
 
         return true;
     }

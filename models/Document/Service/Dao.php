@@ -48,8 +48,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Document $document
-     * @param string $task
      *
      * @return int[]
      */
@@ -88,11 +86,6 @@ class Dao extends Model\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @param Document $document
-     * @param Document $translation
-     * @param string|null $language
-     */
     public function addTranslation(Document $document, Document $translation, string $language = null): void
     {
         $sourceId = $this->getTranslationSourceId($document);
@@ -101,11 +94,11 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        Helper::insertOrUpdate($this->db, 'documents_translations', [
+        Helper::upsert($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,
-        ]);
+        ], $this->getPrimaryKey('documents_translations'));
     }
 
     public function removeTranslation(Document $document): void

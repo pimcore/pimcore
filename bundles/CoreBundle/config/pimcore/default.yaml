@@ -10,11 +10,8 @@ framework:
     router:
         strict_requirements: ~
         utf8: true
-    form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    web_link:
-        enabled: true
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
@@ -26,33 +23,93 @@ framework:
     php_errors:
         log: true
     assets: ~
+    http_method_override: false
     mailer:
         enabled: true
         transports:
             main: native://default
-            pimcore_newsletter: native://default
     messenger:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
-            'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
-            'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+            'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
-        reset_on_message: true
+    rate_limiter:
+        reset_password:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '5 minutes'
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_relative_medias: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    div: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel', 'style' ]
+                    table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
+                    colgroup: 'class'
+                    col: [ 'class', 'style', 'id' ]
+                    thead: [ 'class', 'id' ]
+                    tbody: [ 'class', 'id' ]
+                    tr: [ 'class', 'id' ]
+                    td: [ 'class', 'id' ]
+                    th: [ 'class', 'id', 'scope' ]
+                    ul: [ 'class', 'style', 'id' ]
+                    li: [ 'class', 'style', 'id' ]
+                    ol: [ 'class', 'style', 'id' ]
+                    u: [ 'class', 'id' ]
+                    i: [ 'class', 'id' ]
+                    b: [ 'class', 'id' ]
+                    caption: [ 'class', 'id' ]
+                    sub: [ 'class', 'id' ]
+                    sup: [ 'class', 'id' ]
+                    blockquote: [ 'class', 'id' ]
+                    s: [ 'class', 'id' ]
+                    iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
+                    br: ''
+                    img: [ 'alt', 'style', 'src' ]
+            pimcore.translation_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
+                    br: ''
 
 # Twig Configuration
 twig:
@@ -62,6 +119,8 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        document: ~
+        editmode: false
     paths:
         '%kernel.project_dir%/templates': App
 
@@ -85,6 +144,12 @@ doctrine:
 # Monolog Configuration
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
+    handlers:
+        redirect:
+            type: stream
+            path:  "%kernel.logs_dir%/redirect.log"
+            level: debug
+            channels: ['redirect']
 
 # CMF routing
 cmf_routing:
@@ -115,6 +180,31 @@ pimcore:
                         object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
                         select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                image:
+                    class: \Pimcore\Model\Asset\Image
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                archive:
+                    class: \Pimcore\Model\Asset\Archive
+                    matching: ['/zip/', '/tar/']
+                audio:
+                    class: \Pimcore\Model\Asset\Audio
+                    matching: ['/audio/']
+                document:
+                    class: \Pimcore\Model\Asset\Document
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                folder:
+                    class: \Pimcore\Model\Asset\Folder
+                text:
+                   class: \Pimcore\Model\Asset\Text
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                video:
+                   class: \Pimcore\Model\Asset\Video
+                   matching: [ "/video/" ]
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
@@ -152,7 +242,6 @@ pimcore:
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
-                    newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
@@ -162,8 +251,6 @@ pimcore:
                     advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
                     rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
-                    targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
-                    targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
                     quantityValueRange: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange
                     inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
@@ -189,75 +276,49 @@ pimcore:
     documents:
         type_definitions:
             map:
-                folder: \Pimcore\Model\Document\Folder
-                page: \Pimcore\Model\Document\Page
-                snippet: \Pimcore\Model\Document\Snippet
-                link: \Pimcore\Model\Document\Link
-                hardlink: \Pimcore\Model\Document\Hardlink
-                email: \Pimcore\Model\Document\Email
-                newsletter: \Pimcore\Model\Document\Newsletter
-                printpage: \Pimcore\Model\Document\Printpage
-                printcontainer: \Pimcore\Model\Document\Printcontainer
-            prefixes:
-                - \Pimcore\Model\Document\
+                folder:
+                    class: \Pimcore\Model\Document\Folder
+                    translatable: false
+                    translatable_inheritance: true
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    valid_table: 'page'
+                    direct_route: true
+                    predefined_document_types: true
+                snippet:
+                    class: \Pimcore\Model\Document\Snippet
+                    valid_table: 'snippet'
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+                link:
+                    class: \Pimcore\Model\Document\Link
+                    translatable: false
+                    valid_table: 'link'
+                hardlink:
+                    class: \Pimcore\Model\Document\Hardlink
+                    translatable: false
+                    valid_table: 'hardlink'
+                email:
+                    class: \Pimcore\Model\Document\Email
+                    valid_table: 'email'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
-        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
-
-    routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
-
-    newsletter:
-        source_adapters:
-            defaultAdapter: pimcore.document.newsletter.factory.default
-            csvList: pimcore.document.newsletter.factory.csv
-
-    targeting:
-        data_providers:
-            device: Pimcore\Targeting\DataProvider\Device
-            geoip: Pimcore\Targeting\DataProvider\GeoIp
-            geolocation: Pimcore\Targeting\DataProvider\GeoLocation
-            targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
-            visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
-        conditions:
-            browser: Pimcore\Targeting\Condition\Browser
-            country: Pimcore\Targeting\Condition\Country
-            geopoint: Pimcore\Targeting\Condition\GeoPoint
-            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
-            language: Pimcore\Targeting\Condition\Language
-            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
-            referringsite: Pimcore\Targeting\Condition\ReferringSite
-            searchengine: Pimcore\Targeting\Condition\SearchEngine
-            target_group: Pimcore\Targeting\Condition\TargetGroup
-            timeonsite: Pimcore\Targeting\Condition\TimeOnSite
-            url: Pimcore\Targeting\Condition\Url
-            visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
-        action_handlers:
-            assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
-            codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
-            redirect: Pimcore\Targeting\ActionHandler\Redirect
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
         profiler:
             routes:
                 - { path: ^/_(profiler|wdt)(/.*)?$ }
-
-    sitemaps:
-        generators:
-            pimcore_documents:
-                enabled: true
-                priority: 100
-                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
-    redirects:
-        status_codes:
-            300: Multiple Choices
-            301: Moved Permanently
-            302: Found
-            303: See Other
-            307: Temporary Redirect
+    translations:
+        domains:
+            - messages
+            - admin
 
     templating_engine:
         twig:
@@ -265,13 +326,11 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-presta_sitemap:
-    # do not add properties by default
-    defaults:
-        lastmod: ~
-        priority: ~
-        changefreq: ~
 
-sensio_framework_extra:
-    router:
-        annotations: false
+    gotenberg:
+        base_url: 'http://gotenberg:3000'
+
+    config_location:
+        select_options:
+            read_target:
+                type: 'symfony-config'

@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -207,6 +208,21 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Verifies a newly published object gets the default values of mandatory fields
+     */
+    public function testDefaultValueAndMandatorySavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+
+        $this->assertEquals('default', $latestVersion->getData()->getMandatoryInputWithDefault(), 'Expected default value saved to version');
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
@@ -337,5 +353,39 @@ class ObjectTest extends ModelTestCase
         $iqv = ['value' => null, 'unit' => null];
         $value = $dataType->getDataFromEditmode($iqv, $object);
         $this->assertNull($value);
+    }
+
+    public function testSanitization(): void
+    {
+        $db = Db::get();
+
+        $object = TestHelper::createEmptyObject();
+        $object->setWysiwyg('!@#$%^abc\'"<script>console.log("ops");</script> 测试&lt; edf &gt; "');
+        $object->save();
+
+        //reload from db
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($object->getWysiwyg()), 'Asseting setter/getter value is sanitized');
+
+        $dbQueryValue = $db->fetchOne(
+            sprintf(
+                'SELECT `wysiwyg` FROM object_query_%s WHERE oo_id = %d',
+                $object->getClassName(),
+                $object->getId()
+            )
+        );
+        $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($dbQueryValue), 'Asserting object_query table value is persisted as sanitized');
+    }
+
+    public function testInputCheckValidate(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $targetObject = TestHelper::createEmptyObject();
+        $randomText = TestHelper::generateRandomString(500);
+
+        $targetObject->setInput($randomText);
+        $targetObject->save();
     }
 }

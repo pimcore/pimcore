@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
+use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -50,11 +51,6 @@ class RequestHelper
         return $this->requestStack->getCurrentRequest();
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return Request
-     */
     public function getRequest(Request $request = null): Request
     {
         if (null === $request) {
@@ -79,11 +75,6 @@ class RequestHelper
         return $mainRequest;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
     public function isFrontendRequest(Request $request = null): bool
     {
         $request = $this->getRequest($request);
@@ -117,11 +108,22 @@ class RequestHelper
     }
 
     /**
+     * Can be used to check if a user is trying to access the object preview and is allowed to do so.
+     *
+     *
+     */
+    public function isObjectPreviewRequestByAdmin(Request $request = null): bool
+    {
+        $request = $this->getRequest($request);
+
+        return $request->query->has('pimcore_object_preview')
+            && Authentication::isValidUser(Authentication::authenticateSession($request));
+    }
+
+    /**
      * E.g. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      *
-     * @param Request|null $request
      *
-     * @return bool
      */
     public function isFrontendRequestByAdmin(Request $request = null): bool
     {
@@ -153,9 +155,7 @@ class RequestHelper
      *
      * @internal
      *
-     * @param Request|null $request
      *
-     * @return string
      */
     public function getAnonymizedClientIp(Request $request = null): string
     {
@@ -176,16 +176,17 @@ class RequestHelper
     }
 
     /**
-     * @param string $uri
      *
-     * @return Request
      *
      * @internal
      */
-    public function createRequestWithContext(string $uri = '/'): Request
+    public function createRequestWithContext(string $uri = '/', ?string $host = null): Request
     {
         $port = '';
         $scheme = $this->requestContext->getScheme();
+        if ($host) {
+            $this->requestContext->setHost($host);
+        }
 
         if ('http' === $scheme && 80 !== $this->requestContext->getHttpPort()) {
             $port = ':'.$this->requestContext->getHttpPort();

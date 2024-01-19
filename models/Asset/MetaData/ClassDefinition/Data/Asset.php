@@ -16,15 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Asset extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('asset', $value);
-        if ($element) {
+        $element = $value;
+        if (is_string($value)) {
+            $element = Service::getElementByPath('asset', $value);
+        }
+        if ($element instanceof \Pimcore\Model\Asset) {
             return $element->getId();
         }
 
@@ -39,35 +41,6 @@ class Asset extends Data
         }
 
         return $element;
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal(mixed $value, array $params = []): mixed
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('asset', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
     }
 
     public function transformGetterData(mixed $data, array $params = []): mixed
@@ -90,8 +63,11 @@ class Asset extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('asset', $data);
-        if ($element) {
+        $element = $data;
+        if (is_string($data)) {
+            $element = Service::getElementByPath('asset', $data);
+        }
+        if ($element instanceof \Pimcore\Model\Asset) {
             return $element->getId();
         }
 
@@ -100,7 +76,7 @@ class Asset extends Data
 
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
 
@@ -112,7 +88,7 @@ class Asset extends Data
         if (is_numeric($data)) {
             $data = Service::getElementById('asset', $data);
         }
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getRealFullPath();
         } else {
             return '';
@@ -153,7 +129,7 @@ class Asset extends Data
     public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\Asset::getByPath($data);
-        if ($data instanceof ElementInterface) {
+        if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
 

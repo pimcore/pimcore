@@ -26,20 +26,18 @@ trait LabelTrait
      *
      * @internal
      *
-     * @var int
      */
     public int $labelWidth = 100;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $labelAlign = 'left';
 
     public function setLabelWidth(int $labelWidth): static
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
 
         return $this;
     }

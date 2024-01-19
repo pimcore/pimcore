@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+
+    Pimcore\Bundle\TinymceBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreTinymceBundle')"
+

@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper\DataType;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
@@ -561,11 +560,6 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    public function assertNewsletterActive(Concrete $object, string $field, int $seed = 1): void
-    {
-        $this->assertCheckbox($object, $field, $seed);
-    }
-
     public function assertCheckbox(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
@@ -574,11 +568,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
-    }
-
-    public function assertNewsletterConfirmed(Concrete $object, string $field, int $seed = 1): void
-    {
-        $this->assertCheckbox($object, $field, $seed);
     }
 
     public function assertNumber(Concrete $object, string $field, int $seed = 1): void
@@ -739,7 +728,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\RgbaColor::class, $value);
 
-        $seed = (int) $seed;
         $expectedBase = $seed % 200;
 
         $this->assertEquals($expectedBase, $value->getR());
@@ -760,33 +748,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
-    }
-
-    public function assertIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-
-        $this->assertIsEqual($object, $field, 'carClass', $value);
-    }
-
-    public function assertIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        /** @var IndexFieldSelection $value */
-        $value = $object->$getter();
-
-        $this->assertInstanceOf(IndexFieldSelection::class, $value);
-
-        $this->assertIsEqual($object, $field, 'carClass', $value->getField());
-    }
-
-    public function assertIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-
-        $this->assertIsEqual($object, $field, 'carClass,color', $value);
     }
 
     public function assertSlider(Concrete $object, string $field, int $seed = 1): void
@@ -888,7 +849,10 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertVideo(Concrete $object, string $field, int $seed = 1, mixed $returnParams): void
+    /**
+     * @param array<string, mixed> $returnParams
+     */
+    public function assertVideo(Concrete $object, string $field, array $returnParams, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -914,7 +878,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = 'sometext<br>' . $seed;
+        $expected = 'sometext<br />' . $seed;
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
@@ -1279,20 +1243,10 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($objects);
     }
 
-    public function fillNewsletterActive(Concrete $object, string $field, int $seed = 1): void
-    {
-        $this->fillCheckbox($object, $field, $seed);
-    }
-
     public function fillCheckbox(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(($seed % 2) == true);
-    }
-
-    public function fillNewsletterConfirmed(Concrete $object, string $field, int $seed = 1): void
-    {
-        $this->fillCheckbox($object, $field, $seed);
     }
 
     public function fillNumber(Concrete $object, string $field, int $seed = 1): void
@@ -1353,7 +1307,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
     public function fillRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
-        $seed = (int) $seed;
         $value = $seed % 200;
         $value = new DataObject\Data\RgbaColor($value, $value + 1, $value + 2, $value + 3);
 
@@ -1365,25 +1318,6 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter((string)(1 + ($seed % 2)));
-    }
-
-    public function fillIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $object->$setter('carClass');
-    }
-
-    public function fillIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $object->$setter('carClass,color');
-    }
-
-    public function fillIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $value = new IndexFieldSelection('', 'carClass', '');
-        $object->$setter($value);
     }
 
     public function fillSlider(Concrete $object, string $field, int $seed = 1): void
@@ -1475,8 +1409,6 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillTextarea(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter('sometext<br>' . $seed);
+        $object->$setter('sometext<br />' . $seed);
     }
 }
-
-@class_alias(TestDataHelper::class, 'Pimcore\Tests\Support\Helper\DataType\TestDataHelper');

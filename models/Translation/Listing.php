@@ -41,7 +41,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @internal
      *
-     * @var string
      */
     protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 
@@ -52,6 +51,11 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected ?array $languages = null;
 
+    public function isValidOrderKey(string $key): bool
+    {
+        return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
+    }
+
     public function getDomain(): string
     {
         return $this->domain;
@@ -60,7 +64,13 @@ class Listing extends Model\Listing\AbstractListing
     public function setDomain(string $domain): void
     {
         if (!Model\Translation::isAValidDomain($domain)) {
-            throw new NotFoundException(sprintf('Translation domain table "translations_%s" does not exist', $domain));
+            throw new NotFoundException(
+                sprintf(
+                    'Either translation domain %s is not registered in config `pimcore.translations.domains` or table "%s" does not exist',
+                    'translations_' . $domain,
+                    $domain
+                )
+            );
         }
 
         $this->domain = $domain;

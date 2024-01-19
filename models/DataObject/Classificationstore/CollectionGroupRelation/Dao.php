@@ -31,8 +31,6 @@ class Dao extends Model\Dao\AbstractDao
     public const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
-     * @param int $colId
-     * @param int $groupId
      *
      * @throws NotFoundException
      */
@@ -102,6 +100,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
+        Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
     }
 }

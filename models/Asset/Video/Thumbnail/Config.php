@@ -44,77 +44,65 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $medias = [];
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $group = '';
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $videoBitrate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $audioBitrate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $filenameSuffix = null;
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
      * @throws \Exception
      */
@@ -145,7 +133,6 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return Config
      */
     public static function getPreviewConfig(): Config
     {
@@ -175,11 +162,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      *
      * @internal
      */
@@ -340,20 +323,17 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function getEstimatedDimensions(): array
     {
         $dimensions = [];
         $transformations = $this->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    if (is_array($transformation['arguments'])) {
-                        foreach ($transformation['arguments'] as $key => $value) {
-                            if ($key == 'width' || $key == 'height') {
-                                $dimensions[$key] = $value;
-                            }
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                if (is_array($transformation['arguments'])) {
+                    foreach ($transformation['arguments'] as $key => $value) {
+                        if ($key == 'width' || $key == 'height') {
+                            $dimensions[$key] = $value;
                         }
                     }
                 }
@@ -393,7 +373,7 @@ final class Config extends Model\AbstractModel
         $this->group = $group;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

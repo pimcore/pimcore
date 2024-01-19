@@ -29,14 +29,11 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class LongRunningHelperPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         $helperDefinition = $container->getDefinition(LongRunningHelper::class);
         foreach ($container->getDefinitions() as $serviceId => $definition) {
-            if (strpos($serviceId, 'monolog.handler.') === 0) {
+            if (str_starts_with($serviceId, 'monolog.handler.')) {
                 $class = $container->getParameterBag()->resolveValue($definition->getClass());
                 if (is_a($class, 'Monolog\Handler\BufferHandler', true)
                     || is_a($class, 'Monolog\Handler\FingersCrossedHandler', true)) {

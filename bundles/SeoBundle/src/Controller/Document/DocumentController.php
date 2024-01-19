@@ -15,9 +15,11 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
+use Pimcore\Bundle\SeoBundle\Controller\Traits\DocumentTreeConfigWrapperTrait;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -32,18 +34,17 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class DocumentController extends ElementControllerBase
+class DocumentController extends UserAwareController
 {
-    use DocumentTreeConfigTrait;
+    use JsonHelperTrait;
+    use DocumentTreeConfigWrapperTrait;
 
     private const DOCUMENT_ROOT_ID = 1;
 
     /**
      * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
      *
-     * @param DocumentRouteHandler $documentRouteHandler
      *
-     * @return JsonResponse
      */
     public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
@@ -57,7 +58,7 @@ class DocumentController extends ElementControllerBase
 
             $nodeConfig = $this->getSeoNodeConfig($root);
 
-            return $this->adminJson($nodeConfig);
+            return $this->jsonResponse($nodeConfig);
         }
 
         throw $this->createAccessDeniedHttpException();
@@ -66,17 +67,19 @@ class DocumentController extends ElementControllerBase
     /**
      * @Route("/seopanel-tree", name="pimcore_bundle_seo_document_document_seopaneltree", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DocumentRouteHandler $documentRouteHandler
      *
-     * @return JsonResponse
      */
     public function seopanelTreeAction(
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         DocumentRouteHandler $documentRouteHandler
     ): JsonResponse {
+        $this->checkPermission('seo_document_editor');
+
+        if (!class_exists(AdminEvents::class)) {
+            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        }
+
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
@@ -86,12 +89,10 @@ class DocumentController extends ElementControllerBase
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $this->checkPermission('seo_document_editor');
-
         // make sure document routes are also built for unpublished documents
         $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
 
-        $document = Document::getById($allParams['node']);
+        $document = Document::getById((int) $allParams['node']);
 
         $documents = [];
         if ($document->hasChildren()) {
@@ -132,7 +133,7 @@ class DocumentController extends ElementControllerBase
         $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->adminJson($result['data']);
+        return $this->jsonResponse($result['data']);
     }
 
     private function getSeoNodeConfig(Document $document): array

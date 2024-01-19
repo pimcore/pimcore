@@ -31,70 +31,60 @@ class Glossary extends AbstractModel
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $text = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $link = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $abbr = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $language = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $casesensitive = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $exactmatch = false;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $site = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
@@ -102,7 +92,7 @@ class Glossary extends AbstractModel
     {
         try {
             $glossary = new self();
-            $glossary->setId((int)$id);
+            $glossary->setId($id);
             $glossary->getDao()->getById();
 
             return $glossary;
@@ -119,9 +109,12 @@ class Glossary extends AbstractModel
         return $glossary;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -131,6 +124,9 @@ class Glossary extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setText(string $text): static
     {
         $this->text = $text;
@@ -143,6 +139,9 @@ class Glossary extends AbstractModel
         return $this->text;
     }
 
+    /**
+     * @return $this
+     */
     public function setLink(string $link): static
     {
         $this->link = $link;
@@ -155,6 +154,9 @@ class Glossary extends AbstractModel
         return $this->link;
     }
 
+    /**
+     * @return $this
+     */
     public function setAbbr(string $abbr): static
     {
         $this->abbr = $abbr;
@@ -167,7 +169,10 @@ class Glossary extends AbstractModel
         return $this->abbr;
     }
 
-    public function setLanguage(string $language): static
+    /**
+     * @return $this
+     */
+    public function setLanguage(?string $language): static
     {
         $this->language = $language;
 
@@ -179,9 +184,12 @@ class Glossary extends AbstractModel
         return $this->language;
     }
 
+    /**
+     * @return $this
+     */
     public function setCasesensitive(bool $casesensitive): static
     {
-        $this->casesensitive = (bool) $casesensitive;
+        $this->casesensitive = $casesensitive;
 
         return $this;
     }
@@ -191,9 +199,12 @@ class Glossary extends AbstractModel
         return $this->casesensitive;
     }
 
+    /**
+     * @return $this
+     */
     public function setExactmatch(bool $exactmatch): static
     {
-        $this->exactmatch = (bool) $exactmatch;
+        $this->exactmatch = $exactmatch;
 
         return $this;
     }
@@ -203,12 +214,15 @@ class Glossary extends AbstractModel
         return $this->exactmatch;
     }
 
-    public function setSite(Site|int $site): static
+    /**
+     * @return $this
+     */
+    public function setSite(null|int|Site $site): static
     {
         if ($site instanceof Site) {
             $site = $site->getId();
         }
-        $this->site = (int) $site;
+        $this->site = $site;
 
         return $this;
     }
@@ -218,9 +232,12 @@ class Glossary extends AbstractModel
         return $this->site;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -230,9 +247,12 @@ class Glossary extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

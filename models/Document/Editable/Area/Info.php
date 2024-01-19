@@ -25,42 +25,36 @@ class Info
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $id = null;
 
     /**
      * @internal
      *
-     * @var Editable|null
      */
     protected ?Editable $editable = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $params = [];
 
     /**
      * @internal
      *
-     * @var Request|null
      */
     protected ?Request $request = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $index = null;
 
@@ -156,10 +150,7 @@ class Info
     }
 
     /**
-     * @param string $name
-     * @param string $type
      *
-     * @return Editable|null
      *
      * @throws \Exception
      */

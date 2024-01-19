@@ -29,19 +29,12 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 
     private \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @param string $property
-     * @param PropertyAccessorInterface|null $propertyAccessor
-     */
     public function __construct(string $property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->property = $property;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * @param object $subject
-     */
     public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
@@ -56,13 +49,6 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
         return new Marking($_marking);
     }
 
-    /**
-     * @param object $subject
-     * @param Marking $marking
-     * @param array $context
-     *
-     * @return void
-     */
     public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);

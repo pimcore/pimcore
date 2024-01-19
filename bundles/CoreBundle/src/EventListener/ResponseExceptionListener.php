@@ -18,13 +18,13 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,15 +44,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
     public function __construct(
         protected DocumentRenderer $documentRenderer,
         protected Connection $db,
-        protected Config $config,
+        protected SystemSettingsConfig $config,
         protected Document\Service $documentService,
         protected SiteResolver $siteResolver
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -155,14 +152,18 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
+        $config = $this->config->getSystemSettingsConfig();
+        $localizedErrorDocumentsPaths = $config['documents']['error_pages']['localized'] ?? null;
+        $defaultErrorDocumentPath = $config['documents']['error_pages']['default'] ?? null;
+
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments();
             $defaultErrorDocumentPath = $site->getErrorDocument();
-        } else {
-            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? [];
-            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? '';
         }
+
+        $localizedErrorDocumentsPaths = $localizedErrorDocumentsPaths ?: [];
+        $defaultErrorDocumentPath = $defaultErrorDocumentPath ?: '';
 
         if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
             $errorPath = $localizedErrorDocumentsPaths[$locale];
@@ -170,7 +171,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             // If locale can't be determined check if error page is defined for any of user-agent preferences
             foreach ($request->getLanguages() as $requestLocale) {
                 if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
-                    $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+                    $errorPath = $localizedErrorDocumentsPaths[$requestLocale];
 
                     break;
                 }

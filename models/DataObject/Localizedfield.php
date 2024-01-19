@@ -22,21 +22,23 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method void delete($deleteQuery = true, $isUpdate = true)
- * @method void load($object, $params = [])
- * @method void save($params = [])
- * @method void createUpdateTable($params = [])
+ * @method bool delete(bool $deleteQuery = true, bool $isUpdate = true)
+ * @method void load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+ * @method void save(array $params = [])
+ * @method void createUpdateTable(array $params = [])
  */
 final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-    OwnerAwareFieldInterface
+    OwnerAwareFieldInterface,
+    ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -63,7 +65,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -121,9 +122,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return self::$getFallbackValues;
     }
 
-    /**
-     * @param array|null $items
-     */
     public function __construct(array $items = null)
     {
         if ($items) {
@@ -163,7 +161,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param bool $mark
      *
      * @internal
      */
@@ -177,9 +174,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @internal
      *
-     * @param bool $loadLazyFields
      *
-     * @return array
      */
     public function getInternalData(bool $loadLazyFields = false): array
     {
@@ -212,14 +207,12 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|Model\Element\ElementDescriptor|null $object
-     * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -229,9 +222,7 @@ final class Localizedfield extends Model\AbstractModel implements
             throw new \Exception('must be instance of object concrete');
         }
 
-        if ($markAsDirty) {
-            $this->markAllLanguagesAsDirty();
-        }
+        $this->markAllLanguagesAsDirty();
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
         $this->setClass($object ? $object->getClass() : null);
@@ -241,10 +232,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
@@ -267,9 +254,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @throws \Exception
      *
-     * @param string|null $language
      *
-     * @return string
      */
     public function getLanguage(string $language = null): string
     {
@@ -333,8 +318,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param array $context
-     * @param array $params
      *
      * @return ClassDefinition\Data[]
      *
@@ -394,11 +377,7 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param string|null $language
-     * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
      *
      * @throws \Exception
      * @throws Model\Exception\NotFoundException
@@ -512,10 +491,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param string|null $language
-     * @param bool $markFieldAsDirty
      *
      * @return $this
      *
@@ -605,9 +580,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();
@@ -652,7 +624,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function hasDirtyLanguages(): bool
     {
@@ -666,9 +637,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
      *
-     * @return bool
      */
     public function isLanguageDirty(string $language): bool
     {
@@ -699,7 +668,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getDirtyLanguages(): ?array
     {
@@ -717,7 +685,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function allLanguagesAreDirty(): bool
     {
@@ -731,8 +698,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
-     * @param bool $dirty
      */
     public function markLanguageAsDirty(string $language, bool $dirty = true): void
     {
@@ -753,10 +718,15 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
+    public function markLanguagesAsDirty(array $languages): void
+    {
+        foreach ($languages as $language => $key) {
+            $this->markLanguageAsDirty($language);
+        }
+    }
+
     /**
      * @internal
-     *
-     * @return array
      *
      * @throws \Exception
      */
@@ -783,5 +753,19 @@ final class Localizedfield extends Model\AbstractModel implements
     public function getObjectId(): ?int
     {
         return $this->objectId;
+    }
+
+    /**
+     * @internal
+     */
+    public function setObjectOmitDirty(Localizedfield|AbstractData|Objectbrick\Data\AbstractData|Concrete $object): void
+    {
+        $dirtyLanguages = $this->getDirtyLanguages();
+        $this->setObject($object);
+        if (is_array($dirtyLanguages)) {
+            $this->markLanguagesAsDirty($dirtyLanguages);
+        } else {
+            $this->resetLanguageDirtyMap();
+        }
     }
 }

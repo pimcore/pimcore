@@ -27,7 +27,6 @@ use Pimcore\Model\Element\Tag;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -43,7 +42,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @throws \Exception
      *
@@ -72,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::insertOrUpdate($this->db, 'tags', $data);
+            Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
@@ -119,8 +117,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
      *
      * @return Model\Element\Tag[]
      */
@@ -153,7 +149,7 @@ class Dao extends Model\Dao\AbstractDao
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
+        Helper::upsert($this->db, 'tags_assignment', $data, $this->getPrimaryKey('tags_assignment'));
     }
 
     public function removeTagFromElement(string $cType, int $cId): void
@@ -166,9 +162,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
-     * @param array $tags
      *
      * @throws \Exception
      */
@@ -217,7 +210,6 @@ class Dao extends Model\Dao\AbstractDao
      * @param array  $classNames        For objects only: filter by classnames
      * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public function getElementsForTag(
         Tag $tag,
@@ -234,7 +226,7 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->createQueryBuilder()->select(['*'])
+        $select = $this->db->createQueryBuilder()->select('*')
                            ->from('tags_assignment')
                            ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 
@@ -268,7 +260,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
-        while ($row = $res->fetch()) {
+        while ($row = $res->fetchAssociative()) {
             $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
@@ -281,7 +273,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $tagPath separated by "/"
      *
-     * @return null|Tag
      */
     public function getByPath(string $tagPath): ?Tag
     {

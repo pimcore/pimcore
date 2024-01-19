@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
+use Pimcore\Config;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -25,20 +26,22 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    private const CONFIG_KEY = 'image_thumbnails';
+
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
+
+        $storageConfig = $config['config_location'][self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS',
+            'storageConfig' => $storageConfig,
         ]);
     }
 
     /**
-     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -107,9 +110,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->clearDatabaseCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
@@ -156,7 +156,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     protected function autoClearTempFiles(): void
     {
-        $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
+        $enabled = Config::getSystemConfiguration('assets')['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
             \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new CleanupThumbnailsMessage('image', $this->model->getName())

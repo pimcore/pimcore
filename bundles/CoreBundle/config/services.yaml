@@ -19,7 +19,6 @@ services:
         class: Pimcore\Security\Hasher\PasswordHasherFactory
         decorates: security.password_hasher_factory
         arguments: ['@.inner', '@?']
-        public: false
 
     #
     # INFRASTRUCTURE
@@ -27,12 +26,10 @@ services:
 
     # creates needed pimcore directories
     Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
-        public: false
         tags:
             - { name: kernel.cache_warmer }
 
     Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
-        public: false
         tags:
             - { name: kernel.cache_warmer }
 
@@ -86,22 +83,6 @@ services:
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
 
-    # Newsletter Adapter
-    pimcore.document.newsletter.factory.default:
-      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-      arguments:
-        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
-
-    pimcore.document.newsletter.factory.csv:
-      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-      arguments:
-        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
-
-    pimcore.newsletter.address_source_adapter.factories:
-        public: true
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
-
     # DataObject Consent Service
     Pimcore\DataObject\Consent\Service:
         public: true
@@ -126,14 +107,15 @@ services:
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true
+    Pimcore\Model\DataObject\QuantityValue\Service: ~
 
     Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
 
-    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
+    Pimcore\Bundle\CoreBundle\Request\ParamResolver\DataObjectParamResolver:
         tags:
-            - { name: request.param_converter, priority: -2, converter: data_object_converter }
+            - { name: controller.argument_value_resolver, priority: 101}
 
     Symfony\Component\Lock\PersistingStoreInterface:
         class: Symfony\Component\Lock\Store\DoctrineDbalStore
@@ -166,4 +148,37 @@ services:
         alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+    #
+    # SECURITY
+    #
 
+    # standard user provider returning admin users wrapped in a Pimcore\Security\User\User proxy object.
+    # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
+    Pimcore\Security\User\UserProvider:
+        public: true
+
+    Pimcore\Security\User\TokenStorageUserResolver:
+        public: true
+        arguments:
+            - '@security.token_storage'
+
+    Pimcore\Security\User\UserLoader: ~
+
+    # user-checker checking pimcore users for validity
+    Pimcore\Security\User\UserChecker: ~
+
+    #
+    # System Settings Services
+    #
+    Pimcore\SystemSettingsConfig:
+        public: true
+
+
+    #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+
+    Pimcore\Model\Notification\Service\UserService: ~

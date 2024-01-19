@@ -1,12 +1,12 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
     #
     # INSTALLER
     #
+
     Pimcore\Bundle\SeoBundle\Installer:
         public: true
         arguments:
@@ -21,10 +21,3 @@ services:
         resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
-
-
-    #
-    # EVENTLISTENER
-    #
-
-    Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~

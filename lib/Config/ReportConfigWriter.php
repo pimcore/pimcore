@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
-use Pimcore\Event\Admin\Report\SettingsEvent;
-use Pimcore\Event\Admin\ReportEvents;
+use Pimcore\Event\Report\SettingsEvent;
+use Pimcore\Event\ReportEvents;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -56,7 +56,7 @@ final class ReportConfigWriter
         SettingsStore::set(
             self::REPORT_SETTING_ID,
             json_encode($settings),
-            'string',
+            SettingsStore::TYPE_STRING,
             self::REPORT_SETTING_SCOPE
         );
     }

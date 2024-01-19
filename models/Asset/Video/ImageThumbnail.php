@@ -29,31 +29,22 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Video|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $timeOffset = null;
 
     /**
      * @internal
      *
-     * @var Image|null
      */
     protected ?Image $imageAsset = null;
 
-    /**
-     * @param Model\Asset\Video|null $asset
-     * @param string|array|Image\Thumbnail\Config|null $config
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     * @param bool $deferred
-     */
     public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -63,10 +54,15 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    public function getPath(bool $deferredAllowed = true): string
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -79,8 +75,6 @@ final class ImageThumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     *
      * @throws \Exception
      *
      * @internal
@@ -139,7 +133,6 @@ final class ImageThumbnail
                         $converter->saveImage($tempFile, (int) $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
-                        unlink($tempFile);
                     }
 
                     $lock->release();
@@ -159,8 +152,7 @@ final class ImageThumbnail
                             $generated
                         );
                     } catch (\Exception $e) {
-                        Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                        Logger::error($e->getMessage());
+                        Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath() . ': ' . $e);
                     }
                 }
             }
@@ -187,7 +179,7 @@ final class ImageThumbnail
      *
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath();
     }
@@ -207,14 +199,11 @@ final class ImageThumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Image\Thumbnail|null
      *
      * @throws \Exception
      */
-    public function getMedia(string $name, int $highRes = 1): ?Image\Thumbnail
+    public function getMedia(string $name, int $highRes = 1): ?Image\ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {

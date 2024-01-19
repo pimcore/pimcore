@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -8,6 +7,7 @@ services:
     # CONTROLLERS
     # (auto-register all controllers as services)
     #
+
     Pimcore\Bundle\SimpleBackendSearchBundle\Controller\:
         resource: '../src/Controller'
         public: true
@@ -18,6 +18,7 @@ services:
     # Commands
     # (auto-register all commands as services)
     #
+
     Pimcore\Bundle\SimpleBackendSearchBundle\Command\:
         resource: '../src/Command'
         tags: ['console.command']
@@ -26,6 +27,7 @@ services:
     #
     # INSTALLER
     #
+
     Pimcore\Bundle\SimpleBackendSearchBundle\Installer:
         public: true
         arguments:
@@ -39,19 +41,16 @@ services:
     #
     # Message Handler
     #
+
     Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler\SearchBackendHandler:
         tags:
             - { name: messenger.message_handler }
 
-    #
-    # Data Provider
-    #
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets:
-        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\Assets
-        arguments:
-            $config: '%pimcore.gdpr-data-extrator.assets%'
 
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
-        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\DataObjects
-        arguments:
-            $config: '%pimcore.gdpr-data-extrator.dataobjects%'
+    #
+    # Maintenance Tasks
+    #
+
+    Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }

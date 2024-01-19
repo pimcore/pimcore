@@ -30,42 +30,8 @@ class Geopolyline extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
-     * Static type of this element
      *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'geopolyline';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -76,11 +42,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -90,11 +52,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -103,9 +61,6 @@ class Geopolyline extends AbstractGeo implements
         return $this->getDataForResource($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -138,11 +93,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -167,9 +118,6 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
      *
@@ -190,11 +138,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -204,9 +148,6 @@ class Geopolyline extends AbstractGeo implements
         return $this->getDiffVersionPreview($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -230,9 +171,6 @@ class Geopolyline extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -241,11 +179,8 @@ class Geopolyline extends AbstractGeo implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {
@@ -333,5 +268,20 @@ class Geopolyline extends AbstractGeo implements
         }
 
         return null;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'geopolyline';
     }
 }

@@ -20,8 +20,6 @@ use Exception;
 use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\ColumnType;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\QueryColumnType;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -34,49 +32,10 @@ class NumericRange extends Data implements
     NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType {
-        ColumnType::getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        QueryColumnType::getQueryColumnType as public genericGetQueryColumnType;
-    }
 
     public const DECIMAL_SIZE_DEFAULT = 64;
 
     public const DECIMAL_PRECISION_DEFAULT = 0;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'numericRange';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-    ];
 
     /**
      * @internal
@@ -179,10 +138,7 @@ class NumericRange extends Data implements
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         if ($this->getInteger()) {
             return [
@@ -195,26 +151,15 @@ class NumericRange extends Data implements
             return $this->buildDecimalColumnType();
         }
 
-        return $this->genericGetColumnType();
+        return [
+            'minimum' => 'double',
+            'maximum' => 'double',
+        ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getQueryColumnType(): array|null
+    public function getQueryColumnType(): array
     {
-        if ($this->getInteger()) {
-            return [
-                'minimum' => 'bigint(20)',
-                'maximum' => 'bigint(20)',
-            ];
-        }
-
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return $this->genericGetQueryColumnType();
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool
@@ -266,11 +211,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -291,11 +232,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\NumericRange|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -321,11 +258,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -335,11 +268,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -357,11 +286,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\NumericRange|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -380,11 +305,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -399,7 +320,7 @@ class NumericRange extends Data implements
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws Exception
      */
@@ -419,9 +340,6 @@ class NumericRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -453,9 +371,6 @@ class NumericRange extends Data implements
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -563,5 +478,10 @@ class NumericRange extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'numericRange';
     }
 }

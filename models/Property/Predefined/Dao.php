@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Property\Predefined;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 
@@ -25,20 +26,22 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    private const CONFIG_KEY = 'predefined_properties';
+
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $config = Config::getSystemConfiguration();
+
+        $storageConfig = $config['config_location'][self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/predefined-properties',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES',
+            'storageConfig' => $storageConfig,
         ]);
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -65,7 +68,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $key
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -128,9 +130,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

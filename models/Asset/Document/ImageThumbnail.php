@@ -31,7 +31,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Document|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
     use TemporaryFileHelperTrait;
@@ -39,16 +39,9 @@ final class ImageThumbnail
     /**
      * @internal
      *
-     * @var int
      */
     protected int $page = 1;
 
-    /**
-     * @param Model\Asset\Document|null $asset
-     * @param string|array|Image\Thumbnail\Config|null $config
-     * @param int $page
-     * @param bool $deferred
-     */
     public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -57,10 +50,15 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    public function getPath(bool $deferredAllowed = true): string
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -95,8 +93,7 @@ final class ImageThumbnail
                     }
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                Logger::error($e->getMessage());
+                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath() . ': ' . $e);
             }
         }
 
@@ -139,7 +136,6 @@ final class ImageThumbnail
                     $converter->saveImage($tempFile, $this->page);
                     $storage->write($cacheFilePath, file_get_contents($tempFile));
                 } finally {
-                    unlink($tempFile);
                     $lock->release();
                 }
             } else {
@@ -159,7 +155,7 @@ final class ImageThumbnail
      *
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath();
     }

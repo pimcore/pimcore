@@ -24,9 +24,6 @@ use Pimcore\Model\Tool\TmpStore;
  */
 class LogCleanupTask implements TaskInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression
@@ -36,7 +33,7 @@ class LogCleanupTask implements TaskInterface
             $tmpStoreTimeId = 'log-'.basename($log);
             $lastTimeItem = TmpStore::get($tmpStoreTimeId);
             if ($lastTimeItem) {
-                $lastTime = $lastTimeItem->getData();
+                $lastTime = (int) $lastTimeItem->getData();
             } else {
                 TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
 
@@ -64,14 +61,12 @@ class LogCleanupTask implements TaskInterface
             $files = array_merge($files, $archivedLogFiles);
         }
 
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                if (filemtime($file) < (time() - (86400 * 7))) { // we keep the logs for 7 days
-                    unlink($file);
-                } elseif (!preg_match("/\.gz$/", $file)) {
-                    gzcompressfile($file);
-                    unlink($file);
-                }
+        foreach ($files as $file) {
+            if (filemtime($file) < (time() - (86400 * 7))) { // we keep the logs for 7 days
+                unlink($file);
+            } elseif (!preg_match("/\.gz$/", $file)) {
+                gzcompressfile($file);
+                unlink($file);
             }
         }
     }

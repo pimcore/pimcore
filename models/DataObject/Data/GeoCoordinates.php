@@ -27,11 +27,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 
     protected ?float $latitude = null;
 
-    /**
-     * @param float|null $latitude
-     * @param float|null $longitude
-     */
-    public function __construct(float $latitude = null, float $longitude = null)
+    public function __construct(?float $latitude = null, ?float $longitude = null)
     {
         if ($latitude !== null) {
             $this->setLatitude($latitude);
@@ -44,16 +40,17 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    public function getLongitude(): float
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function setLongitude(float $longitude): static
+    /**
+     * @return $this
+     */
+    public function setLongitude(?float $longitude): static
     {
-        $longitude = (float)$longitude;
-
-        if ($this->longitude != $longitude) {
+        if ($this->longitude !== $longitude) {
             $this->longitude = $longitude;
             $this->markMeDirty();
         }
@@ -61,15 +58,17 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getLatitude(): float
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function setLatitude(float $latitude): static
+    /**
+     * @return $this
+     */
+    public function setLatitude(?float $latitude): static
     {
-        $latitude = (float)$latitude;
-        if ($this->latitude != $latitude) {
+        if ($this->latitude !== $latitude) {
             $this->latitude = $latitude;
             $this->markMeDirty();
         }
@@ -77,10 +76,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->latitude . '; ' . $this->longitude;
     }

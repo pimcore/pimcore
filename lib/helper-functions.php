@@ -25,14 +25,7 @@ function xmlToArray(string $file): array
     return $array;
 }
 
-/**
- * @param string $source
- * @param int|null $level
- * @param string|null $target
- *
- * @return bool|string
- */
-function gzcompressfile(string $source, int $level = null, string $target = null): bool|string
+function gzcompressfile(string $source, int $level = null, string $target = null): false|string
 {
     // this is a very memory efficient way of gzipping files
     if ($target) {
@@ -97,10 +90,8 @@ function foldersize(string $path): int
 }
 
 /**
- * @param string $string
  * @param string[] $values
  *
- * @return string
  */
 function replace_pcre_backreferences(string $string, array $values): string
 {
@@ -142,12 +133,10 @@ function in_arrayi(string $needle, array $haystack): bool
 }
 
 /**
- * @param string $needle
- * @param array $haystack
  *
  * @return false|int|string the key for needle if it is found in the array, false otherwise.
  */
-function array_searchi(string $needle, array $haystack): bool|int|string
+function array_searchi(string $needle, array $haystack): false|int|string
 {
     return array_search(strtolower($needle), array_map('strtolower', $haystack));
 }
@@ -167,40 +156,22 @@ function object2array(object $node): array
     return @json_decode($paj, true);
 }
 
-/**
- * @param array $args
- *
- * @return false|string
- */
-function array_urlencode(array $args): bool|string
+function array_urlencode(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return http_build_query($args);
 }
 
 /**
- * same as  array_urlencode but no urlencode()
- *
- * @param array $args
- *
- * @return false|string
+ * same as array_urlencode but no urlencode()
  */
-function array_toquerystring(array $args): bool|string
+function array_toquerystring(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return urldecode(http_build_query($args));
 }
 
 /**
  * @param array $array with attribute names as keys, and values as values
  *
- * @return string
  */
 function array_to_html_attribute_string(array $array): string
 {
@@ -320,10 +291,6 @@ function rscandir(string $base = '', array &$data = []): array
 /**
  * Wrapper for explode() to get a trimmed array
  *
- * @param string $delimiter
- * @param string $string
- * @param int $limit
- * @param bool $useArrayFilter
  *
  * @return string[]
  *
@@ -385,34 +352,6 @@ function recursiveDelete(string $directory, bool $empty = true): bool
     return false;
 }
 
-function recursiveCopy(string $source, string $destination): bool
-{
-    if (is_dir($source)) {
-        if (!is_dir($destination)) {
-            \Pimcore\File::mkdir($destination);
-        }
-
-        foreach (
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST
-            ) as $item) {
-            if ($item->isDir()) {
-                \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            } else {
-                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            }
-        }
-    } elseif (is_file($source)) {
-        if (is_dir(dirname($destination))) {
-            \Pimcore\File::mkdir(dirname($destination));
-        }
-        copy($source, $destination);
-    }
-
-    return true;
-}
-
 function p_r(): void
 {
     $cloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();
@@ -440,9 +379,7 @@ function wrapArrayElements(array $array, string $prefix = "'", string $suffix = 
 /**
  * Checks if an array is associative
  *
- * @param array $arr
  *
- * @return bool
  */
 function isAssocArray(array $arr): bool
 {
@@ -452,9 +389,7 @@ function isAssocArray(array $arr): bool
 /**
  * this is an alternative for realpath() which isn't able to handle symlinks correctly
  *
- * @param string $filename
  *
- * @return string
  */
 function resolvePath(string $filename): string
 {
@@ -506,9 +441,7 @@ function closureHash(Closure $closure): string
 /**
  * Checks if the given directory is empty
  *
- * @param string $dir
  *
- * @return bool|null
  */
 function is_dir_empty(string $dir): ?bool
 {

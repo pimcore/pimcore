@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     Pimcore\Migrations\FilteredMigrationsRepository:
         public: true
@@ -11,7 +10,7 @@ services:
         public: true
 
     Doctrine\Migrations\DependencyFactory:
-        alias: 'doctrine.migrations.dependency_factory'
+        alias: doctrine.migrations.dependency_factory
 
     Pimcore\Migrations\DirectoryAwareVersionComparator:
         arguments:

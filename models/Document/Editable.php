@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
@@ -25,7 +26,6 @@ use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -43,6 +43,20 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected array $config = [];
 
     /**
+     * The label rendered for the editmode dialog.
+     *
+     * @internal
+     */
+    protected ?string $label = null;
+
+    /**
+     * The description rendered for the editmode dialog.
+     *
+     * @internal
+     */
+    protected ?string $dialogDescription = null;
+
+    /**
      * @internal
      *
      */
@@ -54,7 +68,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected string $realName = '';
+    protected ?string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
@@ -271,7 +285,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function setDocumentId(int $id): static
     {
-        $this->documentId = (int) $id;
+        $this->documentId = $id;
 
         if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
             $this->document = null;
@@ -325,18 +339,44 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function addConfig(string $name, mixed $value): static
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $this->config[$name] = $value;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLabel(?string $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getDialogDescription(): ?string
+    {
+        return $this->dialogDescription;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setDialogDescription(?string $dialogDescription): static
+    {
+        $this->dialogDescription = $dialogDescription;
 
         return $this;
     }
 
     public function getRealName(): string
     {
-        return $this->realName;
+        return $this->realName ?? '';
     }
 
     public function setRealName(string $realName): void
@@ -357,7 +397,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Returns only the properties which should be serialized
      *
-     * @return array
      */
     public function __sleep(): array
     {
@@ -374,15 +413,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $finalVars;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->document = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function render(): mixed
     {
         if ($this->editmode) {
@@ -398,10 +434,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * direct output to the frontend
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $result = '';
 
@@ -412,7 +446,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().' File: ' . $e->getFile().' Line: '. $e->getLine().'</b><br/>'.$e->getTraceAsString();
 
-                return $result;
+                return '<pre class="pimcore_editable_error">' . $result . '</pre>';
             }
 
             Logger::error('toString() returned an exception: {exception}', [
@@ -437,7 +471,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     public function setEditmode(bool $editmode): static
     {
-        $this->editmode = (bool) $editmode;
+        $this->editmode = $editmode;
 
         return $this;
     }
@@ -523,7 +557,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
         $targetGroupEditableName = null;
-        if ($document && $document instanceof TargetingDocumentInterface) {
+        if ($document && interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface) {
             $targetGroupEditableName = $document->getTargetGroupEditableName($name);
 
             if (!$blockState->hasBlocks()) {
@@ -567,10 +601,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             array_pop($tmpBlocks);
             array_pop($tmpIndexes);
 
-            $tmpName = $name;
-            if (is_array($tmpBlocks)) {
-                $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
-            }
+            $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
 
             $previousBlockName = $blocks[count($blocks) - 1]->getName();
             if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {
@@ -639,7 +670,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        if ($document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+        if (interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
             $name = $document->getTargetGroupEditableName($name);
         }
 

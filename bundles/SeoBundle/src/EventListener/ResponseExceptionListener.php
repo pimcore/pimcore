@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,9 +39,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -51,6 +49,10 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
+        if (!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $exception = $event->getThrowable();
 
         // handle ResponseException (can be used from any context)

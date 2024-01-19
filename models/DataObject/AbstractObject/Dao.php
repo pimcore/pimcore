@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
-use Pimcore\Db;
+use Doctrine\DBAL\Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -32,7 +32,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -43,6 +42,7 @@ class Dao extends Model\Element\Dao
                 WHERE objects.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
@@ -52,7 +52,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -85,7 +84,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -119,7 +117,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'objects', $data);
+        Helper::upsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);
@@ -135,7 +133,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes object from database
      *
-     * @return void
      */
     public function delete(): void
     {
@@ -154,15 +151,13 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
-     * @param string $oldPath
      *
-     * @return null|array
      *
      * @internal
      */
     public function updateChildPaths(string $oldPath): ?array
     {
-        if ($this->hasChildren(DataObject::$types)) {
+        if ($this->hasChildren(DataObject::$types, true)) {
             //get objects to empty their cache
             $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
@@ -190,7 +185,6 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      *
-     * @return void
      */
     public function deleteAllProperties(): void
     {
@@ -202,15 +196,11 @@ class Dao extends Model\Element\Dao
      */
     public function getCurrentFullPath(): ?string
     {
-        $path = null;
-
-        try {
-            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()]);
-        } catch (\Exception $e) {
-            Logger::error('could not get current object path from DB');
+        if ($path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()])) {
+            return $path;
         }
 
-        return $path;
+        return null;
     }
 
     public function getVersionCountForUpdate(): int
@@ -232,9 +222,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
-     *
-     * @return array
+     * @throws \Exception
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -242,11 +230,17 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAllAssociative('SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? ) AND ctype='object'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative(
+            'SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE
+                     (
+                         (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1)
+                         OR cid = ? ) AND ctype='object'",
+            [$this->model->getId()]
+        );
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
-            return strcmp($left['cpath'], $right['cpath']);
+            return strcmp((string)$left['cpath'], (string)$right['cpath']);
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
@@ -271,17 +265,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to object ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to object ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -289,14 +278,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are children
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasChildren(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null, User $user = null): bool
-    {
+    public function hasChildren(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER],
+        ?bool $includingUnpublished = null,
+        ?User $user = null
+    ): bool {
         if (!$this->model->getId()) {
             return false;
         }
@@ -342,13 +333,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasSiblings(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
+    public function hasSiblings(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
+    ): bool {
         if (!$this->model->getParentId()) {
             return false;
         }
@@ -379,10 +373,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param array|null $objectTypes
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
     {
@@ -414,9 +406,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param int $id
      *
-     * @return array
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -502,10 +492,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -549,11 +536,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -617,7 +602,7 @@ class Dao extends Model\Element\Dao
             $orderByType = $type ? ', `' . $type . '` DESC' : '';
             $permissions = $this->db->fetchAssociative('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
 
-            return $permissions;
+            return $permissions ?: null;
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
@@ -651,7 +636,7 @@ class Dao extends Model\Element\Dao
     public function saveIndex(int $index): void
     {
         $this->db->update('objects', [
-            'index' => $index,
+            $this->db->quoteIdentifier('index') => $index,
         ], [
             'id' => $this->model->getId(),
         ]);

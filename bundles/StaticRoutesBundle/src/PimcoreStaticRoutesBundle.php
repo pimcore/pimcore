@@ -17,10 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\StaticRoutesBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle
+class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
+    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function getCssPaths(): array
@@ -38,9 +41,6 @@ class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     * @return Installer
-     */
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);

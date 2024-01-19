@@ -29,7 +29,6 @@ use Pimcore\Model\Document;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -41,6 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');
         }
 
+        $data['locked'] = (bool)$data['locked'];
         $this->assignVariablesToModel($data);
 
         // get key-value data
@@ -84,7 +84,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Saves note to database.
-     * @return bool
      *
      * @throws \Exception
      */
@@ -101,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'notes', $data);
+        Helper::upsert($this->db, 'notes', $data, $this->getPrimaryKey('notes'));
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

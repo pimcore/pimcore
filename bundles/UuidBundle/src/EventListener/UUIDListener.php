@@ -17,13 +17,14 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\UuidBundle\EventListener;
 
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
+use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -33,9 +34,6 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UUIDListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -76,6 +74,10 @@ class UUIDListener implements EventSubscriberInterface
 
     protected function isEnabled(): bool
     {
+        if (!PimcoreUuidBundle::isInstalled()) {
+            return false;
+        }
+
         $config = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (!empty($config)) {
             return true;
@@ -84,7 +86,7 @@ class UUIDListener implements EventSubscriberInterface
         return false;
     }
 
-    protected function extractElement(Event $event): ClassDefinition|ElementInterface|null
+    protected function extractElement(Event $event): ClassDefinitionInterface|ElementInterface|null
     {
         $element = null;
 

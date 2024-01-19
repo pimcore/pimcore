@@ -75,9 +75,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     protected array $sharedRoleNames = [];
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
      * @throws \Exception
      */
@@ -96,11 +94,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         }
     }
 
-    /**
-     * @param Model\User|null $user
-     *
-     * @return array
-     */
     public static function getReportsList(Model\User $user = null): array
     {
         $reports = [];
@@ -125,6 +118,8 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
+     * @internal
+     *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
     public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
@@ -218,7 +213,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     public function setMenuShortcut(bool $menuShortcut): void
     {
-        $this->menuShortcut = (bool) $menuShortcut;
+        $this->menuShortcut = $menuShortcut;
     }
 
     public function getMenuShortcut(): bool
@@ -233,7 +228,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     public function getDataSourceConfig(): ?\stdClass
     {
-        if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
+        if (isset($this->dataSourceConfig[0])) {
             $dataSourceConfig = new \stdClass();
             $dataSourceConfigArray = $this->dataSourceConfig[0];
 
@@ -414,7 +409,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $data;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

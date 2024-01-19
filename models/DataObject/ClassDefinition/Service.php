@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
 
 class Service
@@ -29,7 +29,6 @@ class Service
     /**
      * @internal
      *
-     * @return bool
      */
     public static function doRemoveDynamicOptions(): bool
     {
@@ -39,7 +38,6 @@ class Service
     /**
      * @internal
      *
-     * @param bool $doRemoveDynamicOptions
      */
     public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
     {
@@ -49,8 +47,9 @@ class Service
     public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
-        if ($class->layoutDefinitions instanceof Layout) {
-            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        $layoutDefinitions = $class->getLayoutDefinitions();
+        if ($layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
         }
 
         self::setDoRemoveDynamicOptions(true);
@@ -63,7 +62,7 @@ class Service
 
     private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
-        if (method_exists($layout, 'resolveBlockedVars')) {
+        if ($layout instanceof VarExporterInterface) {
             $blockedVars = $layout->resolveBlockedVars();
             foreach ($blockedVars as $blockedVar) {
                 if (isset($layout->{$blockedVar})) {
@@ -81,7 +80,7 @@ class Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     if ($child instanceof DataObject\ClassDefinition\Data\Select) {
-                        if ($child->getOptionsProviderClass()) {
+                        if (!$child->useConfiguredOptions() && $child->getOptionsProviderClass()) {
                             $child->options = null;
                         }
                     }
@@ -196,17 +195,15 @@ class Service
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
-        if (is_array($objectBrick->getClassDefinitions())) {
-            foreach ($objectBrick->getClassDefinitions() as &$cd) {
-                // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
-                // get the class by id in order to be able to correctly set the classname for the generated json
-                if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
-                    $class = DataObject\ClassDefinition::getById($cd['classname']);
-                }
+        foreach ($objectBrick->getClassDefinitions() as &$cd) {
+            // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
+            // get the class by id in order to be able to correctly set the classname for the generated json
+            if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
+                $class = DataObject\ClassDefinition::getById($cd['classname']);
+            }
 
-                if ($class) {
-                    $cd['classname'] = $class->getName();
-                }
+            if ($class) {
+                $cd['classname'] = $class->getName();
             }
         }
 
@@ -230,7 +227,7 @@ class Service
         $data = [
             'description' => $customLayout->getDescription(),
             'layoutDefinitions' => json_decode(json_encode($layoutDefinitions)),
-            'default' => $customLayout->getDefault() ?: 0,
+            'default' => $customLayout->getDefault(),
         ];
         self::setDoRemoveDynamicOptions(false);
 
@@ -285,11 +282,7 @@ class Service
     }
 
     /**
-     * @param array $array
-     * @param bool $throwException
-     * @param bool $insideLocalizedField
      *
-     * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
      *
@@ -297,7 +290,7 @@ class Service
      */
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
-        if (is_array($array) && count($array) > 0) {
+        if ($array) {
             if ($title = $array['title'] ?? false) {
                 if (preg_match('/<.+?>/', $title)) {
                     throw new \Exception('not a valid title:' . htmlentities($title));
@@ -345,7 +338,7 @@ class Service
                 } else {
                     //for BC reasons
                     $blockedVars = [];
-                    if (method_exists($item, 'resolveBlockedVars')) {
+                    if ($item instanceof VarExporterInterface) {
                         $blockedVars = $item->resolveBlockedVars();
                     }
                     self::removeDynamicOptionsFromArray($array, $blockedVars);
@@ -376,17 +369,11 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param array $tableNames
      *
      * @internal
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
-        if (!is_array($tableDefinitions)) {
-            $tableDefinitions = [];
-        }
-
         $db = \Pimcore\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
@@ -407,14 +394,7 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param string $table
-     * @param string $colName
-     * @param string $type
-     * @param string $default
-     * @param string $null
      *
-     * @return bool
      *
      * @internal
      */
@@ -440,10 +420,7 @@ class Service
     }
 
     /**
-     * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
-     *
-     * @return string
      *
      * @throws \Exception
      *
@@ -471,10 +448,7 @@ class Service
     }
 
     /**
-     * @param array $useParts
-     * @param string|null $newTraits
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -482,10 +456,6 @@ class Service
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
-        if (!is_array($useParts)) {
-            $useParts = [];
-        }
-
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
             foreach ($customParts as $trait) {
@@ -502,9 +472,7 @@ class Service
     }
 
     /**
-     * @param array $useParts
      *
-     * @return string
      *
      * @throws \Exception
      *
@@ -515,7 +483,7 @@ class Service
         if ($useParts) {
             $result = '';
             foreach ($useParts as $part) {
-                $result .= 'use ' . $part . ";\r\n";
+                $result .= 'use ' . $part . ";\n";
             }
             $result .= "\n";
 

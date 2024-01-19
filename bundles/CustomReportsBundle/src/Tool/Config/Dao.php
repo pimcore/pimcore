@@ -24,20 +24,24 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    private const CONFIG_KEY = 'custom_reports';
+
     public function configure(): void
     {
+        $config = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.config_location');
         $definitions = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
+
+        $storageConfig = $config[self::CONFIG_KEY];
 
         parent::configure([
             'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_custom_reports',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/custom-reports',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS',
+            'storageConfig' => $storageConfig,
+            'legacyConfigFile' => 'custom-reports.php',
         ]);
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -97,17 +101,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
-            'pimcore' => [
-                'custom_report' => [
-                    'definitions' => [
-                        $id => $data,
-                    ],
+            'pimcore_custom_reports' => [
+                'definitions' => [
+                    $id => $data,
                 ],
             ],
         ];

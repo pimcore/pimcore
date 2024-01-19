@@ -24,56 +24,23 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'externalImage';
-
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $previewWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $inputWidth = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $previewHeight = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     public function getPreviewWidth(): ?int
     {
@@ -82,7 +49,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setPreviewWidth(?int $previewWidth): void
     {
-        $this->previewWidth = $this->getAsIntegerCast($previewWidth);
+        $this->previewWidth = $previewWidth;
     }
 
     public function getPreviewHeight(): ?int
@@ -92,7 +59,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setPreviewHeight(?int $previewHeight): void
     {
-        $this->previewHeight = $this->getAsIntegerCast($previewHeight);
+        $this->previewHeight = $previewHeight;
     }
 
     public function getInputWidth(): ?int
@@ -102,15 +69,11 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setInputWidth(?int $inputWidth): void
     {
-        $this->inputWidth = $this->getAsIntegerCast($inputWidth);
+        $this->inputWidth = $inputWidth;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -124,9 +87,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      *
@@ -147,11 +107,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -161,11 +117,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -182,9 +134,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForGrid(?DataObject\Data\ExternalImage $data, Concrete $object = null, array $params = []): ?string
     {
@@ -192,9 +142,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      *
@@ -206,9 +153,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param string|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
      */
@@ -218,11 +163,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -233,12 +174,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
             return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
         }
 
-        return $data;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -249,9 +187,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $return ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -260,11 +195,8 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param string $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(string $data, Concrete $object = null, array $params = []): string
     {
@@ -276,19 +208,16 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\ExternalImage $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->previewHeight = $masterDefinition->previewHeight;
-        $this->previewWidth = $masterDefinition->previewWidth;
-        $this->inputWidth = $masterDefinition->inputWidth;
+        $this->previewHeight = $mainDefinition->previewHeight;
+        $this->previewWidth = $mainDefinition->previewWidth;
+        $this->inputWidth = $mainDefinition->inputWidth;
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException
      */
@@ -350,5 +279,20 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'externalImage';
     }
 }

@@ -57,7 +57,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $collapsible = false;
 
@@ -74,7 +73,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var string
      */
     public string $datatype = 'layout';
 
@@ -183,7 +181,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function setCollapsible(bool $collapsible): static
     {
-        $this->collapsible = (bool) $collapsible;
+        $this->collapsible = $collapsible;
 
         $this->filterCollapsibleValue();
 
@@ -205,7 +203,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @return array
      */
     public function &getChildrenByRef(): array
     {
@@ -221,7 +218,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
+        if (count($this->children) > 0) {
             return true;
         }
 
@@ -272,14 +269,14 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function setLocked(bool $locked): static
     {
-        $this->locked = (bool) $locked;
+        $this->locked = $locked;
 
         return $this;
     }
 
     public function setCollapsed(bool $collapsed): static
     {
-        $this->collapsed = (bool) $collapsed;
+        $this->collapsed = $collapsed;
 
         $this->filterCollapsibleValue();
 
@@ -326,9 +323,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return array_keys($vars);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function __set_state(array $data): static
     {
         $obj = new static();

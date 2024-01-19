@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -30,38 +30,20 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Admin
 {
     /**
-     * Finds the translation file for a given language
-     *
-     * @static
-     *
-     * @param string $language
-     *
-     * @return string
-     */
-    public static function getLanguageFile(string $language): string
-    {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
-        $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
-
-        return $languageFile;
-    }
-
-    /**
      * finds installed languages
      *
      * @static
      *
-     * @return array
      */
     public static function getLanguages(): array
     {
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
-        $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
+        $adminLanguages = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
         $appDefaultPath = \Pimcore::getContainer()->getParameter('translator.default_path');
 
-        $languages = [];
         $languageDirs = [$languageDir, $appDefaultPath];
+        $translatedLanguages = [];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
@@ -75,16 +57,25 @@ class Admin
                             $languageCode = $parts[1];
                         }
 
-                        if (($adminLang != null && in_array($languageCode, array_values($adminLang))) || $adminLang == null) {
-                            if ($parts[1] === 'json' || $parts[0] === 'admin') {
-                                if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
-                                    $languages[] = $languageCode;
-                                }
+                        if ($parts[1] === 'json' || $parts[0] === 'admin') {
+                            if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
+                                $translatedLanguages[] = $languageCode;
                             }
                         }
                     }
                 }
             }
+        }
+
+        $languages = [];
+        foreach ($adminLanguages as $adminLanguage) {
+            if (in_array($adminLanguage, $translatedLanguages, true) || in_array(\Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)) {
+                $languages[] = $adminLanguage;
+            }
+        }
+
+        if (empty($languages)) {
+            $languages = $translatedLanguages;
         }
 
         return array_unique($languages);
@@ -93,9 +84,7 @@ class Admin
     /**
      * @static
      *
-     * @param string $scriptContent
      *
-     * @return array
      */
     public static function getMinimizedScriptPath(string $scriptContent): array
     {
@@ -140,29 +129,33 @@ class Admin
     }
 
     /**
+     * @deprecated and will be removed in Pimcore 12
+     *
      * @static
      *
-     * @return string
      */
     public static function getMaintenanceModeFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function getMaintenanceModeScheduleLoginFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
 
     /**
-     * @param string|null $sessionId
+     * @deprecated Use MaintenanceModeHelper::activate instead.
      *
      * @throws \Exception
      */
     public static function activateMaintenanceMode(?string $sessionId): void
     {
         if (empty($sessionId)) {
-            $sessionId = Session::getSessionId();
+            $sessionId = \Pimcore::getContainer()->get('request_stack')->getSession()->getId();
         }
 
         if (empty($sessionId)) {
@@ -179,6 +172,8 @@ class Admin
     }
 
     /**
+     * @deprecated Use MaintenanceModeHelperInterface::deactivate instead.
+     *
      * @static
      */
     public static function deactivateMaintenanceMode(): void
@@ -189,15 +184,23 @@ class Admin
     }
 
     /**
+     * @deprecated use MaintenanceModeHelperInterface::isActive instead.
+     *
      * @static
      *
-     * @return bool
      */
     public static function isInMaintenanceMode(): bool
     {
         $file = self::getMaintenanceModeFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::activateMaintenanceMode or using maintenance mode file %s is deprecated.
+                    \tUse MaintenanceModeHelperInterface::active instead.", $file)
+            );
             $conf = include($file);
             if (isset($conf['sessionId'])) {
                 return true;
@@ -209,11 +212,21 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function isMaintenanceModeScheduledForLogin(): bool
     {
         $file = self::getMaintenanceModeScheduleLoginFile();
 
         if (is_file($file)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.1',
+                sprintf(
+                    "Calling Admin::scheduleMaintenanceModeOnLogin or using maintenance mode file %s is deprecated.
+                    \tThe maintenance mode schedule on login will not work in Pimcore 12", $file)
+            );
             $conf = include($file);
             if (isset($conf['schedule']) && $conf['schedule']) {
                 return true;
@@ -225,6 +238,9 @@ class Admin
         return false;
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function scheduleMaintenanceModeOnLogin(): void
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
@@ -236,6 +252,9 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 12
+     */
     public static function unscheduleMaintenanceModeOnLogin(): void
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
@@ -246,21 +265,12 @@ class Admin
     /**
      * @static
      *
-     * @return \Pimcore\Model\User|null
      */
     public static function getCurrentUser(): ?User
     {
         return \Pimcore::getContainer()
             ->get(TokenStorageUserResolver::class)
             ->getUser();
-    }
-
-    /**
-     * @return true if in EXT JS5 mode
-     */
-    public static function isExtJS6(): bool
-    {
-        return true;
     }
 
     public static function reorderWebsiteLanguages(User $user, array|string $languages, bool $returnLanguageArray = false): array|string

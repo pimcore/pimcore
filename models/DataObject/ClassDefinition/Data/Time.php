@@ -23,41 +23,28 @@ use Pimcore\Model\DataObject\Concrete;
 class Time extends Model\DataObject\ClassDefinition\Data\Input
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'time';
-
-    /**
      * Column length
      *
      * @internal
      *
-     * @var int
      */
     public int $columnLength = 5;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $minValue = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $maxValue = null;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $increment = 15 ;
 
@@ -89,9 +76,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -119,9 +103,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -135,9 +116,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns a 5 digit time string of a given time
      *
-     * @param string $timestamp
      *
-     * @return null|string
      */
     private function toTime(string $timestamp): ?string
     {
@@ -152,10 +131,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns a timestamp representation of a given time
      *
-     * @param string $string
-     * @param int|null $baseTimestamp
      *
-     * @return int
      */
     private function toTimestamp(string $string, int $baseTimestamp = null): int
     {
@@ -169,10 +145,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns whether or not a time is earlier than the subject
      *
-     * @param string $subject
-     * @param string $comparison
      *
-     * @return bool
      */
     private function isEarlier(string $subject, string $comparison): bool
     {
@@ -184,10 +157,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns whether or not a time is later than the subject
      *
-     * @param string $subject
-     * @param string $comparison
      *
-     * @return bool
      */
     private function isLater(string $subject, string $comparison): bool
     {
@@ -208,6 +178,11 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
 
     public function setIncrement(int $increment): void
     {
-        $this->increment = (int) $increment;
+        $this->increment = $increment;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'time';
     }
 }

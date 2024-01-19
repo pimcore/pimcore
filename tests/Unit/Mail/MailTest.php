@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\Cache;
+namespace Pimcore\Tests\Unit\Mail;
 
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
@@ -82,7 +82,6 @@ class MailTest extends TestCase
     public function testMailInit(): void
     {
         $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
-
         $mail = new \Pimcore\Mail();
 
         $this->assertEquals($emailConfig['sender']['email'], $mail->getFrom()[0]->getAddress(), 'From recipient not initialized from system settings');

@@ -53,56 +53,48 @@ class Data extends AbstractModel
     /**
      * document | object | asset
      *
-     * @var string
      */
     protected string $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
-     * @var string
      */
     protected string $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
-     * @var string
      */
     protected string $subtype;
 
     /**
      * published or not
      *
-     * @var bool
      */
-    protected bool $published;
+    protected bool $published = false;
 
     /**
      * timestamp of creation date
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * timestamp of modification date
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * User-ID of the owner
      *
-     * @var int
      */
-    protected int $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * User-ID of the user last modified the element
      *
-     * @var int|null
      */
     protected ?int $userModification = null;
 
@@ -110,9 +102,6 @@ class Data extends AbstractModel
 
     protected string $properties;
 
-    /**
-     * @param Element\ElementInterface|null $element
-     */
     public function __construct(Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {
@@ -125,6 +114,9 @@ class Data extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(?Data\Id $id): static
     {
         $this->id = $id;
@@ -137,6 +129,9 @@ class Data extends AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(?string $key): static
     {
         $this->key = $key;
@@ -149,6 +144,9 @@ class Data extends AbstractModel
         return $this->index;
     }
 
+    /**
+     * @return $this
+     */
     public function setIndex(?int $index): static
     {
         $this->index = $index;
@@ -161,6 +159,9 @@ class Data extends AbstractModel
         return $this->fullPath;
     }
 
+    /**
+     * @return $this
+     */
     public function setFullPath(string $fullpath): static
     {
         $this->fullPath = $fullpath;
@@ -173,6 +174,9 @@ class Data extends AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -185,6 +189,9 @@ class Data extends AbstractModel
         return $this->subtype;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -197,6 +204,9 @@ class Data extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -209,6 +219,9 @@ class Data extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -221,6 +234,9 @@ class Data extends AbstractModel
         return $this->userModification;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
@@ -228,11 +244,14 @@ class Data extends AbstractModel
         return $this;
     }
 
-    public function getUserOwner(): int
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
@@ -242,14 +261,17 @@ class Data extends AbstractModel
 
     public function isPublished(): bool
     {
-        return (bool) $this->getPublished();
+        return $this->getPublished();
     }
 
     public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
+    /**
+     * @return $this
+     */
     public function setPublished(bool $published): static
     {
         $this->published = $published;
@@ -262,6 +284,9 @@ class Data extends AbstractModel
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(string $data): static
     {
         $this->data = $data;
@@ -274,6 +299,9 @@ class Data extends AbstractModel
         return $this->properties;
     }
 
+    /**
+     * @return $this
+     */
     public function setProperties(string $properties): static
     {
         $this->properties = $properties;
@@ -281,6 +309,9 @@ class Data extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDataFromElement(Element\ElementInterface $element): static
     {
         $this->data = null;
@@ -306,15 +337,13 @@ class Data extends AbstractModel
 
         $this->properties = '';
         $properties = $element->getProperties();
-        if (is_array($properties)) {
-            foreach ($properties as $nextProperty) {
-                $pData = (string) $nextProperty->getData();
-                if ($nextProperty->getName() === 'bool') {
-                    $pData = $pData ? 'true' : 'false';
-                }
-
-                $this->properties .= $nextProperty->getName() . ':' . $pData .' ';
+        foreach ($properties as $nextProperty) {
+            $pData = (string) $nextProperty->getData();
+            if ($nextProperty->getName() === 'bool') {
+                $pData = $pData ? 'true' : 'false';
             }
+
+            $this->properties .= $nextProperty->getName() . ':' . $pData .' ';
         }
 
         $this->data = '';
@@ -328,18 +357,16 @@ class Data extends AbstractModel
             } elseif ($element instanceof Document\PageSnippet) {
                 $this->published = $element->isPublished();
                 $editables = $element->getEditables();
-                if (is_array($editables) && !empty($editables)) {
-                    foreach ($editables as $editable) {
-                        if ($editable instanceof Document\Editable\EditableInterface) {
-                            // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
-                            if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
-                                continue;
-                            }
-
-                            ob_start();
-                            $this->data .= strip_tags((string) $editable->frontend()).' ';
-                            $this->data .= ob_get_clean();
+                foreach ($editables as $editable) {
+                    if ($editable instanceof Document\Editable\EditableInterface) {
+                        // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
+                        if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
+                            continue;
                         }
+
+                        ob_start();
+                        $this->data .= strip_tags((string) $editable->frontend()).' ';
+                        $this->data .= ob_get_clean();
                     }
                 }
                 if ($element instanceof Document\Page) {

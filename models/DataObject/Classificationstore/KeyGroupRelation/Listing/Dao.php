@@ -28,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of Classificationstore group configs for the specified parameters, returns an array of config elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -48,6 +47,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($data as $dataItem) {
             $entry = new DataObject\Classificationstore\KeyGroupRelation();
             $resource = $entry->getDao();
+            $dataItem['enabled'] = (bool)$dataItem['enabled'];
+            $dataItem['mandatory'] = (bool)$dataItem['mandatory'];
             $resource->assignVariablesToModel($dataItem);
 
             $configData[] = $entry;

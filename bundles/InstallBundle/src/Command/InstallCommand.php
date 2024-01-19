@@ -17,12 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
-use Pimcore\Config;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,6 +38,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:install',
+    description: 'Installs Pimcore with the given parameters. Every parameter will be prompted interactively or can also be set via env vars'
+)]
 class InstallCommand extends Command
 {
     private Installer $installer;
@@ -111,6 +117,12 @@ class InstallCommand extends Command
                 'default' => '',
                 'group' => 'db_credentials',
             ],
+            'install-bundles' => [
+                'description' => sprintf('Installable bundles: %s', $this->generateBundleDescription()),
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'bundles',
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -122,9 +134,6 @@ class InstallCommand extends Command
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $options = $this->getOptions();
@@ -141,15 +150,8 @@ class InstallCommand extends Command
         }
 
         $this
-            ->setName('pimcore:install')
-            ->setDescription($description)
             ->setHelp($help)
             ->addOption(
-                'ignore-existing-config',
-                null,
-                InputOption::VALUE_NONE,
-                'Do not abort if a <comment>system.yaml</comment> file already exists'
-            )->addOption(
                 'skip-database-config',
                 null,
                 InputOption::VALUE_NONE,
@@ -181,17 +183,8 @@ class InstallCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        // no installer if Pimcore is already installed
-        $configFile = Config::locateConfigFile('system.yaml');
-        if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
-            throw new \RuntimeException(sprintf('The system.yaml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
-        }
-
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
         }
@@ -205,6 +198,19 @@ class InstallCommand extends Command
         }
         if ($input->getOption('skip-database-data-dump')) {
             $this->installer->setImportDatabaseDataDump(false);
+        }
+        $bundleOption = $input->getOption('install-bundles');
+        if (false !== $bundleOption) {
+            $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
+
+            if (null === $bundleOption) {
+                $bundles = [];
+            } else {
+                $bundles = explode(',', $bundleOption);
+            }
+
+            $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
+            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -296,14 +302,24 @@ class InstallCommand extends Command
             return false;
         }
 
+        if ('bundles' === ($config['group'] ?? null)) {
+            return false;
+        }
+
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // dispatch a bundle config event here to manually add/remove bundles/recommendations
+        $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
+
+        if (!empty($bundleSetupEvent->getBundles()) && !$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm(sprintf('Do you want to install bundles? We recommend %s.', implode(', ', $bundleSetupEvent->getRecommendedBundles())), false)) {
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3 or just hit enter to install recommended bundles', array_keys($bundleSetupEvent->getBundles()), $this->getRecommendBundles($bundleSetupEvent), true);
+            $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
+            $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
+        }
+
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
             return 0;
         }
@@ -357,7 +373,7 @@ class InstallCommand extends Command
         $progressBar->start();
 
         $this->eventDispatcher->addListener(
-            Installer::EVENT_NAME_STEP,
+            InstallEvents::EVENT_NAME_STEP,
             function (InstallerStepEvent $event) use ($progressBar) {
                 $progressBar->setMessage($event->getMessage());
                 $progressBar->advance();
@@ -407,5 +423,21 @@ class InstallCommand extends Command
             $this->io->getErrorStyle()->write($errorResults);
             $this->io->getErrorStyle()->newLine(2);
         }
+    }
+
+    private function generateBundleDescription(): string
+    {
+        return implode(',', array_keys(Installer::INSTALLABLE_BUNDLES));
+    }
+
+    private function getRecommendBundles(BundleSetupEvent $bundleSetupEvent): string
+    {
+        $installableBundleKeys = array_keys($bundleSetupEvent->getBundles());
+        $recommendedBundles = [];
+        foreach($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
+            $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
+        }
+
+        return implode(',', $recommendedBundles);
     }
 }

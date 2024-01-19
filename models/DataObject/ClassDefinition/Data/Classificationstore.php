@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
@@ -33,60 +32,44 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     use DataObject\Traits\DataWidthTrait;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'classificationstore';
-
-    /**
-     * @internal
-     *
-     * @var array
      */
     public array $children = [];
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $name = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $region;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $layout;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $title = null;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $maxTabs;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $labelWidth = 0;
 
@@ -98,7 +81,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var int
      */
     public int $storeId;
 
@@ -117,58 +99,47 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @internal
      *
-     * @var array
      */
     protected array $referencedFields = [];
 
     /**
      * @internal
      *
-     * @var array|null
      */
     public ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $allowedGroupIds;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $activeGroupDefinitions = [];
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $permissionView;
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $permissionEdit;
 
     /**
-     * @param mixed $data
      * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return array
      *
      * @throws \Exception
      *
@@ -321,25 +292,24 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Classificationstore
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
-    {
+    public function getDataFromEditmode(
+        mixed $data,
+        DataObject\Concrete $object = null,
+        array $params = []
+    ): DataObject\Classificationstore {
         $classificationStore = $this->getDataFromObjectParam($object);
 
         if (!$classificationStore instanceof DataObject\Classificationstore) {
             $classificationStore = new DataObject\Classificationstore();
         }
 
+        $activeGroups = $data['activeGroups'];
+        $groupCollectionMapping = $data['groupCollectionMapping'];
         $data = $data['data'];
-        $activeGroups = $data['activeGroups'] ?? [];
-        $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
 
         $correctedMapping = [];
 
@@ -357,7 +327,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($keys as $keyId => $value) {
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
+                            $keyConfig
+                        );
 
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
@@ -374,11 +346,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         // cleanup
         $existingGroupIds = $classificationStore->getGroupIdsWithData();
-        if (is_array($existingGroupIds)) {
-            foreach ($existingGroupIds as $existingGroupId) {
-                if (!in_array($existingGroupId, $activeGroupIds)) {
-                    $classificationStore->removeGroupData($existingGroupId);
-                }
+        foreach ($existingGroupIds as $existingGroupId) {
+            if (!in_array($existingGroupId, $activeGroupIds)) {
+                $classificationStore->removeGroupData($existingGroupId);
             }
         }
 
@@ -386,11 +356,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): string
     {
@@ -398,11 +365,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -410,13 +373,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
+        // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
         return 'CLASSIFICATIONSTORE';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'not supported';
@@ -469,6 +429,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -479,11 +442,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
-            return true;
-        }
-
-        return false;
+        return count($this->children) > 0;
     }
 
     /**
@@ -548,8 +507,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
@@ -558,9 +515,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore->createUpdateTable();
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
@@ -586,6 +540,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $keyConfig;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -610,6 +567,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setRegion(?string $region): static
     {
         $this->region = $region;
@@ -634,9 +594,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->title;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $activeGroups = $data->getActiveGroups();
@@ -713,9 +670,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -725,20 +679,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
      * @throws \Exception
      */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, Concrete $object = null, array $params = []): mixed
     {
         throw new \Exception('not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return false;
@@ -753,9 +700,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         ];
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $vars = get_object_vars($this);
@@ -780,7 +724,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setLabelWidth(int $labelWidth): void
     {
-        $this->labelWidth = (int)$labelWidth;
+        $this->labelWidth = $labelWidth;
     }
 
     public function getLabelWidth(): int
@@ -790,7 +734,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setMaxItems(?int $maxItems): void
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
     }
 
     public function getMaxItems(): ?int
@@ -805,7 +749,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setLocalized(bool $localized): void
     {
-        $this->localized = (bool) $localized;
+        $this->localized = $localized;
     }
 
     public function getPermissionView(): ?array
@@ -839,11 +783,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
-        if (is_array($mapping)) {
-            foreach ($mapping as $groupId => $collectionId) {
-                if (!isset($mergedMapping[$groupId]) && $collectionId) {
-                    $mergedMapping[$groupId] = $collectionId;
-                }
+        foreach ($mapping as $groupId => $collectionId) {
+            if (!isset($mergedMapping[$groupId]) && $collectionId) {
+                $mergedMapping[$groupId] = $collectionId;
             }
         }
 
@@ -862,9 +804,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param DataObject\Concrete|null $object
-     * @param array $activeGroups
-     *
-     * @return array|null
      *
      * @internal
      */
@@ -896,9 +835,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $activeGroups;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->activeGroupDefinitions = [];
@@ -930,7 +866,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
 
-                // changes here also have an effect here: "bundles/AdminBundle/public/js/pimcore/object/tags/classificationstore.js"
+                // changes here also have an effect here: "https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName();
                 if (!empty($keyGroupRelation->getDescription())) {
                     $fallbackTooltip .= ' - ' . $keyGroupRelation->getDescription();
@@ -1017,6 +953,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->storeId ? $this->storeId : 1;
     }
 
+    /**
+     * @return $this
+     */
     public function setStoreId(int $storeId): static
     {
         $this->storeId = $storeId ? $storeId : 1;
@@ -1044,9 +983,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->hideEmptyData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHideEmptyData(bool $hideEmptyData): static
     {
-        $this->hideEmptyData = (bool) $hideEmptyData;
+        $this->hideEmptyData = $hideEmptyData;
 
         return $this;
     }
@@ -1056,9 +998,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->disallowAddRemove;
     }
 
+    /**
+     * @return $this
+     */
     public function setDisallowAddRemove(bool $disallowAddRemove): static
     {
-        $this->disallowAddRemove = (bool) $disallowAddRemove;
+        $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
     }
@@ -1161,9 +1106,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
-     * @return string
      */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -1196,5 +1139,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'classificationstore';
     }
 }

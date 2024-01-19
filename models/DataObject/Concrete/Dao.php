@@ -54,7 +54,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -65,6 +64,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 WHERE objects.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
@@ -101,7 +101,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
+        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -126,12 +126,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND r.type='document'
 
             ORDER BY `index` ASC", $params);
-
-        if (is_array($relations) && count($relations) > 0) {
-            return $relations;
-        } else {
-            return [];
-        }
     }
 
     /**
@@ -182,7 +176,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save changes to database, it's an good idea to use save() instead
      *
-     * @param bool|null $isUpdate
      */
     public function update(bool $isUpdate = null): void
     {
@@ -278,9 +271,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 }
             }
         }
-
+        $tableName = 'object_store_' . $this->model->getClassId();
         if ($isUpdate) {
-            Helper::insertOrUpdate($this->db, 'object_store_' . $this->model->getClassId(), $data);
+            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
         } else {
             $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
         }
@@ -400,7 +393,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
         $data['oo_id'] = $this->model->getId();
 
-        Helper::insertOrUpdate($this->db, 'object_query_' . $this->model->getClassId(), $data);
+        $tableName = 'object_query_' . $this->model->getClassId();
+        Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
 
         DataObject::setGetInheritedValues($inheritedValues);
     }

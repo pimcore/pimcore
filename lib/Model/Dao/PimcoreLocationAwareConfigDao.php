@@ -45,9 +45,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         $this->locationAwareConfigRepository = new Config\LocationAwareConfigRepository(
             $params['containerConfig'] ?? [],
             $this->settingsStoreScope,
-            $params['storageDirectory'] ?? null,
-            $params['writeTargetEnvVariableName'] ?? null,
-            $params['defaultWriteLocation'] ?? null
+            $params['storageConfig'] ?? null
         );
     }
 
@@ -61,7 +59,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             return self::$cache[$this->settingsStoreScope][$id]['data'];
         }
 
-        list($data, $this->dataSource) = $this->locationAwareConfigRepository->loadConfigByKey($id);
+        [$data, $this->dataSource] = $this->locationAwareConfigRepository->loadConfigByKey($id);
 
         if ($data) {
             self::$cache[$this->settingsStoreScope][$id] = [
@@ -78,11 +76,15 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $this->locationAwareConfigRepository->fetchAllKeys();
     }
 
+    protected function loadIdListByReadTargets(): array
+    {
+        return $this->locationAwareConfigRepository->fetchAllKeysByReadTargets();
+    }
+
     /**
      * Removes config with corresponding id from the cache.
      * A new cache entry will be generated upon requesting the config again.
      *
-     * @param string $id
      */
     protected function invalidateCache(string $id): void
     {
@@ -90,8 +92,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     }
 
     /**
-     * @param string $id
-     * @param array $data
      *
      * @throws \Exception
      */
@@ -107,10 +107,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     /**
      * Hook to prepare config data structure for yaml
      *
-     * @param string $id
-     * @param mixed $data
      *
-     * @return mixed
      */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
@@ -133,7 +130,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     }
 
     /**
-     * @param string $id
      *
      * @throws \Exception
      */

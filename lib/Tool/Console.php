@@ -18,6 +18,7 @@ namespace Pimcore\Tool;
 
 use Pimcore\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -29,13 +30,9 @@ final class Console
     protected static array $executableCache = [];
 
     /**
-     * @deprecated since v.6.9.
-     *
-     * @static
-     *
      * @return string "windows" or "unix"
      */
-    public static function getSystemEnvironment(): string
+    private static function getSystemEnvironment(): string
     {
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
@@ -51,11 +48,11 @@ final class Console
     }
 
     /**
-     * @return ($throwException is true ? string : string|false)
+     * @return string|false ($throwException is true ? string : string|false)
      *
      * @throws \Exception
      */
-    public static function getExecutable(string $name, bool $throwException = false): string|false
+    public static function getExecutable(string $name, bool $throwException = false, bool $checkExternal = true): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -71,21 +68,11 @@ final class Console
             self::$customSetupMethod();
         }
 
-        // use DI to provide the ability to customize / overwrite paths
-        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
-            $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
+        // get executable from pimcore_executable_* param
+        if ($checkExternal && $externalExecutable = self::getExternalExecutable($name, $throwException)) {
+            self::$executableCache[$name] = $externalExecutable;
 
-            if ($value === false) {
-                if ($throwException) {
-                    throw new \Exception("'$name' executable was disabled manually in parameters.yml");
-                }
-
-                return false;
-            }
-
-            if ($value) {
-                return $value;
-            }
+            return $externalExecutable;
         }
 
         $paths = [];
@@ -139,24 +126,48 @@ final class Console
         return false;
     }
 
+    private static function getExternalExecutable(string $name, bool $throwException = false): string|false
+    {
+        $executable = false;
+
+        // use DI to provide the ability to customize / overwrite paths
+        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
+            $executable = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
+
+            if ($executable === false && $throwException) {
+                throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+            }
+        }
+
+        return $executable;
+    }
+
     /**
      * @throws \Exception
      */
     public static function getPhpCli(): string
     {
         try {
-            return self::getExecutable('php', true);
-        } catch (\Exception $e) {
+            $phpPath = self::getExternalExecutable('php', true);
+            if ($phpPath) {
+                return $phpPath;
+            }
+
             $phpFinder = new PhpExecutableFinder();
             $phpPath = $phpFinder->find(true);
             if (!$phpPath) {
-                throw $e;
+                throw new NotFoundException('No PHP executable found, get from getExecutable()');
             }
-
-            return $phpPath;
+        } catch (\Exception $e) {
+            $phpPath = self::getExecutable('php', true, false);
         }
+
+        return $phpPath;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
@@ -209,12 +220,6 @@ final class Console
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
     public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
@@ -226,16 +231,6 @@ final class Console
         return self::execInBackground($commandLine, $outputFile);
     }
 
-    /**
-     * @param string $cmd
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
-     *
-     * @static
-     */
     public static function execInBackground(string $cmd, string $outputFile = null): int
     {
         // windows systems
@@ -248,18 +243,7 @@ final class Console
         }
     }
 
-    /**
-     * @param string $cmd
-     * @param ?string $outputFile
-     * @param bool $useNohup
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
+    private static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -282,7 +266,7 @@ final class Console
         /**
          * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
          */
-        if (strpos(php_sapi_name(), 'apache') !== false) {
+        if (str_contains(php_sapi_name(), 'apache')) {
             foreach (['APP_ENV'] as $envVarName) {
                 if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
                     putenv($envVarName . '='.$envValue);
@@ -299,17 +283,7 @@ final class Console
         return (int)$pid;
     }
 
-    /**
-     * @param string $cmd
-     * @param string $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long-running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    private static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';

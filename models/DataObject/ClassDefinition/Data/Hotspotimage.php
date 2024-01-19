@@ -26,57 +26,25 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
     use ImageTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'hotspotimage';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * @internal
-     *
-     * @var int
      */
     public int $ratioX;
 
     /**
      * @internal
      *
-     * @var int
      */
     public int $ratioY;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $predefinedDataTemplates;
 
@@ -111,11 +79,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -149,11 +113,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Hotspotimage|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -217,11 +177,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -231,11 +187,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -281,15 +233,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\Hotspotimage
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -319,27 +267,20 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'] ?? null, $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        if ($data && isset($data['id']) && (int)$data['id'] > 0) {
+            return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        }
+
+        return null;
     }
 
-    /**
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\Hotspotimage
-     */
     public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -353,9 +294,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -446,21 +384,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $dependencies;
     }
 
-    /**
-     * @param DataObject\Data\Hotspotimage|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDataForGrid(?DataObject\Data\Hotspotimage $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -640,11 +568,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -652,5 +576,23 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         $name .= '__image';
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'image' => 'int(11)',
+            'hotspots' => 'text',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'hotspotimage';
     }
 }

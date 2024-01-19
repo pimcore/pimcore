@@ -22,11 +22,25 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
+use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
+use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
+use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
+use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
+use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
+use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
+use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
+use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
+use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
+use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
+use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Helper;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -46,7 +60,20 @@ use Symfony\Component\Process\Process;
  */
 class Installer
 {
-    const EVENT_NAME_STEP = 'pimcore.installer.step';
+    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle', 'PimcoreTinymceBundle'];
+
+    public const INSTALLABLE_BUNDLES = [
+        'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
+        'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
+        'PimcoreGlossaryBundle' => PimcoreGlossaryBundle::class,
+        'PimcoreSeoBundle' => PimcoreSeoBundle::class,
+        'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
+        'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
+        'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
+        'PimcoreUuidBundle' => PimcoreUuidBundle::class,
+        'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
+        'PimcoreXliffBundle' => PimcoreXliffBundle::class,
+    ];
 
     private LoggerInterface $logger;
 
@@ -55,7 +82,6 @@ class Installer
     /**
      * Predefined DB credentials from config
      *
-     * @var array
      */
     private array $dbCredentials;
 
@@ -64,14 +90,12 @@ class Installer
     /**
      * When false, skips creating database structure during install
      *
-     * @var bool
      */
     private bool $createDatabaseStructure = true;
 
     /**
      * When false, skips importing all database data during install
      *
-     * @var bool
      */
     private bool $importDatabaseData = true;
 
@@ -79,16 +103,35 @@ class Installer
      * When false, skips importing database data dump files (if available) during install
      * only imports needed base data
      *
-     * @var bool
      */
     private bool $importDatabaseDataDump = true;
 
     /**
      * skip writing database.yaml file
      *
-     * @var bool
      */
     private bool $skipDatabaseConfig = false;
+
+    /**
+     * Bundles that will be installed
+     *
+     */
+    private array $bundlesToInstall =  [];
+
+    /**
+     * This bundles might be different to the predefined one, due to the bundle event
+     *
+     * @var array|string[]
+     */
+    private array $availableBundles = self::INSTALLABLE_BUNDLES;
+
+    /**
+     * This bundles should not be added in the bundles php, e.g. for higher priority
+     * Bundles need to be registered in the Kernel then e.g.
+     *
+     * @var array|string[]
+     */
+    private array $excludeFromBundlesPhp = [];
 
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
@@ -104,6 +147,7 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
+        'install_bundles' => 'Installing bundles ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -146,6 +190,23 @@ class Installer
         return empty($this->dbCredentials);
     }
 
+    public function setBundlesToInstall(array $bundlesToInstall = [], array $availableBundles = [], array $excludeFromBundlesPhp = []): void
+    {
+        // map and filter the bundles
+        $bundlesToInstall = array_filter(array_map(
+            static fn (string $bundle) => $availableBundles[$bundle] ?? null,
+            $bundlesToInstall,
+        ));
+        $this->availableBundles = $availableBundles;
+        $this->bundlesToInstall = $bundlesToInstall;
+        $this->excludeFromBundlesPhp = $excludeFromBundlesPhp;
+    }
+
+    public function dispatchBundleSetupEvent(): BundleSetupEvent
+    {
+        return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
+    }
+
     public function checkPrerequisites(Connection $db = null): array
     {
         $checks = array_merge(
@@ -159,9 +220,7 @@ class Installer
 
     /**
      * @param Check[] $checks
-     * @param array $filterStates
      *
-     * @return array
      */
     public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR]): array
     {
@@ -201,13 +260,12 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
+        $this->eventDispatcher->dispatch($event, InstallEvents::EVENT_NAME_STEP);
 
         return $event;
     }
 
     /**
-     * @param array $params
      *
      * @return array Array of errors
      */
@@ -387,10 +445,16 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
+        if (!empty($this->bundlesToInstall)) {
+            $this->dispatchStepEvent('install_bundles');
+            $this->installBundles();
+        }
+
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('complete');
 
         return $errors;
     }
@@ -437,7 +501,7 @@ class Installer
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
             $stdErr->note($taskName . ' failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+            $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
         }
     }
 
@@ -460,6 +524,33 @@ class Installer
             'pimcore:deployment:classes-rebuild',
             '-c',
         ], 'Installing class definitions');
+    }
+
+    private function installBundles(): void
+    {
+        $this->writeBundlesToConfig();
+        foreach ($this->bundlesToInstall as $bundle) {
+            if (in_array($bundle, $this->availableBundles) && !$this->isBundleInstalled($bundle)) {
+                $this->runCommand([
+                    'pimcore:bundle:install',
+                    $bundle,
+                ], 'Installing ' . $bundle);
+            }
+        }
+    }
+
+    private function writeBundlesToConfig(): void
+    {
+        // some bundles need to be excluded
+        $bundlesToInstall = $this->bundlesToInstall;
+        $availableBundles = $this->availableBundles;
+
+        if(!empty($this->excludeFromBundlesPhp)) {
+            $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
+            $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
+        }
+        $writer = new BundleWriter();
+        $writer->addBundlesToConfig($bundlesToInstall, $availableBundles);
     }
 
     private function installAssets(KernelInterface $kernel): void
@@ -497,7 +588,7 @@ class Installer
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
             $stdErr->note('Installing assets failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+            $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
         }
     }
 
@@ -508,8 +599,6 @@ class Installer
         if (!$this->skipDatabaseConfig) {
             $writer->writeDbConfig($config);
         }
-
-        $writer->writeSystemConfig();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel): void
@@ -634,7 +723,6 @@ class Installer
     }
 
     /**
-     * @param string $file
      *
      * @throws \Exception
      */
@@ -646,7 +734,7 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        if (strpos($file, 'atomic') !== false) {
+        if (str_contains($file, 'atomic')) {
             $db->executeStatement($dumpFile);
         } else {
             // get every command as single part - ; at end of line
@@ -718,9 +806,9 @@ class Installer
             'userModification' => 1,
         ]));
         $userPermissions = [
-            'application_logging',
             'assets',
             'classes',
+            'selectoptions',
             'clear_cache',
             'clear_fullpage_cache',
             'clear_temp_files',
@@ -728,37 +816,31 @@ class Installer
             'document_types',
             'documents',
             'emails',
-            'gdpr_data_extractor',
-            'http_errors',
             'notes_events',
             'objects',
             'predefined_properties',
             'asset_metadata',
             'recyclebin',
             'redirects',
-            'reports',
-            'reports_config',
-            'robots.txt',
-            'routes',
             'seemode',
-            'seo_document_editor',
             'share_configurations',
             'system_settings',
             'tags_configuration',
             'tags_assignment',
             'tags_search',
-            'targeting',
             'thumbnails',
             'translations',
             'users',
             'website_settings',
-            'admin_translations',
-            'web2print_settings',
             'workflow_details',
             'notifications',
             'notifications_send',
             'sites',
             'objects_sort_method',
+            'objectbricks',
+            'fieldcollections',
+            'quantityValueUnits',
+            'classificationstore',
         ];
 
         foreach ($userPermissions as $permission) {
@@ -779,5 +861,10 @@ class Installer
 
         // set the id of the system user to 0
         $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
+    }
+
+    private function isBundleInstalled(string $bundle): bool
+    {
+        return null !== SettingsStore::get('BUNDLE_INSTALLED__' . $bundle, 'pimcore');
     }
 }

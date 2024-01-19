@@ -40,9 +40,6 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -63,7 +60,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
             return;
         }
 
-        // master request already has a state on the stack
+        // main request already has a state on the stack
         if ($event->isMainRequest()) {
             return;
         }

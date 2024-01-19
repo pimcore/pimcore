@@ -21,8 +21,6 @@ use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\PrintAbstract;
-use Pimcore\Model\Document\Printpage;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -275,13 +273,13 @@ class DocumentTest extends ModelTestCase
         $sibling->setParentId($this->testPage->getId());
         $sibling->save();
         $child = Page::getById($sibling->getId(), ['force' => true]);
-        // editable should still be null as no master document is set
+        // editable should still be null as no main document is set
 
         $childEditable = $child->getEditable('headline');
         $this->assertNull($childEditable);
 
-        // set master document
-        $child->setContentMasterDocumentId($this->testPage->getId(), true);
+        // set main document
+        $child->setContentMainDocumentId($this->testPage->getId(), true);
         $child->save();
         $child = Page::getById($child->getId(), ['force' => true]);
 
@@ -289,16 +287,16 @@ class DocumentTest extends ModelTestCase
         $childEditable = $child->getEditable('headline');
         $this->assertEquals('test', $childEditable->getValue());
 
-        // Don't set the master document if the document is already a part of the master document chain
+        // Don't set the main document if the document is already a part of the main document chain
         $testFirstPage = TestHelper::createEmptyDocumentPage();
         $testSecondPage = TestHelper::createEmptyDocumentPage();
-        $testFirstPage->setContentMasterDocumentId($testSecondPage->getId(), true);
+        $testFirstPage->setContentMainDocumentId($testSecondPage->getId(), true);
         $testFirstPage->setPublished(true);
         $testFirstPage->save();
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('This document is already part of the master document chain, please choose a different one.');
-        $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
+        $this->expectExceptionMessage('This document is already part of the main document chain, please choose a different one.');
+        $testSecondPage->setContentMainDocumentId($testFirstPage->getId(), true);
     }
 
     public function testLink(): void
@@ -361,22 +359,10 @@ class DocumentTest extends ModelTestCase
 
         $document->setEditable($input);
 
-        $this->buildSession();
-        ElementService::saveElementToSession($document);
-        $loadedDocument = Service::getElementFromSession('document', $document->getId());
+        $session = $this->buildSession();
+        ElementService::saveElementToSession($document, $session->getId());
+        $loadedDocument = Service::getElementFromSession('document', $document->getId(), $session->getId());
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
-    }
-
-    public function testDocumentPrint(): void
-    {
-        $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Model\\Document\\Printpage');
-        $this->assertInstanceOf(Printpage::class, $printpage);
-
-        //Load via abstract class
-        $printpage = PrintAbstract::getById($printpage->getId());
-        $this->assertInstanceOf(Printpage::class, $printpage);
-        $printpage = PrintAbstract::getByPath($printpage->getRealFullPath());
-        $this->assertInstanceOf(Printpage::class, $printpage);
     }
 }

@@ -77,10 +77,11 @@ class QuantityValueRange extends AbstractQuantityValue
         return [
             'minimum' => $this->getMinimum(),
             'maximum' => $this->getMaximum(),
+            'unitId' => $this->getUnitId(),
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 

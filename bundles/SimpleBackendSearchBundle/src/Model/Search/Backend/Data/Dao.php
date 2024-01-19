@@ -45,6 +45,7 @@ class Dao extends AbstractDao
             $data = $this->db->fetchAssociative('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
             if (is_array($data)) {
                 unset($data['id']);
+                $data['published'] = (bool) $data['published'];
                 $this->assignVariablesToModel($data);
                 $this->model->setId(new Backend\Data\Id($element));
             }
@@ -85,7 +86,7 @@ class Dao extends AbstractDao
             'properties' => $this->model->getProperties(),
         ];
 
-        Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
+        Helper::upsert($this->db, 'search_backend_data', $data, $this->getPrimaryKey('search_backend_data'));
     }
 
     /**

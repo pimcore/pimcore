@@ -28,7 +28,6 @@ class Fieldset extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'fieldset';
 }

@@ -27,49 +27,41 @@ final class TmpStore extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
      */
     protected string $id;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected string $tag;
+    protected ?string $tag = null;
 
     /**
      * @internal
      *
-     * @var mixed
      */
     protected mixed $data = null;
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $date;
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $expiryDate;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $serialized = false;
 
     /**
      * @internal
      *
-     * @var self|null
      */
     protected static ?self $instance = null;
 
@@ -87,14 +79,6 @@ final class TmpStore extends Model\AbstractModel
         return 86400 * 7;
     }
 
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string|null $tag
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
     public static function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         $instance = self::getInstance();
@@ -110,14 +94,6 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string|null $tag
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
     public static function set(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
     {
         $instance = self::getInstance();
@@ -126,7 +102,7 @@ final class TmpStore extends Model\AbstractModel
             $lifetime = self::getDefaultLifetime();
         }
 
-        return $instance->getDao()->add($id, $data, $tag ?? '', $lifetime);
+        return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
     public static function delete(string $id): void
@@ -167,12 +143,12 @@ final class TmpStore extends Model\AbstractModel
         $this->id = $id;
     }
 
-    public function getTag(): string
+    public function getTag(): ?string
     {
         return $this->tag;
     }
 
-    public function setTag(string $tag): void
+    public function setTag(?string $tag): void
     {
         $this->tag = $tag;
     }
@@ -217,11 +193,6 @@ final class TmpStore extends Model\AbstractModel
         $this->expiryDate = $expiryDate;
     }
 
-    /**
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
     public function update(int $lifetime = null): bool
     {
         if (!$lifetime) {

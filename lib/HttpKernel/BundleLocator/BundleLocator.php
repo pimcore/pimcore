@@ -30,17 +30,11 @@ class BundleLocator implements BundleLocatorInterface
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBundle(object|string $class): BundleInterface
     {
         return $this->getBundleForClass($class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBundlePath(object|string $class): string
     {
         return $this->getBundleForClass($class)->getPath();
@@ -75,7 +69,7 @@ class BundleLocator implements BundleLocatorInterface
             $namespace = $reflectionClass->getNamespaceName();
 
             foreach ($bundles as $bundle) {
-                if (0 === strpos($namespace, $bundle->getNamespace())) {
+                if (str_starts_with($namespace, $bundle->getNamespace())) {
                     return $bundle;
                 }
             }

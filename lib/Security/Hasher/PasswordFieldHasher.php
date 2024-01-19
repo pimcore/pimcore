@@ -36,7 +36,6 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     /**
      * If true, the user password hash will be updated if necessary.
      *
-     * @var bool
      */
     protected bool $updateHash = true;
 
@@ -52,7 +51,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function setUpdateHash(bool $updateHash): void
     {
-        $this->updateHash = (bool)$updateHash;
+        $this->updateHash = $updateHash;
     }
 
     public function hashPassword(string $raw, ?string $salt): string
@@ -74,7 +73,6 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     }
 
     /**
-     * @return Password
      *
      * @throws RuntimeException
      */

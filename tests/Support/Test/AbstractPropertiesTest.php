@@ -39,9 +39,6 @@ abstract class AbstractPropertiesTest extends ModelTestCase
 
     abstract public function reloadElement(): ElementInterface;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;
@@ -119,5 +116,3 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         $this->assertEquals($asset->getId(), $assetProperty->getId());
     }
 }
-
-@class_alias(AbstractPropertiesTest::class, 'Pimcore\Tests\Support\Test\AbstractPropertiesTest');

@@ -21,19 +21,18 @@ use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
+    use ObjectVarTrait;
     use OwnerAwareFieldTrait;
 
     protected string|null $unitId = null;
 
     protected ?Unit $unit = null;
 
-    /**
-     * @param string|Unit|null $unit
-     */
     public function __construct(Unit|string $unit = null)
     {
         if ($unit instanceof Unit) {
@@ -69,8 +68,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     /**
      * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
      *
-     * @return self
-     *
      * @throws \Exception
      */
     public function convertTo(Unit|string $unit): AbstractQuantityValue
@@ -95,5 +92,5 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     abstract public function getValue(): mixed;
 
-    abstract public function __toString();
+    abstract public function __toString(): string;
 }

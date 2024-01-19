@@ -75,16 +75,14 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
 
-        if (is_array($activeGroups)) {
-            foreach ($activeGroups as $activeGroupId => $enabled) {
-                if ($enabled) {
-                    $data = [
-                        'id' => $objectId,
-                        'groupId' => $activeGroupId,
-                        'fieldname' => $fieldname,
-                    ];
-                    Helper::insertOrUpdate($this->db, $groupsTable, $data);
-                }
+        foreach ($activeGroups as $activeGroupId => $enabled) {
+            if ($enabled) {
+                $data = [
+                    'id' => $objectId,
+                    'groupId' => $activeGroupId,
+                    'fieldname' => $fieldname,
+                ];
+                Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
             }
         }
 
@@ -131,7 +129,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
 
-                    Helper::insertOrUpdate($this->db, $dataTable, $data);
+                    Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
                 }
             }
         }

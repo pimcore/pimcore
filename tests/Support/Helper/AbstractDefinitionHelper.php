@@ -53,17 +53,13 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, bool $index = false, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;
         }
 
-        if (strpos($type, 'indexField') === 0) {
-            $classname = 'Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ClassDefinition\\' . ucfirst($type);
-        } else {
-            $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
-        }
+        $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
         /** @var Data $child */
         $child = new $classname();
         $child->setName($name);
@@ -78,5 +74,3 @@ abstract class AbstractDefinitionHelper extends Module
 
     abstract public function initializeDefinitions(): void;
 }
-
-@class_alias(AbstractDefinitionHelper::class, 'Pimcore\Tests\Support\Helper\AbstractDefinitionHelper');

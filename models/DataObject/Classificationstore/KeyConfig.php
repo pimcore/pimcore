@@ -35,31 +35,25 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
     /** The key
-     * @var string
      */
     protected string $name;
 
     /** Pseudo column for title
-     * @var string|null
      */
     protected ?string $title = null;
 
     /**
      * The key description.
-     *
-     * @var string
      */
-    protected string $description = '';
+    protected ?string $description = null;
 
     /**
      * The key type ("text", "number", etc...)
      *
-     * @var string
      */
     protected string $type;
 
@@ -73,7 +67,6 @@ final class KeyConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         try {
@@ -99,11 +92,6 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool $force
-     *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -146,7 +134,7 @@ final class KeyConfig extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -170,10 +158,8 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * Returns the description.
-     *
-     * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -181,11 +167,9 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
-     *
-     * @return Model\DataObject\Classificationstore\KeyConfig
+     * @return $this
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 

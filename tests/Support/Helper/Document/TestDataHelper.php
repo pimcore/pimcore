@@ -297,7 +297,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Wysiwyg::class, $editable);
         $value = $editable->getValue();
 
-        $this->assertEquals('content<br>' . $seed, $value);
+        $this->assertEquals('content<br />' . $seed, $value);
     }
 
     public function assertTextarea(PageSnippet $pagesnippet, string $field, int $seed = 1): void
@@ -307,7 +307,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Textarea::class, $editable);
         $value = $editable->getValue();
 
-        $this->assertEquals('content<br>' . $seed, $value);
+        $this->assertEquals('content<br />' . $seed, $value);
     }
 
     public function assertBlock(PageSnippet $pagesnippet, string $field, int $seed = 1): void
@@ -569,7 +569,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Wysiwyg();
         $editable->setName($field);
-        $editable->setDataFromEditmode('content<br>' . $seed);
+        $editable->setDataFromEditmode('content<br />' . $seed);
         $page->setEditable($editable);
     }
 
@@ -577,7 +577,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Textarea();
         $editable->setName($field);
-        $editable->setDataFromEditmode('content<br>' . $seed);
+        $editable->setDataFromEditmode('content<br />' . $seed);
         $page->setEditable($editable);
     }
 
@@ -590,5 +590,3 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 }
-
-@class_alias(TestDataHelper::class, 'Pimcore\Tests\Support\Helper\Document\TestDataHelper');

@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,11 +50,6 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         return $this;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
     public function isEditmode(Request $request = null): bool
     {
         if ($this->forceEditmode) {

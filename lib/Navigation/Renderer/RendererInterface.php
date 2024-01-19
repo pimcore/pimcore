@@ -45,12 +45,13 @@ interface RendererInterface
 {
     public function getRenderInvisible(): bool;
 
-    public function setRenderInvisible(bool $renderInvisible = true): AbstractRenderer;
+    /**
+     * @return $this
+     */
+    public function setRenderInvisible(bool $renderInvisible = true): static;
 
     /**
-     * @param Container $container
      *
-     * @return string
      *
      * @throws \Exception
      */

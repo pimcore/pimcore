@@ -21,16 +21,16 @@ use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 use Pimcore\Model\Site;
-use Pimcore\Routing\RedirectHandler;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -41,26 +41,20 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+    use LoggerAwareTrait;
 
     public function __construct(
         protected RequestHelper $requestHelper,
-        protected RedirectHandler $redirectHandler,
         protected SiteResolver $siteResolver,
         protected Config $config
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
             // run with high priority as we need to set the site early
             KernelEvents::REQUEST => ['onKernelRequest', 512],
-
-            // run with high priority before handling real errors
-            KernelEvents::EXCEPTION => ['onKernelException', 64],
         ];
     }
 
@@ -88,14 +82,6 @@ class RoutingListener implements EventSubscriberInterface
         // resolve current site from request
         $this->resolveSite($request, $path);
 
-        // check for override redirects
-        $response = $this->redirectHandler->checkForRedirect($request, true);
-        if ($response) {
-            $event->setResponse($response);
-
-            return;
-        }
-
         // check for app.php in URL and remove it for SEO puroposes
         $this->handleFrontControllerRedirect($event, $path);
         if ($event->hasResponse()) {
@@ -109,42 +95,34 @@ class RoutingListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelException(ExceptionEvent $event): void
-    {
-        // in case routing didn't find a matching route, check for redirects without override
-        $exception = $event->getThrowable();
-        if ($exception instanceof NotFoundHttpException) {
-            $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
-            if ($response) {
-                $event->setResponse($response);
-            }
-        }
-    }
-
     /**
      * Initialize Site
      *
-     * @param Request $request
-     * @param string $path
      *
-     * @return string
      */
     protected function resolveSite(Request $request, string $path): string
     {
+        $site = null;
+
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
             // host name without port incl. X-Forwarded-For handling for trusted proxies
             $host = $request->getHost();
+            $site = Site::getByDomain($host);
+        } elseif ($this->requestHelper->isObjectPreviewRequestByAdmin($request)) {
+            // When rendering an object's preview tab, resolve the site via a parameter
+            $siteId = $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE);
+            $site = Site::getById($siteId);
+        }
 
-            if ($site = Site::getByDomain($host)) {
-                $path = $site->getRootPath() . $path;
+        if ($site) {
+            $path = $site->getRootPath() . $path;
 
-                Site::setCurrentSite($site);
+            Site::setCurrentSite($site);
 
-                $this->siteResolver->setSite($request, $site);
-                $this->siteResolver->setSitePath($request, $path);
-            }
+            $this->siteResolver->setSite($request, $site);
+            $this->siteResolver->setSitePath($request, $path);
         }
 
         return $path;
@@ -168,8 +146,6 @@ class RoutingListener implements EventSubscriberInterface
     /**
      * Redirect to the main domain if specified
      *
-     * @param RequestEvent $event
-     * @param bool $adminContext
      */
     protected function handleMainDomainRedirect(RequestEvent $event, bool $adminContext = false): void
     {
@@ -200,9 +176,8 @@ class RoutingListener implements EventSubscriberInterface
 
             $url = $request->getScheme() . '://' . $hostRedirect . $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
-            // TODO use symfony logger service
             // log all redirects to the redirect log
-            \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . ' -> ' . $url);
+            $this->logger->info(Tool::getAnonymizedClientIp(), ['Host-Redirect Source: ' . $request->getRequestUri() . ' -> ' . $url]);
 
             $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }
@@ -212,7 +187,8 @@ class RoutingListener implements EventSubscriberInterface
     {
         $hostRedirect = null;
 
-        $gc = $this->config['general'];
+        $systemConfig = SystemSettingsConfig::get();
+        $gc = $systemConfig['general'];
         if (isset($gc['redirect_to_maindomain']) && $gc['redirect_to_maindomain'] === true && isset($gc['domain']) && $gc['domain'] !== $request->getHost()) {
             $hostRedirect = $gc['domain'];
         }

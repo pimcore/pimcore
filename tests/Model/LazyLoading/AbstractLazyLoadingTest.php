@@ -79,9 +79,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     }
 
     /**
-     * @param AbstractObject $parent
      *
-     * @return LazyLoading
      *
      * @throws \Exception
      */
@@ -97,7 +95,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
     }
 
     /**
-     * @return RelationTest\Listing
      *
      * @throws \Exception
      */
@@ -134,7 +131,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
 
         foreach ($needle as $item) {
-            $this->assertEquals($expected, strpos($string, $item) !== false, $messagePrefix . "Check if '$item' is occuring in serialized data.");
+            $this->assertEquals($expected, str_contains($string, $item), $messagePrefix . "Check if '$item' is occuring in serialized data.");
         }
     }
 

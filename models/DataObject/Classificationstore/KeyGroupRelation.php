@@ -133,7 +133,7 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     public function setSorter(int $sorter): void
     {
-        $this->sorter = (int) $sorter;
+        $this->sorter = $sorter;
     }
 
     public function isMandatory(): bool
@@ -143,7 +143,7 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     public function setMandatory(bool $mandatory): void
     {
-        $this->mandatory = (bool)$mandatory;
+        $this->mandatory = $mandatory;
     }
 
     public function isEnabled(): bool
@@ -160,7 +160,7 @@ final class KeyGroupRelation extends Model\AbstractModel
     {
         try {
             $relation = new self();
-            $relation->getDao()->getById((int)$keyId, (int)$groupId);
+            $relation->getDao()->getById($keyId, $groupId);
 
             return $relation;
         } catch (NotFoundException) {

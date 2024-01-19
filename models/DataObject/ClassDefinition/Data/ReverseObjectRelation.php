@@ -27,32 +27,19 @@ use Pimcore\Model\DataObject\Localizedfield;
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
     /**
-     * Static type of this element
-     *
      * @internal
-     *
-     * @var string
      */
-    public string $fieldtype = 'reverseObjectRelation';
+    public ?string $ownerClassName = null;
 
     /**
      * @internal
      *
-     * @var string
-     */
-    public string $ownerClassName;
-
-    /**
-     * @internal
-     *
-     * @var string|null
      */
     public ?string $ownerClassId = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $ownerFieldName;
 
@@ -85,7 +72,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
-                $this->ownerClassName = $class->getName();
+                if($class instanceof DataObject\ClassDefinition) {
+                    $this->ownerClassName = $class->getName();
+                }
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
             }
@@ -98,7 +87,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     {
         if (empty($this->ownerClassId)) {
             try {
-                $class = DataObject\ClassDefinition::getByName($this->ownerClassName);
+                $class = $this->ownerClassName ? DataObject\ClassDefinition::getByName($this->ownerClassName) : null;
                 if (!$class instanceof DataObject\ClassDefinition) {
                     Logger::error('Reverse relation '.$this->getName().' has no owner class assigned');
 
@@ -125,10 +114,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function allowObjectRelation($object): bool
+    protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
@@ -142,9 +128,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
@@ -196,17 +179,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isOptimizedAdminLoading(): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);
@@ -218,5 +190,19 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function supportsInheritance(): bool
     {
         return false;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'reverseObjectRelation';
+    }
+
+    public function getClasses(): array
+    {
+        if($this->ownerClassId) {
+            return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
+        }
+
+        return [];
     }
 }

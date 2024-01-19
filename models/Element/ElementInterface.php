@@ -61,7 +61,8 @@ interface ElementInterface extends ModelInterface
 
     public function setUserModification(int $userModification): static;
 
-    public static function getById(int $id): ?static;
+    //TODO add $params parameter in Pimcore 12
+    public static function getById(int $id /*, array $params = [] */): ?static;
 
     /**
      * get possible types
@@ -86,10 +87,7 @@ interface ElementInterface extends ModelInterface
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
      * property doesn't exists return null
      *
-     * @param string $name
-     * @param bool $asContainer
      *
-     * @return mixed
      */
     public function getProperty(string $name, bool $asContainer = false): mixed;
 
@@ -100,14 +98,12 @@ interface ElementInterface extends ModelInterface
     /**
      * returns true if the element is locked
      *
-     * @return bool
      */
     public function isLocked(): bool;
 
     /**
      * enum('self','propagate') nullable
      *
-     * @param string|null $locked
      *
      * @return $this
      */
@@ -116,7 +112,6 @@ interface ElementInterface extends ModelInterface
     /**
      * enum('self','propagate') nullable
      *
-     * @return string|null
      */
     public function getLocked(): ?string;
 
@@ -142,7 +137,7 @@ interface ElementInterface extends ModelInterface
     /**
      * @return $this
      */
-    public function setVersionCount(?int $versionCount): static;
+    public function setVersionCount(int $versionCount): static;
 
     public function getVersionCount(): int;
 
@@ -167,10 +162,7 @@ interface ElementInterface extends ModelInterface
     /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
-     * @param string $type
-     * @param null|User $user
      *
-     * @return bool
      */
     public function isAllowed(string $type, ?User $user = null): bool;
 
@@ -186,8 +178,5 @@ interface ElementInterface extends ModelInterface
 
     public function getDependencies(): Dependency;
 
-    /**
-     * @return string
-     */
-    public function __toString();
+    public function __toString(): string;
 }

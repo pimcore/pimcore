@@ -911,10 +911,7 @@ class TestHelper
     {
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
-        $method->setAccessible(true);
 
         return $method->invokeArgs($obj, $args);
     }
 }
-
-@class_alias(TestHelper::class, 'Pimcore\Tests\Support\Util\TestHelper');

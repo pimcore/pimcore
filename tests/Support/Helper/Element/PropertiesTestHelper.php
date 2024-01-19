@@ -21,5 +21,3 @@ use Codeception\Module;
 class PropertiesTestHelper extends Module
 {
 }
-
-@class_alias(PropertiesTestHelper::class, 'Pimcore\Tests\Support\Helper\Element\PropertiesTestHelper');

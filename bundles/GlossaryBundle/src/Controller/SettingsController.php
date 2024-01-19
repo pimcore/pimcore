@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GlossaryBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
+use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
+use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,19 +31,21 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class SettingsController extends AdminController
+class SettingsController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
      * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function glossaryAction(Request $request): JsonResponse
     {
+        // check glossary permissions
+        $this->checkPermission('glossary');
+
         if ($request->get('data')) {
-            $this->checkPermission('glossary');
 
             Cache::clearTag('glossary');
 
@@ -51,7 +55,7 @@ class SettingsController extends AdminController
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
-                return $this->adminJson(['success' => true, 'data' => []]);
+                return $this->jsonResponse(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') === 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -76,7 +80,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary, 'success' => true]);
+                return $this->jsonResponse(['data' => $glossary, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -102,10 +106,12 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary->getObjectVars(), 'success' => true]);
+                return $this->jsonResponse(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
-            // get list of glossaries
+            if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
+                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+            }
 
             $list = new Glossary\Listing();
             $list->setLimit((int) $request->get('limit', 50));
@@ -136,9 +142,9 @@ class SettingsController extends AdminController
                 $glossaries[] = $glossary->getObjectVars();
             }
 
-            return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->jsonResponse(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(['success' => false]);
+        return $this->jsonResponse(['success' => false]);
     }
 }

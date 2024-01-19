@@ -27,7 +27,6 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
     /**
      * Hasher class name to build
      *
-     * @var string
      */
     protected string $className;
 
@@ -40,10 +39,6 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
 
     protected ?\ReflectionClass $reflector = null;
 
-    /**
-     * @param string $className
-     * @param mixed $arguments
-     */
     public function __construct(string $className, mixed $arguments = null)
     {
         $this->className = $className;

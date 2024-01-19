@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\LinkGeneratorAwareInterface;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -37,15 +35,6 @@ class PimcoreUrl implements RuntimeExtensionInterface
         $this->requestHelper = $requestHelper;
     }
 
-    /**
-     * @param array $urlOptions
-     * @param string|null $name
-     * @param bool $reset
-     * @param bool $encode
-     * @param bool $relative
-     *
-     * @return string
-     */
     public function __invoke(array $urlOptions = [], string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
         // merge all parameters from request to parameters
@@ -59,12 +48,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param array|string|null $name
-     * @param array|null $parameters
-     * @param int $referenceType
-     * @param bool $encode
      *
-     * @return string
      */
     protected function generateUrl(array|string $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
     {
@@ -93,10 +77,12 @@ class PimcoreUrl implements RuntimeExtensionInterface
         $object = $parameters['object'] ?? null;
         $linkGenerator = null;
 
-        if ($object instanceof LinkGeneratorAwareInterface) { //e.g. Mockup
-            $linkGenerator = $object->getLinkGenerator();
-        } elseif ($object instanceof Concrete) {
-            $linkGenerator = $object->getClass()->getLinkGenerator();
+        if ($object) {
+            if (method_exists($object, 'getClass') && method_exists($object->getClass(), 'getLinkGenerator')) {
+                $linkGenerator = $object->getClass()->getLinkGenerator();
+            } elseif (method_exists($object, 'getLinkGenerator')) { // useful for ecommerce LinkGeneratorAwareInterface
+                $linkGenerator = $object->getLinkGenerator();
+            }
         }
 
         if ($linkGenerator) {
@@ -121,9 +107,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
     }
 
     /**
-     * Tries to get the current route name from current or master request
+     * Tries to get the current route name from current or main request
      *
-     * @return string|null
      */
     protected function getCurrentRoute(): ?string
     {

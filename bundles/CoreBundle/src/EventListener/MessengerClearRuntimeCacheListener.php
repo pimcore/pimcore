@@ -26,9 +26,6 @@ use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
  */
 class MessengerClearRuntimeCacheListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

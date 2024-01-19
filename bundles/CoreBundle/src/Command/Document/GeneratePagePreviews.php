@@ -21,6 +21,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,16 +29,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:documents:generate-page-previews',
+    description: 'Generates the previews shown in the tree on hover'
+)]
 class GeneratePagePreviews extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:documents:generate-page-previews')
-            ->setDescription('Generates the previews shown in the tree on hover')
             ->addOption(
                 'urlPrefix',
                 'u',
@@ -59,14 +59,9 @@ class GeneratePagePreviews extends AbstractCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     *
-     * @return Document\Listing|void
-     */
-    protected function fetchItems(InputInterface $input)
+    protected function fetchItems(InputInterface $input): Document\Listing
     {
-        $docs = new \Pimcore\Model\Document\Listing();
+        $docs = new Document\Listing();
         $db = Db::get();
 
         $parentIdOrPath = $input->getOption('parent');
@@ -99,9 +94,6 @@ class GeneratePagePreviews extends AbstractCommand
         return $docs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $hostUrl = $input->getOption('urlPrefix');

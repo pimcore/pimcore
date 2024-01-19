@@ -41,7 +41,6 @@ trait Wrapper
     }
 
     /**
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -108,7 +107,7 @@ trait Wrapper
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {
             $hardLink = $this->getHardLinkSource();
-            if (strpos($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/') === 0
+            if (str_starts_with($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/')
                 || $hardLink->getSourceDocument()->getRealFullPath() === $result->getRealFullPath()
             ) {
                 $c = Service::wrap($result);
@@ -125,11 +124,6 @@ trait Wrapper
         return $result;
     }
 
-    /**
-     * @param bool $includingUnpublished
-     *
-     * @return Listing
-     */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -156,7 +150,7 @@ trait Wrapper
         return $this->children[$cacheKey];
     }
 
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         $hardLink = $this->getHardLinkSource();
 

@@ -24,40 +24,48 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
  */
 final class SettingsStore extends Model\AbstractModel
 {
-    protected static array $allowedTypes = ['bool', 'int', 'float', 'string'];
+    public const TYPE_BOOLEAN = 'bool';
+
+    public const TYPE_FLOAT = 'float';
+
+    public const TYPE_INTEGER = 'int';
+
+    public const TYPE_STRING = 'string';
+
+    protected const ALLOWED_TYPES = [
+        self::TYPE_BOOLEAN,
+        self::TYPE_FLOAT,
+        self::TYPE_INTEGER,
+        self::TYPE_STRING,
+    ];
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $id;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $scope = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type = '';
 
     /**
      * @internal
      *
-     * @var mixed
      */
     protected mixed $data = null;
 
     /**
      * @internal
      *
-     * @var self|null
      */
     protected static ?self $instance = null;
 
@@ -75,20 +83,15 @@ final class SettingsStore extends Model\AbstractModel
      */
     private static function validateType(string $type): bool
     {
-        if (!in_array($type, self::$allowedTypes)) {
-            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));
+        if (!in_array($type, self::ALLOWED_TYPES)) {
+            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::ALLOWED_TYPES)));
         }
 
         return true;
     }
 
     /**
-     * @param string $id
-     * @param float|bool|int|string $data
-     * @param string $type
-     * @param string|null $scope
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -118,7 +121,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $scope
      *
      * @return string[]
      */
@@ -155,7 +157,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
      *
      * @throws \Exception
      */

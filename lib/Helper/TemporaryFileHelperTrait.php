@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use Pimcore;
 use Pimcore\File;
 
 /**
@@ -51,22 +50,20 @@ trait TemporaryFileHelperTrait
      * @param resource|string $stream
      * @param bool $keep whether to delete this file on shutdown or not
      *
-     * @return string
-     *
      * @throws \Exception
      */
     protected static function getTemporaryFileFromStream(mixed $stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
-            $fileExtension = File::getFileExtension($stream);
+            $fileExtension = pathinfo($stream, PATHINFO_EXTENSION);
         } else {
             $src = $stream;
             $streamMeta = stream_get_meta_data($src);
-            $fileExtension = File::getFileExtension($streamMeta['uri']);
+            $fileExtension = pathinfo($streamMeta['uri'], PATHINFO_EXTENSION);
         }
 
-        $tmpFilePath = File::getLocalTempFilePath($fileExtension);
+        $tmpFilePath = File::getLocalTempFilePath($fileExtension, $keep);
 
         $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
         if (!$dest) {
@@ -75,15 +72,6 @@ trait TemporaryFileHelperTrait
 
         stream_copy_to_stream($src, $dest);
         fclose($dest);
-
-        if (!$keep) {
-            /** @var LongRunningHelper $longRunningHelper */
-            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
-            $longRunningHelper->addTmpFilePath($tmpFilePath);
-            register_shutdown_function(static function () use ($tmpFilePath) {
-                @unlink($tmpFilePath);
-            });
-        }
 
         return $tmpFilePath;
     }

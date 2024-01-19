@@ -41,7 +41,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -85,7 +84,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the asset from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -163,7 +161,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'assets', $data);
+        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -196,9 +194,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $oldPath
      *
-     * @return array
      *
      * @internal
      */
@@ -228,9 +224,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
-     *
-     * @return array
+     * @throws \Exception
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -238,7 +232,13 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative(
+            'SELECT * FROM properties WHERE
+                             (
+                                 (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )
+                                 AND ctype='asset'",
+            [$this->model->getId()]
+        );
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -267,17 +267,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -327,7 +322,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return bool
      */
     public function hasChildren(User $user = null): bool
     {
@@ -360,7 +354,6 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @return bool
      */
     public function hasSiblings(): bool
     {
@@ -388,7 +381,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(User $user = null): int
     {
@@ -443,10 +435,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -502,11 +491,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -517,6 +504,11 @@ class Dao extends Model\Element\Dao
     {
         $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
+    }
+
+    public function getCustomSettings(): ?string
+    {
+        return $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = :id', ['id' => $this->model->getId()]);
     }
 
     public function __isBasedOnLatestData(): bool
@@ -541,7 +533,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', $thumb);
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;

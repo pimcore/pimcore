@@ -13,33 +13,27 @@ services:
         arguments:
             - '@logger'
         tags:
-            - { name: pimcore.maintenance.task, type: scheduledtasks }
-
-    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: logmaintenance }
+            - { name: pimcore.maintenance.task, type: scheduledtasks, messengerMessageClass: '\Pimcore\Messenger\ScheduledTaskMessage' }
 
     Pimcore\Maintenance\Tasks\LogCleanupTask:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
 
-    Pimcore\Maintenance\Tasks\LogErrorCleanupTask:
+    Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper:
         arguments:
+            - '@logger'
             - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: httperrorlog }
 
-    Pimcore\Maintenance\Tasks\LogArchiveTask:
+    Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper:
         arguments:
+            - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
             - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: archiveLogEntries }
+
 
     Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
         arguments:
-            - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupBrickTables }
 
@@ -49,9 +43,15 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanupClassificationstoreTables }
 
-    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+    Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper:
         arguments:
             - '@logger'
+            - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
+            - '@doctrine.dbal.default_connection'
+
+    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+        arguments:
+            - '@Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupFieldcollectionTables }
 
@@ -66,12 +66,6 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: VersionsCleanupStackTraceDb }
-
-    Pimcore\Maintenance\Tasks\RedirectCleanupTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: redirectcleanup }
 
     Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
         arguments:
@@ -100,13 +94,13 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
 
+    Pimcore\Maintenance\Tasks\PruningCacheItemsTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: pruning_cache_items }
+
     Pimcore\Maintenance\Tasks\StaticPagesGenerationTask:
         arguments:
             - '@Pimcore\Document\StaticPageGenerator'
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: documents_static_page_generate }
-
-    Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask:
-        tags:
-            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }

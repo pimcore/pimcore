@@ -30,7 +30,6 @@ trait WebLinksTrait
      * Whether to use WebLinks (HTTP/2 push) for every item. Can be
      * overridden on an item level.
      *
-     * @var bool
      */
     protected bool $webLinksEnabled = false;
 

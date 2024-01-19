@@ -16,67 +16,38 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use CheckPasswordLengthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'password';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar(255)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar(255)';
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $salt = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $saltlocation = '';
 
@@ -123,11 +94,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -138,27 +105,29 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         // is already a hashed string? Then do not re-hash
-        $info = password_get_info($data);
-        if ($info['algo'] !== null && $info['algo'] !== 0) {
-            return $data;
-        }
+        if($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
+            $info = password_get_info($data);
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
+                return $data;
+            }
+        } else {
+            // password_get_info() will not detect older, less secure, hashing algos.
+            // It might not detect some less common ones as well.
+            $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
+            $hashLenghts = [
+                32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
+                40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
+                48,  // Tiger/192, HAVAL192
+                56,  // SHA-224, HAVAL224
+                64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
+                96,  // SHA-384
+                128, // SHA-512, BLAKE-512, SWIFFT
+            ];
 
-        // password_get_info() will not detect older, less secure, hashing algos.
-        // It might not detect some less common ones as well.
-        $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
-        $hashLenghts = [
-            32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
-            40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
-            48,  // Tiger/192, HAVAL192
-            56,  // SHA-224, HAVAL224
-            64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
-            96,  // SHA-384
-            128, // SHA-512, BLAKE-512, SWIFFT
-        ];
-
-        if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
-            // Probably already a hashed string
-            return $data;
+            if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
+                // Probably already a hashed string
+                return $data;
+            }
         }
 
         $hashed = $this->calculateHash($data);
@@ -183,24 +152,23 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
-     * @param string $data
      *
-     * @return string
      *
      * @internal
      */
     public function calculateHash(string $data): string
     {
-        $hash = null;
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $hash = password_hash($data, PASSWORD_DEFAULT);
+            $config = Config::getSystemConfiguration()['security']['password'];
+
+            $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
             if (!empty($this->salt)) {
-                if ($this->saltlocation == 'back') {
-                    $data = $data . $this->salt;
-                } elseif ($this->saltlocation == 'front') {
-                    $data = $this->salt . $data;
-                }
+                $data = match ($this->saltlocation) {
+                    'back' => $data . $this->salt,
+                    'front' => $this->salt . $data,
+                    default => $data,
+                };
             }
 
             $hash = hash($this->algorithm, $data);
@@ -216,11 +184,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @param string $password
-     * @param DataObject\Concrete $object
      * @param bool|true $updateHash
-     *
-     * @return bool
      *
      * @internal
      */
@@ -230,16 +194,17 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $setter = 'set' . ucfirst($this->getName());
 
         $objectHash = $object->$getter();
-        if (null === $objectHash || empty($objectHash)) {
+        if (empty($objectHash)) {
             return false;
         }
 
         if ($this->getAlgorithm() === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $result = (true === password_verify($password, $objectHash));
+            $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                // password needs rehash (e.g PASSWORD_DEFAULT changed to a stronger algorithm)
-                if (true === password_needs_rehash($objectHash, PASSWORD_DEFAULT)) {
+                $config = Config::getSystemConfiguration()['security']['password'];
+
+                if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);
 
                     $object->$setter($newHash);
@@ -255,11 +220,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -269,11 +230,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -282,16 +239,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->getDataForResource($data, $object, $params);
     }
 
-    /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
-     * @see Data::getDataForEditmode
-     *
-     */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
@@ -311,11 +258,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -335,32 +278,18 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data[0]['data'];
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -369,7 +298,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
@@ -385,13 +314,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->algorithm = $masterDefinition->algorithm;
-        $this->salt = $masterDefinition->salt;
-        $this->saltlocation = $masterDefinition->saltlocation;
+        $this->algorithm = $mainDefinition->algorithm;
+        $this->salt = $mainDefinition->salt;
+        $this->saltlocation = $mainDefinition->saltlocation;
     }
 
     public function getParameterTypeDeclaration(): ?string
@@ -415,18 +344,34 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException|\Exception
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
+        if (is_string($data) && $this->isPasswordTooLong($data)) {
+            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is too long');
+        }
+
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }
 
         parent::checkValidity($data, $omitMandatoryCheck, $params);
+    }
+
+    public function getColumnType(): string
+    {
+        return 'varchar(255)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'password';
     }
 }

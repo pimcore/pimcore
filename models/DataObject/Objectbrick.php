@@ -37,16 +37,14 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
     /**
      * @internal
      *
-     * @var Model\DataObject\Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * @internal
@@ -83,11 +81,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return $values;
         }
 
-        if (empty($this->items)) {
-            foreach ($this->getObjectVars() as $var) {
-                if ($var instanceof Objectbrick\Data\AbstractData) {
-                    $this->items[] = $var;
-                }
+        foreach ($this->getObjectVars() as $var) {
+            if ($var instanceof Objectbrick\Data\AbstractData &&
+                !in_array($var, $this->items, true)) {
+                $this->items[] = $var;
             }
         }
 
@@ -144,93 +141,62 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
 
-        $getters = $this->getBrickGetters();
-
-        foreach ($getters as $getter) {
+        foreach ($this->getBrickGetters() as $getter) {
             $brick = $this->$getter(true);
+            $createParentBrick = function () use ($object, $getter, $params) {
+                //check if parent object has brick, and if so, create an empty brick to enable inheritance
+                $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
+                    if (DataObject::doGetInheritedValues($object)) {
+                        try {
+                            return $object->getValueFromParent($this->fieldname)?->$getter();
+                        } catch (InheritanceParentNotFoundException) {
+                            return null;
+                        }
+                    }
+
+                    return null;
+                });
+
+                if (!empty($parentBrick)) {
+                    $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
+                    $brick = new $brickType($object);
+                    $brick->setFieldname($this->getFieldname());
+                    $brick->save($object, $params);
+                }
+
+                return $parentBrick;
+            };
 
             if ($brick instanceof Objectbrick\Data\AbstractData) {
                 if ($brick->getDoDelete()) {
                     $brick->delete($object);
 
                     $setter = 's' . substr($getter, 1);
-                    $this->$setter(null);
-
-                    //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                    $parentBrick = null;
-                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
-                    DataObject::setGetInheritedValues(true);
-                    if (DataObject::doGetInheritedValues($object)) {
-                        try {
-                            $container = $object->getValueFromParent($this->fieldname);
-                            if (!empty($container)) {
-                                $parentBrick = $container->$getter();
-                            }
-                        } catch (InheritanceParentNotFoundException $e) {
-                            // no data from parent available, continue ...
-                        }
-                    }
-                    DataObject::setGetInheritedValues($inheritanceModeBackup);
-
-                    if (!empty($parentBrick)) {
-                        $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
-                        $brick = new $brickType($object);
-                        $brick->setFieldname($this->getFieldname());
-                        $brick->save($object, $params);
-                        $this->$setter($brick);
-                    }
+                    $this->$setter($createParentBrick());
                 } else {
                     $brick->setFieldname($this->getFieldname());
                     $brick->save($object, $params);
                 }
-            } else {
-                if ($brick == null) {
-                    $parentBrick = null;
-                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
-                    DataObject::setGetInheritedValues(true);
-                    if (DataObject::doGetInheritedValues($object)) {
-                        try {
-                            $container = $object->getValueFromParent($this->fieldname);
-                            if (!empty($container)) {
-                                $parentBrick = $container->$getter();
-                            }
-                        } catch (InheritanceParentNotFoundException $e) {
-                            // no data from parent available, continue ...
-                        }
-                    }
-                    DataObject::setGetInheritedValues($inheritanceModeBackup);
-
-                    if (!empty($parentBrick)) {
-                        $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
-                        $brick = new $brickType($object);
-                        $brick->setFieldname($this->getFieldname());
-                        $brick->save($object, $params);
-                    }
-                }
+            } elseif ($brick === null) {
+                $createParentBrick();
             }
         }
     }
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
     public function setObject(?Concrete $object): static
     {
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
 
         // update all items with the new $object
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->setObject($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->setObject($object);
             }
         }
 
@@ -239,11 +205,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function delete(Concrete $object): void
     {
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->delete($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->delete($object);
             }
         }
 
@@ -253,7 +217,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __sleep(): array
     {
         $finalVars = [];
-        $blockedVars = ['object'];
+        $blockedVars = ['object', 'brickGetters'];
         $vars = parent::__sleep();
 
         foreach ($vars as $value) {
@@ -281,12 +245,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
         }
 
-        if (is_array($this->items)) {
-            foreach ($this->items as $key => $item) {
-                if ($item instanceof \__PHP_Incomplete_Class) {
-                    unset($this->items[$key]);
-                    Logger::error('brick item ' . $key . ' does not exist anymore');
-                }
+        foreach ($this->items as $key => $item) {
+            if ($item instanceof \__PHP_Incomplete_Class) {
+                unset($this->items[$key]);
+                Logger::error('brick item ' . $key . ' does not exist anymore');
             }
         }
     }
@@ -302,9 +264,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param string $brick
-     * @param string $brickField
-     * @param string $field
      *
      * @throws \Exception
      *
@@ -341,19 +300,17 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function loadLazyData(): void
     {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
-        if (is_array($allowedBrickTypes)) {
-            foreach ($allowedBrickTypes as $allowedBrickType) {
-                $brickGetter = 'get' . ucfirst($allowedBrickType);
-                $brickData = $this->$brickGetter();
-                if ($brickData) {
-                    $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
-                    $fds = $brickDef->getFieldDefinitions();
-                    foreach ($fds as $fd) {
-                        $fieldGetter = 'get' . ucfirst($fd->getName());
-                        $fieldValue = $brickData->$fieldGetter();
-                        if ($fieldValue instanceof Localizedfield) {
-                            $fieldValue->loadLazyData();
-                        }
+        foreach ($allowedBrickTypes as $allowedBrickType) {
+            $brickGetter = 'get' . ucfirst($allowedBrickType);
+            $brickData = $this->$brickGetter();
+            if ($brickData) {
+                $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
+                $fds = $brickDef->getFieldDefinitions();
+                foreach ($fds as $fd) {
+                    $fieldGetter = 'get' . ucfirst($fd->getName());
+                    $fieldValue = $brickData->$fieldGetter();
+                    if ($fieldValue instanceof Localizedfield) {
+                        $fieldValue->loadLazyData();
                     }
                 }
             }

@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -35,8 +34,11 @@ class AdminStyle
 
     protected ?array $elementQtipConfig = null;
 
+    protected ?string $elementText = null;
+
     public function __construct(ElementInterface $element)
     {
+        $this->setElementText($element->getKey());
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
@@ -65,9 +67,9 @@ class AdminStyle
             } else {
                 $this->elementIconClass = 'pimcore_icon_asset_default';
 
-                $fileExt = File::getFileExtension($element->getFilename());
+                $fileExt = pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 if ($fileExt) {
-                    $this->elementIconClass .= ' pimcore_icon_' . File::getFileExtension($element->getFilename());
+                    $this->elementIconClass .= ' pimcore_icon_' . pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 }
             }
         } elseif ($element instanceof Document) {
@@ -162,5 +164,15 @@ class AdminStyle
     public function setElementQtipConfig(?array $elementQtipConfig): void
     {
         $this->elementQtipConfig = $elementQtipConfig;
+    }
+
+    public function getElementText(): ?string
+    {
+        return $this->elementText;
+    }
+
+    public function setElementText(?string $elementText): void
+    {
+        $this->elementText = $elementText;
     }
 }

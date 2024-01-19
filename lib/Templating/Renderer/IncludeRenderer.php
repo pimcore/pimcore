@@ -17,48 +17,34 @@ declare(strict_types=1);
 namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Cache;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  */
 class IncludeRenderer
 {
-    protected ActionRenderer $actionRenderer;
-
-    private DocumentTargetingConfigurator $targetingConfigurator;
-
     public function __construct(
-        ActionRenderer $actionRenderer,
-        DocumentTargetingConfigurator $targetingConfigurator
+        protected ActionRenderer $actionRenderer,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->actionRenderer = $actionRenderer;
-        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
      * Renders a document include
      *
-     * @param mixed $include
-     * @param array $params
-     * @param bool $editmode
-     * @param bool $cacheEnabled
      *
-     * @return string
      */
     public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
-        if (!is_array($params)) {
-            $params = [];
-        }
-
         $originalInclude = $include;
 
         // this is if $this->inc is called eg. with $this->relation() as argument
@@ -81,8 +67,10 @@ class IncludeRenderer
         }
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
-            // apply best matching target group (if any)
-            $this->targetingConfigurator->configureTargetGroup($include);
+            $this->eventDispatcher->dispatch(
+                new DocumentEvent($include, $params),
+                DocumentEvents::INCLUDERENDERER_PRE_RENDER
+            );
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
@@ -103,7 +91,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+            if (is_object($include) && method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 
@@ -144,10 +132,7 @@ class IncludeRenderer
      * add a class and the pimcore id / type so that it can be opened in editmode using the context menu
      * if there's no first level HTML container => add one (wrapper)
      *
-     * @param PageSnippet $include
-     * @param string $content
      *
-     * @return string
      */
     protected function modifyEditmodeContent(PageSnippet $include, string $content): string
     {

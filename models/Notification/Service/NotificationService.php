@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Carbon\Carbon;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -33,7 +34,6 @@ class NotificationService
     /**
      * NotificationService constructor.
      *
-     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -41,11 +41,6 @@ class NotificationService
     }
 
     /**
-     * @param int $userId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -85,11 +80,6 @@ class NotificationService
     }
 
     /**
-     * @param int $groupId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
      * @throws \UnexpectedValueException
      */
@@ -138,9 +128,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */
@@ -156,10 +144,7 @@ class NotificationService
     }
 
     /**
-     * @param int $id
-     * @param int|null $recipientId
      *
-     * @return Notification
      *
      * @throws \UnexpectedValueException
      */
@@ -241,6 +226,7 @@ class NotificationService
 
     public function format(Notification $notification): array
     {
+        $carbonTs = new Carbon($notification->getCreationDate(), 'UTC');
         $data = [
             'id' => $notification->getId(),
             'type' => $notification->getType(),
@@ -249,6 +235,7 @@ class NotificationService
             'sender' => '',
             'read' => (int) $notification->isRead(),
             'date' => $notification->getCreationDate(),
+            'timestamp' => $carbonTs->getTimestamp(),
             'linkedElementType' => $notification->getLinkedElementType(),
             'linkedElementId' => null,
         ];

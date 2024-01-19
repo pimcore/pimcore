@@ -27,23 +27,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'textarea';
-
-    /**
-     * @internal
-     *
-     * @var int|null
      */
     public ?int $maxLength = null;
 
@@ -56,24 +44,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      */
     public bool $excludeFromSearchIndex = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     public function getMaxLength(): ?int
     {
@@ -92,7 +62,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
     public function isExcludeFromSearchIndex(): bool
@@ -108,11 +78,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -122,11 +88,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -136,11 +98,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -150,11 +108,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -181,11 +135,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param string|null $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?string $data, Model\DataObject\Concrete $object = null, array $params = []): array|string
     {
@@ -213,13 +163,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
-            if (mb_strlen($data) > $this->getMaxLength()) {
+            if ($data !== null && mb_strlen($data) > $this->getMaxLength()) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'");
             }
         }
@@ -227,9 +174,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -253,5 +197,20 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'textarea';
     }
 }

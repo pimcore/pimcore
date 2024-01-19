@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-use Pimcore\Model\Asset;
-
 final class AssetEvents
 {
     /**
@@ -87,7 +85,7 @@ final class AssetEvents
     const POST_UPDATE_FAILURE = 'pimcore.asset.postUpdateFailure';
 
     /**
-     * @Event("Pimcore\Event\Model\AssetDeleteInfoEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent")
      *
      * @var string
      */

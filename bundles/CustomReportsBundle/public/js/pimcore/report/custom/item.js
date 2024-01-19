@@ -900,12 +900,44 @@ pimcore.bundle.customreports.custom.item = Class.create({
         return allValues;
     },
 
+    checkMandatoryFields: function () {
+        let adapterValues = {};
+        let errorFields = [];
+        for (let i = 0; i < this.currentElements.length; i++) {
+            if (!this.currentElements[i].deleted) {
+                adapterValues = this.currentElements[i].adapter.getValues();
+                for(let field of this.currentElements[i].adapter.fieldsToCheck) {
+                    if(!adapterValues[field.name] || adapterValues[field.name] === '') {
+                        errorFields.push(field.label)
+                    }
+                }
+            }
+        }
+
+        if(errorFields.length > 0) {
+            throw new Error(`${t("mandatory_fields_missing")} ${errorFields.join(', ')}`)
+        }
+    },
+
     save: function () {
+
+        try {
+            this.checkMandatoryFields();
+        } catch (error) {
+            Ext.Msg.show({
+                title: t("error"),
+                msg: error,
+                buttons: Ext.Msg.OK,
+                icon: Ext.MessageBox.ERROR
+            });
+
+            return;
+        }
 
         let m = this.getValues();
         let error = false;
 
-        ['group', 'groupIconClass', 'iconClass', 'reportClass'].forEach(function (name) {
+        ['groupIconClass', 'iconClass', 'reportClass'].forEach(function (name) {
             if(m[name].length && !m[name].match(/^[_a-zA-Z]+[_a-zA-Z0-9-.\s]*$/)) {
                 error = name;
             }
@@ -934,12 +966,13 @@ pimcore.bundle.customreports.custom.item = Class.create({
     },
 
     saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load();
         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
             if (buttonValue == "yes") {
                 window.location.reload();
+            } else {
+                this.parentPanel.tree.getStore().load();
             }
         }.bind(this));
     }

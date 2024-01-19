@@ -28,61 +28,26 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'imageGallery';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $uploadPath;
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioX = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioY = null;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $predefinedDataTemplates;
 
@@ -127,11 +92,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -168,11 +129,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\ImageGallery
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -236,11 +193,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param Concrete|null $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -250,11 +203,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -274,11 +223,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\ImageGallery
      *
      * @see Data::getDataFromEditmode
      */
@@ -297,24 +242,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return new DataObject\Data\ImageGallery($resultItems);
     }
 
-    /**
-     * @param array|null $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\ImageGallery
-     */
     public function getDataFromGridEditor(?array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -328,9 +262,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -374,21 +305,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $dependencies;
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array
-     */
     public function getDataForGrid(?DataObject\Data\ImageGallery $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -403,9 +324,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Element\ValidationException
      */
@@ -510,5 +428,23 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'images' => 'text',
+            'hotspots' => 'longtext',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'imageGallery';
     }
 }

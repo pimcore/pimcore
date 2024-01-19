@@ -45,16 +45,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
      *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
      */
     public function __construct(string $name, string $type, mixed $data)
     {
@@ -137,6 +133,11 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         );
 
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
+            /**
+             * @param object $object
+             * @param string $property
+             *
+             */
             public function matches($object, $property): bool
             {
                 return $object instanceof AbstractElement;
@@ -146,10 +147,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->data = $copier->copy($this->data);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name . '; ' . $this->type;
     }
@@ -168,7 +166,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @return bool
      */
     public function getNeedsRenewReferences(): bool
     {
@@ -178,11 +175,10 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @param bool $needsRenewReferences
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {
-        $this->needsRenewReferences = (bool) $needsRenewReferences;
+        $this->needsRenewReferences = $needsRenewReferences;
     }
 
     public function setLanguage(string $language): void

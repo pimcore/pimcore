@@ -32,8 +32,6 @@ class BooleanSelect extends Data implements
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /** storage value for yes */
@@ -69,32 +67,20 @@ class BooleanSelect extends Data implements
     ];
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'booleanSelect';
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     public string $yesLabel;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $noLabel;
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $emptyLabel;
 
@@ -105,29 +91,14 @@ class BooleanSelect extends Data implements
      */
     public array $options = self::DEFAULT_OPTIONS;
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1) null';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1) null';
-
     public function getOptions(): array
     {
         return $this->options;
     }
 
+    /**
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         // nothing to do
@@ -135,11 +106,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -160,11 +127,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -174,11 +137,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -198,11 +157,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -219,20 +174,13 @@ class BooleanSelect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -243,7 +191,7 @@ class BooleanSelect extends Data implements
         $diffdata['disabled'] = false;
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         $value = '';
         foreach ($this->options as $option) {
@@ -262,9 +210,6 @@ class BooleanSelect extends Data implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO mandatory probably doesn't make much sense
@@ -279,12 +224,12 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\BooleanSelect $masterDefinition
+     * @param DataObject\ClassDefinition\Data\BooleanSelect $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->options = $masterDefinition->options;
-        $this->width = $masterDefinition->width;
+        $this->options = $mainDefinition->options;
+        $this->width = $mainDefinition->width;
     }
 
     public function getYesLabel(): string
@@ -292,6 +237,9 @@ class BooleanSelect extends Data implements
         return $this->yesLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setYesLabel(?string $yesLabel): static
     {
         $this->yesLabel = $yesLabel;
@@ -302,21 +250,12 @@ class BooleanSelect extends Data implements
 
     public function setOptionsEntry(int $value, string $label): void
     {
-        if (!is_array($this->options)) {
-            $this->options = [
-                [
-                    'key' => $label,
-                    'value' => $value,
-                ],
-            ];
-        } else {
-            foreach ($this->options as $idx => $option) {
-                if ($option['value'] == $value) {
-                    $option['key'] = $label;
-                    $this->options[$idx] = $option;
+        foreach ($this->options as $idx => $option) {
+            if ($option['value'] == $value) {
+                $option['key'] = $label;
+                $this->options[$idx] = $option;
 
-                    break;
-                }
+                break;
             }
         }
     }
@@ -326,6 +265,9 @@ class BooleanSelect extends Data implements
         return $this->noLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setNoLabel(string $noLabel): static
     {
         $this->noLabel = $noLabel;
@@ -339,6 +281,9 @@ class BooleanSelect extends Data implements
         return $this->emptyLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setEmptyLabel(string $emptyLabel): static
     {
         $this->emptyLabel = $emptyLabel;
@@ -348,11 +293,8 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param bool|null $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int
      */
     public function getDataForGrid(?bool $data, Concrete $object = null, array $params = []): int
     {
@@ -360,11 +302,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return int
      *
      * @see Data::getDataForEditmode
      *
@@ -382,23 +320,16 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param string $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return bool|null
      */
-    public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?bool
+    public function getDataFromGridEditor(mixed $data, Concrete $object = null, array $params = []): ?bool
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return bool|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -419,9 +350,6 @@ class BooleanSelect extends Data implements
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
@@ -454,5 +382,20 @@ class BooleanSelect extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'tinyint(1) null';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'booleanSelect';
     }
 }

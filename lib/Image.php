@@ -22,7 +22,6 @@ use Pimcore\Image\Adapter;
 final class Image
 {
     /**
-     * @return null|Adapter\GD|Adapter\Imagick
      *
      * @throws \Exception
      */
@@ -35,7 +34,6 @@ final class Image
     }
 
     /**
-     * @return null|Adapter\GD|Adapter\Imagick
      *
      * @throws \Exception
      *

@@ -64,14 +64,6 @@ class InheritanceHelper
 
     protected ?string $queryIdField = null;
 
-    /**
-     * @param string $classId
-     * @param string|null $idField
-     * @param string|null $storetable
-     * @param string|null $querytable
-     * @param string|null $relationtable
-     * @param string|null $queryIdField
-     */
     public function __construct(string $classId, string $idField = null, string $storetable = null, string $querytable = null, string $relationtable = null, string $queryIdField = null)
     {
         $this->db = \Pimcore\Db::get();
@@ -111,11 +103,10 @@ class InheritanceHelper
     /**
      * Enable or disable the runtime cache. Default value is off.
      *
-     * @param bool $value
      */
     public static function setUseRuntimeCache(bool $value): void
     {
-        self::$useRuntimeCache = (bool) $value;
+        self::$useRuntimeCache = $value;
     }
 
     /**
@@ -143,11 +134,6 @@ class InheritanceHelper
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
-    /**
-     * @param string $fieldname
-     * @param DataObject\ClassDefinition\Data $fieldDefinition
-     * @param array|null $queryfields
-     */
     public function addRelationToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition, array $queryfields = null): void
     {
         if ($queryfields === null) {
@@ -161,9 +147,6 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param bool $createMissingChildrenRows
-     * @param array $params
      *
      * @throws \Exception
      */
@@ -263,8 +246,6 @@ class InheritanceHelper
      * Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
      * child elements.
      *
-     * @param int $objectId
-     * @param array $params
      */
     public function doDelete(int $objectId, array $params = []): void
     {
@@ -365,14 +346,6 @@ class InheritanceHelper
         return array_values($filteredResult);
     }
 
-    /**
-     * @param int $currentParentId
-     * @param string $fields
-     * @param array|null $parentIdGroups
-     * @param array $params
-     *
-     * @return array
-     */
     protected function buildTree(int $currentParentId, string $fields = '', array $parentIdGroups = null, array $params = []): array
     {
         $objects = [];
@@ -598,9 +571,6 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param array $ids
-     * @param string $fieldname
      *
      * @throws \Exception
      */

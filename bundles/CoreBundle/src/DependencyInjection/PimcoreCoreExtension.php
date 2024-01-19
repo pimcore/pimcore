@@ -16,30 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
-use Pimcore\DependencyInjection\ServiceCollection;
+use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
-use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
-use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
-use Pimcore\Targeting\DataLoaderInterface;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 /**
@@ -52,9 +43,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         return 'pimcore';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
@@ -62,8 +50,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         \Pimcore::disableShutdown();
 
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
-        if (!$container->hasParameter('container.dumper.inline_class_loader')) {
-            $container->setParameter('container.dumper.inline_class_loader', true);
+        if (!$container->hasParameter('.container.dumper.inline_class_loader')) {
+            $container->setParameter('.container.dumper.inline_class_loader', true);
         }
 
         // bundle manager/locator config
@@ -78,17 +66,12 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
-        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
-        $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
-
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
-        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
-        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
-        //twig security policy whitelist config
+        //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
@@ -113,10 +96,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('services_routing.yaml');
         $loader->load('services_workflow.yaml');
         $loader->load('extensions.yaml');
-        $loader->load('logging.yaml');
         $loader->load('request_response.yaml');
         $loader->load('l10n.yaml');
         $loader->load('argument_resolvers.yaml');
+        $loader->load('class_resolvers.yaml');
         $loader->load('implementation_factories.yaml');
         $loader->load('documents.yaml');
         $loader->load('event_listeners.yaml');
@@ -124,8 +107,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
-        $loader->load('analytics.yaml');
-        $loader->load('sitemaps.yaml');
         $loader->load('aliases.yaml');
         $loader->load('image_optimizers.yaml');
         $loader->load('maintenance.yaml');
@@ -134,20 +115,25 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('marshaller.yaml');
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
+        $loader->load('serializer.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
+        $this->configureClassResolvers($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
-        $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordHashers($container, $config);
-        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
-        $this->configureGoogleAnalyticsFallbackServiceLocator($container);
-        $this->configureSitemaps($container, $config['sitemaps']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container->registerAttributeForAutoconfiguration(
+            AsAreabrick::class,
+            static function (ChildDefinition $definition, AsAreabrick $attribute): void {
+                $definition->addTag('pimcore.area.brick', ['id' => $attribute->id]);
+            },
+        );
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -185,10 +171,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
-            TypeLoader::class => [
-                'config' => $config['documents']['type_definitions'],
-                'prefixLoader' => DocumentTypePrefixLoader::class,
-            ],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built
@@ -209,16 +191,20 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             if ($cfg['config']['map']) {
                 $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
                 $classMapLoader->setPublic(false);
-
                 $classMapLoaderId = $serviceId . '.class_map_loader';
                 $container->setDefinition($classMapLoaderId, $classMapLoader);
-
                 $loaders[] = new Reference($classMapLoaderId);
             }
 
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
+    }
+
+    private function configureClassResolvers(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.documents.classes.map', $this->flattenConfigurationForClassResolver($config['documents']['type_definitions']));
+        $container->setParameter('pimcore.assets.classes.map', $this->flattenConfigurationForClassResolver($config['assets']['type_definitions']));
     }
 
     private function configureRouting(ContainerBuilder $container, array $config): void
@@ -242,69 +228,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config): void
-    {
-        $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
-        $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', '');
-        }
-
-        $loader->load('targeting.yaml');
-
-        // set TargetingStorageInterface type hint to the configured service ID
-        $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
-
-        if ($config['enabled']) {
-            // enable targeting by registering listeners
-            $loader->load('targeting/services.yaml');
-            $loader->load('targeting/listeners.yaml');
-        }
-
-        $dataProviders = [];
-        foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
-            $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
-        }
-
-        $dataProviderLocator = new Definition(ServiceLocator::class, [$dataProviders]);
-        $dataProviderLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->findDefinition(DataLoaderInterface::class)
-            ->setArgument('$dataProviders', $dataProviderLocator);
-
-        $actionHandlers = [];
-        foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
-            $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
-        }
-
-        $actionHandlerLocator = new Definition(ServiceLocator::class, [$actionHandlers]);
-        $actionHandlerLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->getDefinition(DelegatingActionHandler::class)
-            ->setArgument('$actionHandlers', $actionHandlerLocator);
-    }
-
-    /**
-     * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
-     * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
-     */
-    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services): void
-    {
-        $serviceLocator = new Definition(ServiceLocator::class, [$services]);
-        $serviceLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $locator = $container->getDefinition($locatorClass);
-        $locator->setArgument('$locator', $serviceLocator);
-    }
-
     /**
      * Handle pimcore.security.password_hasher_factories mapping
      */
@@ -321,63 +244,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Creates service locator which is used from static Pimcore\Google\Analytics class
-     */
-    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container): void
-    {
-        $services = [
-            AnalyticsGoogleTracker::class,
-            SiteConfigProvider::class,
-        ];
-
-        $mapping = [];
-        foreach ($services as $service) {
-            $mapping[$service] = new Reference($service);
-        }
-
-        $serviceLocator = $container->getDefinition('pimcore.analytics.google.fallback_service_locator');
-        $serviceLocator->setArguments([$mapping]);
-    }
-
-    private function configureSitemaps(ContainerBuilder $container, array $config): void
-    {
-        $listener = $container->getDefinition(SitemapGeneratorListener::class);
-
-        $generators = [];
-        if (isset($config['generators']) && !empty($config['generators'])) {
-            $generators = $config['generators'];
-        }
-
-        uasort($generators, function (array $a, array $b) {
-            if ($a['priority'] === $b['priority']) {
-                return 0;
-            }
-
-            return $a['priority'] < $b['priority'] ? 1 : -1;
-        });
-
-        $mapping = [];
-        foreach ($generators as $generatorName => $generatorConfig) {
-            if (!$generatorConfig['enabled']) {
-                continue;
-            }
-
-            $mapping[$generatorName] = new Reference($generatorConfig['generator_id']);
-        }
-
-        // the locator is a symfony core service locator containing every generator
-        $locator = new Definition(ServiceLocator::class, [$mapping]);
-        $locator->setPublic(false);
-        $locator->addTag('container.service_locator');
-
-        // the collection decorates the locator as iterable in the defined key order
-        $collection = new Definition(ServiceCollection::class, [$locator, array_keys($mapping)]);
-        $collection->setPublic(false);
-
-        $listener->setArgument('$generators', $collection);
-    }
-
-    /**
      * Add context specific routes to context guesser
      */
     private function addContextRoutes(ContainerBuilder $container, array $config): void
@@ -391,8 +257,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Allows us to prepend/modify configurations of different extensions
-     *
-     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container): void
     {
@@ -404,17 +268,20 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Configure Adapter Factories
+     * Extract class definitions and prefixes if configuration has more than just a class definition
      */
-    private function configureAdapterFactories(ContainerBuilder $container, array $factories, string $serviceLocatorId): void
+    private function flattenConfigurationForClassResolver(array $configuration): array
     {
-        $serviceLocator = $container->getDefinition($serviceLocatorId);
-        $arguments = [];
+        $newConfiguration = [];
 
-        foreach ($factories as $key => $serviceId) {
-            $arguments[$key] = new Reference($serviceId);
+        if (isset($configuration['map'])) {
+            foreach ($configuration['map'] as $type => $config) {
+                if (isset($config['class'])) {
+                    $newConfiguration[$type] = $config['class'];
+                }
+            }
         }
 
-        $serviceLocator->setArgument(0, $arguments);
+        return $newConfiguration;
     }
 }

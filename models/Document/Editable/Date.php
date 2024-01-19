@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Carbon\Carbon;
 use Pimcore\Model;
 
 /**
@@ -28,21 +29,14 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var \Carbon\Carbon|null
      */
     protected ?\Carbon\Carbon $date = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'date';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->date;
@@ -53,9 +47,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?int
     {
         if ($this->date) {
@@ -65,24 +56,32 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
-        $format = null;
+        if ($this->date instanceof Carbon) {
+            if (isset($this->config['outputIsoFormat']) && $this->config['outputIsoFormat']) {
+                return $this->date->isoFormat($this->config['outputIsoFormat']);
+            } elseif (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '11.2',
+                    'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
+                    __CLASS__
+                );
 
-        if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
-            $format = $this->config['outputFormat'];
-        } elseif (isset($this->config['format']) && $this->config['format']) {
-            $format = $this->config['format'];
-        } else {
-            $format = 'Y-m-d\TH:i:sO'; // ISO8601
+                return $this->date->formatLocalized($this->config['outputFormat']);
+            } else {
+                if (isset($this->config['format']) && $this->config['format']) {
+                    $format = $this->config['format'];
+                } else {
+                    $format = \DateTimeInterface::ATOM;
+                }
+
+                return $this->date->format($format);
+            }
         }
 
-        if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($format);
-        }
+        return '';
     }
 
     public function getDataForResource(): mixed
@@ -94,9 +93,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if ($data) {
@@ -106,9 +102,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if (strlen((string) $data) > 5) {
@@ -130,7 +123,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
 
     private function setDateFromTimestamp(int $timestamp): void
     {
-        $this->date = new \Carbon\Carbon();
+        $this->date = new Carbon();
         $this->date->setTimestamp($timestamp);
     }
 }

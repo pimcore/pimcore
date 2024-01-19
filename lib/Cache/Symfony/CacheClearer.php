@@ -29,7 +29,7 @@ class CacheClearer
 {
     private int $processTimeout;
 
-    private \Closure $runCallback;
+    private ?\Closure $runCallback = null;
 
     public function __construct(array $options = [])
     {
@@ -86,9 +86,6 @@ class CacheClearer
         return $this->runCommand('cache:warmup', $resolver->resolve($options));
     }
 
-    /**
-     * @param \Closure|null $runCallback
-     */
     public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;

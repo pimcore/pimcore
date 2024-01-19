@@ -15,15 +15,13 @@
 
 namespace Pimcore\Bundle\CustomReportsBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore_custom_reports');
@@ -75,6 +73,8 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['custom_reports' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_reports']);
 
         return $treeBuilder;
     }

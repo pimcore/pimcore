@@ -33,7 +33,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -44,6 +43,7 @@ class Dao extends Model\Element\Dao
                 WHERE documents.id = ?", [$id]);
 
         if (!empty($data['id'])) {
+            $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('document with id ' . $id . ' not found');
@@ -53,7 +53,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -103,7 +102,13 @@ class Dao extends Model\Element\Dao
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-        $validTables = $documentsConfig['valid_tables'];
+        $validTables = [];
+        foreach ($documentsConfig['type_definitions']['map'] as $type => $config) {
+            if (isset($config['valid_table']) && $config['valid_table']) {
+                $validTables[] = $config['valid_table'];
+            }
+        }
+
         if (in_array($this->model->getType(), $validTables)) {
             $typeSpecificTable = 'documents_' . $this->model->getType();
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
@@ -148,10 +153,10 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
+        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            Helper::insertOrUpdate($this->db, $typeSpecificTable, $dataTypeSpecific);
+            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();
@@ -184,9 +189,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
-     * @param string $oldPath
      *
-     * @return array
      *
      * @internal
      */
@@ -216,7 +219,6 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the current full document path from the database.
      *
-     * @return string|null
      */
     public function getCurrentFullPath(): ?string
     {
@@ -248,22 +250,30 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns properties for the object from the database and assigns these.
+     * Returns properties for the object from the database
      *
-     * @param bool $onlyInherited
-     * @param bool $onlyDirect
-     *
-     * @return array
+     * @throws \Exception
      */
     public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
         $properties = [];
 
         if ($onlyDirect) {
-            $propertiesRaw = $this->db->fetchAllAssociative("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    "SELECT * FROM properties WHERE cid = ? AND ctype='document'",
+                    [$this->model->getId()]
+                );
         } else {
             $parentIds = $this->getParentIds();
-            $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    'SELECT * FROM properties WHERE
+                             (
+                                 (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ?
+                             ) AND ctype='document'",
+                    [$this->model->getId()]
+                );
         }
 
         // because this should be faster than mysql
@@ -296,17 +306,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited || $onlyDirect) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -321,13 +326,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Quick check if there are children.
-     *
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = null, User $user = null): bool
+    public function hasChildren(?bool $includingUnpublished = null, ?User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -365,9 +365,8 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return int
      */
-    public function getChildAmount(User $user = null): int
+    public function getChildAmount(?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -393,11 +392,9 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
-     * @param bool|null $includingUnpublished
      *
-     * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -425,7 +422,6 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document is locked.
      *
-     * @return bool
      *
      * @throws \Exception
      */
@@ -470,7 +466,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes locks from the document and its children.
      *
-     * @return array
      */
     public function unlockPropagate(): array
     {
@@ -481,10 +476,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -496,10 +488,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param string $type
      * @param Model\User $user
      *
-     * @return bool
      */
     public function isAllowed(string $type, User $user): bool
     {
@@ -548,11 +538,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -562,12 +550,11 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param int $index
      */
     public function saveIndex(int $index): void
     {
         $this->db->update('documents', [
-            'index' => $index,
+            $this->db->quoteIdentifier('index') => $index,
         ], [
             'id' => $this->model->getId(),
         ]);
@@ -576,7 +563,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return int
      */
     public function getNextIndex(): int
     {

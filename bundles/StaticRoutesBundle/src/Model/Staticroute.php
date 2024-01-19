@@ -33,21 +33,27 @@ final class Staticroute extends AbstractModel
 {
     protected ?string $id = null;
 
-    protected string $name;
+    protected ?string $name = null;
 
-    protected string $pattern;
+    protected string $pattern = '';
 
-    protected string $reverse;
+    protected ?string $reverse = null;
 
-    protected string $controller;
+    protected ?string $controller = null;
 
-    protected string $variables;
+    protected ?string $variables = null;
 
-    protected string $defaults;
+    protected ?string $defaults = null;
 
+    /**
+     * @var int[]
+     */
     protected array $siteId = [];
 
-    protected array $methods;
+    /**
+     * @var string[]
+     */
+    protected array $methods = [];
 
     protected int $priority = 1;
 
@@ -59,28 +65,24 @@ final class Staticroute extends AbstractModel
      * Associative array filled on match() that holds matched path values
      * for given variable names.
      *
-     * @var array
      */
     protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
      *
-     * @var array
      */
     protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute|null
      */
     protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute|null $route
      */
     public static function setCurrentRoute(?Staticroute $route): void
     {
@@ -90,7 +92,6 @@ final class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute|null
      */
     public static function getCurrentRoute(): ?Staticroute
     {
@@ -100,9 +101,7 @@ final class Staticroute extends AbstractModel
     /**
      * Static helper to retrieve an instance of Staticroute by the given ID
      *
-     * @param string $id
      *
-     * @return self|null
      */
     public static function getById(string $id): ?Staticroute
     {
@@ -128,10 +127,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int|null $siteId
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -205,7 +201,7 @@ final class Staticroute extends AbstractModel
         return $this->pattern;
     }
 
-    public function getController(): string
+    public function getController(): ?string
     {
         return $this->controller;
     }
@@ -215,11 +211,14 @@ final class Staticroute extends AbstractModel
         return $this->variables;
     }
 
-    public function getDefaults(): string
+    public function getDefaults(): ?string
     {
         return $this->defaults;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -227,6 +226,9 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPattern(string $pattern): static
     {
         $this->pattern = $pattern;
@@ -234,13 +236,19 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function setController(string $controller): static
+    /**
+     * @return $this
+     */
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setVariables(string $variables): static
     {
         $this->variables = $variables;
@@ -248,6 +256,9 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaults(string $defaults): static
     {
         $this->defaults = $defaults;
@@ -255,9 +266,12 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPriority(int $priority): static
     {
-        $this->priority = (int) $priority;
+        $this->priority = $priority;
 
         return $this;
     }
@@ -267,6 +281,9 @@ final class Staticroute extends AbstractModel
         return $this->priority;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -274,11 +291,14 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setReverse(string $reverse): static
     {
         $this->reverse = $reverse;
@@ -286,11 +306,16 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function getReverse(): string
+    public function getReverse(): ?string
     {
         return $this->reverse;
     }
 
+    /**
+     * @param int[]|string|null $siteId
+     *
+     * @return $this
+     */
     public function setSiteId(array|string|null $siteId): static
     {
         $result = [];
@@ -322,17 +347,16 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
     public function getSiteId(): array
     {
         return $this->siteId;
     }
 
     /**
-     * @param array $urlOptions
-     * @param bool $encode
-     *
-     * @return string
-     *
+     * @internal
      * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
@@ -363,8 +387,8 @@ final class Staticroute extends AbstractModel
 
         $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
-            if (strpos($tmpReversePattern, '%' . $key) !== false) {
-                $parametersInReversePattern[$key] = $param;
+            if (str_contains($tmpReversePattern, '%' . $key)) {
+                $parametersInReversePattern[$key] = (string) $param;
 
                 // we need to replace the found variable to that it cannot match again a placeholder
                 // eg. %abcd prior %ab if %abcd matches already %ab shouldn't match again on the same placeholder
@@ -426,34 +450,16 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return array|bool
+     * @internal
      *
      * @throws \Exception
-     *
-     * @internal
      */
-    public function match(string $path, array $params = []): bool|array
+    public function match(string $path, array $params = []): false|array
     {
         if (@preg_match($this->getPattern(), $path)) {
             // check for site
             if ($this->getSiteId()) {
-                if (!Site::isSiteRequest()) {
-                    return false;
-                }
-
-                $siteMatched = false;
-                $siteIds = $this->getSiteId();
-                foreach ($siteIds as $siteId) {
-                    if ($siteId == Site::getCurrentSite()->getId()) {
-                        $siteMatched = true;
-
-                        break;
-                    }
-                }
-                if (!$siteMatched) {
+                if (!Site::isSiteRequest() || !in_array(Site::getCurrentSite()->getId(), $this->getSiteId())) {
                     return false;
                 }
             }
@@ -462,13 +468,11 @@ final class Staticroute extends AbstractModel
 
             preg_match_all($this->getPattern(), $path, $matches);
 
-            if (is_array($matches) && count($matches) > 1) {
-                foreach ($matches as $index => $match) {
-                    if (isset($variables[$index - 1]) && $variables[$index - 1]) {
-                        $paramValue = urldecode($match[0]);
-                        if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
-                            $params[$variables[$index - 1]] = $paramValue;
-                        }
+            foreach ($matches as $index => $match) {
+                if (!empty($variables[$index - 1])) {
+                    $paramValue = urldecode($match[0]);
+                    if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                        $params[$variables[$index - 1]] = $paramValue;
                     }
                 }
             }
@@ -484,16 +488,26 @@ final class Staticroute extends AbstractModel
         return [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getMethods(): array
     {
         return $this->methods;
     }
 
+    /**
+     * @param string[]|string $methods
+     *
+     * @return $this
+     */
     public function setMethods(array|string $methods): static
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map('trim', $methods);
+            foreach($methods as $key => $method) {
+                $methods[$key] = trim($method);
+            }
         }
 
         $this->methods = $methods;
@@ -501,9 +515,12 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -513,9 +530,12 @@ final class Staticroute extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -525,7 +545,7 @@ final class Staticroute extends AbstractModel
         return $this->creationDate;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

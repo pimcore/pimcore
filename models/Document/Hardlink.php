@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -27,31 +26,25 @@ class Hardlink extends Document
 {
     use Model\Element\Traits\ScheduledTasksTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'hardlink';
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected int $sourceId;
+    protected ?int $sourceId = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected bool $propertiesFromSource;
+    protected bool $propertiesFromSource = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected bool $childrenFromSource;
+    protected bool $childrenFromSource = false;
 
     public function getSourceDocument(): ?Document
     {
@@ -62,9 +55,6 @@ class Hardlink extends Document
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -97,7 +87,7 @@ class Hardlink extends Document
 
     public function setChildrenFromSource(bool $childrenFromSource): static
     {
-        $this->childrenFromSource = (bool) $childrenFromSource;
+        $this->childrenFromSource = $childrenFromSource;
 
         return $this;
     }
@@ -107,21 +97,21 @@ class Hardlink extends Document
         return $this->childrenFromSource;
     }
 
-    public function setSourceId(int $sourceId): static
+    public function setSourceId(?int $sourceId): static
     {
-        $this->sourceId = (int) $sourceId;
+        $this->sourceId = $sourceId;
 
         return $this;
     }
 
-    public function getSourceId(): int
+    public function getSourceId(): ?int
     {
         return $this->sourceId;
     }
 
     public function setPropertiesFromSource(bool $propertiesFromSource): static
     {
-        $this->propertiesFromSource = (bool) $propertiesFromSource;
+        $this->propertiesFromSource = $propertiesFromSource;
 
         return $this;
     }
@@ -131,9 +121,6 @@ class Hardlink extends Document
         return $this->propertiesFromSource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperties(): array
     {
         if ($this->properties === null) {
@@ -164,26 +151,24 @@ class Hardlink extends Document
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
             $children = parent::getChildren($includingUnpublished);
 
-            $sourceChildren = [];
+            $wrappedSourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished);
-                foreach ($sourceChildren as &$c) {
-                    $c = Document\Hardlink\Service::wrap($c);
-                    $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished)->getDocuments();
+                foreach ($sourceChildren as $key => $c) {
+                    $wrappedChild = Document\Hardlink\Service::wrap($c);
+                    $wrappedChild->setHardLinkSource($this);
+                    $wrappedChild->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                    $wrappedSourceChildren[$key] = $wrappedChild;
                 }
             }
 
-            $children->setData(array_merge($sourceChildren, $children->load()));
+            $children->setData(array_merge($wrappedSourceChildren, $children->load()));
 
             $this->setChildren($children, $includingUnpublished);
         }
@@ -191,34 +176,11 @@ class Hardlink extends Document
         return $this->children[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        return count($this->getChildren($includingUnpublished)) > 0;
+        return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);

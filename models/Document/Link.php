@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Link\Dao getDao()
@@ -33,7 +34,6 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $internal = null;
 
@@ -42,7 +42,6 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $internalType = null;
 
@@ -51,9 +50,8 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var Model\Element\ElementInterface|null
      */
-    protected ?Model\Element\ElementInterface $object = null;
+    protected Model\Element\ElementInterface|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * Contains the direct link as plain text
@@ -69,9 +67,6 @@ class Link extends Model\Document
      */
     protected string $linktype = 'internal';
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'link';
 
     /**
@@ -81,9 +76,6 @@ class Link extends Model\Document
      */
     protected string $href = '';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -123,7 +115,6 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link
      *
-     * @return string
      */
     public function getHref(): string
     {
@@ -157,7 +148,6 @@ class Link extends Model\Document
     /**
      * Returns the plain text path of the link needed for the editmode
      *
-     * @return string
      */
     public function getRawHref(): string
     {
@@ -181,7 +171,6 @@ class Link extends Model\Document
     /**
      * Returns the path of the link including the anchor and parameters
      *
-     * @return string
      */
     public function getLink(): string
     {
@@ -203,7 +192,6 @@ class Link extends Model\Document
     /**
      * Returns the id of the internal document|asset which is linked
      *
-     * @return int|null
      */
     public function getInternal(): ?int
     {
@@ -213,7 +201,6 @@ class Link extends Model\Document
     /**
      * Returns the direct link (eg. http://www.pimcore.org/test)
      *
-     * @return string
      */
     public function getDirect(): string
     {
@@ -223,17 +210,16 @@ class Link extends Model\Document
     /**
      * Returns the type of the link (internal/direct)
      *
-     * @return string
      */
     public function getLinktype(): string
     {
         return $this->linktype;
     }
 
-    public function setInternal(int $internal): static
+    public function setInternal(?int $internal): static
     {
         if (!empty($internal)) {
-            $this->internal = (int) $internal;
+            $this->internal = $internal;
             $this->setObjectFromId();
         } else {
             $this->internal = null;
@@ -270,6 +256,9 @@ class Link extends Model\Document
 
     public function getElement(): ?Model\Element\ElementInterface
     {
+        if ($this->object instanceof Model\Element\ElementDescriptor) {
+            $this->object = Element\Service::getElementById($this->object->getType(), $this->object->getId());
+        }
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
         }
@@ -283,42 +272,6 @@ class Link extends Model\Document
     public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->object = $element;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     *
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getObject(): ?Model\Element\ElementInterface
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::getObject() method is deprecated, use Link::getElement() instead.'
-        );
-
-        return $this->getElement();
-    }
-
-    /**
-     * @param Model\Element\ElementInterface $object
-     *
-     * @return $this
-     *
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     */
-    public function setObject(Model\Element\ElementInterface $object): static
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
-        );
-
-        $this->setElement($object);
 
         return $this;
     }
@@ -351,7 +304,6 @@ class Link extends Model\Document
     /**
      * returns the ready-use html for this link
      *
-     * @return string
      */
     public function getHtml(): string
     {
@@ -379,9 +331,6 @@ class Link extends Model\Document
         return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);

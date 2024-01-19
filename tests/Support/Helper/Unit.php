@@ -57,5 +57,3 @@ class Unit extends \Codeception\Module
         }
     }
 }
-
-@class_alias(Unit::class, 'Pimcore\Tests\Support\Helper\Unit');

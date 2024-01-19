@@ -24,9 +24,7 @@ class Document
     /**
      * Singleton for Pimcore\Document
      *
-     * @param string|null $adapter
      *
-     * @return Document\Adapter|null
      *
      * @throws \Exception
      */
@@ -57,7 +55,6 @@ class Document
     /**
      * Checks if adapter is available.
      *
-     * @return bool
      */
     public static function isAvailable(): bool
     {
@@ -71,9 +68,7 @@ class Document
     /**
      * Checks if a file type is supported by the adapter.
      *
-     * @param string $filetype
      *
-     * @return bool
      */
     public static function isFileTypeSupported(string $filetype): bool
     {
@@ -87,11 +82,10 @@ class Document
     /**
      * Returns adapter class if exists or false if doesn't exist
      *
-     * @return Document\Adapter|null
      */
     public static function getDefaultAdapter(): ?Document\Adapter
     {
-        $adapters = ['LibreOffice', 'Ghostscript'];
+        $adapters = ['Gotenberg', 'LibreOffice', 'Ghostscript'];
 
         foreach ($adapters as $adapter) {
             $adapterClass = '\\Pimcore\\Document\\Adapter\\' . $adapter;

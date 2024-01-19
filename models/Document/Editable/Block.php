@@ -35,7 +35,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var array
      */
     protected array $indices = [];
 
@@ -44,47 +43,31 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var int
      */
     protected int $current = 0;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'block';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->indices;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
@@ -92,9 +75,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
@@ -163,7 +143,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return bool
      */
     public function loop(): bool
     {
@@ -201,9 +180,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementAttributes(): array
     {
         $attributes = parent::getEditmodeElementAttributes();
@@ -216,9 +192,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $attributes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start()
     {
         // set name suffix for the whole block element, this will be added to all child elements of the block
@@ -228,12 +201,11 @@ class Block extends Model\Document\Editable implements BlockInterface
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
+
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function end(bool $return = false)
+    public function end(bool $return = false): void
     {
         $this->current = 0;
 
@@ -246,9 +218,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
@@ -256,9 +225,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->getBlockState()->pushIndex((int) ($this->indices[$this->current] ?? 0));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockDestruct(): void
     {
         $blockState = $this->getBlockState();
@@ -267,11 +233,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * @param bool $showControls
-     * @param bool $return
-     * @param string $additionalClass
-     */
     public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
         $attr = $this->getBlockAttributes();
@@ -328,9 +289,6 @@ EOT;
         $this->outputEditmode($html);
     }
 
-    /**
-     * @param bool $return
-     */
     public function blockEnd(bool $return = false)
     {
         // close outer element
@@ -358,25 +316,16 @@ EOT;
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCount(): int
     {
         return count($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrent(): int
     {
         return $this->current - 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrentIndex(): int
     {
         return (int) ($this->indices[$this->getCurrent()] ?? 0);

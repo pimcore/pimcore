@@ -47,7 +47,6 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @return array
      *
      * @throws Exception
      */

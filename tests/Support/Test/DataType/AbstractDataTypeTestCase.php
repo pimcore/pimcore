@@ -91,9 +91,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function needsDb(): bool
     {
         return true;
@@ -436,30 +433,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
     }
 
-    public function testIndexFieldSelectionField(): void
-    {
-        $this->createTestObject('indexFieldSelectionField');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelectionField($this->testObject, 'indexFieldSelectionField', $this->seed);
-    }
-
-    public function testIndexFieldSelection(): void
-    {
-        $this->createTestObject('indexFieldSelection');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelection($this->testObject, 'indexFieldSelection', $this->seed);
-    }
-
-    public function testIndexFieldSelectionCombo(): void
-    {
-        $this->createTestObject('indexFieldSelectionCombo');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelectionCombo($this->testObject, 'indexFieldSelectionCombo', $this->seed);
-    }
-
     public function testInput(): void
     {
         $this->createTestObject('input');
@@ -649,22 +622,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
-    public function testNewsletterActive(): void
-    {
-        $this->createTestObject('newsletterActive');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertNewsletterActive($this->testObject, 'newsletterActive', $this->seed);
-    }
-
-    public function testNewsletterConfirmed(): void
-    {
-        $this->createTestObject('newsletterConfirmed');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertNewsletterConfirmed($this->testObject, 'newsletterConfirmed', $this->seed);
-    }
-
     public function testNumeric(): void
     {
         $this->createTestObject('number');
@@ -846,7 +803,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->assertNotNull($this->testObject->getVideo());
 
-        $this->testDataHelper->assertVideo($this->testObject, 'video', $this->seed, $returnData);
+        $this->testDataHelper->assertVideo($this->testObject, 'video', $returnData, $this->seed);
     }
 
     public function testWysiwyg(): void
@@ -857,5 +814,3 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
 }
-
-@class_alias(AbstractDataTypeTestCase::class, 'Pimcore\Tests\Support\Test\DataType\AbstractDataTypeTestCase');

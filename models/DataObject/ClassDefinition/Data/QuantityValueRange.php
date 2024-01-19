@@ -28,17 +28,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'quantityValueRange';
 
     /**
      * @internal
@@ -64,28 +53,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @internal
      */
     public bool $autoConvert = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     */
-    public array $queryColumnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-        'unit' => 'varchar(64)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     */
-    public array $columnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-        'unit' => 'varchar(64)',
-    ];
 
     public function getUnitWidth(): string|int
     {
@@ -142,7 +109,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -164,7 +130,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -190,7 +155,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -200,7 +164,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see Data::getDataForEditmode
      *
@@ -219,11 +182,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return DataObject\Data\QuantityValueRange|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -246,7 +205,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see Data::getVersionPreview
      *
@@ -261,7 +219,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws Exception
      */
@@ -323,9 +281,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fieldName = $this->getName();
@@ -348,7 +303,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
-            if ($minimum !== null && (!\is_numeric($minimum) || !\is_numeric($maximum))) {
+            if (!\is_numeric($minimum) || !\is_numeric($maximum)) {
                 throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
             }
 
@@ -464,5 +419,24 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         }
 
         return parent::isEmpty($data);
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'minimum' => 'double',
+            'maximum' => 'double',
+            'unit' => 'varchar(64)',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'quantityValueRange';
     }
 }

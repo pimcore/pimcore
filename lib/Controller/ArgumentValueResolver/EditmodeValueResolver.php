@@ -18,13 +18,13 @@ namespace Pimcore\Controller\ArgumentValueResolver;
 
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
  * @internal
  */
-final class EditmodeValueResolver implements ArgumentValueResolverInterface
+final class EditmodeValueResolver implements ValueResolverInterface
 {
     private EditmodeResolver $editmodeResolver;
 
@@ -33,13 +33,16 @@ final class EditmodeValueResolver implements ArgumentValueResolverInterface
         $this->editmodeResolver = $editmodeResolver;
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument): bool
-    {
-        return $argument->getType() === 'bool' && $argument->getName() === 'editmode';
-    }
-
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        yield $this->editmodeResolver->isEditmode($request);
+        if ($argument->getType() !== 'bool') {
+            return [];
+        }
+
+        if ($argument->getName() !== 'editmode') {
+            return [];
+        }
+
+        return [$this->editmodeResolver->isEditmode($request)];
     }
 }

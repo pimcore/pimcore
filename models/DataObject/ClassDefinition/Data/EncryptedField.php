@@ -34,8 +34,6 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, LayoutDefinitionEnrichmentInterface
 {
-    use Extension\ColumnType;
-
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
      */
@@ -49,18 +47,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     private static int $strictMode = self::STRICT_ENABLED;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'encryptedField';
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     public string $delegateDatatype;
 
@@ -72,20 +60,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public Data|array|null $delegate = null;
 
     /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'LONGBLOB';
-
-    /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -179,11 +154,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\EncryptedField|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -211,11 +182,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -234,11 +201,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\EncryptedField|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -255,13 +218,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return null;
     }
 
-    /**
-     * @param float $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return float|Model\DataObject\Data\EncryptedField
-     */
     public function getDataFromGridEditor(float $data, Model\DataObject\Concrete $object = null, array $params = []): float|Model\DataObject\Data\EncryptedField
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -273,9 +229,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -283,14 +236,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
             $fd->checkValidity($data, $omitMandatoryCheck);
         }
-    }
-
-    /**
-     * @param Model\DataObject\ClassDefinition\Data\EncryptedField $masterDefinition
-     */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
-    {
-        $this->datatype = $masterDefinition->datatype;
     }
 
     public function isEmpty(mixed $data): bool
@@ -308,11 +253,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * display the quantity value field data in the grid
      *
-     * @param mixed $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDataForGrid(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): array
     {
@@ -329,11 +270,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -343,19 +281,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $fd->getVersionPreview($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $this->getDataFromObjectParam($object, $params);
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-
-            if (is_array($params)) {
-                $params = [];
-            }
             $params['injectedData'] = $data;
 
             return $fd->getForCsvExport($object, $params);
@@ -367,11 +298,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -397,7 +324,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @internal
      *
-     * @param mixed $data
      */
     public function setupDelegate(mixed $data): void
     {
@@ -408,9 +334,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             if ($loader->supports($this->getDelegateDatatype())) {
                 $delegate = $loader->build($this->getDelegateDatatype());
                 $className = get_class($delegate);
-                if (method_exists($className, '__set_state')) {
-                    $delegate = $className::__set_state($data);
-                }
+                $delegate = $className::__set_state($data);
                 $this->delegate = $delegate;
             }
         }
@@ -436,9 +360,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $this->delegate = $delegate;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $delegate = $this->getDelegate();
@@ -511,5 +432,15 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $value = new Model\DataObject\Data\EncryptedField($this->delegate, $value);
 
         return $value;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'LONGBLOB';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'encryptedField';
     }
 }

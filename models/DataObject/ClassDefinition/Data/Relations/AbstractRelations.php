@@ -44,7 +44,6 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @var array
      */
     public array $classes = [];
 
@@ -60,7 +59,6 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @var null|string
      */
     public ?string $pathFormatterClass = null;
 
@@ -179,13 +177,9 @@ abstract class AbstractRelations extends Data implements
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, function ($a, $b) {
-            if ($a['index'] == $b['index']) {
-                return 0;
-            }
-
-            return ($a['index'] < $b['index']) ? -1 : 1;
-        });
+        // @noinspection PhpMissingReturnTypeInspection PhpMissingParamTypeInspection Due to this being performance
+        // sensitive and Types add a slight overhead.
+        usort($relations, static fn ($a, $b) => $a['index'] <=> $b['index']);
 
         $data = $this->loadData($relations, $object, $params);
         if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
@@ -196,11 +190,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param array $data
-     * @param Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
-     * @param array $params
      *
-     * @return mixed
      *
      * @internal
      */
@@ -209,9 +199,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @param array|ElementInterface $data
      * @param Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
      *
      * @internal
      */
@@ -232,10 +219,7 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $data
-     * @param array $idMapping
      *
-     * @return array
      *
      * @internal
      */
@@ -279,26 +263,23 @@ abstract class AbstractRelations extends Data implements
 
         $map = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $map[$key] = 1;
             $newData[] = $item;
         }
 
-        if (is_array($additionalData)) {
-            foreach ($additionalData as $item) {
-                $key = $this->buildUniqueKeyForAppending($item);
-                if (!isset($map[$key])) {
-                    $newData[] = $item;
-                }
+        foreach ($additionalData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            if (!isset($map[$key])) {
+                $newData[] = $item;
             }
         }
 
         return $newData;
     }
 
-    public function removeData(mixed $existingData, mixed $removeData): array
+    public function removeData(?array $existingData, array $removeData): array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -307,14 +288,11 @@ abstract class AbstractRelations extends Data implements
 
         $removeMap = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($removeData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $removeMap[$key] = 1;
         }
 
-        $newData = [];
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
 
@@ -327,23 +305,25 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param Element\ElementInterface $item
-     *
-     * @return string
-     *
      * @internal
+     *
+     * @throws \LogicException
      */
-    protected function buildUniqueKeyForAppending(Element\ElementInterface $item): string
+    protected function buildUniqueKeyForAppending(object $item): string
     {
-        $elementType = Element\Service::getElementType($item);
-        $id = $item->getId();
+        if ($item instanceof DataObject\Data\ElementMetadata || $item instanceof DataObject\Data\ObjectMetadata) {
+            $item = $item->getElement();
+        }
+        if ($item instanceof Element\ElementInterface) {
+            $elementType = Element\Service::getElementType($item);
+            $id = $item->getId();
 
-        return $elementType . $id;
+            return $elementType . $id;
+        }
+
+        throw new \LogicException('Unexpected item type: ' . get_debug_type($item));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isEqual(mixed $array1, mixed $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
@@ -379,8 +359,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @param DataObject\Fieldcollection\Data\AbstractData $item
-     *
      * @throws \Exception
      */
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item): void
@@ -399,8 +377,6 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
-     *
-     * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */
@@ -423,7 +399,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @param array|null $data
      *
      * @throws Element\ValidationException
      *
@@ -496,7 +471,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @return string
      */
     abstract protected function getPhpdocType(): string;
 }

@@ -36,21 +36,18 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
     /**
      * Parent id
      *
-     * @var int|null
      */
     protected ?int $parentId = null;
 
     /**
      * The group name.
      *
-     * @var string
      */
     protected string $name;
 
@@ -66,7 +63,6 @@ final class GroupConfig extends Model\AbstractModel
 
     public static function getById(int $id, ?bool $force = false): ?GroupConfig
     {
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         try {
@@ -92,11 +88,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool|null $force
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -138,7 +130,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -233,7 +225,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -245,7 +237,7 @@ final class GroupConfig extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -295,8 +287,12 @@ final class GroupConfig extends Model\AbstractModel
     private function removeCache(): void
     {
         // Remove runtime cache
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-        RuntimeCache::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getId()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
+        }
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getStoreId(), $this->getName()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
+        }
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

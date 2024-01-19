@@ -18,7 +18,8 @@ namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheFallbackPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\FlysystemVisibilityPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\HtmlSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessageBusPublicPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
@@ -28,9 +29,11 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -40,41 +43,18 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class PimcoreCoreBundle extends Bundle
 {
-    public function getContainerExtension(): ?ExtensionInterface
+    public function getContainerExtension(): ExtensionInterface
     {
-        if (null === $this->extension) {
-            $extension = $this->createContainerExtension();
-
-            if (null !== $extension) {
-                if (!$extension instanceof ExtensionInterface) {
-                    throw new \LogicException(sprintf('Extension %s must implement Symfony\Component\DependencyInjection\Extension\ExtensionInterface.', get_class($extension)));
-                }
-
-                $this->extension = $extension;
-            } else {
-                $this->extension = false;
-            }
-        }
-
-        if ($this->extension) {
-            return $this->extension;
-        }
-
-        return null;
+        return new PimcoreCoreExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new NavigationRendererPass());
         $container->addCompilerPass(new ServiceControllersPass());
-        $container->addCompilerPass(new TargetingOverrideHandlersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
-        $container->addCompilerPass(new DebugStopwatchPass());
         $container->addCompilerPass(new LongRunningHelperPass());
         $container->addCompilerPass(new WorkflowPass());
         $container->addCompilerPass(new RegisterImageOptimizersPass());
@@ -83,6 +63,10 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new MessageBusPublicPass());
+        $container->addCompilerPass(new HtmlSanitizerPass());
+        $container->addCompilerPass(new TranslationSanitizerPass());
+        $container->addCompilerPass(new SerializerPass());
+        $container->addCompilerPass(new FlysystemVisibilityPass());
     }
 
     public function getPath(): string

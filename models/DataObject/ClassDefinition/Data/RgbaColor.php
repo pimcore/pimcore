@@ -34,47 +34,9 @@ class RgbaColor extends Data implements
     AfterDecryptionUnmarshallerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'rgbaColor';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
-
-    /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -98,11 +60,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -110,7 +68,7 @@ class RgbaColor extends Data implements
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
-            list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
+            [$r, $g, $b] = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
             $a = hexdec($data[$this->getName() . '__a']);
             $data = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
         }
@@ -129,11 +87,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -143,11 +97,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -164,11 +114,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -176,7 +122,7 @@ class RgbaColor extends Data implements
     {
         if ($data) {
             $data = trim($data, '# ');
-            list($r, $g, $b, $a) = sscanf($data, '%02x%02x%02x%02x');
+            [$r, $g, $b, $a] = sscanf($data, '%02x%02x%02x%02x');
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
             return $color;
@@ -186,20 +132,14 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param string|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -225,11 +165,11 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->width = $masterDefinition->width;
+        $this->width = $mainDefinition->width;
     }
 
     public function isEmpty(mixed $data): bool
@@ -240,11 +180,8 @@ class RgbaColor extends Data implements
     /**
      * display the quantity value field data in the grid
      *
-     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
     {
@@ -252,11 +189,8 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -300,24 +234,17 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $this->getDataForEditmode($data, $object, $params) ?? '';
+        return $this->getDataForEditmode($data) ?? '';
     }
 
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -334,11 +261,8 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -364,13 +288,11 @@ class RgbaColor extends Data implements
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /** { @inheritdoc } */
     public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
     public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);
@@ -402,5 +324,23 @@ class RgbaColor extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'rgb' => 'VARCHAR(6) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL',
+            'a' => 'VARCHAR(2) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'rgbaColor';
     }
 }

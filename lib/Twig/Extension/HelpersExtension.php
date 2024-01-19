@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
-use Pimcore\File;
 use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
 use Symfony\Component\Mime\MimeTypes;
@@ -46,9 +45,6 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -57,7 +53,7 @@ class HelpersExtension extends AbstractExtension
             new TwigFunction('pimcore_file_exists', function ($file) {
                 return is_file($file);
             }),
-            new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
+            new TwigFunction('pimcore_file_extension', [$this, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
             new TwigFunction('pimcore_asset_version_preview', [$this, 'getAssetVersionPreview']),
             new TwigFunction('pimcore_breach_attack_random_content', [$this, 'breachAttackRandomContent'], [
@@ -85,9 +81,7 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @param string $file
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -118,7 +112,6 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @return string
      *
      * @throws \Exception
      */
@@ -134,5 +127,10 @@ class HelpersExtension extends AbstractExtension
                 ord($randomData[$length - 1]) % 32
             )
             . '-->';
+    }
+
+    public function getFileExtension(string $fileName): string
+    {
+        return pathinfo($fileName, PATHINFO_EXTENSION);
     }
 }

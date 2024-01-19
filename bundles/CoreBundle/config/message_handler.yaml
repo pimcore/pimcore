@@ -1,11 +1,4 @@
 services:
-    Pimcore\Messenger\Handler\SendNewsletterHandler:
-        arguments:
-            - '%pimcore.config%'
-            - '@pimcore.newsletter.address_source_adapter.factories'
-        tags:
-            - { name: messenger.message_handler }
-
     Pimcore\Messenger\Handler\VideoConvertHandler:
         tags:
             - { name: messenger.message_handler }
@@ -17,6 +10,7 @@ services:
     Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
         arguments:
             - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
         tags:
             - { name: messenger.message_handler }
 
@@ -32,6 +26,12 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Messenger\Handler\ScheduledTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\OptimizeImageHandler:
         arguments:
             - '@Pimcore\Image\Optimizer'
@@ -40,12 +40,6 @@ services:
             - { name: messenger.message_handler }
 
     Pimcore\Messenger\Handler\GeneratePagePreviewHandler:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: messenger.message_handler }
-
-    Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
         arguments:
             - '@logger'
         tags:

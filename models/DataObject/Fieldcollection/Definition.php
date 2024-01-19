@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -37,8 +38,13 @@ class Definition extends Model\AbstractModel
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * {@inheritdoc}
+     * @var array
      */
+    protected const FORBIDDEN_NAMES = [
+        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
+        'object', 'interface', 'default',
+    ];
+
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
@@ -53,7 +59,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -79,9 +84,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
      *
-     * @return self|null
      *
      * @throws \Exception
      */
@@ -115,7 +118,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws \Exception
      */
@@ -125,7 +127,7 @@ class Definition extends Model\AbstractModel
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
@@ -150,15 +152,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -166,7 +166,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
@@ -197,7 +196,8 @@ class Definition extends Model\AbstractModel
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($definitionFile, $data);
         }
 
         \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
@@ -218,15 +218,13 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->delete($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->delete($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -242,9 +240,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string|null $key
      *
-     * @return string
      *
      * @internal
      */
@@ -256,7 +252,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     public function getPhpClassFile(): string
     {
@@ -266,7 +261,6 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {
@@ -281,5 +275,10 @@ class Definition extends Model\AbstractModel
         $cd .= ' */';
 
         return $cd;
+    }
+
+    public function isForbiddenName(): bool
+    {
+        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
     }
 }

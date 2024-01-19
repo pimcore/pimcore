@@ -22,10 +22,7 @@ use Symfony\Component\Process\Process;
 trait EmbeddedMetaDataTrait
 {
     /**
-     * @param bool $force
-     * @param bool $useExifTool
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -41,9 +38,6 @@ trait EmbeddedMetaDataTrait
     /**
      * @internal
      *
-     * @param bool $useExifTool
-     * @param string|null $filePath
-     *
      * @throws \Exception
      */
     public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
@@ -54,10 +48,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param bool $useExifTool
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -134,9 +125,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -313,7 +302,7 @@ trait EmbeddedMetaDataTrait
                     '2#153' => 'AudioDuration',
                     '2#154' => 'AudioOutcue',
                     '2#184' => 'JobID',
-                    '2#185' => 'MasterDocumentID',
+                    '2#185' => 'MainDocumentID',
                     '2#186' => 'ShortDocumentID',
                     '2#187' => 'UniqueDocumentID',
                     '2#188' => 'OwnerID',
@@ -365,7 +354,7 @@ trait EmbeddedMetaDataTrait
                     $iptcRaw = iptcparse($info['APP13']);
                     if (is_array($iptcRaw)) {
                         foreach ($iptcRaw as $key => $value) {
-                            if (is_array($value) && count($value) === 1) {
+                            if (count($value) === 1) {
                                 $value = $value[0];
                             }
 

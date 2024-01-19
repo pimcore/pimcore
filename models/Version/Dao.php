@@ -28,7 +28,6 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
@@ -40,13 +39,15 @@ class Dao extends Model\Dao\AbstractDao
             throw new NotFoundException('version with id ' . $id . ' not found');
         }
 
+        $data['public'] = (bool)$data['public'];
+        $data['serialized'] = (bool)$data['serialized'];
+        $data['autoSave'] = (bool)$data['autoSave'];
         $this->assignVariablesToModel($data);
     }
 
     /**
      * Save object to database
      *
-     * @return int
      *
      * @todo: $data could be undefined
      */
@@ -65,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'versions', $data);
+        Helper::upsert($this->db, 'versions', $data, $this->getPrimaryKey('versions'));
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
@@ -131,22 +132,22 @@ class Dao extends Model\Dao\AbstractDao
                 if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
-                    while ($versionInfo = $versionData->fetch()) {
+                    $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
+                    while ($versionInfo = $versionData->fetchAssociative()) {
                         $count++;
-                        Logger::info($versionInfo['cid'] . '(object ' . $count . ') Vcount ' . count($versionIds));
-                        $elementVersions = \array_slice(explode(',', $versionInfo['versions']), $elementType['steps']);
+                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE cid=? AND ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$versionInfo['cid'], $elementType['elementType']]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
+
+                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
 
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
-                            sleep(1);
                         }
 
                         if (count($versionIds) > 1000) {

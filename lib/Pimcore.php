@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 
 use Pimcore\Cache;
-use Pimcore\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -28,11 +27,9 @@ class Pimcore
 
     private static ?KernelInterface $kernel = null;
 
-    private static \Composer\Autoload\ClassLoader $autoloader;
-
     public static function inDebugMode(): bool
     {
-        return (bool) self::getKernel()->isDebug();
+        return self::getKernel()->isDebug();
     }
 
     public static function inDevMode(): bool
@@ -71,7 +68,6 @@ class Pimcore
     /**
      * check if the process is currently in admin mode or not
      *
-     * @return bool
      */
     public static function inAdmin(): bool
     {
@@ -92,7 +88,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher(): EventDispatcherInterface
     {
@@ -102,7 +97,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return KernelInterface|null
      */
     public static function getKernel(): ?KernelInterface
     {
@@ -112,7 +106,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return bool
      */
     public static function hasKernel(): bool
     {
@@ -126,7 +119,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @param KernelInterface $kernel
      */
     public static function setKernel(KernelInterface $kernel): void
     {
@@ -141,7 +133,6 @@ class Pimcore
      *
      * @deprecated this method just exists for legacy reasons and shouldn't be used in new code
      *
-     * @return ContainerInterface|null
      */
     public static function getContainer(): ?ContainerInterface
     {
@@ -149,7 +140,6 @@ class Pimcore
     }
 
     /**
-     * @return bool
      *
      * @internal
      */
@@ -169,31 +159,10 @@ class Pimcore
     }
 
     /**
-     * @return \Composer\Autoload\ClassLoader
-     *
-     * @internal
-     */
-    public static function getAutoloader(): \Composer\Autoload\ClassLoader
-    {
-        return self::$autoloader;
-    }
-
-    /**
-     * @param \Composer\Autoload\ClassLoader $autoloader
-     *
-     * @internal
-     */
-    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader): void
-    {
-        self::$autoloader = $autoloader;
-    }
-
-    /**
      * Forces a garbage collection.
      *
      * @static
      *
-     * @param array $keepItems
      */
     public static function collectGarbage(array $keepItems = []): void
     {
@@ -255,7 +224,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return bool
      */
     public static function disableMinifyJs(): bool
     {
@@ -269,45 +237,5 @@ class Pimcore
         }
 
         return false;
-    }
-
-    /**
-     * @internal
-     *
-     * @throws Exception
-     */
-    public static function initLogger(): void
-    {
-        // special request log -> if parameter pimcore_log is set
-        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {
-            $requestLogName = date('Y-m-d_H-i-s');
-            if (!empty($_REQUEST['pimcore_log'])) {
-                // slashed are not allowed, replace them with hyphens
-                $requestLogName = str_replace('/', '-', $_REQUEST['pimcore_log']);
-            }
-
-            $requestLogFile = resolvePath(PIMCORE_LOG_DIRECTORY . '/request-' . $requestLogName . '.log');
-            if (strpos($requestLogFile, PIMCORE_LOG_DIRECTORY) !== 0) {
-                throw new \Exception('Not allowed');
-            }
-
-            if (!file_exists($requestLogFile)) {
-                File::put($requestLogFile, '');
-            }
-
-            $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
-
-            /** @var \Symfony\Component\DependencyInjection\Container $container */
-            $container = self::getContainer();
-            foreach ($container->getServiceIds() as $id) {
-                if (strpos($id, 'monolog.logger.') === 0) {
-                    $logger = self::getContainer()->get($id);
-                    if ($logger->getName() != 'event') {
-                        // replace all handlers
-                        $logger->setHandlers([$requestDebugHandler]);
-                    }
-                }
-            }
-        }
     }
 }

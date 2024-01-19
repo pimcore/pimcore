@@ -27,7 +27,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -45,7 +44,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Returns the db entries from email_log by the specified parameters
      *
-     * @return array
      */
     public function getDataArray(): array
     {
@@ -57,7 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Returns the total amount of Email_Log entries
      *
-     * @return int
      */
     public function getTotalCount(): int
     {

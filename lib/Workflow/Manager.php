@@ -32,7 +32,7 @@ use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Manager
@@ -81,10 +81,6 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $action
-     * @param array $actionConfig
-     * @param CustomHtmlServiceInterface|null $customHtmlService
      *
      * @return $this
      */
@@ -117,12 +113,10 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     * @param Workflow $workflow
-     * @param Marking|null $marking
      *
      * @return PlaceConfig[];
      */
-    public function getOrderedPlaceConfigs(Workflow $workflow, Marking $marking = null): array
+    public function getOrderedPlaceConfigs(WorkflowInterface $workflow, Marking $marking = null): array
     {
         if (is_null($marking)) {
             return $this->placeConfigs[$workflow->getName()] ?? [];
@@ -175,9 +169,8 @@ class Manager
     }
 
     /**
-     * @param object $subject
      *
-     * @return Workflow[]
+     * @return WorkflowInterface[]
      */
     public function getAllWorkflowsForSubject(object $subject): array
     {
@@ -196,7 +189,7 @@ class Manager
         return $workflows;
     }
 
-    public function getWorkflowIfExists(object $subject, string $workflowName): ?Workflow
+    public function getWorkflowIfExists(object $subject, string $workflowName): ?WorkflowInterface
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
@@ -216,19 +209,18 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param Asset|Concrete|PageSnippet $subject
-     * @param string $transition
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, Asset|PageSnippet|Concrete $subject, string $transition, array $additionalData, bool $saveSubject = false): Marking
-    {
+    public function applyWithAdditionalData(
+        WorkflowInterface $workflow,
+        Asset|PageSnippet|Concrete $subject,
+        string $transition,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $marking = $workflow->apply($subject, $transition, $additionalData);
@@ -250,18 +242,17 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param object $subject
-     * @param string $globalAction
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, object $subject, string $globalAction, array $additionalData, bool $saveSubject = false): Marking
-    {
+    public function applyGlobalAction(
+        WorkflowInterface $workflow,
+        object $subject,
+        string $globalAction,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if (!$globalActionObj) {
             throw new LogicException(sprintf('global action %s not found', $globalAction));
@@ -297,10 +288,7 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $transitionName
      *
-     * @return null|\Symfony\Component\Workflow\Transition
      *
      * @throws \Exception
      */
@@ -324,8 +312,6 @@ class Manager
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
      * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
-     * @param string $workflowName
-     * @param object $subject
      *
      * @return bool true if initial state was applied
      *
@@ -369,7 +355,7 @@ class Manager
         return false;
     }
 
-    public function getInitialPlacesForWorkflow(Workflow $workflow): array
+    public function getInitialPlacesForWorkflow(WorkflowInterface $workflow): array
     {
         $definition = $workflow->getDefinition();
 

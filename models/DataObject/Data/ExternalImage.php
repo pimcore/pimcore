@@ -25,9 +25,6 @@ class ExternalImage implements OwnerAwareFieldInterface
 
     protected ?string $url = null;
 
-    /**
-     * @param string|null $url
-     */
     public function __construct(string $url = null)
     {
         $this->url = $url;
@@ -45,10 +42,7 @@ class ExternalImage implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (is_null($this->url)) ? '' : $this->url;
     }

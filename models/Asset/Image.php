@@ -16,14 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Tool;
-use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Process\Process;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -32,16 +31,10 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -58,117 +51,19 @@ class Image extends Model\Asset
         parent::update($params);
     }
 
-    /**
-     * @internal
-     */
-    public function detectFocalPoint(): bool
-    {
-        if ($this->getCustomSetting('focalPointX') && $this->getCustomSetting('focalPointY')) {
-            return false;
-        }
-
-        if ($faceCordintates = $this->getCustomSetting('faceCoordinates')) {
-            $xPoints = [];
-            $yPoints = [];
-
-            foreach ($faceCordintates as $fc) {
-                // focal point calculation
-                $xPoints[] = ($fc['x'] + $fc['x'] + $fc['width']) / 2;
-                $yPoints[] = ($fc['y'] + $fc['y'] + $fc['height']) / 2;
-            }
-
-            $focalPointX = array_sum($xPoints) / count($xPoints);
-            $focalPointY = array_sum($yPoints) / count($yPoints);
-
-            $this->setCustomSetting('focalPointX', $focalPointX);
-            $this->setCustomSetting('focalPointY', $focalPointY);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @internal
-     */
-    public function detectFaces(): bool
-    {
-        if ($this->getCustomSetting('faceCoordinates')) {
-            return false;
-        }
-
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
-
-        if (!$config['enabled']) {
-            return false;
-        }
-
-        $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
-        if ($facedetectBin) {
-            $faceCoordinates = [];
-            $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $reference = $thumbnail->getPathReference();
-            if (in_array($reference['type'], ['asset', 'thumbnail'])) {
-                $image = $thumbnail->getLocalFile();
-
-                if (null === $image) {
-                    return false;
-                }
-
-                $imageWidth = $thumbnail->getWidth();
-                $imageHeight = $thumbnail->getHeight();
-
-                $command = [$facedetectBin, $image];
-                Console::addLowProcessPriority($command);
-                $process = new Process($command);
-                $process->run();
-                $result = $process->getOutput();
-                if (strpos($result, "\n")) {
-                    $faces = explode("\n", trim($result));
-
-                    foreach ($faces as $coordinates) {
-                        list($x, $y, $width, $height) = explode(' ', $coordinates);
-
-                        // percentages
-                        $Px = (int) $x / $imageWidth * 100;
-                        $Py = (int) $y / $imageHeight * 100;
-                        $Pw = (int) $width / $imageWidth * 100;
-                        $Ph = (int) $height / $imageHeight * 100;
-
-                        $faceCoordinates[] = [
-                            'x' => $Px,
-                            'y' => $Py,
-                            'width' => $Pw,
-                            'height' => $Ph,
-                        ];
-                    }
-
-                    $this->setCustomSetting('faceCoordinates', $faceCoordinates);
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     private function isLowQualityPreviewEnabled(): bool
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        return Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
     }
 
     /**
-     * @param string|null $generator
      *
-     * @return bool|string
      *
      * @throws \Exception
      *
      * @internal
      */
-    public function generateLowQualityPreview(string $generator = null): bool|string
+    public function generateLowQualityPreview(string $generator = null): false|string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
             return false;
@@ -195,7 +90,6 @@ class Image extends Model\Asset
             $imagick->writeImage($tmpFile);
             $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
-            unlink($tmpFile);
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
@@ -225,7 +119,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -269,10 +163,18 @@ EOT;
      *
      * @internal
      *
-     * @return Image\Thumbnail\Config|null
+     * @deprecated Will be removed in Pimcore 12
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
+            __METHOD__,
+            'getThumbnail($config)->getConfig()'
+        );
+
         $thumbnail = $this->getThumbnail($config);
 
         return $thumbnail->getConfig();
@@ -280,13 +182,8 @@ EOT;
 
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
-     *
-     * @param null|string|array|Image\Thumbnail\Config|null $config
-     * @param bool $deferred
-     *
-     * @return Image\Thumbnail
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -296,7 +193,6 @@ EOT;
      *
      * @throws \Exception
      *
-     * @return null|\Pimcore\Image\Adapter
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
@@ -327,11 +223,6 @@ EOT;
     }
 
     /**
-     * @param string|null $path
-     * @param bool $force
-     *
-     * @return array|null
-     *
      * @throws \Exception
      */
     public function getDimensions(string $path = null, bool $force = false): ?array
@@ -459,7 +350,6 @@ EOT;
     /**
      * Checks if this file represents an animated image (png or gif)
      *
-     * @return bool
      */
     public function isAnimated(): bool
     {
@@ -522,7 +412,10 @@ EOT;
              *
              * @see http://foone.org/apng/
              */
-            $isAnimated = strpos(substr($fileContent, 0, strpos($fileContent, 'IDAT')), 'acTL') !== false;
+            $posIDAT = strpos($fileContent, 'IDAT');
+            if ($posIDAT !== false) {
+                $isAnimated = str_contains(substr($fileContent, 0, $posIDAT), 'acTL');
+            }
         }
 
         return $isAnimated;

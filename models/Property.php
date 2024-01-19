@@ -25,17 +25,17 @@ use Pimcore\Model\Element\Service;
  */
 final class Property extends AbstractModel
 {
-    protected string $name;
+    protected ?string $name = null;
 
     protected mixed $data = null;
 
-    protected string $type;
+    protected ?string $type = null;
 
-    protected string $ctype;
+    protected ?string $ctype = null;
 
     protected ?string $cpath = null;
 
-    protected int $cid;
+    protected ?int $cid = null;
 
     protected bool $inheritable = false;
 
@@ -43,8 +43,6 @@ final class Property extends AbstractModel
 
     /**
      * @internal
-     *
-     * @param mixed $data
      *
      * @return $this
      */
@@ -74,8 +72,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setDataFromResource(mixed $data): static
@@ -97,17 +93,15 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    public function getCid(): int
+    public function getCid(): ?int
     {
         return $this->cid;
     }
 
     /**
      * enum('document','asset','object')
-     *
-     * @return string
      */
-    public function getCtype(): string
+    public function getCtype(): ?string
     {
         return $this->ctype;
     }
@@ -122,24 +116,25 @@ final class Property extends AbstractModel
         return $this->data;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
      * enum('text','document','asset','object','bool','select')
-     *
-     * @return string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
@@ -147,7 +142,6 @@ final class Property extends AbstractModel
     /**
      * enum('document','asset','object')
      *
-     * @param string $ctype
      *
      * @return $this
      */
@@ -158,6 +152,9 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
@@ -170,6 +167,9 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -180,7 +180,6 @@ final class Property extends AbstractModel
     /**
      * enum('text','document','asset','object','bool','select')
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -204,13 +203,15 @@ final class Property extends AbstractModel
     /**
      * Alias for getInherited()
      *
-     * @return bool
      */
     public function isInherited(): bool
     {
         return $this->getInherited();
     }
 
+    /**
+     * @return $this
+     */
     public function setCpath(?string $cpath): static
     {
         $this->cpath = $cpath;
@@ -218,9 +219,12 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setInherited(bool $inherited): static
     {
-        $this->inherited = (bool) $inherited;
+        $this->inherited = $inherited;
 
         return $this;
     }
@@ -230,9 +234,12 @@ final class Property extends AbstractModel
         return $this->inheritable;
     }
 
+    /**
+     * @return $this
+     */
     public function setInheritable(bool $inheritable): static
     {
-        $this->inheritable = (bool) $inheritable;
+        $this->inheritable = $inheritable;
 
         return $this;
     }
@@ -240,7 +247,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function resolveDependencies(): array
     {
@@ -269,7 +275,6 @@ final class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
-     * @param array $idMapping
      *
      * @internal
      */
@@ -289,7 +294,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function serialize(): array
     {

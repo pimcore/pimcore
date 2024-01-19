@@ -25,6 +25,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -37,14 +38,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $controller = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $template = null;
 
@@ -53,7 +52,6 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      *
      */
     protected ?array $editables = null;
@@ -63,26 +61,30 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var null|int
      */
-    protected ?int $contentMasterDocumentId = null;
-
-    /**
-     * @internal
-     */
-    protected bool $supportsContentMaster = true;
+    protected ?int $contentMainDocumentId = null;
 
     /**
      * @internal
      *
-     * @var null|bool
+     * @var null|int
+     */
+    protected $contentMasterDocumentId;
+
+    /**
+     * @internal
+     */
+    protected bool $supportsContentMain = true;
+
+    /**
+     * @internal
+     *
      */
     protected ?bool $missingRequiredEditable = null;
 
@@ -94,20 +96,32 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var null|int
      */
     protected ?int $staticGeneratorLifetime = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $inheritedEditables = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    private static bool $getInheritedValues = false;
+
+    public function __construct()
+    {
+        $this->contentMasterDocumentId = & $this->contentMainDocumentId;
+    }
+
+    public static function setGetInheritedValues(bool $getInheritedValues): void
+    {
+        self::$getInheritedValues = $getInheritedValues;
+    }
+
+    public static function getGetInheritedValues(): bool
+    {
+        return self::$getInheritedValues;
+    }
+
     public function save(array $parameters = []): static
     {
         // checking the required editables renders the document, so this needs to be
@@ -120,9 +134,6 @@ abstract class PageSnippet extends Model\Document
         return parent::save($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         // update elements
@@ -131,13 +142,11 @@ abstract class PageSnippet extends Model\Document
 
         parent::update($params);
 
-        if (is_array($editables) && count($editables)) {
-            foreach ($editables as $editable) {
-                if (!$editable->getInherited()) {
-                    $editable->setDao(null);
-                    $editable->setDocumentId($this->getId());
-                    $editable->save();
-                }
+        foreach ($editables as $editable) {
+            if (!$editable->getInherited()) {
+                $editable->setDao(null);
+                $editable->setDocumentId($this->getId());
+                $editable->save();
             }
         }
 
@@ -147,12 +156,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
-     * @param string|null $versionNote
-     * @param bool $isAutoSave
      *
-     * @return null|Model\Version
      *
      * @throws \Exception
      */
@@ -181,7 +185,7 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            $documentsConfig = SystemSettingsConfig::get()['documents'];
             if ((is_null($documentsConfig['versions']['days'] ?? null) && is_null($documentsConfig['versions']['steps'] ?? null))
                 || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
@@ -212,9 +216,6 @@ abstract class PageSnippet extends Model\Document
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
@@ -239,9 +240,6 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
@@ -250,11 +248,11 @@ abstract class PageSnippet extends Model\Document
             $dependencies[] = $editable->resolveDependencies();
         }
 
-        if ($this->getContentMasterDocument() instanceof Document) {
-            $masterDocumentId = $this->getContentMasterDocument()->getId();
+        if ($this->getContentMainDocument() instanceof Document) {
+            $mainDocumentId = $this->getContentMainDocument()->getId();
             $dependencies[] = [
-                'document_' . $masterDocumentId => [
-                    'id' => $masterDocumentId,
+                'document_' . $mainDocumentId => [
+                    'id' => $mainDocumentId,
                     'type' => 'document',
                 ],
             ];
@@ -277,6 +275,9 @@ abstract class PageSnippet extends Model\Document
         return $this->template;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(?string $controller): static
     {
         $this->controller = $controller;
@@ -284,6 +285,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(?string $template): static
     {
         $this->template = $template;
@@ -295,10 +299,6 @@ abstract class PageSnippet extends Model\Document
      * Set raw data of an editable (eg. for editmode)
      *
      * @internal
-     *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
      *
      * @return $this
      */
@@ -326,7 +326,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * Set an element with the given key/name
      *
-     * @param Editable $editable
      *
      * @return $this
      */
@@ -338,6 +337,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeEditable(string $name): static
     {
         $this->getEditables();
@@ -351,9 +353,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * Get an editable with the given key/name
      *
-     * @param string $name
      *
-     * @return Editable|null
      */
     public function getEditable(string $name): ?Editable
     {
@@ -362,88 +362,89 @@ abstract class PageSnippet extends Model\Document
             return $editables[$name];
         }
 
+        $inheritedEditable = null;
         if (array_key_exists($name, $this->inheritedEditables)) {
-            return $this->inheritedEditables[$name];
+            $inheritedEditable = $this->inheritedEditables[$name];
         }
 
-        // check for content master document (inherit data)
-        if ($contentMasterDocument = $this->getContentMasterDocument()) {
-            if ($contentMasterDocument instanceof self) {
-                $inheritedEditable = $contentMasterDocument->getEditable($name);
+        if (!$inheritedEditable) {
+            // check for content main document (inherit data)
+            $contentMainDocument = $this->getContentMainDocument();
+            if ($contentMainDocument instanceof self && $contentMainDocument->getId() != $this->getId()) {
+                $inheritedEditable = $contentMainDocument->getEditable($name);
                 if ($inheritedEditable) {
                     $inheritedEditable = clone $inheritedEditable;
                     $inheritedEditable->setInherited(true);
                     $this->inheritedEditables[$name] = $inheritedEditable;
-
-                    return $inheritedEditable;
                 }
             }
+        }
+
+        return $inheritedEditable;
+    }
+
+    /**
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    public function setContentMainDocumentId(int|string|null $contentMainDocumentId, bool $validate = false): static
+    {
+        // this is that the path is automatically converted to ID => when setting directly from admin UI
+        if (!is_numeric($contentMainDocumentId) && !empty($contentMainDocumentId)) {
+            if ($contentMainDocument = Document\PageSnippet::getByPath($contentMainDocumentId)) {
+                $contentMainDocumentId = $contentMainDocument->getId();
+            } else {
+                // Content main document was deleted or don't exist
+                $contentMainDocumentId = null;
+            }
+        }
+
+        // Don't set the content main document if the document is already part of the main document chain
+        if ($contentMainDocumentId) {
+            if ($currentContentMainDocument = Document\PageSnippet::getById($contentMainDocumentId)) {
+                $maxDepth = 20;
+                do {
+                    if ($currentContentMainDocument->getId() === $this->getId()) {
+                        throw new \Exception('This document is already part of the main document chain, please choose a different one.');
+                    }
+                    $currentContentMainDocument = $currentContentMainDocument->getContentMainDocument();
+                } while ($currentContentMainDocument && $maxDepth-- > 0 && $validate);
+            } else {
+                // Content main document was deleted or don't exist
+                $contentMainDocumentId = null;
+            }
+        }
+
+        $this->contentMainDocumentId = ($contentMainDocumentId ? (int) $contentMainDocumentId : null);
+
+        return $this;
+    }
+
+    public function getContentMainDocumentId(): ?int
+    {
+        return $this->contentMainDocumentId;
+    }
+
+    public function getContentMainDocument(): ?PageSnippet
+    {
+        if ($mainDocumentId = $this->getContentMainDocumentId()) {
+            return Document\PageSnippet::getById($mainDocumentId);
         }
 
         return null;
     }
 
     /**
-     * @param int|string|null $contentMasterDocumentId
-     * @param bool $validate
-     *
      * @return $this
-     *
-     * @throws \Exception
      */
-    public function setContentMasterDocumentId(int|string|null $contentMasterDocumentId, bool $validate = false): static
-    {
-        // this is that the path is automatically converted to ID => when setting directly from admin UI
-        if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
-            if ($contentMasterDocument = Document\PageSnippet::getByPath($contentMasterDocumentId)) {
-                $contentMasterDocumentId = $contentMasterDocument->getId();
-            } else {
-                // Content master document was deleted or don't exist
-                $contentMasterDocumentId = null;
-            }
-        }
-
-        // Don't set the content master document if the document is already part of the master document chain
-        if ($contentMasterDocumentId) {
-            if ($currentContentMasterDocument = Document\PageSnippet::getById($contentMasterDocumentId)) {
-                $maxDepth = 20;
-                do {
-                    if ($currentContentMasterDocument->getId() === $this->getId()) {
-                        throw new \Exception('This document is already part of the master document chain, please choose a different one.');
-                    }
-                    $currentContentMasterDocument = $currentContentMasterDocument->getContentMasterDocument();
-                } while ($currentContentMasterDocument && $maxDepth-- > 0 && $validate);
-            } else {
-                // Content master document was deleted or don't exist
-                $contentMasterDocumentId = null;
-            }
-        }
-
-        $this->contentMasterDocumentId = ($contentMasterDocumentId ? (int) $contentMasterDocumentId : null);
-
-        return $this;
-    }
-
-    public function getContentMasterDocumentId(): ?int
-    {
-        return $this->contentMasterDocumentId;
-    }
-
-    public function getContentMasterDocument(): ?PageSnippet
-    {
-        if ($masterDocumentId = $this->getContentMasterDocumentId()) {
-            return Document\PageSnippet::getById($masterDocumentId);
-        }
-
-        return null;
-    }
-
-    public function setContentMasterDocument(?PageSnippet $document): static
+    public function setContentMainDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
-            $this->setContentMasterDocumentId($document->getId(), true);
+            $this->setContentMainDocumentId($document->getId(), true);
         } else {
-            $this->setContentMasterDocumentId(null);
+            $this->setContentMainDocumentId(null);
         }
 
         return $this;
@@ -460,12 +461,23 @@ abstract class PageSnippet extends Model\Document
     public function getEditables(): array
     {
         if ($this->editables === null) {
-            $this->setEditables($this->getDao()->getEditables());
+            $documentEditables = $this->getDao()->getEditables();
+
+            if (self::getGetInheritedValues() && $this->supportsContentMain() && $this->getContentMainDocument()) {
+                $contentMainEditables = $this->getContentMainDocument()->getEditables();
+                $documentEditables = array_merge($contentMainEditables, $documentEditables);
+                $this->inheritedEditables = $documentEditables;
+            }
+
+            $this->setEditables($documentEditables);
         }
 
         return $this->editables;
     }
 
+    /**
+     * @return $this
+     */
     public function setEditables(?array $editables): static
     {
         $this->editables = $editables;
@@ -485,7 +497,10 @@ abstract class PageSnippet extends Model\Document
         return $this->versions;
     }
 
-    public function setVersions(array $versions): static
+    /**
+     * @return $this
+     */
+    public function setVersions(?array $versions): static
     {
         $this->versions = $versions;
 
@@ -495,16 +510,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @see Document::getFullPath
      *
-     * @return string
      */
     public function getHref(): string
     {
         return $this->getFullPath();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -522,10 +533,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string|null $hostname
-     * @param string|null $scheme
      *
-     * @return string
      *
      * @throws \Exception
      */
@@ -568,19 +576,17 @@ abstract class PageSnippet extends Model\Document
     /**
      * checks if the document is missing values for required editables
      *
-     * @return bool|null
      */
     public function getMissingRequiredEditable(): ?bool
     {
         return $this->missingRequiredEditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = (bool) $missingRequiredEditable;
-        }
-
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -589,11 +595,10 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @return bool
      */
-    public function supportsContentMaster(): bool
+    public function supportsContentMain(): bool
     {
-        return $this->supportsContentMaster;
+        return $this->supportsContentMain;
     }
 
     /**
@@ -655,5 +660,21 @@ abstract class PageSnippet extends Model\Document
     public function setStaticGeneratorLifetime(?int $staticGeneratorLifetime): void
     {
         $this->staticGeneratorLifetime = $staticGeneratorLifetime;
+    }
+
+    public function __wakeup(): void
+    {
+        $propertyMappings = [
+            'contentMasterDocumentId' => 'contentMainDocumentId',
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }

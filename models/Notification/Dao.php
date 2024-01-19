@@ -33,7 +33,6 @@ class Dao extends AbstractDao
     const DB_TABLE_NAME = 'notifications';
 
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
@@ -63,7 +62,7 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        Helper::insertOrUpdate($this->db, static::DB_TABLE_NAME, $this->getData($model));
+        Helper::upsert($this->db, static::DB_TABLE_NAME, $this->getData($model), $this->getPrimaryKey(static::DB_TABLE_NAME));
 
         if ($model->getId() === null) {
             $model->setId((int) $this->db->lastInsertId());

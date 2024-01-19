@@ -30,18 +30,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
-     */
-    public string $fieldtype = 'fieldcollections';
-
-    /**
-     * @internal
-     *
-     * @var array
      */
     public array $allowedTypes = [];
 
@@ -53,7 +43,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
@@ -87,19 +76,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->lazyLoading;
     }
 
+    /**
+     * @return $this
+     */
     public function setLazyLoading(bool $lazyLoading): static
     {
-        $this->lazyLoading = (bool) $lazyLoading;
+        $this->lazyLoading = $lazyLoading;
 
         return $this;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see Data::getDataForEditmode
      *
@@ -152,11 +140,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Fieldcollection
      *
      * @see Data::getDataFromEditmode
      */
@@ -230,11 +214,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -244,9 +224,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
@@ -319,6 +296,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->allowedTypes;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
@@ -382,9 +362,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Fieldcollection) {
@@ -432,9 +409,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
@@ -458,9 +432,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $data;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
@@ -473,11 +444,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -525,9 +493,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $html;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter, no inheritance here, that's the only difference
@@ -550,9 +515,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // TODO else part should not be needed at all as preGetData is always there
         // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-//        } else {
-//            $code .= "\t" . '$data = $this->' . $key . ";\n";
-//        }
+        //        } else {
+        //            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        //        }
 
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
@@ -560,9 +525,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $code;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -572,9 +540,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->maxItems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -583,11 +548,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): array
     {
@@ -622,9 +584,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $value;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -652,48 +611,44 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Fieldcollections $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->allowedTypes = $masterDefinition->allowedTypes;
-        $this->lazyLoading = $masterDefinition->lazyLoading;
-        $this->maxItems = $masterDefinition->maxItems;
+        $this->allowedTypes = $mainDefinition->allowedTypes;
+        $this->lazyLoading = $mainDefinition->lazyLoading;
+        $this->maxItems = $mainDefinition->maxItems;
     }
 
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
-        if (is_array($this->allowedTypes)) {
-            foreach ($this->allowedTypes as $i => $allowedType) {
-                if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
-                    $definition->getDao()->createUpdateTable($class);
-                    $fieldDefinition = $definition->getFieldDefinitions();
+        foreach ($this->allowedTypes as $i => $allowedType) {
+            if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
+                $definition->getDao()->createUpdateTable($class);
+                $fieldDefinition = $definition->getFieldDefinitions();
 
-                    foreach ($fieldDefinition as $fd) {
-                        if ($fd instanceof ClassSavedInterface) {
-                            // defer creation
-                            $fd->classSaved($class, $params);
-                        }
+                foreach ($fieldDefinition as $fd) {
+                    if ($fd instanceof ClassSavedInterface) {
+                        // defer creation
+                        $fd->classSaved($class, $params);
                     }
-
-                    $definition->getDao()->classSaved($class);
-                } else {
-                    Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
-                    unset($this->allowedTypes[$i]);
                 }
+
+                $definition->getDao()->classSaved($class);
+            } else {
+                Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
+                unset($this->allowedTypes[$i]);
             }
         }
     }
 
     public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
-        $this->disallowAddRemove = (bool) $disallowAddRemove;
+        $this->disallowAddRemove = $disallowAddRemove;
     }
 
     public function getDisallowAddRemove(): bool
@@ -703,7 +658,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setDisallowReorder(bool $disallowReorder): void
     {
-        $this->disallowReorder = (bool) $disallowReorder;
+        $this->disallowReorder = $disallowReorder;
     }
 
     public function getDisallowReorder(): bool
@@ -728,7 +683,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setCollapsed(bool $collapsed): void
     {
-        $this->collapsed = (bool) $collapsed;
+        $this->collapsed = $collapsed;
     }
 
     public function isCollapsible(): bool
@@ -738,7 +693,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function setCollapsible(bool $collapsible): void
     {
-        $this->collapsible = (bool) $collapsible;
+        $this->collapsible = $collapsible;
     }
 
     /**
@@ -747,22 +702,17 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
-        if (is_array($container)) {
-            foreach ($container as $childDef) {
-                if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-                    $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
+        foreach ($container as $childDef) {
+            if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+                $list[] = $childDef;
+            } else {
+                if (method_exists($childDef, 'getFieldDefinitions')) {
+                    self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
                 }
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;
@@ -856,5 +806,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'fieldcollections';
     }
 }

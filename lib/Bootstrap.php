@@ -18,6 +18,8 @@ namespace Pimcore;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Admin;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,16 +70,13 @@ class Bootstrap
         DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
 
-        // CLI has no memory/time limits
-        @ini_set('memory_limit', '-1');
-        @ini_set('max_execution_time', '-1');
-        @ini_set('max_input_time', '-1');
-
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
+            $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
             // skip if maintenance mode is on and the flag is not set
-            if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
+            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+                !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
                 die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution\n");
             }
         }
@@ -100,24 +99,7 @@ class Bootstrap
 
     public static function bootstrap(): void
     {
-        if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
-            // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
-            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
-        } elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-            $loader = include __DIR__ . '/../vendor/autoload.php';
-        } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
-        } else {
-            throw new \Exception('Unable to locate autoloader! Pimcore project root not found or invalid, please set/check env variable PIMCORE_PROJECT_ROOT.');
-        }
-
         self::defineConstants();
-
-        /** @var \Composer\Autoload\ClassLoader $loader */
-        \Pimcore::setAutoloader($loader);
-        self::autoload();
-
-        ini_set('log_errors', '1');
 
         // load a startup file if it exists - this is a good place to preconfigure the system
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
@@ -139,12 +121,10 @@ class Bootstrap
 
     private static function prepareEnvVariables(): void
     {
-        if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
-            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
-                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-            } else {
-                $_SERVER += $_ENV;
-            }
+        if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+        } else {
+            $_SERVER += $_ENV;
         }
     }
 
@@ -193,31 +173,17 @@ class Bootstrap
 
         // paths relying on basic paths above
         $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_PROJECT_ROOT . '/config/pimcore');
+        $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes');
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
         $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
-        $resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_PRIVATE_VAR . '/application-logger');
         $resolveConstant('PIMCORE_SYMFONY_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache');
         $resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PRIVATE_VAR . '/classes');
         $resolveConstant('PIMCORE_CLASS_DEFINITION_DIRECTORY', PIMCORE_CLASS_DIRECTORY);
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
 
         // configure PHP's error logging
-        $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
-    }
-
-    private static function autoload(): void
-    {
-        $loader = \Pimcore::getAutoloader();
-
-        // tell the autoloader where to find Pimcore's generated class stubs
-        // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-        $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-
-        if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
-            require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
-        }
     }
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface
@@ -228,7 +194,6 @@ class Bootstrap
         if ($debug) {
             umask(0000);
             Debug::enable();
-            @ini_set('display_errors', 'On');
         }
 
         if (defined('PIMCORE_KERNEL_CLASS')) {
@@ -249,7 +214,7 @@ class Bootstrap
         \Pimcore::setKernel($kernel);
         $kernel->boot();
 
-        $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $conf = Config::getSystemConfiguration();
 
         if ($conf['general']['timezone']) {
             date_default_timezone_set($conf['general']['timezone']);

@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\File;
 use Pimcore\Image\Chromium;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -32,30 +31,34 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
  * @method int[] getTranslations(Document $document, string $task = 'open')
- * @method addTranslation(Document $document, Document $translation, $language = null)
- * @method removeTranslation(Document $document)
+ * @method void addTranslation(Document $document, Document $translation, string $language = null)
+ * @method void removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
- * @method removeTranslationLink(Document $document, Document $targetDocument)
+ * @method void removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
-    protected array $_copyRecursiveIds;
+    /**
+     * @internal
+     */
+    protected array $_copyRecursiveIds = [];
 
     /**
      * @var Document[]
      */
     protected array $nearestPathCache;
 
-    /**
-     * @param Model\User|null $user
-     */
     public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
@@ -68,13 +71,7 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param bool $useLayout
-     * @param array $query
-     * @param array $options
      *
-     * @return string
      */
     public static function render(Document\PageSnippet $document, array $attributes = [], bool $useLayout = false, array $query = [], array $options = []): string
     {
@@ -91,17 +88,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $target
-     * @param Document $source
      *
      * @return Page|Document|null copied document
      *
      * @throws \Exception
      */
-    public function copyRecursive(Document $target, Document $source): Page|Document|null
+    public function copyRecursive(Document $target, Document $source, bool $initial = true): Page|Document|null
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
+        if ($initial) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
@@ -142,7 +137,7 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         foreach ($source->getChildren(true) as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         $this->updateChildren($target, $new);
@@ -157,18 +152,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     * @param Document $target
-     * @param Document $source
-     * @param bool $enableInheritance
-     * @param bool $resetIndex
-     * @param bool $language
-     *
-     * @return Page|Document|PageSnippet
-     *
      * @throws ValidationException
      */
-    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, bool $language = false): Page|Document|PageSnippet
+    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, ?string $language = null): Page|Document|PageSnippet
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
@@ -206,9 +192,10 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId(), true);
+            $new->setMissingRequiredEditable(false);
+            $new->setContentMainDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -234,10 +221,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $target
-     * @param Document $source
      *
-     * @return Link|Page|Document|PageSnippet
      *
      * @throws ValidationException
      */
@@ -247,6 +231,13 @@ class Service extends Model\Element\Service
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
         }
+
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */
@@ -276,9 +267,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $document
      *
-     * @return array
      *
      * @internal
      */
@@ -299,9 +288,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $doc
      *
-     * @return Document
      *
      * @internal
      */
@@ -323,10 +310,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string $path
-     * @param string|null $type
      *
-     * @return bool
      */
     public static function pathExists(string $path, string $type = null): bool
     {
@@ -366,11 +350,7 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param Document $document
-     * @param array $rewriteConfig
-     * @param array $params
      *
-     * @return Document|PageSnippet
      *
      * @internal
      */
@@ -381,15 +361,15 @@ class Service extends Model\Element\Service
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
                 $editables = $document->getEditables();
                 $changedEditables = [];
-                $contentMaster = $document->getContentMasterDocument();
-                if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterEditables = $contentMaster->getEditables();
-                    foreach ($contentMasterEditables as $contentMasterEditable) {
-                        if ($contentMasterEditable instanceof IdRewriterInterface) {
-                            $editable = clone $contentMasterEditable;
+                $contentMain = $document->getContentMainDocument();
+                if ($contentMain instanceof Document\PageSnippet) {
+                    $contentMainEditables = $contentMain->getEditables();
+                    foreach ($contentMainEditables as $contentMainEditable) {
+                        if ($contentMainEditable instanceof IdRewriterInterface) {
+                            $editable = clone $contentMainEditable;
                             $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMainEditable)) {
                                 $changedEditables[] = $editable;
                             }
                         }
@@ -430,9 +410,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $url
      *
-     * @return Document|null
      *
      * @internal
      */
@@ -496,11 +474,7 @@ class Service extends Model\Element\Service
     /**
      * Get the nearest document by path. Used to match nearest document for a static route.
      *
-     * @param string|Request $path
-     * @param bool $ignoreHardlinks
-     * @param array $types
      *
-     * @return Document|null
      *
      * @internal
      */
@@ -572,11 +546,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param int $id
-     * @param Request|null $request
-     * @param string|null $hostUrl
      *
-     * @return bool
      *
      * @throws \Exception
      *
@@ -584,10 +554,11 @@ class Service extends Model\Element\Service
      */
     public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
     {
-        $success = false;
-
-        /** @var Page $doc */
-        $doc = Document::getById($id);
+        $filesystem = new Filesystem();
+        $doc = Document\Page::getById($id);
+        if (!$doc) {
+            return false;
+        }
         if (!$hostUrl) {
             $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
             if (empty($hostUrl)) {
@@ -599,7 +570,7 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        File::mkdir(dirname($file));
+        $filesystem->mkdir(dirname($file), 0775);
 
         if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
@@ -609,9 +580,9 @@ class Service extends Model\Element\Service
 
             unlink($tmpFile);
 
-            $success = true;
+            return true;
         }
 
-        return $success;
+        return false;
     }
 }
