@@ -479,7 +479,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @return string
      */
-    public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if (null === $data) return '';
 
@@ -490,32 +490,33 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 continue;
             }
 
+            $itemHtml = '';
             if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefnition) {
-                            $title = $localizedFieldDefnition->title ?? $localizedFieldDefnition->getName();
-                            $htmlRow = '<tr><td>' . $title . ':</td><td>';
-                            $htmlRow .= $item->get($localizedFieldDefnition->getName());
-                            $htmlRow .= '</td></tr>';
-                            $dataTable[$item->getType()][] = $htmlRow;
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
+                            $title = $localizedFieldDefinition->title ?? $localizedFieldDefinition->getName();
+                            $itemHtml .= '<tr><td>' . $title . ':</td><td>';
+                            $getter = 'get'.ucfirst($localizedFieldDefinition->getName());
+                            $itemHtml .= $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params);
+                            $itemHtml .= '</td></tr>';
                         }
                     } else {
                         $title = $fd->title ?? $fd->getName();
-                        $htmlRow = '<tr><td>' . $title . ':</td><td>';
-                        $htmlRow .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
-                        $htmlRow .= '</td></tr>';
-                        $dataTable[$item->getType()][] = $htmlRow;
+                        $itemHtml = '<tr><td>' . $title . ':</td><td>';
+                        $getter = 'get'.ucfirst($fd->getName());
+                        $itemHtml .= $fd->getVersionPreview($item->$getter(), $object, $params);
+                        $itemHtml .= '</td></tr>';
                     }
                 }
             }
 
-            $dataTable[$item->getType()][] = '<tr><td colspan="2"><hr/></td></tr>';
+            $dataTable[$item->getType()][] = $itemHtml;
         }
 
         foreach ($dataTable as $type => $rows) {
             $html .= '<tr><th colspan="2"><b>' . $type . '</b></th></tr>';
-            $html .= implode('', $rows);
+            $html .= implode('<tr><td colspan="2"><hr/></td></tr>', $rows);
         }
 
         $html .= '</table>';
