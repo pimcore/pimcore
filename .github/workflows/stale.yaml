@@ -27,7 +27,7 @@ jobs:
                 operations-per-run: 100
                 stale-issue-message: >
                     Thanks a lot for reporting the issue.
-                    We did not consider the issue as "Priority" or "Backlog",
+                    We did not consider the issue as "Pimcore:Priority", "Pimcore:ToDo" or "Pimcore:Backlog",
                     so we're not going to work on that anytime soon.
                     Please create a pull request to fix the issue if this is a bug report.
                     We'll then review it as quickly as possible.
