@@ -491,7 +491,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             $itemHtml = '';
-            if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+            $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
+            if ($collectionDef instanceof DataObject\Fieldcollection\Definition) {
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
                         foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
@@ -511,7 +512,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
             }
 
-            $dataTable[$item->getType()][] = $itemHtml;
+            $dataTable[$collectionDef->getTitle() ?: $collectionDef->getKey()][] = $itemHtml;
         }
 
         foreach ($dataTable as $type => $rows) {
