@@ -56,7 +56,7 @@ and set accordingly:
 
 ### Gotenberg
 
-To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/get-started/docker-compose#quick-start](https://gotenberg.dev/docs/get-started/docker-compose#quick-start).
+To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/getting-started/installation#docker-compose](https://gotenberg.dev/docs/getting-started/installation#docker-compose).
 
 Configure the Docker services accordingly:
 
