@@ -115,7 +115,7 @@ final class Config extends Model\AbstractModel
             if (!$thumbnail) {
                 throw new \Exception('Thumbnail in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Video\Thumbnail\Config\Dao $dao */

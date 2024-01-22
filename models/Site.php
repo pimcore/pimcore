@@ -328,7 +328,7 @@ final class Site extends AbstractModel
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag('site');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::crit((string) $e);
         }
     }

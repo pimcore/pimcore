@@ -113,7 +113,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
                 $event->setResponse($reponse);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error($e->getMessage());
         }
     }
@@ -162,7 +162,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
                     || $this->staticPageGenerator->pageExists($document)) {
                     $this->staticPageGenerator->remove($document);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error((string) $e);
 
                 return;

@@ -53,7 +53,7 @@ class PublicServicesController extends Controller
             }
 
             throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error($e->getMessage());
 
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');

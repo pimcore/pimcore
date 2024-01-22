@@ -645,7 +645,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                 $dataForValidityCheck[$language][$fd->getName()] = null;
                             }
                             $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
                                 try {
@@ -668,7 +668,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
                                     $fd->checkValidity($value, $omitMandatoryCheck, $params);
                                     DataObject::setGetInheritedValues($getInheritedValues);
-                                } catch (\Exception $e) {
+                                } catch (\Throwable $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }

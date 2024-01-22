@@ -223,7 +223,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
                         try {
                             $columnData[$c['key']] = $metaObject->$getter();
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             Logger::debug('Meta column '.$c['key'].' does not exist');
                         }
                     }

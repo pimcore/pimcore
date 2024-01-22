@@ -74,7 +74,7 @@ trait EmbeddedMetaDataTrait
         } else {
             try {
                 $xmp = $this->flattenArray($this->getXMPData($filePath));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $xmp = [];
                 Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
                     . $e->getMessage());

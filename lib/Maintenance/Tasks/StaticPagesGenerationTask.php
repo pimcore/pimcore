@@ -69,7 +69,7 @@ class StaticPagesGenerationTask implements TaskInterface
                         if ($generate) {
                             $this->generator->generate($page, ['is_cli' => true]);
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $this->logger->debug('Unable to generate Static Page for document ID:' . $page->getId() . ', reason: ' . $e->getMessage());
                     }
                 }

@@ -497,7 +497,7 @@ class Dao extends Model\Dao\AbstractDao
                     $fd->delete($object, $params);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
@@ -769,7 +769,7 @@ QUERY;
 
                 // execute
                 $this->db->executeQuery($viewQuery);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error((string) $e);
             }
         }

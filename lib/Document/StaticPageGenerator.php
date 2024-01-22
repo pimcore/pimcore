@@ -95,7 +95,7 @@ class StaticPageGenerator
             }
 
             $storage->write($storagePath, $response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
 
             return false;

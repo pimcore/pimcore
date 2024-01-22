@@ -87,7 +87,7 @@ class Dao extends Model\Dao\AbstractDao
             } else {
                 $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::warning('Error during removing old relations: ' . $e);
         }
 

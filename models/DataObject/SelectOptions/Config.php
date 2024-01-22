@@ -190,7 +190,7 @@ final class Config extends AbstractModel implements \JsonSerializable
             if (!$selectOptions instanceof self) {
                 throw new \RuntimeException('Select options in registry is invalid', 1678353750987);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $selectOptions = new self();
                 /** @var Config\Dao $dao */

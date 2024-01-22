@@ -62,7 +62,7 @@ class RecyclebinCleanupCommand extends AbstractCommand
         foreach ($recyclebinItems->load() as $recyclebinItem) {
             try {
                 $recyclebinItem->delete();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $msg = "Could not delete {$recyclebinItem->getPath()} ({$recyclebinItem->getId()}) because of: {$e->getMessage()}";
                 Logger::error($msg);
                 $this->output->writeln($msg);

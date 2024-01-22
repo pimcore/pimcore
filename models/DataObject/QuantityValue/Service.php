@@ -47,7 +47,7 @@ class Service
             foreach ($units as $unit) {
                 $unit->save();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
 
@@ -73,7 +73,7 @@ class Service
                         true));
                 }
                 $result[] = $unit->getObjectVars();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 return false;
             }
         }

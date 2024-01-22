@@ -63,7 +63,7 @@ class MysqlToolsCommand extends AbstractCommand
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
                     $db->executeQuery('OPTIMIZE TABLE ' . $t);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::error((string) $e);
                 }
             }
@@ -77,7 +77,7 @@ class MysqlToolsCommand extends AbstractCommand
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
                     Logger::debug('Result: ' . $res);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::error((string) $e);
                 }
             }

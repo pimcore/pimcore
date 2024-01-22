@@ -103,7 +103,7 @@ class DocType extends Model\AbstractModel
             $docType->getDao()->getById($id);
 
             return $docType;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

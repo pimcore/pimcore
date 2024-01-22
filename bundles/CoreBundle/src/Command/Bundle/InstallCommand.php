@@ -56,7 +56,7 @@ class InstallCommand extends AbstractBundleCommand
             $this->bundleManager->install($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully installed', $bundle->getName()));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handlePrerequisiteError($e->getMessage());
         }
 

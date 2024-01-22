@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
                     return $name;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         return null;
@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
             if (!empty($name)) {
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         if (empty($id)) {
@@ -210,7 +210,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
             $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::debug((string) $e);
         }
 

@@ -63,7 +63,7 @@ final class WebsiteSetting extends AbstractModel
             if (!$setting) {
                 throw new \Exception('Website setting in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $setting = new self();
                 $setting->getDao()->getById($id);

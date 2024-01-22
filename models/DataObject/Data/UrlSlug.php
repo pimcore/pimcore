@@ -230,7 +230,7 @@ class UrlSlug implements OwnerAwareFieldInterface
             if ($rawItem) {
                 $slug = self::createFromDataRow($rawItem);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
         }
 

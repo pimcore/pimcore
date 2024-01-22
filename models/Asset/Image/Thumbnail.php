@@ -124,7 +124,7 @@ final class Thumbnail implements ThumbnailInterface
                 try {
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath() . ': ' . $e);
                 }
             }

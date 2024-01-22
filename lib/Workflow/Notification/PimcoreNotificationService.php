@@ -70,7 +70,7 @@ class PimcoreNotificationService extends AbstractNotificationService
                     $this->notificationService->sendToUser($recipient->getId(), 0, $title, $message, $subject);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Pimcore\Logger::error('Error sending Workflow change notification.');
         }
     }

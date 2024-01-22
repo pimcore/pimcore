@@ -87,7 +87,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
                     $siteSection = sprintf('site_%s', $currentSite->getId());
                     $this->populateCollection($urlContainer, $rootDocument, $siteSection, $currentSite);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error('Cannot determine current domain for sitemap generation');
             }
         }

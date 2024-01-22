@@ -71,7 +71,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $this->model->getConditionVariables(),
                 $this->model->getConditionVariableTypes()
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

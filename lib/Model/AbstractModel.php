@@ -220,7 +220,7 @@ abstract class AbstractModel implements ModelInterface
                 $r = call_user_func_array([$this->getDao(), $method], $args);
 
                 return $r;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::emergency((string) $e);
 
                 throw $e;

@@ -70,7 +70,7 @@ class AbstractElementImporter implements ImporterInterface
     {
         try {
             $element->save();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Unable to save ' . Element\Service::getElementType($element) . ' with id ' . $element->getId() . ' because of the following reason: ' . $e->getMessage());
         }
     }

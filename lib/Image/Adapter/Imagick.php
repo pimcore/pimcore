@@ -132,12 +132,12 @@ class Imagick extends Adapter
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error('Unable to load image ' . $imagePath . ': ' . $e);
 
             return false;
@@ -374,7 +374,7 @@ class Imagick extends Adapter
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                     $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Logger::warn((string) $e);
                 }
             }
@@ -902,7 +902,7 @@ class Imagick extends Adapter
                     return true;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::err((string) $e);
         }
 
@@ -985,7 +985,7 @@ class Imagick extends Adapter
             unlink($tmpFile);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

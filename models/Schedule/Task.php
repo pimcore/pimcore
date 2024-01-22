@@ -51,7 +51,7 @@ class Task extends Model\AbstractModel
             if (!$task) {
                 throw new \Exception('Scheduled Task in Registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $task = new self();
                 $task->getDao()->getById($id);

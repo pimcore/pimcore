@@ -116,7 +116,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
                 'exception' => $exception,
                 PimcoreContextListener::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING => true,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';
             $this->logger->emergency('Unable to render error page, exception thrown');

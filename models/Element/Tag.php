@@ -173,7 +173,7 @@ final class Tag extends Model\AbstractModel
     {
         try {
             return (new self)->getDao()->getByPath($path);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

@@ -112,7 +112,7 @@ final class Staticroute extends AbstractModel
             if (!$route) {
                 throw new \Exception('Route in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $route = new self();
                 $route->setId($id);

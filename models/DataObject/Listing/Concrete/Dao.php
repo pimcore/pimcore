@@ -43,7 +43,7 @@ class Dao extends Model\DataObject\Listing\Dao
     {
         try {
             return parent::loadIdList();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->exceptionHandler($e);
         }
     }

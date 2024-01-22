@@ -79,7 +79,7 @@ class Tree extends DAV\Tree
             $user = \Pimcore\Tool\Admin::getCurrentUser();
             $asset->setUserModification($user->getId());
             $asset->save();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
         }
     }

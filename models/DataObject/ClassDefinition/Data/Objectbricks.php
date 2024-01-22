@@ -542,7 +542,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
 
                                         DataObject::setGetInheritedValues($getInheritedValues);
-                                    } catch (\Exception $e) {
+                                    } catch (\Throwable $e) {
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }

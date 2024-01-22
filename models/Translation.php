@@ -254,7 +254,7 @@ final class Translation extends AbstractModel
 
         try {
             $translation->getDao()->getByKey($id, $languages);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (!$create && !$returnIdIfEmpty) {
                 return null;
             }

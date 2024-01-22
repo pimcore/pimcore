@@ -141,7 +141,7 @@ class Item extends Model\AbstractModel
             $this->doRecursiveRestore($element);
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
             if ($dummy) {
                 $dummy->delete();

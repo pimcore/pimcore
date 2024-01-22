@@ -65,7 +65,7 @@ class CustomLayout extends Model\AbstractModel
             if (!$customLayout) {
                 throw new \Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
@@ -92,7 +92,7 @@ class CustomLayout extends Model\AbstractModel
             if (!$customLayout) {
                 throw new \Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getByName($name);
@@ -190,7 +190,7 @@ class CustomLayout extends Model\AbstractModel
         // empty custom layout cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
     }
 
@@ -226,7 +226,7 @@ class CustomLayout extends Model\AbstractModel
             $customLayout = new self();
 
             return $customLayout->getDao()->getLatestIdentifier($classId);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Logger::error((string) $e);
 
             return null;
@@ -245,13 +245,13 @@ class CustomLayout extends Model\AbstractModel
         // empty object cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         // empty output cache
         try {
             Cache::clearTag('output');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         $this->getDao()->delete();

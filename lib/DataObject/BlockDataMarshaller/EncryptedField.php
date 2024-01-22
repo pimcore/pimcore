@@ -93,7 +93,7 @@ class EncryptedField implements MarshallerInterface
 
             try {
                 $key = Key::loadFromAsciiSafeString($key);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw new \Exception('could not load key');
             }
             // store it in raw binary mode to preserve space
@@ -128,7 +128,7 @@ class EncryptedField implements MarshallerInterface
 
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     throw new \Exception('could not load key');
                 }
 
@@ -141,7 +141,7 @@ class EncryptedField implements MarshallerInterface
                 }
 
                 return $data;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error((string) $e);
 
                 throw new \Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');

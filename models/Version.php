@@ -145,7 +145,7 @@ final class Version extends AbstractModel
         if ($this->getGenerateStackTrace()) {
             try {
                 throw new \Exception('not a real exception ... ;-)');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->stackTrace = $e->getTraceAsString();
             }
         }

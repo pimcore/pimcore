@@ -156,7 +156,7 @@ final class Config extends Model\AbstractModel
         if (is_string($config)) {
             try {
                 $thumbnail = self::getByName($config);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
 
                 return null;
@@ -195,7 +195,7 @@ final class Config extends Model\AbstractModel
             }
 
             $thumbnail->setName($name);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */

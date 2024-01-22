@@ -76,7 +76,7 @@ final class Editlock extends Model\AbstractModel
             $lock->getDao()->clearSession($sessionId);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
