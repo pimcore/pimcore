@@ -245,7 +245,7 @@ $webpThumbnail->getHtml();
 {{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}
 ```
 
-Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
+Additionally, there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#configuration).
 
 ## Lazy Loading
 
@@ -268,7 +268,7 @@ Pimcore supports ICC color profiles to get better results when converting CMYK i
 to RGB.
 
 Due licensing issues Pimcore doesn't include the color profiles (\*.icc files) in the download package, but
-you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075)
+you can download them for free here: [Adobe ICC Profiles](https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html)
 or here: [ICC (color.org)](http://www.color.org/profiles.xalter).
 
 After downloading the profiles put them into your project folder or anywhere else on your sever

@@ -51,7 +51,7 @@ For details see:
 
 * [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/2-configuration.md#configuring-your-application-base-url)
 * [Symfony Documentation on the Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands)
-* [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php)
+* [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/UrlGenerator.php)
 
 
 ## Sitemap Generators
@@ -102,8 +102,8 @@ pimcore_seo:
 For more advanced use cases involving Pimcore models, Pimcore defines an `AbstractElementGenerator` which is extendable
 via pluggable filters and processors. This makes it possible to define reusable behaviour in a filter/processor which can
 be used from multiple generators. A **filter** determines if an element can be added to the sitemap and if it is able to handle children (it's up to the
-generator to query for this information). For example the [PropertiesFilter](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Element/Filter/PropertiesFilter.php)
-excludes elements with a property `sitemaps_exclude`. A **processor** can enhance an entry before it is added to the container. For example, the [ModificationDateProcessor](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Element/Processor/ModificationDateProcessor.php)
+generator to query for this information). For example the [PropertiesFilter](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Element/Filter/PropertiesFilter.php)
+excludes elements with a property `sitemaps_exclude`. A **processor** can enhance an entry before it is added to the container. For example, the [ModificationDateProcessor](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Element/Processor/ModificationDateProcessor.php)
 adds the modification date of an element to the url.
 
 Which filters and processors to use can be defined on the generator level. For example, the [`DocumentTreeGenerator`](#page_The-DocumentTreeGenerator)
@@ -147,7 +147,7 @@ as service and can directly be consumed.
 
 #### The DocumentTreeGenerator
 
-Pimcore ships a default generator for documents implemented in [`DocumentTreeGenerator`](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Document/DocumentTreeGenerator.php).
+Pimcore ships a default generator for documents implemented in [`DocumentTreeGenerator`](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Document/DocumentTreeGenerator.php).
 This generator iterates the whole document tree and adds entries for every document while taking care of handling sites and
 hardlinks. It uses the the host names configured as main/site domain and falls back to the request context host by using
 the [url generator service](#page_Generating-absolute-URLs). You can either disable the default generator completely as shown in the example above or define your own service using the
@@ -386,7 +386,7 @@ services:
 
 ### Generating absolute URLs
 
-To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
+To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands).
 See core processors/generators and [demo](https://github.com/pimcore/demo/tree/11.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
