@@ -245,7 +245,7 @@ $webpThumbnail->getHtml();
 {{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}
 ```
 
-Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
+Additionally, there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#configuration).
 
 ## Lazy Loading
 
