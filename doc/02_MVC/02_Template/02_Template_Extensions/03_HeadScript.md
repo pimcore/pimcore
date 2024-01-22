@@ -114,4 +114,4 @@ argument to `captureStart()`.
 
 ## HTTP/2 Push Support
 
-See [HTTP/2 Push Support on the HeadLink page](./01_HeadLink.md#page_HTTP-2-Push-Support).
+See [HTTP/2 Push Support on the HeadLink page](./01_HeadLink.md#http2-push-support).

@@ -20,7 +20,7 @@ and after the string, if `Debug Admin-Translations (wrapped in +)` is activated 
 But you can use the admin translation also in your custom templates. 
 Admin translations use the same translator component (Symfony) but on a different domain.
 
-Admin translations underlay the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
+Admin translations underlay the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#translations-case-sensitivity).
 
 #### Example: Translate Options of a Select Editable in the language of the current user
 

@@ -502,7 +502,7 @@ pimcore:
 - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
-- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
+- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
 -  Removed the `attributes` field from the link editable.
 -  Deprecated WkHtmlToImage has been removed.
 -  Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
