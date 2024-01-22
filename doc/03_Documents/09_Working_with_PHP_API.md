@@ -124,7 +124,7 @@ If you'd like to get also all the unpublished documents, set the following flag:
 | `getItems()`            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
 | `loadIdList()`          |                                     | Returns complete array with id as a row.                                                    |
 
-If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_PHP_API.md#zendPaginatorListing)
+If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_PHP_API.md#working-with-knpcomponentpagerpaginator).
 
 
 ### Advanced Example
