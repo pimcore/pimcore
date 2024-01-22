@@ -65,7 +65,7 @@ class ContentController extends FrontendController
 ```
 
 #### Translation Pluralization/Selection
-Since Pimcore uses Symfony Translator component in background, you can store and use the translations in ICU Message Format(supported by Symfony Translator) for Pluralization, Selection and more. [Read here](https://symfony.com/doc/current/translation/message_format.html)
+Since Pimcore uses Symfony Translator component in background, you can store and use the translations in ICU Message Format(supported by Symfony Translator) for Pluralization, Selection and more. [Read here](https://symfony.com/doc/current/translation.html#message-format)
 This can be achieved in Pimcore by selecting type "ICU Format" on translation UI and passing required parameter in view/Controller. 
 e.g.
  - Add translation key and select type "ICU Format".
