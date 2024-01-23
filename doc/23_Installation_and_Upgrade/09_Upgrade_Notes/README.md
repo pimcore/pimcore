@@ -13,6 +13,8 @@
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
 #### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+#### [Symfony]
+- Bumped Symfony packages to "^6.4".
 
 ## Pimcore 11.1.0
 ### Elements
