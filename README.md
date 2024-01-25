@@ -1,4 +1,4 @@
-[![Pimcore Inspire 2024 - A Must-Attend Conference for Pimcore Developers!]([/img/inspire-2024.png](https://github.com/pimcore/.github-private/raw/main/img/inspire-2024.png))](https://pimcore.com/en/resources/events/inspire-2024)
+[![Pimcore Inspire 2024 - A Must-Attend Conference for Pimcore Developers!](/.github/inspire-2024.png)](https://pimcore.com/en/resources/events/inspire-2024)
     
     
         
