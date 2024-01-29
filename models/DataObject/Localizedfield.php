@@ -725,6 +725,20 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
+    public function markLanguageAsDirtyByFallback(): void
+    {
+        foreach (Tool::getValidLanguages() as $validLanguage) {
+            $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
+            foreach ($fallbackLanguages as $fallbackLanguage) {
+                if ($this->isLanguageDirty($fallbackLanguage)) {
+                    $this->markLanguageAsDirty($validLanguage);
+
+                    break;
+                }
+            }
+        }
+    }
+
     /**
      * @internal
      *
