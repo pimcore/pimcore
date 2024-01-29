@@ -188,13 +188,15 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     public function lazyInitialize($domain, $locale)
     {
         $cacheKey = 'translation_data_' . $domain . '_' . $locale;
+        $backend = $this->getBackendForDomain($domain);
 
-        if (isset($this->initializedCatalogues[$cacheKey])) {
+        if (isset($this->initializedCatalogues[$cacheKey])
+            && (!$backend || $this->getCatalogue($locale)->defines('__pimcore_dummy', $domain))
+        ) {
             return;
         }
 
         $this->initializedCatalogues[$cacheKey] = true;
-        $backend = $this->getBackendForDomain($domain);
 
         if ($backend) {
             $catalogue = null;
