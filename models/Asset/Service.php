@@ -500,7 +500,10 @@ class Service extends Model\Element\Service
                     }
                 } elseif (Config::getSystemConfiguration()['assets'][$config['type']]['thumbnails']['status_cache']) {
                     // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
-                    $asset->getDao()->deleteFromThumbnailCache($config['thumbnail_name']);
+                    $storagePath = "/".$config['prefix'].$config['type']."-thumb__".$asset->getId()."__".$config['thumbnail_name'].'/'.$config['filename'];
+                    $storage = Storage::get('thumbnail')->delete($storagePath);
+                    $asset->getDao()->deleteFromThumbnailCache($config['thumbnail_name'], $config['filename']);
+
                 }
             }
 
