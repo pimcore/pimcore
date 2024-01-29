@@ -107,7 +107,7 @@ RewriteRule ^cache-buster\-[\d]+/(.*) $1 [PT,L]
 
 # If the requested filename exists, simply serve it.
 # We only want to let Apache serve files and not directories.
-RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 # Rewrite all other queries to the front controller.
