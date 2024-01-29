@@ -55,15 +55,10 @@ class CacheExtension extends AbstractExtension
      *
      * @return $this
      */
-    public function init(string $name, int $lifetime = null, bool $force = false): static
+    public function init(string $name, int $lifetime = 0, bool $force = false): static
     {
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
-
-        if (!$lifetime) {
-            $lifetime = null;
-        }
-
         $this->lifetime = $lifetime;
 
         return $this;
