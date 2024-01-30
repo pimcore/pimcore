@@ -885,7 +885,6 @@ class Imagick extends Adapter
                     'EPS3',
                     'EPSF',
                     'EPSI',
-                    'EPT',
                     'PDF',
                     'PFA',
                     'PFB',
