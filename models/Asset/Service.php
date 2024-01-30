@@ -665,7 +665,7 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnailConfig($config, $uri);
+            return self::getStreamedResponseForThumbnail($config, $uri);
         }
 
         return null;
