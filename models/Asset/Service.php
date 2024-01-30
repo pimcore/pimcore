@@ -36,6 +36,7 @@ use function date;
 use function fpassthru;
 use function preg_quote;
 use function preg_replace;
+use function strlen;
 use function time;
 use function urldecode;
 
@@ -685,7 +686,8 @@ class Service extends Model\Element\Service
             $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
         }
 
-        if ($storage->fileExists($storagePath)) {
+        // thumbnail urls are at least 10 characters long
+        if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
             $stream = $storage->readStream($storagePath);
 
             $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
