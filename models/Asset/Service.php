@@ -32,6 +32,12 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function date;
+use function fpassthru;
+use function preg_quote;
+use function preg_replace;
+use function time;
+use function urldecode;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -500,6 +506,8 @@ class Service extends Model\Element\Service
                     }
                 } elseif (Config::getSystemConfiguration()['assets'][$config['type']]['thumbnails']['status_cache']) {
                     // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
+                    // because otherwise it's getting directly delivered from the cache by Processor:process()
+                    // without having the actual thumbnail file on the storage
                     $asset->getDao()->deleteFromThumbnailCache($config['thumbnail_name']);
                 }
             }
@@ -648,6 +656,7 @@ class Service extends Model\Element\Service
         return $thumbnailStream;
     }
 
+
     /**
      * @throws \Exception
      */
@@ -656,22 +665,42 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            $storage = Storage::get('thumbnail');
-            $storagePath = urldecode($uri);
-            if ($storage->fileExists($storagePath)) {
-                $stream = $storage->readStream($storagePath);
+            return self::getStreamedResponseForThumbnailConfig($config, $uri);
+        }
 
-                return new StreamedResponse(function () use ($stream) {
-                    fpassthru($stream);
-                }, 200, [
-                    'Content-Type' => $storage->mimeType($storagePath),
-                    'Content-Length' => $storage->fileSize($storagePath),
-                ]);
-            } else {
-                $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
-                if ($thumbnail) {
-                    return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
-                }
+        return null;
+    }
+
+    /**
+     * @internal
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public static function getStreamedResponseForThumbnail(array $config, string $uri): ?StreamedResponse
+    {
+        $storage = Storage::get('thumbnail');
+        $storagePath = urldecode($uri);
+
+        $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+        if($prefix) {
+            $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
+        }
+
+        if ($storage->fileExists($storagePath)) {
+            $stream = $storage->readStream($storagePath);
+
+            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Cache-Control' => 'public, max-age=' . $lifetime,
+                'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                'Content-Type' => $storage->mimeType($storagePath),
+                'Content-Length' => $storage->fileSize($storagePath),
+            ]);
+        } else {
+            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
+            if ($thumbnail) {
+                return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
             }
         }
 
