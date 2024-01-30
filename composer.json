@@ -156,7 +156,7 @@
     "chrome-php/chrome": "Required for Documents Page Previews",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
     "symfony/dotenv": "Required for loading environment vars from .env files",
-    "pimcore/admin-ui-classic-bundle": "^1.2.0"
+    "pimcore/admin-ui-classic-bundle": "^1.4.0"
   },
   "autoload": {
     "files": [
