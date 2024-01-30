@@ -29,7 +29,7 @@ class QuantityValueRange implements MarshallerInterface
         if (is_array($value)) {
             $minMaxValue = [
                 'minimum' => $value['minimum'] ?? null,
-                'maximum' => $value['maximum'] ?? null
+                'maximum' => $value['maximum'] ?? null,
             ];
 
             return [
@@ -45,6 +45,7 @@ class QuantityValueRange implements MarshallerInterface
     {
         if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {
             $minMaxValue = Serialize::unserialize($value['value'] ?? null);
+
             return [
                 'minimum' => $minMaxValue['minimum'] ?? null,
                 'maximum' => $minMaxValue['maximum'] ?? null,
