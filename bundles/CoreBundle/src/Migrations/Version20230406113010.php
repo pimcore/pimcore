@@ -71,6 +71,6 @@ final class Version20230406113010 extends AbstractMigration
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle', 'pimcore');
         }
 
-        $this->write('Please deactivate the BUNDLE_INSTALLED__Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle manually in config/bundles.php');
+        $this->write('Please deactivate the Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle manually in config/bundles.php');
     }
 }
