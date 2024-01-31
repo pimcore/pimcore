@@ -37,11 +37,8 @@ final class Version20230111074323 extends AbstractMigration
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
-        // Delete this definition if it already exists, because upgrades from pimcore 10 sometimes get stuck in this state. See #14995
-        $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'word_export'");
-
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already word_export
-        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle')");
+        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle') ON DUPLICATE KEY UPDATE `category` = 'Pimcore Word Export Bundle';");
 
         $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',word_export\') WHERE `permissions` REGEXP \'(?:^|,)translations(?:$|,)\'');
 
