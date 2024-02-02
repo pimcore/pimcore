@@ -34,6 +34,7 @@ trait StopMessengerWorkersTrait
             'command' => 'messenger:stop-workers',
             '--no-ansi' => null,
             '--no-interaction' => null,
+            '--ignore-maintenance-mode' => null,
         ]);
 
         $output = new BufferedOutput();
