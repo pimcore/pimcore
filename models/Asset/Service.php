@@ -500,7 +500,8 @@ class Service extends Model\Element\Service
 
                 if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                     $thumbnailConfig = $thumbnailConfigItem->getData();
-                    TmpStore::delete($deferredConfigId);
+                    // the dynamic config get's deleted out of the TmpStore in the Processor after the thumbnail
+                    // file was generated, to avoid race conditions and other unintended behavior
 
                     if (!$thumbnailConfig instanceof $thumbnailConfigClass) {
                         throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid '.$thumbnailConfigClass.' object');
