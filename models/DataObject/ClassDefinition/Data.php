@@ -397,6 +397,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $db = \Pimcore\Db::get();
         $name = $params['name'] ?: $this->name;
         $key = $db->quoteIdentifier($name);
+        $isNumeric = false;
         if (!empty($params['brickPrefix'])) {
             $key = $params['brickPrefix'].$key;
         }
@@ -407,17 +408,50 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             return $key . ' ' . $operator . ' (' . $formattedValues . ')';
         }
 
-        if ($value === 'NULL') {
-            if ($operator === '=') {
-                $operator = 'IS';
-            } elseif ($operator === '!=') {
-                $operator = 'IS NOT';
+        if ($this instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+            if ($this->elementType === 'date') {
+                $dateFormat = 'Y-m-d H:i:s';
+                $startDate = new \Carbon\Carbon($value);
+                if ($operator === '=') {
+                    $maxTime = $startDate->addDay();
+                    $endDate = new \Carbon\Carbon($maxTime);
+                    $operator = ' BETWEEN ' . $db->quote($startDate->format($dateFormat));
+                    $operator .= ' AND ' . $db->quote($endDate->format($dateFormat));
+
+                    return $key . ' ' . $operator;
+                } else {
+                    return $key . ' ' . $operator . ' ' . $db->quote($startDate->format($dateFormat));
+                }
             }
-        } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator === 'LIKE') {
-                $value = $db->quote('%' . $value . '%');
-            } else {
-                $value = $db->quote($value);
+
+            if ($this->elementType === 'boolean') {
+                if ($this->calculatorType === 'class') {
+                    $bool = $value === 1 ? 1 : 0;
+                } else {
+                    $bool = $value === 1 ? $db->quote('true') : $db->quote('false');
+                }
+
+                return $key . ' ' . $operator . ' ' . $bool;
+            }
+
+            if ($this->elementType === 'numeric') {
+                $isNumeric = true;
+            }
+        }
+
+        if (!$isNumeric) {
+            if ($value === 'NULL') {
+                if ($operator === '=') {
+                    $operator = 'IS';
+                } elseif ($operator === '!=') {
+                    $operator = 'IS NOT';
+                }
+            } elseif (!is_array($value) && !is_object($value)) {
+                if ($operator === 'LIKE') {
+                    $value = $db->quote('%' . $value . '%');
+                } else {
+                    $value = $db->quote($value);
+                }
             }
         }
 
@@ -996,13 +1030,33 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $code;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function getAsIntegerCast(mixed $number): ?int
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2',
+            'Using "%s" is deprecated and will be removed in Pimcore 12.',
+            __METHOD__
+        );
+
         return strlen((string) $number) === 0 ? null : (int)$number;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function getAsFloatCast(mixed $number): ?float
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2',
+            'Using "%s" is deprecated and will be removed in Pimcore 12.',
+            __METHOD__
+        );
+
         return strlen((string) $number) === 0 ? null : (float)$number;
     }
 
