@@ -296,8 +296,10 @@ class BundleCollectionTest extends TestCase
         $this->assertTrue($collection->hasItem(BundleH::class));
         $this->assertTrue($collection->hasItem(BundleJ::class));
 
-        $this->assertEquals(10, $collection->getItem(BundleG::class)->getPriority()); // will be overwritten because of higher prio
-        $this->assertEquals(50, $collection->getItem(BundleH::class)->getPriority()); // as set here when adding the item
+        // will be overwritten because of higher prio
+        $this->assertEquals(10, $collection->getItem(BundleG::class)->getPriority());
+        // as set here when adding the item
+        $this->assertEquals(50, $collection->getItem(BundleH::class)->getPriority());
     }
 }
 
