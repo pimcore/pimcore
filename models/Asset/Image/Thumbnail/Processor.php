@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use League\Flysystem\FilesystemException;
+use function ltrim;
+use function md5;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -27,8 +29,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use function ltrim;
-use function md5;
 
 /**
  * @internal

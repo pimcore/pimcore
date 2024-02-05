@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use function date;
+use function fpassthru;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -29,14 +31,12 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function date;
-use function fpassthru;
 use function preg_quote;
 use function preg_replace;
 use function strlen;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use function time;
 use function urldecode;
 
@@ -658,7 +658,6 @@ class Service extends Model\Element\Service
         return $thumbnailStream;
     }
 
-
     /**
      * @throws \Exception
      */
@@ -675,6 +674,7 @@ class Service extends Model\Element\Service
 
     /**
      * @internal
+     *
      * @throws \League\Flysystem\FilesystemException
      */
     public static function getStreamedResponseForThumbnail(array $config, string $uri): ?StreamedResponse
@@ -692,6 +692,7 @@ class Service extends Model\Element\Service
             $stream = $storage->readStream($storagePath);
 
             $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [
