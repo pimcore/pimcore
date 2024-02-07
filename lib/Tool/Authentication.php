@@ -128,6 +128,8 @@ class Authentication
         }
 
         if (self::isValidUser($user)) {
+            $user = User::getById($user->getId());
+
             // expiring the token
             $user->setPasswordRecoveryToken(null);
             $user->save();
