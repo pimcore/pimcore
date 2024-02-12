@@ -187,17 +187,19 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $db = Db::get();
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
-            if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                if (!$this->model->isLazyKeyLoaded($fieldName) || $fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
-                    //this is a relation subject to lazy loading - it has not been loaded
-                    $untouchable[] = $fieldName;
-                }
-            }
-
-            if (!DataObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($fieldName)) {
-                    if (!in_array($fieldName, $untouchable)) {
+            if($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                if ($fd->getLazyLoading()) {
+                    if (!$this->model->isLazyKeyLoaded($fieldName) || $fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                        //this is a relation subject to lazy loading - it has not been loaded
                         $untouchable[] = $fieldName;
+                    }
+                }
+
+                if (!DataObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
+                    if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($fieldName)) {
+                        if (!in_array($fieldName, $untouchable)) {
+                            $untouchable[] = $fieldName;
+                        }
                     }
                 }
             }
