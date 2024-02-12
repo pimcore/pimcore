@@ -1,7 +1,7 @@
 # Working With Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
-For details see [sessions docs](https://symfony.com/doc/current/components/http_foundation/sessions.html). 
+For details see [sessions docs](https://symfony.com/doc/current/components/http_foundation.html#session). 
 
 In case  you need to add a custom session bag for your bundle or application, then implement an EventListener to register the session bag before the session started.
 
