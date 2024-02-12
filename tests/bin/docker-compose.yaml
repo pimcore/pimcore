@@ -7,7 +7,7 @@ services:
     db:
         image: mariadb:10.7
         working_dir: /application
-        command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-per-table=1]
+        command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_general_ci, --innodb-file-per-table=1]
         environment:
             MYSQL_ROOT_PASSWORD: ROOT
             MYSQL_DATABASE: pimcore_test

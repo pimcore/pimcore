@@ -56,7 +56,7 @@ and set accordingly:
 
 ### Gotenberg
 
-To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/get-started/docker-compose#quick-start](https://gotenberg.dev/docs/get-started/docker-compose#quick-start).
+To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/getting-started/installation#docker-compose](https://gotenberg.dev/docs/getting-started/installation#docker-compose).
 
 Configure the Docker services accordingly:
 
@@ -65,7 +65,7 @@ Configure the Docker services accordingly:
 
 Make sure to add and install the required library via composer:
 ```bash
-composer require gotenberg/gotenberg-php
+composer require gotenberg/gotenberg-php ^1.1
 ```
 
 ## Image Optimizers
