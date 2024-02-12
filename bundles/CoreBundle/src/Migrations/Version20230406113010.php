@@ -57,7 +57,7 @@ final class Version20230406113010 extends AbstractMigration
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle', 'pimcore'),
-            'Please make sure to enable the BUNDLE_INSTALLED__Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle manually in config/bundles.php'
+            'Please make sure to enable the Pimcore\\Bundle\\NewsletterBundle\\PimcoreNewsletterBundle manually in config/bundles.php'
         );
     }
 
