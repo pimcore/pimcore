@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
-    "php": "~8.1.0 || ~8.2.0",
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
     "ext-SimpleXML": "*",
     "ext-curl": "*",
     "ext-dom": "*",
