@@ -634,7 +634,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->removeInheritedProperties();
         }
 
-        return array_diff(parent::__sleep(), $this->getBlockedVars());
+        return array_diff(parent::__sleep(), $this->getBlockedVars(), self::getBlockedVars());
     }
 
     public function __wakeup(): void
