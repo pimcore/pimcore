@@ -28,7 +28,7 @@ final class Version20240131080600 extends AbstractMigration
     }
 
     public function up(Schema $schema): void
-    {      
+    {
         if ($schema->getTable('users')->hasColumn('passwordRecoveryToken')) {
             $this->addSql(
                 'ALTER TABLE `users` MODIFY `passwordRecoveryToken` varchar(290);'
