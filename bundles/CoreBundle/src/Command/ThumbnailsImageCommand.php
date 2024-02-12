@@ -38,7 +38,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     use Parallelization;
 
     private const DATE_FORMAT = 'Y-m-d H:i:s';
-    
+
     protected function configure(): void
     {
         parent::configure();
@@ -141,7 +141,7 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = 'modificationDate >= ?';
             $conditionVariables[] = $lastModifiedSinceDate->getTimestamp();
         }
-        
+
         if ($regex = $input->getOption('pathPattern')) {
             $conditions[] = 'CONCAT(`path`, filename) REGEXP ?';
             $conditionVariables[] = $regex;
