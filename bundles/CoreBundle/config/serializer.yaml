@@ -29,3 +29,6 @@ services:
         class: Pimcore\Serializer\Normalizer\ReferenceLoopNormalizer
         tags:
             -  { name: pimcore.serializer.normalizer }
+
+    Pimcore\Serializer\Normalizer\DataObjectNormalizer:
+        autoconfigure: false
