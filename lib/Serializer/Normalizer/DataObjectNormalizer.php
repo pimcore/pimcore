@@ -116,6 +116,8 @@ class DataObjectNormalizer implements NormalizerInterface
             $result[$key] = $value;
         }
 
+        $result = $this->transformLocalizedfields($result);
+
         return $result;
     }
 
@@ -128,5 +130,23 @@ class DataObjectNormalizer implements NormalizerInterface
         return (new DateTime())
             ->setTimestamp($timestamp)
             ->format(DateTimeInterface::ATOM);
+    }
+
+
+    private function transformLocalizedfields(array $data): array
+    {
+        if (isset($data['localizedfields'])) {
+            $localizedFields = $data['localizedfields'];
+            unset($data['localizedfields']);
+
+            foreach ($localizedFields as $locale => $attributes) {
+                foreach ($attributes as $attributeName => $attributeData) {
+                    $data[$attributeName] = $data[$attributeName] ?? [];
+                    $data[$attributeName][$locale] = $attributeData;
+                }
+            }
+        }
+
+        return $data;
     }
 }
