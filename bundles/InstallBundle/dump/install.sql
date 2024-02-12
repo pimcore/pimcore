@@ -479,7 +479,7 @@ CREATE TABLE `users` (
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   `lastLogin` int(11) unsigned DEFAULT NULL,
   `keyBindings` json NULL,
-  `passwordRecoveryToken` varchar(255) DEFAULT NULL,
+  `passwordRecoveryToken` varchar(290) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
