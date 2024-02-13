@@ -240,7 +240,7 @@ class Area extends Model\Document\Editable
      *
      *
      */
-    public function getElement(string $name): Model\Document\Editable
+    public function getElement(string $name): ?Model\Document\Editable
     {
         $document = $this->getDocument();
         $parentBlockNames = $this->getParentBlockNames();
