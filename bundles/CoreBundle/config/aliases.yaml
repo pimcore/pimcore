@@ -11,6 +11,13 @@ services:
     GuzzleHttp\ClientInterface: '@pimcore.http_client'
     Symfony\Component\HttpKernel\EventListener\SessionListener: '@session_listener'
 
+    Pimcore\Document\Renderer\DocumentRenderer:
+        alias: Pimcore\Document\Renderer\DocumentRendererInterface
+        deprecated:
+            message: 'The "%alias_id%" alias is deprecated, use "Pimcore\Document\Renderer\DocumentRendererInterface" instead.'
+            package: pimcore/pimcore
+            version: 11.2
+
     Pimcore\Localization\LocaleService:
         alias: Pimcore\Localization\LocaleServiceInterface
         deprecated:

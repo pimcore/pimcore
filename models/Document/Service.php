@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Config;
-use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -77,8 +76,7 @@ class Service extends Model\Element\Service
     {
         $container = \Pimcore::getContainer();
 
-        /** @var DocumentRendererInterface $renderer */
-        $renderer = $container->get(DocumentRenderer::class);
+        $renderer = $container->get(DocumentRendererInterface::class);
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
