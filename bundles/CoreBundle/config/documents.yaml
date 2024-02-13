@@ -51,7 +51,8 @@ services:
 
     Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface: '@fragment.renderer.inline'
 
-    Pimcore\Document\Renderer\DocumentRenderer:
+    Pimcore\Document\Renderer\DocumentRendererInterface:
+        class: Pimcore\Document\Renderer\DocumentRenderer
         public: true
 
     Pimcore\Document\Editable\EditableUsageResolver:
@@ -60,6 +61,5 @@ services:
     Pimcore\Document\StaticPageGenerator:
         public: true
         arguments:
-            - '@Pimcore\Document\Renderer\DocumentRenderer'
+            - '@Pimcore\Document\Renderer\DocumentRendererInterface'
             - '@Symfony\Component\Lock\LockFactory'
-
