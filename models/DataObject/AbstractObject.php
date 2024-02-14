@@ -200,7 +200,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      */
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int|string|null $id, array $params = []): ?static
     {
         if (is_string($id)) {
             trigger_deprecation(
