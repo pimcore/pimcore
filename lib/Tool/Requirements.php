@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 use Symfony\Component\Filesystem\Filesystem;
@@ -383,16 +384,16 @@ final class Requirements
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        // Chromium BIN
+        // Chromium or Gotenberg
         try {
-            $chromiumBin = (bool) \Pimcore\Image\Chromium::getChromiumBinary();
+            $htmlToImage = \Pimcore\Image\HtmlToImage::isSupported();
         } catch (\Exception $e) {
-            $chromiumBin = false;
+            $htmlToImage = false;
         }
 
         $checks[] = new Check([
-            'name' => 'Chromium',
-            'state' => $chromiumBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'name' => 'Gotenberg/Chromium',
+            'state' => $htmlToImage ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         // ghostscript BIN
@@ -408,15 +409,18 @@ final class Requirements
         ]);
 
         // LibreOffice BIN
-        try {
-            $libreofficeBin = (bool) \Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
-        } catch (\Exception $e) {
-            $libreofficeBin = false;
+        $libreofficeGotenberg = GotenbergHelper::isAvailable();
+        if(!$libreofficeGotenberg) {
+            try {
+                $libreofficeGotenberg = (bool)\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
+            } catch (\Exception $e) {
+                $libreofficeGotenberg = false;
+            }
         }
 
         $checks[] = new Check([
-            'name' => 'LibreOffice',
-            'state' => $libreofficeBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'name' => 'Gotenberg / LibreOffice',
+            'state' => $libreofficeGotenberg ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         // image optimizer
