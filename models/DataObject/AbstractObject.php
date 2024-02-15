@@ -1037,7 +1037,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
 
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
 
         if (in_array(strtolower($propertyName), self::$objectColumns)) {
             $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
@@ -1045,7 +1045,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $offset = $arguments[2] ?? 0;
             $objectTypes = $arguments[3] ?? null;
 
-            $defaultCondition = $propertyName.' = '.Db::get()->quote($value).' ';
+            $defaultCondition = $db->quoteIdentifier($propertyName) . ' = ' . $db->quote($value) . ' ';
 
             $listConfig = [
                 'condition' => $defaultCondition,
