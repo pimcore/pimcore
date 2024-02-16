@@ -168,13 +168,14 @@ class HtmlToImage
             ]);
         }
 
-        try {
-            $headers = [];
-            if (null !== $sessionId && null !== $sessionName) {
-                $headers['Cookie'] = $sessionName . '=' . $sessionId;
-            }
+        $headers = [];
+        if (null !== $sessionId && null !== $sessionName) {
+            $headers['Cookie'] = $sessionName . '=' . $sessionId;
+        }
 
-            $page = $browser->createPage();
+        $page = $browser->createPage();
+
+        try {
 
             if (!empty($headers)) {
                 $page->getSession()->sendMessageSync(new Message(
