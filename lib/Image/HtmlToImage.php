@@ -68,7 +68,7 @@ class HtmlToImage
                     }
                 } catch (\Exception $e) {
                     Logger::debug((string) $e);
-                    // noting to do
+                    // nothing to do
                 }
             }
 
