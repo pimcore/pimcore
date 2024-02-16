@@ -65,7 +65,7 @@ Configure the Docker services accordingly:
 
 Make sure to add and install the required library via composer:
 ```bash
-composer require gotenberg/gotenberg-php ^1.1
+composer require gotenberg/gotenberg-php ^2.0
 ```
 
 ## Image Optimizers
