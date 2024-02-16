@@ -20,6 +20,11 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
     drillDownFilters: {},
     drillDownStores: [],
 
+    filtersByRelation: {},
+    relationColumnTypes: {},
+
+    systemColumns: [],
+
     progressBar: {},
     progressWindow: {},
     progressStop: false,
@@ -41,6 +46,8 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
     },
 
     prepareGridConfig: function(data) {
+        this.RELATION_FILTER_REGEX = /^([^\:]+)(\:(.*))$/;
+
         this.drillDownFilters = {};
         this.drillDownStores = [];
 
@@ -50,6 +57,15 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         this.drillDownFilterDefinitions = [];
         this.columnLabels = {};
         this.gridfilters = {};
+
+
+        this.relationColumnTypes = {};
+        this.filtersByRelation = {
+            '@manyToOneRelation': [],
+            '@manyToManyRelation': []
+        };
+
+        this.systemColumns = [];
 
         var gridColConfig = {};
 
@@ -78,8 +94,15 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
             }
 
             if(colConfig["filter"]) {
-                gridColConfig["filter"] = colConfig["filter"];
-                this.gridfilters[colConfig["name"]] = colConfig["filter"];
+                if (colConfig["filter"][0] != '@') {
+                    gridColConfig["filter"] = colConfig["filter"];
+                    this.gridfilters[colConfig["name"]] = colConfig["filter"];
+                } else {
+                    var relationFilterKey = colConfig["filter"].match(this.RELATION_FILTER_REGEX);
+                    this.filtersByRelation[relationFilterKey[1]] = this.filtersByRelation[relationFilterKey[1]] || [];
+                    this.filtersByRelation[relationFilterKey[1]].push(colConfig["name"]);
+                    this.relationColumnTypes[colConfig["name"]] = relationFilterKey[3] || 'object';
+                }
             }
 
             if (colConfig["displayType"] == "text") {
@@ -237,6 +260,51 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
             trackMouseOver: true,
             forceFit: false,
             tbar: topBar,
+            listeners: {
+                afterrender: function(grid) {
+                    var menu = grid.headerCt.getMenu();
+
+                    var manyToOneRelation = menu.add({
+                        text: t("filter_by_relation"),
+                        iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
+                        handler: function() {
+                            var menu = grid.headerCt.getMenu();
+                            var column = menu.activeHeader;
+                            var dataType = this.relationColumnTypes[column.dataIndex];
+
+                            this.filterByRelationPrepare(column, 'manyToOneRelation', dataType);
+                        }.bind(this)
+                    });
+                    var manyToManyRelation = menu.add({
+                        text: t("filter_by_relation"),
+                        iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
+                        handler: function() {
+                            var menu = grid.headerCt.getMenu();
+                            var column = menu.activeHeader;
+                            var dataType = this.relationColumnTypes[column.dataIndex];
+
+                            this.filterByRelationPrepare(column, 'manyToManyRelation', dataType);
+                        }.bind(this)
+                    });
+
+                    menu.on('beforeshow', function() {
+                        var currentDataIndex = menu.activeHeader.dataIndex;
+                        if (this.filtersByRelation['@manyToOneRelation'].includes(currentDataIndex)) {
+                            manyToOneRelation.show();
+                            manyToManyRelation.hide();
+                        } else {
+                            manyToOneRelation.hide();
+                        }
+
+                        if (this.filtersByRelation['@manyToManyRelation'].includes(currentDataIndex)) {
+                            manyToManyRelation.show();
+                            manyToOneRelation.hide();
+                        } else {
+                            manyToManyRelation.hide();
+                        }
+                    }.bind(this));
+                }.bind(this)
+            },
             viewConfig: {
                 enableTextSelection: true
             }
@@ -254,6 +322,24 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         var drillDownFilterComboboxes = [];
 
         for(var i = 0; i < this.drillDownFilterDefinitions.length; i++) {
+            var relationMatch = null;
+            if (relationMatch = this.drillDownFilterDefinitions[i]["filter"].match(this.RELATION_FILTER_REGEX)) {
+                var _item = this.drillDownFilterDefinitions[i];
+                var column = {
+                    dataIndex: _item["name"],
+                    text: _item["label"],
+                };
+                drillDownFilterComboboxes.push({
+                    xtype: 'button',
+                    text: _item["label"],
+                    iconCls: 'pimcore_icon_filter',
+                    handler: function (column, relationMatch) {
+                        this.filterByRelationPrepare(column, relationMatch[1].substr(1), relationMatch[3]);
+                    }.bind(this, column, relationMatch)
+                });
+                continue;
+            }
+
             drillDownFilterComboboxes.push({
                 xtype: 'label',
                 text: this.drillDownFilterDefinitions[i]["label"] ? t(this.drillDownFilterDefinitions[i]["label"])
@@ -576,6 +662,98 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     }
                 }
             }.bind(this)
+        });
+    },
+
+    filterByRelationPrepare: function (column, relationType, dataType) {
+        var dataIndexName = column.dataIndex
+        var gridColumns = this.grid.getColumns();
+        var columnIndex = -1;
+        for (let i = 0; i < gridColumns.length; i++) {
+            let dataIndex = gridColumns[i].dataIndex;
+            if (dataIndex == dataIndexName) {
+                columnIndex = i;
+                break;
+            }
+        }
+        if (columnIndex < 0) {
+            return;
+        }
+
+        if (this.systemColumns.indexOf(gridColumns[columnIndex].dataIndex) > -1) {
+            return;
+        }
+
+        var fieldInfo = this.grid.getColumns()[columnIndex].config;
+        var fieldInfoLayout = {
+            name: dataIndexName,
+            classes: [],
+            displayMode: 'grid',
+            objectsAllowed: dataType == 'object',
+            assetsAllowed: dataType == 'asset',
+            assetTypes: null,
+            documentsAllowed: dataType == 'document',
+            documentTypes: null
+        }
+
+        var editor = new pimcore.object.tags[relationType](null, fieldInfoLayout);
+        editor.setObject({id: 1});
+
+        editor.updateContext({
+            containerType: "filterByRelationWindow"
+        });
+
+        var formPanel = Ext.create('Ext.form.Panel', {
+            xtype: "form",
+            border: false,
+            items: [editor.getLayoutEdit()],
+            bodyStyle: "padding: 10px;",
+            buttons: [
+                {
+                    text: t("clear_relation_filter"),
+                    iconCls: "pimcore_icon_filter_condition pimcore_icon_overlay_delete",
+                    handler: function () {
+                        this.filterByRelationWindow.close();
+                        this.grid.store.filters.removeByKey("x-gridfilter-"+fieldInfo.dataIndex);
+                    }.bind(this)
+                },
+                {
+                    text: t("apply_filter"),
+                    iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
+                    handler: function () {
+                        if (formPanel.isValid()) {
+                            this.grid.filters.getStore().addFilter(
+                                this.getRelationFilter(fieldInfo.dataIndex, editor)
+                            );
+                            this.filterByRelationWindow.close();
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
+
+        var title = t("filter_by_relation_field") + " " + column.text;
+        this.filterByRelationWindow = new Ext.Window({
+            autoScroll: true,
+            modal: false,
+            title: title,
+            items: [formPanel],
+            bodyStyle: "background: #fff;",
+            width: 700,
+            maxHeight: 650
+        });
+        this.filterByRelationWindow.show();
+        this.filterByRelationWindow.updateLayout();
+    },
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data && editor.data.id !== undefined ? 1893 : null;
+        return new Ext.util.Filter({
+            operator: "eq",
+            type: "int",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
         });
     }
 });

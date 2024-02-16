@@ -17,12 +17,19 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Pimcore\Db;
+use Pimcore\Model;
 
 /**
  * @internal
  */
 class Sql extends AbstractAdapter
 {
+    private $relationLoaderDictionary = [
+        'object' => Model\DataObject::class,
+        'asset' => Model\Asset::class,
+        'document' => Model\Document::class,
+    ];
+
     public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
@@ -46,9 +53,80 @@ class Sql extends AbstractAdapter
             }
 
             $data = $db->fetchAllAssociative($sql);
+
+            $this->loadRelationData($data);
         }
 
         return ['data' => $data, 'total' => $total];
+    }
+
+    protected function loadRelationData(&$data): void
+    {
+        $columnsDictionary = $this->getRelationColumns();
+        $columnNames = array_keys($columnsDictionary);
+
+        $relationDataDictionary = [];
+        foreach ($data as $index =>$row) {
+            foreach ($columnNames as $columnName) {
+                if (empty($row[$columnName])) {
+                    continue;
+                }
+
+                $type = $columnsDictionary[$columnName];
+                $relationDataDictionary[$type] = $relationDataDictionary[$type] ?? [];
+                $relationDataDictionary[$type][] = $row[$columnName];
+
+                $element = $this->loadElementById($row[$columnName], $type);
+                $data[$index][$columnName] = $element ? $element->getFullPath() : $row[$columnName];
+            }
+        }
+    }
+
+    /**
+     * Load many elements by ids for specific model type and return assoc array
+     *
+     * @param number[]|string[] $ids
+     * @param string $type
+     *
+     * @return Model\Element\AbstractElement[]
+     */
+    protected function loadElementsByIds(array $ids, string $type): array
+    {
+        $ids = array_unique(array_filter($ids));
+
+        return array_reduce(
+            $ids,
+            function ($carrier, $id) use ($type) {
+                $carrier[strval($id)] = $this->loadElementById($id, $type);
+
+                return $carrier;
+            },
+            []
+        );
+    }
+
+    protected function loadElementById($id, string $type): ?Model\Element\AbstractElement
+    {
+        $class = $this->relationLoaderDictionary[$type] ?? null;
+
+        $element = call_user_func([$class, 'getById'], $id);
+
+        return $element;
+    }
+
+    protected function getRelationColumns(): array
+    {
+        return array_reduce(
+            $this->fullConfig->getColumnConfiguration(),
+            function ($carrier, $item) {
+                if (preg_match("/^\@\w+\:(object|asset|document)$/", $item['filter'] ?? '', $match)) {
+                    $carrier[$item['name']] = $match[1];
+                }
+
+                return $carrier;
+            },
+            []
+        );
     }
 
     public function getColumns(?\stdClass $configuration): array
@@ -149,6 +227,20 @@ class Sql extends AbstractAdapter
                 case 'like':
                     $fields[] = $filter['property'];
                     $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+
+                    break;
+                case 'in':
+                    $values = array_map(
+                        function ($str) use ($db) {
+                            return $db->quote($str);
+                        },
+                        explode(',', $value)
+                    );
+
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier(
+                        sprintf("%s IN (%s)", $filter['property'], implode(',', $values))
+                    );
 
                     break;
                 case 'lt':
