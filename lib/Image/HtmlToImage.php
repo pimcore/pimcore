@@ -194,7 +194,7 @@ class HtmlToImage
 
             return false;
         } finally {
-            $browser->close();
+            $page->close();
         }
 
         return true;
