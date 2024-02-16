@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 trait ContextPersistenceTrait
 {
     protected function prepareMyCurrentRelations(
-        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
         array $params
     ): array {
         if ($object instanceof Concrete) {
