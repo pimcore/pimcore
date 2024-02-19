@@ -1971,11 +1971,15 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    /**
+     * @deprecated
+     */
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
                 ->arrayNode('chromium')
+                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('uri')

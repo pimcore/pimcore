@@ -146,6 +146,8 @@ class HtmlToImage
      */
     public static function convertChromium(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
+        trigger_deprecation('pimcore/pimcore', '11.2.0', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.');
+
         $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
         if (!empty($chromiumUri)) {
             try {
