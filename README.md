@@ -1,7 +1,7 @@
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
   
-Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
+Pimcore Core Framework - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
@@ -23,20 +23,6 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
 **Security vulnerabilities:** please see our [security policy](https://github.com/pimcore/pimcore/security/policy)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
-
-## Supported Versions
-
-| Version  | Supported | LTS** | CE End of life*** |
-|----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
-| `5.x`    |     ❌     |   ❌   |   `2019-12-09`    |
-| `6.x`    |     ❌     |   ❌   |   `2021-06-23`    |
-| `10.6`   |     ❌     |   ☑   |   `2023-08-21`    |
-| `11.x`   |     ✅     |   ☑   |                   |
-
-** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
-*** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
-
 
 ## Overview
 ![Technology and Architecture](./doc/img/pimcore-technology-architecture.svg)
@@ -91,6 +77,17 @@ cd ./my-project
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
 [Click here for more installation options and a detailed guide](https://pimcore.com/docs/platform/Pimcore/Getting_Started/)
+
+
+## Supported Versions and LTS
+
+Community support of a minor version of Pimcore packages ends with the release of the next minor version. After end of
+community support, long term supported is provided in combination with enterprise edition.
+
+LTS versions are based on our [Platform Version Releases](https://pimcore.com/docs/platform/Platform_Version/) which cover
+the Core Framework as well as extensions provided by Pimcore. For details on versions and their support state see our
+[documentation](https://pimcore.com/docs/platform/Platform_Version/Platform_Version_Releases/).
+
 
 ## Copyright and License 
 Copyright: [Pimcore](https://www.pimcore.org) GmbH
