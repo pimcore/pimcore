@@ -17,3 +17,9 @@ import 'tinymce/plugins/media';
 import 'tinymce/plugins/help';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/code';
+
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/visualblocks';
