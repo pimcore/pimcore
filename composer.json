@@ -153,7 +153,7 @@
     "ext-redis": "*",
     "gotenberg/gotenberg-php": "^2.0 - Required for generating pdf via Gotenberg in assets preview (LibreOffice), page preview, version diff and web2print",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
-    "chrome-php/chrome": "Required for Documents Page Previews",
+    "chrome-php/chrome": "Optional for Documents Page Previews when requiring gotenberg-php v2, but required if you opt for gotenberg-php v1",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
     "symfony/dotenv": "Required for loading environment vars from .env files",
     "pimcore/admin-ui-classic-bundle": "^1.4.0"
