@@ -22,6 +22,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Tool;
@@ -92,6 +93,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
             $host = null;
             if($site = Frontend::getSiteForDocument($document)) {
+                Site::setCurrentSite($site);
                 $host = $site->getMainDomain();
             } elseif($systemMainDomain = Tool::getHostname()) {
                 $host = $systemMainDomain;
