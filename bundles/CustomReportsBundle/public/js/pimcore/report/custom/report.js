@@ -685,9 +685,12 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         }
 
         var fieldInfo = this.grid.getColumns()[columnIndex].config;
+
+        // Fix for editor so we can use existing functionality
         var fieldInfoLayout = {
             name: dataIndexName,
             classes: [],
+            columns: [],
             displayMode: 'grid',
             objectsAllowed: dataType == 'object',
             assetsAllowed: dataType == 'asset',
@@ -722,9 +725,16 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
                     handler: function () {
                         if (formPanel.isValid()) {
-                            this.grid.filters.getStore().addFilter(
-                                this.getRelationFilter(fieldInfo.dataIndex, editor)
-                            );
+                            var method = 'get' + relationType.charAt(0).toUpperCase() + relationType.slice(1) + 'Filter';
+
+                            if (typeof this[method] == 'function') {
+                                this.grid.filters.getStore().addFilter(
+                                    this[method](fieldInfo.dataIndex, editor)
+                                );
+                            } else {
+                                console.warn('CustomReportsBundle: No method found for ' + method + '!');
+                            }
+
                             this.filterByRelationWindow.close();
                         }
                     }.bind(this)
@@ -745,8 +755,9 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         this.filterByRelationWindow.show();
         this.filterByRelationWindow.updateLayout();
     },
-    getRelationFilter: function (dataIndex, editor) {
-        var filterValue = editor.data && editor.data.id !== undefined ? 1893 : null;
+
+    getManyToOneRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data && editor.data.id || null;
         return new Ext.util.Filter({
             operator: "eq",
             type: "int",
@@ -755,5 +766,16 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
             dataIndex: dataIndex,
             value: filterValue
         });
-    }
+    },
+    getAdvancedManyToManyRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.store.getData().items.map(function (record) { return record.get('id'); });
+        return new Ext.util.Filter({
+            operator: "in",
+            type: "array",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
+    },
 });
