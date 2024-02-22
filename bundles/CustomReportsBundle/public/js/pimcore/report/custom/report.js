@@ -22,6 +22,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     filtersByRelation: {},
     relationColumnTypes: {},
+    filterButtons: {},
 
     systemColumns: [],
 
@@ -329,14 +330,29 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     dataIndex: _item["name"],
                     text: _item["label"],
                 };
-                drillDownFilterComboboxes.push({
+
+                var filterKey = "x-gridfilter-" + _item["name"];
+                var filterButton = Ext.create({
                     xtype: 'button',
-                    text: _item["label"],
+                    text: _item["label"] || _item["name"],
                     iconCls: 'pimcore_icon_filter',
-                    handler: function (column, relationMatch) {
-                        this.filterByRelationPrepare(column, relationMatch[1].substr(1), relationMatch[3]);
-                    }.bind(this, column, relationMatch)
                 });
+
+                filterButton.setHandler(function (button, column, relationMatch, filterKey) {
+                    if (this.grid.filters.getStore().getFilters().getByKey(filterKey)) {
+                        this.grid.filters.getStore().removeFilter(filterKey);
+
+                        button.setIconCls('pimcore_icon_filter');
+                        button.setText(column.text || column.dataIndex);
+                        return;
+                    }
+
+                    this.filterByRelationPrepare(column, relationMatch[1].substr(1), relationMatch[3]);
+                }.bind(this, filterButton, column, relationMatch, filterKey))
+
+                // Store value into dictionary so we can change look on selection
+                this.filterButtons[filterKey] = filterButton;
+                drillDownFilterComboboxes.push(filterButton);
                 continue;
             }
 
@@ -685,8 +701,6 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         }
 
         var fieldInfo = this.grid.getColumns()[columnIndex].config;
-
-        // Fix for editor so we can use existing functionality
         var fieldInfoLayout = {
             name: dataIndexName,
             classes: [],
@@ -699,6 +713,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
             documentTypes: null
         }
 
+        // Fix for editor so we can use existing functionality
         var editor = new pimcore.object.tags[relationType](null, fieldInfoLayout);
         editor.setObject({id: 1});
 
@@ -725,14 +740,11 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
                     handler: function () {
                         if (formPanel.isValid()) {
-                            var method = 'get' + relationType.charAt(0).toUpperCase() + relationType.slice(1) + 'Filter';
+                            var filter = this.makeFilter(relationType, fieldInfo, editor);
 
-                            if (typeof this[method] == 'function') {
-                                this.grid.filters.getStore().addFilter(
-                                    this[method](fieldInfo.dataIndex, editor)
-                                );
-                            } else {
-                                console.warn('CustomReportsBundle: No method found for ' + method + '!');
+                            if (filter) {
+                                this.grid.filters.getStore().addFilter(filter);
+                                this.markFilterButton(fieldInfo);
                             }
 
                             this.filterByRelationWindow.close();
@@ -754,6 +766,25 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         });
         this.filterByRelationWindow.show();
         this.filterByRelationWindow.updateLayout();
+    },
+
+    markFilterButton: function (fieldInfo) {
+        var button = this.filterButtons["x-gridfilter-" + fieldInfo.dataIndex];
+        button.setIconCls('pimcore_icon_clear_filters');
+        button.setText('Clear '+fieldInfo['text'] || fieldInfo['name']);
+    },
+
+    makeFilter: function (relationType, fieldInfo, editor) {
+        var method = 'get' + relationType.charAt(0).toUpperCase() + relationType.slice(1) + 'Filter';
+        var filter = null;
+
+        if (typeof this[method] == 'function') {
+            filter = this[method](fieldInfo.dataIndex, editor);
+        } else {
+            console.warn('CustomReportsBundle: No method found for ' + method + '!');
+        }
+
+        return filter;
     },
 
     getManyToOneRelationFilter: function (dataIndex, editor) {
