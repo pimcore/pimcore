@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
-use League\Csv\EscapeFormula;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
