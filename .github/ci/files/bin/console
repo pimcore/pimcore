@@ -21,7 +21,7 @@ define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('PIMCORE_CONSOLE', true);
 
 \Pimcore\Bootstrap::setProjectRoot();
-
+\Pimcore\Bootstrap::prepareEnvVariables();
 /** @var \Pimcore\Kernel $kernel */
 $kernel = \Pimcore\Bootstrap::startupCli();
 $application = new \Pimcore\Console\Application($kernel);

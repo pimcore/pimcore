@@ -24,6 +24,7 @@ define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('APP_ENV', 'test');
 
 \Pimcore\Bootstrap::setProjectRoot();
+\Pimcore\Bootstrap::prepareEnvVariables();
 \Pimcore\Bootstrap::bootstrap();
 
 $request = Request::createFromGlobals();
