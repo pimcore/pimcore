@@ -24,7 +24,12 @@ use Pimcore\Model;
  */
 class Sql extends AbstractAdapter
 {
-    private $relationLoaderDictionary = [
+    /**
+     * Relation loaders dictionary
+     *
+     * @var array
+     */
+    private array $relationLoaderDictionary = [
         'object' => Model\DataObject::class,
         'asset' => Model\Asset::class,
         'document' => Model\Document::class,
@@ -60,7 +65,7 @@ class Sql extends AbstractAdapter
         return ['data' => $data, 'total' => $total];
     }
 
-    protected function loadRelationData(&$data): void
+    protected function loadRelationData(array &$data): void
     {
         $columnsDictionary = $this->getRelationColumns();
         $columnNames = array_keys($columnsDictionary);
@@ -105,7 +110,7 @@ class Sql extends AbstractAdapter
         );
     }
 
-    protected function loadElementById($id, string $type): ?Model\Element\AbstractElement
+    protected function loadElementById(int $id, string $type): ?Model\Element\AbstractElement
     {
         $class = $this->relationLoaderDictionary[$type] ?? null;
 
@@ -114,11 +119,19 @@ class Sql extends AbstractAdapter
         return $element;
     }
 
+    /**
+     * Return columns that are marked as relations
+     *
+     * @return array
+     */
     protected function getRelationColumns(): array
     {
         return array_reduce(
             $this->fullConfig->getColumnConfiguration(),
             function ($carrier, $item) {
+                if (!$item["display"] && !$item["export"]) {
+                    return $carrier;
+                }
                 if (preg_match("/^\@\w+\:(object|asset|document)$/", $item['filter'] ?? '', $match)) {
                     $carrier[$item['name']] = $match[1];
                 }
