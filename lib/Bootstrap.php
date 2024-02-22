@@ -160,6 +160,7 @@ class Bootstrap
         };
 
         // basic paths
+        $resolveConstant('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');
         $resolveConstant('PIMCORE_COMPOSER_FILE_PATH', PIMCORE_PROJECT_ROOT);
         $resolveConstant('PIMCORE_PATH', realpath(__DIR__ . '/..'));
         $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/public');
