@@ -230,18 +230,10 @@ class Sql extends AbstractAdapter
 
                     break;
                 case 'in':
-                    $values = array_map(
-                        function ($str) use ($db) {
-                            return $db->quote($str);
-                        },
-                        explode(',', $value)
-                    );
-
-                    $fields[] = $filter['property'];
-                    $condition[] = $db->quoteIdentifier(
-                        sprintf("%s IN (%s)", $filter['property'], implode(',', $values))
-                    );
-
+                    if (!empty($value)) {
+                        $values = implode(', ', array_map(fn ($id) => intval($id), $value));
+                        $condition[] = sprintf("%s IN (%s)", $db->quoteIdentifier($filter['property']), $values);
+                    }
                     break;
                 case 'lt':
                 case 'gt':
