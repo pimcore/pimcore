@@ -683,24 +683,8 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     filterByRelationPrepare: function (column, relationType, dataType) {
         var dataIndexName = column.dataIndex
-        var gridColumns = this.grid.getColumns();
-        var columnIndex = -1;
-        for (let i = 0; i < gridColumns.length; i++) {
-            let dataIndex = gridColumns[i].dataIndex;
-            if (dataIndex == dataIndexName) {
-                columnIndex = i;
-                break;
-            }
-        }
-        if (columnIndex < 0) {
-            return;
-        }
+        var fieldInfo = column;
 
-        if (this.systemColumns.indexOf(gridColumns[columnIndex].dataIndex) > -1) {
-            return;
-        }
-
-        var fieldInfo = this.grid.getColumns()[columnIndex].config;
         var fieldInfoLayout = {
             name: dataIndexName,
             classes: [],
@@ -771,7 +755,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
     markFilterButton: function (fieldInfo) {
         var button = this.filterButtons["x-gridfilter-" + fieldInfo.dataIndex];
         button.setIconCls('pimcore_icon_clear_filters');
-        button.setText('Clear '+fieldInfo['text'] || fieldInfo['name']);
+        button.setText('Clear '+fieldInfo.text || fieldInfo.dataIndex);
     },
 
     makeFilter: function (relationType, fieldInfo, editor) {
