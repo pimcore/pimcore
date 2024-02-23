@@ -11,8 +11,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -37,14 +37,14 @@ final class Version20240222143211 extends AbstractMigration
         $this->addSql('SET foreign_key_checks = 0');
 
         foreach($schema->getTables() as $table) {
-            if($table->hasColumn("id")) {
+            if($table->hasColumn('id')) {
                 $tableName = $table->getName();
 
                 if (
-                    str_starts_with($tableName, "object_brick_") ||
-                    str_starts_with($tableName, "object_classificationstore_") ||
-                    str_starts_with($tableName, "object_collection_") ||
-                    str_starts_with($tableName, "object_metadata_")
+                    str_starts_with($tableName, 'object_brick_') ||
+                    str_starts_with($tableName, 'object_classificationstore_') ||
+                    str_starts_with($tableName, 'object_collection_') ||
+                    str_starts_with($tableName, 'object_metadata_')
                 ) {
                     $foreignKeyWithoutOPrefix = AbstractDao::getForeignKeyName($tableName, 'id');
                     $foreignKeyWithOPrefix = AbstractDao::getForeignKeyName($tableName, 'o_id');
@@ -65,14 +65,14 @@ final class Version20240222143211 extends AbstractMigration
         $this->addSql('SET foreign_key_checks = 0');
 
         foreach($schema->getTables() as $table) {
-            if($table->hasColumn("id")) {
+            if($table->hasColumn('id')) {
                 $tableName = $table->getName();
 
                 if (
-                    str_starts_with($tableName, "object_brick_") ||
-                    str_starts_with($tableName, "object_classificationstore_") ||
-                    str_starts_with($tableName, "object_collection_") ||
-                    str_starts_with($tableName, "object_metadata_")
+                    str_starts_with($tableName, 'object_brick_') ||
+                    str_starts_with($tableName, 'object_classificationstore_') ||
+                    str_starts_with($tableName, 'object_collection_') ||
+                    str_starts_with($tableName, 'object_metadata_')
                 ) {
                     $foreignKeyWithoutOPrefix = AbstractDao::getForeignKeyName($tableName, 'id');
                     $foreignKeyWithOPrefix = AbstractDao::getForeignKeyName($tableName, 'o_id');
