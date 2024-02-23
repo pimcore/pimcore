@@ -46,9 +46,8 @@ final class Version20240222143211 extends AbstractMigration
                     str_starts_with($tableName, "object_collection_") ||
                     str_starts_with($tableName, "object_metadata_")
                 ) {
-                    $currentForeignKeyName = AbstractDao::getForeignKeyName($tableName, 'id');
-                    $foreignKeyWithOPrefix = preg_replace('/__id$/', '__o_id', $currentForeignKeyName);
-                    $foreignKeyWithoutOPrefix = preg_replace('/__o_id$/', '__id', $currentForeignKeyName);
+                    $foreignKeyWithoutOPrefix = AbstractDao::getForeignKeyName($tableName, 'id');
+                    $foreignKeyWithOPrefix = AbstractDao::getForeignKeyName($tableName, 'o_id');
 
                     if ($table->hasForeignKey($foreignKeyWithOPrefix)) {
                         $this->addSql("ALTER TABLE {$tableName} DROP FOREIGN KEY {$foreignKeyWithOPrefix}");
@@ -75,9 +74,8 @@ final class Version20240222143211 extends AbstractMigration
                     str_starts_with($tableName, "object_collection_") ||
                     str_starts_with($tableName, "object_metadata_")
                 ) {
-                    $currentForeignKeyName = AbstractDao::getForeignKeyName($tableName, 'id');
-                    $foreignKeyWithOPrefix = preg_replace('/__id$/', '__o_id', $currentForeignKeyName);
-                    $foreignKeyWithoutOPrefix = preg_replace('/__o_id$/', '__id', $currentForeignKeyName);
+                    $foreignKeyWithoutOPrefix = AbstractDao::getForeignKeyName($tableName, 'id');
+                    $foreignKeyWithOPrefix = AbstractDao::getForeignKeyName($tableName, 'o_id');
 
                     if ($table->hasForeignKey($foreignKeyWithoutOPrefix)) {
                         $this->addSql("ALTER TABLE {$tableName} DROP FOREIGN KEY {$foreignKeyWithoutOPrefix}");
