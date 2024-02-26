@@ -128,15 +128,6 @@ class Bootstrap
         }
     }
 
-    public static function prepareEnvVariables(): void
-    {
-        if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
-            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-        } else {
-            $_SERVER += $_ENV;
-        }
-    }
-
     public static function defineConstants(): void
     {
         // load custom constants

@@ -18,13 +18,12 @@ use Pimcore\Tool;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . "/../vendor/autoload_runtime.php";
 
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('APP_ENV', 'test');
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::prepareEnvVariables();
 \Pimcore\Bootstrap::bootstrap();
 
 $request = Request::createFromGlobals();
