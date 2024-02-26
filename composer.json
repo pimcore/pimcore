@@ -219,7 +219,8 @@
     },
     "allow-plugins": {
       "eloquent/composer-npm-bridge": false,
-      "php-http/discovery": false
+      "php-http/discovery": false,
+      "symfony/runtime": true
     }
   }
 }
