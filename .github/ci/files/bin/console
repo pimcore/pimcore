@@ -14,6 +14,7 @@
  */
 
 use Pimcore\Bootstrap;
+use Pimcore\Console\Application;
 
 ob_get_clean();
 
@@ -22,6 +23,9 @@ include __DIR__ . "/../vendor/autoload_runtime.php";
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('PIMCORE_CONSOLE', true);
 
+return function (array $context) {
     $kernel = Bootstrap::startupCli();
-    $application = new \Pimcore\Console\Application($kernel);
+    $application = new Application($kernel);
     $application->run();
+    return $application;
+};
