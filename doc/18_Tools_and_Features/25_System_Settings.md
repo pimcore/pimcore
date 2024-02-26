@@ -68,17 +68,17 @@ Settings for assets like version steps.
 
 namespace App\Controller;
 
+use Pimcore\Config;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Pimcore\SystemSettingsConfig;
 
 class DefaultController extends FrontendController
 {
     public function defaultAction(Request $request, SystemSettingsConfig $config): Response
     {
         // use type-hinting to inject the config service
-        $config = $config->getSystemSettingsConfig();
+        $config = Config::getSystemConfiguration();
         $bar = $config['general']['valid_languages'];
     }
 }
