@@ -26,6 +26,7 @@ final class Version20230616085142 extends AbstractMigration
     private const ID_COLUMN = 'id';
 
     private const O_PREFIX = 'o_';
+
     private const PK_COLUMNS = '`' . self::ID_COLUMN .
     '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
 
