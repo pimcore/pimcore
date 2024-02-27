@@ -194,9 +194,7 @@ class InstallCommand extends Command
     {
         if ($onlySteps = $input->getOption('only-steps')) {
             $onlySteps = array_map('trim', explode(',', $onlySteps));
-            if(!empty($onlySteps)) {
-                $this->installer->setRunInstallSteps($onlySteps);
-            }
+            $this->installer->setRunInstallSteps($onlySteps);
         }
 
         if ($input->getOption('skip-database-config')) {
