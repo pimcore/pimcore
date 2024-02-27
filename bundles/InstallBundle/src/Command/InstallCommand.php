@@ -32,6 +32,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use function explode;
+use function implode;
 
 /**
  * @method Application getApplication()
@@ -171,6 +173,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.'
+            )->addOption(
+                'only-steps',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Specify a comma separated limited list of steps that should run. Available steps: ' . implode(', ', $this->installer->getRunInstallSteps())
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -185,6 +192,13 @@ class InstallCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
+        if ($onlySteps = $input->getOption('only-steps')) {
+            $onlySteps = array_map('trim', explode(',', $onlySteps));
+            if(!empty($onlySteps)) {
+                $this->installer->setRunInstallSteps($onlySteps);
+            }
+        }
+
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
         }
