@@ -6,6 +6,12 @@
 TinyMCE bundle provides TineMCE as WYSIWYG-editor.
 Similar to Textarea and Input you can use the WYSIWYG editable in the templates to provide rich-text editing.
 
+## Installation
+
+```bash
+bin/console pimcore:bundle:install PimcoreTinymceBundle
+```
+
 ## Configuration
 
 Available configuration options can be found here: [config options](https://www.tiny.cloud/docs/configure/)
