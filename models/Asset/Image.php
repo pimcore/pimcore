@@ -63,7 +63,7 @@ class Image extends Model\Asset
      *
      * @internal
      */
-    public function generateLowQualityPreview(string $generator = null): bool|string
+    public function generateLowQualityPreview(): false|string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
             return false;

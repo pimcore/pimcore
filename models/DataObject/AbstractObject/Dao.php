@@ -58,7 +58,7 @@ class Dao extends Model\Element\Dao
     public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = :path AND `key` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

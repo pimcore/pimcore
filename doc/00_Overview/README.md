@@ -38,7 +38,7 @@ Most important, all elements (assets, documents or objects) can be linked and se
 
 ## ANY Channel / ANY Process
 As Pimcore is a platform that stores data independently from the channel, it can provide the managed data to any channel – simple 
-websites (B2B, B2C), commerce-systems ([integrated](https://github.com/pimcore/ecommerce-bundle/tree/1.x/doc/README.md) and/or third party), mobile apps, 
+websites (B2B, B2C), commerce-systems ([integrated](https://pimcore.com/docs/platform/Ecommerce_Framework/) and/or third party), mobile apps, 
 print, digital signage, ... there are basically no limits.
 
 In terms of output to the frontend or custom APIs, Pimcore follows the MVC pattern and is based on the Symfony Framework. 

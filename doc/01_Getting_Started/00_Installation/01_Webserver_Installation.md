@@ -80,8 +80,33 @@ The installer writes a log in `var/log` which contains any errors encountered du
 ## 5. Maintenance Cron Job
 
 Maintenance tasks are handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance
-messages to the bus and run them afterward immediately from the queue. However, it is  recommended to set up independent workers that process the queues by running `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_asset_update` (using e.g.
-`Supervisor`).
+messages to the bus. However, `pimcore:maintenance` will not process the maintenance messages itself.
+Independent workers are required to consume these messages from the queues and perform maintenance tasks.
+In a typical Pimcore installation, you should set up workers for these transports:
+
+| # | Transport name                 | Purpose                                                                                       |
+|---|--------------------------------|-----------------------------------------------------------------------------------------------|
+| 1 | pimcore_core                   | Core background tasks such as converting videos, rendering Asset previews, etc.               |
+| 2 | pimcore_maintenance            | [Maintenance tasks](../../20_Extending_Pimcore/16_Maintenance_Tasks.md)                       |
+| 3 | pimcore_scheduled_tasks        | [Scheduled tasks](../../18_Tools_and_Features/03_Scheduling.md)                               |
+| 4 | pimcore_image_optimize         | Execute optimizers on Asset image thumbnails                                                     |
+| 5 | pimcore_asset_update           | Process Asset metadata e.g. Documents page count, Video duration/dimensions, Image previews etc. |
+| 6 | pimcore_search_backend_message | Update the index for Pimcore backend search. Only if you install `SimpleBackendSearchBundle` |
+
+Beware that the actual transports depend on which core bundles you installed. Therefore, you will need to adjust the list accordingly to your installation.
+Use `bin/console debug:messenger` to list all available transports.
+
+Consuming messages from the queues is performed with the `messenger:consume` command (e.g., `bin/console messenger:consume pimcore_core ...`).
+You might need to spawn multiple workers, each consuming from a different queue to avoid blocking message processing by long-running tasks.
+For example:
+
+```bash
+bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_scheduled_tasks pimcore_search_backend_message pimcore_asset_update
+bin/console messenger:consume pimcore_image_optimize
+```
+
+We recommend following the [Symfony Messenger guide](https://symfony.com/doc/current/messenger.html#deploying-to-production) for setting up
+worker processes in production. The following is a simplified example of maintenance tasks execution using cron:
 
 ```bash
 # this command needs to be executed via cron or similar task scheduler
@@ -91,8 +116,13 @@ messages to the bus and run them afterward immediately from the queue. However, 
 # it's recommended to run the following command using a process control system like Supervisor
 # please follow the Symfony Messenger guide for a best practice production setup: 
 # https://symfony.com/doc/current/messenger.html#deploying-to-production
-*/5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_search_backend_message --time-limit=300
+*/5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_scheduled_tasks pimcore_search_backend_message --time-limit=300
+*/5 * * * * /your/project/bin/console messenger:consume pimcore_asset_update --time-limit=300
+*/5 * * * * /your/project/bin/console messenger:consume pimcore_image_optimize --time-limit=300
 ```
+
+Refer to [Symfony Messenger](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md) for further information on working
+with the messenger component in Pimcore.
 
 > Depending on installed and activated extensions, it might be necessary to add additional transports to the messenger consume command. Please look at the documentation of corresponding extensions for more details. 
 

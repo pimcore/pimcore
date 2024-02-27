@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use League\Flysystem\FilesystemException;
+use function ltrim;
+use function md5;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -212,12 +214,12 @@ class Processor
         // the configuration is saved for later use in
         // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
         // so that it can be used also with dynamic configurations
+        $pathInfo = ltrim($asset->getRealPath(), '/') . $asset->getId() . '/' . $config->getName() . '/' . $filename;
+        $tmpStoreDeferredConfigId = 'thumb_' . $asset->getId() . '__' . md5($pathInfo);
         if ($deferred) {
             // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
             if (!Config::exists($config->getName())) {
-                $pathInfo = trim($asset->getRealPath(), '/').'/'.$asset->getId() . '/';
-                $configId = 'thumb_' . $asset->getId() . '__' . md5($pathInfo);
-                TmpStore::add($configId, $config, 'thumbnail_deferred');
+                TmpStore::add($tmpStoreDeferredConfigId, $config, 'thumbnail_deferred');
             }
 
             return [
@@ -343,6 +345,11 @@ class Processor
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {
                     //update thumbnail dimensions to cache
                     $asset->addThumbnailFileToCache($tmpFsPath, $filename, $config);
+                }
+
+                if (!Config::exists($config->getName())) {
+                    // delete dynamic thumbnail configs out of the TmpStore as soon as we've generated the thumbnail file
+                    TmpStore::delete($tmpStoreDeferredConfigId);
                 }
 
                 $generated = true;

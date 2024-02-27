@@ -18,7 +18,7 @@ namespace Pimcore\Workflow\Place;
 
 use Pimcore\Helper\ContrastColor;
 use Pimcore\Workflow\ExpressionService;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class PlaceConfig
 {
@@ -78,7 +78,7 @@ class PlaceConfig
         return $this->placeConfigArray['visibleInHeader'];
     }
 
-    public function getObjectLayout(Workflow $workflow, object $subject): ?string
+    public function getObjectLayout(WorkflowInterface $workflow, object $subject): ?string
     {
         return $this->getPermissions($workflow, $subject)['objectLayout'] ?? null;
     }
@@ -98,7 +98,7 @@ class PlaceConfig
         return $this->placeConfigArray;
     }
 
-    public function getPermissions(Workflow $workflow, object $subject): array
+    public function getPermissions(WorkflowInterface $workflow, object $subject): array
     {
         foreach ($this->placeConfigArray['permissions'] ?? [] as $permission) {
             $condition = $permission['condition'] ?? false;
@@ -112,7 +112,7 @@ class PlaceConfig
         return [];
     }
 
-    public function getUserPermissions(Workflow $workflow, object $subject): array
+    public function getUserPermissions(WorkflowInterface $workflow, object $subject): array
     {
         $result = [];
 

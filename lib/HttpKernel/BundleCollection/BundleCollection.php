@@ -37,7 +37,11 @@ class BundleCollection
 
         // a bundle can only be registered once
         if ($this->hasItem($identifier)) {
-            return $this;
+            $bundle = $this->getItem($identifier);
+            // if the new item has a higher priority, we replace the existing item
+            if ($bundle->getPriority() >= $item->getPriority()) {
+                return $this;
+            }
         }
 
         $this->items[$identifier] = $item;

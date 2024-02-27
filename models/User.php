@@ -593,11 +593,11 @@ final class User extends User\UserRole implements UserInterface
     public function getAllowedLanguagesForEditingWebsiteTranslations(): ?array
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if (empty($mergedWebsiteTranslationLanguagesEdit) || $this->isAdmin()) {
-            $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-            if (empty($mergedWebsiteTranslationLanguagesView)) {
-                return Tool::getValidLanguages();
-            }
+        if (
+            (!$mergedWebsiteTranslationLanguagesEdit && !$this->getMergedWebsiteTranslationLanguagesView()) ||
+            $this->isAdmin()
+        ) {
+            return Tool::getValidLanguages();
         }
 
         return $mergedWebsiteTranslationLanguagesEdit;

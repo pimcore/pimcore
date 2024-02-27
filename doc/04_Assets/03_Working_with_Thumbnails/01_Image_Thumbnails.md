@@ -80,7 +80,7 @@ Pimcore offers the method `getHTML(array $options)` to get a ready to use `<pict
 You can configure the generated markup with the following options:
 
 | Name                           | Type     | Description                                                                                                                        |
-| ------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+|--------------------------------| -------- |------------------------------------------------------------------------------------------------------------------------------------|
 | `disableWidthHeightAttributes` | bool     | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)             |
 | `disableAutoTitle`             | bool     | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)         |
 | `disableAutoAlt`               | bool     | Set to true, to disable the automatically generated alt attribute                                                                  |
@@ -94,6 +94,7 @@ You can configure the generated markup with the following options:
 | `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.               |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.                                            |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.                                                             |
+| `useFrontendPath`              | bool     | Set to `true` to use the full url (including the frontend_prefix).                                                                 |
 
 ## Usage Examples
 
@@ -245,7 +246,7 @@ $webpThumbnail->getHtml();
 {{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}
 ```
 
-Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
+Additionally, there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#configuration).
 
 ## Lazy Loading
 
@@ -268,7 +269,7 @@ Pimcore supports ICC color profiles to get better results when converting CMYK i
 to RGB.
 
 Due licensing issues Pimcore doesn't include the color profiles (\*.icc files) in the download package, but
-you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075)
+you can download them for free here: [Adobe ICC Profiles](https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html)
 or here: [ICC (color.org)](http://www.color.org/profiles.xalter).
 
 After downloading the profiles put them into your project folder or anywhere else on your sever

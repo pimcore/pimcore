@@ -32,13 +32,11 @@ class Builder
 
     /**
      * @internal
-     *
      */
     protected ?string $htmlMenuIdPrefix = null;
 
     /**
      * @internal
-     *
      */
     protected string $pageClass = DocumentPage::class;
 
@@ -66,6 +64,7 @@ class Builder
             'root' => null,
             'htmlMenuPrefix' => null,
             'pageCallback' => null,
+            'rootCallback' => null,
             'cache' => true,
             'cacheLifetime' => null,
             'maxDepth' => null,
@@ -75,7 +74,8 @@ class Builder
 
         $options->setAllowedTypes('root', [Document::class, 'null']);
         $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
-        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('pageCallback', [\Closure::class, 'null']);
+        $options->setAllowedTypes('rootCallback', [\Closure::class, 'null']);
         $options->setAllowedTypes('cache', ['string', 'bool']);
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
@@ -92,7 +92,8 @@ class Builder
      * @param array{
      *     root?: ?Document,
      *     htmlMenuPrefix?: ?string,
-     *     pageCallback?: ?callable,
+     *     pageCallback?: ?\Closure,
+     *     rootCallback?: ?\Closure,
      *     cache?: string|bool,
      *     cacheLifetime?: ?int,
      *     maxDepth?: ?int,
@@ -108,6 +109,7 @@ class Builder
             'root' => $navigationRootDocument,
             'htmlMenuPrefix' => $htmlMenuIdPrefix,
             'pageCallback' => $pageCallback,
+            'rootCallback' => $rootCallback,
             'cache' => $cache,
             'cacheLifetime' => $cacheLifetime,
             'maxDepth' => $maxDepth,
@@ -160,6 +162,10 @@ class Builder
                 $navigation->addPages($rootPage);
             }
 
+            if ($rootCallback instanceof \Closure) {
+                $rootCallback($navigation);
+            }
+
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
             if ($cacheEnabled) {
@@ -176,8 +182,6 @@ class Builder
 
     /**
      * @internal
-     *
-     *
      */
     protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
     {
@@ -264,7 +268,6 @@ class Builder
     }
 
     /**
-     *
      * @throws \Exception
      *
      * @internal
@@ -308,7 +311,6 @@ class Builder
 
     /**
      * Returns the name of the pageclass
-     *
      */
     public function getPageClass(): string
     {
@@ -316,7 +318,6 @@ class Builder
     }
 
     /**
-     *
      * @return Document[]
      */
     protected function getChildren(Document $parentDocument): array
@@ -331,7 +332,6 @@ class Builder
     }
 
     /**
-     *
      * @return Page[]
      *
      * @throws \Exception

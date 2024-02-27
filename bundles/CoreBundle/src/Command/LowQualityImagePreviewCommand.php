@@ -30,9 +30,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 #[AsCommand(
     name: 'pimcore:image:low-quality-preview',
-    description: 'Regenerates low quality image previews for all image assets',
+    description: 'Regenerates low-quality image previews for all image assets',
     aliases: ['pimcore:image:svg-preview']
-
 )]
 class LowQualityImagePreviewCommand extends AbstractCommand
 {
@@ -68,6 +67,10 @@ class LowQualityImagePreviewCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($input->hasOption('generator')) {
+            trigger_deprecation('pimcore/pimcore', '11.2.0', 'Using the "generator" option is deprecated and will be removed in Pimcore 12.');
+        }
+
         $conditionVariables = [];
 
         // get only images
@@ -92,11 +95,6 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $conditionVariables[] = $regex;
         }
 
-        $generator = null;
-        if ($input->getOption('generator')) {
-            $generator = $input->getOption('generator');
-        }
-
         $force = $input->getOption('force');
 
         $list = new Asset\Listing();
@@ -114,8 +112,8 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 $progressBar->advance();
                 if ($force || !$image->getLowQualityPreviewDataUri()) {
                     try {
-                        $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
-                        $image->generateLowQualityPreview($generator);
+                        $this->output->writeln('generating low-quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                        $image->generateLowQualityPreview();
                     } catch (\Exception $e) {
                         $this->output->writeln('<error>'.$e->getMessage().'</error>');
                     }

@@ -47,8 +47,14 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
-    protected array $_copyRecursiveIds;
+    /**
+     * @internal
+     */
+    protected array $_copyRecursiveIds = [];
 
+    /**
+     * @internal
+     */
     protected ?Model\User $_user;
 
     /**
@@ -115,10 +121,10 @@ class Service extends Model\Element\Service
         return \array_merge(...$userObjects);
     }
 
-    public function copyRecursive(AbstractObject $target, AbstractObject $source): ?AbstractObject
+    public function copyRecursive(AbstractObject $target, AbstractObject $source, bool $initial = true): ?AbstractObject
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
+        if ($initial) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
@@ -148,7 +154,7 @@ class Service extends Model\Element\Service
         ], true);
 
         foreach ($children as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         $this->updateChildren($target, $new);
@@ -1363,6 +1369,12 @@ class Service extends Model\Element\Service
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
+                // Send information when we have block or similar element
+                if ($layout instanceof \Pimcore\Model\DataObject\ClassDefinition\Data && empty($context['subContainerType'])) {
+                    $context['subContainerKey'] = $layout->getName();
+                    $context['subContainerType'] = $layout->getFieldtype();
+                }
+
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);
                 }
@@ -1770,7 +1782,7 @@ class Service extends Model\Element\Service
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);
             if ($fieldDefinition) {
-                return $fieldDefinition->getForCsvExport($object);
+                return $fieldDefinition->getForCsvExport($object, ['language' => $requestedLanguage]);
             } else {
                 $fieldParts = explode('~', $field);
 
@@ -1820,7 +1832,7 @@ class Service extends Model\Element\Service
                             );
                         }
                     }
-                //key value store - ignore for now
+                    //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];

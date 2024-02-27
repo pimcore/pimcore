@@ -1,5 +1,22 @@
 # Upgrade Notes
 
+## Pimcore 11.2.0
+### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+#### [Data Objects]:
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+
+-----------------
+### General
+#### [Localization]
+- Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
+#### [Navigation]
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+#### [Symfony]
+- Bumped Symfony packages to "^6.4".
+
 ## Pimcore 11.1.0
 ### Elements
 
@@ -174,8 +191,8 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 -  Enabled Content Security Policy by default.
 -  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
-Also, when using API to set WYSIWYG data, please pass encoded characters for html entities <,>, & etc.
-The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 
 -----------------
@@ -502,7 +519,7 @@ pimcore:
 - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
-- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
+- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
 -  Removed the `attributes` field from the link editable.
 -  Deprecated WkHtmlToImage has been removed.
 -  Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)

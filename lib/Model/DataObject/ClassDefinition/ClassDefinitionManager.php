@@ -31,6 +31,8 @@ class ClassDefinitionManager
 
     /**
      * Delete all classes from db
+     *
+     * @return list<array{string, string, string}>
      */
     public function cleanUpDeletedClassDefinitions(): array
     {
@@ -62,6 +64,8 @@ class ClassDefinitionManager
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      *
      * @param bool $force whether to always update no matter if the model definition changed or not
+     *
+     * @return list<array{string, string, string}>
      */
     public function createOrUpdateClassDefinitions(bool $force = false): array
     {
@@ -71,7 +75,6 @@ class ClassDefinitionManager
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
             $files = glob($objectClassesFolder . '/*.php');
-
             foreach ($files as $file) {
                 $class = include $file;
 
