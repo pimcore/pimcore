@@ -27,13 +27,13 @@ $maxExecutionTime = 0;
 @ini_set('max_execution_time', $maxExecutionTime);
 set_time_limit($maxExecutionTime);
 
-if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
+if (file_exists($a = getcwd() . '/vendor/autoload_runtime.php')) {
     require $a;
     $projectRoot = getcwd();
-} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload.php')) {
+} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload_runtime.php')) {
     require $a;
     $projectRoot = __DIR__ . '/../../../..';
-} elseif (file_exists($a = __DIR__ . '/../autoload.php')) {
+} elseif (file_exists($a = __DIR__ . '/../autoload_runtime.php')) {
     require $a;
     $projectRoot = __DIR__ . '/..';
 } else {
@@ -43,16 +43,9 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
 
 define('PIMCORE_PROJECT_ROOT', $projectRoot);
 
-Bootstrap::defineConstants();
+Bootstrap::bootstrap();
 
 Debug::enable();
-
-// Load a startup file if it exists - this is a good place to preconfigure the system
-// before the kernel is loaded - e.g. to set trusted proxies on the request object
-$startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
-if (file_exists($startupFile)) {
-    include_once $startupFile;
-}
 
 $input = new \Symfony\Component\Console\Input\ArgvInput();
 $env = $input->getParameterOption(['--env', '-e'], null, true);

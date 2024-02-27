@@ -145,7 +145,8 @@
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.1",
-    "symfony/dotenv": "^6.4"
+    "symfony/dotenv": "^6.4",
+    "symfony/runtime": "^6.4"
   },
   "suggest": {
     "ext-sockets": "*",
@@ -218,7 +219,8 @@
     },
     "allow-plugins": {
       "eloquent/composer-npm-bridge": false,
-      "php-http/discovery": false
+      "php-http/discovery": false,
+      "symfony/runtime": true
     }
   }
 }

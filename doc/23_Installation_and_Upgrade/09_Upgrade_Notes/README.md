@@ -17,6 +17,11 @@
 #### [Symfony]
 - Bumped Symfony packages to "^6.4".
 
+> [!WARNING]  
+> For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
+> Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
+
+
 ## Pimcore 11.1.0
 ### Elements
 
