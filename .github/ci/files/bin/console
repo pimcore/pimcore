@@ -13,16 +13,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+use Pimcore\Bootstrap;
+use Pimcore\Console\Application;
+
 ob_get_clean();
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . "/../vendor/autoload_runtime.php";
 
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('PIMCORE_CONSOLE', true);
 
-\Pimcore\Bootstrap::setProjectRoot();
-
-/** @var \Pimcore\Kernel $kernel */
-$kernel = \Pimcore\Bootstrap::startupCli();
-$application = new \Pimcore\Console\Application($kernel);
-$application->run();
+return function (array $context) {
+    $kernel = Bootstrap::startupCli();
+    $application = new Application($kernel);
+    $application->run();
+    return $application;
+};
