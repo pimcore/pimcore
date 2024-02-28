@@ -21,6 +21,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
+use function in_array;
 use PDO;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
@@ -54,7 +55,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use function in_array;
 
 /**
  * @internal
@@ -895,17 +895,11 @@ class Installer
         return null !== SettingsStore::get('BUNDLE_INSTALLED__' . $bundle, 'pimcore');
     }
 
-    /**
-     * @return array
-     */
     public function getRunInstallSteps(): array
     {
         return $this->runInstallSteps;
     }
 
-    /**
-     * @param array $runInstallSteps
-     */
     public function setRunInstallSteps(array $runInstallSteps): void
     {
         $this->runInstallSteps = $runInstallSteps;

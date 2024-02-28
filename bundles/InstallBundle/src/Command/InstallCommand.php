@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use function explode;
+use function implode;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
@@ -32,8 +34,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use function explode;
-use function implode;
 
 /**
  * @method Application getApplication()
