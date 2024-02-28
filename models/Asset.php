@@ -174,7 +174,7 @@ class Asset extends Element\AbstractElement
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
 
-            if ($this->customSettingsCanBeCached === false) {
+            if($this->customSettingsCanBeCached === false) {
                 $blockedVars[] = 'customSettings';
             }
         }
@@ -185,7 +185,7 @@ class Asset extends Element\AbstractElement
     public function __sleep(): array
     {
         $blockedVars = parent::__sleep();
-        if (in_array('customSettings', $blockedVars)) {
+        if(in_array('customSettings', $blockedVars)) {
             $this->customSettingsNeedRefresh = true;
         }
 
@@ -291,7 +291,7 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 Cache::save($asset, $cacheKey);
-            } catch (NotFoundException | UnsupportedException $e) {
+            } catch (NotFoundException|UnsupportedException $e) {
                 $asset = null;
             }
         } else {
@@ -410,8 +410,8 @@ class Asset extends Element\AbstractElement
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
-                $diff = sqrt(1 + $imagePixels / $maxPixels);
-
+                $diff = sqrt($imagePixels / $maxPixels);
+                
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
@@ -732,7 +732,7 @@ class Asset extends Element\AbstractElement
 
                 try {
                     $mimeType = $storage->mimeType($path);
-                } catch (UnableToRetrieveMetadata $e) {
+                } catch(UnableToRetrieveMetadata $e) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
@@ -848,8 +848,7 @@ class Asset extends Element\AbstractElement
             if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
-                || $setModificationDate
-            ) {
+                || $setModificationDate) {
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
@@ -1013,10 +1012,8 @@ class Asset extends Element\AbstractElement
             // remove file on filesystem
             if (!$isNested) {
                 $fullPath = $this->getRealFullPath();
-                if ($fullPath != '/..' && !strpos(
-                    $fullPath,
-                    '/../'
-                ) && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                if ($fullPath != '/..' && !strpos($fullPath,
+                    '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
                     $this->deletePhysicalFile();
                 }
             }
@@ -1257,7 +1254,7 @@ class Asset extends Element\AbstractElement
 
     private function refreshCustomSettings(): void
     {
-        if ($this->customSettingsNeedRefresh === true) {
+        if($this->customSettingsNeedRefresh === true) {
             $customSettings = $this->getDao()->getCustomSettings();
             $this->setCustomSettings($customSettings);
             $this->customSettingsNeedRefresh = false;
@@ -1301,7 +1298,7 @@ class Asset extends Element\AbstractElement
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
-            if (strlen($customSettings) > 10e6) {
+            if(strlen($customSettings) > 10e6) {
                 $this->customSettingsCanBeCached = false;
             }
 
@@ -1594,7 +1591,7 @@ class Asset extends Element\AbstractElement
             $this->renewInheritedProperties();
         }
 
-        if (!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
+        if(!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }
 
@@ -1734,7 +1731,7 @@ class Asset extends Element\AbstractElement
     public function clearThumbnail(string $name): void
     {
         try {
-            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . '/' . $this->getId() . '/image-thumb__' . $this->getId() . '__' . $name);
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
             $this->getDao()->deleteFromThumbnailCache($name);
         } catch (Exception $e) {
             // noting to do
