@@ -32,6 +32,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 {
     use Layout\Traits\LabelTrait;
     use DataObject\Traits\ClassSavedTrait;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
