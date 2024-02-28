@@ -21,6 +21,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
+use function in_array;
 use PDO;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
@@ -150,6 +151,16 @@ class Installer
         'install_bundles' => 'Installing bundles ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
+    ];
+
+    private array $runInstallSteps = [
+        'write_database_config',
+        'setup_database',
+        'install_assets',
+        'install_classes',
+        'install_bundles',
+        'mark_migrations_as_done',
+        'clear_cache',
     ];
 
     public function __construct(
@@ -373,33 +384,36 @@ class Installer
     private function runInstall(array $dbConfig, array $userCredentials): array
     {
         $errors = [];
+        $stepsToRun = $this->getRunInstallSteps();
 
-        $this->dispatchStepEvent('create_config_files');
+        if(in_array('write_database_config', $stepsToRun)) {
+            $this->dispatchStepEvent('create_config_files');
 
-        unset($dbConfig['driver']);
-        unset($dbConfig['wrapperClass']);
+            unset($dbConfig['driver']);
+            unset($dbConfig['wrapperClass']);
 
-        if (isset($dbConfig['driverOptions'])) {
-            $dbConfig['options'] = $dbConfig['driverOptions'];
-            unset($dbConfig['driverOptions']);
-        }
+            if (isset($dbConfig['driverOptions'])) {
+                $dbConfig['options'] = $dbConfig['driverOptions'];
+                unset($dbConfig['driverOptions']);
+            }
 
-        $dbConfig['mapping_types'] = [
-            'enum' => 'string',
-            'bit' => 'boolean',
-        ];
+            $dbConfig['mapping_types'] = [
+                'enum' => 'string',
+                'bit' => 'boolean',
+            ];
 
-        $doctrineConfig = [
-            'doctrine' => [
-                'dbal' => [
-                    'connections' => [
-                        'default' => $dbConfig,
+            $doctrineConfig = [
+                'doctrine' => [
+                    'dbal' => [
+                        'connections' => [
+                            'default' => $dbConfig,
+                        ],
                     ],
                 ],
-            ],
-        ];
+            ];
 
-        $this->createConfigFiles($doctrineConfig);
+            $this->createConfigFiles($doctrineConfig);
+        }
 
         $this->dispatchStepEvent('boot_kernel');
 
@@ -416,44 +430,57 @@ class Installer
 
         $kernel = new $kernel($environment, true);
 
-        $this->clearKernelCacheDir($kernel);
+        if(in_array('clear_cache', $stepsToRun)) {
+            $this->clearKernelCacheDir($kernel);
+        }
 
         \Pimcore::setKernel($kernel);
 
         $kernel->boot();
 
-        $this->dispatchStepEvent('setup_database');
+        if(in_array('setup_database', $stepsToRun)) {
+            $this->dispatchStepEvent('setup_database');
 
-        $errors = $this->setupDatabase($userCredentials, $errors);
+            $errors = $this->setupDatabase($userCredentials, $errors);
 
-        if (!$this->skipDatabaseConfig) {
-            // now we're able to write the server version to the database.yaml
-            $db = \Pimcore\Db::get();
-            if ($db instanceof Connection) {
-                $connection = $db->getWrappedConnection();
-                if ($connection instanceof ServerInfoAwareConnection) {
-                    $writer = new ConfigWriter();
-                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                    $writer->writeDbConfig($doctrineConfig);
+            if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
+                // now we're able to write the server version to the database.yaml
+                $db = \Pimcore\Db::get();
+                if ($db instanceof Connection) {
+                    $connection = $db->getWrappedConnection();
+                    if ($connection instanceof ServerInfoAwareConnection) {
+                        $writer = new ConfigWriter();
+                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                        $writer->writeDbConfig($doctrineConfig);
+                    }
                 }
             }
         }
 
-        $this->dispatchStepEvent('install_assets');
-        $this->installAssets($kernel);
+        if(in_array('install_assets', $stepsToRun)) {
+            $this->dispatchStepEvent('install_assets');
+            $this->installAssets($kernel);
+        }
 
-        $this->dispatchStepEvent('install_classes');
-        $this->installClasses();
+        if(in_array('install_classes', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+        }
 
-        if (!empty($this->bundlesToInstall)) {
+        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
 
-        $this->dispatchStepEvent('migrations');
-        $this->markMigrationsAsDone();
+        if(in_array('mark_migrations_as_done', $stepsToRun)) {
+            $this->dispatchStepEvent('migrations');
+            $this->markMigrationsAsDone();
+        }
 
-        $this->clearKernelCacheDir($kernel);
+        if(in_array('clear_cache', $stepsToRun)) {
+            $this->clearKernelCacheDir($kernel);
+        }
+
         $this->dispatchStepEvent('complete');
 
         return $errors;
@@ -866,5 +893,15 @@ class Installer
     private function isBundleInstalled(string $bundle): bool
     {
         return null !== SettingsStore::get('BUNDLE_INSTALLED__' . $bundle, 'pimcore');
+    }
+
+    public function getRunInstallSteps(): array
+    {
+        return $this->runInstallSteps;
+    }
+
+    public function setRunInstallSteps(array $runInstallSteps): void
+    {
+        $this->runInstallSteps = $runInstallSteps;
     }
 }
