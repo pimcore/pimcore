@@ -145,12 +145,15 @@ class SearchController extends UserAwareController
                     || $class->getFieldDefinition($paramConditionObject['property']);
 
                 if (
-                    $definitionExists
-                    && !$class->getFieldDefinitions()['localizedfields']->getFieldDefinition($paramConditionObject['property'])
+                    isset($class->getFieldDefinitions()['localizedfields'])
+                    && $class->getFieldDefinitions()['localizedfields']->getFieldDefinition($paramConditionObject['property'])
                 ) {
-                    $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } else {
                     $localizedFieldsFilters[] = $paramConditionObject;
+                    continue;
+                }
+
+                if ($definitionExists) {
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 
