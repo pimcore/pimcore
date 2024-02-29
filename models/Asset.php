@@ -410,7 +410,7 @@ class Asset extends Element\AbstractElement
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
-                $diff = sqrt(1 + ($maxPixels / $imagePixels));
+                $diff = sqrt(1 + $imagePixels / $maxPixels);
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
