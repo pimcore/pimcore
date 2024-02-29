@@ -459,7 +459,7 @@ CREATE TABLE `users` (
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `language` varchar(10) DEFAULT NULL,
+  `language` varchar(10) DEFAULT 'en',
   `contentLanguages` LONGTEXT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',

@@ -173,7 +173,6 @@ class SystemSettingsConfig
             'general' => [
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
-                'language' => $values['general.language'],
                 'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
                 'default_language' => $values['general.defaultLanguage'],

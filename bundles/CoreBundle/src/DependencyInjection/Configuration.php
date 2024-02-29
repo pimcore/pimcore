@@ -212,6 +212,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('language')
                     ->defaultValue('en')
+                    ->setDeprecated('pimcore/pimcore', '11.2')
                 ->end()
                 ->arrayNode('valid_languages')
                     ->info('String or array format are supported.')
