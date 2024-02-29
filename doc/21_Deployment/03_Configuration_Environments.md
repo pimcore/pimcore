@@ -97,7 +97,9 @@ pimcore:
                 options:
                     directory: '/var/www/html/var/config/select_options'
 ```
-and when the optional bundles are enabled:
+
+and for some specific optional bundles are:
+
 ```yaml
 pimcore_custom_reports:
     config_location:
@@ -112,6 +114,7 @@ pimcore_static_routes:
                 type: 'symfony-config'
        ...
 ```
+
 #### Production environment with `symfony-config`
 When using `symfony-config` write target, configs are written to Symfony Config files (`yaml`), which are only getting revalidated in debug mode. So if you're
 changing configs in production you won't see any update, because these configs are read only.
