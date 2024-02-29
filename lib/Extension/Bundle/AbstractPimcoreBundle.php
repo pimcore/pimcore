@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
+abstract class AbstractPimcoreBundle extends AbstractBundle implements PimcoreBundleInterface
 {
     /**
      * @deprecated
