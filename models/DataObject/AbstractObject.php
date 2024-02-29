@@ -1045,7 +1045,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $offset = $arguments[2] ?? 0;
             $objectTypes = $arguments[3] ?? null;
 
-            $defaultCondition = $propertyName.' = '.Db::get()->quote($value).' ';
+            $defaultCondition = $db->quoteIdentifier($propertyName).' = '.$db->quote($value).' ';
 
             $listConfig = [
                 'condition' => $defaultCondition,
