@@ -13,9 +13,11 @@
 #### [Localization]
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
 #### [Navigation]
-- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`.
 #### [Symfony]
 - Bumped Symfony packages to "^6.4".
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
 
 > [!WARNING]  
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
