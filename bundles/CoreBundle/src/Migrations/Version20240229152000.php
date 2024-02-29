@@ -24,7 +24,7 @@ final class Version20240229152000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add language default value users table';
+        return 'Add language default value on users table';
     }
 
     public function up(Schema $schema): void
