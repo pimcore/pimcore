@@ -129,6 +129,7 @@ class Bootstrap
 
     public static function defineConstants(): void
     {
+        $_SERVER += $_ENV;
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/constants.php';
         if (file_exists($customConstantsFile)) {
