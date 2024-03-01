@@ -59,7 +59,7 @@ final class Version extends AbstractModel
 
     protected bool $serialized = false;
 
-    protected string $stackTrace = '';
+    protected ?string $stackTrace = null;
 
     protected bool $generateStackTrace = true;
 
@@ -522,12 +522,12 @@ final class Version extends AbstractModel
         $this->generateStackTrace = $generateStackTrace;
     }
 
-    public function setStackTrace(string $stackTrace): void
+    public function setStackTrace(?string $stackTrace): void
     {
         $this->stackTrace = $stackTrace;
     }
 
-    public function getStackTrace(): string
+    public function getStackTrace(): ?string
     {
         return $this->stackTrace;
     }
