@@ -37,6 +37,8 @@ pimcore:
             disable_stack_trace: true
 ```
 
+Pimcore has a maintenance job (VersionsCleanupStackTraceDbTask) to cleanup stack trace for versions older than 7 days.
+
 ## Version storage
 
 For every version the metadata and, if present, binary data is stored. Since the amount of information can turn out to
