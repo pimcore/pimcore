@@ -129,9 +129,9 @@ abstract class Adapter
         return $this;
     }
 
-    public function cover(int $width, int $height, array|string $orientation = 'center', bool $forceResize = false): static
+    public function cover(int $width, int $height, array|string|null $orientation = 'center', bool $forceResize = false): static
     {
-        if (empty($orientation)) {
+        if (!$orientation) {
             $orientation = 'center'; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
         }
         $ratio = $this->getWidth() / $this->getHeight();
