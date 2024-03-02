@@ -119,11 +119,9 @@ class Authentication
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
-        $timestamp = null;
-
         try {
             [$timestamp, $user] = self::tokenDecrypt($token);
-        } catch (CryptoException $e) {
+        } catch (CryptoException|NotFoundException) {
             return null;
         }
 
