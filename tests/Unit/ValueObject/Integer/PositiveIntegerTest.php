@@ -42,4 +42,14 @@ final class PositiveIntegerTest extends TestCase
 
         $this->assertSame($value, $positiveInteger->getValue());
     }
+
+    public function testEquals(): void
+    {
+        $positiveInteger = new PositiveInteger(1);
+        $positiveInteger2 = new PositiveInteger(1);
+        $positiveInteger3 = new PositiveInteger(2);
+
+        $this->assertTrue($positiveInteger->equals($positiveInteger2));
+        $this->assertFalse($positiveInteger->equals($positiveInteger3));
+    }
 }

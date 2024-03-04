@@ -47,4 +47,9 @@ final class PositiveInteger
     {
         return $this->value;
     }
+
+    public function  equals(PositiveInteger $positiveInteger): bool
+    {
+        return $this->value === $positiveInteger->getValue();
+    }
 }

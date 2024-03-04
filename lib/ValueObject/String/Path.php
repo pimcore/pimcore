@@ -45,4 +45,9 @@ final class Path
     {
         return $this->path;
     }
+
+    public function equals(Path $path): bool
+    {
+        return $this->path === $path->getValue();
+    }
 }

@@ -49,4 +49,14 @@ final class PathTest extends TestCase
 
         $this->assertSame($value, $path->getValue());
     }
+
+    public function testEquals(): void
+    {
+        $path = new Path('/path');
+        $path2 = new Path('/path');
+        $path3 = new Path('/path2');
+
+        $this->assertTrue($path->equals($path2));
+        $this->assertFalse($path->equals($path3));
+    }
 }
