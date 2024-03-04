@@ -16,33 +16,35 @@ declare(strict_types = 1);
  */
 
 
-namespace Pimcore\ValueObject;
+namespace Pimcore\ValueObject\Integer;
 
 use Pimcore\Exception\InvalidValueObjectException;
 
-final class Path
+final class PositiveInteger
 {
+
     /**
      * @throws InvalidValueObjectException
      */
-    public function __construct(private readonly string $path)
+    public function __construct(private readonly int $value)
     {
         $this->validate();
     }
 
     private function validate(): void
     {
-        if (!str_starts_with($this->path, '/')) {
-            throw new InvalidValueObjectException('Path must start with a slash.');
-        }
-
-        if (str_contains($this->path, '//')) {
-            throw new InvalidValueObjectException('Path must not contain consecutive slashes.');
+        if ($this->value < 0) {
+            throw new InvalidValueObjectException(
+                sprintf(
+                    'Provided integer must be positive. (%s given)',
+                    $this->value
+                ),
+            );
         }
     }
 
-    public function getValue(): string
+    public function getValue(): int
     {
-        return $this->path;
+        return $this->value;
     }
 }

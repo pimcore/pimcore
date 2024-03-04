@@ -15,39 +15,31 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+namespace Pimcore\Tests\Unit\ValueObject\Collections;
 
-namespace Pimcore\Tests\Unit\ValueObject;
 
 use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\ValueObject\PositiveIntegerArray;
+use Pimcore\ValueObject\Collections\ArrayOfIntegers;
 
 /**
  * @internal
  */
-final class PositiveIntegerArrayTest extends TestCase
+final class ArrayOfIntegersTest extends TestCase
 {
-    public function testItShouldThrowExceptionWhenProvidedIntegerArrayIsNotPositive(): void
-    {
-        $this->expectException(InvalidValueObjectException::class);
-        $this->expectExceptionMessage('Provided integer must be positive. (-1 given)');
-
-        new PositiveIntegerArray([-1]);
-    }
-
     public function testItShouldThrowExceptionWhenProvidedArrayContainsNonIntegerValues(): void
     {
         $this->expectException(InvalidValueObjectException::class);
         $this->expectExceptionMessage('Provided array must contain only integer values. (string given)');
 
-        new PositiveIntegerArray([1, 2, '3']);
+        new ArrayOfIntegers([1, 2, '3']);
     }
 
     public function testItShouldReturnValues(): void
     {
         $values = [1, 2, 3];
-        $positiveIntegerArray = new PositiveIntegerArray($values);
+        $integerArray = new ArrayOfIntegers($values);
 
-        $this->assertSame($values, $positiveIntegerArray->getValue());
+        $this->assertSame($values, $integerArray->getValue());
     }
 }

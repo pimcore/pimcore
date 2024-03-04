@@ -15,30 +15,30 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\ValueObject;
+namespace Pimcore\Tests\Unit\ValueObject\Collections;
 
 use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\ValueObject\BooleanArray;
+use Pimcore\ValueObject\Collections\ArrayOfBoolean;
 
 /**
  * @internal
  */
-final class BooleanArrayTest extends TestCase
+final class ArrayOfBooleanTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedArrayContainsNonBooleanValues(): void
     {
         $this->expectException(InvalidValueObjectException::class);
         $this->expectExceptionMessage('Provided array must contain only boolean values. (integer given)');
 
-        new BooleanArray([true, false, 1]);
+        new ArrayOfBoolean([true, false, 1]);
     }
 
 
     public function testItShouldReturnValues(): void
     {
         $values = [true, false, true];
-        $booleanArray = new BooleanArray($values);
+        $booleanArray = new ArrayOfBoolean($values);
 
         $this->assertSame($values, $booleanArray->getValue());
     }

@@ -16,34 +16,39 @@ declare(strict_types = 1);
  */
 
 
-namespace Pimcore\ValueObject;
+namespace Pimcore\ValueObject\Collections;
 
 use Pimcore\Exception\InvalidValueObjectException;
 
-final class PositiveInteger
+final class ArrayOfIntegers
 {
 
     /**
      * @throws InvalidValueObjectException
      */
-    public function __construct(private readonly int $value)
+    public function __construct(private readonly array $value)
     {
         $this->validate();
     }
 
     private function validate(): void
     {
-        if ($this->value < 0) {
-            throw new InvalidValueObjectException(
-                sprintf(
-                    'Provided integer must be positive. (%s given)',
-                    $this->value
-                ),
-            );
+        foreach ($this->value as $value) {
+            if (!is_int($value)) {
+                throw new InvalidValueObjectException(
+                    sprintf(
+                        'Provided array must contain only integer values. (%s given)',
+                        gettype($value)
+                    ),
+                );
+            }
         }
     }
 
-    public function getValue(): int
+    /**
+     * @return int[]
+     */
+    public function getValue(): array
     {
         return $this->value;
     }

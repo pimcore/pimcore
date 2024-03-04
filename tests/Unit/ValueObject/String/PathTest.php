@@ -15,11 +15,11 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\ValueObject;
+namespace Pimcore\Tests\Unit\ValueObject\String;
 
 use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\ValueObject\Path;
+use Pimcore\ValueObject\String\Path;
 
 /**
  * @internal

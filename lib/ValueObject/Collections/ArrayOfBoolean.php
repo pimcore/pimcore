@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -11,21 +11,18 @@ declare(strict_types = 1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 
-namespace Pimcore\ValueObject;
+namespace Pimcore\ValueObject\Collections;
 
 use Pimcore\Exception\InvalidValueObjectException;
 
-final class PositiveIntegerArray
+final class ArrayOfBoolean
 {
 
-    /**
-     * @throws InvalidValueObjectException
-     */
     public function __construct(private readonly array $value)
     {
         $this->validate();
@@ -34,20 +31,11 @@ final class PositiveIntegerArray
     private function validate(): void
     {
         foreach ($this->value as $value) {
-            if (!is_int($value)) {
+            if (!is_bool($value)) {
                 throw new InvalidValueObjectException(
                     sprintf(
-                        'Provided array must contain only integer values. (%s given)',
+                        'Provided array must contain only boolean values. (%s given)',
                         gettype($value)
-                    ),
-                );
-            }
-
-            if ($value < 0) {
-                throw new InvalidValueObjectException(
-                    sprintf(
-                        'Provided integer must be positive. (%s given)',
-                        $value
                     ),
                 );
             }
@@ -55,7 +43,7 @@ final class PositiveIntegerArray
     }
 
     /**
-     * @return int[]
+     * @return bool[]
      */
     public function getValue(): array
     {

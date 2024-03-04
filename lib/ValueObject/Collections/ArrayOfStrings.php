@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 
 
-namespace Pimcore\ValueObject;
+namespace Pimcore\ValueObject\Collections;
 
 use Pimcore\Exception\InvalidValueObjectException;
 
-final class StringArray
+final class ArrayOfStrings
 {
 
     /**

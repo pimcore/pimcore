@@ -16,40 +16,33 @@ declare(strict_types = 1);
  */
 
 
-namespace Pimcore\ValueObject;
+namespace Pimcore\ValueObject\String;
 
 use Pimcore\Exception\InvalidValueObjectException;
 
-final class IntegerArray
+final class Path
 {
-
     /**
      * @throws InvalidValueObjectException
      */
-    public function __construct(private readonly array $value)
+    public function __construct(private readonly string $path)
     {
         $this->validate();
     }
 
     private function validate(): void
     {
-        foreach ($this->value as $value) {
-            if (!is_int($value)) {
-                throw new InvalidValueObjectException(
-                    sprintf(
-                        'Provided array must contain only integer values. (%s given)',
-                        gettype($value)
-                    ),
-                );
-            }
+        if (!str_starts_with($this->path, '/')) {
+            throw new InvalidValueObjectException('Path must start with a slash.');
+        }
+
+        if (str_contains($this->path, '//')) {
+            throw new InvalidValueObjectException('Path must not contain consecutive slashes.');
         }
     }
 
-    /**
-     * @return int[]
-     */
-    public function getValue(): array
+    public function getValue(): string
     {
-        return $this->value;
+        return $this->path;
     }
 }
