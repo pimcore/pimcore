@@ -15,10 +15,10 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\ValueObject\Collections;
+namespace Pimcore\Tests\Unit\ValueObject\Collection;
 
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\ValueObject\Collections\ArrayOfStrings;
+use Pimcore\ValueObject\Collection\ArrayOfStrings;
 use ValueError;
 
 /**

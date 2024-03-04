@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 
 
-namespace Pimcore\ValueObject\Collections;
+namespace Pimcore\ValueObject\Collection;
 
 use ValueError;
 

@@ -15,31 +15,31 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\ValueObject\Collections;
+namespace Pimcore\Tests\Unit\ValueObject\Collection;
+
 
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\ValueObject\Collections\ArrayOfBoolean;
+use Pimcore\ValueObject\Collection\ArrayOfIntegers;
 use ValueError;
 
 /**
  * @internal
  */
-final class ArrayOfBooleanTest extends TestCase
+final class ArrayOfIntegersTest extends TestCase
 {
-    public function testItShouldThrowExceptionWhenProvidedArrayContainsNonBooleanValues(): void
+    public function testItShouldThrowExceptionWhenProvidedArrayContainsNonIntegerValues(): void
     {
         $this->expectException(ValueError::class);
-        $this->expectExceptionMessage('Provided array must contain only boolean values. (integer given)');
+        $this->expectExceptionMessage('Provided array must contain only integer values. (string given)');
 
-        new ArrayOfBoolean([true, false, 1]);
+        new ArrayOfIntegers([1, 2, '3']);
     }
-
 
     public function testItShouldReturnValues(): void
     {
-        $values = [true, false, true];
-        $booleanArray = new ArrayOfBoolean($values);
+        $values = [1, 2, 3];
+        $integerArray = new ArrayOfIntegers($values);
 
-        $this->assertSame($values, $booleanArray->getValue());
+        $this->assertSame($values, $integerArray->getValue());
     }
 }
