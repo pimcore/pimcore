@@ -311,12 +311,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
-                        if (isset($items[$oIndex])) {
-                            if (isset($items[$oIndex][$elementName])) {
-                                $item = $items[$oIndex][$elementName];
-                                $blockData = $blockElement[$elementName] ?? $item->getData();
-                                $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
-                            }
+                        if (isset($items[$oIndex][$elementName])) {
+                            $item = $items[$oIndex][$elementName];
+                            $blockData = $blockElement[$elementName] ?? $item->getData();
+                            $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
                         $params['blockGetter'] = $blockGetter;
