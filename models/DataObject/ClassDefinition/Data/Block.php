@@ -315,10 +315,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             if (isset($items[$oIndex][$elementName])) {
                                 $item = $items[$oIndex][$elementName];
                                 $blockData = $blockElement[$elementName] ?? $item->getData();
-                            } else {
-                                $blockData = $fd->getDefaultValue();
+                                $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                             }
-                            $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
                         $params['blockGetter'] = $blockGetter;
