@@ -455,7 +455,7 @@ class Installer
                         $writer = new ConfigWriter();
                         $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
                         $writer->writeDbConfig($doctrineConfig);
-}
+                    }
                 }
             }
         }

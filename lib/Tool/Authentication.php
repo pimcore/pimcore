@@ -198,7 +198,7 @@ class Authentication
             // default config in case kernel is not booted yet (e.g. in installer)
             $config = [
                 'algorithm' => PASSWORD_DEFAULT,
-                'options' => []
+                'options' => [],
             ];
         }
 
