@@ -17,9 +17,9 @@ declare(strict_types = 1);
 
 namespace Pimcore\Tests\Unit\ValueObject\Collections;
 
-use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\Collections\ArrayOfBoolean;
+use ValueError;
 
 /**
  * @internal
@@ -28,7 +28,7 @@ final class ArrayOfBooleanTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedArrayContainsNonBooleanValues(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Provided array must contain only boolean values. (integer given)');
 
         new ArrayOfBoolean([true, false, 1]);

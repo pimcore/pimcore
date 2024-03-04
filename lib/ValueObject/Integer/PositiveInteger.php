@@ -18,13 +18,13 @@ declare(strict_types = 1);
 
 namespace Pimcore\ValueObject\Integer;
 
-use Pimcore\Exception\InvalidValueObjectException;
+use ValueError;
 
 final class PositiveInteger
 {
 
     /**
-     * @throws InvalidValueObjectException
+     * @throws ValueError
      */
     public function __construct(private readonly int $value)
     {
@@ -34,7 +34,7 @@ final class PositiveInteger
     private function validate(): void
     {
         if ($this->value < 0) {
-            throw new InvalidValueObjectException(
+            throw new ValueError(
                 sprintf(
                     'Provided integer must be positive. (%s given)',
                     $this->value

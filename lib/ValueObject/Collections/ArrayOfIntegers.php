@@ -18,13 +18,13 @@ declare(strict_types = 1);
 
 namespace Pimcore\ValueObject\Collections;
 
-use Pimcore\Exception\InvalidValueObjectException;
+use ValueError;
 
 final class ArrayOfIntegers
 {
 
     /**
-     * @throws InvalidValueObjectException
+     * @throws ValueError
      */
     public function __construct(private readonly array $value)
     {
@@ -35,7 +35,7 @@ final class ArrayOfIntegers
     {
         foreach ($this->value as $value) {
             if (!is_int($value)) {
-                throw new InvalidValueObjectException(
+                throw new ValueError(
                     sprintf(
                         'Provided array must contain only integer values. (%s given)',
                         gettype($value)

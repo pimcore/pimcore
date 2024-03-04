@@ -18,9 +18,9 @@ declare(strict_types = 1);
 namespace Pimcore\Tests\Unit\ValueObject\Collections;
 
 
-use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\Collections\ArrayOfIntegers;
+use ValueError;
 
 /**
  * @internal
@@ -29,7 +29,7 @@ final class ArrayOfIntegersTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedArrayContainsNonIntegerValues(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Provided array must contain only integer values. (string given)');
 
         new ArrayOfIntegers([1, 2, '3']);

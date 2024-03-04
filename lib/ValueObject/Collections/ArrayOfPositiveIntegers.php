@@ -18,13 +18,13 @@ declare(strict_types = 1);
 
 namespace Pimcore\ValueObject\Collections;
 
-use Pimcore\Exception\InvalidValueObjectException;
+use ValueError;
 
 final class ArrayOfPositiveIntegers
 {
 
     /**
-     * @throws InvalidValueObjectException
+     * @throws ValueError
      */
     public function __construct(private readonly array $value)
     {
@@ -35,7 +35,7 @@ final class ArrayOfPositiveIntegers
     {
         foreach ($this->value as $value) {
             if (!is_int($value)) {
-                throw new InvalidValueObjectException(
+                throw new ValueError(
                     sprintf(
                         'Provided array must contain only integer values. (%s given)',
                         gettype($value)
@@ -44,7 +44,7 @@ final class ArrayOfPositiveIntegers
             }
 
             if ($value < 0) {
-                throw new InvalidValueObjectException(
+                throw new ValueError(
                     sprintf(
                         'Provided integer must be positive. (%s given)',
                         $value

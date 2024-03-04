@@ -18,12 +18,12 @@ declare(strict_types = 1);
 
 namespace Pimcore\ValueObject\String;
 
-use Pimcore\Exception\InvalidValueObjectException;
+use ValueError;
 
 final class Path
 {
     /**
-     * @throws InvalidValueObjectException
+     * @throws ValueError
      */
     public function __construct(private readonly string $path)
     {
@@ -33,11 +33,11 @@ final class Path
     private function validate(): void
     {
         if (!str_starts_with($this->path, '/')) {
-            throw new InvalidValueObjectException('Path must start with a slash.');
+            throw new ValueError('Path must start with a slash.');
         }
 
         if (str_contains($this->path, '//')) {
-            throw new InvalidValueObjectException('Path must not contain consecutive slashes.');
+            throw new ValueError('Path must not contain consecutive slashes.');
         }
     }
 

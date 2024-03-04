@@ -17,9 +17,9 @@ declare(strict_types = 1);
 
 namespace Pimcore\Tests\Unit\ValueObject\Collections;
 
-use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\Collections\ArrayOfStrings;
+use ValueError;
 
 /**
  * @internal
@@ -28,7 +28,7 @@ final class ArrayOfStringsTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedArrayContainsNonStringValues(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Provided array must contain only string values. (integer given)');
 
         new ArrayOfStrings(['1', '2', 3]);

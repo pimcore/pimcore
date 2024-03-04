@@ -18,11 +18,14 @@ declare(strict_types=1);
 
 namespace Pimcore\ValueObject\Collections;
 
-use Pimcore\Exception\InvalidValueObjectException;
+use ValueError;
 
 final class ArrayOfBoolean
 {
 
+    /**
+     * @throws ValueError
+     */
     public function __construct(private readonly array $value)
     {
         $this->validate();
@@ -32,7 +35,7 @@ final class ArrayOfBoolean
     {
         foreach ($this->value as $value) {
             if (!is_bool($value)) {
-                throw new InvalidValueObjectException(
+                throw new ValueError(
                     sprintf(
                         'Provided array must contain only boolean values. (%s given)',
                         gettype($value)

@@ -17,9 +17,9 @@ declare(strict_types = 1);
 
 namespace Pimcore\Tests\Unit\ValueObject\String;
 
-use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\String\Path;
+use ValueError;
 
 /**
  * @internal
@@ -28,7 +28,7 @@ final class PathTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedPathDoesNotStartWithSlash(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Path must start with a slash.');
 
         new Path('path');
@@ -36,7 +36,7 @@ final class PathTest extends TestCase
 
     public function testItShouldThrowExceptionWhenProvidedPathContainsConsecutiveSlashes(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Path must not contain consecutive slashes.');
 
         new Path('/path//path');

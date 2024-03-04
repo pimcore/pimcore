@@ -18,9 +18,9 @@ declare(strict_types = 1);
 
 namespace Pimcore\Tests\Unit\ValueObject\Integer;
 
-use Pimcore\Exception\InvalidValueObjectException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\Integer\PositiveInteger;
+use ValueError;
 
 /**
  * @internal
@@ -29,7 +29,7 @@ final class PositiveIntegerTest extends TestCase
 {
     public function testItShouldThrowExceptionWhenProvidedIntegerIsNotPositive(): void
     {
-        $this->expectException(InvalidValueObjectException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Provided integer must be positive. (-1 given)');
 
         new PositiveInteger(-1);
