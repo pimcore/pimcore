@@ -42,4 +42,17 @@ final class ArrayOfBooleanTest extends TestCase
 
         $this->assertSame($values, $booleanArray->getValue());
     }
+
+    public function testItShouldBeValidatedAfterUnSerialization(): void
+    {
+        $stringArray = new ArrayOfBoolean([true, false]);
+        $serialized = serialize($stringArray);
+
+        $serialized =  str_replace('i:42', 's:2:"42"', $serialized);
+        $serialized = str_replace('b:1', 's:4:"true"', $serialized);
+
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage('Provided array must contain only boolean values. (string given)');
+        unserialize($serialized);
+    }
 }

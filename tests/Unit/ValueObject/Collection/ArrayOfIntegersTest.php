@@ -42,4 +42,16 @@ final class ArrayOfIntegersTest extends TestCase
 
         $this->assertSame($values, $integerArray->getValue());
     }
+
+    public function testItShouldBeValidatedAfterUnSerialization(): void
+    {
+        $stringArray = new ArrayOfIntegers([1, 2, 42]);
+        $serialized = serialize($stringArray);
+
+        $serialized =  str_replace('i:42', 's:2:"42"', $serialized);
+
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage('Provided array must contain only integer values. (string given)');
+        unserialize($serialized);
+    }
 }

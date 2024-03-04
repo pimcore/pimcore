@@ -31,6 +31,14 @@ final class ArrayOfIntegers
         $this->validate();
     }
 
+    /**
+     * @throws ValueError
+     */
+    public function __wakeup(): void
+    {
+        $this->validate();
+    }
+
     private function validate(): void
     {
         foreach ($this->value as $value) {

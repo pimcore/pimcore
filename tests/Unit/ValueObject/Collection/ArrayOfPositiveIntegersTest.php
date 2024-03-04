@@ -50,4 +50,16 @@ final class ArrayOfPositiveIntegersTest extends TestCase
 
         $this->assertSame($values, $positiveIntegerArray->getValue());
     }
+
+    public function testItShouldBeValidatedAfterUnSerialization(): void
+    {
+        $array = new ArrayOfPositiveIntegers([1, 2, 42]);
+        $serialized = serialize($array);
+
+        $serialized =  str_replace("42", '-42', $serialized);
+
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage('Provided integer must be positive. (-42 given)');
+        unserialize($serialized);
+    }
 }

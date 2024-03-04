@@ -30,6 +30,14 @@ final class Path
         $this->validate();
     }
 
+    /**
+     * @throws ValueError
+     */
+    public function __wakeup(): void
+    {
+        $this->validate();
+    }
+
     private function validate(): void
     {
         if (!str_starts_with($this->path, '/')) {

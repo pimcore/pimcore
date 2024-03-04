@@ -59,4 +59,17 @@ final class PathTest extends TestCase
         $this->assertTrue($path->equals($path2));
         $this->assertFalse($path->equals($path3));
     }
+
+    public function testItShouldBeValidatedAfterUnSerialization(): void
+    {
+        $path = new Path('/mypath');
+        $serialized = serialize($path);
+
+        $serialized = str_replace("/mypath", "!mypath", $serialized);
+
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage('Path must start with a slash.');
+
+        unserialize($serialized);
+    }
 }

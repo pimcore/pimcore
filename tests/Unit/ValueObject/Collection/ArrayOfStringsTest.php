@@ -41,4 +41,16 @@ final class ArrayOfStringsTest extends TestCase
 
         $this->assertSame($values, $stringArray->getValue());
     }
+
+    public function testItShouldBeValidatedAfterUnSerialization(): void
+    {
+        $stringArray = new ArrayOfStrings(['1', '2', '42']);
+        $serialized = serialize($stringArray);
+
+        $serialized =  str_replace('s:2:"42"', 'i:42', $serialized);
+
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage('Provided array must contain only string values. (integer given)');
+        unserialize($serialized);
+    }
 }

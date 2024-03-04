@@ -31,6 +31,14 @@ final class PositiveInteger
         $this->validate();
     }
 
+    /**
+     * @throws ValueError
+     */
+    public function __wakeup(): void
+    {
+        $this->validate();
+    }
+
     private function validate(): void
     {
         if ($this->value < 0) {
