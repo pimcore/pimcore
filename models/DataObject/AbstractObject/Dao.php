@@ -245,9 +245,12 @@ class Dao extends Model\Element\Dao
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if ($id !== null) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('object');
                 $property->setDataFromResource($propertyRaw['data']);
