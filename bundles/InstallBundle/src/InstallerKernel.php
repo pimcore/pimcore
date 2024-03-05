@@ -56,6 +56,11 @@ class InstallerKernel extends Kernel
         return $this->projectRoot . '/var/installer/cache';
     }
 
+    public function getBuildDir(): string
+    {
+        return $this->projectRoot . '/var/installer/build';
+    }
+
     public function registerBundles(): array
     {
         $bundles = [
