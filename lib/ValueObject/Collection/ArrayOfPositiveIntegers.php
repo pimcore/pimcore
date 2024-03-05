@@ -49,7 +49,7 @@ final class ArrayOfPositiveIntegers
                 );
             }
 
-            if ($value < 0) {
+            if ($value <= 0) {
                 throw new ValueError(
                     sprintf(
                         'Provided integer must be positive. (%s given)',
