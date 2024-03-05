@@ -34,7 +34,6 @@ final class ArrayOfBooleanTest extends TestCase
         new ArrayOfBoolean([true, false, 1]);
     }
 
-
     public function testItShouldReturnValues(): void
     {
         $values = [true, false, true];

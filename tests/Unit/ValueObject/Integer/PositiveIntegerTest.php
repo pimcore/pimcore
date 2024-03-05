@@ -15,7 +15,6 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 namespace Pimcore\Tests\Unit\ValueObject\Integer;
 
 use Pimcore\Tests\Support\Test\TestCase;
@@ -58,7 +57,7 @@ final class PositiveIntegerTest extends TestCase
         $positiveInteger = new PositiveInteger(42);
         $serialized = serialize($positiveInteger);
 
-        $serialized = str_replace("42", "-42", $serialized);
+        $serialized = str_replace('42', '-42', $serialized);
 
         $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Provided integer must be positive. (-42 given)');

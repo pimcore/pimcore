@@ -65,7 +65,7 @@ final class PathTest extends TestCase
         $path = new Path('/mypath');
         $serialized = serialize($path);
 
-        $serialized = str_replace("/mypath", "!mypath", $serialized);
+        $serialized = str_replace('/mypath', '!mypath', $serialized);
 
         $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Path must start with a slash.');

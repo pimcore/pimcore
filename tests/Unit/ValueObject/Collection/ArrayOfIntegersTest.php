@@ -17,7 +17,6 @@ declare(strict_types = 1);
 
 namespace Pimcore\Tests\Unit\ValueObject\Collection;
 
-
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\ValueObject\Collection\ArrayOfIntegers;
 use ValueError;

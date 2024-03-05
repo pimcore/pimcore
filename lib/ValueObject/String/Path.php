@@ -15,7 +15,6 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 namespace Pimcore\ValueObject\String;
 
 use ValueError;

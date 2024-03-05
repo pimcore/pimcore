@@ -15,14 +15,12 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 namespace Pimcore\ValueObject\Integer;
 
 use ValueError;
 
 final class PositiveInteger
 {
-
     /**
      * @throws ValueError
      */
@@ -56,7 +54,7 @@ final class PositiveInteger
         return $this->value;
     }
 
-    public function  equals(PositiveInteger $positiveInteger): bool
+    public function equals(PositiveInteger $positiveInteger): bool
     {
         return $this->value === $positiveInteger->getValue();
     }
