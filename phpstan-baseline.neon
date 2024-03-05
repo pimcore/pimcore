@@ -953,3 +953,7 @@ parameters:
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: models/WebsiteSetting/Listing/Dao.php
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: lib/Image/Chromium.php
