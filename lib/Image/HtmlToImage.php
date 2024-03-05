@@ -125,12 +125,12 @@ class HtmlToImage
             /** @var GotenbergAPI|object $request */
             $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
             if(method_exists($request, 'screenshot')) {
-                $request->screenshot()
+                $urlResponse = $request->screenshot()
                     ->png()
                     ->extraHttpHeaders($extraHeaders)
                     ->url($url);
 
-                $file = GotenbergAPI::save($request, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+                $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
                 return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
             }
 
