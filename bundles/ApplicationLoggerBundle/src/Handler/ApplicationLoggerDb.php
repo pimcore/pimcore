@@ -42,7 +42,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'pid' => getmypid(),
             'priority' => $record->level->toPsrLogLevel(),
             'message' => $record->message,
-            'timestamp' => $record->datetime->format('Y-m-d H:i:s'),
+            'timestamp' => $record->datetime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
             'component' => $record->context['component'] ?? $record->channel,
             'fileobject' => $record->context['fileObject'] ?? null,
             'relatedobject' => $record->context['relatedObject'] ?? null,
