@@ -696,7 +696,7 @@ class Installer
 
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
-                    $this->insertDatabaseContents();
+                    $this->insertDatabaseContents($db);
                     $this->createOrUpdateUser($db, $userCredentials);
                 } else {
                     foreach ($dataFiles as $dbFile) {
@@ -787,9 +787,8 @@ class Installer
         }
     }
 
-    protected function insertDatabaseContents(): void
+    protected function insertDatabaseContents(Connection $db): void
     {
-        $db = \Pimcore\Db::get();
         $db->insert('assets', Helper::quoteDataIdentifiers($db, [
             'id' => 1,
             'parentId' => 0,
