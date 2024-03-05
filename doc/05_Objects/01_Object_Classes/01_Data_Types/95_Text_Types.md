@@ -41,7 +41,7 @@ These rules will detect the following hashes:
  - SHA-512, BLAKE-512, SWIFFT
 
 
-We recommend using `password_hash` as algorithm.
+We recommend using `password_hash` as algorithm, any other algorithm is deprecated since Pimcore 11.2 and will be removed in Pimcore 12.
  
 
 ![Password Configuration](../../../img/classes-datatypes-text4.jpg)

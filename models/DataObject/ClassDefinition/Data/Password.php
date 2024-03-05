@@ -65,6 +65,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setAlgorithm(string $algorithm): void
     {
+        if($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+        }
+
         $this->algorithm = $algorithm;
     }
 
@@ -163,6 +171,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+
             if (!empty($this->salt)) {
                 $data = match ($this->saltlocation) {
                     'back' => $data . $this->salt,
@@ -212,6 +227,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
                 }
             }
         } else {
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+
             $hash = $this->calculateHash($password);
             $result = hash_equals($objectHash, $hash);
         }

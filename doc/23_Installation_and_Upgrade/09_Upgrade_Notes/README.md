@@ -7,7 +7,7 @@
 - Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
-
+- All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
 -----------------
 ### General
 #### [Localization]
