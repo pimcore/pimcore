@@ -39,7 +39,7 @@ final class PositiveInteger
 
     private function validate(): void
     {
-        if ($this->value < 0) {
+        if ($this->value <= 0) {
             throw new ValueError(
                 sprintf(
                     'Provided integer must be positive. (%s given)',
