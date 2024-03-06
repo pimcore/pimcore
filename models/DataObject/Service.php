@@ -1640,7 +1640,10 @@ class Service extends Model\Element\Service
         return $fieldName;
     }
 
-    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
+    /**
+     * @internal
+     */
+    public static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
     {
         if (!$parent = self::hasInheritableParentObject($object)) {
             return [];
