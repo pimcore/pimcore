@@ -217,7 +217,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
-                    $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
+                    $columnData = GridData\DataObject::getData($object, $gridFields, null, ['purpose' => 'editmode']);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
 

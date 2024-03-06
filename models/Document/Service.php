@@ -269,27 +269,6 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function gridDocumentData(Document $document): array
-    {
-        $data = Element\Service::gridElementData($document);
-
-        if ($document instanceof Document\Page) {
-            $data['title'] = $document->getTitle();
-            $data['description'] = $document->getDescription();
-        } else {
-            $data['title'] = '';
-            $data['description'] = '';
-            $data['name'] = '';
-        }
-
-        return $data;
-    }
-
-    /**
-     *
-     *
-     * @internal
-     */
     public static function loadAllDocumentFields(Document $doc): Document
     {
         $doc->getProperties();
