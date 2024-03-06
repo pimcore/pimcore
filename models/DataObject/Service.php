@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\ConfigElementInterface;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use Pimcore\Cache\RuntimeCache;
@@ -295,7 +296,7 @@ class Service extends Model\Element\Service
      */
     public static function gridObjectData(AbstractObject $object, array $fields = null, string $requestedLanguage = null, array $params = []): array
     {
-       return \Pimcore\Bundle\AdminBundle\Service\GridData\DataObject::getData($object, $fields, $requestedLanguage, $params);
+       return GridData\DataObject::getData($object, $fields, $requestedLanguage, $params);
     }
 
     /**
@@ -1404,7 +1405,7 @@ class Service extends Model\Element\Service
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
 
-        $helperDefinitions = static::getHelperDefinitions();
+        $helperDefinitions = GridData\DataObject::getHelperDefinitions();
 
         foreach ($list->getObjects() as $object) {
             if ($fields) {
@@ -1638,25 +1639,6 @@ class Service extends Model\Element\Service
         }
 
         return $fieldName;
-    }
-
-    /**
-     * @internal
-     */
-    public static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
-    {
-        if (!$parent = self::hasInheritableParentObject($object)) {
-            return [];
-        }
-
-        if ($inheritedValue = self::getStoreValueForObject($parent, $key, $requestedLanguage)) {
-            return [
-                'parent' => $parent,
-                'value' => $inheritedValue,
-            ];
-        }
-
-        return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 
     public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed
