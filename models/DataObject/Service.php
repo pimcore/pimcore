@@ -374,6 +374,20 @@ class Service extends Model\Element\Service
         });
     }
 
+     /**
+     * @deprecated Since 11.2, this method got moved to admin-ui-classic-bundle v1.4
+     */
+    public static function getHelperDefinitions(): array
+    {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.2.0',
+            sprintf('The "%s" method is deprecated here and moved to admin-ui-classc-bundle, use "%s" instead.', __METHOD__, 'Pimcore\Bundle\AdminBundle\Service\GridData::getHelperDefinitions()')
+        );
+        
+        return GridData\DataObject::getHelperDefinitions();
+    }
+
     public static function getLanguagePermissions(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|AbstractObject $object, Model\User $user, string $type): ?array
     {
         $languageAllowed = null;
