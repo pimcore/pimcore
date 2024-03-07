@@ -446,7 +446,7 @@ class Installer
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
-        
+
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
