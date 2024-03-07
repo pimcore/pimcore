@@ -442,13 +442,13 @@ class Installer
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
 
-        $this->dispatchStepEvent('install_classes');
-        $this->installClasses();
-
         if (!empty($this->bundlesToInstall)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
+
+        $this->dispatchStepEvent('install_classes');
+        $this->installClasses();
 
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
