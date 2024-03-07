@@ -606,32 +606,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
-     *
-     */
-    public static function gridElementData(ElementInterface $element): array
-    {
-        $data = [
-            'id' => $element->getId(),
-            'fullpath' => $element->getRealFullPath(),
-            'type' => self::getElementType($element),
-            'subtype' => $element->getType(),
-            'filename' => $element->getKey(),
-            'creationDate' => $element->getCreationDate(),
-            'modificationDate' => $element->getModificationDate(),
-        ];
-
-        if (method_exists($element, 'isPublished')) {
-            $data['published'] = $element->isPublished();
-        } else {
-            $data['published'] = true;
-        }
-
-        return $data;
-    }
-
-    /**
      * find all elements which the user may not list and therefore may never be shown to the user.
      * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *

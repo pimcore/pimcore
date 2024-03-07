@@ -7,7 +7,7 @@
 - Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
-
+- Method `Service::getHelperDefinitions()` is deprecated here and moved to `admin-classic-ui-bundle` `v1.4`.
 -----------------
 ### General
 #### [Localization]

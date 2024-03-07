@@ -132,7 +132,8 @@
   "conflict": {
     "symfony/symfony": "*",
     "sabre/dav": "4.2.2",
-    "thecodingmachine/safe": "<2.0"
+    "thecodingmachine/safe": "<2.0",
+    "pimcore/admin-ui-classic-bundle": "<1.4"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
@@ -146,7 +147,8 @@
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.1",
     "symfony/dotenv": "^6.4",
-    "symfony/runtime": "^6.4"
+    "symfony/runtime": "^6.4",
+    "pimcore/admin-ui-classic-bundle": "dev-move-previewthumbfromcore as 1.4"
   },
   "suggest": {
     "ext-sockets": "*",
