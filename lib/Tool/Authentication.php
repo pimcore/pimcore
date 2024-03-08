@@ -119,11 +119,9 @@ class Authentication
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
-        $timestamp = null;
-
         try {
             [$timestamp, $user] = self::tokenDecrypt($token);
-        } catch (CryptoException $e) {
+        } catch (CryptoException|NotFoundException) {
             return null;
         }
 
@@ -191,7 +189,16 @@ class Authentication
     public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
         $password = self::preparePlainTextPassword($username, $plainTextPassword);
-        $config = Config::getSystemConfiguration()['security']['password'];
+
+        try {
+            $config = Config::getSystemConfiguration()['security']['password'];
+        } catch (\Exception $e) {
+            // default config in case kernel is not booted yet (e.g. in installer)
+            $config = [
+                'algorithm' => PASSWORD_DEFAULT,
+                'options' => [],
+            ];
+        }
 
         if ($hash = password_hash($password, $config['algorithm'], $config['options'])) {
             return $hash;
