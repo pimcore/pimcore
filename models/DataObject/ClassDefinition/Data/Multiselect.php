@@ -151,7 +151,7 @@ class Multiselect extends Data implements
             return implode(',', array_map(fn ($v) => $v['value'] ?? $v, $defaultValue));
         }
 
-        return $defaultValue ?? '';
+        return $defaultValue;
     }
 
     /**
