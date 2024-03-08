@@ -29,10 +29,16 @@ interface ElementInterface extends ModelInterface
 
     public function getKey(): ?string;
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static;
 
     public function getPath(): ?string;
 
+    /**
+     * @return $this
+     */
     public function setPath(string $path): static;
 
     public function getRealPath(): ?string;
@@ -43,22 +49,37 @@ interface ElementInterface extends ModelInterface
 
     public function getType(): string;
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static;
 
     public function getCreationDate(): ?int;
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static;
 
     public function getModificationDate(): ?int;
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static;
 
     public function getUserOwner(): ?int;
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(int $userOwner): static;
 
     public function getUserModification(): ?int;
 
+    /**
+     * @return $this
+     */
     public function setUserModification(int $userModification): static;
 
     //TODO add $params parameter in Pimcore 12
@@ -91,6 +112,9 @@ interface ElementInterface extends ModelInterface
      */
     public function getProperty(string $name, bool $asContainer = false): mixed;
 
+    /**
+     * @return $this
+     */
     public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static;
 
     public function hasProperty(string $name): bool;
@@ -117,10 +141,16 @@ interface ElementInterface extends ModelInterface
 
     public function getParentId(): ?int;
 
+    /**
+     * @return $this
+     */
     public function setParentId(?int $id): static;
 
     public function getParent(): ?ElementInterface;
 
+    /**
+     * @return $this
+     */
     public function setParent(?ElementInterface $parent): static;
 
     public function getCacheTag(): string;
@@ -159,6 +189,9 @@ interface ElementInterface extends ModelInterface
 
     public function clearDependentCache(array $additionalTags = []): void;
 
+    /**
+     * @return $this
+     */
     public function setId(?int $id): static;
 
     /**

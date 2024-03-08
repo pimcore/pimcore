@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -1073,6 +1074,9 @@ class Asset extends Element\AbstractElement
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setFilename(string $filename): static
     {
         $this->filename = $filename;
@@ -1105,6 +1109,9 @@ class Asset extends Element\AbstractElement
         return '';
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $handle = tmpfile();
@@ -1201,6 +1208,9 @@ class Asset extends Element\AbstractElement
         return $this->dataChanged;
     }
 
+    /**
+     * @return $this
+     */
     public function setDataChanged(bool $changed = true): static
     {
         $this->dataChanged = $changed;
