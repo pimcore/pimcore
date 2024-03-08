@@ -58,6 +58,7 @@ class Dao extends Model\Dao\AbstractDao
         $fieldname = $this->model->getFieldname();
 
         $groupsToKeep = [];
+        $groupsWithCollectionToKeep = [];
         $collectionToKeep = [];
         $systemRowToDelete = [];
 
@@ -125,62 +126,81 @@ class Dao extends Model\Dao\AbstractDao
 
                     Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
                     $collectionToKeep[] = $collectionId;
-                    $systemRowToDelete[] = $collectionId;
+                    if ($collectionId) {
+                        $systemRowToDelete[] = [$collectionId, $groupId];
+                    }
+                    $groupsWithCollectionToKeep[] = $groupId;
                 }
             }
         }
 
-        if (!$items && count($collectionMapping) > 0){
-            foreach ($collectionMapping as $groupId => $collectionId) {
-                if ($collectionId) {
-                    $data = [
-                        'id' => $objectId,
-                        'collectionId' => $collectionId,
-                        'groupId' => $groupId,
-                        'keyId' => 0,
-                        'fieldname' => $fieldname,
-                        'language' => 'default',
-                        'type' => '<system>' //on purpose to avoid conflict with real types, could be easily cleared
-                    ];
-                    Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
-                    $groupsToKeep[] = $groupId;
-                    $collectionToKeep[] = $collectionId;
-                }
+        foreach ($collectionMapping as $groupId => $collectionId) {
+            if ($collectionId && !in_array($groupId, $groupsWithCollectionToKeep)) {
+                $data = [
+                    'id' => $objectId,
+                    'collectionId' => $collectionId,
+                    'groupId' => $groupId,
+                    'keyId' => 0,
+                    'fieldname' => $fieldname,
+                    'language' => 'default',
+                    'type' => '<system>' //on purpose to avoid conflict with real types, could be easily cleared
+                ];
+                Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
+                $groupsToKeep[] = $groupId;
+                $collectionToKeep[] = $collectionId;
             }
         }
 
         // Delete the groups that are not found anymore
         $this->db->executeQuery(
             sprintf(
-                'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s NOT IN (?)',
+                'DELETE FROM %s WHERE %s = %s AND %s = %s AND (%s NOT IN (?) AND %s NOT IN (?))',
                 $groupsTable,
                 $this->db->quoteIdentifier('id'),
                 $objectId,
                 $this->db->quoteIdentifier('fieldname'),
                 $this->db->quote($fieldname),
                 $this->db->quoteIdentifier('groupId'),
+                $this->db->quoteIdentifier('groupId')
             ),
-            [array_unique($groupsToKeep)],
-            [ArrayParameterType::INTEGER]
+            [array_unique($groupsToKeep), $groupsWithCollectionToKeep],
+            [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER]
         );
 
-        // Delete the collections that are not found anymore or the system rows that are not needed anymore as the ones with real value and keyId is filled
+        // Delete the collections that are not found anymore
         $this->db->executeQuery(
             sprintf(
-                'DELETE FROM %s WHERE %s = %s AND %s = %s AND (%s NOT IN (?) OR (%s = %s AND %s IN (?)))',
+                'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s NOT IN (?)',
                 $dataTable,
                 $this->db->quoteIdentifier('id'),
                 $objectId,
                 $this->db->quoteIdentifier('fieldname'),
                 $this->db->quote($fieldname),
                 $this->db->quoteIdentifier('collectionId'),
-                $this->db->quoteIdentifier('type'),
-                $this->db->quote('<system>'),
-                $this->db->quoteIdentifier('groupId'),
             ),
-            [array_unique($collectionToKeep), $systemRowToDelete],
-            [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER]
+            [array_unique($collectionToKeep)],
+            [ArrayParameterType::INTEGER]
         );
+
+        // Delete the system rows that are not needed anymore as the ones with real value and keyId is filled
+        foreach ($systemRowToDelete as $row) {
+            $this->db->executeQuery(
+                sprintf(
+                    'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s = %s AND %s = %s AND %s = %s',
+                    $dataTable,
+                    $this->db->quoteIdentifier('id'),
+                    $objectId,
+                    $this->db->quoteIdentifier('fieldname'),
+                    $this->db->quote($fieldname),
+                    $this->db->quoteIdentifier('collectionId'),
+                    $row[0],
+                    $this->db->quoteIdentifier('groupId'),
+                    $row[1],
+                    $this->db->quoteIdentifier('type'),
+                    $this->db->quote('<system>')
+                )
+            );
+        }
 
     }
 
