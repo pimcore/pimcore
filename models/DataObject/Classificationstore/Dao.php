@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -151,6 +152,11 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $type = Connection::PARAM_INT_ARRAY;
+        if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
+            $type = ArrayParameterType::INTEGER;
+        }
+
         // Delete the groups that are not found anymore
         $this->db->executeQuery(
             sprintf(
@@ -164,7 +170,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->db->quoteIdentifier('groupId')
             ),
             [array_unique($groupsToKeep), $groupsWithCollectionToKeep],
-            [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER]
+            [$type,$type]
         );
 
         // Delete the collections that are not found anymore
@@ -179,7 +185,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->db->quoteIdentifier('collectionId'),
             ),
             [array_unique($collectionToKeep)],
-            [ArrayParameterType::INTEGER]
+            [$type]
         );
 
         // Delete the system rows that are not needed anymore as the ones with real value and keyId is filled
