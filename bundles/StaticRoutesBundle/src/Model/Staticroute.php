@@ -454,25 +454,12 @@ final class Staticroute extends AbstractModel
      *
      * @throws \Exception
      */
-    public function match(string $path, array $params = []): bool|array
+    public function match(string $path, array $params = []): false|array
     {
         if (@preg_match($this->getPattern(), $path)) {
             // check for site
             if ($this->getSiteId()) {
-                if (!Site::isSiteRequest()) {
-                    return false;
-                }
-
-                $siteMatched = false;
-                $siteIds = $this->getSiteId();
-                foreach ($siteIds as $siteId) {
-                    if ($siteId == Site::getCurrentSite()->getId()) {
-                        $siteMatched = true;
-
-                        break;
-                    }
-                }
-                if (!$siteMatched) {
+                if (!Site::isSiteRequest() || !in_array(Site::getCurrentSite()->getId(), $this->getSiteId())) {
                     return false;
                 }
             }
@@ -482,7 +469,7 @@ final class Staticroute extends AbstractModel
             preg_match_all($this->getPattern(), $path, $matches);
 
             foreach ($matches as $index => $match) {
-                if (isset($variables[$index - 1]) && $variables[$index - 1]) {
+                if (!empty($variables[$index - 1])) {
                     $paramValue = urldecode($match[0]);
                     if (!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
                         $params[$variables[$index - 1]] = $paramValue;

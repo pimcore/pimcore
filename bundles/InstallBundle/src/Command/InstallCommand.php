@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use function explode;
+use function implode;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
@@ -171,6 +173,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.'
+            )->addOption(
+                'only-steps',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Specify a comma separated limited list of steps that should run. Available steps: ' . implode(', ', $this->installer->getRunInstallSteps())
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -185,6 +192,11 @@ class InstallCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
+        if ($onlySteps = $input->getOption('only-steps')) {
+            $onlySteps = array_map('trim', explode(',', $onlySteps));
+            $this->installer->setRunInstallSteps($onlySteps);
+        }
+
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
         }
@@ -361,7 +373,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/installer/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

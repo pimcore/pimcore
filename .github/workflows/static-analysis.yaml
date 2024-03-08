@@ -38,9 +38,11 @@ jobs:
         strategy:
             matrix:
                 include:
+                    - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.2", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.2", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "highest", experimental: true, symfony: "6.3.x-dev", composer-options: "" }
+                    - { php-version: "8.2", dependencies: "highest", experimental: true, symfony: "6.4.x-dev", composer-options: "" }
                     - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 

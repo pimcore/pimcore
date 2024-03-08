@@ -76,6 +76,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->lazyLoading;
     }
 
+    /**
+     * @return $this
+     */
     public function setLazyLoading(bool $lazyLoading): static
     {
         $this->lazyLoading = $lazyLoading;
@@ -104,9 +107,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (!$fd instanceof CalculatedValue) {
                             $value = $item->{'get' . $fd->getName()}();
-                            if (isset($params['context']['containerKey']) === false) {
-                                $params['context']['containerKey'] = $idx;
-                            }
+                            $params['context']['containerKey'] = $idx;
                             $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
                         }
                     }
@@ -293,6 +294,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->allowedTypes;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
@@ -478,9 +482,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $code;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }

@@ -38,7 +38,7 @@ final class Version20230111074323 extends AbstractMigration
         }
 
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already word_export
-        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle')");
+        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle') ON DUPLICATE KEY UPDATE `category` = 'Pimcore Word Export Bundle';");
 
         $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',word_export\') WHERE `permissions` REGEXP \'(?:^|,)translations(?:$|,)\'');
 

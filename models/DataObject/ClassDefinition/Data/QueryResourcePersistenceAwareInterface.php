@@ -24,9 +24,6 @@ interface QueryResourcePersistenceAwareInterface
      * Returns the data which should be stored in the query columns
      *
      *
-     * @return mixed
-     *
-     * abstract public function getDataForQueryResource($data);
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 

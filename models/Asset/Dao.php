@@ -90,7 +90,7 @@ class Dao extends Model\Element\Dao
     public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE `path` = :path AND `filename` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE `path` = BINARY :path AND `filename` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -247,9 +247,12 @@ class Dao extends Model\Element\Dao
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if ($id !== null) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('asset');
                 $property->setDataFromResource($propertyRaw['data']);
@@ -504,6 +507,11 @@ class Dao extends Model\Element\Dao
     {
         $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
+    }
+
+    public function getCustomSettings(): ?string
+    {
+        return $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = :id', ['id' => $this->model->getId()]);
     }
 
     public function __isBasedOnLatestData(): bool

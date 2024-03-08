@@ -181,6 +181,7 @@ final class WorkflowPass implements CompilerPassInterface
             if (isset($markingStoreDefinition)) {
                 $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             }
+            $workflowDefinition->setPublic(true);
             $workflowDefinition->replaceArgument(3, $workflowName);
             $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);
 
