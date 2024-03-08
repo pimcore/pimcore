@@ -34,7 +34,7 @@ class OptionsProviderResolver extends ClassResolver
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {
 
-            if ($provider instanceof MultiSelectOptionsProviderInterface){
+            if ($provider instanceof MultiSelectOptionsProviderInterface) {
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '11.2',
