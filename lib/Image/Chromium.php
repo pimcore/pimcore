@@ -112,7 +112,7 @@ class Chromium
 
             return false;
         } finally {
-            $browser->close();
+            $page->close();
         }
 
         return true;
