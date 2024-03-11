@@ -306,14 +306,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
-                if ($invisible && !is_null($oIndex)) {
+                if ((!array_key_exists($elementName, $blockElement) || $invisible) && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
                     if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
-                        if (isset($items[$oIndex])) {
+                        if (isset($items[$oIndex][$elementName])) {
                             $item = $items[$oIndex][$elementName];
-                            $blockData = $blockElement[$elementName] ?: $item->getData();
+                            $blockData = $blockElement[$elementName] ?? $item->getData();
                             $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
