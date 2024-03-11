@@ -41,12 +41,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @internal
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
     public string $salt = '';
 
     /**
      * @internal
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
     public string $saltlocation = '';
@@ -81,21 +83,31 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->algorithm;
     }
 
+     /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function setSalt(string $salt): void
     {
         $this->salt = $salt;
     }
-
+    /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function getSalt(): string
     {
         return $this->salt;
     }
-
+    /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function setSaltlocation(string $saltlocation): void
     {
         $this->saltlocation = $saltlocation;
     }
 
+    /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function getSaltlocation(): string
     {
         return $this->saltlocation;
