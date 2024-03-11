@@ -86,13 +86,15 @@ class Chromium
             ]);
         }
 
+        $page = $browser->createPage();
+        
         try {
             $headers = [];
             if (null !== $sessionId && null !== $sessionName) {
                 $headers['Cookie'] = $sessionName . '=' . $sessionId;
             }
 
-            $page = $browser->createPage();
+            
 
             if (!empty($headers)) {
                 $page->getSession()->sendMessageSync(new Message(
