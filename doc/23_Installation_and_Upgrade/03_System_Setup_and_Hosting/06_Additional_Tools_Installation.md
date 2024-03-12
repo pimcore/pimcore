@@ -38,7 +38,7 @@ To install it, please add it in your Docker Compose services stack as [https://g
 Configure the Docker services accordingly:
 
 - `pimcore.gotenberg.base_url` which by default to `http://gotenberg:3000`
-- `pimcore.documents.preview_url_prefix` for example to `nginx:80`
+- `pimcore.documents.preview_url_prefix` for example to `http://nginx:80`
 
 Make sure to add and install the required library via composer:
 ```bash
