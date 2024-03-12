@@ -120,7 +120,7 @@ class Csv
     /**
      * @phpstan-param non-empty-string $linefeed
      */
-    protected function guessDelim(string $data, string $linefeed, string $quotechar): bool|string
+    protected function guessDelim(string $data, string $linefeed, string $quotechar): false|string
     {
         $charcount = count_chars($data, 1);
 

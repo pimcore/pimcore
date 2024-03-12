@@ -127,19 +127,13 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 
     /**
      * Load JSON data from file
-     *
-     *
-     * @return string|false
      */
-    protected function getJson(string $path): bool|string
+    protected function getJson(string $path): string
     {
         $content = file_get_contents($path);
 
         // try to decode json here as we want to fail early if file is no valid JSON
-        $json = json_decode($content);
-        if (null === $json) {
-            throw new \InvalidArgumentException('JSON could not be decoded');
-        }
+        json_decode($content, flags: JSON_THROW_ON_ERROR);
 
         // return string content as service import
         // methods decode JSON by their own

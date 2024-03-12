@@ -76,6 +76,10 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_quantityValue, key: 'classificationstore_quantityValue' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_inputQuantityValue, key: 'classificationstore_inputQuantityValue' }
 
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\QuantityValueRange:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_quantityValueRange, key: 'classificationstore_quantityValueRange' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_inputQuantityValueRange, key: 'classificationstore_inputQuantityValueRange' }
 
     # service
     Pimcore\Element\MarshallerService:
