@@ -16,18 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
+use function class_exists;
+use function func_get_args;
 use Gotenberg\Gotenberg as GotenbergAPI;
-use Gotenberg\Stream;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Connection;
 use HeadlessChromium\Communication\Message;
+use function method_exists;
 use Pimcore\Config;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use function class_exists;
-use function func_get_args;
-use function method_exists;
 use function rename;
 
 /**
@@ -115,7 +114,7 @@ class HtmlToImage
         try {
 
             $extraHeaders = [
-                'X-Foo' => 'Bar' // required, as extraHttpHeaders() requires at least one entry
+                'X-Foo' => 'Bar', // required, as extraHttpHeaders() requires at least one entry
             ];
 
             if (null !== $sessionId && null !== $sessionName) {
@@ -131,6 +130,7 @@ class HtmlToImage
                     ->url($url);
 
                 $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+
                 return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
             }
 
