@@ -35,6 +35,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @internal
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
     public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
@@ -65,6 +66,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->minimumLength = $minimumLength;
     }
 
+    /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function setAlgorithm(string $algorithm): void
     {
         if($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
@@ -78,6 +82,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->algorithm = $algorithm;
     }
 
+    /**
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     */
     public function getAlgorithm(): string
     {
         return $this->algorithm;
