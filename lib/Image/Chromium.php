@@ -16,105 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
-use HeadlessChromium\BrowserFactory;
-use HeadlessChromium\Communication\Connection;
-use HeadlessChromium\Communication\Message;
-use Pimcore\Logger;
-use Pimcore\Tool\Console;
+use function class_alias;
+use function class_exists;
+use function trigger_deprecation;
 
-/**
- * @internal
- */
-class Chromium
-{
-    public static function isSupported(): bool
-    {
-        if (!class_exists(BrowserFactory::class)) {
-            return false;
-        }
+trigger_deprecation('pimcore/pimcore', '11.2', 'The "%s" class is deprecated, use "%s" instead.', Chromium::class, HtmlToImage::class);
 
-        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
-        if (!empty($chromiumUri)) {
-            try {
-                return (new Connection($chromiumUri))->connect();
-            } catch (\Exception $e) {
-                Logger::debug((string) $e);
+if (!class_exists(Chromium::class, false)) {
+    class_alias(HtmlToImage::class, Chromium::class);
+}
 
-                return false;
-            }
-        }
-
-        return (bool) self::getChromiumBinary();
-    }
-
-    public static function getChromiumBinary(): ?string
-    {
-        foreach (['chromium', 'chrome'] as $app) {
-            $chromium = Console::getExecutable($app);
-            if ($chromium) {
-                return $chromium;
-            }
-        }
-
-        return null;
-    }
-
+if (false) {
     /**
-     * @throws \Exception
+     * @deprecated since Pimcore 11.2, use HtmlToImage instead
      */
-    public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
+    class Chromium extends HtmlToImage
     {
-        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
-        if (!empty($chromiumUri)) {
-            try {
-                $browser = BrowserFactory::connectToBrowser($chromiumUri);
-            } catch (\Exception $e) {
-                Logger::debug((string) $e);
-
-                return false;
-            }
-        } else {
-            $binary = self::getChromiumBinary();
-            if (!$binary) {
-                return false;
-            }
-            $browserFactory = new BrowserFactory($binary);
-            $browser = $browserFactory->createBrowser([
-                'noSandbox' => file_exists('/.dockerenv'),
-                'startupTimeout' => 120,
-                'windowSize' => explode(',', $windowSize),
-            ]);
-        }
-
-        try {
-            $headers = [];
-            if (null !== $sessionId && null !== $sessionName) {
-                $headers['Cookie'] = $sessionName . '=' . $sessionId;
-            }
-
-            $page = $browser->createPage();
-
-            if (!empty($headers)) {
-                $page->getSession()->sendMessageSync(new Message(
-                    'Network.setExtraHTTPHeaders',
-                    ['headers' => $headers]
-                ));
-            }
-
-            $page->navigate($url)->waitForNavigation();
-
-            $page->screenshot([
-                'captureBeyondViewport' => true,
-                'clip' => $page->getFullPageClip(),
-            ])->saveToFile($outputFile);
-        } catch (\Throwable $e) {
-            Logger::debug('Could not create image from url ' . $url . ': ' . $e);
-
-            return false;
-        } finally {
-            $browser->close();
-        }
-
-        return true;
     }
 }
