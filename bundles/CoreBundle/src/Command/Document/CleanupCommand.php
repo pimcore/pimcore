@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -66,15 +65,15 @@ class CleanupCommand extends AbstractCommand
 
         if (!empty($filteredDocumentTypes)) {
             $db = Db::get();
-            $type = Connection::PARAM_STR_ARRAY;
-            if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
-                $type = ArrayParameterType::STRING;
-            }
 
             try {
                 // remove all documents with certain types
-                $db->executeQuery('DELETE FROM documents WHERE type IN (:types)', ['types' => $filteredDocumentTypes], ['types' => $type]);
-            } catch (\Exception $ex) {
+                $db->executeQuery(
+                    'DELETE FROM documents WHERE type IN (:types)',
+                    ['types' => $filteredDocumentTypes],
+                    ['types' => ArrayParameterType::STRING]
+                );
+            } catch (\Exception) {
                 $output->writeln('Could not delete all document types from documents table');
             }
 
@@ -108,7 +107,7 @@ class CleanupCommand extends AbstractCommand
             $typeColumn = $result->fetchAllAssociative();
 
             return explode("','", preg_replace("/(enum)\('(.+?)'\)/", '\\2', $typeColumn[0]['Type']));
-        } catch (\Exception $ex) {
+        } catch (\Exception) {
             // nothing to do here if it does not work we return the standard types
         }
 
@@ -117,11 +116,11 @@ class CleanupCommand extends AbstractCommand
 
     private function modifyEnumTypes(array $enums): void
     {
-        $type = Connection::PARAM_STR_ARRAY;
-        if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
-            $type = ArrayParameterType::STRING;
-        }
         $db = Db::get();
-        $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => $type]);
+        $db->executeQuery(
+            'ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);',
+            ['enums' => $enums],
+            ['enums' => ArrayParameterType::STRING]
+        );
     }
 }

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -232,7 +233,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '{' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
-        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("pimcore.locale")->getLocale();'  . "\n";
+        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("' . LocaleServiceInterface::class . '")->getLocale();'  . "\n";
         $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage($locale)) {'  . "\n";
         $code .= "\t\t\t\t" . '$language = (string) $locale;'  . "\n";
         $code .= "\t\t\t" . '} else {'  . "\n";

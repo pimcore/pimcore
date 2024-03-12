@@ -506,7 +506,7 @@ final class Config extends Model\AbstractModel
         }
 
         if (isset($config['quality'])) {
-            $pipe->setQuality($config['quality']);
+            $pipe->setQuality((int)$config['quality']);
         }
 
         if (isset($config['cover'])) {

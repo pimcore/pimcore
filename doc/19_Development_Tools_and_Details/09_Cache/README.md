@@ -113,8 +113,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 
 #### Disable the Cache for a Single Request
 Sometimes it's useful to deactivate the cache for testing purposes for a single request. You 
-can do this by passing the URL parameter `pimcore_nocache=true`. Note: This is only possible if you have 
-enabled the `DEBUG MODE` in *Settings* > *System*
+can do this by passing the URL parameter `pimcore_nocache=true`. Note: This is only possible if you are in [DEBUG MODE](../13_Debugging.md#debug-mode)
 
 For example: `http://www.pimcore.org/download?pimcore_nocache=true` 
 

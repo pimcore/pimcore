@@ -103,79 +103,64 @@ class IntlFormatter
      */
     protected function buildDateTimeFormatters(string $format): \IntlDateFormatter
     {
-        switch ($format) {
-            case self::DATE_SHORT:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::SHORT,
-                    \IntlDateFormatter::NONE
-                );
-            case self::DATE_MEDIUM:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::MEDIUM,
-                    \IntlDateFormatter::NONE
-                );
-            case self::DATE_LONG:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::LONG,
-                    \IntlDateFormatter::NONE
-                );
-            case self::DATETIME_SHORT:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::SHORT,
-                    \IntlDateFormatter::SHORT
-                );
-            case self::DATETIME_MEDIUM:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::MEDIUM,
-                    \IntlDateFormatter::MEDIUM
-                );
-            case self::DATETIME_LONG:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::LONG,
-                    \IntlDateFormatter::LONG
-                );
-            case self::TIME_SHORT:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::NONE,
-                    \IntlDateFormatter::SHORT
-                );
-            case self::TIME_MEDIUM:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::NONE,
-                    \IntlDateFormatter::MEDIUM
-                );
-            case self::TIME_LONG:
-                return \IntlDateFormatter::create(
-                    $this->getLocale(),
-                    \IntlDateFormatter::NONE,
-                    \IntlDateFormatter::LONG
-                );
-            default:
-                throw new \RuntimeException("Invalid format '$format'' for date formatter.");
-        }
+        return match ($format) {
+            self::DATE_SHORT => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE
+            ),
+            self::DATE_MEDIUM => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::NONE
+            ),
+            self::DATE_LONG => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::LONG,
+                \IntlDateFormatter::NONE
+            ),
+            self::DATETIME_SHORT => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::SHORT
+            ),
+            self::DATETIME_MEDIUM => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::MEDIUM
+            ),
+            self::DATETIME_LONG => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::LONG,
+                \IntlDateFormatter::LONG
+            ),
+            self::TIME_SHORT => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::NONE,
+                \IntlDateFormatter::SHORT
+            ),
+            self::TIME_MEDIUM => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::NONE,
+                \IntlDateFormatter::MEDIUM
+            ),
+            self::TIME_LONG => \IntlDateFormatter::create(
+                $this->getLocale(),
+                \IntlDateFormatter::NONE,
+                \IntlDateFormatter::LONG
+            ),
+            default => throw new \RuntimeException("Invalid format '{$format}' for date formatter."),
+        };
     }
 
     /**
      * formats given datetime in given format
      *
-     *
+     * @return false|string
      */
     public function formatDateTime(\DateTimeInterface|int|string $dateTime, string $format = self::DATETIME_MEDIUM): bool|string
     {
-        if (isset($this->dateFormatters[$format])) {
-            $formatter = $this->dateFormatters[$format];
-        } else {
-            $formatter = $this->buildDateTimeFormatters($format);
-            $this->dateFormatters[$format] = $formatter;
-        }
+        $formatter = $this->dateFormatters[$format] ??= $this->buildDateTimeFormatters($format);
 
         return $formatter->format($dateTime);
     }
@@ -183,13 +168,11 @@ class IntlFormatter
     /**
      * formats given value as number based on current locale
      *
-     *
+     * @return false|string
      */
     public function formatNumber(float|int $value): bool|string
     {
-        if (empty($this->numberFormatter)) {
-            $this->numberFormatter = new \NumberFormatter($this->getLocale(), \NumberFormatter::DECIMAL);
-        }
+        $this->numberFormatter ??= new \NumberFormatter($this->getLocale(), \NumberFormatter::DECIMAL);
 
         return $this->numberFormatter->format($value);
     }

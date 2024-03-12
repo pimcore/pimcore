@@ -150,6 +150,8 @@ interface ElementInterface extends ModelInterface
      *  - versionNote: Optional. Descriptive text saved alongside versioned data
      *
      * @return $this
+     *
+     * @throws DuplicateFullPathException
      */
     public function save(array $parameters = []): static;
 
