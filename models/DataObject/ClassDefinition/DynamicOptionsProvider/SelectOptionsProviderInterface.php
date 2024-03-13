@@ -18,7 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface SelectOptionsProviderInterface
+interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
     public function getOptions(array $context, Data $fieldDefinition): array;
 
