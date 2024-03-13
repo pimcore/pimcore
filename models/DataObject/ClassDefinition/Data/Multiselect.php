@@ -127,7 +127,7 @@ class Multiselect extends Data implements
      */
     public function setDefaultValue(array|string|null $defaultValue): static
     {
-        if (empty($defaultValue)) {
+        if (!$defaultValue) {
             $defaultValue = null;
         }elseif (is_string($defaultValue)){
             $defaultValue = [$defaultValue];
