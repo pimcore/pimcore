@@ -212,7 +212,7 @@ class Multiselect extends Data implements
         }
 
         $context['fieldname'] = $this->getName();
-        $options = $optionsProvider->{'getOptions'}($context, $this);
+        $options = $optionsProvider->getOptions($context, $this);
         $this->setOptions($options);
 
         if (isset($params['purpose']) && $params['purpose'] === 'editmode') {
