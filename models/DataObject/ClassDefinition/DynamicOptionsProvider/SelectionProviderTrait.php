@@ -51,7 +51,7 @@ trait SelectionProviderTrait
 
             $this->setOptions($options);
 
-            if ($this instanceof Data\Select || $this instanceof Data\MultiSelect) {
+            if ($this instanceof Data\Select || $this instanceof Data\Multiselect) {
                 $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
                 $this->setDefaultValue($defaultValue);
             }
