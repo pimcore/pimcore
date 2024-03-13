@@ -183,11 +183,7 @@ class Multiselect extends Data implements
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (!empty($data) && is_array($data)) {
-            return ','.implode(',', $data).',';
-        }
-
-        return null;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -197,11 +193,7 @@ class Multiselect extends Data implements
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_array($data)) {
-            return implode(',', $data);
-        }
-
-        return null;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
@@ -551,7 +543,7 @@ class Multiselect extends Data implements
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
-        if ($optionsProvider instanceof SelectOptionsProviderInterface) {
+        if ($optionsProvider instanceof MultiSelectOptionsProviderInterface) {
             $context['object'] = $object;
             $context['class'] = $object->getClass();
 
@@ -560,7 +552,8 @@ class Multiselect extends Data implements
                 $context['purpose'] = 'layout';
             }
 
-            return $optionsProvider->getDefaultValue($context, $this);
+            $a = $optionsProvider->getDefaultValue($context, $this);
+            return $a;
         }
 
         return $this->getDefaultValue();
