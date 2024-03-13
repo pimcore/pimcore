@@ -122,8 +122,13 @@ class Multiselect extends Data implements
         return $this->renderType;
     }
 
-    public function setDefaultValue(array $defaultValue): static
+    public function setDefaultValue(array|string|null $defaultValue): static
     {
+        if (empty($defaultValue)) {
+            $defaultValue = null;
+        }elseif (is_string($defaultValue)){
+            $defaultValue = [$defaultValue];
+        }
         $this->defaultValue = $defaultValue;
 
         return $this;
