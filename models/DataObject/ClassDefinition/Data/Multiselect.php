@@ -543,7 +543,7 @@ class Multiselect extends Data implements
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
-        if ($optionsProvider instanceof MultiSelectOptionsProviderInterface) {
+        if ($optionsProvider instanceof SelectOptionsProviderInterface) {
             $context['object'] = $object;
             $context['class'] = $object->getClass();
 
@@ -552,8 +552,7 @@ class Multiselect extends Data implements
                 $context['purpose'] = 'layout';
             }
 
-            $a = $optionsProvider->getDefaultValue($context, $this);
-            return $a;
+            return $optionsProvider->getDefaultValue($context, $this);
         }
 
         return $this->getDefaultValue();
