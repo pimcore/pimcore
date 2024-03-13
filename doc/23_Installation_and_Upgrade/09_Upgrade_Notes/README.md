@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
@@ -12,8 +17,6 @@
 ### General
 #### [Localization]
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
-#### [Listing]
-- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
 #### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 #### [Symfony]
