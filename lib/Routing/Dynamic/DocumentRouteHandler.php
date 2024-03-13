@@ -102,7 +102,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
-        $document = Document::getByPath($context->getPath());
+        $document = Document\Page::getByPath($context->getPath());
         $site = $this->siteResolver->getSite($context->getRequest());
 
         // If the request is not from a site and the document is part of a site
