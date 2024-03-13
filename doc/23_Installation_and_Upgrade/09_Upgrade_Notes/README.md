@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
@@ -13,11 +18,9 @@
 #### [Localization]
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
 #### [Navigation]
-- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`.
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 #### [Symfony]
 - Bumped Symfony packages to "^6.4".
-#### [System Settings]
-- Unused setting `general.language` has been deprecated.
 #### [Value Objects]
 - Added new self validating Value Objects:
   - `Pimcore\ValueObject\BooleanArray`
