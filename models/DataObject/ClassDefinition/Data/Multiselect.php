@@ -122,8 +122,14 @@ class Multiselect extends Data implements
         return $this->renderType;
     }
 
-    public function setDefaultValue(array $defaultValue): static
+    /**
+     * @return $this
+     */
+    public function setDefaultValue(array|string|null $defaultValue): static
     {
+        if (is_string($defaultValue)) {
+            $defaultValue = $defaultValue !== '' ? [$defaultValue] : null;
+        }
         $this->defaultValue = $defaultValue;
 
         return $this;
@@ -175,8 +181,9 @@ class Multiselect extends Data implements
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (!empty($data) && is_array($data)) {
-            return ','.implode(',', $data).',';
+        $dataForResource = $this->getDataForResource($data, $object, $params);
+        if ($dataForResource) {
+            return ','.$dataForResource.',';
         }
 
         return null;
@@ -189,11 +196,7 @@ class Multiselect extends Data implements
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_array($data)) {
-            return implode(',', $data);
-        }
-
-        return null;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
@@ -214,7 +217,7 @@ class Multiselect extends Data implements
         }
 
         $context['fieldname'] = $this->getName();
-        $options = $optionsProvider->{'getOptions'}($context, $this);
+        $options = $optionsProvider->getOptions($context, $this);
         $this->setOptions($options);
 
         if (isset($params['purpose']) && $params['purpose'] === 'editmode') {

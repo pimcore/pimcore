@@ -147,9 +147,9 @@ class Installer
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
-        'install_classes' => 'Installing classes ...',
-        'install_bundles' => 'Installing bundles ...',
-        'migrations' => 'Marking all migrations as done ...',
+        'install_classes' => 'Installing classes...',
+        'install_bundles' => 'Installing bundles...',
+        'migrations' => 'Marking all migrations as done...',
         'complete' => 'Install complete!',
     ];
 
