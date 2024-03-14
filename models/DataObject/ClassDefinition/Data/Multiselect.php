@@ -181,8 +181,8 @@ class Multiselect extends Data implements
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        $dataForResource = $this->getDataForResource($data, $object, $params);            
-        if ($dataForResource){
+        $dataForResource = $this->getDataForResource($data, $object, $params);
+        if ($dataForResource) {
             return ','.$dataForResource.',';
         }
 
