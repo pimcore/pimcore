@@ -764,7 +764,7 @@ class Installer
         $dumpFile = file_get_contents($file);
 
         // remove comments in SQL script
-        $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
+        $dumpFile = preg_replace("/\s*(?!<\")\/\*(?![!+])[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
         if (str_contains($file, 'atomic')) {
             $db->executeStatement($dumpFile);
