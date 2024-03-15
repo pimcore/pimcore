@@ -118,13 +118,7 @@ class Bootstrap
         }
 
         if (false === $isCli) {
-            // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
-            if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
-                Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
-            }
-            if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
-                Request::setTrustedHosts([$trustedHosts]);
-            }
+            self::setTrustedProxies();
         }
     }
 
@@ -139,6 +133,19 @@ class Bootstrap
             } else {
                 $_SERVER += $_ENV;
             }
+
+            self::setTrustedProxies();
+        }
+    }
+
+    private static function setTrustedProxies(): void
+    {
+        // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+            Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
+        }
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+            Request::setTrustedHosts([$trustedHosts]);
         }
     }
 
