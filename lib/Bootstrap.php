@@ -104,8 +104,9 @@ class Bootstrap
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
-                sprintf('In `public/index.php` the "Bootstrap::bootstrap();" should be moved just above "$kernel = Bootstrap::kernel();"', )
+                sprintf('For consistency purpose, it is recommended to use the autoload from Symfony Runtime. When using it, the line "Bootstrap::bootstrap();" in `public/index.php` should be moved just above "$kernel = Bootstrap::kernel();"', )
             );
+            self::prepareEnvVariables();
         }
 
         self::defineConstants();
@@ -210,9 +211,6 @@ class Bootstrap
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface
     {
-        // this is for compatibility reasons, will be removed in Pimcore 12
-        self::prepareEnvVariables();
-
         $environment = Config::getEnvironment();
 
         $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
