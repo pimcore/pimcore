@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -117,13 +118,34 @@ class Bootstrap
         }
 
         if (false === $isCli) {
-            // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
-            if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
-                Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
+            self::setTrustedProxies();
+        }
+    }
+
+    /**
+     * @deprecated only for compatibility reasons, will be removed in Pimcore 12
+     */
+    private static function prepareEnvVariables(): void
+    {
+        if(!isset($_SERVER['SYMFONY_DOTENV_VARS'])) {
+            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+            } else {
+                $_SERVER += $_ENV;
             }
-            if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
-                Request::setTrustedHosts([$trustedHosts]);
-            }
+
+            self::setTrustedProxies();
+        }
+    }
+
+    private static function setTrustedProxies(): void
+    {
+        // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+            Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
+        }
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+            Request::setTrustedHosts([$trustedHosts]);
         }
     }
 
@@ -188,6 +210,9 @@ class Bootstrap
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface
     {
+        // this is for compatibility reasons, will be removed in Pimcore 12
+        self::prepareEnvVariables();
+
         $environment = Config::getEnvironment();
 
         $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
