@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -127,6 +128,20 @@ class Bootstrap
         }
     }
 
+    /**
+     * @deprecated only for compatibility reasons, will be removed in Pimcore 12
+     */
+    private static function prepareEnvVariables(): void
+    {
+        if(!isset($_SERVER['SYMFONY_DOTENV_VARS'])) {
+            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+            } else {
+                $_SERVER += $_ENV;
+            }
+        }
+    }
+
     public static function defineConstants(): void
     {
         // make sure $_SERVER contains all values of $_ENV
@@ -188,6 +203,9 @@ class Bootstrap
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface
     {
+        // this is for compatibility reasons, will be removed in Pimcore 12
+        self::prepareEnvVariables();
+
         $environment = Config::getEnvironment();
 
         $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
