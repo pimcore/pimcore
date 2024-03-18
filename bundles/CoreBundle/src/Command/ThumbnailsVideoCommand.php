@@ -176,7 +176,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
                 sleep(5);
             } else {
                 // error
-                Logger::debug('video [' . $video->getId() . "] has status: ['" . $thumb['status'] ?? 'invalid status | thumb could not be loaded' . "'] -> skipping");
+                Logger::debug('video [' . $video->getId() . "] has status: ['" . $thumb['status'] . "'] -> skipping");
 
                 break;
             }
