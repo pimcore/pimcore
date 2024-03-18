@@ -413,7 +413,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
-                        $html .= htmlspecialchars((string)$cell ?? '', ENT_QUOTES, 'UTF-8');
+                        $html .= htmlspecialchars((string) $cell, ENT_QUOTES, 'UTF-8');
                         $html .= '</td>';
                     }
                 }
