@@ -104,8 +104,10 @@ class Bootstrap
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
-                sprintf('In `public/index.php` the "Bootstrap::bootstrap();" should be moved just above "$kernel = Bootstrap::kernel();"', )
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime. 
+                When using it, the line "Bootstrap::bootstrap();" in `public/index.php` should be moved just above "$kernel = Bootstrap::kernel();" and within the closure'
             );
+            self::bootDotEnvVariables();
         }
 
         self::defineConstants();
@@ -125,16 +127,10 @@ class Bootstrap
     /**
      * @deprecated only for compatibility reasons, will be removed in Pimcore 12
      */
-    private static function prepareEnvVariables(): void
+    private static function bootDotEnvVariables(): void
     {
-        if(!isset($_SERVER['SYMFONY_DOTENV_VARS'])) {
-            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
-                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-            } else {
-                $_SERVER += $_ENV;
-            }
-
-            self::setTrustedProxies();
+        if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
         }
     }
 
@@ -210,9 +206,6 @@ class Bootstrap
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface
     {
-        // this is for compatibility reasons, will be removed in Pimcore 12
-        self::prepareEnvVariables();
-
         $environment = Config::getEnvironment();
 
         $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
