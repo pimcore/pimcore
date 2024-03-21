@@ -50,7 +50,7 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     protected string $type;
 
-    protected int $sorter;
+    protected int $sorter = 0;
 
     /**
      * The group name
@@ -59,7 +59,7 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     protected bool $mandatory = false;
 
-    protected bool $enabled;
+    protected bool $enabled = true;
 
     public static function create(): self
     {
