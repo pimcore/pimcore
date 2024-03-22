@@ -40,12 +40,11 @@ use App\Website\Tool\Text;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 
 class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkGeneratorInterface
 {
-    public function generate(Concrete $object, array $params = []): string
+    public function generate(object $object, array $params = []): string
     {
         if (!($object instanceof Car || $object instanceof AccessoryPart)) {
             throw new \InvalidArgumentException('Given object is no Car');
