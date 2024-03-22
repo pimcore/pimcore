@@ -151,7 +151,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
                 }
 
                 if ($reflectionProperty instanceof ReflectionProperty) {
-                    return $reflectionProperty->getValue($object) instanceof AbstractElement;
+                    return !($reflectionProperty->getValue($object) instanceof ElementDescriptor);
                 }
 
                 return $object instanceof AbstractElement;
