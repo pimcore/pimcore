@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -83,7 +84,8 @@ class Dao extends Model\Dao\AbstractDao
                             try {
                                 $this->db->executeQuery(
                                     sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) 
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
                                         $table,
                                         self::getForeignKeyName($table, $key . '__' . $fkey),
                                         $key . '__' . $fkey

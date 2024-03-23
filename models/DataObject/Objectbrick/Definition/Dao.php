@@ -113,7 +113,8 @@ class Dao extends Model\Dao\AbstractDao
                                 try {
                                     $this->db->executeQuery(
                                         sprintf(
-                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) 
+                                                REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
                                             $tableStore,
                                             self::getForeignKeyName($tableStore, $key . '__' . $fkey),
                                             $key . '__' . $fkey
@@ -148,7 +149,8 @@ class Dao extends Model\Dao\AbstractDao
                             try {
                                 $this->db->executeQuery(
                                     sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) 
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
                                         $tableQuery,
                                         self::getForeignKeyName($tableQuery, $key . '__' . $fkey),
                                         $key . '__' . $fkey
