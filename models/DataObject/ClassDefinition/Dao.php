@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -160,13 +161,32 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         foreach ($this->model->getFieldDefinitions() as $key => $value) {
             if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+                && $value instanceof DataObject\ClassDefinition\Data
+            ) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
+
+                            if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                                    || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                                && $fkey === 'unit'
+                            ) {
+                                try {
+                                    $this->db->executeQuery(
+                                        sprintf(
+                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                            $objectDatastoreTable,
+                                            self::getForeignKeyName($objectDatastoreTable, $key . '__' . $fkey),
+                                            $key . '__' . $fkey
+                                        )
+                                    );
+                                } catch (DriverException $e) {
+                                    // Ignore if the foreign key already exists
+                                }
+                            }
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
@@ -178,12 +198,31 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+                && $value instanceof DataObject\ClassDefinition\Data
+            ) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumns[] = $key . '__' . $fkey;
+
+                        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                            && $fkey === 'unit'
+                        ) {
+                            try {
+                                $this->db->executeQuery(
+                                    sprintf(
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        $objectTable,
+                                        self::getForeignKeyName($objectTable, $key . '__' . $fkey),
+                                        $key . '__' . $fkey
+                                    )
+                                );
+                            } catch (DriverException $e) {
+                                // Ignore if the foreign key already exists
+                            }
+                        }
                     }
                 } elseif ($value->getQueryColumnType()) {
                     $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
