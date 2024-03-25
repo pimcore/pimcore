@@ -446,8 +446,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function setPublished(bool $published): static
     {
-        $this->markFieldDirty('published');
-
         $this->published = $published;
 
         return $this;
@@ -662,11 +660,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         } elseif ($this->getClass()->getAllowInherit() && $this->isFieldDirty('parentId')) {
             // if inherit is enabled and the data object is moved the query table should be updated
             DataObject::disableDirtyDetection();
-        }
-
-        if ($this->isFieldDirty('published')) {
-            $event = $this->getPublished() ? DataObjectEvents::PRE_PUBLISH : DataObjectEvents::PRE_UNPUBLISH;
-            \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), $event);
         }
 
         try {
