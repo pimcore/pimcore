@@ -33,6 +33,11 @@ You can do this in `Settings` -> `System Settings` -> `Localization & Internatio
 
 ![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
 
+## Definition of required Languages
+If you want to have mandatory fields in the localized fields but they are not mandatory for all languages, you can define
+which languages are required in `Settings` -> `System Settings` -> `Localization & Internationalization` with the `Mandatory language` checkbox on each language.
+
+
 ## Inheritance
 
 Fallback and inherited values are evaluated in a vertical way first. This is contrary to the [Classification Store](15_Classification_Store.md) where the evaluation is done in a horizontal way. If no value for the current language is found, the parent level is checked. 

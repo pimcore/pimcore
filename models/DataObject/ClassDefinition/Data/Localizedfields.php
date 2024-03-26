@@ -634,7 +634,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        $languages = Tool::getValidLanguages();
+        $languages = Tool::getRequiredLanguages();
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
