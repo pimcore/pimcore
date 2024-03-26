@@ -119,8 +119,19 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+
+                if (str_contains($value, 'unit') === true) {
+                    $this->db->executeQuery(
+                        sprintf(
+                            'ALTER TABLE `%s` DROP FOREIGN KEY %s',
+                            $table,
+                            self::getForeignKeyName($table, $value)
+                        )
+                    );
+                }
             }
         }
+
         if ($dropColumns) {
             $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);

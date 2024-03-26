@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -75,6 +76,25 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColums[] = $key . '__' . $fkey;
+
+                        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                            && $fkey === 'unit'
+                        ) {
+                            try {
+                                $this->db->executeQuery(
+                                    sprintf(
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        $table,
+                                        self::getForeignKeyName($table, $key . '__' . $fkey),
+                                        $key . '__' . $fkey
+                                    )
+                                );
+                            } catch (DriverException $e) {
+                                // Ignore if the foreign key already exists
+                            }
+                        }
                     }
                 } else {
                     if ($value->getColumnType()) {

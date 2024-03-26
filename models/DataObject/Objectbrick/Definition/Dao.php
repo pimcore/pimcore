@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -104,6 +105,25 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedColumnsStore[] = $key . '__' . $fkey;
+
+                            if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                                    || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                                && $fkey === 'unit'
+                            ) {
+                                try {
+                                    $this->db->executeQuery(
+                                        sprintf(
+                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                                REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                            $tableStore,
+                                            self::getForeignKeyName($tableStore, $key . '__' . $fkey),
+                                            $key . '__' . $fkey
+                                        )
+                                    );
+                                } catch (DriverException $e) {
+                                    // Ignore if the foreign key already exists
+                                }
+                            }
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($tableStore, $key, $value->getColumnType(), '', 'NULL');
@@ -121,6 +141,25 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($tableQuery, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumnsQuery[] = $key . '__' . $fkey;
+
+                        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                            && $fkey === 'unit'
+                        ) {
+                            try {
+                                $this->db->executeQuery(
+                                    sprintf(
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        $tableQuery,
+                                        self::getForeignKeyName($tableQuery, $key . '__' . $fkey),
+                                        $key . '__' . $fkey
+                                    )
+                                );
+                            } catch (DriverException $e) {
+                                // Ignore if the foreign key already exists
+                            }
+                        }
                     }
                 } elseif ($value->getQueryColumnType()) {
                     $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), '', 'NULL');
