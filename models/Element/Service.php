@@ -444,7 +444,7 @@ class Service extends Model\AbstractModel
         };
     }
 
-    public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
+    public static function getElementById(string $type, int|string|null $id, array $params = []): Asset|Document|AbstractObject|null
     {
         if (is_string($id)) {
             trigger_deprecation(
