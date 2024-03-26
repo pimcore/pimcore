@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -56,11 +58,10 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
+        $groupsToKeep = [];
+        $groupsWithCollectionToKeep = [];
+        $collectionToKeep = [];
+        $systemRowToDelete = [];
 
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
@@ -68,12 +69,6 @@ class Dao extends Model\Dao\AbstractDao
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
         $groupsTable = $this->getGroupsTableName();
-
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
 
         foreach ($activeGroups as $activeGroupId => $enabled) {
             if ($enabled) {
@@ -83,6 +78,7 @@ class Dao extends Model\Dao\AbstractDao
                     'fieldname' => $fieldname,
                 ];
                 Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
+                $groupsToKeep[] = $activeGroupId;
             }
         }
 
@@ -130,9 +126,88 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value2'] = $encodedData['value2'] ?? null;
 
                     Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
+                    $collectionToKeep[] = $collectionId;
+                    if ($collectionId) {
+                        $systemRowToDelete[] = [$collectionId, $groupId];
+                    }
+                    $groupsWithCollectionToKeep[] = $groupId;
                 }
             }
         }
+
+        foreach ($collectionMapping as $groupId => $collectionId) {
+            if ($collectionId && !in_array($groupId, $groupsWithCollectionToKeep)) {
+                $data = [
+                    'id' => $objectId,
+                    'collectionId' => $collectionId,
+                    'groupId' => $groupId,
+                    'keyId' => 0,
+                    'fieldname' => $fieldname,
+                    'language' => 'default',
+                    'type' => '<system>' //on purpose to avoid conflict with real types, could be easily cleared
+                ];
+                Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
+                $groupsToKeep[] = $groupId;
+                $collectionToKeep[] = $collectionId;
+            }
+        }
+
+        $type = Connection::PARAM_INT_ARRAY;
+        if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
+            $type = ArrayParameterType::INTEGER;
+        }
+
+        // Delete the groups that are not found anymore
+        $this->db->executeQuery(
+            sprintf(
+                'DELETE FROM %s WHERE %s = %s AND %s = %s AND (%s NOT IN (?) AND %s NOT IN (?))',
+                $groupsTable,
+                $this->db->quoteIdentifier('id'),
+                $objectId,
+                $this->db->quoteIdentifier('fieldname'),
+                $this->db->quote($fieldname),
+                $this->db->quoteIdentifier('groupId'),
+                $this->db->quoteIdentifier('groupId')
+            ),
+            [array_unique($groupsToKeep), $groupsWithCollectionToKeep],
+            [$type,$type]
+        );
+
+        // Delete the collections that are not found anymore
+        $this->db->executeQuery(
+            sprintf(
+                'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s NOT IN (?)',
+                $dataTable,
+                $this->db->quoteIdentifier('id'),
+                $objectId,
+                $this->db->quoteIdentifier('fieldname'),
+                $this->db->quote($fieldname),
+                $this->db->quoteIdentifier('collectionId'),
+            ),
+            [array_unique($collectionToKeep)],
+            [$type]
+        );
+
+        // Delete the system rows that are not needed anymore as the ones with real value and keyId is filled
+        foreach ($systemRowToDelete as $row) {
+            $this->db->executeQuery(
+                sprintf(
+                    'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s = %s AND %s = %s AND %s = %s',
+                    $dataTable,
+                    $this->db->quoteIdentifier('id'),
+                    $objectId,
+                    $this->db->quoteIdentifier('fieldname'),
+                    $this->db->quote($fieldname),
+                    $this->db->quoteIdentifier('collectionId'),
+                    $row[0],
+                    $this->db->quoteIdentifier('groupId'),
+                    $row[1],
+                    $this->db->quoteIdentifier('type'),
+                    $this->db->quote('<system>')
+                )
+            );
+        }
+
     }
 
     public function delete(): void
