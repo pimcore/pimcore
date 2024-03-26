@@ -38,13 +38,28 @@ class Helper
 
             return $connection->insert($table, $data);
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
-            $critera = [];
+            $criteria = [];
+            $checkKeys = [];
+            
             foreach ($keys as $key) {
-                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+                $quotedKey = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+                $criteria[$quotedKey] = $data[$quotedKey] ?? $checkKeys[] = $key;
             }
 
-            return $connection->update($table, $data, $critera);
+            if ($checkKeys) {
+                $schemaManager = $connection->createSchemaManager();
+                $indexes = $schemaManager->listTableIndexes($table);
+                foreach ($checkKeys as $key) {
+                    foreach ($indexes as $index) {
+                        if ([$key] === $index->getColumns() && $index->isUnique()) {
+                            throw new \LogicException($exception->getMessage(), $exception->getCode(), $exception);
+                        }
+                    }
+                }
+                throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', implode(', ', $checkKeys)));
+            }
+
+            return $connection->update($table, $data, $criteria);
         }
     }
 
