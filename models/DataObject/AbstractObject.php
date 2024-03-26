@@ -117,14 +117,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         return $blockedVars;
