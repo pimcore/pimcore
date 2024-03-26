@@ -143,10 +143,17 @@ class SearchController extends UserAwareController
                 //this loop divides filter parameters to localized and unlocalized groups
                 $definitionExists = in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())
                     || $class->getFieldDefinition($paramConditionObject['property']);
-                if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
-                    $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } else {
+
+                if (
+                    isset($class->getFieldDefinitions()['localizedfields'])
+                    && $class->getFieldDefinitions()['localizedfields']->getFieldDefinition($paramConditionObject['property'])
+                ) {
                     $localizedFieldsFilters[] = $paramConditionObject;
+                    continue;
+                }
+
+                if ($definitionExists) {
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 
