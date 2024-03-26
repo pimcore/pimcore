@@ -429,7 +429,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {
             $thumbConfig = $image->getThumbnail($conf)->getConfig();
-            if ($thumbConfig && $this->cropPercent) {
+            if ($thumbConfig && $this->cropPercent && (!$image->isVectorGraphic() || $thumbConfig->getFormat() !== 'ORIGINAL')) {
+                // only apply crop on non vector graphics OR if the thumbnail format is not set to original
                 $this->applyCustomCropping($thumbConfig);
                 $thumbConfig->generateAutoName();
             }
