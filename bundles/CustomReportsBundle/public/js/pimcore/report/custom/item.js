@@ -113,7 +113,7 @@ pimcore.bundle.customreports.custom.item = Class.create({
                 checkOrder,
                 {
                     text: t("filter_type"),
-                    width: 100,
+                    width: 160,
                     sortable: false,
                     dataIndex: 'filter',
                     editable: true,
@@ -123,7 +123,13 @@ pimcore.bundle.customreports.custom.item = Class.create({
                             ["string", t("text")],
                             ["numeric", t("numeric")],
                             ["date", t("date")],
-                            ["boolean", t("bool")]
+                            ["boolean", t("bool")],
+                            ["@manyToOneRelation:asset", t("Has one Asset relation")],
+                            ["@manyToOneRelation:object", t("Has one Object relation")],
+                            ["@manyToOneRelation:document", t("Has one Document relation")],
+                            ["@advancedManyToManyRelation:asset", t("Has many Asset relation")],
+                            ["@advancedManyToManyRelation:object", t("Has many Object relation")],
+                            ["@advancedManyToManyRelation:document", t("Has many Document relation")],
                         ],
                         queryMode: 'local',
                         typeAhead: false,
