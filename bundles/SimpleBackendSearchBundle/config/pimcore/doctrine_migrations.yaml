@@ -1,0 +1,3 @@
+doctrine_migrations:
+    migrations_paths:
+        'Pimcore\Bundle\SimpleBackendSearchBundle\Migrations': '@PimcoreSimpleBackendSearchBundle/src/Migrations'
