@@ -445,9 +445,50 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return 'NOT SUPPORTED';
+        if (null === $data) return '';
+
+        $dataTable = [];
+        $html = '<table>';
+        foreach ($data as $item) {
+            if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                continue;
+            }
+
+            $itemHtml = '';
+            $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
+            if ($collectionDef instanceof DataObject\Fieldcollection\Definition) {
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
+                            $title = $localizedFieldDefinition->title ?? $localizedFieldDefinition->getName();
+                            $itemHtml .= '<tr><td>' . $title . ':</td><td>';
+                            $getter = 'get'.ucfirst($localizedFieldDefinition->getName());
+                            $itemHtml .= $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params);
+                            $itemHtml .= '</td></tr>';
+                        }
+                    } else {
+                        $title = $fd->title ?? $fd->getName();
+                        $itemHtml = '<tr><td>' . $title . ':</td><td>';
+                        $getter = 'get'.ucfirst($fd->getName());
+                        $itemHtml .= $fd->getVersionPreview($item->$getter(), $object, $params);
+                        $itemHtml .= '</td></tr>';
+                    }
+                }
+            }
+
+            $dataTable[$collectionDef->getTitle() ?: $collectionDef->getKey()][] = $itemHtml;
+        }
+
+        foreach ($dataTable as $type => $rows) {
+            $html .= '<tr><th colspan="2"><b>' . $type . '</b></th></tr>';
+            $html .= implode('<tr><td colspan="2"><hr/></td></tr>', $rows);
+        }
+
+        $html .= '</table>';
+
+        return $html;
     }
 
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
