@@ -109,7 +109,7 @@ class HtmlToImage
     /**
      * @throws \Exception
      */
-    public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1920,1024'): bool
+    public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         try {
             /** @var GotenbergAPI|object $request */
