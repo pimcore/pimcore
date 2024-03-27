@@ -482,7 +482,18 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $paths = [];
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
-                if ($eo instanceof Element\ElementInterface) {
+                $metadata = $metaObject->getData();
+                $colmuns = $metaObject->getColumns();
+
+                if (!empty($metadata) || !empty($colmuns)) {
+                    $paths[] = $eo->getKey();
+
+                    // We use this loop to keep the metadata order the same as in the grid
+                    foreach ($colmuns as $column) {
+                        $paths[] = $metadata[$column] ?? '';
+                    }
+
+                } elseif ($eo instanceof Element\ElementInterface) {
                     $paths[] = Element\Service::getElementType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
