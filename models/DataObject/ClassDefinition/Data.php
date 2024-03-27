@@ -1321,7 +1321,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function supportsDirtyDetection(): bool
     {
-        return false;
+        return true;
     }
 
     public function markLazyloadedFieldAsLoaded(Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object): void
