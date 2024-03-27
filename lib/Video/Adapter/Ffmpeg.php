@@ -148,6 +148,10 @@ class Ffmpeg extends Adapter
                 array_push($command, '-adaptation_sets', 'id=0,streams=v id=1,streams=a');
                 array_push($command, '-single_file', '1');
                 array_push($command, '-f', 'dash');
+            } elseif ($this->getFormat() === 'mpg') {
+                array_push($command, '-c:v', 'mpeg2video');
+                array_push($command, '-c:a', 'mp2');
+                array_push($command, '-f', 'vob');
             } else {
                 throw new \Exception('Unsupported video output format: ' . $this->getFormat());
             }
