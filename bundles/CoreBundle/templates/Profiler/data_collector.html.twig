@@ -22,6 +22,22 @@
             <b>Context</b>
             <span>{{ collector.context }}</span>
         </div>
+
+        {% if collector.deeplink is iterable %}
+            <div class="sf-toolbar-info-piece">
+                <b>Deeplink</b>
+                <span>
+                    <a href="{{ collector.deeplink.href }}" target="_blank">{{ collector.deeplink.label }}</a>
+                </span>
+            </div>
+        {% endif %}
+
+        {% if collector.elementId %}
+            <div class="sf-toolbar-info-piece">
+                <b>Element ID</b>
+                <span>{{ collector.elementId }}</span>
+            </div>
+        {% endif %}
     {% endset %}
 
     {# the 'link' value set to 'false' means that this panel doesn't
@@ -58,5 +74,21 @@
             <span class="value">{{ collector.context }}</span>
             <span class="label">Request Context</span>
         </div>
+
+        {% if collector.deeplink is iterable %}
+            <div class="metric">
+                <span>
+                    <a href="{{ collector.deeplink.href }}" class="value" target="_blank">{{ collector.deeplink.label }}</a>
+                </span>
+                <span class="label">Deeplink</span>
+            </div>
+        {% endif %}
+
+        {% if collector.elementId %}
+            <div class="metric">
+                <span class="value">{{ collector.elementId }}</span>
+                <span class="label">Element ID</span>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

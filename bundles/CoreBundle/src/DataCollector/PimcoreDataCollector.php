@@ -17,10 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+use Pimcore\Tool;
 use Pimcore\Version;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -29,7 +34,8 @@ use Symfony\Contracts\Service\ResetInterface;
 class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
     public function __construct(
-        protected PimcoreContextResolver $contextResolver
+        protected PimcoreContextResolver $contextResolver,
+        protected RouterInterface $router,
     ) {
     }
 
@@ -40,6 +46,21 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
             'revision' => Version::getRevision(),
             'context' => $this->contextResolver->getPimcoreContext($request),
         ];
+
+        $element = $request->attributes->get('object') ?? $request->attributes->get(DynamicRouter::CONTENT_KEY);
+        if($element instanceof ElementInterface) {
+            $elementType = Service::getElementType($element);
+
+            $url = Tool::getHostUrl() . $this->router->generate('pimcore_admin_login_deeplink');
+            $url = sprintf("$url?%s", join("_", [$elementType, $element->getId(), $element->getType()]));
+
+            $this->data['deeplink'] = [
+                'label' => $element->getKey() ?: ($element->getId() === 1 ? 'Home' : $element->getFullPath()),
+                'href' => $url
+            ];
+
+            $this->data['elementId'] = $element->getId();
+        }
     }
 
     public function reset(): void
@@ -65,5 +86,15 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
     public function getRevision(): string
     {
         return $this->data['revision'];
+    }
+
+    public function getDeeplink(): ?array
+    {
+        return $this->data['deeplink'] ?? null;
+    }
+
+    public function getElementId(): int|string|null
+    {
+        return $this->data['elementId'] ?? null;
     }
 }
