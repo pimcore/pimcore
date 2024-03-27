@@ -527,8 +527,11 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->cropImage($width, $height, $x, $y);
-        $this->resource->setImagePage($width, $height, 0, 0);
+        // loop is for animated GIFs which in fact consist of multiple images
+        foreach($this->resource as $resource) {
+            $resource->cropImage($width, $height, $x, $y);
+            $resource->setImagePage($width, $height, 0, 0);
+        }
 
         $this->setWidth($width);
         $this->setHeight($height);
