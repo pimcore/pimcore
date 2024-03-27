@@ -17,13 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\MetaData;
 
 use Pimcore\Logger;
+use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
     /**
-     *
-     *
      * @throws \Exception
      */
     public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
@@ -48,13 +47,12 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
-        $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
+        $exiftool = Console::getExecutable('exiftool');
+        $embeddedMetaData = [];
 
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -64,11 +62,14 @@ trait EmbeddedMetaDataTrait
             $process = new Process([$exiftool, '-j', $filePath]);
             $process->run();
             $output = $process->getOutput();
-            $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
+            $outputArray = json_decode($output, true);
+            if ($outputArray) {
+                $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-            foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
-                if (isset($embeddedMetaData[$removeKey])) {
-                    unset($embeddedMetaData[$removeKey]);
+                foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                    if (isset($embeddedMetaData[$removeKey])) {
+                        unset($embeddedMetaData[$removeKey]);
+                    }
                 }
             }
         } else {
@@ -125,8 +126,6 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public function getXMPData(?string $filePath = null): array
