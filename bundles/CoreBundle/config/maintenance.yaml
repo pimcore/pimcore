@@ -83,10 +83,16 @@ services:
 
     Pimcore\Maintenance\Tasks\HousekeepingTask:
         arguments:
-            - '%pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than%'
             - '%pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than%'
         tags:
             - { name: pimcore.maintenance.task, type: housekeeping }
+
+    Pimcore\Maintenance\Tasks\CleanupDirectoryTask:
+        arguments:
+            - '%pimcore.maintenance.cleanup_directory.cleanup_files_atime_older_than%'
+            - '%pimcore.maintenance.cleanup_directory.directories%'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupDirectory }
 
     Pimcore\Maintenance\Tasks\LowQualityImagePreviewTask:
         arguments:
