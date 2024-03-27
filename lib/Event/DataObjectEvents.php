@@ -87,6 +87,30 @@ final class DataObjectEvents
     const POST_UPDATE_FAILURE = 'pimcore.dataobject.postUpdateFailure';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - oldPath | the old full path in case the path has changed
+     *  - modifiedFields | the modified fields
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const PRE_SAVE_MODIFICATION = 'pimcore.dataobject.preSaveModification';
+
+    /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - oldPath | the old full path in case the path has changed
+     *  - modifiedFields | the modified fields
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_SAVE_MODIFICATION = 'pimcore.dataobject.postSaveModification';
+
+    /**
      * @Event("Pimcore\Event\Model\DataObjectDeleteInfoEvent")
      *
      * @var string

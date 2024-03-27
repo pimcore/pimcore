@@ -253,13 +253,20 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $this->setModificationDate(time());
             }
 
+            // If fields other than metadata has been modified
+            $modifiedFields = array_filter($this->getDirtyFields(), fn ($field) => !in_array($field, ['userModification', 'modificationDate']));
+
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
+                    'modifiedFields' => $this->getDirtyFields(),
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
+                if (count($modifiedFields) > 0) {
+                    \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_SAVE_MODIFICATION);
+                }
             }
 
             // scheduled tasks are saved always, they are not versioned!
@@ -283,8 +290,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
+                    'modifiedFields' => $this->getDirtyFields(),
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
+                if (count($modifiedFields) > 0) {
+                    \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_SAVE_MODIFICATION);
+                }
             }
 
             return $version;
