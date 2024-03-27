@@ -52,6 +52,7 @@ trait EmbeddedMetaDataTrait
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
         $exiftool = Console::getExecutable('exiftool');
+        $embeddedMetaData = [];
 
         if (!$filePath) {
             $filePath = $this->getLocalFile();
