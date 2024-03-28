@@ -50,6 +50,6 @@ class InputQuantityValue extends AbstractQuantityValue
             $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
-        return $value ? (string)$value : '';
+        return $value ?? '';
     }
 }
