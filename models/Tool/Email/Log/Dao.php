@@ -34,6 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
+     * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id = null): void
     {
@@ -42,6 +43,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $data = $this->db->fetchAssociative('SELECT * FROM email_log WHERE id = ?', [$this->model->getId()]);
+        if (!$data) {
+            throw new Model\Exception\NotFoundException('email log with id ' . $id . ' not found');
+        }
         $this->assignVariablesToModel($data);
     }
 

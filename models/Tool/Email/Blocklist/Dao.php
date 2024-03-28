@@ -27,13 +27,13 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      *
-     * @throws Model\Exception\NotFoundException(
+     * @throws Model\Exception\NotFoundException
      */
     public function getByAddress(string $address): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM email_blocklist WHERE address = ?', [$address]);
 
-        if (empty($data['address'])) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException('blocklist item with address ' . $address . ' not found');
         }
         $this->assignVariablesToModel($data);
