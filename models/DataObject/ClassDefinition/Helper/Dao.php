@@ -38,6 +38,7 @@ trait Dao
             $enabled = $config['enabled'];
             $unique = $config['unique'];
             $uniqueStr = $unique ? ' UNIQUE ' : '';
+            $columnNames = [];
 
             if ($enabled) {
                 if (is_array($columnType)) {
@@ -52,9 +53,7 @@ trait Dao
                                 $columnName .= ',`fieldname`';
                             }
                         }
-                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                            [UniqueConstraintViolationException::class]
-                        );
+                        $columnNames[] = $columnName;
                     }
                 } else {
                     // single -column field
@@ -67,21 +66,29 @@ trait Dao
                             $columnName .= ',`fieldname`';
                         }
                     }
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                        [UniqueConstraintViolationException::class]
-                    );
+                    $columnNames[] = $columnName;
+                }
+                # custom
+                foreach ($columnNames as $columnName) {
+                    if ($this->indexDoesNotExist($table, $prefix, $columnName)) {
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                    }
                 }
             } else {
                 if (is_array($columnType)) {
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
-                        $columnName = $field->getName().'__'.$fkey;
-                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                        $columnNames[] = $field->getName().'__'.$fkey;
                     }
                 } else {
                     // single -column field
-                    $columnName = $field->getName();
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                    $columnNames[] = $field->getName();
+                }
+                # custom
+                foreach ($columnNames as $columnName) {
+                    if ($this->indexExists($table, $prefix, $columnName)) {
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $columnName . '`;');
+                    }
                 }
             }
         }
@@ -172,11 +179,28 @@ trait Dao
         if ($columnsToRemove) {
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
-                if (!in_array(strtolower($value), $lowerCaseColumns)) {
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'p_index_', $value)) {
+                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
                 }
             }
             $this->resetValidTableColumnsCache($table);
         }
+    }
+
+    /**
+     * For MariaDB, it would be possible to use 'ADD/DROP INDEX IF EXISTS' but this is not supported by MySQL
+     */
+    protected function indexExists(string $table, string $prefix, mixed $columnName): bool
+    {
+        $exist = $this->db->fetchFirstColumn(
+            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_name = '${table}' and index_name = '${prefix}${columnName}' and table_schema = database();"
+        );
+
+        return \count($exist) > 0 && '1' === $exist[0];
+    }
+
+    protected function indexDoesNotExist(string $table, string $prefix, mixed $columnName): bool
+    {
+        return !$this->indexExists($table, $prefix, $columnName);
     }
 }
