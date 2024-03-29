@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
-        if (empty($data['cid'])) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException('WorkflowStatus item for workflow ' . $workflow . ' with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
         }
         $this->assignVariablesToModel($data);

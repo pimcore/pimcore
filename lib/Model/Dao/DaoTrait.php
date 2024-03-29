@@ -34,6 +34,9 @@ trait DaoTrait
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function assignVariablesToModel(array $data): void
     {
         $this->model->setValues($data, true);
