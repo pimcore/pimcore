@@ -32,6 +32,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -643,7 +644,17 @@ class Service extends Model\Element\Service
     private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null): \stdClass
     {
         $getter = 'get' . ucfirst($key);
-        $value = $object->$getter();
+        $value = null;
+
+        try {
+            $value = $object->$getter(AdminTool::getCurrentUser()?->getLanguage());
+        } catch (\Throwable) {
+        }
+
+        if (empty($value)) {
+            $value = $object->$getter();
+        }
+
         if (!empty($value) && !empty($brickType)) {
             $getBrickType = 'get' . ucfirst($brickType);
             $value = $value->$getBrickType();
@@ -799,7 +810,7 @@ class Service extends Model\Element\Service
                     DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
                 );
 
-                if (!$definition->useConfiguredOptions() && $optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
+                if (!$definition->useConfiguredOptions() && $optionsProvider instanceof SelectOptionsProviderInterface) {
                     $_options = $optionsProvider->getOptions(['fieldname' => $definition->getName()], $definition);
                 } else {
                     $_options = $definition->getOptions();

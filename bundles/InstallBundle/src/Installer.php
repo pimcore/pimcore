@@ -147,9 +147,9 @@ class Installer
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
-        'install_classes' => 'Installing classes ...',
-        'install_bundles' => 'Installing bundles ...',
-        'migrations' => 'Marking all migrations as done ...',
+        'install_classes' => 'Installing classes...',
+        'install_bundles' => 'Installing bundles...',
+        'migrations' => 'Marking all migrations as done...',
         'complete' => 'Install complete!',
     ];
 
@@ -465,17 +465,20 @@ class Installer
             $this->installAssets($kernel);
         }
 
-        if(in_array('install_classes', $stepsToRun)) {
-            $this->dispatchStepEvent('install_classes');
-            $this->installClasses();
-        }
-
         if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
 
+        if(in_array('install_classes', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+        }
+
         if(in_array('mark_migrations_as_done', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
         }
@@ -730,7 +733,7 @@ class Installer
         return $files;
     }
 
-    private function createOrUpdateUser(Connection $db, array $config = []): void
+    protected function createOrUpdateUser(Connection $db, array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',
@@ -756,7 +759,7 @@ class Installer
      *
      * @throws \Exception
      */
-    private function insertDatabaseDump(Connection $db, string $file): void
+    protected function insertDatabaseDump(Connection $db, string $file): void
     {
         $dumpFile = file_get_contents($file);
 
