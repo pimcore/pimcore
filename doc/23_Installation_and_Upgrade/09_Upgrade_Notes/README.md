@@ -2,6 +2,8 @@
 
 ## Pimcore 11.3.0
 ### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
 #### [Listing]
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
 
