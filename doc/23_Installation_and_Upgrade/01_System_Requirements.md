@@ -91,11 +91,15 @@ maxmemory-policy volatile-lru
 save ""
 ```
 
+### RabbitMQ (optional but recommended for messenger)
+Pimcore utilizes the Symfony Messenger for various background processes to ensure efficient handling of tasks. As the number of Pimcore elements grows, the need for a more robust and scalable queue system becomes evident. RabbitMQ is recommended in these scenarios for its exemplary performance and scalability. It excels in managing high volumes of messages and complex workflows, making it the preferred choice for systems that demand reliability and efficiency at scale.
+
+Please follow [Symfony Messenger](../01_Getting_Started/02_Advanced_Installation_Topics/01_Symfony_Messenger.md) for more information about pimcore messenger.
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 
 `apt-get install locales-all` (on some systems there may be a reboot required).
-
 
 ### Additional Server Software 
 - FFMPEG (>= 3)
