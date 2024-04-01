@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
+use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,14 +30,8 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    private LoggerInterface $logger;
-
-    private Config $config;
-
-    public function __construct(LoggerInterface $logger, Config $config)
+    public function __construct(private LoggerInterface $logger, private SystemSettingsConfig $config)
     {
-        $this->logger = $logger;
-        $this->config = $config;
     }
 
     public function execute(): void
@@ -66,9 +60,10 @@ class VersionsCleanupTask implements TaskInterface
 
     private function doVersionCleanup(): void
     {
-        $conf['document'] = $this->config['documents']['versions'] ?? null;
-        $conf['asset'] = $this->config['assets']['versions'] ?? null;
-        $conf['object'] = $this->config['objects']['versions'] ?? null;
+        $systemSettingsConfig = $this->config->getSystemSettingsConfig();
+        $conf['document'] = $systemSettingsConfig['documents']['versions'] ?? null;
+        $conf['asset'] = $systemSettingsConfig['assets']['versions'] ?? null;
+        $conf['object'] = $systemSettingsConfig['objects']['versions'] ?? null;
 
         $elementTypes = [];
 
