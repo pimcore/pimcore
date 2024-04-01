@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -113,9 +114,19 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
 
     public function setDataFromResource(mixed $data): static
     {
-        if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
-            $this->setDataFromEditmode($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
         }
+
+        $this->setDataFromEditmode($processedData);
 
         return $this;
     }

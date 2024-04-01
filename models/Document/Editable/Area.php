@@ -208,13 +208,19 @@ class Area extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_string($data) && strlen($data) > 2) {
-            $data = Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
         }
 
-        if (is_array($data)) {
-            $this->type = $data['type'] ?? null;
-        }
+        $this->type = $processedData['type'] ?? null;
 
         return $this;
     }

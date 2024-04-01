@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -109,11 +110,19 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        if (!empty($data)) {
-            $data = \Pimcore\Tool\Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
         }
 
-        $this->id = $data['id'];
+        $this->id = $processedData['id'] ?? null;
 
         return $this;
     }

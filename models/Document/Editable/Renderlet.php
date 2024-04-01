@@ -25,6 +25,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -158,7 +159,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         if (is_array($data)) {
             $processedData = $data;
         } elseif (is_string($data)) {
-            $unserializedData = \Pimcore\Tool\Serialize::unserialize($data);
+            $unserializedData = Serialize::unserialize($data);
             if (!is_array($unserializedData)) {
                 throw new \InvalidArgumentException('Unserialized data must be an array.');
             }

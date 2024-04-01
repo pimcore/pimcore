@@ -268,8 +268,16 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function setDataFromResource(mixed $data): static
     {
-        if (strlen($data) > 2) {
-            $data = Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
         }
 
         $rewritePath = function ($data) {
@@ -291,15 +299,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             return $data;
         };
 
-        if (array_key_exists('marker', $data) && is_array($data['marker']) && count($data['marker']) > 0) {
-            $data['marker'] = $rewritePath($data['marker']);
-        }
+        $processedData['marker'] = $rewritePath($processedData['marker'] ?? []);
+        $processedData['hotspots'] = $rewritePath($processedData['hotspots'] ?? []);
 
-        if (array_key_exists('hotspots', $data) && is_array($data['hotspots']) && count($data['hotspots']) > 0) {
-            $data['hotspots'] = $rewritePath($data['hotspots']);
-        }
-
-        $this->setData($data);
+        $this->setData($processedData);
 
         return $this;
     }

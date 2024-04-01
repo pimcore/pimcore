@@ -330,15 +330,23 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_string($data) && $data) {
-            $data = Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
         }
 
-        $this->id = $data['id'] ?? null;
-        $this->type = $data['type'] ?? null;
-        $this->poster = $data['poster'] ?? null;
-        $this->title = $data['title'] ?? '';
-        $this->description = $data['description'] ?? '';
+        $this->id = $processedData['id'] ?? null;
+        $this->type = $processedData['type'] ?? null;
+        $this->poster = $processedData['poster'] ?? null;
+        $this->title = $processedData['title'] ?? '';
+        $this->description = $processedData['description'] ?? '';
 
         return $this;
     }
