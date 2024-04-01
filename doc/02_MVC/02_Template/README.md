@@ -108,11 +108,12 @@ for details.
 
 The following functions can be used to get specific data from Pimcore elements:
 
-| Function                                                                         | Description                                                                                                                       |
+| Function                                                                              | Description                                                                                                                       |
 |---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | `pimcore_object_classificationstore_group(id)`                                        | Get classification store group definition by id.                                                                                  |
 | `pimcore_object_classificationstore_get_field_definition_from_json(definition, type)` | Returns the classification store field definition from the given definition JSON, enabling structured access to field properties. |
 | `pimcore_object_brick_definition_key(key)`                                            | Get objectbrick definition by id.                                                                                                 |
+| `pimcore_element_tags(element, asNameList)`                                           | Returns a list of assigned element tags. Use `true` as the second parameter to receive only the tag names.                        |
 
 
 #### Subrequests
