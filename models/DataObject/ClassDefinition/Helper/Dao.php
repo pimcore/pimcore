@@ -38,7 +38,6 @@ trait Dao
             $enabled = $config['enabled'];
             $unique = $config['unique'];
             $uniqueStr = $unique ? ' UNIQUE ' : '';
-            $columnNames = [];
 
             if ($enabled) {
                 if (is_array($columnType)) {
@@ -53,7 +52,9 @@ trait Dao
                                 $columnName .= ',`fieldname`';
                             }
                         }
-                        $columnNames[] = $columnName;
+                        if ($this->indexDoesNotExist($table, $prefix, $columnName)) {
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                        }
                     }
                 } else {
                     // single -column field
@@ -66,10 +67,6 @@ trait Dao
                             $columnName .= ',`fieldname`';
                         }
                     }
-                    $columnNames[] = $columnName;
-                }
-                # custom
-                foreach ($columnNames as $columnName) {
                     if ($this->indexDoesNotExist($table, $prefix, $columnName)) {
                         $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
                     }
@@ -78,14 +75,14 @@ trait Dao
                 if (is_array($columnType)) {
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
-                        $columnNames[] = $field->getName().'__'.$fkey;
+                        $columnName = $field->getName().'__'.$fkey;
+                        if ($this->indexExists($table, $prefix, $columnName)) {
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $columnName . '`;');
+                        }
                     }
                 } else {
                     // single -column field
-                    $columnNames[] = $field->getName();
-                }
-                # custom
-                foreach ($columnNames as $columnName) {
+                    $columnName = $field->getName();
                     if ($this->indexExists($table, $prefix, $columnName)) {
                         $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $columnName . '`;');
                     }
