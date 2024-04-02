@@ -61,9 +61,11 @@ class VersionsCleanupTask implements TaskInterface
     private function doVersionCleanup(): void
     {
         $systemSettingsConfig = $this->config->getSystemSettingsConfig();
-        $conf['document'] = $systemSettingsConfig['documents']['versions'] ?? null;
-        $conf['asset'] = $systemSettingsConfig['assets']['versions'] ?? null;
-        $conf['object'] = $systemSettingsConfig['objects']['versions'] ?? null;
+        $conf = [
+            'document' => $systemSettingsConfig['documents']['versions'] ?? null,
+            'asset' => $systemSettingsConfig['assets']['versions'] ?? null,
+            'object' => $systemSettingsConfig['objects']['versions'] ?? null,
+        ];
 
         $elementTypes = [];
 
