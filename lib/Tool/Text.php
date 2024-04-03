@@ -82,7 +82,7 @@ class Text
 
                             $site = Frontend::getSiteForDocument($element);
                             if ($site instanceof Site) {
-                                $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . $site->getRootPath().'~','', $path);
+                                $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
                             }
 
                         } elseif ($element instanceof Concrete) {
