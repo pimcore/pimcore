@@ -12,7 +12,9 @@ framework:
                 dsn: "doctrine://default?queue_name=pimcore_failed_jobs&table_name=messenger_messages_pimcore_failed"
 
             pimcore_core:
-                dsn: "amqp://rabbitmq:5672/%2f/pimcore_core"
+                dsn: "doctrine://default?queue_name=pimcore_core"
+                # For RabbitMQ (recommend) use this as example:
+                # dsn: "amqp://rabbitmq:5672/%2f/pimcore_core"
                 failure_transport: pimcore_failed_jobs
 ```
 which can be re-processed later after fixing the underlying issue with command `bin/console messenger:consume pimcore_failed_jobs`.
