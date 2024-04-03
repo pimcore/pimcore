@@ -63,6 +63,5 @@ class Dao extends Model\Dao\AbstractDao
         ];
 
         Helper::upsert($this->db, 'properties', $saveData, $this->getPrimaryKey('properties'));
-        \Pimcore\Cache::remove($this->model->getCtype() . '_properties_' . $this->model->getCid());
     }
 }
