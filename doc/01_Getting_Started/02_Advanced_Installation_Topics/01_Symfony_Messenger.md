@@ -13,7 +13,7 @@ framework:
 
             pimcore_core:
                 dsn: "doctrine://default?queue_name=pimcore_core"
-                # For RabbitMQ (recommend) use this as example:
+                # For RabbitMQ (recommended) use this as example:
                 # dsn: "amqp://rabbitmq:5672/%2f/pimcore_core"
                 failure_transport: pimcore_failed_jobs
 ```
