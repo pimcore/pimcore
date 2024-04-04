@@ -24,6 +24,7 @@ use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Document;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
@@ -139,6 +140,19 @@ final class Redirect extends AbstractModel
     public function getTarget(): ?string
     {
         return $this->target;
+    }
+
+    public function getTargetPath(): string
+    {
+        $redirectTarget = $this->target;
+        $targetDocumentPath = Document::getById($this->target)?->getFullPath();
+
+        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? "";
+
+        if(!str_starts_with($resolvedPath, "/")) {
+            return "/".$resolvedPath;
+        }
+        return $resolvedPath;
     }
 
     public function setId(int $id): static
