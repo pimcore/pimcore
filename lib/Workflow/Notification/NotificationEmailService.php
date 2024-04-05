@@ -48,10 +48,10 @@ class NotificationEmailService extends AbstractNotificationService
      * Sends an Mail
      *
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
+    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath, bool $includeAllUsers): void
     {
         try {
-            $recipients = $this->getNotificationUsersByName($users, $roles);
+            $recipients = $this->getNotificationUsersByName($users, $roles, $includeAllUsers);
             if (!count($recipients)) {
                 return;
             }
