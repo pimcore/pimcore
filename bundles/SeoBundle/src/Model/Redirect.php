@@ -137,11 +137,20 @@ final class Redirect extends AbstractModel
         return $this->source;
     }
 
+    /**
+     * Target as string, can be target path or document id
+     */
     public function getTarget(): ?string
     {
         return $this->target;
     }
 
+    /**
+     * resolved target path with handling for document ids as `target`
+     *   - tries to resolve the target as document by id and take its full path
+     *   - if no document can be found the target is used as target path
+     *   - ensures a slash at the beginning of the target string
+     */
     public function getTargetPath(): string
     {
         $redirectTarget = $this->target;
