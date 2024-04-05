@@ -233,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
             [
                 'name' => $this->model->getName(),
                 'id' => $this->model->getId(),
-                'definitionModificationDate' => $this->model->getModificationDate()
+                'definitionModificationDate' => $this->model->getModificationDate(),
             ]
         );
     }
