@@ -57,7 +57,12 @@ class AbstractNotificationService
 
             foreach ($roleList->load() as $role) {
                 $userList = new User\Listing();
-                $userList->setCondition('FIND_IN_SET(?, roles) > 0 AND active = ?', [$role->getId(), $includeAllUsers]);
+
+                if ($includeAllUsers) {
+                    $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
+                } else {
+                    $userList->setCondition('FIND_IN_SET(?, roles) > 0 and email is not null AND active = ?', [$role->getId()]);
+                }
 
                 foreach ($userList->load() as $user) {
                     if ($includeAllUsers || $user->getEmail()) {
@@ -71,7 +76,7 @@ class AbstractNotificationService
             //get users
             $userList = new User\Listing();
             if ($includeAllUsers) {
-                $userList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).')  AND active = ?', [$includeAllUsers]);
+                $userList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).')', [$includeAllUsers]);
             } else {
                 $userList->setCondition(
                     'name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).') and email is not null AND active = ?', [$includeAllUsers]
