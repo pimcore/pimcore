@@ -118,13 +118,13 @@ final class Tool
         if (empty(self::$requiredLanguages) === true) {
             $config = SystemSettingsConfig::get()['general'];
             if (empty($config['required_languages'])) {
-                return [];
+                return Tool::getValidLanguages();
             }
 
             $requiredLanguages = $config['required_languages'];
 
             if (!is_array($requiredLanguages)) {
-                $requiredLanguages = [];
+                $requiredLanguages = Tool::getValidLanguages();
             }
 
             self::$requiredLanguages = $requiredLanguages;

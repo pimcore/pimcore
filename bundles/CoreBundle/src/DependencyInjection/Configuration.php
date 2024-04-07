@@ -229,7 +229,6 @@ final class Configuration implements ConfigurationInterface
                     ->ifString()
                         ->then(fn ($v) => explode(',', $v))
                     ->end()
-                    ->defaultValue(['en', 'de', 'fr'])
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
