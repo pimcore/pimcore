@@ -733,7 +733,7 @@ class Installer
         return $files;
     }
 
-    private function createOrUpdateUser(Connection $db, array $config = []): void
+    protected function createOrUpdateUser(Connection $db, array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',
@@ -759,7 +759,7 @@ class Installer
      *
      * @throws \Exception
      */
-    private function insertDatabaseDump(Connection $db, string $file): void
+    protected function insertDatabaseDump(Connection $db, string $file): void
     {
         $dumpFile = file_get_contents($file);
 
