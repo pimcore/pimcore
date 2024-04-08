@@ -100,11 +100,12 @@ class Bootstrap
     public static function bootstrap(): void
     {
         $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
-        if (!Tool::hasCurrentRequest() && !$isCli) {
+
+        if (!Tool::hasCurrentRequest()) {
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
-                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime. 
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime.
                 When using it, the line "Bootstrap::bootstrap();" in `public/index.php` should be moved just above "$kernel = Bootstrap::kernel();" and within the closure'
             );
             self::bootDotEnvVariables();
