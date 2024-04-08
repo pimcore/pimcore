@@ -91,7 +91,7 @@ class Item extends Model\AbstractModel
     public function restore(Model\User $user = null): void
     {
         $dummy = null;
-        $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
+        $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
         $element = Serialize::unserialize($raw);
 
         // check for element with the same name
@@ -175,7 +175,7 @@ class Item extends Model\AbstractModel
         $this->getDao()->save();
 
         $storage = Storage::get('recycle_bin');
-        $storage->write($this->getStoreageFile(), $data);
+        $storage->write($this->getStorageFile(), $data);
 
         $saveBinaryData = function ($element, $rec, self $scope) use ($storage) {
             // assets are kind of special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
@@ -197,7 +197,7 @@ class Item extends Model\AbstractModel
     public function delete(): void
     {
         $storage = Storage::get('recycle_bin');
-        $storage->delete($this->getStoreageFile());
+        $storage->delete($this->getStorageFile());
 
         $files = $storage->listContents($this->getType())->filter(function (StorageAttributes $item) {
             return (bool) strpos($item->path(), '/' . $this->getId() . '_');
@@ -358,9 +358,18 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    public function getStoreageFile(): string
+    public function getStorageFile(): string
     {
         return sprintf('%s/%s.psf', $this->getType(), $this->getId());
+    }
+
+    /**
+     * @deprecated since pimcore 11.3 and will be removed in 12.0
+     * @see Item::getStorageFile()
+     */
+    public function getStoreageFile(): string
+    {
+       return $this->getStorageFile();
     }
 
     protected function getStorageFileBinary(Element\ElementInterface $element): string
