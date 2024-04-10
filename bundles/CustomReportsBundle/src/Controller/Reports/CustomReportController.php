@@ -327,7 +327,10 @@ class CustomReportController extends UserAwareController
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
-
+        if($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== ''){
+            $sort = $configuration->orderby;
+            $dir = $configuration->orderbydir;
+        }
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
         return $this->jsonResponse([
@@ -387,6 +390,10 @@ class CustomReportController extends UserAwareController
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
+        if($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== ''){
+            $sort = $configuration->orderby;
+            $dir = $configuration->orderbydir;
+        }
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         return $this->jsonResponse([
