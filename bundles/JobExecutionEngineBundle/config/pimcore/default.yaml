@@ -1,0 +1,4 @@
+pimcore_job_execution_engine:
+    execution_context:
+        default:
+            translations_domain: admin

@@ -52,6 +52,7 @@
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
+    "doctrine/orm": "^2.15",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
@@ -178,7 +179,8 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
+      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
+      "Pimcore\\Bundle\\JobExecutionEngineBundle\\": "bundles/JobExecutionEngineBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
