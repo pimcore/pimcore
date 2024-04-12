@@ -118,7 +118,7 @@ class Bootstrap
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
-                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime.'
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime in project root "bin/console"'
             );
             self::bootDotEnvVariables();
         }
