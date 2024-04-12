@@ -44,7 +44,6 @@ class Bootstrap
         }
 
         self::setProjectRoot();
-        // set something here statically
         self::bootstrap();
 
         $workingDirectory = getcwd();
@@ -101,7 +100,7 @@ class Bootstrap
     {
         $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
 
-        if (!Tool::hasCurrentRequest()) { // add a condition to the static property above, so we don't exclude all CLI, only the ones from https://github.com/pimcore/skeleton/blob/0533f1043074e3adbd781cd4e5f11750459daba3/bin/console#L36 but still working for https://github.com/pimcore/pimcore/blob/11.x/bin/pimcore-install
+        if (!Tool::hasCurrentRequest() && !$isCli) { // add a condition that is INSTALLER (!$isCli || $isInstaller)
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
