@@ -26,19 +26,17 @@ The table editable provides the ability to edit a table structure.
 ```twig
 {{ pimcore_table("productProperties", {
     "width": 700,
-    "height": 400,
     "defaults": {
-        "cols": 2,
-        "rows": 3,
+        "cols": 3,
+        "rows": 4,
         "data": [
-            ["Attribute name", "Value"],
-            ["Color", "Black"],
-            ["Size", "Large"],
-            ["Availability", "Out of stock"]
-            ]
-        }
-    })
-}}
+            ["Attribute name", "Value", "Additional column"],
+            ["Color", "Black", ""],
+            ["Size", "Large", ""],
+            ["Availability", "Out of stock", ""]
+        ]
+    }
+}) }}
 ```
 
 You're now able to change columns and the predefined data in the editmode.
@@ -54,18 +52,17 @@ You would just use the `getData()` method instead of rendering the entire HTML o
 {% if editmode %}
     {{ pimcore_table("productProperties", {
         "width": 700,
-        "height": 400,
         "defaults": {
-            "cols": 2,
-            "rows": 3,
+            "cols": 3,
+            "rows": 4,
             "data": [
-                ["Attribute name", "Value"],
-                ["Color", "Black"],
-                ["Size", "Large"],
-                ["Availability", "Out of stock"]
+                ["Attribute name", "Value", "Additional column"],
+                ["Color", "Black", ""],
+                ["Size", "Large", ""],
+                ["Availability", "Out of stock", ""]
             ]
         }
-    })}}
+    }) }}
 {% else %}
     {% set data = pimcore_table("productProperties").getData() %}
     
@@ -81,22 +78,22 @@ array(4) {
   [0] => array(3) {
     [0] => string(14) "Attribute name"
     [1] => string(5) "Value"
-    [2] => string(18) " Additional column"
+    [2] => string(17) "Additional column"
   }
   [1] => array(3) {
     [0] => string(5) "Color"
     [1] => string(5) "Black"
-    [2] => string(1) " "
+    [2] => string(0) ""
   }
   [2] => array(3) {
     [0] => string(4) "Size"
     [1] => string(5) "Large"
-    [2] => string(1) " "
+    [2] => string(0) ""
   }
   [3] => array(3) {
     [0] => string(12) "Availability"
     [1] => string(12) "Out of stock"
-    [2] => string(1) " "
+    [2] => string(0) ""
   }
 }
 ```
