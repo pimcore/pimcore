@@ -114,7 +114,7 @@ class Bootstrap
         }
 
         // BC Layer when using bin/console without symfony runtime, exclude installer script
-        if ($isCli && !isset(SYMFONY_DOTENV_VARS) && !self::$isInstaller) { 
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && !self::$isInstaller) { 
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
@@ -125,7 +125,7 @@ class Bootstrap
 
         // Installer
         // Keep this block unless core is requiring symfony runtime as mandatory and pimcore-install is adapted
-        if ($isCli && !isset(SYMFONY_DOTENV_VARS) && self::$isInstaller) { 
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && self::$isInstaller) { 
             self::bootDotEnvVariables();
         }
             
