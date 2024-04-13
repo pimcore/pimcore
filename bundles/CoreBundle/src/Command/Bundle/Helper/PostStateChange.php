@@ -28,13 +28,15 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * @internal
+ *
+ * @TODO: Make class readonly and remove readonly from properties when PHP 8.1 support is dropped
  */
 class PostStateChange
 {
     public function __construct(
-        private CacheClearer $cacheClearer,
-        private AssetsInstaller $assetsInstaller,
-        private EventDispatcherInterface $eventDispatcher
+        private readonly CacheClearer $cacheClearer,
+        private readonly AssetsInstaller $assetsInstaller,
+        private readonly EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -45,16 +47,12 @@ class PostStateChange
             null,
             InputOption::VALUE_NONE,
             'Do not run any post change commands (<comment>assets:install</comment>, <comment>cache:clear</comment>) after successful state change'
-        );
-
-        $command->addOption(
+        )->addOption(
             'no-assets-install',
             null,
             InputOption::VALUE_NONE,
             'Do not run <comment>assets:install</comment> command after successful state change'
-        );
-
-        $command->addOption(
+        )->addOption(
             'no-cache-clear',
             null,
             InputOption::VALUE_NONE,
@@ -70,22 +68,20 @@ class PostStateChange
             return;
         }
 
-        $runAssetsInstall = $input->getOption('no-assets-install') ? false : true;
-        $runCacheClear = $input->getOption('no-cache-clear') ? false : true;
+        $runAssetsInstall = !$input->getOption('no-assets-install');
+        $runCacheClear = !$input->getOption('no-cache-clear');
 
         if (!$runAssetsInstall && !$runCacheClear) {
             return;
         }
 
-        $runCallback = function ($type, $buffer) use ($io) {
-            $io->write($buffer);
-        };
+        $runCallback = static fn ($type, $buffer) => $io->write($buffer);
 
         $io->newLine();
         $io->section('Running post state change commands');
 
         if ($runAssetsInstall) {
-            $io->comment('Running bin/console assets:install...');
+            $io->simpleSection('Running bin/console assets:install...');
 
             try {
                 $this->assetsInstaller->setRunCallback($runCallback);
@@ -93,7 +89,7 @@ class PostStateChange
                     'env' => $environment,
                     'ansi' => $io->isDecorated(),
                 ]);
-            } catch (ProcessFailedException $e) {
+            } catch (ProcessFailedException) {
                 // noop - output should be enough
             }
         }
@@ -104,14 +100,14 @@ class PostStateChange
                 $this->eventDispatcher->removeListener(ConsoleEvents::TERMINATE, $listener);
             }
 
-            $io->comment('Running bin/console cache:clear...');
+            $io->simpleSection('Running bin/console cache:clear...');
 
             try {
                 $this->cacheClearer->setRunCallback($runCallback);
                 $this->cacheClearer->clear($environment, [
                     'ansi' => $io->isDecorated(),
                 ]);
-            } catch (ProcessFailedException $e) {
+            } catch (ProcessFailedException) {
                 // noop - output should be enough
             }
         }
