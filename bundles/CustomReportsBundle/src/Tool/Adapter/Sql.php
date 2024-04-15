@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
+use Pimcore\Bundle\CustomReportsBundle\Tool\HumanReadableElementNameInterface;
 use Pimcore\Db;
 use Pimcore\Model;
 
@@ -89,7 +90,13 @@ class Sql extends AbstractAdapter
                 $relationDataDictionary[$type][] = $row[$columnName];
 
                 $element = $this->loadElementById($row[$columnName], $type);
-                $data[$index][$columnName] = $element ? $element->getFullPath() : $row[$columnName];
+
+                if ($element instanceof HumanReadableElementNameInterface) {
+                    $data[$index][$columnName] = $element->getHumanReadableElementName();
+
+                } else {
+                    $data[$index][$columnName] = $element ? $element->getFullPath() : $row[$columnName];
+                }
             }
         }
     }
