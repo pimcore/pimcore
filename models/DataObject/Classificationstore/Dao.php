@@ -167,7 +167,6 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-
     }
 
     public function delete(): void
