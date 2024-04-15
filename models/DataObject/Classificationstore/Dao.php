@@ -51,24 +51,32 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
-            return;
+//            return;
         }
         $object = $this->model->getObject();
         $objectId = $object->getId();
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $groupsToKeep = [];
-        $groupsWithCollectionToKeep = [];
-        $collectionToKeep = [];
-        $systemRowToDelete = [];
+        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
+         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        if ($dataExists) {
+            $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
+        }
 
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
+        $broups = $this->model->getGroups();
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
         $groupsTable = $this->getGroupsTableName();
+
+        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
+         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        if ($dataExists) {
+            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
+        }
 
         foreach ($activeGroups as $activeGroupId => $enabled) {
             if ($enabled) {
@@ -78,9 +86,11 @@ class Dao extends Model\Dao\AbstractDao
                     'fieldname' => $fieldname,
                 ];
                 Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
-                $groupsToKeep[] = $activeGroupId;
             }
         }
+
+        $alreadySavedGroups = [];
+        $alreadySavedKeyIds = [];
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
@@ -126,86 +136,39 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value2'] = $encodedData['value2'] ?? null;
 
                     Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
-                    $collectionToKeep[] = $collectionId;
-                    if ($collectionId) {
-                        $systemRowToDelete[] = [$collectionId, $groupId];
-                    }
-                    $groupsWithCollectionToKeep[] = $groupId;
+                    $alreadySavedGroups[] = $groupId;
+                    $alreadySavedKeyIds[] = $keyId;
                 }
             }
         }
 
+        // Adds a placeholder to persist collectionId by adding the first field of the group
+        // that belongs to a collection with NULL values
         foreach ($collectionMapping as $groupId => $collectionId) {
-            if ($collectionId && !in_array($groupId, $groupsWithCollectionToKeep)) {
-                $data = [
-                    'id' => $objectId,
-                    'collectionId' => $collectionId,
-                    'groupId' => $groupId,
-                    'keyId' => 0,
-                    'fieldname' => $fieldname,
-                    'language' => 'default',
-                    'type' => '<system>' //on purpose to avoid conflict with real types, could be easily cleared
-                ];
-                Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
-                $groupsToKeep[] = $groupId;
-                $collectionToKeep[] = $collectionId;
+            // Ignore the groups that are already saved and those without any collection id
+            if ($collectionId && !in_array($groupId, $alreadySavedGroups)) {
+                $group = GroupConfig::getById($groupId);
+                $groupKeys = $group->getRelations();
+                // make sure that any of the group keys are not among those already saved
+                // if so, skip as there no need for a placeholder
+                if (!in_array(array_keys($groupKeys), $alreadySavedKeyIds)) {
+                    $firstKey = reset($groupKeys);
+                    $keyId = $firstKey->getKeyId();
+                    $keyConfig = DefinitionCache::get($keyId);
+                    $data = [
+                        'id' => $objectId,
+                        'collectionId' => $collectionId,
+                        'groupId' => $groupId,
+                        'keyId' => $keyId,
+                        'fieldname' => $fieldname,
+                        'language' => 'default',
+                        'type' => $keyConfig->getType(),
+                        'value' => null,
+                        'value2' => null
+                    ];
+                    $this->db->insert($dataTable, $data);
+                }
             }
-        }
-
-        $type = Connection::PARAM_INT_ARRAY;
-        if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
-            $type = ArrayParameterType::INTEGER;
-        }
-
-        // Delete the groups that are not found anymore
-        $this->db->executeQuery(
-            sprintf(
-                'DELETE FROM %s WHERE %s = %s AND %s = %s AND (%s NOT IN (?) AND %s NOT IN (?))',
-                $groupsTable,
-                $this->db->quoteIdentifier('id'),
-                $objectId,
-                $this->db->quoteIdentifier('fieldname'),
-                $this->db->quote($fieldname),
-                $this->db->quoteIdentifier('groupId'),
-                $this->db->quoteIdentifier('groupId')
-            ),
-            [array_unique($groupsToKeep), $groupsWithCollectionToKeep],
-            [$type,$type]
-        );
-
-        // Delete the collections that are not found anymore
-        $this->db->executeQuery(
-            sprintf(
-                'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s NOT IN (?)',
-                $dataTable,
-                $this->db->quoteIdentifier('id'),
-                $objectId,
-                $this->db->quoteIdentifier('fieldname'),
-                $this->db->quote($fieldname),
-                $this->db->quoteIdentifier('collectionId'),
-            ),
-            [array_unique($collectionToKeep)],
-            [$type]
-        );
-
-        // Delete the system rows that are not needed anymore as the ones with real value and keyId is filled
-        foreach ($systemRowToDelete as $row) {
-            $this->db->executeQuery(
-                sprintf(
-                    'DELETE FROM %s WHERE %s = %s AND %s = %s AND %s = %s AND %s = %s AND %s = %s',
-                    $dataTable,
-                    $this->db->quoteIdentifier('id'),
-                    $objectId,
-                    $this->db->quoteIdentifier('fieldname'),
-                    $this->db->quote($fieldname),
-                    $this->db->quoteIdentifier('collectionId'),
-                    $row[0],
-                    $this->db->quoteIdentifier('groupId'),
-                    $row[1],
-                    $this->db->quoteIdentifier('type'),
-                    $this->db->quote('<system>')
-                )
-            );
         }
 
     }
