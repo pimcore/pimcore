@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -51,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
-//            return;
+            return;
         }
         $object = $this->model->getObject();
         $objectId = $object->getId();
@@ -66,7 +64,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
-        $broups = $this->model->getGroups();
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
