@@ -27,6 +27,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Bootstrap
 {
+    /**
+     * @internal
+     */
     public static bool $isInstaller = false;
     
     public static function startup(): Kernel|\App\Kernel|KernelInterface
