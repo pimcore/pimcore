@@ -98,6 +98,9 @@ final class Frontend
         return $siteMapping;
     }
 
+    /**
+     * @return false|array{enabled: true, lifetime: int|null}
+     */
     public static function isOutputCacheEnabled(): bool|array
     {
         $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);

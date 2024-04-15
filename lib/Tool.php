@@ -47,6 +47,14 @@ final class Tool
     }
 
     /**
+     * @internal
+     */
+    public static function hasCurrentRequest(): bool
+    {
+        return self::$currentRequest !== null;
+    }
+
+    /**
      * Checks, if the given language is configured in pimcore's system
      * settings at "Localization & Internationalization (i18n/l10n)".
      * Returns true, if the language is valid or no language is
@@ -432,7 +440,7 @@ final class Tool
         return $mail;
     }
 
-    public static function getHttpData(string $url, array $paramsGet = [], array $paramsPost = [], array $options = []): bool|string
+    public static function getHttpData(string $url, array $paramsGet = [], array $paramsPost = [], array $options = []): false|string
     {
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';

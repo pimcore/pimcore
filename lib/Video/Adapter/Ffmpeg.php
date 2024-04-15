@@ -55,7 +55,7 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    public static function getFfmpegCli(): bool|string
+    public static function getFfmpegCli(): false|string
     {
         return \Pimcore\Tool\Console::getExecutable('ffmpeg', true);
     }

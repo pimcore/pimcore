@@ -70,7 +70,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }
 
-            if (!empty($data['id'])) {
+            if ($data) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new Model\Exception\NotFoundException('Layout with ID ' . $id . " doesn't exist");

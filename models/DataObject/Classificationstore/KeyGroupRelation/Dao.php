@@ -48,7 +48,7 @@ class Dao extends AbstractDao
             [$this->model->getKeyId(), $this->model->getGroupId()]
         );
 
-        if (!empty($data['keyId'])) {
+        if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $data['mandatory'] = (bool)$data['mandatory'];
             $this->assignVariablesToModel($data);

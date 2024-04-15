@@ -99,6 +99,17 @@ class Bootstrap
 
     public static function bootstrap(): void
     {
+        $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
+        if (!Tool::hasCurrentRequest() && !$isCli) {
+            trigger_deprecation(
+                'pimcore/skeleton',
+                '11.2.0',
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime. 
+                When using it, the line "Bootstrap::bootstrap();" in `public/index.php` should be moved just above "$kernel = Bootstrap::kernel();" and within the closure'
+            );
+            self::bootDotEnvVariables();
+        }
+
         self::defineConstants();
 
         // load a startup file if it exists - this is a good place to preconfigure the system
@@ -108,29 +119,36 @@ class Bootstrap
             include_once $startupFile;
         }
 
-        if (false === in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
-            // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
-            if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
-                Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
-            }
-            if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
-                Request::setTrustedHosts([$trustedHosts]);
-            }
+        if (false === $isCli) {
+            self::setTrustedProxies();
         }
     }
 
-    private static function prepareEnvVariables(): void
+    /**
+     * @deprecated only for compatibility reasons, will be removed in Pimcore 12
+     */
+    private static function bootDotEnvVariables(): void
     {
         if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
             (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-        } else {
-            $_SERVER += $_ENV;
+        }
+    }
+
+    private static function setTrustedProxies(): void
+    {
+        // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+            Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
+        }
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+            Request::setTrustedHosts([$trustedHosts]);
         }
     }
 
     public static function defineConstants(): void
     {
-        self::prepareEnvVariables();
+        // make sure $_SERVER contains all values of $_ENV
+        $_SERVER += $_ENV;
 
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/constants.php';
