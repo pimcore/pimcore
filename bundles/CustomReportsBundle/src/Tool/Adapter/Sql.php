@@ -67,7 +67,14 @@ class Sql extends AbstractAdapter
 
     protected function loadRelationData(array &$data): void
     {
-        $columnsDictionary = $this->getRelationColumns();
+        if (empty($data)) {
+            return;
+        }
+
+        if (!$columnsDictionary = $this->getRelationColumns()) {
+            return;
+        }
+
         $columnNames = array_keys($columnsDictionary);
 
         $relationDataDictionary = [];
