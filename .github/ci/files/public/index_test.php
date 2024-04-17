@@ -25,21 +25,25 @@ define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('APP_ENV', 'test');
 
 Bootstrap::setProjectRoot();
-Bootstrap::bootstrap();
 
 $request = Request::createFromGlobals();
 
+return function (Request $request, array $context) {
 // set current request as property on tool as there's no
 // request stack available yet
-Tool::setCurrentRequest($request);
+    Tool::setCurrentRequest($request);
 
-/** @var \Pimcore\Kernel $kernel */
-$kernel = Bootstrap::kernel();
+    Bootstrap::bootstrap();
+
+    /** @var \Pimcore\Kernel $kernel */
+    $kernel = Bootstrap::kernel();
 
 // reset current request - will be read from request stack from now on
-Tool::setCurrentRequest(null);
+    Tool::setCurrentRequest(null);
 
-$response = $kernel->handle($request);
-$response->send();
+    $response = $kernel->handle($request);
+    $response->send();
 
-$kernel->terminate($request, $response);
+    $kernel->terminate($request, $response);
+    return $kernel;
+};
