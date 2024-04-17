@@ -64,6 +64,9 @@ class AssetUpdateTasksHandler
     private function processDocument(Asset\Document $asset): void
     {
         if ($asset->isPdfScanningEnabled() && $asset->getMimeType() === 'application/pdf' && !$asset->getScanStatus()) {
+            $asset->setCustomSetting($asset::CUSTOM_SETTING_PDF_SCAN_STATUS, PdfScanStatus::IN_PROGRESS->value);
+            $this->saveAsset($asset);
+
             if ($asset->checkIfPdfContainsJS()) {
                 $asset->setCustomSetting($asset::CUSTOM_SETTING_PDF_SCAN_STATUS, PdfScanStatus::SAFE->value);
                 $note = 'safe';

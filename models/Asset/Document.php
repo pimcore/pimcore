@@ -167,11 +167,6 @@ class Document extends Model\Asset
 
     public function checkIfPdfContainsJS(): bool
     {
-        $this->setCustomSetting(
-            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
-            Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
-        );
-
         $chunkSize = 1024;
         $filePointer = $this->getStream();
 

@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
+use Pimcore\Model\Asset\Enum\PdfScanStatus;
 use function in_array;
 use function is_array;
 use League\Flysystem\FilesystemException;
@@ -497,6 +498,12 @@ class Asset extends Element\AbstractElement
             $this->correctPath();
 
             $parameters['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
+
+            if ($this->getDataChanged()) {
+                if ($this->getType() === 'document') {
+                    $this->setCustomSetting($this::CUSTOM_SETTING_PDF_SCAN_STATUS, null);
+                }
+            }
 
             // we wrap the save actions in a loop here, to restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
