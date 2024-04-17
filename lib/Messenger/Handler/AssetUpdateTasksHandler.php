@@ -19,6 +19,7 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Enum\PdfScanStatus;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
@@ -62,8 +63,15 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset): void
     {
-        if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $asset->save(['versionNote' => 'PDF scan result']);
+        if ($asset->isPdfScanningEnabled() && $asset->getMimeType() === 'application/pdf' && !$asset->getScanStatus()) {
+            if ($asset->checkIfPdfContainsJS()) {
+                $asset->setCustomSetting($asset::CUSTOM_SETTING_PDF_SCAN_STATUS, PdfScanStatus::SAFE->value);
+                $note = 'safe';
+            } else {
+                $asset->setCustomSetting($asset::CUSTOM_SETTING_PDF_SCAN_STATUS, PdfScanStatus::UNSAFE->value);
+                $note = 'unsafe';
+            }
+            $asset->save(['versionNote' => 'PDF scan result:' . $note]);
         }
 
         $pageCount = $asset->getCustomSetting('document_page_count');

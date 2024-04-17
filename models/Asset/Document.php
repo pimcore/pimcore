@@ -167,10 +167,6 @@ class Document extends Model\Asset
 
     public function checkIfPdfContainsJS(): bool
     {
-        if (!$this->isPdfScanningEnabled()) {
-            return false;
-        }
-
         $this->setCustomSetting(
             self::CUSTOM_SETTING_PDF_SCAN_STATUS,
             Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
@@ -187,19 +183,9 @@ class Document extends Model\Asset
             }
 
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
-                $this->setCustomSetting(
-                    self::CUSTOM_SETTING_PDF_SCAN_STATUS,
-                    Model\Asset\Enum\PdfScanStatus::UNSAFE->value
-                );
-
-                return true;
+                return false;
             }
         }
-
-        $this->setCustomSetting(
-            self::CUSTOM_SETTING_PDF_SCAN_STATUS,
-            Model\Asset\Enum\PdfScanStatus::SAFE->value
-        );
 
         return true;
     }
@@ -228,7 +214,7 @@ class Document extends Model\Asset
         return Config::getSystemConfiguration('assets')['document']['process_text'];
     }
 
-    private function isPdfScanningEnabled(): bool
+    public function isPdfScanningEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['scan_pdf'];
     }
