@@ -500,7 +500,7 @@ class Asset extends Element\AbstractElement
             $parameters['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
 
             if ($this->getDataChanged()) {
-                if ($this->getType() === 'document') {
+                if ($this->getType() === 'document' && $this instanceof Asset\Document) {
                     $this->setCustomSetting($this::CUSTOM_SETTING_PDF_SCAN_STATUS, null);
                 }
             }
