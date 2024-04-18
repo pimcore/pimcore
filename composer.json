@@ -132,7 +132,8 @@
   "conflict": {
     "symfony/symfony": "*",
     "sabre/dav": "4.2.2",
-    "thecodingmachine/safe": "<2.0"
+    "thecodingmachine/safe": "<2.0",
+    "twig/twig": ">=3.9.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
