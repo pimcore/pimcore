@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
             [$this->model->getColId(), $this->model->getGroupId()]
         );
 
-        if (!empty($data['colId'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException(sprintf(
