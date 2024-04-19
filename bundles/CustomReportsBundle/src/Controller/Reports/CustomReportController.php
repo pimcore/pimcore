@@ -312,8 +312,9 @@ class CustomReportController extends UserAwareController
         }
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
-        $sortFilters = $this->getSortAndFilters($request , $configuration);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
         $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], $offset, $limit, null, $sortFilters['drillDownFilters']);
+
         return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
@@ -363,8 +364,9 @@ class CustomReportController extends UserAwareController
         }
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
-        $sortFilters = $this->getSortAndFilters($request , $configuration);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
         $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], null, null, null, $sortFilters['drillDownFilters']);
+
         return $this->jsonResponse([
             'success' => true,
             'data' => $result['data'],
@@ -487,9 +489,7 @@ class CustomReportController extends UserAwareController
         }
     }
 
-    /*
-     * gets the sort, direction, filters, drilldownfilters from grid or initial config
-     */
+    // gets the sort, direction, filters, drilldownfilters from grid or initial config
     private function getSortAndFilters(Request $request, \stdClass $configuration): array
     {
         $sortingSettings = null;
@@ -508,6 +508,7 @@ class CustomReportController extends UserAwareController
             $sort = $configuration->orderby;
             $dir = $configuration->orderbydir;
         }
-        return array('sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters);
+
+        return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
     }
 }
