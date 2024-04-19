@@ -170,14 +170,21 @@ class NotificationService
     {
         $listing = new Listing();
 
-        if (!empty($filter)) {
+        if ($filter) {
             $conditions = [];
+            $conditionVariables = [];
             foreach ($filter as $key => $value) {
-                $conditions[] = $key . ' = :' . $key;
+                if (isset($value['condition'])) {
+                    $conditions[] = $value['condition'];
+                    $conditionVariables[] = $value['conditionVariables'] ?? [];
+                } else {
+                    $conditions[] = $key . ' = :' . $key;
+                    $conditionVariables[] = [$key => $value];
+                }
             }
 
             $condition = implode(' AND ', $conditions);
-            $listing->setCondition($condition, $filter);
+            $listing->setCondition($condition, array_merge(...$conditionVariables));
         }
 
         $listing->setOrderKey('creationDate');
