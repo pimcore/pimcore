@@ -59,7 +59,7 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @return list<string, array{condition: string, conditionVariables: array<string, mixed>}>
+     * @return array<string, array{condition: string, conditionVariables: array<string, mixed>}>
      */
     public function parse(): array
     {
