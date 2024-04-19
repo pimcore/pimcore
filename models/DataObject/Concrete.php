@@ -446,6 +446,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;

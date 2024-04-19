@@ -1,13 +1,23 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
 - Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+- Page previews and version comparisons can now be rendered using Gotenberg v8.
+  To replace Headless Chrome, upgrade to Gotenberg v8 and upgrade the client library: `composer require gotenberg/gotenberg-php:^2`
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
-
+- All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
+- `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
 -----------------
 ### General
 #### [Localization]
@@ -16,6 +26,14 @@
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
 #### [Symfony]
 - Bumped Symfony packages to "^6.4".
+#### [Value Objects]
+- Added new self validating Value Objects:
+  - `Pimcore\ValueObject\BooleanArray`
+  - `Pimcore\ValueObject\IntegerArray`
+  - `Pimcore\ValueObject\Path`
+  - `Pimcore\ValueObject\PositiveInteger`
+  - `Pimcore\ValueObject\PositiveIntegerArray`
+  - `Pimcore\ValueObject\StringArray`
 
 > [!WARNING]  
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.

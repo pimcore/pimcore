@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Data;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use DeepCopy\Reflection\ReflectionHelper;
 use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\AbstractModel;
@@ -31,6 +32,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use ReflectionProperty;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, CacheMarshallerInterface
 {
@@ -140,6 +142,21 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
              */
             public function matches($object, $property): bool
             {
+                $reflectionProperty = null;
+                if ($object instanceof Video) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'data');
+                }
+                if ($object instanceof Hotspotimage) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'image');
+                }
+                if ($object instanceof ExternalImage) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'url');
+                }
+
+                if ($reflectionProperty instanceof ReflectionProperty) {
+                    return !($reflectionProperty->getValue($object) instanceof ElementDescriptor);
+                }
+
                 return $object instanceof AbstractElement;
             }
         });

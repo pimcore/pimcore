@@ -147,9 +147,9 @@ class Installer
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
-        'install_classes' => 'Installing classes ...',
-        'install_bundles' => 'Installing bundles ...',
-        'migrations' => 'Marking all migrations as done ...',
+        'install_classes' => 'Installing classes...',
+        'install_bundles' => 'Installing bundles...',
+        'migrations' => 'Marking all migrations as done...',
         'complete' => 'Install complete!',
     ];
 
@@ -292,6 +292,8 @@ class Installer
             $config = new Configuration();
 
             $db = DriverManager::getConnection($dbConfig, $config);
+            $db->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+            $db->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
 
             $this->dispatchStepEvent('check_prerequisites');
 
@@ -327,7 +329,8 @@ class Installer
                 [
                     'username' => $adminUser,
                     'password' => $adminPass,
-                ]
+                ],
+                $db
             );
         } catch (\Throwable $e) {
             $this->logger->error((string) $e);
@@ -381,7 +384,7 @@ class Installer
         return $dbConfig;
     }
 
-    private function runInstall(array $dbConfig, array $userCredentials): array
+    private function runInstall(array $dbConfig, array $userCredentials, Connection $db): array
     {
         $errors = [];
         $stepsToRun = $this->getRunInstallSteps();
@@ -434,18 +437,18 @@ class Installer
             $this->clearKernelCacheDir($kernel);
         }
 
-        \Pimcore::setKernel($kernel);
-
-        $kernel->boot();
+        if(in_array('clear_cache', $stepsToRun) || in_array('install_assets', $stepsToRun)) {
+            \Pimcore::setKernel($kernel);
+            $kernel->boot();
+        }
 
         if(in_array('setup_database', $stepsToRun)) {
             $this->dispatchStepEvent('setup_database');
 
-            $errors = $this->setupDatabase($userCredentials, $errors);
+            $errors = $this->setupDatabase($db, $userCredentials, $errors);
 
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
-                $db = \Pimcore\Db::get();
                 if ($db instanceof Connection) {
                     $connection = $db->getWrappedConnection();
                     if ($connection instanceof ServerInfoAwareConnection) {
@@ -462,17 +465,20 @@ class Installer
             $this->installAssets($kernel);
         }
 
-        if(in_array('install_classes', $stepsToRun)) {
-            $this->dispatchStepEvent('install_classes');
-            $this->installClasses();
-        }
-
         if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
 
+        if(in_array('install_classes', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+        }
+
         if(in_array('mark_migrations_as_done', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
         }
@@ -655,9 +661,8 @@ class Installer
         }
     }
 
-    public function setupDatabase(array $userCredentials, array $errors = []): array
+    public function setupDatabase(Connection $db, array $userCredentials, array $errors = []): array
     {
-        $db = \Pimcore\Db::get();
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
 
         if ($this->createDatabaseStructure) {
@@ -694,15 +699,15 @@ class Installer
 
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
-                    $this->insertDatabaseContents();
-                    $this->createOrUpdateUser($userCredentials);
+                    $this->insertDatabaseContents($db);
+                    $this->createOrUpdateUser($db, $userCredentials);
                 } else {
                     foreach ($dataFiles as $dbFile) {
                         $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
-                        $this->insertDatabaseDump($dbFile);
+                        $this->insertDatabaseDump($db, $dbFile);
                     }
 
-                    $this->createOrUpdateUser($userCredentials);
+                    $this->createOrUpdateUser($db, $userCredentials);
                 }
             } catch (\Exception $e) {
                 $this->logger->error((string) $e);
@@ -714,19 +719,19 @@ class Installer
 
         // close connections and collection garbage ... in order to avoid too many connections error
         // when installing demos
-        \Pimcore::collectGarbage();
+        if(\Pimcore::getKernel() instanceof \Pimcore\Kernel) {
+            \Pimcore::collectGarbage();
+        }
 
         return $errors;
     }
 
     protected function getDataFiles(): array
     {
-        $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
-
-        return $files;
+        return glob(PIMCORE_PROJECT_ROOT . '/dump/*{.sql,.sql.gz}', \GLOB_BRACE);
     }
 
-    protected function createOrUpdateUser(array $config = []): void
+    protected function createOrUpdateUser(Connection $db, array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',
@@ -735,27 +740,29 @@ class Installer
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
-        if ($user = User::getByName($settings['username'])) {
-            $user->delete();
-        }
+        $db->delete('users', ['name' => $settings['username']]);
 
-        $user = User::create([
+        $db->insert('users', [
             'parentId' => 0,
-            'username' => $settings['username'],
+            'name' => $settings['username'],
             'password' => \Pimcore\Tool\Authentication::getPasswordHash($settings['username'], $settings['password']),
-            'active' => true,
+            'active' => 1,
+            'admin' => 1,
+            'type' => 'user',
+            'language' => 'en',
         ]);
-        $user->setAdmin(true);
-        $user->save();
     }
 
     /**
      *
      * @throws \Exception
      */
-    public function insertDatabaseDump(string $file): void
+    protected function insertDatabaseDump(Connection $db, string $file): void
     {
-        $db = \Pimcore\Db::get();
+        if (str_ends_with($file, '.gz')) {
+            $file = 'compress.zlib://' . $file;
+        }
+
         $dumpFile = file_get_contents($file);
 
         // remove comments in SQL script
@@ -771,11 +778,11 @@ class Installer
             $batchQueries = [];
             foreach ($singleQueries as $m) {
                 $sql = trim($m);
-                if (strlen($sql) > 0) {
+                if ($sql !== '') {
                     $batchQueries[] = $sql . ';';
                 }
 
-                if (count($batchQueries) > 500) {
+                if (\count($batchQueries) > 500) {
                     $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }
@@ -785,9 +792,8 @@ class Installer
         }
     }
 
-    protected function insertDatabaseContents(): void
+    protected function insertDatabaseContents(Connection $db): void
     {
-        $db = \Pimcore\Db::get();
         $db->insert('assets', Helper::quoteDataIdentifiers($db, [
             'id' => 1,
             'parentId' => 0,

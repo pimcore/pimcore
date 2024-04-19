@@ -212,6 +212,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('language')
                     ->defaultValue('en')
+                    ->setDeprecated('pimcore/pimcore', '11.2')
                 ->end()
                 ->arrayNode('valid_languages')
                     ->info('String or array format are supported.')
@@ -1971,11 +1972,15 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    /**
+     * @deprecated
+     */
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
                 ->arrayNode('chromium')
+                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('uri')
