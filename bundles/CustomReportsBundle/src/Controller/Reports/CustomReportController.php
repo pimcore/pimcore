@@ -492,10 +492,10 @@ class CustomReportController extends UserAwareController
      */
     protected function getSortAndFilters(Request $request, \stdClass $configuration): array
     {
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        if(class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         $sort = null;
         $dir = null;
-        if ($sortingSettings['orderKey']) {
+        if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
         }
