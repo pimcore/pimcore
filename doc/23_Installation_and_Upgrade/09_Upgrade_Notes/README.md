@@ -2,12 +2,13 @@
 
 ## Pimcore 11.3.0
 ### General
-#### [Composer]
-- Removed unused `rybakit/twig-deferred-extension` dependency. If you use this dependency, please add the dependency to your own `composer.json`.
 #### [System Settings]
 - Unused setting `general.language` has been deprecated.
 #### [Listing]
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Twig Deferred Extension]
+- Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service. 
+  If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
 
 ## Pimcore 11.2.0
 ### Elements
