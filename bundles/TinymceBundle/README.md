@@ -8,6 +8,19 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 
 ## Installation
 
+Make sure the bundle is enabled in the `config/bundles.php` file. The following lines should be added:
+
+```php
+use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
+// ...
+
+return [
+    // ...
+    PimcoreTinymceBundle::class => ['all' => true],
+    // ...
+];
+```
+
 ```bash
 bin/console pimcore:bundle:install PimcoreTinymceBundle
 ```
