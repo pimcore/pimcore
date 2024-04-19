@@ -93,6 +93,13 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    public function save(): void
+    {
+        $this->getDao()->save();
+
+        \Pimcore\Cache::remove($this->getCtype() . '_properties_' . $this->getCid());
+    }
+
     public function getCid(): ?int
     {
         return $this->cid;

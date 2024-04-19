@@ -52,7 +52,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $data['id'] = $id;
         }
 
-        if (empty($data)) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException(
                 sprintf(
                     'Select options with ID "%s" does not exist.',
