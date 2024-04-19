@@ -369,7 +369,7 @@ class Item extends Model\AbstractModel
      */
     public function getStoreageFile(): string
     {
-       return $this->getStorageFile();
+        return $this->getStorageFile();
     }
 
     protected function getStorageFileBinary(Element\ElementInterface $element): string
