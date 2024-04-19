@@ -49,7 +49,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setPreviewWidth(?int $previewWidth): void
     {
-        $this->previewWidth = $this->getAsIntegerCast($previewWidth);
+        $this->previewWidth = $previewWidth;
     }
 
     public function getPreviewHeight(): ?int
@@ -59,7 +59,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setPreviewHeight(?int $previewHeight): void
     {
-        $this->previewHeight = $this->getAsIntegerCast($previewHeight);
+        $this->previewHeight = $previewHeight;
     }
 
     public function getInputWidth(): ?int
@@ -69,7 +69,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function setInputWidth(?int $inputWidth): void
     {
-        $this->inputWidth = $this->getAsIntegerCast($inputWidth);
+        $this->inputWidth = $inputWidth;
     }
 
     /**

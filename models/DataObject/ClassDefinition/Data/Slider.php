@@ -63,9 +63,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->minValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setMinValue(?float $minValue): static
     {
-        $this->minValue = $this->getAsFloatCast($minValue);
+        $this->minValue = $minValue;
 
         return $this;
     }
@@ -75,9 +78,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->maxValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxValue(?float $maxValue): static
     {
-        $this->maxValue = $this->getAsFloatCast($maxValue);
+        $this->maxValue = $maxValue;
 
         return $this;
     }
@@ -87,6 +93,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->vertical;
     }
 
+    /**
+     * @return $this
+     */
     public function setVertical(bool $vertical): static
     {
         $this->vertical = $vertical;
@@ -99,9 +108,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->increment;
     }
 
+    /**
+     * @return $this
+     */
     public function setIncrement(?float $increment): static
     {
-        $this->increment = $this->getAsFloatCast($increment);
+        $this->increment = $increment;
 
         return $this;
     }
@@ -111,9 +123,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->decimalPrecision;
     }
 
+    /**
+     * @return $this
+     */
     public function setDecimalPrecision(?int $decimalPrecision): static
     {
-        $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
+        $this->decimalPrecision = $decimalPrecision;
 
         return $this;
     }

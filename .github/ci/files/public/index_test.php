@@ -14,17 +14,18 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+use Pimcore\Bootstrap;
 use Pimcore\Tool;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . "/../vendor/autoload_runtime.php";
 
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('APP_ENV', 'test');
 
-\Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::bootstrap();
+Bootstrap::setProjectRoot();
+Bootstrap::bootstrap();
 
 $request = Request::createFromGlobals();
 
@@ -33,7 +34,7 @@ $request = Request::createFromGlobals();
 Tool::setCurrentRequest($request);
 
 /** @var \Pimcore\Kernel $kernel */
-$kernel = \Pimcore\Bootstrap::kernel();
+$kernel = Bootstrap::kernel();
 
 // reset current request - will be read from request stack from now on
 Tool::setCurrentRequest(null);

@@ -134,7 +134,7 @@ class Dao extends AbstractDao
     /**
      * get vote by id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById(?int $id = null): void
     {
@@ -144,7 +144,7 @@ class Dao extends AbstractDao
 
         $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
-        if(!$data) {
+        if (!$data) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
         }
 

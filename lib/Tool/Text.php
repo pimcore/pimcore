@@ -22,6 +22,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Site;
+use Pimcore\Tool;
 
 class Text
 {
@@ -77,6 +79,12 @@ class Text
                                     $path .= '#' . $urlParts['fragment'];
                                 }
                             }
+
+                            $site = Frontend::getSiteForDocument($element);
+                            if ($site instanceof Site) {
+                                $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
+                            }
+
                         } elseif ($element instanceof Concrete) {
                             if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                                 $path = $linkGenerator->generate(

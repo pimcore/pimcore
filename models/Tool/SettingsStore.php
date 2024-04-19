@@ -112,12 +112,14 @@ final class SettingsStore extends Model\AbstractModel
 
     public static function get(string $id, ?string $scope = null): ?SettingsStore
     {
-        $item = new self();
-        if ($item->getDao()->getById($id, $scope)) {
-            return $item;
-        }
+        try {
+            $item = new self();
+            $item->getDao()->getById($id, $scope);
 
-        return null;
+            return $item;
+        } catch (Model\Exception\NotFoundException) {
+            return null;
+        }
     }
 
     /**

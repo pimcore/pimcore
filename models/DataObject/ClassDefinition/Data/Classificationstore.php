@@ -429,6 +429,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -537,6 +540,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $keyConfig;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -561,6 +567,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setRegion(?string $region): static
     {
         $this->region = $region;
@@ -725,7 +734,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function setMaxItems(?int $maxItems): void
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
     }
 
     public function getMaxItems(): ?int
@@ -944,6 +953,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->storeId ? $this->storeId : 1;
     }
 
+    /**
+     * @return $this
+     */
     public function setStoreId(int $storeId): static
     {
         $this->storeId = $storeId ? $storeId : 1;
@@ -971,6 +983,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->hideEmptyData;
     }
 
+    /**
+     * @return $this
+     */
     public function setHideEmptyData(bool $hideEmptyData): static
     {
         $this->hideEmptyData = $hideEmptyData;
@@ -983,6 +998,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->disallowAddRemove;
     }
 
+    /**
+     * @return $this
+     */
     public function setDisallowAddRemove(bool $disallowAddRemove): static
     {
         $this->disallowAddRemove = $disallowAddRemove;
