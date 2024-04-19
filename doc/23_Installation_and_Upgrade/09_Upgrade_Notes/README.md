@@ -2,6 +2,8 @@
 
 ## Pimcore 11.3.0
 ### General
+#### [Composer]
+- Removed unused `rybakit/twig-deferred-extension` dependency. If you use this dependency, please add the dependency to your own `composer.json`.
 #### [System Settings]
 - Unused setting `general.language` has been deprecated.
 #### [Listing]
