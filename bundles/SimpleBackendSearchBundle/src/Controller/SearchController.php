@@ -146,7 +146,8 @@ class SearchController extends UserAwareController
 
                 if (
                     isset($class->getFieldDefinitions()['localizedfields'])
-                    && $class->getFieldDefinitions()['localizedfields']->getFieldDefinition($paramConditionObject['property'])
+                    && method_exists($class->getFieldDefinitions()['localizedfields'], 'getFieldDefinition')
+                    && ($class->getFieldDefinitions()['localizedfields'])->getFieldDefinition($paramConditionObject['property'])
                 ) {
                     $localizedFieldsFilters[] = $paramConditionObject;
                     continue;
