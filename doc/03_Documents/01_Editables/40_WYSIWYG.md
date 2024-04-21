@@ -15,6 +15,15 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `defaultValue` | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().      |
 | `required`     | boolean  | (default: false) set to true to make field value required for publish                                                                     |
 
+## Example
+
+```twig
+{{ pimcore_wysiwyg("myWYSIWYG", {
+    "height": 600,
+    "width": 1100,
+    "placeholder": "Enter you content"
+}) }}
+```
 
 ## Enable TinyMce
 In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
