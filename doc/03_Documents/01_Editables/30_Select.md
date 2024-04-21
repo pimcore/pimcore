@@ -38,7 +38,7 @@ in the frontend preview you will see simply the value of the chosen option.
                 ["three-months", "Three months"],
                 ["unlimited", "Unlimited"]
             ],
-            "defaultValue" : "unlimited"
+            "defaultValue": "unlimited"
         }) }}
 {% else %}
     <p>

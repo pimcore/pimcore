@@ -37,11 +37,11 @@ Now you can see the **numeric** value in the editmode view
 In the following example we're going to use a minimal and maximum value as well as a decimal precision. 
 
 ```twig
-{{ pimcore_numeric("myNumber",{
-		"width" : 300,
-		"minValue" : 0,
-		"maxValue" : 100,
-		"decimalPrecision" : 0
+{{ pimcore_numeric("myNumber", {
+		"width": 300,
+		"minValue": 0,
+		"maxValue": 100,
+		"decimalPrecision": 0
 	}) 
 }}
 ```
