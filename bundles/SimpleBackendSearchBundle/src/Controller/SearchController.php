@@ -133,6 +133,7 @@ class SearchController extends UserAwareController
         // filtering for objects
         if (!empty($allParams['filter']) && !empty($allParams['class'])) {
             $class = DataObject\ClassDefinition::getByName($allParams['class']);
+            $localizedFields = $class->getFieldDefinition('localizedfields');
 
             // add Localized Fields filtering
             $params = $this->decodeJson($allParams['filter']);
@@ -143,13 +144,10 @@ class SearchController extends UserAwareController
                 //this loop divides filter parameters to localized and unlocalized groups
                 if (in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } else {
-                    $localizedFields = $class->getFieldDefinition('localizedfields');
-                    if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
-                        $localizedFieldsFilters[] = $paramConditionObject;
-                    } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
-                        $unlocalizedFieldsFilters[] = $paramConditionObject;
-                    }
+                } elseif ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
+                    $localizedFieldsFilters[] = $paramConditionObject;
+                } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 
