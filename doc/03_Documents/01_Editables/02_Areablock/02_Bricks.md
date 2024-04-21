@@ -172,10 +172,10 @@ brick metadata.
 ```twig
 /* templates/areas/iframe/view.html.twig */
 
-{% set urlField = pimcore_input('iframe_url') %}
-{% set widthField = pimcore_numeric('iframe_width') %}
-{% set heightField = pimcore_numeric('iframe_height') %}
-{% set transparentField = pimcore_checkbox('iframe_transparent') %}
+{% set urlField = pimcore_input("iframe_url") %}
+{% set widthField = pimcore_numeric("iframe_width") %}
+{% set heightField = pimcore_numeric("iframe_height") %}
+{% set transparentField = pimcore_checkbox("iframe_transparent") %}
 
 {% if editmode %}
     <div>
@@ -198,9 +198,9 @@ brick metadata.
 {% else %}
     {% if not urlField.isEmpty() %}
         
-        {% set transparent = 'false' %}
-        {% set width = '100%' %}
-        {% set height = '400' %}
+        {% set transparent = "false" %}
+        {% set width = "100%" %}
+        {% set height = "400" %}
 
         {% if not widthField.isEmpty() %}
             {% set width = widthField.data %}    
@@ -211,7 +211,7 @@ brick metadata.
         {% endif %}
 
         {% if transparentField.isChecked() %}
-            {% set transparent = 'true' %}    
+            {% set transparent = "true" %}    
         {% endif %}
 
         <iframe src="{{ urlField }}" width="{{ width }}" height="{{ height }}" allowtransparency="{{ transparent }}" frameborder="0"></iframe>

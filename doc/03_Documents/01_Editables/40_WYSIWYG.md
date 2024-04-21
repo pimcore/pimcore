@@ -4,6 +4,18 @@
 
 Similar to Textarea and Input you can use the WYSIWYG editable in the templates to provide rich-text editing. TinyMce is installed by default in our demo. Another editor can be installed via the wysiwyg-events you find in `events.js`
 
+## Configuration
+
+| Name           | Type     | Description                                                                                                                               |
+|----------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `height`       | bool     | Set true to reload the page in editmode after selecting an item                                                                           |
+| `width`        | inte ger | Width of the select box in pixel                                                                                                          |
+| `class`        | string   | A CSS class that is added to the surrounding container of this element in editmode                                                        |
+| `placeholder`  | string   | A text shown in the field when it is empty to guide the user about the expected type of input.                                            |
+| `defaultValue` | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().      |
+| `required`     | boolean  | (default: false) set to true to make field value required for publish                                                                     |
+
+
 ## Enable TinyMce
 In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
 
@@ -14,7 +26,7 @@ if(!parent.pimcore.wysiwyg) {
     parent.pimcore.wysiwyg = {};
     parent.pimcore.wysiwyg.editors = [];
 }
-parent.pimcore.wysiwyg.editors.push('Custom_Editor');
+parent.pimcore.wysiwyg.editors.push("Custom_Editor");
 ```
 
 The Editor als needs to dispatch the `pimcore.events.changeWysiwyg` to set the value from the WYSIWYG-Field in the core.
