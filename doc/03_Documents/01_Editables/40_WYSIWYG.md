@@ -9,7 +9,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | Name           | Type     | Description                                                                                                                               |
 |----------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | `height`       | bool     | Set true to reload the page in editmode after selecting an item                                                                           |
-| `width`        | inte ger | Width of the select box in pixel                                                                                                          |
+| `width`        | integer  | Width of the select box in pixel                                                                                                          |
 | `class`        | string   | A CSS class that is added to the surrounding container of this element in editmode                                                        |
 | `placeholder`  | string   | A text shown in the field when it is empty to guide the user about the expected type of input.                                            |
 | `defaultValue` | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().      |

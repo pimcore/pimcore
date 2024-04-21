@@ -10,7 +10,7 @@ The select editable generates select-box component in Editmode.
 |----------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | `store`        | array    | Key/Value pairs for the available options.                                                                                                |
 | `reload`       | bool     | Set true to reload the page in editmode after selecting an item                                                                           |
-| `width`        | inte ger | Width of the select box in pixel                                                                                                          |
+| `width`        | integer  | Width of the select box in pixel                                                                                                          |
 | `class`        | string   | A CSS class that is added to the surrounding container of this element in editmode                                                        |
 | `defaultValue` | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().      |
 | `required`     | boolean  | (default: false) set to true to make field value required for publish                                                                     |
