@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -132,7 +133,7 @@ class NotificationServiceFilterParser
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = strtotime($item[self::KEY_VALUE]);
+        $value = new Carbon($item[self::KEY_VALUE]);
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:
@@ -141,8 +142,8 @@ class NotificationServiceFilterParser
                     $key,
                     "{$property} BETWEEN :{$key}_start AND :{$key}_end",
                     [
-                        $key . '_start' => $value,
-                        $key . '_end' => $value + (86400 - 1),
+                        $key . '_start' => $value->toDateTimeString(),
+                        $key . '_end' => $value->addDay()->subSecond()->toDateTimeString(),
                     ],
                 ];
 
@@ -152,7 +153,7 @@ class NotificationServiceFilterParser
                 $result = [
                     $key,
                     "{$property} > :{$key}",
-                    [$key => $value],
+                    [$key => $value->toDateTimeString()],
                 ];
 
                 break;
@@ -161,7 +162,7 @@ class NotificationServiceFilterParser
                 $result = [
                     $key,
                     "{$property} < :{$key}",
-                    [$key => $value],
+                    [$key => $value->addDay()->subSecond()->toDateTimeString()],
                 ];
 
                 break;
