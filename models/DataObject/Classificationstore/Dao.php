@@ -65,7 +65,18 @@ class Dao extends Model\Dao\AbstractDao
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
 
-        $collectionMapping = $this->model->getGroupCollectionMappings();
+        $collectionMapping = $collectionToAdd = $this->model->getGroupCollectionMappings();
+
+        // When is inheritable field, it gets the parent collection mappings
+        $allowInherit = $this->model->getClass()->getAllowInherit();
+        if ($allowInherit) {
+            $doGetInheritedValuesTemp = DataObject::doGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
+            $parentCollectionMapping = $this->model->getGroupCollectionMappings();
+            DataObject::setGetInheritedValues($doGetInheritedValuesTemp);
+
+            $collectionToAdd = array_diff($collectionToAdd, $parentCollectionMapping);
+        }
 
         $groupsTable = $this->getGroupsTableName();
 
@@ -141,7 +152,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // Adds a placeholder to persist collectionId by adding the first field of the group
         // that belongs to a collection with NULL values
-        foreach ($collectionMapping as $groupId => $collectionId) {
+        foreach ($collectionToAdd as $groupId => $collectionId) {
             // Ignore the groups that are already saved and those without any collection id
             if ($collectionId && !in_array($groupId, $alreadySavedGroups)) {
                 $group = GroupConfig::getById($groupId);
