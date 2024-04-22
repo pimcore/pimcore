@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
