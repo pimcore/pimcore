@@ -75,16 +75,16 @@ trait Dao
                 if (is_array($columnType)) {
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
-                        $columnName = $field->getName().'__'.$fkey;
-                        if ($this->indexExists($table, $prefix, $columnName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $columnName . '`;');
+                        $indexName = $field->getName().'__'.$fkey;
+                        if ($this->indexExists($table, $prefix, $indexName)) {
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
                         }
                     }
                 } else {
                     // single -column field
-                    $columnName = $field->getName();
-                    if ($this->indexExists($table, $prefix, $columnName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $columnName . '`;');
+                    $indexName = $field->getName();
+                    if ($this->indexExists($table, $prefix, $indexName)) {
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
                     }
                 }
             }
