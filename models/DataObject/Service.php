@@ -1506,7 +1506,7 @@ class Service extends Model\Element\Service
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                     try {
-                        return self::evaluateExpression($fd, $object, $data);
+                        return (string) self::evaluateExpression($fd, $object, $data);
                     } catch (SyntaxError $exception) {
                         return $exception->getMessage();
                     }
