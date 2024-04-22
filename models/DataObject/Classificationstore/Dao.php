@@ -67,14 +67,11 @@ class Dao extends Model\Dao\AbstractDao
 
         $collectionMapping = $collectionToAdd = $this->model->getGroupCollectionMappings();
 
-        // When is inheritable field, it gets the parent collection mappings
+        // When is inheritable field, it gets the parent collection mappings and removes the ones that are meant to be inherited
         $allowInherit = $this->model->getClass()->getAllowInherit();
         if ($allowInherit) {
-            $doGetInheritedValuesTemp = DataObject::doGetInheritedValues();
-            DataObject::setGetInheritedValues(true);
-            $parentCollectionMapping = $this->model->getGroupCollectionMappings();
-            DataObject::setGetInheritedValues($doGetInheritedValuesTemp);
-
+            $parentCollectionMapping = DataObject\Service::useInheritedValues(true, $this->model->getGroupCollectionMappings(...));
+            //TODO: Add an exception to the rule, when it's top parent and both array are matching
             $collectionToAdd = array_diff($collectionToAdd, $parentCollectionMapping);
         }
 
