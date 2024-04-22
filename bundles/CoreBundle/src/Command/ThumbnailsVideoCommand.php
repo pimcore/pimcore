@@ -141,7 +141,15 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         // initial delay
         $video = Asset\Video::getById($videoId);
-        $thumb = $video?->getThumbnail($thumbnail);
+
+        if (!$video instanceof Asset\Video) {
+            $message = 'video ['.$videoId.'] could not be found. Skipping ...';
+            Logger::error($message);
+
+            return;
+        }
+
+        $thumb = $video->getThumbnail($thumbnail);
         if ($thumb !== null && $thumb['status'] !== 'finished') {
             sleep(20);
         }
@@ -150,13 +158,6 @@ class ThumbnailsVideoCommand extends AbstractCommand
             \Pimcore::collectGarbage();
 
             $video = Asset\Video::getById($videoId);
-
-            if (!$video instanceof Asset\Video) {
-                $message = 'video ['.$videoId.'] could not be found. Skipping ...';
-                Logger::error($message);
-
-                break;
-            }
 
             $thumb = $video->getThumbnail($thumbnail);
 
@@ -176,7 +177,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
                 sleep(5);
             } else {
                 // error
-                Logger::debug('video [' . $video->getId() . "] has status: ['" . $thumb['status'] . "'] -> skipping");
+                Logger::debug('video [' . $video->getId() . "] has status: ['" . $thumb['status'] . "'] -> skipping ...");
 
                 break;
             }
