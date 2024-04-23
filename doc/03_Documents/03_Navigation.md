@@ -358,12 +358,7 @@ class NavigationExtension extends AbstractExtension
 ```
 
 ```twig
-{% set mainNav = pimcore_build_nav({
-    active: document,
-    root: mainNavStartNode,
-}) %}
-
-{% set mainNavigation =  app_navigation_news_links(document, navStartNode) %}
+{% set navigation = app_navigation_news_links(document, navStartNode) %}
 
 <div class="my-navigation">
     {{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {

@@ -170,7 +170,7 @@ class DateRange extends Data implements
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
-            return $data->toString();
+            return 'From ' . $data->getStartDate()->toDateString() . ' to ' . $data->getEndDate()->toDateString();
         }
 
         return '';

@@ -260,7 +260,7 @@ class Multiselect extends Data implements
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
-                return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             }, $data));
         }
 
