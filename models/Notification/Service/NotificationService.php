@@ -168,7 +168,7 @@ class NotificationService
 
     /**
      * @param array<string, mixed> $filter
-     * @param array{offset?: int, limit?: ?int} $options
+     * @param array{offset?: int|string, limit?: int|string|null} $options
      *
      * @return array{total: int, data: Notification[]}
      */
