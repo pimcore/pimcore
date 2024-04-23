@@ -171,7 +171,7 @@ class Dao extends Model\Dao\AbstractDao
                         'language' => 'default',
                         'type' => $keyConfig->getType(),
                         'value' => null,
-                        'value2' => null
+                        'value2' => null,
                     ];
                     $this->db->insert($dataTable, $data);
                 }
