@@ -31,7 +31,7 @@ class Bootstrap
      * @internal
      */
     public static bool $isInstaller = false;
-    
+
     public static function startup(): Kernel|\App\Kernel|KernelInterface
     {
         self::setProjectRoot();
@@ -106,7 +106,7 @@ class Bootstrap
         $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
 
         // BC Layer when using the public/index.php without symfony runtime pimcore/skeleton #128 OR without pimcore/skeleton #183 (< 11.0.4)
-        if (!Tool::hasCurrentRequest() && !$isCli && !isset($_ENV['SYMFONY_DOTENV_VARS'])) { 
+        if (!Tool::hasCurrentRequest() && !$isCli && !isset($_ENV['SYMFONY_DOTENV_VARS'])) {
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
@@ -117,7 +117,7 @@ class Bootstrap
         }
 
         // BC Layer when using bin/console without symfony runtime, exclude installer script
-        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && !self::$isInstaller) { 
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && !self::$isInstaller) {
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
@@ -128,10 +128,9 @@ class Bootstrap
 
         // Installer
         // Keep this block unless core is requiring symfony runtime as mandatory and pimcore-install is adapted
-        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && self::$isInstaller) { 
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && self::$isInstaller) {
             self::bootDotEnvVariables();
         }
-            
 
         self::defineConstants();
 
