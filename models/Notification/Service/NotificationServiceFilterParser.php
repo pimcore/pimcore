@@ -65,7 +65,7 @@ class NotificationServiceFilterParser
     public function parse(): array
     {
         $result = [];
-        $filter = $this->request->get(self::KEY_FILTER, '[]');
+        $filter = $this->request->request->get(self::KEY_FILTER, '[]');
         $items = json_decode($filter, true);
 
         foreach ($items as $item) {
