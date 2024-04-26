@@ -35,6 +35,8 @@ final class Tool
 
     protected static array $validLanguages = [];
 
+    protected static array $requiredLanguages = [];
+
     /**
      * Sets the current request to operate on
      *
@@ -109,6 +111,26 @@ final class Tool
         }
 
         return self::$validLanguages;
+    }
+
+    public static function getRequiredLanguages(): array
+    {
+        if (empty(self::$requiredLanguages) === true) {
+            $config = SystemSettingsConfig::get()['general'];
+            if (empty($config['required_languages'])) {
+                return Tool::getValidLanguages();
+            }
+
+            $requiredLanguages = $config['required_languages'];
+
+            if (!is_array($requiredLanguages)) {
+                $requiredLanguages = Tool::getValidLanguages();
+            }
+
+            self::$requiredLanguages = $requiredLanguages;
+        }
+
+        return self::$requiredLanguages;
     }
 
     /**
