@@ -30,6 +30,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\AdminStyle;
@@ -144,7 +145,7 @@ class SearchController extends UserAwareController
                 //this loop divides filter parameters to localized and unlocalized groups
                 if (in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } elseif ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
+                } elseif ($localizedFields instanceof Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
                     $localizedFieldsFilters[] = $paramConditionObject;
                 } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
