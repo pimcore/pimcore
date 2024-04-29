@@ -148,7 +148,7 @@
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.1",
     "symfony/dotenv": "^6.4",
-    "symfony/runtime": "^6.4",
+    "symfony/runtime": "^6.4"
   },
   "suggest": {
     "ext-sockets": "*",
