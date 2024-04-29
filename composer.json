@@ -193,6 +193,7 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
+      "Pimcore\\Model\\AdminBundle\\": "vendor/pimcore/admin-ui-classic-bundle/src/",
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
