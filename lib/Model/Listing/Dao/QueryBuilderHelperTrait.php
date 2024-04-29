@@ -128,13 +128,14 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
+        $distinct = $this->model->addDistinct();
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
-        if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+        if ($distinct) {
             $queryBuilder->distinct();
         }
 
@@ -145,13 +146,13 @@ trait QueryBuilderHelperTrait
             $innerQuery = (string)$queryBuilder;
             $queryBuilder
                 ->resetWhere()
-                ->resetOrderBy()
                 ->resetGroupBy()
                 ->resetHaving()
+                ->resetOrderBy()
                 ->select('COUNT(*)')
                 ->from('(' . $innerQuery . ')', 'XYZ')
             ;
-        } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
+        } elseif ($distinct) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
         }
