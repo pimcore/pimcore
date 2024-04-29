@@ -53,7 +53,7 @@ To create a container for local video files you can just use the `$this->video` 
 
 ```twig
 <section id="campaign_video">
-    {{ pimcore_video('campaignVideo', {
+    {{ pimcore_video("campaignVideo", {
         width: 700,
         height: 400
     }) }}
@@ -81,7 +81,7 @@ In the configuration, you could also specify additional options for external ser
 
 ```twig
 <section id="campaign_video">
-    {{ pimcore_video('campaignVideo', {
+    {{ pimcore_video("campaignVideo", {
             width: 700,
             height: 400,
             youtube: {
@@ -101,8 +101,8 @@ It is possible to limit the available types for this editable. The selection can
 
 ```twig
 <section id="campaign_video">
-    {{ pimcore_video('campaignVideo', {
-            allowedTypes: ['asset', 'youtube']
+    {{ pimcore_video("campaignVideo", {
+            allowedTypes: ["asset", "youtube"]
        })
     }}
 </section>
@@ -118,15 +118,15 @@ It is possible to limit the available types for this editable. The selection can
     <link href="http://vjs.zencdn.net/5.4.4/video-js.css" rel="stylesheet">
 </head>
 <body>
-    {{ pimcore_video('myVideo', {
-            thumbnail: 'example',
+    {{ pimcore_video("myVideo", {
+            thumbnail: "example",
             width: 400,
             height: 300,
             attributes: {
-                'class': 'video-js custom-class',
-                'preload': 'auto',
-                'controls': '',
-                'data-custom-attr': 'my-test'
+                "class": "video-js custom-class",
+                "preload": "auto",
+                "controls": "",
+                "data-custom-attr": "my-test"
             }
         })
     }}

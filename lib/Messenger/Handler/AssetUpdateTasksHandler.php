@@ -132,10 +132,8 @@ class AssetUpdateTasksHandler
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
 
-        $customSettings = $image->getCustomSettings();
-
         try {
-            $image->handleEmbeddedMetaData(true);
+            $image->handleEmbeddedMetaData();
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
         }

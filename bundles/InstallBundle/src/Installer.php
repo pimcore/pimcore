@@ -147,9 +147,9 @@ class Installer
         'boot_kernel' => 'Booting new kernel...',
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
-        'install_classes' => 'Installing classes ...',
-        'install_bundles' => 'Installing bundles ...',
-        'migrations' => 'Marking all migrations as done ...',
+        'install_classes' => 'Installing classes...',
+        'install_bundles' => 'Installing bundles...',
+        'migrations' => 'Marking all migrations as done...',
         'complete' => 'Install complete!',
     ];
 
@@ -465,17 +465,20 @@ class Installer
             $this->installAssets($kernel);
         }
 
-        if(in_array('install_classes', $stepsToRun)) {
-            $this->dispatchStepEvent('install_classes');
-            $this->installClasses();
-        }
-
         if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
 
+        if(in_array('install_classes', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+        }
+
         if(in_array('mark_migrations_as_done', $stepsToRun)) {
+            $this->dispatchStepEvent('install_classes');
+            $this->installClasses();
+
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
         }
@@ -725,12 +728,10 @@ class Installer
 
     protected function getDataFiles(): array
     {
-        $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
-
-        return $files;
+        return glob(PIMCORE_PROJECT_ROOT . '/dump/*{.sql,.sql.gz}', \GLOB_BRACE);
     }
 
-    private function createOrUpdateUser(Connection $db, array $config = []): void
+    protected function createOrUpdateUser(Connection $db, array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',
@@ -756,8 +757,12 @@ class Installer
      *
      * @throws \Exception
      */
-    private function insertDatabaseDump(Connection $db, string $file): void
+    protected function insertDatabaseDump(Connection $db, string $file): void
     {
+        if (str_ends_with($file, '.gz')) {
+            $file = 'compress.zlib://' . $file;
+        }
+
         $dumpFile = file_get_contents($file);
 
         // remove comments in SQL script
@@ -773,11 +778,11 @@ class Installer
             $batchQueries = [];
             foreach ($singleQueries as $m) {
                 $sql = trim($m);
-                if (strlen($sql) > 0) {
+                if ($sql !== '') {
                     $batchQueries[] = $sql . ';';
                 }
 
-                if (count($batchQueries) > 500) {
+                if (\count($batchQueries) > 500) {
                     $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }

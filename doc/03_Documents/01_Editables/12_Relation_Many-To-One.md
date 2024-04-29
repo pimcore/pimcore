@@ -47,7 +47,7 @@ options in the editable configuration.
 ##### Example
 
 ```twig
-{{ pimcore_relation("myRelation",{
+{{ pimcore_relation("myRelation", {
     "types": ["asset","object"],
     "subtypes": {
         "asset": ["video", "image"],

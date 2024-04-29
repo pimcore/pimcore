@@ -69,7 +69,7 @@ class AdminStyle
 
                 $fileExt = pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 if ($fileExt) {
-                    $this->elementIconClass .= ' pimcore_icon_' . pathinfo($element->getFilename(), PATHINFO_EXTENSION);
+                    $this->elementIconClass .= ' pimcore_icon_' . strtolower(pathinfo($element->getFilename(), PATHINFO_EXTENSION));
                 }
             }
         } elseif ($element instanceof Document) {

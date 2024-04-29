@@ -27,13 +27,13 @@ $maxExecutionTime = 0;
 @ini_set('max_execution_time', $maxExecutionTime);
 set_time_limit($maxExecutionTime);
 
-if (file_exists($a = getcwd() . '/vendor/autoload_runtime.php')) {
+if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
     require $a;
     $projectRoot = getcwd();
-} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload_runtime.php')) {
+} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload.php')) {
     require $a;
     $projectRoot = __DIR__ . '/../../../..';
-} elseif (file_exists($a = __DIR__ . '/../autoload_runtime.php')) {
+} elseif (file_exists($a = __DIR__ . '/../autoload.php')) {
     require $a;
     $projectRoot = __DIR__ . '/..';
 } else {
@@ -43,6 +43,7 @@ if (file_exists($a = getcwd() . '/vendor/autoload_runtime.php')) {
 
 define('PIMCORE_PROJECT_ROOT', $projectRoot);
 
+Bootstrap::$isInstaller = true;
 Bootstrap::bootstrap();
 
 Debug::enable();

@@ -54,7 +54,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $data = $this->getDataByName($id);
         }
 
-        if (empty($data)) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException(sprintf(
                 'Document Type with ID "%s" does not exist.',
                 $this->model->getId()

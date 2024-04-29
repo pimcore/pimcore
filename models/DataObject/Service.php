@@ -33,6 +33,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -457,6 +458,115 @@ class Service extends Model\Element\Service
         return null;
     }
 
+    /**
+     * gets value for given object and getter, including inherited values
+     *
+     * @return \stdClass value and objectid where the value comes from
+     */
+    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null): \stdClass
+    {
+        $getter = 'get' . ucfirst($key);
+        $value = null;
+
+        try {
+            $value = $object->$getter(AdminTool::getCurrentUser()?->getLanguage());
+        } catch (\Throwable) {
+        }
+
+        if (empty($value)) {
+            $value = $object->$getter();
+        }
+
+        if (!empty($value) && !empty($brickType)) {
+            $getBrickType = 'get' . ucfirst($brickType);
+            $value = $value->$getBrickType();
+            if (!empty($value) && !empty($brickKey)) {
+                if ($brickDescriptor) {
+                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
+                    $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
+                    $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                    /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
+                    $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
+                    $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
+                    $value = $localizedFields->getLocalizedValue($brickDescriptor['brickfield']);
+                } else {
+                    $brickFieldGetter = 'get' . ucfirst($brickKey);
+                    $value = $value->$brickFieldGetter();
+                }
+            }
+        }
+
+        if (!$fieldDefinition) {
+            $fieldDefinition = $object->getClass()->getFieldDefinition($key, $context);
+        }
+
+        if (!empty($brickType) && !empty($brickKey) && !$brickDescriptor) {
+            $brickClass = Objectbrick\Definition::getByKey($brickType);
+            $context = ['object' => $object, 'outerFieldname' => $key];
+            $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
+        }
+
+        if ($fieldDefinition->isEmpty($value)) {
+            $parent = self::hasInheritableParentObject($object);
+            if (!empty($parent)) {
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
+            }
+        }
+
+        $result = new \stdClass();
+        $result->value = $value;
+        $result->objectid = $object->getId();
+
+        return $result;
+    }
+
+    /**
+     * gets store value for given object and key
+     */
+    private static function getStoreValueForObject(Concrete $object, string $key, ?string $requestedLanguage): mixed
+    {
+        $keyParts = explode('~', $key);
+
+        if (str_starts_with($key, '~')) {
+            $type = $keyParts[1];
+            if ($type === 'classificationstore') {
+                $field = $keyParts[2];
+                $groupKeyId = explode('-', $keyParts[3]);
+
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
+                $getter = 'get' . ucfirst($field);
+
+                if (method_exists($object, $getter)) {
+                    /** @var Classificationstore $classificationStoreData */
+                    $classificationStoreData = $object->$getter();
+
+                    /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                    $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                    $csLanguage = $requestedLanguage;
+
+                    if (!$csFieldDefinition->isLocalized()) {
+                        $csLanguage = 'default';
+                    }
+
+                    $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
+
+                    $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
+                    $type = $keyConfig->getType();
+                    $definition = json_decode($keyConfig->getDefinition(), true);
+                    $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                    if (method_exists($definition, 'getDataForGrid')) {
+                        $fielddata = $definition->getDataForGrid($fielddata, $object);
+                    }
+
+                    return $fielddata;
+                }
+            }
+        }
+
+        return null;
+    }
 
     public static function hasInheritableParentObject(Concrete $object): ?Concrete
     {
@@ -522,7 +632,7 @@ class Service extends Model\Element\Service
                     DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
                 );
 
-                if (!$definition->useConfiguredOptions() && $optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
+                if (!$definition->useConfiguredOptions() && $optionsProvider instanceof SelectOptionsProviderInterface) {
                     $_options = $optionsProvider->getOptions(['fieldname' => $definition->getName()], $definition);
                 } else {
                     $_options = $definition->getOptions();
@@ -1218,7 +1328,7 @@ class Service extends Model\Element\Service
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                     try {
-                        return self::evaluateExpression($fd, $object, $data);
+                        return (string) self::evaluateExpression($fd, $object, $data);
                     } catch (SyntaxError $exception) {
                         return $exception->getMessage();
                     }

@@ -20,12 +20,18 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Bootstrap
 {
+    /**
+     * @internal
+     */
+    public static bool $isInstaller = false;
+
     public static function startup(): Kernel|\App\Kernel|KernelInterface
     {
         self::setProjectRoot();
@@ -43,7 +49,6 @@ class Bootstrap
         }
 
         self::setProjectRoot();
-
         self::bootstrap();
 
         $workingDirectory = getcwd();
@@ -99,12 +104,32 @@ class Bootstrap
     public static function bootstrap(): void
     {
         $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
-        if (!Tool::hasCurrentRequest() && !$isCli) {
+
+        // BC Layer when using the public/index.php without symfony runtime pimcore/skeleton #128 OR without pimcore/skeleton #183 (< 11.0.4)
+        if (!Tool::hasCurrentRequest() && !$isCli && !isset($_ENV['SYMFONY_DOTENV_VARS'])) {
             trigger_deprecation(
                 'pimcore/skeleton',
                 '11.2.0',
-                sprintf('In `public/index.php` the "Bootstrap::bootstrap();" should be moved just above "$kernel = Bootstrap::kernel();"', )
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime.
+                When using it, the line "Bootstrap::bootstrap();" in `public/index.php` should be moved just above "$kernel = Bootstrap::kernel();" and within the closure'
             );
+            self::bootDotEnvVariables();
+        }
+
+        // BC Layer when using bin/console without symfony runtime, exclude installer script
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && !self::$isInstaller) {
+            trigger_deprecation(
+                'pimcore/skeleton',
+                '11.2.0',
+                'For consistency purpose, it is recommended to use the autoload from Symfony Runtime in project root "bin/console"'
+            );
+            self::bootDotEnvVariables();
+        }
+
+        // Installer
+        // Keep this block unless core is requiring symfony runtime as mandatory and pimcore-install is adapted
+        if ($isCli && !isset($_ENV['SYMFONY_DOTENV_VARS']) && self::$isInstaller) {
+            self::bootDotEnvVariables();
         }
 
         self::defineConstants();
@@ -117,18 +142,36 @@ class Bootstrap
         }
 
         if (false === $isCli) {
-            // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
-            if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
-                Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
-            }
-            if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
-                Request::setTrustedHosts([$trustedHosts]);
-            }
+            self::setTrustedProxies();
+        }
+    }
+
+    /**
+     * @deprecated only for compatibility reasons, will be removed in Pimcore 12
+     */
+    private static function bootDotEnvVariables(): void
+    {
+        if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+        }
+    }
+
+    private static function setTrustedProxies(): void
+    {
+        // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+            Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
+        }
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+            Request::setTrustedHosts([$trustedHosts]);
         }
     }
 
     public static function defineConstants(): void
     {
+        // make sure $_SERVER contains all values of $_ENV
+        $_SERVER += $_ENV;
+
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/constants.php';
         if (file_exists($customConstantsFile)) {
