@@ -133,7 +133,7 @@
     "symfony/symfony": "*",
     "sabre/dav": "4.2.2",
     "thecodingmachine/safe": "<2.0",
-    "pimcore/admin-ui-classic-bundle": "<1.4"
+    "pimcore/admin-ui-classic-bundle": "<1.4",
     "twig/twig": ">=3.9.0"
   },
   "require-dev": {
