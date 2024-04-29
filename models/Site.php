@@ -49,7 +49,7 @@ final class Site extends AbstractModel
 
     protected string $errorDocument = '';
 
-    protected array $localizedErrorDocuments;
+    protected array $localizedErrorDocuments = [];
 
     protected bool $redirectToMainDomain = false;
 
