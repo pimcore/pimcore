@@ -56,7 +56,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             if (!$this->db->isConnected()) {
-                $this->db->connect();
+                $this->db->getServerVersion();
             }
         } catch (\Exception) {
             return false;

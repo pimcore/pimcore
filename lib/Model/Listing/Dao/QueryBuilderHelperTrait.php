@@ -130,7 +130,7 @@ trait QueryBuilderHelperTrait
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
-        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
@@ -144,7 +144,10 @@ trait QueryBuilderHelperTrait
             // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
             $innerQuery = (string)$queryBuilder;
             $queryBuilder
-                ->resetQueryParts()
+                ->resetWhere()
+                ->resetOrderBy()
+                ->resetGroupBy()
+                ->resetHaving()
                 ->select('COUNT(*)')
                 ->from('(' . $innerQuery . ')', 'XYZ')
             ;
