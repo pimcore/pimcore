@@ -127,7 +127,8 @@
     "twig/extra-bundle": "^3.4.0",
     "twig/string-extra": "^3.3.5",
     "twig/twig": "^3.3.9",
-    "umpirsky/country-list": "^2.0.6"
+    "umpirsky/country-list": "^2.0.6",
+    "pimcore/admin-ui-classic-bundle": "dev-move-previewthumbfromcore as 1.4"
   },
   "conflict": {
     "symfony/symfony": "*",
@@ -148,8 +149,7 @@
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.1",
     "symfony/dotenv": "^6.4",
-    "symfony/runtime": "^6.4",
-    "pimcore/admin-ui-classic-bundle": "dev-move-previewthumbfromcore as 1.4"
+    "symfony/runtime": "^6.4"
   },
   "suggest": {
     "ext-sockets": "*",
@@ -193,7 +193,6 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
-      "Pimcore\\Model\\AdminBundle\\": "vendor/pimcore/admin-ui-classic-bundle/src/",
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
