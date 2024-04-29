@@ -149,7 +149,6 @@
     "webmozarts/console-parallelization": "^2.1",
     "symfony/dotenv": "^6.4",
     "symfony/runtime": "^6.4",
-    "pimcore/admin-ui-classic-bundle": "dev-move-previewthumbfromcore as 1.4"
   },
   "suggest": {
     "ext-sockets": "*",
