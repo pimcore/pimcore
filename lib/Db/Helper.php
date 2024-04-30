@@ -99,10 +99,10 @@ class Helper
     public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
-            return str_replace('?', $db->quote($value, $type), $text);
+            return str_replace('?', $db->quote((string)$value), $text);
         }
 
-        return implode($db->quote($value, $type), explode('?', $text, $count + 1));
+        return implode($db->quote((string)$value), explode('?', $text, $count + 1));
     }
 
     public static function escapeLike(string $like): string

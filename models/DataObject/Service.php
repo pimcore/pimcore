@@ -1630,7 +1630,7 @@ class Service extends Model\Element\Service
             if ($lastChar === '%') {
                 $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
             } else {
-                $conditionParts[] = $key . ' = ' . $db->quote($value);
+                $conditionParts[] = $key . ' = ' . $db->quote((string)$value);
             }
         }
 
