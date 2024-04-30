@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\QueryException;
 use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
@@ -131,13 +132,18 @@ trait QueryBuilderHelperTrait
         $distinct = false;
         $originalSelect = '';
 
-        $originalQuery = (string) $queryBuilder;
-        preg_match('/SELECT(.*?)FROM/', $originalQuery, $matches);
-        if (isset($matches[1])){
-            $originalSelect = trim($matches[1]);
-            if (strpos($originalSelect, 'DISTINCT')){
-                $distinct = true;
+        try {
+            $originalQuery = (string)$queryBuilder;
+            preg_match('/SELECT(.*?)FROM/', $originalQuery, $matches);
+            if (isset($matches[1])){
+                $originalSelect = trim($matches[1]);
+                if (strpos($originalSelect, 'DISTINCT')){
+                    $distinct = true;
+                }
             }
+        }catch(\Exception){
+            //do nothing, this is to avoid `No SELECT expressions given.` exception in dbal v4
+            $originalSelect = '';
         }
 
         $queryBuilder->select('COUNT(*)');
