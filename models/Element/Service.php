@@ -937,24 +937,24 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
-
-                $customViewJoins = $cv['joins'] ?? null;
-                if ($customViewJoins) {
-                    foreach ($customViewJoins as $joinConfig) {
-                        $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
-
-                        $joinAlias = array_keys($joinConfig['name']);
-                        $joinAlias = reset($joinAlias);
-                        $joinTable = $joinConfig['name'][$joinAlias];
-
-                        $condition = $joinConfig['condition'];
-                        $columns = $joinConfig['columns'];
-                        $select->addSelect($columns);
-                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
-                    }
-                }
+//                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
+//
+//                $customViewJoins = $cv['joins'] ?? null;
+//                if ($customViewJoins) {
+//                    foreach ($customViewJoins as $joinConfig) {
+//                        $type = $joinConfig['type'];
+//                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
+//
+//                        $joinAlias = array_keys($joinConfig['name']);
+//                        $joinAlias = reset($joinAlias);
+//                        $joinTable = $joinConfig['name'][$joinAlias];
+//
+//                        $condition = $joinConfig['condition'];
+//                        $columns = $joinConfig['columns'];
+//                        $select->addSelect($columns);
+//                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
+//                    }
+//                }
 
                 if (!empty($cv['having'])) {
                     $select->having($cv['having']);
