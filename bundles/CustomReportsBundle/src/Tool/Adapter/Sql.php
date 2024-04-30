@@ -134,10 +134,10 @@ class Sql extends AbstractAdapter
 
         $extractAllFields = empty($fields);
         foreach ($filters as $filter) {
-            $value = $filter['value'] ?? null;
+            $value = $filter['value'] ?? '';
             $type = $filter['type'];
             $operator = $filter['operator'];
-            $maxValue = null;
+            $maxValue = '';
             if ($type == 'date') {
                 if ($operator == 'eq') {
                     $maxValue = strtotime($value . '+23 hours 59 minutes');
