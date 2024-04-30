@@ -354,11 +354,22 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $db->quoteIdentifier($value);
     }
 
+    /**
+     * @deprecated Since pimcore 11.3 it's not possible to define the type of the value to quote to align to doctrine/dbal v4
+     */
     public function quote(mixed $value, int $type = null): string
     {
+        if ($type) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.3.0',
+                'The AbstractListing::quote() method does not accept any $type anymore to align with doctrine/dbal v4.'
+            );
+        }
         $db = Db::get();
 
-        return $db->quote($value, $type);
+        //TODO: Add bc-layer for v3?
+        return $db->quote($value);
     }
 
     public function escapeLike(string $value): string
