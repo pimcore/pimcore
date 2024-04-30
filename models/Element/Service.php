@@ -951,7 +951,7 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->add('select', $columns, true);
+                        $select->addSelect($columns);
                         $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
