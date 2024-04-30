@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use function in_array;
 use PDO;
@@ -451,11 +450,9 @@ class Installer
                 // now we're able to write the server version to the database.yaml
                 if ($db instanceof Connection) {
                     $connection = $db->getNativeConnection();
-                    if ($connection instanceof ServerInfoAwareConnection) {
-                        $writer = new ConfigWriter();
-                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                        $writer->writeDbConfig($doctrineConfig);
-                    }
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
                 }
             }
         }
