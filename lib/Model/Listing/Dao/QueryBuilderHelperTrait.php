@@ -144,6 +144,8 @@ trait QueryBuilderHelperTrait
         }catch(\Exception){
             //do nothing, this is to avoid `No SELECT expressions given.` exception in dbal v4
             $originalSelect = '';
+            $queryBuilder->select('1');
+            $originalQuery = (string)$queryBuilder;
         }
 
         $queryBuilder->select('COUNT(*)');
