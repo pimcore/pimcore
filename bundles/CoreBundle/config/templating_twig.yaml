@@ -20,6 +20,8 @@ services:
 
     Pimcore\Twig\Extension\AssetCompressExtension: ~
 
+    Pimcore\Twig\Extension\MyPlaceHolderExtension: ~
+
     Pimcore\Twig\Extension\WebsiteConfigExtension: ~
 
     Pimcore\Twig\Extension\DumpExtension: ~
