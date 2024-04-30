@@ -34,12 +34,12 @@ final class Site extends AbstractModel
 
     protected ?int $id = null;
 
-    protected array $domains;
+    protected array $domains = [];
 
     /**
      * Contains the ID to the Root-Document
      */
-    protected int $rootId;
+    protected ?int $rootId = null;
 
     protected ?Document\Page $rootDocument = null;
 
@@ -197,7 +197,7 @@ final class Site extends AbstractModel
         return $this->domains;
     }
 
-    public function getRootId(): int
+    public function getRootId(): ?int
     {
         return $this->rootId;
     }
@@ -220,7 +220,7 @@ final class Site extends AbstractModel
     /**
      * @return $this
      */
-    public function setDomains(mixed $domains): static
+    public function setDomains(array|string $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
@@ -285,7 +285,7 @@ final class Site extends AbstractModel
     /**
      * @return $this
      */
-    public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
+    public function setLocalizedErrorDocuments(array|string $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
             $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
