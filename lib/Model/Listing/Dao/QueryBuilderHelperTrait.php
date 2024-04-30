@@ -130,19 +130,28 @@ trait QueryBuilderHelperTrait
     {
         $distinct = false;
         $originalSelect = '';
+
+        $originalQuery = (string) $queryBuilder;
+        preg_match('/SELECT(.*?)FROM/', $originalQuery, $matches);
+        if (isset($matches[1])){
+            $originalSelect = trim($matches[1]);
+            if (strpos($originalSelect, 'DISTINCT')){
+                $distinct = true;
+            }
+        }
+
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
-        if ($distinct) {
+        if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
             $queryBuilder->distinct();
         }
 
-        //TODO: former if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-        // can't get these info anymore, might need to be be done before passing to query builder
-        if (true) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
+        $hasGroupByClauses = preg_match('/\b(GROUP BY|HAVING)\b/', $originalQuery, $matches);
+        if ($hasGroupByClauses) {
+            $queryBuilder->select($originalSelect ?: $identifierColumn);
 
             // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
             $innerQuery = (string)$queryBuilder;
@@ -163,14 +172,5 @@ trait QueryBuilderHelperTrait
     protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
         return true;
-        try {
-            if ($query->getQueryPart($part)) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // do nothing
-        }
-
-        return false;
     }
 }
