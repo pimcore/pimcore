@@ -38,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $assets = [];
 
         $queryBuilder = $this->getQueryBuilder('assets.id', 'assets.type');
-        $assetsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetsData = $this->db->fetchAllAssociative($queryBuilder->getSQL(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {
@@ -75,7 +75,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList(): array
     {
         $queryBuilder = $this->getQueryBuilder('assets.id');
-        $assetIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return array_map('intval', $assetIds);
     }
@@ -96,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, 'assets.id');
 
-        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $amount;
     }

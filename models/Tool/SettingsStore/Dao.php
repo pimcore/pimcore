@@ -53,23 +53,24 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    public function getById(string $id, ?string $scope = null): bool
+    /**
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getById(string $id, ?string $scope = null): void
     {
         $item = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
             'id' => $id,
             'scope' => (string) $scope,
         ]);
 
-        if (is_array($item) && array_key_exists('id', $item)) {
-            $this->assignVariablesToModel($item);
-
-            $data = $item['data'] ?? null;
-            $this->model->setData($data);
-
-            return true;
+        if (!$item) {
+            throw new Model\Exception\NotFoundException('settings store with id ' . $id . ' and scope ' . $scope . ' not found');
         }
 
-        return false;
+        $this->assignVariablesToModel($item);
+
+        $data = $item['data'] ?? null;
+        $this->model->setData($data);
     }
 
     public function getIdsByScope(string $scope): array

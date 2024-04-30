@@ -103,6 +103,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $data['definitionModificationDate'] = $this->model->getModificationDate();
+
         $this->db->update('classes', $data, ['id' => $this->model->getId()]);
 
         $objectTable = 'object_query_' . $this->model->getId();
@@ -227,7 +229,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create(): void
     {
-        $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
+        $this->db->insert(
+            'classes',
+            [
+                'name' => $this->model->getName(),
+                'id' => $this->model->getId(),
+                'definitionModificationDate' => $this->model->getModificationDate(),
+            ]
+        );
     }
 
     /**

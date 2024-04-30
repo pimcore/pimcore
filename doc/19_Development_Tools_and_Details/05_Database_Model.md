@@ -14,61 +14,61 @@ data.
 # Default Tables 
 These tables are created during Pimcore install and are always the same. 
 
-| Table | Description |
-|-------|-------------|
-| application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally, there might be application_logs_archive* tables for old logging entries. | 
-| assets | Assets (Images, etc.), with system metadata |
-| assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
-| classes | List of all object classes with ID and name. Everything else is stored in PHP configuration files. |
-| classificationstore_collectionrelations | Relation Collection - Group for Classification Store | 
-| classificationstore_collections | Collections of Classification Store |
-| classificationstore_groups | Groups of Classification Store |
-| classificationstore_keys | Keys of Classification Store |
-| classificationstore_relations | Relation Group - Key for Classification Store |
-| classificationstore_stores | Stores of Classification Store |
-| custom_layouts | Definition of the `custom layouts` for object classes |
-| dependencies | Stores dependencies between elements such as objects, assets, documents |
-| documents | List of all documents, folders, links, hardlinks, emails and snippets of the document area with meta- and config-data, relations |
-| documents_editables | Editables of documents (data), in a serialized form |
-| documents_email | Extra config data |
-| documents_hardlink | Extra config data |
-| documents_link | Extra config data |
-| documents_page | Extra config data |
-| documents_printpage | Extra config data |
-| documents_snippet | Extra config data |
-| documents_translations | Relation between same documents for different languages |
-| edit_lock | Tracks which user opened which resource in the backend |
-| element_workflow_state | Keeps track of workflow state for all elements |
-| email_blocklist | Blocklist for eMail-addresses
-| email_log | Log for sent emails |
-| glossary | Words to auto-link in texts. See [Glossary](../18_Tools_and_Features/21_Glossary.md) |
-| http_error_log | HTTP error log |
-| locks | Store for [Locking functionality](./17_Static_Helpers.md#locking) |
-| notes | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements | 
-| notes_data | Additional data for notes | 
-| objects | List of all objects with metadata like id, class name, path, parent, ...|
-| object_url_slugs | [URL Slug](../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md) data|
-| properties | Data from the `properties` tab |
-| quantityvalue_units | Available quantities for quantity value object data type |
-| recyclebin | Stores metadata of deleted elements |
-| redirects | Stores redirects | 
-| schedule_tasks | Stores scheduled tasks |
-| search_backend_data | Stores the index for the backend search - is a InnoDb Table with fulltext capabilities |
-| sites | Stores [sites](../02_MVC/04_Routing_and_URLs/08_Working_with_Sites.md) |
-| tags | Stores available [tags](../18_Tools_and_Features/09_Tags.md)
-| tags_assignment | Stores assignment of tags to elements |
-| tmp_store | Pimcore internal tmp store | 
-| tracking_events | |
-| translations_admin | Backend translations |
-| translations_messages | Frontend translations |
-| tree_locks | Locks in the tree of Pimcore backend interface | 
-| users | Backend users |
-| users_permission_definitions | List of globally assignable user permissions |
-| users_workspaces_asset | Stores user access permissions for asset folder |
-| users_workspaces_document | Stores user access permissions for document folders |
-| users_workspaces_object | Stores user access permissions for object folders |
-| uuids | stores Unique Identifiers - if enabled |
-| versions | List of object/asset/document versions. Actual data is serialized and written to disk |
+| Table                                   | Description                                                                                                                                                                                                             |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| application_logs                        | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally, there might be application_logs_archive* tables for old logging entries. | 
+| assets                                  | Assets (Images, etc.), with system metadata                                                                                                                                                                             |
+| assets_metadata                         | Additional user metadata (Metadata tab in the asset panel)                                                                                                                                                              |
+| classes                                 | List of all object classes with ID and name. Everything else is stored in PHP configuration files.                                                                                                                      |
+| classificationstore_collectionrelations | Relation Collection - Group for Classification Store                                                                                                                                                                    | 
+| classificationstore_collections         | Collections of Classification Store                                                                                                                                                                                     |
+| classificationstore_groups              | Groups of Classification Store                                                                                                                                                                                          |
+| classificationstore_keys                | Keys of Classification Store                                                                                                                                                                                            |
+| classificationstore_relations           | Relation Group - Key for Classification Store                                                                                                                                                                           |
+| classificationstore_stores              | Stores of Classification Store                                                                                                                                                                                          |
+| custom_layouts                          | Definition of the `custom layouts` for object classes                                                                                                                                                                   |
+| dependencies                            | Stores dependencies between elements such as objects, assets, documents                                                                                                                                                 |
+| documents                               | List of all documents, folders, links, hardlinks, emails and snippets of the document area with meta- and config-data, relations                                                                                        |
+| documents_editables                     | Editables of documents (data), in a serialized form                                                                                                                                                                     |
+| documents_email                         | Extra config data                                                                                                                                                                                                       |
+| documents_hardlink                      | Extra config data                                                                                                                                                                                                       |
+| documents_link                          | Extra config data                                                                                                                                                                                                       |
+| documents_page                          | Extra config data                                                                                                                                                                                                       |
+| documents_printpage                     | Extra config data                                                                                                                                                                                                       |
+| documents_snippet                       | Extra config data                                                                                                                                                                                                       |
+| documents_translations                  | Relation between same documents for different languages                                                                                                                                                                 |
+| edit_lock                               | Tracks which user opened which resource in the backend                                                                                                                                                                  |
+| element_workflow_state                  | Keeps track of workflow state for all elements                                                                                                                                                                          |
+| email_blocklist                         | Blocklist for eMail-addresses                                                                                                                                                                                           
+| email_log                               | Log for sent emails                                                                                                                                                                                                     |
+| glossary                                | Words to auto-link in texts. See [Glossary](../18_Tools_and_Features/21_Glossary.md)                                                                                                                                    |
+| http_error_log                          | HTTP error log                                                                                                                                                                                                          |
+| lock_keys                               | Store for Locking functionality                                                                                                                                                                                         |
+| notes                                   | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements                                                                                                                                                   | 
+| notes_data                              | Additional data for notes                                                                                                                                                                                               | 
+| objects                                 | List of all objects with metadata like id, class name, path, parent, ...                                                                                                                                                |
+| object_url_slugs                        | [URL Slug](../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md) data                                                                                                                                             |
+| properties                              | Data from the `properties` tab                                                                                                                                                                                          |
+| quantityvalue_units                     | Available quantities for quantity value object data type                                                                                                                                                                |
+| recyclebin                              | Stores metadata of deleted elements                                                                                                                                                                                     |
+| redirects                               | Stores redirects                                                                                                                                                                                                        | 
+| schedule_tasks                          | Stores scheduled tasks                                                                                                                                                                                                  |
+| search_backend_data                     | Stores the index for the backend search - is a InnoDb Table with fulltext capabilities                                                                                                                                  |
+| sites                                   | Stores [sites](../02_MVC/04_Routing_and_URLs/08_Working_with_Sites.md)                                                                                                                                                  |
+| tags                                    | Stores available [tags](../18_Tools_and_Features/09_Tags.md)                                                                                                                                                            
+| tags_assignment                         | Stores assignment of tags to elements                                                                                                                                                                                   |
+| tmp_store                               | Pimcore internal tmp store                                                                                                                                                                                              | 
+| tracking_events                         |                                                                                                                                                                                                                         |
+| translations_admin                      | Backend translations                                                                                                                                                                                                    |
+| translations_messages                   | Frontend translations                                                                                                                                                                                                   |
+| tree_locks                              | Locks in the tree of Pimcore backend interface                                                                                                                                                                          | 
+| users                                   | Backend users                                                                                                                                                                                                           |
+| users_permission_definitions            | List of globally assignable user permissions                                                                                                                                                                            |
+| users_workspaces_asset                  | Stores user access permissions for asset folder                                                                                                                                                                         |
+| users_workspaces_document               | Stores user access permissions for document folders                                                                                                                                                                     |
+| users_workspaces_object                 | Stores user access permissions for object folders                                                                                                                                                                       |
+| uuids                                   | stores Unique Identifiers - if enabled                                                                                                                                                                                  |
+| versions                                | List of object/asset/document versions. Actual data is serialized and written to disk                                                                                                                                   |
 
 # Object Tables 
 These tables are created and modified dynamically during the configuration of the object data model. 

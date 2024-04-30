@@ -122,7 +122,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 
 {# Custom image tag (thumbnail objects) #}
 {% if editmode %}
-    {{ pimcore_image("myImage",{"thumbnail": "myThumbnail"}) }}
+    {{ pimcore_image("myImage", {"thumbnail": "myThumbnail"}) }}
 {% else %}
     {% set thumbnail = pimcore_image("myImage").getThumbnail("myThumbnail") %}
     <img src="{{ thumbnail }}" width="{{ thumbnail.width }}" height="{{ thumbnail.height }}" />
@@ -133,7 +133,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 
 {# Custom drop targets #}
 <div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
-{{ pimcore_image("image",{
+{{ pimcore_image("image", {
     "thumbnail": "contentfullimage",
     "dropClass": "myCustomImageDropTarget"
 }) }}
@@ -171,7 +171,7 @@ All dimensions are in percent and therefore independent from the image size, you
 ```twig
 <div>
     <p>
-        {{ pimcore_image("myImage",{
+        {{ pimcore_image("myImage", {
             "title": "Drag your image here",
             "width": 400,
             "height": 400,

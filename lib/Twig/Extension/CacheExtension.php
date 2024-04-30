@@ -35,7 +35,7 @@ class CacheExtension extends AbstractExtension
 
     protected bool $force = false;
 
-    protected int $lifetime;
+    protected ?int $lifetime;
 
     protected EditmodeResolver $editmodeResolver;
 

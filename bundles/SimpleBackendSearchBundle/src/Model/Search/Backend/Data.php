@@ -252,7 +252,7 @@ class Data extends AbstractModel
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 

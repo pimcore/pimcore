@@ -920,6 +920,7 @@ class Document extends Element\AbstractElement
 
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;

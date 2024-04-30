@@ -128,16 +128,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
         if (!$ignoreLocalizedQueryFallback) {
-            foreach ($validLanguages as $validLanguage) {
-                $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
-                foreach ($fallbackLanguages as $fallbackLanguage) {
-                    if ($this->model->isLanguageDirty($fallbackLanguage)) {
-                        $this->model->markLanguageAsDirty($validLanguage);
-
-                        break;
-                    }
-                }
-            }
+            $this->model->markLanguageAsDirtyByFallback();
         }
 
         $flag = DataObject\Localizedfield::getGetFallbackValues();
@@ -517,6 +508,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
+        $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
+        if (!$ignoreLocalizedQueryFallback) {
+            $this->model->markLanguageAsDirtyByFallback();
+        }
+
         if (!DataObject::isDirtyDetectionDisabled()) {
             if (!$this->model->hasDirtyFields()) {
                 return false;

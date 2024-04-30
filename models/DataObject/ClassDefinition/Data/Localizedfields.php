@@ -32,6 +32,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 {
     use Layout\Traits\LabelTrait;
     use DataObject\Traits\ClassSavedTrait;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
@@ -632,7 +634,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        $languages = Tool::getValidLanguages();
+        $languages = Tool::getRequiredLanguages();
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];

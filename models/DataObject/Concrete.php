@@ -446,6 +446,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;
@@ -733,12 +734,26 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     public function __wakeup(): void
     {
+        // parent::__wakeup() will call $this->setInDumpState(false) but we'll need the original value below
+        $wasInDumpState = $this->isInDumpState();
+
         parent::__wakeup();
 
-        // renew object reference to other object aware fields
-        foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
-            if (isset($this->$objectAwareField)) {
-                if ($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+        // Renew object reference to object aware fields
+        if ($wasInDumpState) {
+            // We're reloading version data, there might be fields that now implement the ObjectAwareFieldInterface but
+            // aren't included in the $this->__objectAwareFields array - for example versions created in Pimcore <= 10.x
+            // containing LocalizedFields. Verify all fields in this object.
+            foreach (get_object_vars($this) as $propertyValue) {
+                if ($propertyValue instanceof ObjectAwareFieldInterface) {
+                    $propertyValue->setObject($this);
+                }
+            }
+        } else {
+            // We're reloading from cache, optimize by only reloading known object aware fields (instead of verifying
+            // all fields within this object).
+            foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
+                if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
                     $this->$objectAwareField->setObject($this);
                 }
             }

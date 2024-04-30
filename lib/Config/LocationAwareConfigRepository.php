@@ -264,6 +264,15 @@ class LocationAwareConfigRepository
         ));
     }
 
+    public function fetchAllKeysByReadTargets(): array
+    {
+        if ($this->storageConfig[self::READ_TARGET][self::TYPE] === self::LOCATION_SYMFONY_CONFIG) {
+            return array_keys($this->containerConfig);
+        }
+
+        return array_unique(SettingsStore::getIdsByScope($this->settingsStoreScope));
+    }
+
     private function invalidateConfigCache(): void
     {
         // invalidate container config cache if debug flag on kernel is set

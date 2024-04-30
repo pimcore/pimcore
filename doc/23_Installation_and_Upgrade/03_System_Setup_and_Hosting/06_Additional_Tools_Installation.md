@@ -31,8 +31,26 @@ It's possible to either choose to install LibreOffice/Chromium or to use them vi
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
-### Chromium (Chrome Headless)
+### Gotenberg
 
+To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/getting-started/installation#docker-compose](https://gotenberg.dev/docs/getting-started/installation#docker-compose).
+
+Configure the Docker services accordingly:
+
+- `pimcore.gotenberg.base_url` which by default to `http://gotenberg:3000`
+- `pimcore.documents.preview_url_prefix` for example to `http://nginx:80`
+
+Make sure to add and install the required library via composer:
+```bash
+composer require gotenberg/gotenberg-php ^2.0
+```
+
+
+### Chromium (Chrome Headless) - deprecated
+
+> Chromium is used to generate previews of document pages. 
+> This functionality is now also provided by Gotenberg, therefore Chromium support has been deprecated in favour of Gotenberg. 
+ 
 First of all, you need to add and install the required library via composer:
 ```bash
 composer require chrome-php/chrome
@@ -51,22 +69,8 @@ Add a new service as:
         image: browserless/chrome
 ```
 and set accordingly:
-- config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`) 
+- config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`)
 - web2print settings hostUrl as the Docker web server service (e.g. `http://nginx:80`)
-
-### Gotenberg
-
-To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/get-started/docker-compose#quick-start](https://gotenberg.dev/docs/get-started/docker-compose#quick-start).
-
-Configure the Docker services accordingly:
-
-- `pimcore.gotenberg.base_url` which by default to `http://gotenberg:3000`
-- `pimcore.documents.preview_url_prefix` for example to `nginx:80`
-
-Make sure to add and install the required library via composer:
-```bash
-composer require gotenberg/gotenberg-php
-```
 
 ## Image Optimizers
 

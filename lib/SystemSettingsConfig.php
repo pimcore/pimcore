@@ -147,6 +147,7 @@ class SystemSettingsConfig
         $fallbackLanguages = [];
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
+        $requiredLanguages = explode(',', $values['general.requiredLanguages']);
         $filteredLanguages = [];
         $existingValues = self::get();
 
@@ -174,9 +175,9 @@ class SystemSettingsConfig
             'general' => [
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
-                'language' => $values['general.language'],
                 'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
+                'required_languages' => $requiredLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
             ],

@@ -223,7 +223,7 @@ final class RedirectHandler
 
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
-        $this->redirectLogger->info(Tool::getAnonymizedClientIp() ?? 'Anonymous', ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
+        $this->redirectLogger->info(Tool::getAnonymizedClientIp() ?? 'Anonymous', ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $request->getRequestUri() . ' -> ' . $url]);
 
         return $response;
     }

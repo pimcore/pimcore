@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
-        if (empty($data['id'])) {
+        if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getByRootId(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
-        if (empty($data['id'])) {
+        if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
@@ -59,7 +59,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getByDomain(string $domain): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
-        if (empty($data['id'])) {
+        if (!$data) {
             // check for wildcards
             // @TODO: refactor this to be more clear
             $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
@@ -86,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            if (empty($data['id'])) {
+            if (!$data) {
                 throw new NotFoundException('there is no site for the requested domain: `' . $domain . '´');
             }
         }

@@ -159,3 +159,8 @@ parameters:
 			message: "#^Call to static method getAvailablePerspectives\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
 			count: 1
 			path: models/User.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: lib/Image/Chromium.php

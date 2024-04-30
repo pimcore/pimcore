@@ -76,6 +76,11 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $this->locationAwareConfigRepository->fetchAllKeys();
     }
 
+    protected function loadIdListByReadTargets(): array
+    {
+        return $this->locationAwareConfigRepository->fetchAllKeysByReadTargets();
+    }
+
     /**
      * Removes config with corresponding id from the cache.
      * A new cache entry will be generated upon requesting the config again.

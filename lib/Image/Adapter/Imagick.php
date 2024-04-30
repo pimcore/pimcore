@@ -71,6 +71,10 @@ class Imagick extends Adapter
                 $i->setResolution($options['resolution']['x'], $options['resolution']['y']);
             }
 
+            if (isset($options['asset']) && $options['asset']->getMimeType() === 'image/vnd.adobe.photoshop') {
+                $i->setOption('psd:alpha-unblend', 'off');
+            }
+
             $imagePathLoad = $imagePath;
 
             $imagePathLoad = $imagePathLoad . '[0]';
@@ -885,7 +889,6 @@ class Imagick extends Adapter
                     'EPS3',
                     'EPSF',
                     'EPSI',
-                    'EPT',
                     'PDF',
                     'PFA',
                     'PFB',

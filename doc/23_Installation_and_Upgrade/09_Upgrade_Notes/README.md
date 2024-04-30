@@ -1,13 +1,46 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+- Page previews and version comparisons can now be rendered using Gotenberg v8.
+  To replace Headless Chrome, upgrade to Gotenberg v8 and upgrade the client library: `composer require gotenberg/gotenberg-php:^2`
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+- All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
+- `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
+-----------------
+### General
+#### [Localization]
+- Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
 #### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+#### [Symfony]
+- Bumped Symfony packages to "^6.4".
+#### [Value Objects]
+- Added new self validating Value Objects:
+  - `Pimcore\ValueObject\BooleanArray`
+  - `Pimcore\ValueObject\IntegerArray`
+  - `Pimcore\ValueObject\Path`
+  - `Pimcore\ValueObject\PositiveInteger`
+  - `Pimcore\ValueObject\PositiveIntegerArray`
+  - `Pimcore\ValueObject\StringArray`
+
+> [!WARNING]  
+> For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
+> Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
+> 
+> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/11.x/bin/console
+
 
 ## Pimcore 11.1.0
 ### Elements
@@ -184,7 +217,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 -  Enabled Content Security Policy by default.
 -  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
 Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
-The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 
 -----------------
@@ -511,7 +544,7 @@ pimcore:
 - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
-- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
+- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
 -  Removed the `attributes` field from the link editable.
 -  Deprecated WkHtmlToImage has been removed.
 -  Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)

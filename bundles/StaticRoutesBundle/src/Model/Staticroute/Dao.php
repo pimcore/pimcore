@@ -92,8 +92,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $name = $this->model->getName();
 
-        $totalList = new Listing();
-        $totalList = $totalList->load();
+        $listing = new Listing();
+        $totalList = $listing->load();
 
         $data = array_filter($totalList, function (Staticroute $row) use ($name, $siteId) {
             if ($row->getName() == $name) {

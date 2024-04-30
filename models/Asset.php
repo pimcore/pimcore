@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
+use function in_array;
 use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -54,6 +55,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
+use function strlen;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
@@ -118,6 +120,18 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
+     * @var bool whether custom settings should go into the cache or not -> depending on the size of the data stored there
+     */
+    protected bool $customSettingsCanBeCached = true;
+
+    /**
+     * @internal
+     */
+    protected bool $customSettingsNeedRefresh = false;
+
+    /**
+     * @internal
+     *
      */
     protected bool $hasMetaData = false;
 
@@ -160,6 +174,20 @@ class Asset extends Element\AbstractElement
         if (!$this->isInDumpState()) {
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+
+            if($this->customSettingsCanBeCached === false) {
+                $blockedVars[] = 'customSettings';
+            }
+        }
+
+        return $blockedVars;
+    }
+
+    public function __sleep(): array
+    {
+        $blockedVars = parent::__sleep();
+        if(in_array('customSettings', $blockedVars)) {
+            $this->customSettingsNeedRefresh = true;
         }
 
         return $blockedVars;
@@ -365,7 +393,7 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
-        if (file_exists($tmpFile)) {
+        if ($tmpFile !== null && file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
@@ -378,12 +406,12 @@ class Asset extends Element\AbstractElement
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
-        if ($size = @getimagesize($localPath)) {
+        if ($maxPixels && $size = @getimagesize($localPath)) {
             $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
-                $diff = sqrt(1 + ($maxPixels / $imagePixels));
+                $diff = sqrt(1 + $imagePixels / $maxPixels);
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
@@ -1233,11 +1261,21 @@ class Asset extends Element\AbstractElement
         return self::getLocalFileFromStream($this->getStream());
     }
 
+    private function refreshCustomSettings(): void
+    {
+        if($this->customSettingsNeedRefresh === true) {
+            $customSettings = $this->getDao()->getCustomSettings();
+            $this->setCustomSettings($customSettings);
+            $this->customSettingsNeedRefresh = false;
+        }
+    }
+
     /**
      * @return $this
      */
     public function setCustomSetting(string $key, mixed $value): static
     {
+        $this->refreshCustomSettings();
         $this->customSettings[$key] = $value;
 
         return $this;
@@ -1245,16 +1283,21 @@ class Asset extends Element\AbstractElement
 
     public function getCustomSetting(string $key): mixed
     {
+        $this->refreshCustomSettings();
+
         return $this->customSettings[$key] ?? null;
     }
 
     public function removeCustomSetting(string $key): void
     {
+        $this->refreshCustomSettings();
         unset($this->customSettings[$key]);
     }
 
     public function getCustomSettings(): array
     {
+        $this->refreshCustomSettings();
+
         return $this->customSettings;
     }
 
@@ -1264,6 +1307,10 @@ class Asset extends Element\AbstractElement
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
+            if(strlen($customSettings) > 10e6) {
+                $this->customSettingsCanBeCached = false;
+            }
+
             $customSettings = Serialize::unserialize($customSettings);
         }
 
@@ -1551,6 +1598,10 @@ class Asset extends Element\AbstractElement
 
         if ($this->isInDumpState() && $this->properties !== null) {
             $this->renewInheritedProperties();
+        }
+
+        if(!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
+            $this->customSettingsNeedRefresh = true;
         }
 
         $this->setInDumpState(false);

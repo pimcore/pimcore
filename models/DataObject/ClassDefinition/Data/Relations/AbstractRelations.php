@@ -263,7 +263,6 @@ abstract class AbstractRelations extends Data implements
 
         $map = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $map[$key] = 1;
@@ -280,7 +279,7 @@ abstract class AbstractRelations extends Data implements
         return $newData;
     }
 
-    public function removeData(mixed $existingData, mixed $removeData): array
+    public function removeData(?array $existingData, array $removeData): array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -289,14 +288,11 @@ abstract class AbstractRelations extends Data implements
 
         $removeMap = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($removeData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $removeMap[$key] = 1;
         }
 
-        $newData = [];
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
 
@@ -309,16 +305,23 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     *
-     *
      * @internal
+     *
+     * @throws \LogicException
      */
-    protected function buildUniqueKeyForAppending(Element\ElementInterface $item): string
+    protected function buildUniqueKeyForAppending(object $item): string
     {
-        $elementType = Element\Service::getElementType($item);
-        $id = $item->getId();
+        if ($item instanceof DataObject\Data\ElementMetadata || $item instanceof DataObject\Data\ObjectMetadata) {
+            $item = $item->getElement();
+        }
+        if ($item instanceof Element\ElementInterface) {
+            $elementType = Element\Service::getElementType($item);
+            $id = $item->getId();
 
-        return $elementType . $id;
+            return $elementType . $id;
+        }
+
+        throw new \LogicException('Unexpected item type: ' . get_debug_type($item));
     }
 
     public function isEqual(mixed $array1, mixed $array2): bool

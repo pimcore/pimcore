@@ -149,7 +149,7 @@ $items->setOrderKey("(SELECT id FROM sometable GROUP BY someField)", false);
 
 ### Using prepared statement placeholders and variables
 The syntax is similar to that from the Zend Framework described
-[here](http://framework.zend.com/manual/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
+[here](https://framework.zend.com/manual/1.12/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
 
 ```php
 <?php

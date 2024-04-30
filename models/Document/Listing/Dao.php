@@ -40,7 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = [];
         $select = $this->getQueryBuilder('documents.id', 'documents.type');
 
-        $documentsData = $this->db->fetchAllAssociative((string) $select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentsData = $this->db->fetchAllAssociative($select->getSQL(), $select->getParameters(), $select->getParameterTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
@@ -77,7 +77,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList(): array
     {
         $queryBuilder = $this->getQueryBuilder('documents.id');
-        $documentIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return array_map('intval', $documentIds);
     }
@@ -88,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdPathList(): array
     {
         $queryBuilder = $this->getQueryBuilder('documents.id', 'CONCAT(documents.path, documents.key) as `path`');
-        $documentIds = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentIds = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $documentIds;
     }
@@ -109,7 +109,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, 'documents.id');
 
-        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $amount;
     }

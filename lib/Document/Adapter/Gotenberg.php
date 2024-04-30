@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
-use Gotenberg\Exceptions\GotenbergApiErroed;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
 use Pimcore\Config;
+use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
@@ -29,8 +29,6 @@ use Pimcore\Tool\Storage;
  */
 class Gotenberg extends Ghostscript
 {
-    protected static bool $validPing = false;
-
     public function isAvailable(): bool
     {
         try {
@@ -61,24 +59,7 @@ class Gotenberg extends Ghostscript
      */
     public static function checkGotenberg(): bool
     {
-        if (self::$validPing) {
-            return true;
-        }
-
-        if (!class_exists(GotenbergAPI::class, true)) {
-            return false;
-        }
-        $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url'])
-            ->html(Stream::string('dummy.html', '<body></body>'));
-
-        try {
-            GotenbergAPI::send($request);
-            self::$validPing = true;
-
-            return true;
-        } catch (GotenbergApiErroed $e) {
-            return false;
-        }
+        return GotenbergHelper::isAvailable();
     }
 
     public function load(Asset\Document $asset): static
@@ -151,7 +132,7 @@ class Gotenberg extends Ghostscript
                 rewind($stream);
 
                 return $stream;
-            } catch (GotenbergApiErroed $e) {
+            } catch (\Exception $e) {
                 $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . ' with Gotenberg: ';
                 Logger::error($message. $e->getMessage());
 

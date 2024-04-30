@@ -25,8 +25,8 @@ Localization (output-format, ...) is automatically used from the globally regist
 Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 
 ```twig
-{{ pimcore_date('myDate', {
-    'format': 'd.m.Y',
-    'outputIsoFormat': 'DD.MM.YYYY'
+{{ pimcore_date("myDate", {
+    "format": "d.m.Y",
+    "outputIsoFormat": "DD.MM.YYYY"
 }) }}
 ```

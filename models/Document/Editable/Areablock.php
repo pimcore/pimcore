@@ -249,8 +249,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->indices = Tool\Serialize::unserialize($data);
-        if (!is_array($this->indices)) {
+        $unserializedData = Tool\Serialize::unserialize($data);
+
+        if (is_array($unserializedData)) {
+            $this->indices = $unserializedData;
+        } else {
             $this->indices = [];
         }
 
