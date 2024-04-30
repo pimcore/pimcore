@@ -123,7 +123,7 @@ class ListingTest extends ModelTestCase
                 'assets',
                 'tags_assignment',
                 'ta',
-                $expressionBuilder->and(
+                (string) $expressionBuilder->and(
                     $expressionBuilder->in('ta.tagid', $tagIds),
                     $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
                     $expressionBuilder->eq('ta.cid', 'assets.id')

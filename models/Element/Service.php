@@ -937,10 +937,10 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-//                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 //
 //                $customViewJoins = $cv['joins'] ?? null;
 //                if ($customViewJoins) {
+//                    $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 //                    foreach ($customViewJoins as $joinConfig) {
 //                        $type = $joinConfig['type'];
 //                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
