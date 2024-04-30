@@ -128,8 +128,8 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
-        $distinct = $this->model->addDistinct();
-        $originalSelect = $queryBuilder->getQueryPart('select');
+        $distinct = false;
+        $originalSelect = '';
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
@@ -139,7 +139,9 @@ trait QueryBuilderHelperTrait
             $queryBuilder->distinct();
         }
 
-        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+        //TODO: former if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+        // can't get these info anymore, might need to be be done before passing to query builder
+        if (true) {
             $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
 
             // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
@@ -160,6 +162,7 @@ trait QueryBuilderHelperTrait
 
     protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
+        return true;
         try {
             if ($query->getQueryPart($part)) {
                 return true;
