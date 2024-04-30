@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
@@ -264,15 +265,14 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 }
             } else {
                 if (is_bool($param)) {
-                    $type = \PDO::PARAM_BOOL;
+                    $type = ParameterType::BOOLEAN;
                 } elseif (is_int($param)) {
-                    $type = \PDO::PARAM_INT;
+                    $type = ParameterType::INTEGER;
                 } elseif (is_null($param)) {
-                    $type = \PDO::PARAM_NULL;
+                    $type = ParameterType::NULL;
                 } else {
-                    $type = \PDO::PARAM_STR;
+                    $type = ParameterType::STRING;
                 }
-
                 $conditionVariableTypes[$pkey] = $type;
             }
         }
