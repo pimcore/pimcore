@@ -271,7 +271,7 @@ class Pimcore extends Module\Symfony
     protected function connectDb(Connection $connection): void
     {
         if (!$connection->isConnected()) {
-            $connection->connect();
+            $connection->getServerVersion();
         }
 
         $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
