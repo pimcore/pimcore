@@ -236,9 +236,7 @@ final class Site extends AbstractModel
     public function setRootId(int $rootId): static
     {
         $this->rootId = $rootId;
-
-        $rd = Document\Page::getById($this->rootId);
-        $this->setRootDocument($rd);
+        $this->rootDocument = Document\Page::getById($this->rootId);
 
         return $this;
     }
@@ -249,6 +247,7 @@ final class Site extends AbstractModel
     public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
+        $this->rootId = $rootDocument?->getId();
 
         return $this;
     }
