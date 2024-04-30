@@ -192,6 +192,9 @@ class Processor
         // fix htmlentities issues
         $tmpData = [];
         foreach ($data as $d) {
+            if (!($d['text'])) {
+                continue;
+            }
             $text = htmlentities($d['text'], ENT_COMPAT, 'UTF-8');
             if ($d['text'] !== $text) {
                 $td = $d;
