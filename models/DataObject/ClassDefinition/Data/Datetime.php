@@ -289,7 +289,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
                 return $condition;
             } else {
-                $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
+                $maxTime = (string)($timestamp + (86400 - 1)); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ? $params['name'] : $this->getName();
                 $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
 
