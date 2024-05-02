@@ -270,19 +270,15 @@ class Pimcore extends Module\Symfony
      */
     protected function connectDb(Connection $connection): void
     {
-        if (!$connection->isConnected()) {
-            // we don't need the serverVersion here, but it triggers the needed connect(), which is protected since doctrine/dbal v4
-            // TODO: remove check when dropping support for doctrine/dbal v3, $db->getServerVersion has public visibility since v4
-            // @phpstan-ignore-next-line
-            if (method_exists($this, 'getWrappedConnection')) {
-                $connection->getServerVersion();
-            }else {
-                // @phpstan-ignore-next-line
-                $this->db->getServerVersion();
+        try {
+            if (!$connection->isConnected()) {
+                // doesn't do anything, just to trigger a (protected since dbal v4) `->connect()` call
+                $this->db->getNativeConnection();
             }
+            $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
+        } catch (\Exception) {
+            $this->debug(sprintf('[DB] Failed to connect to DB %s', $connection->getDatabase()));
         }
-
-        $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
     }
 
     /**

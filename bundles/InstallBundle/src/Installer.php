@@ -455,9 +455,12 @@ class Installer
                 if ($reflection->isPublic()){
                     $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $db->getServerVersion();
                 }else{
-                    $connection = $db->getWrappedConnection();
-                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    if (method_exists($db, 'getWrappedConnection')) {
+                        $connection = $db->getWrappedConnection();
+                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    }
                 }
+
                 $writer = new ConfigWriter();
                 $writer->writeDbConfig($doctrineConfig);
             }
