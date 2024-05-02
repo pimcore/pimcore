@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\InstallBundle;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use ReflectionMethod;
 use function in_array;
 use PDO;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
@@ -450,7 +451,8 @@ class Installer
                 // now we're able to write the server version to the database.yaml
 
                 // TODO: remove check when dropping support for doctrine/dbal v3, $db->getServerVersion has public visibility since v4
-                if (is_callable([$db,'getServerVersion'])){
+                $reflection = new ReflectionMethod($db, 'getServerVersion');
+                if ($reflection->isPublic()){
                     $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $db->getServerVersion();
                 }else{
                     if (method_exists($db, 'getWrappedConnection')) {
