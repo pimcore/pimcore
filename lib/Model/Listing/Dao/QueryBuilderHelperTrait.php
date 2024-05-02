@@ -134,8 +134,8 @@ trait QueryBuilderHelperTrait
 
         try {
             $originalQuery = (string)$queryBuilder;
-            preg_match('/SELECT(.*?)FROM/', $originalQuery, $matches);
-            if (isset($matches[1])){
+            $hasSelect = preg_match('/SELECT(.*?)FROM/', $originalQuery, $matches);
+            if ($hasSelect){
                 $originalSelect = trim($matches[1]);
                 if (strpos($originalSelect, 'DISTINCT')){
                     $distinct = true;
