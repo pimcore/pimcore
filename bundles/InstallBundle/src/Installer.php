@@ -449,9 +449,9 @@ class Installer
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
 
-                $connection = $db->getNativeConnection();
                 // TODO: remove check when dropping support for doctrine/dbal v3, $db->getServerVersion has public visibility since v4
-                if (method_exists($connection, 'getServerVersion')) {
+                if (method_exists($db, 'getWrappedConnection')) {
+                    $connection = $db->getWrappedConnection();
                     $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
                 }else{
                     $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $db->getServerVersion();
