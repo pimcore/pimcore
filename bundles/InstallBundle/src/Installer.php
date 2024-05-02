@@ -450,14 +450,15 @@ class Installer
                 // now we're able to write the server version to the database.yaml
 
                 // TODO: remove check when dropping support for doctrine/dbal v3, $db->getServerVersion has public visibility since v4
-                // @phpstan-ignore-next-line
-                if (method_exists($db, 'getWrappedConnection')) {
-                    $connection = $db->getWrappedConnection();
-                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                }else{
-                    // @phpstan-ignore-next-line
+                if (is_callable([$db,'getServerVersion'])){
                     $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $db->getServerVersion();
+                }else{
+                    if (method_exists($db, 'getWrappedConnection')) {
+                        $connection = $db->getWrappedConnection();
+                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    }
                 }
+
                 $writer = new ConfigWriter();
                 $writer->writeDbConfig($doctrineConfig);
             }
