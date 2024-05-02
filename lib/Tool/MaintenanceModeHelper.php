@@ -56,7 +56,13 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             if (!$this->db->isConnected()) {
-                $this->db->getServerVersion();
+                // TODO: remove check when dropping support for doctrine/dbal v3, $db->getServerVersion has public visibility since v4
+                $connection = $this->db->getNativeConnection();
+                if (method_exists($connection, 'getServerVersion')) {
+                    $connection->getServerVersion();
+                }else {
+                    $this->db->getServerVersion();
+                }
             }
         } catch (\Exception) {
             return false;
