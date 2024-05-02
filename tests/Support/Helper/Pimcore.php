@@ -273,7 +273,7 @@ class Pimcore extends Module\Symfony
         try {
             if (!$connection->isConnected()) {
                 // doesn't do anything, just to trigger a (protected since dbal v4) `->connect()` call
-                $this->db->getNativeConnection();
+                $connection->getNativeConnection();
             }
             $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
         } catch (\Exception) {

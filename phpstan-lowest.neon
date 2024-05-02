@@ -2,4 +2,14 @@ includes:
     - phpstan.neon
 
 parameters:
-	reportUnmatchedIgnoredErrors: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        -
+            message: "#^Call to private method getServerVersion\\(\\) of class Doctrine\\\\DBAL\\\\Connection\\.$#"
+            count: 1
+            path: bundles/InstallBundle/src/Installer.php
+        -
+            message: "#^Call to function method_exists\\(\\) with Doctrine\\\\DBAL\\\\Connection and 'getWrappedConnection' will always evaluate to true\\.$#"
+            count: 1
+            path: bundles/InstallBundle/src/Installer.php
+

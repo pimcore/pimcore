@@ -556,7 +556,7 @@ parameters:
 
 		-
 			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
-			count: 1
+			count: 2
 			path: models/DataObject/Listing/Dao.php
 
 		-
