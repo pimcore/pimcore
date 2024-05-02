@@ -271,6 +271,7 @@ class Pimcore extends Module\Symfony
     protected function connectDb(Connection $connection): void
     {
         if (!$connection->isConnected()) {
+            // we don't need the serverVersion here, but it triggers the needed connect(), which is protected since doctrine/dbal v4
             $connection->getServerVersion();
         }
 

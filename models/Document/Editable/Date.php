@@ -68,8 +68,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                     'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
                     __CLASS__
                 );
-                //TODO: this is removed by nesbot/carbon v3
-//                return $this->date->formatLocalized($this->config['outputFormat']);
+                return $this->date->formatLocalized($this->config['outputFormat']);
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
                     $format = $this->config['format'];
