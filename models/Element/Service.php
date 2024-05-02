@@ -937,24 +937,31 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-//
-//                $customViewJoins = $cv['joins'] ?? null;
-//                if ($customViewJoins) {
-//                    $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
-//                    foreach ($customViewJoins as $joinConfig) {
-//                        $type = $joinConfig['type'];
-//                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
-//
-//                        $joinAlias = array_keys($joinConfig['name']);
-//                        $joinAlias = reset($joinAlias);
-//                        $joinTable = $joinConfig['name'][$joinAlias];
-//
-//                        $condition = $joinConfig['condition'];
-//                        $columns = $joinConfig['columns'];
-//                        $select->addSelect($columns);
-//                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
-//                    }
-//                }
+                $customViewJoins = $cv['joins'] ?? null;
+                if ($customViewJoins) {
+
+                    $tempSql = $select->getSQL();
+                    $pattern = '/\bFROM\b\s+([^\s,;]+)(?:\s+AS\s+(\w+))?/i';
+                    if (preg_match($pattern, $tempSql, $matches)) {
+                        $fromAlias = $matches[2] ?? $matches[1];
+                    }else{
+                        throw new \Exception('Could not determine FROM table/alias');
+                    }
+
+                    foreach ($customViewJoins as $joinConfig) {
+                        $type = $joinConfig['type'];
+                        $method = $type == 'left' || $type == 'right' ? $type . 'Join' : 'join';
+
+                        $joinAlias = array_keys($joinConfig['name']);
+                        $joinAlias = reset($joinAlias);
+                        $joinTable = $joinConfig['name'][$joinAlias];
+
+                        $condition = $joinConfig['condition'];
+                        $columns = $joinConfig['columns'];
+                        $select->addSelect($columns);
+                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
+                    }
+                }
 
                 if (!empty($cv['having'])) {
                     $select->having($cv['having']);
