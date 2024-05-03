@@ -452,7 +452,7 @@ trait ImageThumbnailTrait
     private function checkMaxScalingFactor(?float $scalingFactor = null): bool
     {
         if ($scalingFactor === null) {
-           return true;
+            return true;
         }
 
         $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
