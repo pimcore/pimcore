@@ -205,7 +205,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @throws \Exception
      *
-     * @return mixed|void
+     * @return mixed
      */
     public function __call(string $method, array $args)
     {
@@ -214,22 +214,13 @@ abstract class AbstractModel implements ModelInterface
             throw new \Exception("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
         }
 
-        // check if the method is defined in ´dao
-        if (method_exists($this->getDao(), $method)) {
-            try {
-                $r = call_user_func_array([$this->getDao(), $method], $args);
-
-                return $r;
-            } catch (\Exception $e) {
-                Logger::emergency((string) $e);
-
-                throw $e;
-            }
-        } else {
-            Logger::error('Class: ' . get_class($this) . ' => call to undefined method ' . $method);
-
-            throw new \Exception('Call to undefined method ' . $method . ' in class ' . get_class($this));
+        // check if the method is defined in dao
+        $dao = $this->getDao();
+        if (method_exists($dao, $method)) {
+            return call_user_func_array([$dao, $method], $args);
         }
+
+        throw new \Exception('Call to undefined method ' . $method . ' in class ' . get_class($this));
     }
 
     public function __clone(): void
