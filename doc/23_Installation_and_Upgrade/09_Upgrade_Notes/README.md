@@ -7,6 +7,36 @@
 #### [Listing]
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
 
+## Pimcore 11.2.4
+### Assets Thumbnails
+- Thumbnail generation for Assets, Documents and Videos now only support the following formats out of the box: `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'`.
+- You can extend this list by adding your formats on the bottom: 
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        allowed_formats:
+          - 'avif'
+          - 'eps'
+          - 'gif'
+          - 'jpeg'
+          - 'jpg'
+          - 'pjpeg'
+          - 'png'
+          - 'svg'
+          - 'tiff'
+          - 'webm'
+          - 'webp'
+          - 'pdf' # Add your desired format here
+```
+- High resolution scaling factor for image thumbnails has now been limited to a maximum of `5.0`. If you need to scale an image more than that, you can use the `max_scaling_factor` option in the configuration.
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        max_scaling_factor: 6.0
+```
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
