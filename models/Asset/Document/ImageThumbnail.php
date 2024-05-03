@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
@@ -70,8 +71,15 @@ final class ImageThumbnail implements ImageThumbnailInterface
         return $path;
     }
 
+    /**
+     * @throws ThumbnailFormatNotSupportedException
+     */
     public function generate(bool $deferredAllowed = true): void
     {
+        if (!$this->checkAllowedFormats($this->config->getFormat())) {
+            throw new ThumbnailFormatNotSupportedException();
+        }
+
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
