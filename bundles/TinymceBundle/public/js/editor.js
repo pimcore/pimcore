@@ -85,7 +85,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             defaultConfig = pimcore[e.detail.context][subSpace].wysiwyg ? pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 
-        let maxChars = this.maxChars;
+        const maxChars = this.maxChars;
 
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
