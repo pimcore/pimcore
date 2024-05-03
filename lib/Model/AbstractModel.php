@@ -203,7 +203,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @throws \BadMethodCallException
+     * @throws \Exception
      *
      * @return mixed
      */
