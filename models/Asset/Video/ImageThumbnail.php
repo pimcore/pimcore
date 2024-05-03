@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video;
 
+use Exception;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
@@ -75,12 +77,16 @@ final class ImageThumbnail implements ImageThumbnailInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {
+        if (!$this->checkAllowedFormats($this->config->getFormat())) {
+            throw new ThumbnailFormatNotSupportedException();
+        }
+
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 

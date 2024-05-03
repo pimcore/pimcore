@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
+use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
@@ -427,5 +428,29 @@ trait ImageThumbnailTrait
         $thumb->reset();
 
         return $thumb;
+    }
+
+    private function checkAllowedFormats(string $format, ?Asset $asset = null): bool
+    {
+        $format = strtolower($format);
+        if($asset) {
+            $original = pathinfo($asset->getRealFullPath(),  PATHINFO_EXTENSION);
+            if ($format === $original || $format === 'source') {
+                return true;
+            }
+        }
+
+        $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
+        return in_array(
+            $format,
+            $assetConfig['thumbnails']['allowed_formats'],
+            true
+        );
+    }
+
+    private function checkMaxScalingFactor(float $scalingFactor): bool
+    {
+        $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
+        return $scalingFactor <= $assetConfig['thumbnails']['max_scaling_factor'];
     }
 }
