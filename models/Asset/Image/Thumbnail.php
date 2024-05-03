@@ -107,6 +107,7 @@ final class Thumbnail implements ThumbnailInterface
     /**
      * @throws ThumbnailFormatNotSupportedException
      * @throws ThumbnailMaxScalingFactorException
+     *
      * @internal
      */
     public function generate(bool $deferredAllowed = true): void
