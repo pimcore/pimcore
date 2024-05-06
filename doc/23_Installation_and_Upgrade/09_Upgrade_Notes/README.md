@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## Pimcore 11.2.4
+## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
 - Thumbnail generation for Assets, Documents and Videos now only support the following formats out of the box: `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'`.
 - You can extend this list by adding your formats on the bottom: 
