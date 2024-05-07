@@ -130,6 +130,7 @@ abstract class AbstractRelations extends Data implements
         	$object instanceof Localizedfield => $object->getObject()->getClassId(),
         	$object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
         };
+        $db = Db::get();
 
         if (null === $classId) {
             throw new \Exception('Invalid object type');
@@ -137,6 +138,35 @@ abstract class AbstractRelations extends Data implements
 
         if ($data !== null) {
             $relations = $this->prepareDataForPersistence($data, $object, $params);
+
+            /**
+             * FieldCollection don't support delta Updates of relations
+             * A FieldCollection Entry does not have a unique ID,
+             * so we need to delete all relations and insert them again
+             */
+            if ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                foreach ($relations as $relation) {
+                    $this->enrichDataRow($object, $params, $classId, $relation);
+
+                    // relation needs to be an array with src_id, dest_id, type, fieldname
+                    try {
+                        $db->insert('object_relations_'.$classId, Db\Helper::quoteDataIdentifiers($db, $relation));
+                    } catch (\Exception $e) {
+                        Logger::error(
+                            'It seems that the relation '.$relation['src_id'].' => '.$relation['dest_id']
+                            .' (fieldname: '.$this->getName().') already exist -> please check immediately!'
+                        );
+                        Logger::error((string)$e);
+
+                        // try it again with an update if the insert fails, shouldn't be the case, but it seems that
+                        // sometimes the insert throws an exception
+
+                        throw $e;
+                    }
+                }
+
+                return;
+            }
 
             if (is_array($relations) && !empty($relations)) {
                 foreach ($relations as $relation) {
@@ -202,8 +232,6 @@ abstract class AbstractRelations extends Data implements
         if (empty($updatedRelations) && empty($newRelations) && empty($removedRelations)) {
             return;
         }
-
-        $db = Db::get();
 
         foreach ($updatedRelations as $updatedRelation) {
             $db->update(

@@ -143,9 +143,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
-        // empty or create all relevant tables
-
-        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
 
@@ -195,8 +192,8 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($childDefinitions as $fd) {
                 if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                        '_self'
-                    )) {
+                            '_self'
+                        )) {
                         continue;
                     }
                 }
@@ -248,20 +245,12 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        if (!$saveMode) {
-            $where = "(ownertype = 'fieldcollection' AND ".Helper::quoteInto(
-                    $this->db,
-                    'ownername = ?',
-                    $this->model->getFieldname()
-                )
-                .' AND '.Helper::quoteInto($this->db, 'src_id = ?', $object->getId()).')';
+        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
 
-            // empty relation table
-            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$where);
-            $this->db->executeStatement(
-                'DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$whereLocalizedFields
-            );
-        }
+        // empty relation table
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

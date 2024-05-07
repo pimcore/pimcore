@@ -203,18 +203,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
         }
 
-        // empty relation table except the untouchable fields (eg. lazy loading fields)
-        if (count($untouchable) > 0) {
-            $untouchables = "'" . implode("','", $untouchable) . "'";
-            $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
-        } else {
-            $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
-        }
-
-        if (!DataObject::isDirtyDetectionDisabled()) {
-            $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
-        }
-
         $inheritedValues = DataObject::doGetInheritedValues();
         DataObject::setGetInheritedValues(false);
 

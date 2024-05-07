@@ -37,7 +37,7 @@ trait ContextPersistenceTrait
                     'fieldname' => $this->getName(),
                     'ownertype' => 'fieldcollection',
                     'ownername' => $object->getFieldname(),
-                    'position' => $object->getIndex(),
+                    'position' => (string)$object->getIndex(), //Gets cast to string for checking a delta of the relations on removal or addition
                 ]
             );
         } elseif ($object instanceof Localizedfield) {
@@ -103,7 +103,7 @@ trait ContextPersistenceTrait
             $row[$srcCol] = $object->getObject()->getId(); // use the id from the object, not from the field collection
             $row['ownertype'] = 'fieldcollection';
             $row['ownername'] = $object->getFieldname();
-            $row['position'] = $object->getIndex();
+            $row['position'] = (string)$object->getIndex();
 
             $classId = $object->getObject()->getClassId();
         } elseif ($object instanceof Localizedfield) {
