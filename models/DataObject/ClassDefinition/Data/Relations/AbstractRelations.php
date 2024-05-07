@@ -144,7 +144,7 @@ abstract class AbstractRelations extends Data implements
              * A FieldCollection Entry does not have a unique ID,
              * so we need to delete all relations and insert them again
              */
-            if ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $context['containerType'] === 'fieldcollection') {
                 foreach ($relations as $relation) {
                     $this->enrichDataRow($object, $params, $classId, $relation);
 
