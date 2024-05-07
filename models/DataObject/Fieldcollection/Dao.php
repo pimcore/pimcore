@@ -143,6 +143,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
+        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
 
