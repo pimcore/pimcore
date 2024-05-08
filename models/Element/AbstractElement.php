@@ -179,10 +179,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     */
     public function getLocked(): ?string
     {
         if (empty($this->locked)) {
@@ -192,12 +188,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->locked;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     *
-     * @return $this
-     */
     public function setLocked(?string $locked): static
     {
         $this->locked = $locked;
