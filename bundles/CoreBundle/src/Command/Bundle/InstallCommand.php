@@ -49,7 +49,7 @@ class InstallCommand extends AbstractBundleCommand
     {
         $bundle = $this->getBundle();
 
-        if (!$this->bundleManager->canBeInstalled($bundle) || $this->bundleManager->isInstalled($bundle)) {
+        if ($this->bundleManager->isInstalled($bundle)) {
             $this->io->success(sprintf('Bundle "%s" is already installed', $bundle->getName()));
             return 0;
         }
