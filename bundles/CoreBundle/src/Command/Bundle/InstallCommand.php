@@ -22,6 +22,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * @internal
@@ -51,7 +52,7 @@ class InstallCommand extends AbstractBundleCommand
 
         if ($this->bundleManager->isInstalled($bundle)) {
             $this->io->success(sprintf('Bundle "%s" is already installed', $bundle->getName()));
-            return 0;
+            return Command::SUCCESS;
         }
 
         // sets up installer with console output writer
@@ -70,6 +71,6 @@ class InstallCommand extends AbstractBundleCommand
             $this->getApplication()->getKernel()->getEnvironment()
         );
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
