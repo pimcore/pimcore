@@ -6,6 +6,8 @@
 - Unused setting `general.language` has been deprecated.
 #### [Listing]
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Html to Image]
+- Bumped the lowest requirement of `2.x` gotenberg-php to `^2.4` to add support of passing screenshot size
 
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
