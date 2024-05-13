@@ -112,14 +112,6 @@ final class Thumbnail implements ThumbnailInterface
      */
     public function generate(bool $deferredAllowed = true): void
     {
-        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
-            throw new ThumbnailFormatNotSupportedException();
-        }
-
-        if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
-            throw new ThumbnailMaxScalingFactorException();
-        }
-
         $deferred = false;
         $generated = false;
 
@@ -131,6 +123,15 @@ final class Thumbnail implements ThumbnailInterface
                     'src' => $this->asset->getRealFullPath(),
                 ];
             } else {
+
+                if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+                    throw new ThumbnailFormatNotSupportedException();
+                }
+
+                if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
+                    throw new ThumbnailMaxScalingFactorException();
+                }
+
                 try {
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
