@@ -112,13 +112,7 @@ final class Thumbnail implements ThumbnailInterface
      */
     public function generate(bool $deferredAllowed = true): void
     {
-        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
-            throw new ThumbnailFormatNotSupportedException();
-        }
-
-        if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
-            throw new ThumbnailMaxScalingFactorException();
-        }
+        $this->validate();
 
         $deferred = false;
         $generated = false;
@@ -459,5 +453,23 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         return implode(', ', $srcSetValues);
+    }
+
+    /**
+     * @throws ThumbnailFormatNotSupportedException
+     * @throws ThumbnailMaxScalingFactorException
+     */
+    private function validate(): void
+    {
+        if(!$this->asset || !$this->config) {
+            return;
+        }
+        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+            throw new ThumbnailFormatNotSupportedException();
+        }
+
+        if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
+            throw new ThumbnailMaxScalingFactorException();
+        }
     }
 }
