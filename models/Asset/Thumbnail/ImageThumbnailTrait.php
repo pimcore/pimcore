@@ -442,9 +442,10 @@ trait ImageThumbnailTrait
 
         $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
 
-        return in_arrayi(
+        return in_array(
             $format,
-            $assetConfig['thumbnails']['allowed_formats']
+            $assetConfig['thumbnails']['allowed_formats'],
+            true
         );
     }
 
