@@ -259,7 +259,7 @@ final class Config extends Model\AbstractModel
                 'mode' => 'asTexture',
             ]);
             $thumbnail->setQuality(60);
-            $thumbnail->setFormat('PJPEG');
+            $thumbnail->setFormat('pjpeg');
         }
 
         $thumbnail->setHighResolution(2);
