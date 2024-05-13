@@ -116,14 +116,8 @@ final class Thumbnail implements ThumbnailInterface
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
-            // if no correct thumbnail config is given use the original image as thumbnail
-            if (!$this->config) {
-                $this->pathReference = [
-                    'type' => 'asset',
-                    'src' => $this->asset->getRealFullPath(),
-                ];
-            } else {
 
+            if($this->config) {
                 if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
                     throw new ThumbnailFormatNotSupportedException();
                 }
@@ -131,7 +125,15 @@ final class Thumbnail implements ThumbnailInterface
                 if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
                     throw new ThumbnailMaxScalingFactorException();
                 }
+            }
 
+            // if no correct thumbnail config is given use the original image as thumbnail
+            if (!$this->config) {
+                $this->pathReference = [
+                    'type' => 'asset',
+                    'src' => $this->asset->getRealFullPath(),
+                ];
+            } else {
                 try {
                     $deferred = $deferredAllowed && $this->deferred;
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
