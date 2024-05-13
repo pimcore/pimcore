@@ -117,14 +117,13 @@ final class Thumbnail implements ThumbnailInterface
 
         if ($this->asset && empty($this->pathReference)) {
 
-            if($this->config) {
-                if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
-                    throw new ThumbnailFormatNotSupportedException();
-                }
 
-                if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
-                    throw new ThumbnailMaxScalingFactorException();
-                }
+            if ($this->config && !$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+                throw new ThumbnailFormatNotSupportedException();
+            }
+
+            if ($this->config && !$this->checkMaxScalingFactor($this->config->getHighResolution())) {
+                throw new ThumbnailMaxScalingFactorException();
             }
 
             // if no correct thumbnail config is given use the original image as thumbnail
