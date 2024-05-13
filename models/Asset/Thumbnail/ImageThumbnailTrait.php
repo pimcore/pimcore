@@ -434,7 +434,7 @@ trait ImageThumbnailTrait
     {
         $format = strtolower($format);
         if($asset) {
-            $original = pathinfo($asset->getRealFullPath(), PATHINFO_EXTENSION);
+            $original = strtolower(pathinfo($asset->getRealFullPath(), PATHINFO_EXTENSION));
             if ($format === $original || $format === 'source') {
                 return true;
             }

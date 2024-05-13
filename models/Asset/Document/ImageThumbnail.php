@@ -76,14 +76,15 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     public function generate(bool $deferredAllowed = true): void
     {
-        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
-            throw new ThumbnailFormatNotSupportedException();
-        }
-
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
+
+            if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+                throw new ThumbnailFormatNotSupportedException();
+            }
+
             $config = $this->getConfig();
             $cacheFileStream = null;
             $config->setFilenameSuffix('page-' . $this->page);

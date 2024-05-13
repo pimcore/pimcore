@@ -77,20 +77,21 @@ final class ImageThumbnail implements ImageThumbnailInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|\League\Flysystem\FilesystemException|ThumbnailFormatNotSupportedException
      *
      * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {
-        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
-            throw new ThumbnailFormatNotSupportedException();
-        }
-
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
+
+            if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+                throw new ThumbnailFormatNotSupportedException();
+            }
+
             $cs = $this->asset->getCustomSetting('image_thumbnail_time');
             $im = $this->asset->getCustomSetting('image_thumbnail_asset');
 
