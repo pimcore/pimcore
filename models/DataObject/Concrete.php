@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
+use function array_merge;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -710,13 +711,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     public function __sleep(): array
     {
         $parentVars = parent::__sleep();
-
         $finalVars = [];
-
-        $blockedVars = [];
+        $blockedVars = ['__rawRelationData'];
 
         if (!$this->isInDumpState()) {
-            $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+            $blockedVars = array_merge(['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'], $blockedVars);
             // do not dump lazy loaded fields for caching
             $lazyLoadedFields = $this->getLazyLoadedFieldNames();
             $blockedVars = array_merge($lazyLoadedFields, $blockedVars);
