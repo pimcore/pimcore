@@ -29,6 +29,12 @@ bin/console pimcore:bundle:install PimcoreTinymceBundle
 
 Available configuration options can be found here: [config options](https://www.tiny.cloud/docs/configure/)
 
+## Default Configuration
+
+`convert_unsafe_embeds` is set to `true` by default.
+This means that unsafe elements like `<embed>` or `<object>` will be converted to more restrictive alternatives.
+For more details please take a look at the [TinyMCE documentation](https://www.tiny.cloud/docs/configure/content-filtering/#convert_unsafe_embeds).
+
 ## Examples
 
 ### Basic usage
