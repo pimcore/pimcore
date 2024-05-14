@@ -229,7 +229,7 @@ CSS;
 
         //matches all links
         preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
-        if (!empty($matches[0])) {
+        if ($matches[0]) {
             foreach ($matches[0] as $key => $value) {
                 $path = $matches[2][$key];
 
@@ -289,7 +289,7 @@ CSS;
 
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
-        if (!empty($matches[0])) {
+        if ($matches[0]) {
             $css = '';
 
             foreach ($matches[0] as $key => $value) {
@@ -340,7 +340,7 @@ CSS;
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
 
-        if (is_array($matches[0])) {
+        if ($matches[0]) {
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
