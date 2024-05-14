@@ -507,7 +507,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @throws \Exception
      */
-    public function current()
+    public function current(): mixed
     {
         $this->_sort();
         $hash = key($this->_index);
