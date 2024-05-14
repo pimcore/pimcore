@@ -6,6 +6,8 @@
 - Unused setting `general.language` has been deprecated.
 #### [Listing]
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Assets]
+- MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
 
 ## Pimcore 11.2.0
 ### Elements
