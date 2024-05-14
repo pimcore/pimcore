@@ -1,3 +1,5 @@
+gee_job_run_permission: Job Run Overview
+gee_see_all_job_runs_permission: See all Job Runs
 pimcore_job_execution_engine_error_no_job_definition: No Job definition found for Job Run ID %job_run_id%.
 pimcore_job_execution_engine_error_missing_message_implementation: Step message implementation %message% of Job %job_name% not found.
 pimcore_job_execution_engine_error_no_steps: Job definition %job_name% has no steps defined.

@@ -26,6 +26,7 @@ use Pimcore\Bundle\JobExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\JobExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\JobExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\JobExecutionEngineBundle\Security\PermissionServiceInterface;
+use Pimcore\Bundle\JobExecutionEngineBundle\Utils\Constants\TableConstants;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
@@ -92,7 +93,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
         $this->db->executeStatement(
             'UPDATE ' .
-            JobRun::TABLE .
+            TableConstants::JOB_RUN_TABLE .
             ' SET log = IF(ISNULL(log),:message,CONCAT(log, "\n", :message)) WHERE id = :id',
             [
                 'id' => $jobRun->getId(),

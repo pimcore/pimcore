@@ -16,15 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\JobExecutionEngineBundle\Utils\Constants;
 
-/**
- * @internal
- */
-class PermissionConstants
+final class TableConstants
 {
-    /**
-     * Permission have a max length of 50 chars!
-     */
-    public const GEE_JOB_RUN = 'gee_job_run_permission';
+    public const USER_PERMISSION_DEF_TABLE = 'users_permission_definitions';
 
-    public const GEE_SEE_ALL_JOB_RUNS = 'gee_see_all_job_runs_permission';
+    public const JOB_RUN_TABLE = 'job_execution_engine_job_run';
 }

@@ -24,6 +24,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Pimcore\Bundle\JobExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\JobExecutionEngineBundle\Utils\Constants\PermissionConstants;
+use Pimcore\Bundle\JobExecutionEngineBundle\Utils\Constants\TableConstants;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -42,8 +43,6 @@ final class Installer extends SettingsStoreAwareInstaller
     }
 
     public const USER_PERMISSIONS_CATEGORY = 'Pimcore Job Execution Engine';
-
-    public const USER_PERMISSION_DEF_TABLE = 'users_permission_definitions';
 
     protected const USER_PERMISSIONS = [
         PermissionConstants::PJEE_JOB_RUN,
@@ -97,8 +96,8 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function installJobRunTable(Schema $schema): void
     {
-        if (!$schema->hasTable(JobRun::TABLE)) {
-            $jobRunTable = $schema->createTable(JobRun::TABLE);
+        if (!$schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
+            $jobRunTable = $schema->createTable(TableConstants::JOB_RUN_TABLE);
             $jobRunTable->addColumn('id', 'integer', ['autoincrement' => true, 'notnull' => true]);
             $jobRunTable->addColumn('ownerId', 'integer', ['notnull' => false, 'unsigned' => true]);
             $jobRunTable->addColumn('state', 'string', ['notnull' => true, 'length' => 10]);
@@ -146,8 +145,8 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function removeJobRunTable(Schema $schema): void
     {
-        if ($schema->hasTable(JobRun::TABLE)) {
-            $this->db->executeStatement('DROP TABLE ' . JobRun::TABLE);
+        if ($schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
+            $this->db->executeStatement('DROP TABLE ' . TableConstants::JOB_RUN_TABLE);
         }
     }
 
@@ -156,11 +155,11 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function addUserPermission(Schema $schema): void
     {
-        if ($schema->hasTable(self::USER_PERMISSION_DEF_TABLE)) {
+        if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
                 $queryBuilder = $this->db->createQueryBuilder();
                 $queryBuilder
-                    ->insert(self::USER_PERMISSION_DEF_TABLE)
+                    ->insert(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->values([
                         $this->db->quoteIdentifier('key') => ':key',
                         $this->db->quoteIdentifier('category') => ':category',
@@ -180,11 +179,11 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function removeUserPermission(Schema $schema): void
     {
-        if ($schema->hasTable(self::USER_PERMISSION_DEF_TABLE)) {
+        if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
                 $queryBuilder = $this->db->createQueryBuilder();
                 $queryBuilder
-                    ->delete(self::USER_PERMISSION_DEF_TABLE)
+                    ->delete(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->where($this->db->quoteIdentifier('key') . ' = :key')
                     ->setParameter('key', $permission);
 

@@ -41,8 +41,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[HasLifecycleCallbacks]
 class JobRun
 {
-    public const TABLE = 'job_execution_engine_job_run';
-
     public const DEFAULT_EXECUTION_CONTEXT = 'default';
 
     #[ORM\Id]
