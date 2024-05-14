@@ -166,25 +166,46 @@ class NotificationService
         return $notification;
     }
 
+    /**
+     * @param array<string, mixed> $filter
+     * @param array{offset?: int|string, limit?: int|string|null} $options
+     *
+     * @return array{total: int, data: Notification[]}
+     */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
 
-        if (!empty($filter)) {
+        if ($filter) {
             $conditions = [];
+            $conditionVariables = [];
             foreach ($filter as $key => $value) {
-                $conditions[] = $key . ' = :' . $key;
+                if (isset($value['condition'])) {
+                    $conditions[] = $value['condition'];
+                    $conditionVariables[] = $value['conditionVariables'] ?? [];
+                } else {
+                    $conditions[] = $key . ' = :' . $key;
+                    $conditionVariables[] = [$key => $value];
+                }
             }
 
             $condition = implode(' AND ', $conditions);
-            $listing->setCondition($condition, $filter);
+            $listing->setCondition($condition, array_merge(...$conditionVariables));
         }
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $options += ['offset' => 0, 'limit' => 0];
-        $offset = (int) $options['offset'];
-        $limit = (int) $options['limit'];
+        $offset = $options['offset'] ?? 0;
+        $limit = $options['limit'] ?? null;
+
+        if (is_string($offset)) {
+            //TODO: Trigger deprecation
+            $offset = (int) $offset;
+        }
+        if (is_string($limit)) {
+            //TODO: Trigger deprecation
+            $limit = (int) $limit;
+        }
 
         $this->beginTransaction();
 

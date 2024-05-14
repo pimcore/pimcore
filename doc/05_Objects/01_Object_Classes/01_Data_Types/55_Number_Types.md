@@ -90,6 +90,8 @@ represented by a [QuantityValueRange](https://github.com/pimcore/pimcore/tree/11
 You can also convert values between units. Therefore you have to define base units, conversion factors and offsets. 
 All units with the same base unit can be converted to each other.
 
+Factor and offset define how to convert the current unit to the base unit. 
+
 Example:
 You have physical length units meter (m), millimeters (mm) and inches ("). Then your quantity value unit configuration could look like:
 
@@ -128,10 +130,13 @@ In quantity value unit configuration there is also the column "offset". This is 
 
 | Name               | Abbreviation | Baseunit | Factor | Offset |
 |--------------------|--------------|----------|--------|--------|
-| Degrees Celcius    | °C           |          |        |        |
-| Degrees Fahrenheit | °F           | °C       | 1.8    |  32    |
+| Degrees Celcius    | °C           |          | 1.8    | -32    |
+| Degrees Fahrenheit | °F           | °C       |        |        |
 
 These conversion parameters result from the formula `°F = °C * 1.8 + 32`
+
+The formula used for conversion is: `$convertedValue = ($quantityValue->getValue() * $fromUnit->getFactor() - $fromUnit->getConversionOffset()) / $toUnit->getFactor() + $toUnit->getConversionOffset();`
+
 
 #### Dynamic unit conversion
 

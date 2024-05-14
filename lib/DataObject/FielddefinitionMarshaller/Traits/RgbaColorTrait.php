@@ -40,6 +40,9 @@ trait RgbaColorTrait
     {
         if (is_array($value)) {
             $rgb = $value['value'];
+            if (!$rgb) {
+                return null;
+            }
             $a = $value['value2'];
             [$r, $g, $b] = sscanf($rgb, '%02x%02x%02x');
             $a = hexdec($a);

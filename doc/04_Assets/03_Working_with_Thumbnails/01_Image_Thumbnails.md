@@ -9,7 +9,8 @@ which are not stored as an asset inside Pimcore.
 > **IMPORTANT**  
 > Use Imagick PECL extension for best results, GDlib is just a fallback with limited functionality
 > (only PNG, JPG, GIF) and less quality!
-> Using ImageMagick Pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
+> Using ImageMagick Pimcore can support hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, etc.
+> Not all formats are allowed out of the box. To extend the list [see](./README.md#allowed-formats).
 
 To use the thumbnailing service of Pimcore, you have to create a transformation pipeline first. To do so, open
 _Settings_ > _Thumbnails_ and click on _Add Thumbnail_ to create a new configuration.
@@ -328,6 +329,15 @@ $asset->getThumbnail("myConfig")->getPath(['deferredAllowed' => false]);
 This is a special functionality to allow embedding high resolution (ppi/dpi) images.
 The following is only necessary in special use-cases like Web-to-Print, in typical web-based cases, Pimcore
 automatically adds the `srcset` attribute to `<img>` and `<picture>` tags automatically, so no manual work is necessary.
+
+The high resolution scaling factor is limited to `5.0` eg. `@5x`. Float values are supported.
+If you need to scale an image more than that, you can use the `max_scaling_factor` option in the configuration.
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        max_scaling_factor: 6.0
+```
 
 ### Use in the Thumbnail Configuration:
 
