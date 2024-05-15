@@ -1,3 +1,0 @@
-doctrine_migrations:
-    migrations_paths:
-        Pimcore\Bundle\JobExecutionEngineBundle\Migrations: '@PimcoreJobExecutionEngineBundle/src/Migrations'
