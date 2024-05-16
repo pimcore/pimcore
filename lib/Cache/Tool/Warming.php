@@ -36,7 +36,7 @@ class Warming
      * @static
      *
      */
-    public static function documents(array $types = null): void
+    public static function documents(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['page', 'snippet', 'folder', 'link'];
@@ -52,7 +52,7 @@ class Warming
      * @static
      *
      */
-    public static function objects(array $types = null, array $classes = null): void
+    public static function objects(?array $types = null, ?array $classes = null): void
     {
         if (empty($types)) {
             $types = DataObject::$types;
@@ -73,7 +73,7 @@ class Warming
      * @static
      *
      */
-    public static function assets(array $types = null): void
+    public static function assets(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];

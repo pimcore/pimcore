@@ -75,7 +75,7 @@ class Cache
      *
      *
      */
-    public static function save(mixed $data, string $key, array $tags = [], \DateInterval|int $lifetime = null, int $priority = 0, bool $force = false): bool
+    public static function save(mixed $data, string $key, array $tags = [], \DateInterval|int|null $lifetime = null, int $priority = 0, bool $force = false): bool
     {
         return static::getHandler()->save($key, $data, $tags, $lifetime, $priority, $force);
     }

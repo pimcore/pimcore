@@ -148,7 +148,7 @@ CSS;
         return implode(', ', $formatedReceiversArray);
     }
 
-    public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
+    public static function logEmail(MailClient $mail, array $recipients, ?string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
 
@@ -209,7 +209,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
+    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, ?string $hostUrl = null): string
     {
         $replacePrefix = '';
 

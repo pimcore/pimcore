@@ -203,7 +203,7 @@ class Ffmpeg extends Adapter
         return $success;
     }
 
-    public function saveImage(string $file, int $timeOffset = null): void
+    public function saveImage(string $file, ?int $timeOffset = null): void
     {
         if (!is_numeric($timeOffset)) {
             $timeOffset = 5;

@@ -37,7 +37,7 @@ class DocumentTypeFilter implements FilterInterface
         'hardlink',
     ];
 
-    public function __construct(array $documentTypes = null, array $containerTypes = null)
+    public function __construct(?array $documentTypes = null, ?array $containerTypes = null)
     {
         if (null !== $documentTypes) {
             $this->documentTypes = $documentTypes;

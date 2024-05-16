@@ -94,7 +94,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, User $user = null): Element\Note
+    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, ?User $user = null): Element\Note
     {
         //prepare some vars for creating the note
         if (!$user) {

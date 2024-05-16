@@ -77,7 +77,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\ExternalImage) {
             return $data->getUrl();
@@ -93,7 +93,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
     {
         $externalImage = new Model\DataObject\Data\ExternalImage($data);
 
@@ -111,7 +111,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -122,7 +122,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\ExternalImage) {
             return $data->getUrl();
@@ -136,7 +136,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataForGrid(?DataObject\Data\ExternalImage $data, Concrete $object = null, array $params = []): ?string
+    public function getDataForGrid(?DataObject\Data\ExternalImage $data, ?Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -147,7 +147,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
     {
         return new Model\DataObject\Data\ExternalImage($data);
     }
@@ -157,7 +157,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return Model\DataObject\Data\ExternalImage
      */
-    public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
+    public function getDataFromGridEditor(?string $data, ?Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -168,7 +168,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Model\DataObject\Data\ExternalImage && $data->getUrl()) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
@@ -198,7 +198,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(string $data, Concrete $object = null, array $params = []): string
+    public function getDiffVersionPreview(string $data, ?Concrete $object = null, array $params = []): string
     {
         if ($data) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';

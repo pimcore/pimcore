@@ -41,7 +41,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @throws \Exception
      */
-    public function __construct(?string $fieldname = null, array $columns = [], Model\Element\ElementInterface $element = null)
+    public function __construct(?string $fieldname = null, array $columns = [], ?Model\Element\ElementInterface $element = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;

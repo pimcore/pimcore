@@ -34,7 +34,7 @@ class DeviceDetector
 
     protected bool $wasUsed = false;
 
-    public static function getInstance(string $default = null): DeviceDetector
+    public static function getInstance(?string $default = null): DeviceDetector
     {
         if (!self::$instance) {
             self::$instance = new self($default);
@@ -43,7 +43,7 @@ class DeviceDetector
         return self::$instance;
     }
 
-    public function __construct(string $default = null)
+    public function __construct(?string $default = null)
     {
         if ($default && in_array($default, ['desktop', 'mobile', 'tablet'])) {
             $this->default = $default;

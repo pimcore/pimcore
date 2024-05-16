@@ -23,7 +23,7 @@ use Symfony\Component\Templating\EngineInterface;
 
 abstract class Controller extends AbstractController
 {
-    protected function render(string $view, array $parameters = [], Response $response = null): Response
+    protected function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         $templatingEngine = $this->container->get('pimcore.templating');
         if ($templatingEngine->isDelegate()) {
@@ -40,7 +40,7 @@ abstract class Controller extends AbstractController
         return parent::render($view, $parameters, $response);
     }
 
-    protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
+    protected function stream(string $view, array $parameters = [], ?StreamedResponse $response = null): StreamedResponse
     {
         $templatingEngine = $this->container->get('pimcore.templating');
         if ($templatingEngine->isDelegate()) {

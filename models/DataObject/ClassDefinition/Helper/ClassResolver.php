@@ -23,7 +23,7 @@ abstract class ClassResolver
 {
     private static array $cache;
 
-    protected static function resolve(?string $class, callable $validationCallback = null): ?object
+    protected static function resolve(?string $class, ?callable $validationCallback = null): ?object
     {
         if (!$class) {
             return null;
@@ -35,7 +35,7 @@ abstract class ClassResolver
         );
     }
 
-    private static function returnValidServiceOrNull(object $service, callable $validationCallback = null): ?object
+    private static function returnValidServiceOrNull(object $service, ?callable $validationCallback = null): ?object
     {
         if ($validationCallback && !$validationCallback($service)) {
             return null;

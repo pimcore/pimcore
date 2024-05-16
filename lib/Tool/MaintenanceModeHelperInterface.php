@@ -22,5 +22,5 @@ interface MaintenanceModeHelperInterface
 
     public function deactivate(): void;
 
-    public function isActive(string $matchSessionId = null): bool;
+    public function isActive(?string $matchSessionId = null): bool;
 }

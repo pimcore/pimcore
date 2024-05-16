@@ -50,7 +50,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      * @param null|Model\DataObject\Concrete $object
      *
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -69,7 +69,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         $this->init();
         if (!empty($data)) {

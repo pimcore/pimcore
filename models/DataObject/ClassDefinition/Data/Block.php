@@ -97,7 +97,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         $result = [];
 
@@ -157,7 +157,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $count = 0;
@@ -246,7 +246,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
 
         $result = [];
@@ -290,7 +290,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         $count = 0;
@@ -420,7 +420,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
@@ -441,7 +441,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): array
     {
         $html = '';
         if (is_array($data)) {

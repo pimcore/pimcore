@@ -29,7 +29,7 @@ class PackageInfo
      *
      *
      */
-    public function getInstalledPackages(array|string $type = null): array
+    public function getInstalledPackages(array|string|null $type = null): array
     {
         $packages = $this->readInstalledPackages();
 

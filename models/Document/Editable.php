@@ -537,7 +537,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws \Exception
      */
-    public static function buildEditableName(string $type, string $name, Document $document = null): string
+    public static function buildEditableName(string $type, string $name, ?Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!

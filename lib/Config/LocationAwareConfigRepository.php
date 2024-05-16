@@ -170,7 +170,7 @@ class LocationAwareConfigRepository
      *
      * @throws \Exception
      */
-    public function saveConfig(string $key, mixed $data, callable $yamlStructureCallback = null): void
+    public function saveConfig(string $key, mixed $data, ?callable $yamlStructureCallback = null): void
     {
         $writeLocation = $this->getWriteTarget();
 

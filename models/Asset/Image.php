@@ -225,7 +225,7 @@ EOT;
     /**
      * @throws \Exception
      */
-    public function getDimensions(string $path = null, bool $force = false): ?array
+    public function getDimensions(?string $path = null, bool $force = false): ?array
     {
         if (!$force) {
             $width = $this->getCustomSetting('imageWidth');

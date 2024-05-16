@@ -35,7 +35,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
     /**
      * @return $this
      */
-    protected function configureDescriptionAndHelp(string $description, string $help = null): static
+    protected function configureDescriptionAndHelp(string $description, ?string $help = null): static
     {
         if (null === $help) {
             $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';

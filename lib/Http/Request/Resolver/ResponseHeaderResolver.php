@@ -34,7 +34,7 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      *
      * @return ResponseHeader[]
      */
-    public function getResponseHeaders(Request $request = null): array
+    public function getResponseHeaders(?Request $request = null): array
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();

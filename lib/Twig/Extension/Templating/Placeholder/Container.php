@@ -351,7 +351,7 @@ class Container extends \ArrayObject
      *
      *
      */
-    public function toString(int|string $indent = null): string
+    public function toString(int|string|null $indent = null): string
     {
         // Check items
         if (0 === $this->count()) {

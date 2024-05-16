@@ -25,7 +25,7 @@ class ExternalImage implements OwnerAwareFieldInterface
 
     protected ?string $url = null;
 
-    public function __construct(string $url = null)
+    public function __construct(?string $url = null)
     {
         $this->url = $url;
         $this->markMeDirty();

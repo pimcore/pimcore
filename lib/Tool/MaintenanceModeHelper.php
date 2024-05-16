@@ -52,7 +52,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
-    public function isActive(string $matchSessionId = null): bool
+    public function isActive(?string $matchSessionId = null): bool
     {
         try {
             if (!$this->db->isConnected()) {

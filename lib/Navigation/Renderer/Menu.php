@@ -953,11 +953,11 @@ class Menu extends AbstractRenderer
      */
     public function renderSubMenu(
         Container $container,
-        string $ulClass = null,
-        int|string $indent = null,
-        string $ulId = null,
+        ?string $ulClass = null,
+        int|string|null $indent = null,
+        ?string $ulId = null,
         bool $addPageClassToLi = false,
-        int|string $innerIndent = null
+        int|string|null $innerIndent = null
     ): string {
         return $this->renderMenu($container, [
             'indent' => $indent,
@@ -993,7 +993,7 @@ class Menu extends AbstractRenderer
      *
      * @throws \Exception   When no partial script is set
      */
-    public function renderTemplate(Container $container, array|string $partial = null): string
+    public function renderTemplate(Container $container, array|string|null $partial = null): string
     {
         if (null === $partial) {
             $partial = $this->getTemplate();
@@ -1017,7 +1017,7 @@ class Menu extends AbstractRenderer
      *
      *
      */
-    public function renderPartial(Container $container, array|string $partial = null): string
+    public function renderPartial(Container $container, array|string|null $partial = null): string
     {
         return $this->renderTemplate($container, $partial);
     }

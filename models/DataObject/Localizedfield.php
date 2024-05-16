@@ -122,7 +122,7 @@ final class Localizedfield extends Model\AbstractModel implements
         return self::$getFallbackValues;
     }
 
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -256,7 +256,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      *
      */
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
@@ -382,7 +382,7 @@ final class Localizedfield extends Model\AbstractModel implements
      * @throws \Exception
      * @throws Model\Exception\NotFoundException
      */
-    public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false): mixed
+    public function getLocalizedValue(string $name, ?string $language = null, bool $ignoreFallbackLanguage = false): mixed
     {
         $data = null;
         $language = $this->getLanguage($language);
@@ -496,7 +496,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws \Exception
      */
-    public function setLocalizedValue(string $name, mixed $value, string $language = null, bool $markFieldAsDirty = true): static
+    public function setLocalizedValue(string $name, mixed $value, ?string $language = null, bool $markFieldAsDirty = true): static
     {
         if ($markFieldAsDirty) {
             $this->markFieldDirty('_self');

@@ -32,7 +32,7 @@ class SearchBackendHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(SearchBackendMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey(string $key, array $languages = null): void
+    public function getByKey(string $key, ?array $languages = null): void
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key

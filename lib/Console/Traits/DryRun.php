@@ -31,7 +31,7 @@ trait DryRun
      *
      * @return $this
      */
-    protected function configureDryRunOption(string $description = null): static
+    protected function configureDryRunOption(?string $description = null): static
     {
         /** @var Command $command */
         $command = $this;

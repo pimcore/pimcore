@@ -177,7 +177,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      * Save changes to database, it's an good idea to use save() instead
      *
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 

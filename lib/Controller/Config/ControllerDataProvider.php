@@ -163,7 +163,7 @@ class ControllerDataProvider
      *
      * @return string[]
      */
-    private function findTemplates(string $path, string $bundleName = null): array
+    private function findTemplates(string $path, ?string $bundleName = null): array
     {
         $finder = new Finder();
         $finder

@@ -278,7 +278,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      *
      */
-    public function save(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false): bool
+    public function save(string $key, mixed $data, array $tags = [], \DateInterval|int|null $lifetime = null, ?int $priority = 0, bool $force = false): bool
     {
         if ($this->writeInProgress) {
             return false;
@@ -436,7 +436,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         return $tags;
     }
 
-    protected function storeCacheData(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, bool $force = false): bool
+    protected function storeCacheData(string $key, mixed $data, array $tags = [], \DateInterval|int|null $lifetime = null, bool $force = false): bool
     {
         if ($this->writeInProgress) {
             return false;

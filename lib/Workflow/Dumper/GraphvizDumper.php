@@ -59,7 +59,7 @@ class GraphvizDumper implements DumperInterface
      *  * node: The default options for nodes (places + transitions)
      *  * edge: The default options for edges
      */
-    public function dump(Definition $definition, Marking $marking = null, array $options = []): string
+    public function dump(Definition $definition, ?Marking $marking = null, array $options = []): string
     {
         $places = $this->findPlaces($definition, $marking, $options['workflowName']);
         $transitions = $this->findTransitions($definition);
@@ -77,7 +77,7 @@ class GraphvizDumper implements DumperInterface
     /**
      * @internal
      */
-    protected function findPlaces(Definition $definition, Marking $marking = null, string $workflowName = ''): array
+    protected function findPlaces(Definition $definition, ?Marking $marking = null, string $workflowName = ''): array
     {
         $places = [];
         foreach ($definition->getPlaces() as $place) {

@@ -35,7 +35,7 @@ interface UserRoleInterface extends AbstractUserInterface
      *
      * @return $this
      */
-    public function setPermission(string $permissionName, bool $value = null): static;
+    public function setPermission(string $permissionName, ?bool $value = null): static;
 
     /**
      * @return string[]

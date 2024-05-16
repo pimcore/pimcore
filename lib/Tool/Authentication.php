@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class Authentication
 {
-    public static function authenticateSession(Request $request = null): ?User
+    public static function authenticateSession(?Request $request = null): ?User
     {
         if (null === $request) {
             $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();

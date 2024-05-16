@@ -82,7 +82,7 @@ abstract class FrontendController extends Controller
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
      */
-    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, ?Request $request = null): void
     {
         if (null === $request) {
             $request = $this->container->get('request_stack')->getCurrentRequest();
@@ -100,7 +100,7 @@ abstract class FrontendController extends Controller
      *
      * @throws \Exception
      */
-    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], ?Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {
         if (null === $document) {
             $document = $this->document;
@@ -109,7 +109,7 @@ abstract class FrontendController extends Controller
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
-    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
+    protected function renderTemplate(string $view, array $parameters = [], ?Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

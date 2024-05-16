@@ -28,7 +28,7 @@ trait RecursionBlockingEventDispatchHelperTrait
      *
      *
      */
-    protected function dispatchEvent(object $event, string $eventName = null): void
+    protected function dispatchEvent(object $event, ?string $eventName = null): void
     {
         $eventName ??= \get_class($event);
         if (!isset($this->activeDispatchingEvents[$eventName])) {

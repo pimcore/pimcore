@@ -124,7 +124,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     /**
      * @param string[]|string $needle
      */
-    protected function checkSerializedStringForNeedle(string $string, array|string $needle, bool $expected, string $messagePrefix = null): void
+    protected function checkSerializedStringForNeedle(string $string, array|string $needle, bool $expected, ?string $messagePrefix = null): void
     {
         if (!is_array($needle)) {
             $needle = [$needle];

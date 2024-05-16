@@ -62,7 +62,7 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return $this
      */
-    public function __invoke(string $title = null, string $setType = null): static
+    public function __invoke(?string $title = null, ?string $setType = null): static
     {
         if (null === $setType) {
             $setType = (null === $this->getDefaultAttachOrder())
@@ -120,7 +120,7 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function toString(string $indent = null, string $locale = null): string
+    public function toString(?string $indent = null, ?string $locale = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)

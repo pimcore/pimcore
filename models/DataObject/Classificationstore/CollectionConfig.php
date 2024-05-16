@@ -254,7 +254,7 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Calculate cache key
      */
-    private static function getCacheKey(int $id, string $name = null): string
+    private static function getCacheKey(int $id, ?string $name = null): string
     {
         $cacheKey = 'cs_collectionconfig_' . $id;
         if ($name !== null) {

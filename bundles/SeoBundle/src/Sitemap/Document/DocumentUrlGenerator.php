@@ -38,7 +38,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         return $this->urlGenerator->generateUrl($path, $options);
     }
 
-    public function generateDocumentUrl(Document $document, Site $site = null, array $options = []): string
+    public function generateDocumentUrl(Document $document, ?Site $site = null, array $options = []): string
     {
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $prettyUrlSet = true;
@@ -57,7 +57,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         return $this->urlGenerator->generateUrl($path, $options);
     }
 
-    protected function prepareOptions(array $options, Site $site = null): array
+    protected function prepareOptions(array $options, ?Site $site = null): array
     {
         if (!isset($options['host'])) {
             // set site host as default value if it is not explicitely set via options

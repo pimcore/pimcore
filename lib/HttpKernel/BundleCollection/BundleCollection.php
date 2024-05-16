@@ -97,7 +97,7 @@ class BundleCollection
      *
      * @return string[]
      */
-    public function getIdentifiers(string $environment = null): array
+    public function getIdentifiers(?string $environment = null): array
     {
         return array_map(
             static fn (ItemInterface $item): string => $item->getBundleIdentifier(),

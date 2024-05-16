@@ -36,7 +36,7 @@ class Inc implements RuntimeExtensionInterface
         $this->editmodeResolver = $editmodeResolver;
     }
 
-    public function __invoke(int|string|PageSnippet $include, array $params = [], bool $cacheEnabled = true, bool $editmode = null): string
+    public function __invoke(int|string|PageSnippet $include, array $params = [], bool $cacheEnabled = true, ?bool $editmode = null): string
     {
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();

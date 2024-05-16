@@ -666,7 +666,7 @@ final class User extends User\UserRole implements UserInterface
         $this->keyBindings = $keyBindings;
     }
 
-    public function getTwoFactorAuthentication(string $key = null): mixed
+    public function getTwoFactorAuthentication(?string $key = null): mixed
     {
         if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present

@@ -92,7 +92,7 @@ class Dependency extends AbstractModel
         return $this->sourceId;
     }
 
-    public function getRequires(int $offset = null, int $limit = null): array
+    public function getRequires(?int $offset = null, ?int $limit = null): array
     {
         if ($offset !== null) {
             return array_slice($this->requires, $offset, $limit);
@@ -101,30 +101,30 @@ class Dependency extends AbstractModel
         return $this->requires;
     }
 
-    public function getFilterRequiresByPath(int $offset = null, int $limit = null, string $value = null): array
+    public function getFilterRequiresByPath(?int $offset = null, ?int $limit = null, ?string $value = null): array
     {
 
         return $this->getDao()->getFilterRequiresByPath($offset, $limit, $value);
 
     }
 
-    public function getFilterRequiredByPath(int $offset = null, int $limit = null, string $value = null): array
+    public function getFilterRequiredByPath(?int $offset = null, ?int $limit = null, ?string $value = null): array
     {
 
         return $this->getDao()->getFilterRequiredByPath($offset, $limit, $value);
 
     }
 
-    public function getRequiredBy(int $offset = null, int $limit = null): array
+    public function getRequiredBy(?int $offset = null, ?int $limit = null): array
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
     }
 
     public function getRequiredByWithPath(
-        int $offset = null,
-        int $limit = null,
-        string $orderBy = null,
-        string $orderDirection = null
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null
     ): array {
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }

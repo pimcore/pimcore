@@ -301,7 +301,7 @@ class Processor
         return true;
     }
 
-    protected function getJobStoreId(string $processId = null): string
+    protected function getJobStoreId(?string $processId = null): string
     {
         if (!$processId) {
             $processId = $this->getProcessId();

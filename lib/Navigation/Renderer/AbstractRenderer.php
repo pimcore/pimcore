@@ -96,7 +96,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return $this
      */
-    public function setMinDepth(int $minDepth = null): static
+    public function setMinDepth(?int $minDepth = null): static
     {
         $this->_minDepth = $minDepth;
 
@@ -116,7 +116,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return $this
      */
-    public function setMaxDepth(int $maxDepth = null): static
+    public function setMaxDepth(?int $maxDepth = null): static
     {
         $this->_maxDepth = $maxDepth;
 
@@ -200,7 +200,7 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * @return array{page?: Page, depth?: int}
      */
-    public function findActive(Container $container, int $minDepth = null, int $maxDepth = null): array
+    public function findActive(Container $container, ?int $minDepth = null, ?int $maxDepth = null): array
     {
         if (!is_int($minDepth)) {
             $minDepth = $this->getMinDepth();

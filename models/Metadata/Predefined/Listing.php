@@ -68,7 +68,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @throws \Exception
      */
-    public static function getByTargetType(string $type, array|string $subTypes = null): ?array
+    public static function getByTargetType(string $type, array|string|null $subTypes = null): ?array
     {
         if ($type !== 'asset') {
             throw new \Exception('other types than assets are currently not supported');
@@ -97,7 +97,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
         return $list->load();
     }
 
-    public static function getByKeyAndLanguage(string $key, ?string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
+    public static function getByKeyAndLanguage(string $key, ?string $language, ?string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
     {
         $list = new self();
 

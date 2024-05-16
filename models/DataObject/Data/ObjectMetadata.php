@@ -41,7 +41,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param Concrete|null $object
      */
-    public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
+    public function __construct(?string $fieldname, array $columns = [], ?DataObject\Concrete $object = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;

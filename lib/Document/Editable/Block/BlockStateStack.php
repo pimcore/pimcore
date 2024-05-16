@@ -39,7 +39,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
      * Adds a new state to the stack
      *
      */
-    public function push(BlockState $blockState = null): void
+    public function push(?BlockState $blockState = null): void
     {
         if (null === $blockState) {
             $blockState = new BlockState();

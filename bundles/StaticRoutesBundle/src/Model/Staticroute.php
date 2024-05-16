@@ -131,7 +131,7 @@ final class Staticroute extends AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName(string $name, int $siteId = null): ?Staticroute
+    public static function getByName(string $name, ?int $siteId = null): ?Staticroute
     {
         $cacheKey = $name . '~~~' . $siteId;
 

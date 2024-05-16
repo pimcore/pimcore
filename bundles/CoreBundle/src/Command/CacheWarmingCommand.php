@@ -164,7 +164,7 @@ class CacheWarmingCommand extends AbstractCommand
      *
      *
      */
-    protected function humanList(array $list, string $glue = 'or', string $template = null): string
+    protected function humanList(array $list, string $glue = 'or', ?string $template = null): string
     {
         if (null !== $template) {
             array_walk($list, function (&$item) use ($template) {

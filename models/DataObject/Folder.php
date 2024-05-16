@@ -36,7 +36,7 @@ class Folder extends DataObject
         return $object;
     }
 
-    protected function update(bool $isUpdate = null, array $params = []): void
+    protected function update(?bool $isUpdate = null, array $params = []): void
     {
         parent::update($isUpdate, $params);
         $this->getDao()->update($isUpdate);

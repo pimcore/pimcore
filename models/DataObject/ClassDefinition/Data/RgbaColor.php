@@ -41,7 +41,7 @@ class RgbaColor extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             $rgb = sprintf('%02x%02x%02x', $data->getR(), $data->getG(), $data->getB());
@@ -65,7 +65,7 @@ class RgbaColor extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
             [$r, $g, $b] = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
@@ -91,7 +91,7 @@ class RgbaColor extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -102,7 +102,7 @@ class RgbaColor extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $rgba = sprintf('#%02x%02x%02x%02x', $data->getR(), $data->getG(), $data->getB(), $data->getA());
@@ -118,7 +118,7 @@ class RgbaColor extends Data implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if ($data) {
             $data = trim($data, '# ');
@@ -135,7 +135,7 @@ class RgbaColor extends Data implements
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
+    public function getDataFromGridEditor(?string $data, ?Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -183,7 +183,7 @@ class RgbaColor extends Data implements
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
+    public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, ?Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -192,7 +192,7 @@ class RgbaColor extends Data implements
      * @param null|Model\DataObject\Concrete $object
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);
@@ -288,12 +288,12 @@ class RgbaColor extends Data implements
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
+    public function marshalBeforeEncryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
+    public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);
     }

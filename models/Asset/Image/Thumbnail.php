@@ -40,7 +40,7 @@ final class Thumbnail implements ThumbnailInterface
      */
     protected static array $hasListenersCache = [];
 
-    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config|null $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;

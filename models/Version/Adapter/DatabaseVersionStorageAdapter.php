@@ -119,8 +119,8 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->getStream($metaData);
     }
 
-    public function getStorageType(int $metaDataSize = null,
-        int $binaryDataSize = null): string
+    public function getStorageType(?int $metaDataSize = null,
+        ?int $binaryDataSize = null): string
     {
         return 'db';
     }

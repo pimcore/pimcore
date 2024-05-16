@@ -24,7 +24,7 @@ interface LocaleServiceInterface
 
     public function getLocaleList(): array;
 
-    public function getDisplayRegions(string $locale = null): array;
+    public function getDisplayRegions(?string $locale = null): array;
 
     public function getLocale(): ?string;
 

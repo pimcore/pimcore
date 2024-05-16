@@ -35,7 +35,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
         $this->requestHelper = $requestHelper;
     }
 
-    public function __invoke(array $urlOptions = [], string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
+    public function __invoke(array $urlOptions = [], ?string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
         // merge all parameters from request to parameters
         if (!$reset && $this->requestHelper->hasMainRequest()) {
@@ -50,7 +50,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      *
      */
-    protected function generateUrl(array|string $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
+    protected function generateUrl(array|string|null $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
     {
         if ($encode !== true) {
             // encoding is default anyway, so we only set it when really necessary, to minimize the risk of

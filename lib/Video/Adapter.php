@@ -67,7 +67,7 @@ abstract class Adapter
 
     abstract public function save(): bool;
 
-    abstract public function saveImage(string $file, int $timeOffset = null): void;
+    abstract public function saveImage(string $file, ?int $timeOffset = null): void;
 
     abstract public function destroy(): void;
 

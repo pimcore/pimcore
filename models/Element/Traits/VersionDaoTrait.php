@@ -29,7 +29,7 @@ trait VersionDaoTrait
      *
      *
      */
-    public function getLatestVersion(int $userId = null, bool $includingPublished = false): ?Version
+    public function getLatestVersion(?int $userId = null, bool $includingPublished = false): ?Version
     {
         $operator = $includingPublished ? '>=' : '>';
         $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` ' . $operator . ' :mdate OR versionCount ' . $operator . ' :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [

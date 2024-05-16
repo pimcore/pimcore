@@ -211,7 +211,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @return string|void
      */
-    public function content(Area\Info $info = null, array $templateParams = [], bool $return = false)
+    public function content(?Area\Info $info = null, array $templateParams = [], bool $return = false)
     {
         if (!$info) {
             $info = $this->buildInfoObject();
@@ -358,7 +358,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode($html);
     }
 
-    public function blockStart(Area\Info $info = null): array
+    public function blockStart(?Area\Info $info = null): array
     {
         $this->blockStarted = true;
         $attributes = [

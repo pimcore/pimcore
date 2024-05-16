@@ -218,7 +218,7 @@ class Installer
         return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
     }
 
-    public function checkPrerequisites(Connection $db = null): array
+    public function checkPrerequisites(?Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -260,7 +260,7 @@ class Installer
         return count($this->stepEvents);
     }
 
-    private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
+    private function dispatchStepEvent(string $type, ?string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
             throw new \InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));

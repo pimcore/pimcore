@@ -25,5 +25,5 @@ interface CustomReportAdapterFactoryInterface
      *
      *
      */
-    public function create(\stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface;
+    public function create(\stdClass $config, ?Config $fullConfig = null): CustomReportAdapterInterface;
 }

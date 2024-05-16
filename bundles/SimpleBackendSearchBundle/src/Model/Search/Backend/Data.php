@@ -102,7 +102,7 @@ class Data extends AbstractModel
 
     protected string $properties;
 
-    public function __construct(Element\ElementInterface $element = null)
+    public function __construct(?Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);

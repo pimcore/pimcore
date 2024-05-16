@@ -299,7 +299,7 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Calculate cache key
      */
-    private static function getCacheKey(int $id, string $name = null): string
+    private static function getCacheKey(int $id, ?string $name = null): string
     {
         $cacheKey = 'cs_keyconfig_' . $id;
         if ($name !== null) {

@@ -100,7 +100,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return $this
      */
-    public function __invoke(string $content = null, string $keyValue = null, string $keyType = 'name', array $modifiers = [], string $placement = Container::APPEND): static
+    public function __invoke(?string $content = null, ?string $keyValue = null, string $keyType = 'name', array $modifiers = [], string $placement = Container::APPEND): static
     {
         if ((null !== $content) && (null !== $keyValue)) {
             $item = $this->createData($keyType, $keyValue, $content, $modifiers);
@@ -347,7 +347,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function toString(int|string $indent = null): string
+    public function toString(int|string|null $indent = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
@@ -406,7 +406,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return $this
      */
-    public function setDescription(string $string, int $length = null, string $suffix = ''): static
+    public function setDescription(string $string, ?int $length = null, string $suffix = ''): static
     {
         $string = $this->normalizeString($string, $length, $suffix);
 

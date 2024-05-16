@@ -276,7 +276,7 @@ class Service extends Model\AbstractModel
      *
      * @internal
      */
-    public static function isPublished(ElementInterface $element = null): bool
+    public static function isPublished(?ElementInterface $element = null): bool
     {
         if ($element instanceof ElementInterface) {
             if (method_exists($element, 'isPublished')) {
@@ -434,7 +434,7 @@ class Service extends Model\AbstractModel
         return $sourceKey;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         return match ($type) {
             'asset' => Asset\Service::pathExists($path),
@@ -714,7 +714,7 @@ class Service extends Model\AbstractModel
      *
      * @internal
      */
-    public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
+    public static function renewReferences(mixed $data, bool $initial = true, ?string $key = null): mixed
     {
         if ($data instanceof \__PHP_Incomplete_Class) {
             Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));

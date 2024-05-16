@@ -51,7 +51,7 @@ class RequestHelper
         return $this->requestStack->getCurrentRequest();
     }
 
-    public function getRequest(Request $request = null): Request
+    public function getRequest(?Request $request = null): Request
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -75,7 +75,7 @@ class RequestHelper
         return $mainRequest;
     }
 
-    public function isFrontendRequest(Request $request = null): bool
+    public function isFrontendRequest(?Request $request = null): bool
     {
         $request = $this->getRequest($request);
         $attribute = self::ATTRIBUTE_FRONTEND_REQUEST;
@@ -112,7 +112,7 @@ class RequestHelper
      *
      *
      */
-    public function isObjectPreviewRequestByAdmin(Request $request = null): bool
+    public function isObjectPreviewRequestByAdmin(?Request $request = null): bool
     {
         $request = $this->getRequest($request);
 
@@ -125,7 +125,7 @@ class RequestHelper
      *
      *
      */
-    public function isFrontendRequestByAdmin(Request $request = null): bool
+    public function isFrontendRequestByAdmin(?Request $request = null): bool
     {
         $request = $this->getRequest($request);
 
@@ -157,7 +157,7 @@ class RequestHelper
      *
      *
      */
-    public function getAnonymizedClientIp(Request $request = null): string
+    public function getAnonymizedClientIp(?Request $request = null): string
     {
         $request = $this->getRequest($request);
 

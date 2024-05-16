@@ -86,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
         return $translations;
     }
 
-    public function addTranslation(Document $document, Document $translation, string $language = null): void
+    public function addTranslation(Document $document, Document $translation, ?string $language = null): void
     {
         $sourceId = $this->getTranslationSourceId($document);
 

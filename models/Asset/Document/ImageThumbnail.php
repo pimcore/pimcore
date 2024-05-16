@@ -43,7 +43,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     protected int $page = 1;
 
-    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
+    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config|null $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->config = $this->createConfig($config ?? []);

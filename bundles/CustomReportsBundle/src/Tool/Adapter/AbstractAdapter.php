@@ -24,13 +24,13 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
 
     protected ?Config $fullConfig = null;
 
-    public function __construct(\stdClass $config, Config $fullConfig = null)
+    public function __construct(\stdClass $config, ?Config $fullConfig = null)
     {
         $this->config = $config;
         $this->fullConfig = $fullConfig;
     }
 
-    abstract public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array;
+    abstract public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields = null, ?array $drillDownFilters = null): array;
 
     abstract public function getColumns(?\stdClass $configuration): array;
 

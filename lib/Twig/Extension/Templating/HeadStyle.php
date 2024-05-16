@@ -116,7 +116,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return $this
      */
-    public function __invoke(string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
+    public function __invoke(?string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
     {
         if (is_string($content)) {
             $action = match (strtoupper($placement)) {
@@ -367,7 +367,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function toString(int|string $indent = null): string
+    public function toString(int|string|null $indent = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)

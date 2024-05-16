@@ -59,7 +59,7 @@ class FullPageCacheListener
     ) {
     }
 
-    public function disable(string $reason = null): bool
+    public function disable(?string $reason = null): bool
     {
         if ($reason) {
             $this->disableReason = $reason;

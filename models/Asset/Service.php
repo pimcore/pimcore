@@ -62,7 +62,7 @@ class Service extends Model\Element\Service
      */
     protected array $_copyRecursiveIds = [];
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -212,7 +212,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function gridAssetData(Asset $asset, array $fields = null, string $requestedLanguage = null, array $params = []): array
+    public static function gridAssetData(Asset $asset, ?array $fields = null, ?string $requestedLanguage = null, array $params = []): array
     {
         $data = Element\Service::gridElementData($asset);
         $loader = null;
@@ -311,7 +311,7 @@ class Service extends Model\Element\Service
      *
      *
      */
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;

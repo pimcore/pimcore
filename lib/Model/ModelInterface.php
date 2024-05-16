@@ -27,7 +27,7 @@ interface ModelInterface
     /**
      * @throws \Exception
      */
-    public function initDao(string $key = null, bool $forceDetection = false): void;
+    public function initDao(?string $key = null, bool $forceDetection = false): void;
 
     public function setValues(array $data = []): static;
 

@@ -138,7 +138,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -148,7 +148,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
@@ -164,7 +164,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         return null;
     }
@@ -175,7 +175,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
@@ -344,7 +344,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return '';
     }
 
-    public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDataForGrid(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }

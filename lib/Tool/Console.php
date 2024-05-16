@@ -196,7 +196,7 @@ final class Console
     /**
      * @param string[] $arguments
      */
-    public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
+    public static function runPhpScript(string $script, array $arguments = [], ?string $outputFile = null, float $timeout = 60): string
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -222,7 +222,7 @@ final class Console
     /**
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
-    public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
+    public static function runPhpScriptInBackground(string $script, array $arguments = [], ?string $outputFile = null): int
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
@@ -231,7 +231,7 @@ final class Console
         return self::execInBackground($commandLine, $outputFile);
     }
 
-    public static function execInBackground(string $cmd, string $outputFile = null): int
+    public static function execInBackground(string $cmd, ?string $outputFile = null): int
     {
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {

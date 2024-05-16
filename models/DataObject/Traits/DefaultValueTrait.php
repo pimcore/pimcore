@@ -37,7 +37,7 @@ trait DefaultValueTrait
      *
      * @return mixed $data
      */
-    protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): mixed
+    protected function handleDefaultValue(mixed $data, ?Concrete $object = null, array $params = []): mixed
     {
         // 1. only for create, not on update. otherwise there is no way to null it out anymore.
         if ($params['isUpdate'] ?? true) {

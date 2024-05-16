@@ -107,7 +107,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
+    public function renderResponse(string $view, array $parameters = [], ?Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();

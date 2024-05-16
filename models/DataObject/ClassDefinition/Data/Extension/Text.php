@@ -44,7 +44,7 @@ trait Text
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?Model\DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
     }

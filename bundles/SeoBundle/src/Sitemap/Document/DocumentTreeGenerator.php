@@ -69,7 +69,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
     }
 
-    public function populate(UrlContainerInterface $urlContainer, string $section = null): void
+    public function populate(UrlContainerInterface $urlContainer, ?string $section = null): void
     {
         if ($this->options['handleMainDomain'] && (null === $section || $section === 'default')) {
             $rootDocument = Document::getById($this->options['rootId']);
@@ -104,7 +104,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null): void
+    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, ?Site $site = null): void
     {
         $context = new DocumentGeneratorContext($urlContainer, $section, $site);
         $visit = $this->visit($rootDocument, $context);

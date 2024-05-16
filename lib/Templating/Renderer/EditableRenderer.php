@@ -47,7 +47,7 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * @throws \Exception
      */
-    public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], bool $editmode = null): Editable\EditableInterface
+    public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], ?bool $editmode = null): Editable\EditableInterface
     {
         $type = strtolower($type);
 
@@ -94,7 +94,7 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null): Editable\EditableInterface
+    public function render(PageSnippet $document, string $type, string $name, array $options = [], ?bool $editmode = null): Editable\EditableInterface
     {
         return $this->getEditable($document, $type, $name, $options, $editmode);
     }

@@ -55,7 +55,7 @@ class SiteRootFilter implements FilterInterface
         return $this->canBeAdded($element, $context);
     }
 
-    private function isExcludedSiteRoot(Document $document, Site $site = null): bool
+    private function isExcludedSiteRoot(Document $document, ?Site $site = null): bool
     {
         if (null === $this->siteRoots) {
             $sites = (new Site\Listing())->load();

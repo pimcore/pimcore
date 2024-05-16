@@ -338,7 +338,7 @@ class Builder
      *
      * @internal
      */
-    protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, callable $pageCallback = null, array $parents = [], int $maxDepth = null): array
+    protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, ?callable $pageCallback = null, array $parents = [], ?int $maxDepth = null): array
     {
         $this->currentLevel++;
         $pages = [];

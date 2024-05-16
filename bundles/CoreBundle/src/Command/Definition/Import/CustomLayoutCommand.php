@@ -93,7 +93,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
         return null;
     }
 
-    protected function import(ModelInterface $definition, string $json = null): bool
+    protected function import(ModelInterface $definition, ?string $json = null): bool
     {
         if (!$definition instanceof CustomLayout) {
             return false;

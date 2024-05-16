@@ -26,7 +26,7 @@ class Video
      *
      * @throws \Exception
      */
-    public static function getInstance(string $adapter = null): ?Video\Adapter
+    public static function getInstance(?string $adapter = null): ?Video\Adapter
     {
         try {
             if ($adapter) {

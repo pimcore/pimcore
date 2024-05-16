@@ -36,7 +36,7 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->adapters[$fallbackAdapter->getStorageType(null, null)] = $fallbackAdapter;
     }
 
-    protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
+    protected function getAdapter(?string $storageType = null): VersionStorageAdapterInterface
     {
         if (empty($storageType) === true) {
             return $this->defaultAdapter;
@@ -60,8 +60,8 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->getAdapter($version->getStorageType())->loadBinaryData($version);
     }
 
-    public function getStorageType(int $metaDataSize = null,
-        int $binaryDataSize = null): string
+    public function getStorageType(?int $metaDataSize = null,
+        ?int $binaryDataSize = null): string
     {
         if (empty($this->fallbackAdapter) === false) {
             if ($metaDataSize > $this->byteThreshold ||

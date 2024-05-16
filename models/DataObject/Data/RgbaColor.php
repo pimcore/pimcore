@@ -35,7 +35,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      * RgbaColor constructor.
      *
      */
-    public function __construct(int $r = null, int $g = null, int $b = null, int $a = null)
+    public function __construct(?int $r = null, ?int $g = null, ?int $b = null, ?int $a = null)
     {
         $this->setR($r);
         $this->setG($g);
@@ -150,7 +150,7 @@ class RgbaColor implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null): void
+    public function setRgba(?int $r = null, ?int $g = null, ?int $b = null, ?int $a = null): void
     {
         $this->setR($r);
         $this->setG($g);

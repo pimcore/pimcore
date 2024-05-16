@@ -69,7 +69,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -139,7 +139,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
@@ -154,7 +154,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws \Exception
      */
-    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, string $language = null): static
+    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, ?string $language = null): static
     {
         if (!$groupId) {
             throw new \Exception('groupId not valid');
@@ -423,7 +423,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
-    public function setGroupCollectionMapping(int $groupId = null, int $collectionId = null): void
+    public function setGroupCollectionMapping(?int $groupId = null, ?int $collectionId = null): void
     {
         if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;

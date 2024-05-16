@@ -46,7 +46,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      *
      *
      */
-    public function getPimcoreContext(Request $request = null): ?string
+    public function getPimcoreContext(?Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();

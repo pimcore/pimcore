@@ -75,7 +75,7 @@ final class RedirectHandler
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?Response
+    public function checkForRedirect(Request $request, bool $override = false, ?Site $sourceSite = null): ?Response
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -110,7 +110,7 @@ final class RedirectHandler
         Redirect $redirect,
         Request $request,
         RedirectUrlPartResolver $partResolver,
-        Site $sourceSite = null
+        ?Site $sourceSite = null
     ): ?Response {
         if (empty($redirect->getType())) {
             return null;

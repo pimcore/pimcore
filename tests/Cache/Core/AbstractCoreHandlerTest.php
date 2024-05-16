@@ -153,7 +153,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         static::handleLogOutput();
     }
 
-    protected function getHandlerPropertyValue(string $property, CoreCacheHandler $handler = null): mixed
+    protected function getHandlerPropertyValue(string $property, ?CoreCacheHandler $handler = null): mixed
     {
         if (null === $handler) {
             $handler = $this->handler;

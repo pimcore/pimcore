@@ -84,7 +84,7 @@ class Manager
      *
      * @return $this
      */
-    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null): static
+    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, ?CustomHtmlServiceInterface $customHtmlService = null): static
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
         $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName, $customHtmlService);
@@ -116,7 +116,7 @@ class Manager
      *
      * @return PlaceConfig[];
      */
-    public function getOrderedPlaceConfigs(WorkflowInterface $workflow, Marking $marking = null): array
+    public function getOrderedPlaceConfigs(WorkflowInterface $workflow, ?Marking $marking = null): array
     {
         if (is_null($marking)) {
             return $this->placeConfigs[$workflow->getName()] ?? [];

@@ -377,7 +377,7 @@ abstract class Adapter
      *
      * @return $this
      */
-    abstract public function save(string $path, string $format = null, int $quality = null): static;
+    abstract public function save(string $path, ?string $format = null, ?int $quality = null): static;
 
     abstract protected function destroy(): void;
 

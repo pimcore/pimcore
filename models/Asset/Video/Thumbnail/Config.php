@@ -166,7 +166,7 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      */
-    public function addItem(string $name, array $parameters, string $media = null): bool
+    public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
         $item = [
             'method' => $name,

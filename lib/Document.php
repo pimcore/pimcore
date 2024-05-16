@@ -28,7 +28,7 @@ class Document
      *
      * @throws \Exception
      */
-    public static function getInstance(string $adapter = null): ?Document\Adapter
+    public static function getInstance(?string $adapter = null): ?Document\Adapter
     {
         try {
             if ($adapter) {

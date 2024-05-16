@@ -86,7 +86,7 @@ class CacheClearer
         return $this->runCommand('cache:warmup', $resolver->resolve($options));
     }
 
-    public function setRunCallback(\Closure $runCallback = null): void
+    public function setRunCallback(?\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }

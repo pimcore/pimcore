@@ -48,7 +48,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @param TItem[] $items
      */
-    public function __construct(array $items = [], string $fieldname = null)
+    public function __construct(array $items = [], ?string $fieldname = null)
     {
         if (!empty($items)) {
             $this->setItems($items);
