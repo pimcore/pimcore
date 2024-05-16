@@ -115,7 +115,10 @@ class HtmlToImage
             /** @var GotenbergAPI|object $request */
             $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
             if(method_exists($request, 'screenshot')) {
+                $sizes = explode(',', $windowSize);
                 $urlResponse = $request->screenshot()
+                    ->width((int) $sizes[0])
+                    ->height((int) $sizes[1])
                     ->png()
                     ->url($url);
 
