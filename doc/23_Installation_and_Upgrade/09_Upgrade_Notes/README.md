@@ -8,6 +8,8 @@
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
 #### [Html to Image]
 - [Gotenberg] Bumped the lowest requirement of `gotenberg-php` from `^2.0` to `^2.4` to add support of passing screenshot size
+#### [Assets]
+- MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
 
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
