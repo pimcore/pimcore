@@ -29,7 +29,7 @@ use Pimcore\SystemSettingsConfig;
 
 /**
  * @method Model\Document\PageSnippet\Dao getDao()
- * @method Model\Version|null getLatestVersion(int $userId = null, bool $includingPublished = false)
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 abstract class PageSnippet extends Model\Document
 {

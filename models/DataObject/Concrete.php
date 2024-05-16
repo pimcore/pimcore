@@ -32,7 +32,7 @@ use Pimcore\SystemSettingsConfig;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
- * @method Model\Version|null getLatestVersion(int $userId = null, bool $includingPublished = false)
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
