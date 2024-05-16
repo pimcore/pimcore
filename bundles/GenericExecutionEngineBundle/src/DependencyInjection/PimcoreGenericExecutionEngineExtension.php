@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\DependencyInjection;
 
 use Exception;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
+use Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobExecutionSubscriber;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -34,5 +37,10 @@ class PimcoreGenericExecutionEngineExtension extends Extension
 
         $definition = $container->getDefinition(ExecutionContextInterface::class);
         $definition->setArgument('$contexts', $config['execution_context'] ?? []);
+
+        $definition = $container->getDefinition(JobExecutionAgentInterface::class);
+        $definition->setArgument(
+            '$errorHandlingMode', $config['error_handling'] ?? ErrorHandlingMode::CONTINUE_ON_ERROR->value
+        );
     }
 }

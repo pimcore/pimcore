@@ -18,10 +18,14 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 
 use Doctrine\DBAL\Exception;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
+use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -32,13 +36,17 @@ use Throwable;
  */
 final class JobExecutionAgent implements JobExecutionAgentInterface
 {
+    use StopMessengerWorkersTrait;
+
     private bool $isDev;
 
     public function __construct(
         string $environment,
-        private readonly MessageBusInterface $executionEngineBus,
+        private readonly string $errorHandlingMode,
         private readonly JobRunRepositoryInterface $jobRunRepository,
+        private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
         private readonly LoggerInterface $logger,
+        private readonly MessageBusInterface $executionEngineBus,
         private readonly Translator $translator
     ) {
         $this->isDev = $environment === 'dev';
@@ -50,25 +58,72 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     public function startJobExecution(Job $job, ?int $ownerId): JobRun
     {
         $jobRun = $this->jobRunRepository->createFromJob($job, $ownerId);
-
-        if (count($job->getSteps()) === 0) {
-            $this->setJobRunError(
-                $jobRun,
-                'gee_error_no_steps',
-                ['%job_name%' => $job->getName()]
-            );
-
-            return $jobRun;
-        }
-
         $jobRun->setState(JobRunStates::RUNNING);
         $jobRun->setCurrentStep(0);
+        $jobRun->setTotalElements(count($job->getSelectedElements()));
 
         $this->jobRunRepository->update($jobRun);
 
         $this->dispatchStepMessage($jobRun);
 
         return $jobRun;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function handleJobExecutionError(
+        GenericExecutionEngineMessageInterface $message,
+        ?Throwable $throwable = null
+    ): void
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
+
+        $errorMessage =  'Unknown Error.';
+        if ($throwable) {
+            $this->logger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
+
+            $errorMessage = $throwable->getMessage();
+            if ($this->isDev) {
+                $errorMessage .= ' Stack trace: ' . str_replace("\n", '', $throwable->getTraceAsString());
+            }
+        }
+
+        $this->jobRunErrorLogRepository->createFromJobRun(
+            $jobRun,
+            $message->getElement()?->getId(),
+            $errorMessage,
+        );
+
+        match ($this->errorHandlingMode) {
+            ErrorHandlingMode::STOP_ON_FIRST_ERROR->value =>
+            $this->stopJobExecutionOnError(
+                $jobRun,
+                $errorMessage
+            ),
+            ErrorHandlingMode::CONTINUE_ON_ERROR->value =>
+            $this->continueJobExecutionOnError(
+                $jobRun,
+                $message,
+                $errorMessage
+            ),
+            default => throw new InvalidErrorHandlingModeException(),
+        };
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
+        $currentElementCount = $jobRun->getProcessedElementsForStep() + 1;
+
+        $jobRun->setProcessedElementsForStep($currentElementCount);
+        $this->jobRunRepository->update($jobRun);
+        if ($currentElementCount === $jobRun->getTotalElements()) {
+            $this->continueJobStepExecution($message);
+        }
     }
 
     /**
@@ -106,39 +161,18 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         if (count($job->getSteps()) <= $nextStep) {
             $jobRun->setCurrentStep(null);
             $jobRun->setCurrentMessage(null);
-            $jobRun->setState(JobRunStates::FINISHED);
+            if (!$jobRun->getState()) {
+                $jobRun->setState(JobRunStates::FINISHED);
+            }
             $this->jobRunRepository->update($jobRun);
 
             $this->logger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
         } else {
+            $jobRun->setProcessedElementsForStep(0);
             $jobRun->setCurrentStep($nextStep);
             $this->jobRunRepository->update($jobRun);
             $this->dispatchStepMessage($jobRun);
         }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function jobExecutionFailed(GenericExecutionEngineMessageInterface $message, ?Throwable $throwable = null): void
-    {
-
-        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-        if ($throwable) {
-            $this->logger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
-        }
-
-        $errorMessage =  'Unknown Error.';
-
-        if ($throwable) {
-            $errorMessage = $throwable->getMessage();
-
-            if ($this->isDev) {
-                $errorMessage .= ' Stack trace: ' . str_replace("\n", '', $throwable->getTraceAsString());
-            }
-        }
-
-        $this->setJobRunError($jobRun, $errorMessage, [], false);
     }
 
     public function isInteractionAllowed(int $jobRunId, int $ownerId): bool
@@ -170,17 +204,60 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->startJobExecution($jobRun->getJob(), $ownerId);
     }
 
+    public function isRunning(int $jobRunId): bool
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($jobRunId, true);
+
+        return $jobRun->getState() === JobRunStates::RUNNING;
+    }
+
     /**
      * @throws Exception
      */
-    protected function setJobRunError(
+    private function continueJobExecutionOnError(
+        JobRun $jobRun,
+        GenericExecutionEngineMessageInterface $message,
+        string $errorMessage
+    ): void
+    {
+        $this->setJobRunError(
+            $jobRun,
+            $errorMessage,
+            [],
+            false,
+            JobRunStates::FINISHED_WITH_ERRORS
+        );
+
+        $this->handleNextMessage($message);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function stopJobExecutionOnError(
+        JobRun $jobRun,
+        string $errorMessage
+    ): void
+    {
+        $this->stopMessengerWorkers();
+        $this->setJobRunError($jobRun, $errorMessage, [], false);
+        $this->logger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
+        $this->jobRunRepository->updateLogLocalized(
+            $jobRun, 'gee_job_failed', ['%job_run_id%' => $jobRun->getId()]
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function setJobRunError(
         JobRun $jobRun,
         string $errorMessage,
         array $params = [],
-        bool $translate = true
+        bool $translate = true,
+        ?JobRunStates $status = null
     ): void {
-        $jobRun->setState(JobRunStates::FAILED);
-
+        $jobRun->setState($status ?? JobRunStates::FAILED);
         if ($translate) {
             $translatedMessage = $this->translator->trans($errorMessage, $params);
             $this->logger->info(
@@ -200,7 +277,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
-    protected function dispatchStepMessage(JobRun $jobRun): void
+    private function dispatchStepMessage(JobRun $jobRun): void
     {
         $job = $jobRun->getJob();
         if (!$job instanceof Job) {
@@ -231,13 +308,18 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $this->executionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
-    }
+        $selectedElements = $job->getSelectedElements();
+        if (empty($selectedElements)) {
+            $this->executionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
+            return;
+        }
 
-    public function isRunning(int $jobRunId): bool
-    {
-        $jobRun = $this->jobRunRepository->getJobRunById($jobRunId, true);
-
-        return $jobRun->getState() === JobRunStates::RUNNING;
+        foreach ($selectedElements as $selectedElement) {
+            $this->executionEngineBus->dispatch(new $messageString(
+                $jobRun->getId(),
+                $jobRun->getCurrentStep(),
+                $selectedElement)
+            );
+        }
     }
 }

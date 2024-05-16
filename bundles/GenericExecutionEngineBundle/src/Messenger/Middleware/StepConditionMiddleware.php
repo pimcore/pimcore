@@ -36,6 +36,27 @@ final class StepConditionMiddleware implements MiddlewareInterface
     ) {
     }
 
+    public function handle(Envelope $envelope, StackInterface $stack): Envelope
+    {
+        $message = $envelope->getMessage();
+
+        if ($message instanceof GenericExecutionEngineMessageInterface) {
+            if ($this->jobRunExtractor->checkCondition($message)) {
+                return $stack->next()->handle($envelope, $stack);
+            }
+
+            $this->logToJobRun(
+                $message,
+            );
+
+            $this->jobExecutionAgent->handleNextMessage($message);
+
+            return $envelope;
+        }
+
+        return $stack->next()->handle($envelope, $stack);
+    }
+
     private function logToJobRun(
         GenericExecutionEngineMessageInterface $message
     ): void {
@@ -57,26 +78,5 @@ final class StepConditionMiddleware implements MiddlewareInterface
             "[JobRun {$jobRun->getId()}]:
             Skipping step $stepName with id $stepId of Job '$jobName', job condition not met."
         );
-    }
-
-    public function handle(Envelope $envelope, StackInterface $stack): Envelope
-    {
-        $message = $envelope->getMessage();
-
-        if ($message instanceof GenericExecutionEngineMessageInterface) {
-            if ($this->jobRunExtractor->checkCondition($message)) {
-                return $stack->next()->handle($envelope, $stack);
-            }
-
-            $this->logToJobRun(
-                $message,
-            );
-
-            $this->jobExecutionAgent->continueJobStepExecution($message);
-
-            return $envelope;
-        }
-
-        return $stack->next()->handle($envelope, $stack);
     }
 }

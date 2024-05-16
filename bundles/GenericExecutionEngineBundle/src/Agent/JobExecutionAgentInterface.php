@@ -32,17 +32,22 @@ interface JobExecutionAgentInterface
     public function startJobExecution(Job $job, ?int $ownerId): JobRun;
 
     /**
-     * Continue execution when one step is finished. Normally not needed from the outside, only for internal purposes.
+     * Handle job execution error. Normally not needed from the outside, only for internal purposes.
      */
-    public function continueJobStepExecution(GenericExecutionEngineMessageInterface $message): void;
-
-    /**
-     * Called when a step execution failed. Normally not needed from the outside, only for internal purposes.
-     */
-    public function jobExecutionFailed(
+    public function handleJobExecutionError(
         GenericExecutionEngineMessageInterface $message,
         ?Throwable $throwable = null
     ): void;
+
+    /**
+     * Decide if current step is finished. Normally not needed from the outside, only for internal purposes.
+     */
+    public function handleNextMessage(GenericExecutionEngineMessageInterface $message): void;
+
+    /**
+     * Continue execution when one step is finished. Normally not needed from the outside, only for internal purposes.
+     */
+    public function continueJobStepExecution(GenericExecutionEngineMessageInterface $message): void;
 
     /**
      * checks if interaction with job run is allowed by given user

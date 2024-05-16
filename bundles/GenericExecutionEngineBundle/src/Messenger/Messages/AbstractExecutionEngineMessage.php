@@ -17,11 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages;
 
+use Pimcore\Model\Element\ElementDescriptor;
+
 abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineMessageInterface
 {
     public function __construct(
         protected int $jobRunId,
-        protected int $currentJobStep
+        protected int $currentJobStep,
+        protected ?ElementDescriptor $element = null
     ) {
     }
 
@@ -33,5 +36,10 @@ abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineM
     public function getCurrentJobStep(): int
     {
         return $this->currentJobStep;
+    }
+
+    public function getElement(): ?ElementDescriptor
+    {
+        return $this->element;
     }
 }

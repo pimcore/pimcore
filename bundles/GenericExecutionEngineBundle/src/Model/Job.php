@@ -16,24 +16,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
+use InvalidArgumentException;
 use Pimcore\Model\Element\ElementDescriptor;
 
-class Job
+final class Job
 {
     /**
      * @param string $name
      * @param JobStep[] $steps
-     * @param null|ElementDescriptor $subject
-     * @param null|ElementDescriptor[] $selectedElements
+     * @param ElementDescriptor[] $selectedElements
      * @param array $environmentData
      */
     public function __construct(
-        protected string $name,
-        protected array $steps = [],
-        protected ?ElementDescriptor $subject = null,
-        protected ?array $selectedElements = null,
-        protected array $environmentData = []
+        private readonly string $name,
+        private readonly array $steps,
+        private readonly array $selectedElements = [],
+        private readonly array $environmentData = []
     ) {
+        if (empty($this->steps)) {
+            throw new InvalidArgumentException('Job must have at least one step');
+        }
     }
 
     /**
@@ -53,17 +55,9 @@ class Job
     }
 
     /**
-     * @return ElementDescriptor|null
+     * @return array
      */
-    public function getSubject(): ?ElementDescriptor
-    {
-        return $this->subject;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getSelectedElements(): ?array
+    public function getSelectedElements(): array
     {
         return $this->selectedElements;
     }

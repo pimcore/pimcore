@@ -22,8 +22,6 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 
 interface JobRunExtractorInterface
 {
-    public function getElementsToProcess(JobRun $jobRun, string $type): array;
-
     public function getJobRun(GenericExecutionEngineMessageInterface $message, bool $forceReload = false): JobRun;
 
     public function getJobStep(GenericExecutionEngineMessageInterface $message): JobStepInterface;

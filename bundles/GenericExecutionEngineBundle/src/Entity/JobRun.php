@@ -82,6 +82,12 @@ class JobRun
     #[ORM\Column(type: 'string', length: 255)]
     private string $executionContext;
 
+    #[ORM\Column(type: 'integer')]
+    private int $totalElements = 0;
+
+    #[ORM\Column(type: 'integer')]
+    private int $processedElementsForStep = 0;
+
     public function __construct(int $ownerId = null)
     {
         $this->creationDate = time();
@@ -185,9 +191,9 @@ class JobRun
     }
 
     /**
-     * @param Job|null $job
+     * @param Job $job
      */
-    public function setJob(?Job $job): void
+    public function setJob(Job $job): void
     {
         $this->job = $job;
     }
@@ -232,6 +238,26 @@ class JobRun
     public function setCurrentMessageLocalized(MessageInterface $message): void
     {
         $this->setCurrentMessage($message->getSerializedString());
+    }
+
+    public function getTotalElements(): int
+    {
+        return $this->totalElements;
+    }
+
+    public function setTotalElements(int $totalElements): void
+    {
+        $this->totalElements = $totalElements;
+    }
+
+    public function getProcessedElementsForStep(): int
+    {
+        return $this->processedElementsForStep;
+    }
+
+    public function setProcessedElementsForStep(int $processedElementsForStep): void
+    {
+        $this->processedElementsForStep = $processedElementsForStep;
     }
 
     private function getSerializer(): SerializerInterface

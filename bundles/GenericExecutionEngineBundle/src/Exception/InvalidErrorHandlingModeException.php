@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -15,17 +14,13 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
+namespace Pimcore\Bundle\GenericExecutionEngineBundle\Exception;
+
+use RuntimeException;
 
 /**
  * @internal
  */
-enum JobRunStates: string
+final class InvalidErrorHandlingModeException extends RuntimeException
 {
-    case RUNNING = 'running';
-    case FINISHED = 'finished';
-    case FINISHED_WITH_ERRORS = 'finished with errors';
-    case FAILED = 'failed';
-    case CANCELLED = 'cancelled';
-    case NOT_STARTED = 'not started';
 }

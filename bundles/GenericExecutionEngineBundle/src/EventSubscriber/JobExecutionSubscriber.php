@@ -39,7 +39,7 @@ final class JobExecutionSubscriber implements EventSubscriberInterface
     }
 
     public function __construct(
-        protected JobExecutionAgentInterface $jobExecutionAgent
+        private readonly JobExecutionAgentInterface $jobExecutionAgent
     ) {
     }
 
@@ -54,7 +54,8 @@ final class JobExecutionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->jobExecutionAgent->jobExecutionFailed($message, $this->getFirstThrowable($event->getThrowable()));
+        $throwable = $this->getFirstThrowable($event->getThrowable());
+        $this->jobExecutionAgent->handleJobExecutionError($message, $throwable);
     }
 
     public function onWorkerMessageHandled(WorkerMessageHandledEvent $event): void
@@ -64,6 +65,6 @@ final class JobExecutionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->jobExecutionAgent->continueJobStepExecution($message);
+        $this->jobExecutionAgent->handleNextMessage($message);
     }
 }

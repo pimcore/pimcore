@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\DependencyInjection;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -26,6 +27,11 @@ class Configuration implements ConfigurationInterface
         $rootNode->addDefaultsIfNotSet();
 
         $rootNode->children()
+            ->enumNode('error_handling')
+                ->values([ErrorHandlingMode::CONTINUE_ON_ERROR->value, ErrorHandlingMode::STOP_ON_FIRST_ERROR->value])
+                ->info('Specifies how errors should be handled during job run execution.')
+                ->defaultValue(ErrorHandlingMode::CONTINUE_ON_ERROR->value)
+            ->end()
             ->arrayNode('execution_context')
                 ->prototype('array')
                     ->children()

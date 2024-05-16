@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages;
 
+use Pimcore\Model\Element\ElementDescriptor;
+
 /**
  * @internal
  */
@@ -25,4 +27,6 @@ interface GenericExecutionEngineMessageInterface
     public function getJobRunId(): int;
 
     public function getCurrentJobStep(): int;
+
+    public function getElement(): ?ElementDescriptor;
 }

@@ -21,4 +21,6 @@ final class TableConstants
     public const USER_PERMISSION_DEF_TABLE = 'users_permission_definitions';
 
     public const JOB_RUN_TABLE = 'generic_execution_engine_job_run';
+
+    public const ERROR_LOG_TABLE = 'generic_execution_engine_error_log';
 }

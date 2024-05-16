@@ -42,25 +42,6 @@ final class JobRunExtractor implements JobRunExtractorInterface
     ) {
     }
 
-    public function getElementsToProcess(JobRun $jobRun, string $type = self::ASSET_TYPE): array
-    {
-        $elementsToProcess = [];
-        $subject = $jobRun->getJob()?->getSubject();
-        $selectedElements = $jobRun->getJob()?->getSelectedElements() ?? [];
-
-        if (empty($selectedElements) && $subject && $subject->getType() === $type) {
-            $elementsToProcess[] = $this->getElement($type, $subject->getId());
-        }
-
-        foreach ($selectedElements as $selectedElement) {
-            if ($selectedElement && $selectedElement->getType() === $type) {
-                $elementsToProcess[] = $this->getElement($type, $selectedElement->getId());
-            }
-        }
-
-        return array_filter($elementsToProcess);
-    }
-
     public function getJobRun(GenericExecutionEngineMessageInterface $message, bool $forceReload = false): JobRun
     {
         return $this->jobRunRepository->getJobRunById($message->getJobRunId(), $forceReload);

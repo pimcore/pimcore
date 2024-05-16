@@ -75,6 +75,7 @@ final class Installer extends SettingsStoreAwareInstaller
         $currentSchema = $this->db->createSchemaManager()->introspectSchema();
 
         $this->installJobRunTable($currentSchema);
+        $this->installLogTable($currentSchema);
         $this->addUserPermission($currentSchema);
         $this->executeDiffSql($currentSchema);
     }
@@ -88,6 +89,7 @@ final class Installer extends SettingsStoreAwareInstaller
 
         $this->executeDiffSql($currentSchema);
         $this->removeUserPermission($currentSchema);
+        $this->removeLogTable($currentSchema);
         $this->removeJobRunTable($currentSchema);
     }
 
@@ -98,9 +100,13 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         if (!$schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
             $jobRunTable = $schema->createTable(TableConstants::JOB_RUN_TABLE);
-            $jobRunTable->addColumn('id', 'integer', ['autoincrement' => true, 'notnull' => true]);
+            $jobRunTable->addColumn('id', 'integer', [
+                'autoincrement' => true,
+                'notnull' => true,
+                'unsigned' => true
+            ]);
             $jobRunTable->addColumn('ownerId', 'integer', ['notnull' => false, 'unsigned' => true]);
-            $jobRunTable->addColumn('state', 'string', ['notnull' => true, 'length' => 10]);
+            $jobRunTable->addColumn('state', 'string', ['notnull' => true, 'length' => 100]);
             $jobRunTable->addColumn('currentStep', 'integer', ['notnull' => false, 'unsigned' => true]);
             $jobRunTable->addColumn(
                 'currentMessage',
@@ -127,6 +133,14 @@ final class Installer extends SettingsStoreAwareInstaller
                 'length' => 255,
                 'default' => JobRun::DEFAULT_EXECUTION_CONTEXT,
             ]);
+            $jobRunTable->addColumn('totalElements', 'integer', [
+                'notnull' => true,
+                'unsigned' => true
+            ]);
+            $jobRunTable->addColumn('processedElementsForStep', 'integer', [
+                'notnull' => true,
+                'unsigned' => true
+            ]);
 
             $jobRunTable->addForeignKeyConstraint(
                 'users',
@@ -141,12 +155,53 @@ final class Installer extends SettingsStoreAwareInstaller
     }
 
     /**
+     * @throws SchemaException
+     */
+    private function installLogTable(Schema $schema): void
+    {
+        if ($schema->hasTable(TableConstants::ERROR_LOG_TABLE)) {
+            return;
+        }
+
+        $logTable = $schema->createTable(TableConstants::ERROR_LOG_TABLE);
+        $logTable->addColumn('id', 'integer', [
+            'autoincrement' => true,
+            'notnull' => true,
+            'unsigned' => true
+        ]);
+        $logTable->addColumn('jobRunId', 'integer', ['notnull' => true, 'unsigned' => true]);
+        $logTable->addColumn('stepNumber', 'integer', ['notnull' => true, 'unsigned' => true]);
+        $logTable->addColumn('elementId', 'integer', ['notnull' => false, 'unsigned' => true]);
+        $logTable->addColumn('errorMessage', 'text', ['notnull' => false, 'length' => 65535]);
+
+        $logTable->addForeignKeyConstraint(
+            TableConstants::JOB_RUN_TABLE,
+            ['jobRunId'],
+            ['id'],
+            ['onDelete' => 'CASCADE'],
+            'fk_generic_job_execution_log_jobs'
+        );
+
+        $logTable->setPrimaryKey(['id']);
+    }
+
+    /**
      * @throws Exception
      */
     private function removeJobRunTable(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
             $this->db->executeStatement('DROP TABLE ' . TableConstants::JOB_RUN_TABLE);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function removeLogTable(Schema $schema): void
+    {
+        if ($schema->hasTable(TableConstants::ERROR_LOG_TABLE)) {
+            $this->db->executeStatement('DROP TABLE ' . TableConstants::ERROR_LOG_TABLE);
         }
     }
 
