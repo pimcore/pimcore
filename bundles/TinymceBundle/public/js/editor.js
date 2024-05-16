@@ -26,6 +26,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (e.detail.context === 'object') {
             if (!isNaN(e.detail.config.maxCharacters) && e.detail.config.maxCharacters > 0) {
                 this.maxChars = e.detail.config.maxCharacters;
+            }else{
+                this.maxChars = -1;
             }
         }
 
@@ -83,6 +85,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             defaultConfig = pimcore[e.detail.context][subSpace].wysiwyg ? pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 
+        const maxChars = this.maxChars;
+
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
@@ -100,9 +104,14 @@ pimcore.bundle.tinymce.editor = Class.create({
             extended_valid_elements: 'a[class|name|href|target|title|pimcore_id|pimcore_type],img[class|style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
+                    tinymce.activeEditor.getBody().style.border = '';
+                    tinymce.activeEditor.getElement().setAttribute('title', '');
+
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-                    if (this.maxChars !== -1 && charCount > this.maxChars) {
-                        pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
+
+                    if (maxChars !== -1 && charCount > maxChars) {
+                        tinymce.activeEditor.getBody().style.border = '1px solid red';
+                        tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
                     }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
