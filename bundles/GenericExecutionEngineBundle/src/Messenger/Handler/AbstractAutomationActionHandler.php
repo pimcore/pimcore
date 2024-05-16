@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Handler;
 
 use Exception;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ValidateStepConfigurationTrait;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidStepConfigurationException;
@@ -35,12 +36,13 @@ abstract class AbstractAutomationActionHandler
 {
     use ValidateStepConfigurationTrait;
 
-    protected LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
-    protected JobRunRepositoryInterface $jobRunRepository;
+    protected ?JobRunRepositoryInterface $jobRunRepository = null;
+    private ?JobRunExtractorInterface $jobRunExtractor = null;
+    private ?JobExecutionAgentInterface $jobExecutionAgent = null;
 
     public function __construct(
-        private readonly JobRunExtractorInterface $jobRunExtractor
     ) {
         $this->stepConfiguration = new OptionsResolver();
     }
@@ -48,13 +50,33 @@ abstract class AbstractAutomationActionHandler
     #[Required]
     public function setJobRunRepository(JobRunRepositoryInterface $jobRunRepository): void
     {
-        $this->jobRunRepository = $jobRunRepository;
+        if(!$this->jobRunRepository) {
+            $this->jobRunRepository = $jobRunRepository;
+        }
+    }
+
+    #[Required]
+    public function setJobRunExtractor(JobRunExtractorInterface $jobRunExtractor): void
+    {
+        if(!$this->jobRunExtractor) {
+            $this->jobRunExtractor = $jobRunExtractor;
+        }
+    }
+
+    #[Required]
+    public function setJobExecutionAgent(JobExecutionAgentInterface $jobExecutionAgent): void
+    {
+        if(!$this->jobExecutionAgent) {
+            $this->jobExecutionAgent = $jobExecutionAgent;
+        }
     }
 
     #[Required]
     public function setLogger(LoggerInterface $logger): void
     {
-        $this->logger = $logger;
+        if(!$this->logger) {
+            $this->logger = $logger;
+        }
     }
 
     /**
@@ -123,5 +145,11 @@ abstract class AbstractAutomationActionHandler
     protected function throwUnRecoverableException(Throwable $exception): void
     {
         throw new UnrecoverableMessageHandlingException($exception->getMessage(), 0, $exception);
+    }
+
+    protected function isRunning(
+        JobRun $jobRun
+    ): bool {
+        return $this->jobExecutionAgent->isRunning($jobRun->getId());
     }
 }
