@@ -38,6 +38,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 {
     use StopMessengerWorkersTrait;
 
+    private const LOG_JOB_RUN_ID_KEY = '%job_run_id%';
+
     private bool $isDev;
 
     public function __construct(
@@ -108,7 +110,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->logger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled.");
         $jobRun->setState(JobRunStates::CANCELLED);
         $this->jobRunRepository->updateLogLocalized(
-            $jobRun, 'gee_job_cancelled', ['%job_run_id%' => $jobRun->getId()]
+            $jobRun,
+            'gee_job_cancelled',
+            $this->getLogParams($jobRun->getId())
         );
     }
 
@@ -150,7 +154,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->setJobRunError(
                 $jobRun,
                 'gee_error_no_job_definition',
-                ['%job_run_id%' => $jobRun->getId()]
+                $this->getLogParams($jobRun->getId())
             );
 
             return;
@@ -259,7 +263,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->setJobRunError($jobRun, $errorMessage, [], false);
         $this->logger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
         $this->jobRunRepository->updateLogLocalized(
-            $jobRun, 'gee_job_failed', ['%job_run_id%' => $jobRun->getId()]
+            $jobRun,
+            'gee_job_failed',
+            $this->getLogParams($jobRun->getId())
         );
     }
 
@@ -345,5 +351,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
                 $selectedElement)
             );
         }
+    }
+
+    private function getLogParams(int $jobRunId): array
+    {
+        return [self::LOG_JOB_RUN_ID_KEY => $jobRunId];
     }
 }

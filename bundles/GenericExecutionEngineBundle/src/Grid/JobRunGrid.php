@@ -22,7 +22,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProviderInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects\LogLine;
-use Pimcore\Bundle\StaticResolverBundle\Models\User\UserResolverInterface;
+use Pimcore\Model\User;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -31,7 +31,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class JobRunGrid implements JobRunGridInterface
 {
     public function __construct(
-        private readonly UserResolverInterface $userResolver,
         private readonly CurrentMessageProviderInterface $currentMessageProvider,
         private readonly ExecutionContextInterface $executionContext,
         private readonly TranslatorInterface $translator
@@ -51,7 +50,7 @@ final class JobRunGrid implements JobRunGridInterface
             'job_name' => $this->translator->trans($jobRun->getJob()?->getName(), [], $domain),
             'started_at' => $jobRun->getCreationDate(),
             'last_update_at' => $jobRun->getModificationDate(),
-            'owner' => $jobRun->getOwnerId() ? $this->userResolver->getById($jobRun->getOwnerId())?->getName() : null,
+            'owner' => $jobRun->getOwnerId() ? User::getById($jobRun->getOwnerId())?->getName() : null,
             'state' => $jobRun->getState()->value,
             'current_step' => $jobRun->getCurrentStep(),
             'current_message' => $currentMessage->getMessage(),

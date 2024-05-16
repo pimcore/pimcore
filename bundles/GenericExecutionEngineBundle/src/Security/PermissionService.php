@@ -18,21 +18,19 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Security;
 
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\PermissionException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
-use Pimcore\Bundle\StaticResolverBundle\Lib\Tools\Authentication\AuthenticationResolverInterface;
-use Pimcore\Model\User;
+use Pimcore\Model\UserInterface;
+use Pimcore\Tool\Authentication;
 
 /**
  * @internal
  */
 final class PermissionService implements PermissionServiceInterface
 {
-    private ?User $user;
+    private ?UserInterface $user;
 
     public function __construct(
-        private readonly AuthenticationResolverInterface $authenticationResolver
     ) {
-        $pimcoreUser = $this->authenticationResolver->authenticateSession();
-        $this->user = $pimcoreUser;
+        $this->user = Authentication::authenticateSession();
     }
 
     public function allowedToSeeJobRuns(): void

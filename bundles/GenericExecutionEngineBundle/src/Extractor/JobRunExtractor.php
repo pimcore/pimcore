@@ -114,15 +114,4 @@ final class JobRunExtractor implements JobRunExtractorInterface
 
         return $variables;
     }
-
-    private function getElement(string $type, int $id): ?ElementInterface
-    {
-        $element = Service::getElementById($type, $id);
-
-        if (!$element || $element->getType() === self::FOLDER_TYPE) {
-            return null;
-        }
-
-        return $element;
-    }
 }
