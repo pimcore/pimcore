@@ -31,6 +31,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\AdminStyle;
@@ -134,6 +135,7 @@ class SearchController extends UserAwareController
         // filtering for objects
         if (!empty($allParams['filter']) && !empty($allParams['class'])) {
             $class = DataObject\ClassDefinition::getByName($allParams['class']);
+            $localizedFields = $class->getFieldDefinition('localizedfields');
 
             // add Localized Fields filtering
             $params = $this->decodeJson($allParams['filter']);
@@ -142,12 +144,12 @@ class SearchController extends UserAwareController
 
             foreach ($params as $paramConditionObject) {
                 //this loop divides filter parameters to localized and unlocalized groups
-                $definitionExists = in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())
-                    || $class->getFieldDefinition($paramConditionObject['property']);
-                if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
+                if (in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } else {
+                } elseif ($localizedFields instanceof Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
                     $localizedFieldsFilters[] = $paramConditionObject;
+                } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 

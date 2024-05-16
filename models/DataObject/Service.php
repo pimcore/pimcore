@@ -463,13 +463,13 @@ class Service extends Model\Element\Service
      *
      * @return \stdClass value and objectid where the value comes from
      */
-    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null): \stdClass
+    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null, string $requestedLanguage = null): \stdClass
     {
         $getter = 'get' . ucfirst($key);
         $value = null;
 
         try {
-            $value = $object->$getter(AdminTool::getCurrentUser()?->getLanguage());
+            $value = $object->$getter($requestedLanguage ?? AdminTool::getCurrentUser()?->getLanguage());
         } catch (\Throwable) {
         }
 
@@ -509,7 +509,7 @@ class Service extends Model\Element\Service
         if ($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
-                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor, $requestedLanguage);
             }
         }
 

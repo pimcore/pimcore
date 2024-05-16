@@ -394,6 +394,10 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                 this.store.load();
             }
             pimcore.layout.refresh();
+
+            this.panel.on("destroy", function () {
+                Ext.TaskManager.stop(this.autoRefreshTask);
+            }.bind(this));
         }
         return this.panel;
     },
