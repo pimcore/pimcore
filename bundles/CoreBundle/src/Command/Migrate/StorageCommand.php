@@ -52,6 +52,7 @@ class StorageCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $errors = [];
         $storages = $input->getArgument('storage');
 
         foreach ($storages as $storageName) {
@@ -69,8 +70,6 @@ class StorageCommand extends AbstractCommand
 
             $this->io->newLine();
             $this->io->info(sprintf('Migrating storage "%s"', $storageName));
-
-            $errors = [];
 
             $progressBar = new ProgressBar($output);
             $progressBar->setFormat('%current% [%bar%] %message%');
