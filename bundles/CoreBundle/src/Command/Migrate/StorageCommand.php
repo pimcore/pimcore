@@ -104,7 +104,7 @@ class StorageCommand extends AbstractCommand
 
         $this->io->success('Finished Migrating Storage!');
 
-        if(!empty($errors)) {
+        if ($errors) {
             $this->io->warning('Some errors occoured during migrating certain files:');
             $this->io->writeLn(implode("\n", $errors));
         }
