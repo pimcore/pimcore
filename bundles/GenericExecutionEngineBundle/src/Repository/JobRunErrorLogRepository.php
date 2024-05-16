@@ -73,6 +73,11 @@ final class JobRunErrorLogRepository implements JobRunErrorLogRepositoryInterfac
         return $this->getLogRepository()->count([]);
     }
 
+    public function getTotalCountByJobRunId(int $jobRunId): int
+    {
+        return $this->getLogRepository()->count(['jobRunId' => $jobRunId]);
+    }
+
     private function getLogRepository(): EntityRepository
     {
         return $this->pimcoreEntityManager->getRepository(JobRunErrorLog::class);

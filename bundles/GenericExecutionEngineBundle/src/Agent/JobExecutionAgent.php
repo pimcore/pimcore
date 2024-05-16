@@ -72,107 +72,24 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
-    public function handleJobExecutionError(
+    public function continueJobMessageExecution(
         GenericExecutionEngineMessageInterface $message,
         ?Throwable $throwable = null
     ): void
     {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-
-        $errorMessage =  'Unknown Error.';
-        if ($throwable) {
-            $this->logger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
-
-            $errorMessage = $throwable->getMessage();
-            if ($this->isDev) {
-                $errorMessage .= ' Stack trace: ' . str_replace("\n", '', $throwable->getTraceAsString());
-            }
-        }
-
-        $this->jobRunErrorLogRepository->createFromJobRun(
-            $jobRun,
-            $message->getElement()?->getId(),
-            $errorMessage,
-        );
-
-        match ($this->errorHandlingMode) {
-            ErrorHandlingMode::STOP_ON_FIRST_ERROR->value =>
-            $this->stopJobExecutionOnError(
-                $jobRun,
-                $errorMessage
-            ),
-            ErrorHandlingMode::CONTINUE_ON_ERROR->value =>
-            $this->continueJobExecutionOnError(
-                $jobRun,
-                $message,
-                $errorMessage
-            ),
-            default => throw new InvalidErrorHandlingModeException(),
-        };
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
-    {
-        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-        $currentElementCount = $jobRun->getProcessedElementsForStep() + 1;
-
-        $jobRun->setProcessedElementsForStep($currentElementCount);
-        $this->jobRunRepository->update($jobRun);
-        if ($currentElementCount === $jobRun->getTotalElements()) {
-            $this->continueJobStepExecution($message);
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function continueJobStepExecution(GenericExecutionEngineMessageInterface $message): void
-    {
-        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-        $job = $jobRun->getJob();
-        if (!$job instanceof Job) {
-            $this->setJobRunError(
-                $jobRun,
-                'gee_error_no_job_definition',
-                ['%job_run_id%' => $jobRun->getId()]
-            );
-
+        if (!$this->isRunning($jobRun->getId())) {
             return;
         }
 
-        $this->logger->info(
-            "[JobRun {$jobRun->getId()}]:" .
-            " Job step {$jobRun->getCurrentStep()} of Job '{$job->getName()}' finished."
-        );
+        $this->incrementProcessedElements($jobRun);
 
-        if ($jobRun->getState() === JobRunStates::CANCELLED) {
-            $this->logger->info(
-                "[JobRun {$jobRun->getId()}]: Cancel stop execution due to JobRun was cancelled."
-            );
-
+        if (!$throwable) {
+            $this->handleNextMessage($message);
             return;
         }
 
-        $nextStep = $jobRun->getCurrentStep() + 1;
-
-        if (count($job->getSteps()) <= $nextStep) {
-            $jobRun->setCurrentStep(null);
-            $jobRun->setCurrentMessage(null);
-            if (!$jobRun->getState()) {
-                $jobRun->setState(JobRunStates::FINISHED);
-            }
-            $this->jobRunRepository->update($jobRun);
-
-            $this->logger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
-        } else {
-            $jobRun->setProcessedElementsForStep(0);
-            $jobRun->setCurrentStep($nextStep);
-            $this->jobRunRepository->update($jobRun);
-            $this->dispatchStepMessage($jobRun);
-        }
+        $this->handleJobExecutionError($message, $throwable);
     }
 
     public function isInteractionAllowed(int $jobRunId, int $ownerId): bool
@@ -214,6 +131,105 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
+    private function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
+        if ($jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
+            $this->continueJobStepExecution($message);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function continueJobStepExecution(GenericExecutionEngineMessageInterface $message): void
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
+        $job = $jobRun->getJob();
+        if (!$job instanceof Job) {
+            $this->setJobRunError(
+                $jobRun,
+                'gee_error_no_job_definition',
+                ['%job_run_id%' => $jobRun->getId()]
+            );
+
+            return;
+        }
+
+        $this->logger->info(
+            "[JobRun {$jobRun->getId()}]:" .
+            " Job step {$jobRun->getCurrentStep()} of Job '{$job->getName()}' finished."
+        );
+
+        if ($jobRun->getState() === JobRunStates::CANCELLED) {
+            $this->logger->info(
+                "[JobRun {$jobRun->getId()}]: Cancel stop execution due to JobRun was cancelled."
+            );
+
+            return;
+        }
+
+        $nextStep = $jobRun->getCurrentStep() + 1;
+
+        if (count($job->getSteps()) <= $nextStep) {
+            $jobRun->setCurrentStep(null);
+            $jobRun->setCurrentMessage(null);
+            $jobRun->setState(JobRunStates::FINISHED);
+            if ($this->jobRunErrorLogRepository->getLogsByJobRunId($jobRun->getId())) {
+                $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
+            }
+            $this->jobRunRepository->update($jobRun);
+
+            $this->logger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
+        } else {
+            $jobRun->setProcessedElementsForStep(0);
+            $jobRun->setCurrentStep($nextStep);
+            $this->jobRunRepository->update($jobRun);
+            $this->dispatchStepMessage($jobRun);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function handleJobExecutionError(
+        GenericExecutionEngineMessageInterface $message,
+        Throwable $throwable
+    ): void
+    {
+        $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
+
+        $this->logger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
+        $errorMessage = $throwable->getMessage();
+        if ($this->isDev) {
+            $errorMessage .= ' Stack trace: ' . str_replace("\n", '', $throwable->getTraceAsString());
+        }
+
+        $this->jobRunErrorLogRepository->createFromJobRun(
+            $jobRun,
+            $message->getElement()?->getId(),
+            $errorMessage,
+        );
+
+        match ($this->errorHandlingMode) {
+            ErrorHandlingMode::STOP_ON_FIRST_ERROR->value =>
+            $this->stopJobExecutionOnError(
+                $jobRun,
+                $errorMessage
+            ),
+            ErrorHandlingMode::CONTINUE_ON_ERROR->value =>
+            $this->continueJobExecutionOnError(
+                $jobRun,
+                $message,
+                $errorMessage
+            ),
+            default => throw new InvalidErrorHandlingModeException(),
+        };
+    }
+
+    /**
+     * @throws Exception
+     */
     private function continueJobExecutionOnError(
         JobRun $jobRun,
         GenericExecutionEngineMessageInterface $message,
@@ -225,7 +241,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $errorMessage,
             [],
             false,
-            JobRunStates::FINISHED_WITH_ERRORS
+            JobRunStates::RUNNING
         );
 
         $this->handleNextMessage($message);
@@ -245,6 +261,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->jobRunRepository->updateLogLocalized(
             $jobRun, 'gee_job_failed', ['%job_run_id%' => $jobRun->getId()]
         );
+    }
+
+    private function incrementProcessedElements(JobRun $jobRun): void
+    {
+        $currentElementCount = $jobRun->getProcessedElementsForStep() + 1;
+
+        $jobRun->setProcessedElementsForStep($currentElementCount);
+        $this->jobRunRepository->update($jobRun);
     }
 
     /**

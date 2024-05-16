@@ -24,8 +24,8 @@ enum JobRunStates: string
 {
     case RUNNING = 'running';
     case FINISHED = 'finished';
-    case FINISHED_WITH_ERRORS = 'finished with errors';
+    case FINISHED_WITH_ERRORS = 'finished_with_errors';
     case FAILED = 'failed';
     case CANCELLED = 'cancelled';
-    case NOT_STARTED = 'not started';
+    case NOT_STARTED = 'not_started';
 }

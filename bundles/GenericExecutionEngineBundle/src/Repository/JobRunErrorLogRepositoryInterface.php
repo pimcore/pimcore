@@ -41,5 +41,5 @@ interface JobRunErrorLogRepositoryInterface
 
     public function getTotalCount(): int;
 
-
+    public function getTotalCountByJobRunId(int $jobRunId): int;
 }

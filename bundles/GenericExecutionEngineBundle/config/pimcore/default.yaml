@@ -1,5 +1,5 @@
 pimcore_generic_execution_engine:
-    error_handling: 'continue_on_error'
+    error_handling: 'stop_on_first_error'
     execution_context:
         default:
             translations_domain: admin

@@ -49,7 +49,7 @@ final class StepConditionMiddleware implements MiddlewareInterface
                 $message,
             );
 
-            $this->jobExecutionAgent->handleNextMessage($message);
+            $this->jobExecutionAgent->continueJobMessageExecution($message);
 
             return $envelope;
         }

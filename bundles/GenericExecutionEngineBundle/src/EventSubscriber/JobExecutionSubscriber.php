@@ -55,7 +55,7 @@ final class JobExecutionSubscriber implements EventSubscriberInterface
         }
 
         $throwable = $this->getFirstThrowable($event->getThrowable());
-        $this->jobExecutionAgent->handleJobExecutionError($message, $throwable);
+        $this->jobExecutionAgent->continueJobMessageExecution($message, $throwable);
     }
 
     public function onWorkerMessageHandled(WorkerMessageHandledEvent $event): void
@@ -65,6 +65,6 @@ final class JobExecutionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->jobExecutionAgent->handleNextMessage($message);
+        $this->jobExecutionAgent->continueJobMessageExecution($message);
     }
 }
