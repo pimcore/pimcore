@@ -430,10 +430,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $classIds = $this->getClasses();
 
         if (empty($classIds[0]['classes'])) {
-            return $this;
+            if($this instanceof ReverseObjectRelation) {
+                $classId = $this->name;
+            } else {
+                return $this;
+            }
+        }else {
+            $classId = $classIds[0]['classes'];
         }
-
-        $classId = $classIds[0]['classes'];
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
