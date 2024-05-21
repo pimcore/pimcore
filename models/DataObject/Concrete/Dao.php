@@ -207,7 +207,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $untouchables = "'" . implode("','", $untouchable) . "'";
             $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
         } else {
-            $condition = 'src_id = ' . $this->model->getId() ?? 0 . ' AND ownertype = "object"';
+            $condition = 'src_id = ' . $this->model->getId() ?: 0 . ' AND ownertype = "object"';
         }
 
         if (!DataObject::isDirtyDetectionDisabled()) {
