@@ -199,7 +199,7 @@ class Dao extends Model\Dao\AbstractDao
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
-        $objectId = $object->getId();
+        $objectId = $object->getId() ?? 0;
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
