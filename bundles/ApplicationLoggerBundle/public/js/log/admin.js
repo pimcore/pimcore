@@ -270,28 +270,28 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
             this.fromDate = new Ext.form.DateField({
                 name: 'from_date',
                 width: 130,
-                invalidText: 'Enter date as MM/DD/YYYY',
+                format: "Y-m-d",
                 xtype: 'datefield'
             });
 
             this.fromTime = new Ext.form.TimeField({
                 name: 'from_time',
                 width: 100,
-                invalidText: 'Enter time as HH:MM AM/PM',
+                format: "H:i",
                 xtype: 'timefield'
             });
 
             this.toDate = new Ext.form.DateField({
                 name: 'to_date',
                 width: 130,
-                invalidText: 'Enter date as MM/DD/YYYY',
+                format: "Y-m-d",
                 xtype: 'datefield'
             });
 
             this.toTime = new Ext.form.TimeField({
                 name: 'to_time',
                 width: 100,
-                invalidText: 'Enter time as HH:MM AM/PM',
+                format: "H:i",
                 xtype: 'timefield'
             });
 
