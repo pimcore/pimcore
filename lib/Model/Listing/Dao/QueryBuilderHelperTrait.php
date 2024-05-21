@@ -130,7 +130,7 @@ trait QueryBuilderHelperTrait
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
-        $queryBuilder->resetOrderBy('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
