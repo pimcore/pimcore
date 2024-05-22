@@ -376,7 +376,7 @@ class Service extends Model\Element\Service
     }
 
      /**
-     * @deprecated Since 11.2, this method got moved to admin-ui-classic-bundle v1.4
+     * @deprecated Since 11.2, this method got moved to admin-ui-classic-bundle v1.5
      */
     public static function getHelperDefinitions(): array
     {
