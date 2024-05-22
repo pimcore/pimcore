@@ -137,7 +137,7 @@ final class Version20211018104331 extends AbstractMigration
                 ]);
             }
 
-            if (!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
+            if (!$column->hasPlatformOption('unsigned') || $column->getPlatformOption('unsigned') === false) {
                 $tableSchema->modifyColumn($localForeignKeyColumn, ['unsigned' => true]);
             }
 
