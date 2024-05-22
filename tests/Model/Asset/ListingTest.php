@@ -103,7 +103,6 @@ class ListingTest extends ModelTestCase
         $list->getDao()->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) use ($tagA, $tagB) {
             $this->joinTags($queryBuilder, $tagA, $tagB);
         });
-
         $list->setLimit(3);
 
         $totalCount = $list->getTotalCount();

@@ -203,7 +203,6 @@ class Dao extends Model\Dao\AbstractDao
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
-
         $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
@@ -212,7 +211,6 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($data as $item) {
             $list[$item['groupId']] = true;
         }
-
 
         $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
