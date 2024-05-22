@@ -292,7 +292,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @deprecated Despite being internal, keeping in here to avoid bundles to require 11.2 or set a compatibility layer when bundles support both 10 & 11
+     * @deprecated Despite being internal, keeping in here to avoid bundles to require 11.3 or set a compatibility layer when bundles support both 10 & 11
      * @internal
      */
     public static function gridObjectData(AbstractObject $object, array $fields = null, string $requestedLanguage = null, array $params = []): array
@@ -376,16 +376,16 @@ class Service extends Model\Element\Service
     }
 
      /**
-     * @deprecated Since 11.2, this method got moved to admin-ui-classic-bundle v1.5
+     * @deprecated Since 11.3, this method got moved to admin-ui-classic-bundle v1.5
      */
     public static function getHelperDefinitions(): array
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '11.2.0',
+            '11.3.0',
             sprintf('The "%s" method is deprecated here and moved to admin-ui-classc-bundle, use "%s" instead.', __METHOD__, 'Pimcore\Bundle\AdminBundle\Service\GridData::getHelperDefinitions()')
         );
-        
+
         return GridData\DataObject::getHelperDefinitions();
     }
 
