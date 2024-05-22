@@ -24,6 +24,8 @@ use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
+use Pimcore\Model\Exception\ThumbnailMaxScalingFactorException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -103,10 +105,15 @@ final class Thumbnail implements ThumbnailInterface
     }
 
     /**
+     * @throws ThumbnailFormatNotSupportedException
+     * @throws ThumbnailMaxScalingFactorException
+     *
      * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {
+        $this->validate();
+
         $deferred = false;
         $generated = false;
 
@@ -446,5 +453,23 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         return implode(', ', $srcSetValues);
+    }
+
+    /**
+     * @throws ThumbnailFormatNotSupportedException
+     * @throws ThumbnailMaxScalingFactorException
+     */
+    private function validate(): void
+    {
+        if(!$this->asset || !$this->config) {
+            return;
+        }
+        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+            throw new ThumbnailFormatNotSupportedException();
+        }
+
+        if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
+            throw new ThumbnailMaxScalingFactorException();
+        }
     }
 }
