@@ -127,8 +127,7 @@
     "twig/extra-bundle": "^3.4.0",
     "twig/string-extra": "^3.3.5",
     "twig/twig": "^3.3.9",
-    "umpirsky/country-list": "^2.0.6",
-    "pimcore/admin-ui-classic-bundle": "dev-move-previewthumbfromcore as 1.4"
+    "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
     "symfony/symfony": "*",
