@@ -252,7 +252,6 @@ CSS;
             $path = preg_quote($path, '!');
             $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
         }
-        
 
         preg_match_all("@srcset\s*=[\"'](.*?)[\"']@is", $string, $matches);
         foreach ($matches[1] as $i => $value) {
@@ -339,7 +338,7 @@ CSS;
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
-    
+
         foreach ($matches[0] as $key => $value) {
             $fullMatch = $matches[0][$key];
             $path = $matches[1][$key];
