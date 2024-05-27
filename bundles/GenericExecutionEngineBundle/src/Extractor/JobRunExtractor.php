@@ -21,7 +21,11 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
+use Pimcore\Bundle\StaticResolverBundle\Models\Element\ServiceResolver;
 use Pimcore\Helper\SymfonyExpression\ExpressionServiceInterface;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
@@ -107,22 +111,26 @@ final class JobRunExtractor implements JobRunExtractorInterface
         return $variables;
     }
 
-    public function getElementsToProcess(JobRun $jobRun, string $type = JobRunExtractorInterface::ASSET_TYPE): array
+    public function getElementFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        string $type = JobRunExtractorInterface::ASSET_TYPE
+    ): ?ElementInterface
     {
-        $elementsToProcess = [];
-
-        $selectedElements = $jobRun->getJob()?->getSelectedElements();
-        if(!$selectedElements) {
-            return [];
+        $elementDescriptor = $message->getElement();
+        if(!$elementDescriptor || $elementDescriptor->getType() !== $type) {
+            return null;
         }
 
-        foreach ($selectedElements as $selectedElement) {
-            if ($selectedElement && $selectedElement->getType() === $type) {
-                $elementsToProcess[] = $this->getElement($type, $selectedElement->getId());
-            }
+        $element = $this->getElement(
+            $elementDescriptor->getType(),
+            $elementDescriptor->getId()
+        );
+
+        if(!$element) {
+            return null;
         }
 
-        return array_filter($elementsToProcess);
+        return $element;
     }
 
     private function getElement(string $type, int $id): ?ElementInterface

@@ -19,6 +19,10 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Extractor;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 
 interface JobRunExtractorInterface
 {
@@ -44,5 +48,8 @@ interface JobRunExtractorInterface
         array $params = []
     ): void;
 
-    public function getElementsToProcess(JobRun $jobRun, string $type = JobRunExtractorInterface::ASSET_TYPE): array;
+    public function getElementFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        string $type = JobRunExtractorInterface::ASSET_TYPE
+    ): ?ElementInterface;
 }
