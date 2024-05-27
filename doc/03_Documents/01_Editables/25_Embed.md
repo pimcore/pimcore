@@ -24,5 +24,5 @@ Additionally you can use any configuration option of [Embera](https://github.com
 {{ pimcore_embed("socialWidgets") }}
 
 {# Advanced usage #}
-{{ pimcore_embed("socialWidgets", { "width": 540 }) }}
+{{ pimcore_embed("socialWidgets", {"width": 540}) }}
 ```

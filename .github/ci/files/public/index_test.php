@@ -19,7 +19,7 @@ use Pimcore\Tool;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-include __DIR__ . "/../vendor/autoload_runtime.php";
+include __DIR__ . "/../vendor/autoload.php";
 
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('APP_ENV', 'test');
@@ -43,3 +43,4 @@ $response = $kernel->handle($request);
 $response->send();
 
 $kernel->terminate($request, $response);
+

@@ -393,7 +393,7 @@ class Service extends Model\Element\Service
                         if (in_array($key, Concrete::SYSTEM_COLUMN_NAMES)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
-                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor, $requestedLanguage);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
                             if ($csvMode || method_exists($def, 'getDataForGrid')) {
@@ -641,13 +641,13 @@ class Service extends Model\Element\Service
      *
      * @return \stdClass value and objectid where the value comes from
      */
-    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null): \stdClass
+    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null, string $requestedLanguage = null): \stdClass
     {
         $getter = 'get' . ucfirst($key);
         $value = null;
 
         try {
-            $value = $object->$getter(AdminTool::getCurrentUser()?->getLanguage());
+            $value = $object->$getter($requestedLanguage ?? AdminTool::getCurrentUser()?->getLanguage());
         } catch (\Throwable) {
         }
 
@@ -687,7 +687,7 @@ class Service extends Model\Element\Service
         if ($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
-                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor, $requestedLanguage);
             }
         }
 
@@ -1506,7 +1506,7 @@ class Service extends Model\Element\Service
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                     try {
-                        return self::evaluateExpression($fd, $object, $data);
+                        return (string) self::evaluateExpression($fd, $object, $data);
                     } catch (SyntaxError $exception) {
                         return $exception->getMessage();
                     }

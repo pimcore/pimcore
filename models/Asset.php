@@ -22,7 +22,6 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
-use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -168,7 +167,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -727,14 +726,13 @@ class Asset extends Element\AbstractElement
                     $storage->delete($dbPath);
                 }
 
-                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
-
-                try {
-                    $mimeType = $storage->mimeType($path);
-                } catch(UnableToRetrieveMetadata $e) {
+                $mimeType = MimeTypes::getDefault()->guessMimeType($this->getLocalFileFromStream($src));
+                if($mimeType === null) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
+
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());

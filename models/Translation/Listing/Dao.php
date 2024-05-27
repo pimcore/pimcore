@@ -37,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
-        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
