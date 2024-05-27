@@ -25,12 +25,14 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterfa
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Exception\NotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Service\Attribute\Required;
 use Throwable;
+use UnexpectedValueException;
 
 abstract class AbstractAutomationActionHandler
 {
@@ -151,5 +153,23 @@ abstract class AbstractAutomationActionHandler
         JobRun $jobRun
     ): bool {
         return $this->jobExecutionAgent->isRunning($jobRun->getId());
+    }
+
+    protected function getSubjectFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
+    ): AbstractElement
+    {
+        /** @var AbstractElement|null $subject */
+        $subject = $this->jobRunExtractor->getElementFromMessage(
+            $message,
+            $types
+        );
+
+        if(!$subject) {
+            throw new UnexpectedValueException('No subject type found');
+        }
+
+        return $subject;
     }
 }
