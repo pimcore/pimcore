@@ -113,11 +113,11 @@ final class JobRunExtractor implements JobRunExtractorInterface
 
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
-        string $type = JobRunExtractorInterface::ASSET_TYPE
+        array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): ?ElementInterface
     {
         $elementDescriptor = $message->getElement();
-        if(!$elementDescriptor || $elementDescriptor->getType() !== $type) {
+        if(!$elementDescriptor || !in_array($elementDescriptor->getType(), $types, true)) {
             return null;
         }
 
