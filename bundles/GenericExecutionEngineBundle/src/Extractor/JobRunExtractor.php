@@ -28,14 +28,6 @@ use Pimcore\Model\Exception\NotFoundException;
 
 final class JobRunExtractor implements JobRunExtractorInterface
 {
-    public const ASSET_TYPE = 'asset';
-
-    public const DOCUMENT_TYPE = 'document';
-
-    public const FOLDER_TYPE = 'folder';
-
-    public const OBJECT_TYPE = 'object';
-
     public function __construct(
         private readonly ExpressionServiceInterface $symfonyExpressionService,
         private readonly JobRunRepositoryInterface $jobRunRepository
@@ -113,5 +105,34 @@ final class JobRunExtractor implements JobRunExtractorInterface
         }
 
         return $variables;
+    }
+
+    public function getElementsToProcess(JobRun $jobRun, string $type = JobRunExtractorInterface::ASSET_TYPE): array
+    {
+        $elementsToProcess = [];
+
+        $selectedElements = $jobRun->getJob()?->getSelectedElements();
+        if(!$selectedElements) {
+            return [];
+        }
+
+        foreach ($selectedElements as $selectedElement) {
+            if ($selectedElement && $selectedElement->getType() === $type) {
+                $elementsToProcess[] = $this->getElement($type, $selectedElement->getId());
+            }
+        }
+
+        return array_filter($elementsToProcess);
+    }
+
+    private function getElement(string $type, int $id): ?ElementInterface
+    {
+        $element = Service::getElementById($type, $id);
+
+        if (!$element || $element->getType() === JobRunExtractorInterface::FOLDER_TYPE) {
+            return null;
+        }
+
+        return $element;
     }
 }

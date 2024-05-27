@@ -22,6 +22,14 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 
 interface JobRunExtractorInterface
 {
+    public const ASSET_TYPE = 'asset';
+
+    public const DOCUMENT_TYPE = 'document';
+
+    public const FOLDER_TYPE = 'folder';
+
+    public const OBJECT_TYPE = 'object';
+
     public function getJobRun(GenericExecutionEngineMessageInterface $message, bool $forceReload = false): JobRun;
 
     public function getJobStep(GenericExecutionEngineMessageInterface $message): JobStepInterface;
@@ -35,4 +43,6 @@ interface JobRunExtractorInterface
         string $translationKey,
         array $params = []
     ): void;
+
+    public function getElementsToProcess(JobRun $jobRun, string $type = JobRunExtractorInterface::ASSET_TYPE): array;
 }
