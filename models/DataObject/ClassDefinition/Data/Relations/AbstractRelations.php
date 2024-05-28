@@ -97,11 +97,9 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    private function calculateDelta(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?array
     {
-        if (isset($params['isUntouchable']) && $params['isUntouchable']) {
-            return;
-        }
+        $db = Db::get();
 
         if (!isset($params['context'])) {
             $params['context'] = null;
@@ -112,10 +110,10 @@ abstract class AbstractRelations extends Data implements
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
-                        return;
+                        return null;
                     }
                 } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
-                    return;
+                    return null;
                 }
             }
         }
@@ -130,7 +128,7 @@ abstract class AbstractRelations extends Data implements
             $object instanceof Localizedfield => $object->getObject()->getClassId(),
             $object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
         };
-        $db = Db::get();
+
 
         if (null === $classId) {
             throw new \Exception('Invalid object type');
@@ -165,7 +163,7 @@ abstract class AbstractRelations extends Data implements
                     }
                 }
 
-                return;
+                return null;
             }
 
             if (is_array($relations) && !empty($relations)) {
@@ -188,8 +186,8 @@ abstract class AbstractRelations extends Data implements
         //Updates can happen to the index
         $updatedRelations = [];
 
-        foreach ($myNewRawRelations as $relation) {
-            foreach ($myCurrentRawRelations as $existingRelation) {
+        foreach ($myNewRawRelations as $i => $relation) {
+            foreach ($myCurrentRawRelations as $j => $existingRelation) {
                 if ($relation['dest_id'] === $existingRelation['dest_id'] &&
                     $relation['type'] === $existingRelation['type'] &&
                     $relation['fieldname'] === $existingRelation['fieldname'] &&
@@ -203,8 +201,12 @@ abstract class AbstractRelations extends Data implements
                         $updatedRelation['id'] = $existingRelation['id'];
 
                         $updatedRelations[] = $updatedRelation;
+                        unset($myNewRawRelations[$i]);
+                        unset($myCurrentRawRelations[$j]);
                     } else {
                         $existingRelations[] = $relation;
+                        unset($myNewRawRelations[$i]);
+                        unset($myCurrentRawRelations[$j]);
                     }
 
                     continue 2;
@@ -212,28 +214,60 @@ abstract class AbstractRelations extends Data implements
             }
 
             $newRelations[] = $relation;
+            unset($myNewRawRelations[$i]);
         }
 
-        foreach ($myCurrentRawRelations as $existingRelation) {
-            foreach ($myNewRawRelations as $relation) {
-                if ($relation['dest_id'] === $existingRelation['dest_id'] &&
-                    $relation['type'] === $existingRelation['type'] &&
-                    $relation['fieldname'] === $existingRelation['fieldname'] &&
-                    $relation['ownertype'] === $existingRelation['ownertype'] &&
-                    $relation['ownername'] === $existingRelation['ownername'] &&
-                    $relation['position'] === $existingRelation['position']) {
-                    continue 2;
+        $removedRelations = $myCurrentRawRelations;
+
+        return [
+            'newRelations' => $newRelations,
+            'existingRelations' => $existingRelations,
+            'updatedRelations' => $updatedRelations,
+            'removedRelations' => $removedRelations
+        ];
+    }
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    {
+        if (isset($params['isUntouchable']) && $params['isUntouchable']) {
+            return;
+        }
+
+        if (!isset($params['context'])) {
+            $params['context'] = null;
+        }
+        $context = $params['context'];
+
+        $classId = match (true) {
+            $object instanceof Concrete => $object->getClassId(),
+            $object instanceof AbstractData => $object->getObject()->getClassId(),
+            $object instanceof Localizedfield => $object->getObject()->getClassId(),
+            $object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
+        };
+
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+            if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
+                if ($object instanceof DataObject\Localizedfield) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                        return;
+                    }
+                } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                    return;
                 }
             }
-
-            $removedRelations[] = $existingRelation;
         }
+
+        $delta = $this->calculateDelta($object, $params);
+
+        $updatedRelations = $delta['updatedRelations'] ?? [];
+        $newRelations = $delta['newRelations'] ?? [];
+        $removedRelations = $delta['removedRelations'] ?? [];
 
         //Nothing changed, no need to update
         if (empty($updatedRelations) && empty($newRelations) && empty($removedRelations)) {
             return;
         }
 
+        $db = Db::get();
         foreach ($updatedRelations as $updatedRelation) {
             $db->update(
                 'object_relations_'.$classId,
