@@ -125,10 +125,10 @@ abstract class AbstractRelations extends Data implements
         $myNewRawRelations = [];
         $ignoreClassId = null;
         $classId = match (true) {
-        	$object instanceof Concrete => $object->getClassId(),
-        	$object instanceof AbstractData => $object->getObject()->getClassId(),
-        	$object instanceof Localizedfield => $object->getObject()->getClassId(),
-        	$object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
+            $object instanceof Concrete => $object->getClassId(),
+            $object instanceof AbstractData => $object->getObject()->getClassId(),
+            $object instanceof Localizedfield => $object->getObject()->getClassId(),
+            $object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
         };
         $db = Db::get();
 
@@ -206,6 +206,7 @@ abstract class AbstractRelations extends Data implements
                     } else {
                         $existingRelations[] = $relation;
                     }
+
                     continue 2;
                 }
             }

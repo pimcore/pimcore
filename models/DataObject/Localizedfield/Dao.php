@@ -563,7 +563,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
             // Fieldcollection don't support delta updates, so we delete the relations and insert them later again
             $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
-                )->getId().$dirtyLanguageCondition;
+            )->getId().$dirtyLanguageCondition;
             $this->db->executeStatement(
                 'DELETE FROM object_relations_'.$this->model->getObject()->getClassId().' WHERE '.$sql
             );

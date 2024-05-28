@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Relations;
 
-use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;

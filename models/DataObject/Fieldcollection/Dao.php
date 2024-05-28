@@ -193,8 +193,8 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($childDefinitions as $fd) {
                 if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                            '_self'
-                        )) {
+                        '_self'
+                    )) {
                         continue;
                     }
                 }

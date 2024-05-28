@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Db;
 use Pimcore\Db\Helper;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
