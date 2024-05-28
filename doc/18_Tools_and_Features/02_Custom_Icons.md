@@ -71,6 +71,8 @@ class Car extends AdminStyle
         if ($element instanceof \App\Model\Product\Car) {
             DataObject\Service::useInheritedValues(true, function () use ($element) {
                 if ($element->getObjectType() == 'actual-car') {
+                    // setting this to false is necessary for the elementIcon to actually be used
+                    $this->elementIconClass = false;
                     $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f697.svg';
                 }
             });

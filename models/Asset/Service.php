@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use function date;
+use function fpassthru;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -29,9 +31,14 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
+use function preg_quote;
+use function preg_replace;
+use function strlen;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function time;
+use function urldecode;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -488,18 +495,21 @@ class Service extends Model\Element\Service
             if (!$thumbnailConfig) {
                 // check if there's an item in the TmpStore
                 // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
-                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $config['prefix']);
+                $pathInfo = preg_replace('@^cache-buster\-[\d]+/@', '', $config['prefix']) . $config['thumbnail_name'] . '/' . $config['filename'];
                 $deferredConfigId = 'thumb_' . $config['asset_id'] . '__' . md5(urldecode($pathInfo));
 
                 if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                     $thumbnailConfig = $thumbnailConfigItem->getData();
-                    TmpStore::delete($deferredConfigId);
+                    // the dynamic config get's deleted out of the TmpStore in the Processor after the thumbnail
+                    // file was generated, to avoid race conditions and other unintended behavior
 
                     if (!$thumbnailConfig instanceof $thumbnailConfigClass) {
                         throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid '.$thumbnailConfigClass.' object');
                     }
                 } elseif (Config::getSystemConfiguration()['assets'][$config['type']]['thumbnails']['status_cache']) {
                     // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
+                    // because otherwise it's getting directly delivered from the cache by Processor:process()
+                    // without having the actual thumbnail file on the storage
                     $asset->getDao()->deleteFromThumbnailCache($config['thumbnail_name']);
                 }
             }
@@ -656,22 +666,45 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            $storage = Storage::get('thumbnail');
-            $storagePath = urldecode($uri);
-            if ($storage->fileExists($storagePath)) {
-                $stream = $storage->readStream($storagePath);
+            return self::getStreamedResponseForThumbnail($config, $uri);
+        }
 
-                return new StreamedResponse(function () use ($stream) {
-                    fpassthru($stream);
-                }, 200, [
-                    'Content-Type' => $storage->mimeType($storagePath),
-                    'Content-Length' => $storage->fileSize($storagePath),
-                ]);
-            } else {
-                $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
-                if ($thumbnail) {
-                    return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
-                }
+        return null;
+    }
+
+    /**
+     * @internal
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public static function getStreamedResponseForThumbnail(array $config, string $uri): ?StreamedResponse
+    {
+        $storage = Storage::get('thumbnail');
+        $storagePath = urldecode($uri);
+
+        $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+        if($prefix) {
+            $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
+        }
+
+        // thumbnail urls are at least 10 characters long
+        if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
+            $stream = $storage->readStream($storagePath);
+
+            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Cache-Control' => 'public, max-age=' . $lifetime,
+                'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                'Content-Type' => $storage->mimeType($storagePath),
+                'Content-Length' => $storage->fileSize($storagePath),
+            ]);
+        } else {
+            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
+            if ($thumbnail) {
+                return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
             }
         }
 

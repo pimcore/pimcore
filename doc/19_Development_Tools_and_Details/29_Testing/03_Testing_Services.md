@@ -6,11 +6,11 @@ retrieving them directly from the symfony container (regardless if there are pub
 The symfony default way is described [here](https://symfony.com/doc/current/testing.html#retrieving-services-in-the-test)
 and can be used in context within Pimcore too. 
 
-In combination with codeception, where is the [codeception symfony module](https://codeception.com/docs/modules/Symf) 
+In combination with codeception, where is the [codeception symfony module](https://codeception.com/docs/modules/Symfony) 
 that provides additional functionality as also grabbing services from 
 [the container](https://codeception.com/docs/modules/Symfony#grabService). 
 
-Currently, we are not using the [codeception symfony module](https://codeception.com/docs/modules/Symf) though, 
+Currently, we are not using the [codeception symfony module](https://codeception.com/docs/modules/Symfony) though, 
 to reduce test complexity and due to lack of compatibility with symfony 6.
 
 To still have the grab service functionality available, just use the 

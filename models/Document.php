@@ -89,7 +89,7 @@ class Document extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -920,6 +920,7 @@ class Document extends Element\AbstractElement
 
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;

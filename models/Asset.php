@@ -22,7 +22,6 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
-use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -168,7 +167,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -392,7 +391,7 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
-        if (file_exists($tmpFile)) {
+        if ($tmpFile !== null && file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
@@ -405,12 +404,12 @@ class Asset extends Element\AbstractElement
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
-        if ($size = @getimagesize($localPath)) {
+        if ($maxPixels && $size = @getimagesize($localPath)) {
             $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
-                $diff = sqrt(1 + ($maxPixels / $imagePixels));
+                $diff = sqrt(1 + $imagePixels / $maxPixels);
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
@@ -727,14 +726,13 @@ class Asset extends Element\AbstractElement
                     $storage->delete($dbPath);
                 }
 
-                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
-
-                try {
-                    $mimeType = $storage->mimeType($path);
-                } catch(UnableToRetrieveMetadata $e) {
+                $mimeType = MimeTypes::getDefault()->guessMimeType($this->getLocalFileFromStream($src));
+                if($mimeType === null) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
+
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());

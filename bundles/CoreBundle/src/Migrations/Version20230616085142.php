@@ -25,8 +25,10 @@ final class Version20230616085142 extends AbstractMigration
 {
     private const ID_COLUMN = 'id';
 
+    private const O_PREFIX = 'o_';
+
     private const PK_COLUMNS = '`' . self::ID_COLUMN .
-    '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
+        '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
 
     private const UNIQUE_KEY_NAME = 'metadata_un';
 
@@ -51,13 +53,16 @@ final class Version20230616085142 extends AbstractMigration
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
             $foreignKeyName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
+            $foreignKeyNameWithOPrefix = AbstractDao::getForeignKeyName($tableName, self::O_PREFIX . self::ID_COLUMN);
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
                 if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyName . '`');
+                } elseif ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyNameWithOPrefix)) {
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyNameWithOPrefix . '`');
                 }
 
-                if ($metaDataTable->hasPrimaryKey()) {
+                if ($metaDataTable->getPrimaryKey()) {
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY');
                 }
 

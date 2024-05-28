@@ -831,7 +831,7 @@ class Menu extends AbstractRenderer
                 $liClasses[] = $page->getClass();
             }
             // Add CSS class for parents to LI?
-            if ($renderParentClass && $page->hasChildren()) {
+            if ($renderParentClass && $page->hasVisiblePages()) {
                 // Check max depth
                 if ((is_int($maxDepth) && ($depth + 1 < $maxDepth))
                     || !is_int($maxDepth)

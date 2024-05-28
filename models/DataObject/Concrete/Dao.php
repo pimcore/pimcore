@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Concrete;
 
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -63,7 +62,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->getData();
@@ -184,7 +183,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
         $untouchable = [];
-        $db = Db::get();
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
             if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {

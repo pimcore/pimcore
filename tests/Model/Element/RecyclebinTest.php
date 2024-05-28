@@ -73,10 +73,12 @@ class RecyclebinTest extends ModelTestCase
 
         //recycle asserts
         $recycledItems = new Item\Listing();
-        $this->assertTrue($storage->fileExists($recycledItems->current()->getStoreageFile()));
+        $this->assertTrue($storage->fileExists($recycledItems->current()->getStorageFile()));
 
-        $recycledStorage = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
+        $recycledStorage = unserialize($storage->read($recycledItems->current()->getStorageFile()));
         $this->assertEquals($objectId, $recycledStorage->getId(), 'Recycled Object not found.');
+
+        $this->assertEquals($recycledItems->current()->getStorageFile(), $recycledItems->current()->getStoreageFile());    // deprecated method name
 
         //restore asserts
         $recycledItems->current()->restore();
@@ -114,7 +116,7 @@ class RecyclebinTest extends ModelTestCase
 
         $storage = Storage::get('recycle_bin');
         //recycle bin item storage file
-        $recycledContent = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
+        $recycledContent = unserialize($storage->read($recycledItems->current()->getStorageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
         $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true)->getData(), 'Expected recycled child object');

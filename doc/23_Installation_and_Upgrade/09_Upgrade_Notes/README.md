@@ -1,18 +1,84 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Html to Image]
+- [Gotenberg] Bumped the lowest requirement of `gotenberg-php` from `^2.0` to `^2.4` to add support of passing screenshot size
+#### [Assets]
+- MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
+#### [DBAL]
+- Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
+#### [Composer]
+- Removed requirement of "phpoffice/phpspreadsheet" due it being not in used, more specifically moved it to the specific bundle who actually use it. Please check and adapt your project's composer requirement accordingly.
+
+## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
+### Assets Thumbnails
+- Thumbnail generation for Assets, Documents and Videos now only support the following formats out of the box: `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'`.
+- You can extend this list by adding your formats on the bottom: 
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        allowed_formats:
+          - 'avif'
+          - 'eps'
+          - 'gif'
+          - 'jpeg'
+          - 'jpg'
+          - 'pjpeg'
+          - 'png'
+          - 'svg'
+          - 'tiff'
+          - 'webm'
+          - 'webp'
+          - 'pdf' # Add your desired format here
+```
+- High resolution scaling factor for image thumbnails has now been limited to a maximum of `5.0`. If you need to scale an image more than that, you can use the `max_scaling_factor` option in the configuration.
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        max_scaling_factor: 6.0
+```
+
 ## Pimcore 11.2.0
 ### Elements
 #### [Documents]:
 - Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+- Page previews and version comparisons can now be rendered using Gotenberg v8.
+  To replace Headless Chrome, upgrade to Gotenberg v8 and upgrade the client library: `composer require gotenberg/gotenberg-php:^2`
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
-
+- All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
+- `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
 -----------------
 ### General
 #### [Localization]
 - Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
 #### [Navigation]
 - Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+#### [Symfony]
+- Bumped Symfony packages to "^6.4".
+#### [Value Objects]
+- Added new self validating Value Objects:
+  - `Pimcore\ValueObject\BooleanArray`
+  - `Pimcore\ValueObject\IntegerArray`
+  - `Pimcore\ValueObject\Path`
+  - `Pimcore\ValueObject\PositiveInteger`
+  - `Pimcore\ValueObject\PositiveIntegerArray`
+  - `Pimcore\ValueObject\StringArray`
+
+> [!WARNING]  
+> For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
+> Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
+> 
+> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/11.x/bin/console
+
 
 ## Pimcore 11.1.0
 ### Elements
@@ -516,7 +582,7 @@ pimcore:
 - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
-- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
+- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
 -  Removed the `attributes` field from the link editable.
 -  Deprecated WkHtmlToImage has been removed.
 -  Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)

@@ -6,9 +6,34 @@
 TinyMCE bundle provides TineMCE as WYSIWYG-editor.
 Similar to Textarea and Input you can use the WYSIWYG editable in the templates to provide rich-text editing.
 
+## Installation
+
+Make sure the bundle is enabled in the `config/bundles.php` file. The following lines should be added:
+
+```php
+use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
+// ...
+
+return [
+    // ...
+    PimcoreTinymceBundle::class => ['all' => true],
+    // ...
+];
+```
+
+```bash
+bin/console pimcore:bundle:install PimcoreTinymceBundle
+```
+
 ## Configuration
 
 Available configuration options can be found here: [config options](https://www.tiny.cloud/docs/configure/)
+
+## Default Configuration
+
+`convert_unsafe_embeds` is set to `true` by default.
+This means that unsafe elements like `<embed>` or `<object>` will be converted to more restrictive alternatives.
+For more details please take a look at the [TinyMCE documentation](https://www.tiny.cloud/docs/configure/content-filtering/#convert_unsafe_embeds).
 
 ## Examples
 

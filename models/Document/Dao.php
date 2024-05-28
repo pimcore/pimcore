@@ -42,7 +42,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
@@ -61,7 +61,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             // try to find a page with a pretty URL (use the original $path)
@@ -69,7 +69,7 @@ class Dao extends Model\Element\Dao
                 'prettyUrl' => $path,
             ]);
 
-            if (!empty($data['id'])) {
+            if ($data) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
@@ -286,7 +286,7 @@ class Dao extends Model\Element\Dao
                 $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                if (isset($id)) {
+                if ($id !== null) {
                     $property->setCid($id);
                 }
                 $property->setName($propertyRaw['name']);

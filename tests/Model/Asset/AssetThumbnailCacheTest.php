@@ -97,6 +97,7 @@ class AssetThumbnailCacheTest extends TestCase
             'prefix' => '',
         ]);
         $response = $controller->thumbnailAction($subRequest);
+        $response->sendContent(); // calls getStream() in order to generate the thumbnail file
 
         //check if cache is filled
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));

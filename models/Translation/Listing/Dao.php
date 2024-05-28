@@ -37,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
-        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
@@ -68,7 +68,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -103,7 +103,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder('*');
-        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+        $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $translationsData;
     }
@@ -117,7 +117,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
-            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
             foreach ($translationsData as $t) {
                 $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
 

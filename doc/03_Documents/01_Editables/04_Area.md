@@ -22,7 +22,7 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```twig
 <div>
-{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
+{{ pimcore_area("myArea", {"type": "gallery-single-images"}) }}
 </div>
 ```
 
@@ -30,11 +30,11 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```twig
 <div>
-    {{ pimcore_area('myArea', {
-        type: 'gallery-single-images',
+    {{ pimcore_area("myArea", {
+        type: "gallery-single-images",
         params: {
-            'gallery-single-images': {
-                'param1': 123,
+            "gallery-single-images": {
+                "param1": 123,
             }
         }
     }) }}

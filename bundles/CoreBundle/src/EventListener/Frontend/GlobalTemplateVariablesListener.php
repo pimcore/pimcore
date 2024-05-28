@@ -75,6 +75,10 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
             if ($globals !== false) {

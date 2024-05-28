@@ -134,7 +134,7 @@ class Dao extends AbstractDao
     /**
      * get vote by id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById(?int $id = null): void
     {
@@ -144,7 +144,7 @@ class Dao extends AbstractDao
 
         $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
-        if(!$data) {
+        if (!$data) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
         }
 
@@ -415,7 +415,7 @@ class Dao extends Listing\Dao\AbstractDao
     public function loadIdList(): array
     {
         $query = $this->getQueryBuilder();
-        $objectIds = $this->db->fetchFirstColumn((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $objectIds = $this->db->fetchFirstColumn($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
         $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
 
         return array_map('intval', $objectIds);
@@ -447,7 +447,7 @@ class Dao extends Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
-        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return (int) $totalCount;
     }

@@ -20,7 +20,6 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -118,14 +117,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         return $blockedVars;
@@ -242,7 +241,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
+                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
 
                     Service::recursiveResetDirtyMap($object);
 
@@ -1045,7 +1044,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $offset = $arguments[2] ?? 0;
             $objectTypes = $arguments[3] ?? null;
 
-            $defaultCondition = $propertyName.' = '.Db::get()->quote($value).' ';
+            $defaultCondition = $db->quoteIdentifier($propertyName).' = '.$db->quote($value).' ';
 
             $listConfig = [
                 'condition' => $defaultCondition,

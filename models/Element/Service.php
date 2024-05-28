@@ -765,7 +765,7 @@ class Service extends Model\AbstractModel
                 foreach ($properties as $name => $value) {
                     //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
                     //specific version of the object and must not be reloaded with DB version of object
-                    if (($data instanceof ObjectAwareFieldInterface || $data instanceof DataObject\Localizedfield) && $name === 'object') {
+                    if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
                         continue;
                     }
 
@@ -803,7 +803,7 @@ class Service extends Model\AbstractModel
         // correct wrong path (root-node problem)
         $path = str_replace('//', '/', $path);
 
-        if (str_contains($path, '%')) {
+        if (str_contains($path, '%') && mb_check_encoding(rawurldecode($path), 'UTF-8')) {
             $path = rawurldecode($path);
         }
 
