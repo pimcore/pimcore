@@ -666,6 +666,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
+            //Reset Relational data to force a reload
+            $this->__rawRelationData = null;
 
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();

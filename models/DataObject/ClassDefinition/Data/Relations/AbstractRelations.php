@@ -186,7 +186,7 @@ abstract class AbstractRelations extends Data implements
         //Updates can happen to the index
         $updatedRelations = [];
 
-        foreach ($myNewRawRelations as $i => $relation) {
+        foreach ($myNewRawRelations as $relation) {
             foreach ($myCurrentRawRelations as $j => $existingRelation) {
                 if ($relation['dest_id'] === $existingRelation['dest_id'] &&
                     $relation['type'] === $existingRelation['type'] &&
@@ -201,11 +201,9 @@ abstract class AbstractRelations extends Data implements
                         $updatedRelation['id'] = $existingRelation['id'];
 
                         $updatedRelations[] = $updatedRelation;
-                        unset($myNewRawRelations[$i]);
                         unset($myCurrentRawRelations[$j]);
                     } else {
                         $existingRelations[] = $relation;
-                        unset($myNewRawRelations[$i]);
                         unset($myCurrentRawRelations[$j]);
                     }
 
@@ -214,9 +212,9 @@ abstract class AbstractRelations extends Data implements
             }
 
             $newRelations[] = $relation;
-            unset($myNewRawRelations[$i]);
         }
 
+        // the matching relations are unset, so the remaining are the ones that need to be removed
         $removedRelations = $myCurrentRawRelations;
 
         return [
