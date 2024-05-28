@@ -97,7 +97,12 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-    private function calculateDelta(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?array
+    /**
+     *
+     * @internal
+     *
+     */
+    public function calculateDelta(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?array
     {
         $db = Db::get();
 
