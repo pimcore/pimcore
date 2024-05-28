@@ -356,7 +356,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $tags;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 

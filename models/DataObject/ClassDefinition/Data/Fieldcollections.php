@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -321,6 +322,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
+
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return [];
+        }
 
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -293,6 +294,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
+
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return [];
+        }
 
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();

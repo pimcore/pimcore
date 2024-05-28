@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Config;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -240,8 +241,12 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return [];
+        }
+
         $dependencies = [parent::resolveDependencies()];
 
         foreach ($this->getEditables() as $editable) {
