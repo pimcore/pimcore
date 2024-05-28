@@ -71,7 +71,6 @@
     "nesbot/carbon": "^2.65",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
-    "phpoffice/phpspreadsheet": "^1.24",
     "presta/sitemap-bundle": "^3.3",
     "rybakit/twig-deferred-extension": "^3.0",
     "sabre/dav": "^4.1.2",

@@ -12,6 +12,8 @@
 - MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
 #### [DBAL]
 - Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
+#### [Composer]
+- Removed requirement of "phpoffice/phpspreadsheet" due it being not in used, more specifically moved it to the specific bundle who actually use it. Please check and adapt your project's composer requirement accordingly.
 
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
