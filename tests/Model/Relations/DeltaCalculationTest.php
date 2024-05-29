@@ -106,7 +106,7 @@ class DeltaCalculationTest extends ModelTestCase
         $object->save();
 
         // Swap 1 and 2
-        $this->swapOrder($metaDataList, 1, 2);
+        $metaDataList = $this->swapOrder($metaDataList, 1, 2);
         $object->setMultipleManyToMany($metaDataList);
         $this->deltaCheck([0, 2, 2, 0], $fd, $object);
         $object->save();
@@ -115,7 +115,7 @@ class DeltaCalculationTest extends ModelTestCase
 
         // Swap 0 and 2 and delete first one at the same time
         $newMetaDataList = $object->getMultipleManyToMany();
-        $this->swapOrder($newMetaDataList, 0, 2);
+        $newMetaDataList = $this->swapOrder($newMetaDataList, 0, 2);
         array_shift($newMetaDataList);
         $object->setMultipleManyToMany($newMetaDataList);
         $this->deltaCheck([0, 1, 2, 1], $fd, $object);
