@@ -177,10 +177,13 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 
         if (count($job->getSteps()) <= $nextStep) {
             $jobRun->setCurrentStep(null);
-            $jobRun->setCurrentMessage(null);
-            $jobRun->setState(JobRunStates::FINISHED);
+
             if ($this->jobRunErrorLogRepository->getLogsByJobRunId($jobRun->getId())) {
                 $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
+            }
+            else {
+                $jobRun->setCurrentMessage(null);
+                $jobRun->setState(JobRunStates::FINISHED);
             }
             $this->jobRunRepository->update($jobRun);
 
