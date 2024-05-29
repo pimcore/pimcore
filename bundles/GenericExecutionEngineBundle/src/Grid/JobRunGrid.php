@@ -55,12 +55,13 @@ final class JobRunGrid implements JobRunGridInterface
             'current_step' => $jobRun->getCurrentStep(),
             'current_message' => $currentMessage->getMessage(),
             'canCancel' => $jobRun->getState() === JobRunStates::RUNNING,
-            'log' => array_map(static fn (LogLine $line) =>
-            [
-                'logMessage' => $line->getLogLine(),
-                'createdAt' => $line->getCreatedAt()->format(DateTimeInterface::ATOM),
-            ],
-            $jobRun->getLogs()),
+            'log' =>
+                array_map(static fn (LogLine $line) =>
+                [
+                    'logMessage' => $line->getLogLine(),
+                    'createdAt' => $line->getCreatedAt()->format(DateTimeInterface::ATOM),
+                ],
+                $jobRun->getLogs()),
         ];
     }
 }

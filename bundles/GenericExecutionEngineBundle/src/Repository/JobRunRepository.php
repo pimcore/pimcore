@@ -38,7 +38,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
         private readonly CurrentMessageProviderInterface $currentMessageProvider,
         private readonly EntityManagerInterface $pimcoreEntityManager,
         private readonly ExecutionContextInterface $executionContext,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $genericExecutionEngineLogger,
         private readonly PermissionServiceInterface $permissionService,
         private readonly Translator $translator,
     ) {
@@ -104,7 +104,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
             ]
         );
 
-        $this->logger->info("[JobRun {$jobRun->getId()}]: " . $message);
+        $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: " . $message);
 
         $this->pimcoreEntityManager->refresh($jobRun);
     }

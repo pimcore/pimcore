@@ -38,7 +38,7 @@ abstract class AbstractAutomationActionHandler
 {
     use ValidateStepConfigurationTrait;
 
-    protected ?LoggerInterface $logger = null;
+    protected ?LoggerInterface $genericExecutionEngineLogger = null;
 
     protected ?JobRunRepositoryInterface $jobRunRepository = null;
     private ?JobRunExtractorInterface $jobRunExtractor = null;
@@ -74,10 +74,10 @@ abstract class AbstractAutomationActionHandler
     }
 
     #[Required]
-    public function setLogger(LoggerInterface $logger): void
+    public function setLogger(LoggerInterface $genericExecutionEngineLogger): void
     {
-        if (!$this->logger) {
-            $this->logger = $logger;
+        if (!$this->genericExecutionEngineLogger) {
+            $this->genericExecutionEngineLogger = $genericExecutionEngineLogger;
         }
     }
 

@@ -32,7 +32,7 @@ final class StepConditionMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly JobExecutionAgentInterface $jobExecutionAgent,
         private readonly JobRunExtractorInterface $jobRunExtractor,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $genericExecutionEngineLogger,
     ) {
     }
 
@@ -74,7 +74,7 @@ final class StepConditionMiddleware implements MiddlewareInterface
             $params
         );
 
-        $this->logger->info(
+        $this->genericExecutionEngineLogger->info(
             "[JobRun {$jobRun->getId()}]:
             Skipping step $stepName with id $stepId of Job '$jobName', job condition not met."
         );

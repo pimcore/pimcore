@@ -3,6 +3,9 @@ imports:
     - { resource: doctrine.yaml }
     - { resource: doctrine_migrations.yaml }
 
+monolog:
+    channels: ['generic_execution_engine']
+
 framework:
     messenger:
         buses:

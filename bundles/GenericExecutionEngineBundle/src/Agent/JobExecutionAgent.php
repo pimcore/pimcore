@@ -47,7 +47,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         private readonly string $errorHandlingMode,
         private readonly JobRunRepositoryInterface $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $genericExecutionEngineLogger,
         private readonly MessageBusInterface $executionEngineBus,
         private readonly Translator $translator
     ) {
@@ -107,7 +107,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     public function cancelJobRun(int $jobRunId): void
     {
         $jobRun = $this->jobRunRepository->getJobRunById($jobRunId, true);
-        $this->logger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled.");
+        $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled.");
         $jobRun->setState(JobRunStates::CANCELLED);
         $this->jobRunRepository->updateLogLocalized(
             $jobRun,
@@ -160,13 +160,13 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $this->logger->info(
+        $this->genericExecutionEngineLogger->info(
             "[JobRun {$jobRun->getId()}]:" .
             " Job step {$jobRun->getCurrentStep()} of Job '{$job->getName()}' finished."
         );
 
         if ($jobRun->getState() === JobRunStates::CANCELLED) {
-            $this->logger->info(
+            $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: Cancel stop execution due to JobRun was cancelled."
             );
 
@@ -186,7 +186,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             }
             $this->jobRunRepository->update($jobRun);
 
-            $this->logger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
+            $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
         } else {
             $jobRun->setProcessedElementsForStep(0);
             $jobRun->setCurrentStep($nextStep);
@@ -205,7 +205,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
-        $this->logger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
+        $this->genericExecutionEngineLogger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
         $errorMessage = $throwable->getMessage();
         if ($this->isDev) {
             $errorMessage .= ' Stack trace: ' . str_replace("\n", '', $throwable->getTraceAsString());
@@ -263,7 +263,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     {
         $this->stopMessengerWorkers();
         $this->setJobRunError($jobRun, $errorMessage, [], false);
-        $this->logger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
+        $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
         $this->jobRunRepository->updateLogLocalized(
             $jobRun,
             'gee_job_failed',
@@ -292,12 +292,12 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $jobRun->setState($status ?? JobRunStates::FAILED);
         if ($translate) {
             $translatedMessage = $this->translator->trans($errorMessage, $params);
-            $this->logger->info(
+            $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $translatedMessage . ' --> Job execution failed.'
             );
             $this->jobRunRepository->updateLogLocalized($jobRun, $errorMessage, $params);
         } else {
-            $this->logger->info(
+            $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $errorMessage . ' --> Job execution failed.'
             );
             $jobRun->setCurrentMessage($errorMessage);
@@ -322,7 +322,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $this->logger->info(
+        $this->genericExecutionEngineLogger->info(
             "[JobRun {$jobRun->getId()}]:" .
             " Starting job step {$jobRun->getCurrentStep()} of Job '{$job->getName()}'."
         );
