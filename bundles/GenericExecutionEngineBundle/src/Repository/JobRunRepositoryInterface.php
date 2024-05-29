@@ -30,7 +30,10 @@ interface JobRunRepositoryInterface
      * @throws Exception
      */
     public function updateLogLocalized(
-        JobRun $jobRun, string $message, array $params = [], bool $updateCurrentMessage = true,
+        JobRun $jobRun,
+        string $message,
+        array $params = [],
+        bool $updateCurrentMessage = true,
         string $defaultLocale = 'en'
     ): void;
 

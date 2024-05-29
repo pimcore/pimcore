@@ -21,11 +21,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
-use Pimcore\Bundle\StaticResolverBundle\Models\Element\ServiceResolver;
 use Pimcore\Helper\SymfonyExpression\ExpressionServiceInterface;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
@@ -117,7 +113,7 @@ final class JobRunExtractor implements JobRunExtractorInterface
     ): ?ElementInterface
     {
         $elementDescriptor = $message->getElement();
-        if(!$elementDescriptor || !in_array($elementDescriptor->getType(), $types, true)) {
+        if (!$elementDescriptor || !in_array($elementDescriptor->getType(), $types, true)) {
             return null;
         }
 
@@ -126,7 +122,7 @@ final class JobRunExtractor implements JobRunExtractorInterface
             $elementDescriptor->getId()
         );
 
-        if(!$element) {
+        if (!$element) {
             return null;
         }
 

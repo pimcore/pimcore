@@ -180,8 +180,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 
             if ($this->jobRunErrorLogRepository->getLogsByJobRunId($jobRun->getId())) {
                 $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
-            }
-            else {
+            } else {
                 $jobRun->setCurrentMessage(null);
                 $jobRun->setState(JobRunStates::FINISHED);
             }
@@ -351,7 +350,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->executionEngineBus->dispatch(new $messageString(
                 $jobRun->getId(),
                 $jobRun->getCurrentStep(),
-                $selectedElement)
+                $selectedElement
+                )
             );
         }
     }

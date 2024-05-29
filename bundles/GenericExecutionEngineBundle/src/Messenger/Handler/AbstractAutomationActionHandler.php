@@ -52,7 +52,7 @@ abstract class AbstractAutomationActionHandler
     #[Required]
     public function setJobRunRepository(JobRunRepositoryInterface $jobRunRepository): void
     {
-        if(!$this->jobRunRepository) {
+        if (!$this->jobRunRepository) {
             $this->jobRunRepository = $jobRunRepository;
         }
     }
@@ -60,7 +60,7 @@ abstract class AbstractAutomationActionHandler
     #[Required]
     public function setJobRunExtractor(JobRunExtractorInterface $jobRunExtractor): void
     {
-        if(!$this->jobRunExtractor) {
+        if (!$this->jobRunExtractor) {
             $this->jobRunExtractor = $jobRunExtractor;
         }
     }
@@ -68,7 +68,7 @@ abstract class AbstractAutomationActionHandler
     #[Required]
     public function setJobExecutionAgent(JobExecutionAgentInterface $jobExecutionAgent): void
     {
-        if(!$this->jobExecutionAgent) {
+        if (!$this->jobExecutionAgent) {
             $this->jobExecutionAgent = $jobExecutionAgent;
         }
     }
@@ -76,7 +76,7 @@ abstract class AbstractAutomationActionHandler
     #[Required]
     public function setLogger(LoggerInterface $logger): void
     {
-        if(!$this->logger) {
+        if (!$this->logger) {
             $this->logger = $logger;
         }
     }
@@ -166,7 +166,7 @@ abstract class AbstractAutomationActionHandler
             $types
         );
 
-        if(!$subject) {
+        if (!$subject) {
             throw new UnexpectedValueException('No subject type found');
         }
 

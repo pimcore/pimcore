@@ -69,7 +69,10 @@ final class JobRunRepository implements JobRunRepositoryInterface
      * @throws Exception
      */
     public function updateLogLocalized(
-        JobRun $jobRun, string $message, array $params = [], bool $updateCurrentMessage = true,
+        JobRun $jobRun,
+        string $message,
+        array $params = [],
+        bool $updateCurrentMessage = true,
         string $defaultLocale = 'en'
     ): void {
         $domain = $this->executionContext->getTranslationDomain($jobRun->getExecutionContext());
@@ -144,7 +147,8 @@ final class JobRunRepository implements JobRunRepositoryInterface
             $params['ownerId'] = $ownerId;
         }
 
-        return $this->pimcoreEntityManager->getRepository(JobRun::class)->findBy($params,
+        return $this->pimcoreEntityManager->getRepository(JobRun::class)->findBy(
+            $params,
             $orderBy,
             $limit,
             $offset

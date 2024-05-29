@@ -40,7 +40,8 @@ class PimcoreGenericExecutionEngineExtension extends Extension
 
         $definition = $container->getDefinition(JobExecutionAgentInterface::class);
         $definition->setArgument(
-            '$errorHandlingMode', $config['error_handling'] ?? ErrorHandlingMode::CONTINUE_ON_ERROR->value
+            '$errorHandlingMode',
+            $config['error_handling'] ?? ErrorHandlingMode::CONTINUE_ON_ERROR->value
         );
     }
 }
