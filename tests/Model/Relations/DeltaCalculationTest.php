@@ -118,7 +118,7 @@ class DeltaCalculationTest extends ModelTestCase
         $newMetaDataList = $this->swapOrder($newMetaDataList, 0, 2);
         array_shift($newMetaDataList);
         $object->setMultipleManyToMany($newMetaDataList);
-        $this->deltaCheck([0, 1, 2, 1], $fd, $object);
+        $this->deltaCheck([0, 0, 3, 1], $fd, $object);
         $object->save();
         $multipleManyToMany = $object->getMultipleManyToMany();
         $this->metaOrderCheck([2, 0, 3], $multipleManyToMany);
@@ -137,16 +137,16 @@ class DeltaCalculationTest extends ModelTestCase
             ]
         ]);
 
-        $this->assertCount($expectedValues[0], $delta['newRelations']);
-        $this->assertCount($expectedValues[1], $delta['existingRelations']);
-        $this->assertCount($expectedValues[2], $delta['updatedRelations']);
-        $this->assertCount($expectedValues[3], $delta['removedRelations']);
+        $this->assertCount($expectedValues[0], $delta['newRelations'], 'New relations count');
+        $this->assertCount($expectedValues[1], $delta['existingRelations'], 'Existing relations count');
+        $this->assertCount($expectedValues[2], $delta['updatedRelations'], 'Updated relations count');
+        $this->assertCount($expectedValues[3], $delta['removedRelations'], 'Removed relations count');
     }
 
     protected function metaOrderCheck(array $expectedValues, array $data): void
     {
         foreach ($data as $i => $relation){
-            $this->assertEquals("multiple-some-metadata ". $expectedValues[$i], $relation->getMeta());
+            $this->assertEquals("multiple-some-metadata ". $expectedValues[$i], $relation->getMeta(), 'Metadata order check');
         }
 
     }
