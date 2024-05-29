@@ -108,7 +108,7 @@ class DeltaCalculationTest extends ModelTestCase
         // Swap 1 and 2
         $this->swapOrder($metaDataList, 1, 2);
         $object->setMultipleManyToMany($metaDataList);
-        $this->deltaCheck([0, 3, 2, 0], $fd, $object);
+        $this->deltaCheck([0, 2, 2, 0], $fd, $object);
         $object->save();
         $multipleManyToMany = $object->getMultipleManyToMany();
         $this->metaOrderCheck([0, 2, 1, 3], $multipleManyToMany);
@@ -118,7 +118,7 @@ class DeltaCalculationTest extends ModelTestCase
         $this->swapOrder($newMetaDataList, 0, 2);
         array_shift($newMetaDataList);
         $object->setMultipleManyToMany($newMetaDataList);
-        $this->deltaCheck([0, 2, 2, 1], $fd, $object);
+        $this->deltaCheck([0, 1, 2, 1], $fd, $object);
         $object->save();
         $multipleManyToMany = $object->getMultipleManyToMany();
         $this->metaOrderCheck([2, 0, 3], $multipleManyToMany);
