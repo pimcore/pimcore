@@ -82,7 +82,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'versions', 'properties', 'permissions', 'permissionsforuser', 'childamount', 'apipluginbroker', 'resource',
         'parentClass', 'definition', 'locked', 'language', 'omitmandatorycheck', 'idpath', 'object', 'fieldname',
         'property', 'parentid', 'scheduledtasks', 'latestVersion', 'haschildren', 'siblings', 'hassiblings',
-        'childrenSortby', 'childrensortorder', 'versioncount', 'dirtylanguages', 'dirtyfields', 'classTitle',
+        'childrensortby', 'childrensortorder', 'versioncount', 'dirtylanguages', 'dirtyfields', 'classtitle', 'classid',
     ];
 
     /**
@@ -1352,7 +1352,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function isForbiddenName(): bool
     {
-        return in_array($this->getName(), self::FORBIDDEN_NAMES);
+        return in_array(strtolower($this->getName() ?? ''), self::FORBIDDEN_NAMES);
     }
 
     public function jsonSerialize(): mixed
