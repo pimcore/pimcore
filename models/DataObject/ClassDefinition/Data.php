@@ -1320,11 +1320,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         if ($name === null) {
             return true;
         }
-        if ($name === 'localizedfields' && !$this instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+        $lowerCasedName = strtolower($name);
+        if (
+            !$this instanceof DataObject\ClassDefinition\Data\Localizedfields &&
+            $lowerCasedName === 'localizedfields'
+        ) {
             return true;
         }
 
-        return in_array(strtolower($name), self::FORBIDDEN_NAMES);
+        return in_array($lowerCasedName, self::FORBIDDEN_NAMES);
     }
 
     public function jsonSerialize(): mixed
