@@ -76,13 +76,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
-        'id', 'key', 'path', 'type', 'index', 'classname', 'creationdate', 'userowner', 'value', 'class', 'list',
-        'fullpath', 'childs', 'children', 'values', 'cachetag', 'cachetags', 'parent', 'published', 'valuefromparent',
-        'userpermissions', 'dependencies', 'modificationdate', 'usermodification', 'byid', 'bypath', 'data',
-        'versions', 'properties', 'permissions', 'permissionsforuser', 'childamount', 'apipluginbroker', 'resource',
-        'parentClass', 'definition', 'locked', 'language', 'omitmandatorycheck', 'idpath', 'object', 'fieldname',
-        'property', 'parentid', 'scheduledtasks', 'latestVersion', 'haschildren', 'siblings', 'hassiblings',
-        'childrensortby', 'childrensortorder', 'versioncount', 'dirtylanguages', 'dirtyfields', 'classtitle', 'classid',
+        'apipluginbroker', 'byid', 'bypath', 'cachetag', 'cachetags', 'childamount', 'children', 'childrensortby',
+        'childrensortorder', 'childs', 'class', 'classid', 'classname', 'classtitle', 'closestparentofclass',
+        'creationdate', 'dao', 'data', 'definition', 'dependencies', 'dirtyfields', 'dirtylanguages', 'fieldname',
+        'fullpath', 'haschildren', 'hassiblings', 'id', 'idpath', 'index', 'key', 'language', 'latestversion',
+        'lazyloadedfieldnames', 'list', 'localizedfields', 'locked', 'modificationdate', 'nextparentforinheritance',
+        'object', 'omitmandatorycheck', 'parent', 'parentclass', 'parentid', 'path', 'permissions',
+        'permissionsforuser', 'properties', 'property', 'published', 'relationdata', 'resource', 'scheduledtasks',
+        'siblings', 'type', 'usermodification', 'userowner', 'userpermissions', 'value', 'valueforfieldname',
+        'valuefromparent', 'values', 'versioncount', 'versions',
     ];
 
     /**
