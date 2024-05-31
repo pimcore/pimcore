@@ -80,7 +80,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'childrensortorder', 'childs', 'class', 'classid', 'classname', 'classtitle', 'closestparentofclass',
         'creationdate', 'dao', 'data', 'definition', 'dependencies', 'dirtyfields', 'dirtylanguages', 'fieldname',
         'fullpath', 'haschildren', 'hassiblings', 'id', 'idpath', 'index', 'key', 'language', 'latestversion',
-        'lazyloadedfieldnames', 'list', 'localizedfields', 'locked', 'modificationdate', 'nextparentforinheritance',
+        'lazyloadedfieldnames', 'list', 'locked', 'modificationdate', 'nextparentforinheritance',
         'object', 'omitmandatorycheck', 'parent', 'parentclass', 'parentid', 'path', 'permissions',
         'permissionsforuser', 'properties', 'property', 'published', 'relationdata', 'resource', 'scheduledtasks',
         'siblings', 'type', 'usermodification', 'userowner', 'userpermissions', 'value', 'valueforfieldname',
