@@ -89,21 +89,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Returns the data for the editmode
-     *
-     *
      */
     abstract public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
-     *
-     *
      */
     abstract public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Checks if data is valid for current data field
-     *
      *
      * @throws \Exception
      */
@@ -129,8 +124,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * converts object data to a simple string value or CSV Export
-     *
-     *
      *
      * @internal
      */
@@ -369,9 +362,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     *
-     *
-     *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
@@ -388,7 +378,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * returns sql query statement to filter according to this data types value(s)
      *
      * @param array $params optional params used to change the behavior
-     *
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -492,8 +481,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
-     *
-     *
      */
     public function getGetterCode(DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -543,8 +530,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
-     *
-     *
      */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -631,8 +616,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
-     *
-     *
      */
     public function getGetterCodeObjectbrick(DataObject\Objectbrick\Definition $brickClass): string
     {
@@ -680,8 +663,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
-     *
-     *
      */
     public function getSetterCodeObjectbrick(DataObject\Objectbrick\Definition $brickClass): string
     {
@@ -763,8 +744,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
-     *
-     *
      */
     public function getGetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition): string
     {
@@ -804,8 +783,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
-     *
-     *
      */
     public function getSetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition): string
     {
@@ -876,8 +853,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
-     *
-     *
      */
     public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -916,8 +891,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
-     *
-     *
      */
     public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
@@ -997,7 +970,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Creates filter method code for listing classes
-     *
      */
     public function getFilterCode(): string
     {
@@ -1085,8 +1057,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *  - "field" => the name of (this) field
      *  - "key" => the key of the data element
      *  - "data" => the data
-     *
-     *
      */
     public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
@@ -1106,9 +1076,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *                          and will not be touched by the editor in any way.
      *      - "disabled" => whether the data element can be edited or not
      *      - "title" => pretty name describing the data element
-     *
-     *
-     *
      */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -1140,8 +1107,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     protected function getDataFromObjectParam(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): mixed
@@ -1314,7 +1279,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Returns if datatype supports data inheritance
-     *
      */
     public function supportsInheritance(): bool
     {
@@ -1335,7 +1299,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * Returns if datatype supports listing filters: getBy, filterBy
-     *
      */
     public function isFilterable(): bool
     {
@@ -1345,7 +1308,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @param string|int|float|array|Model\Element\ElementInterface $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
-     *
      */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
@@ -1354,7 +1316,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function isForbiddenName(): bool
     {
-        return in_array(strtolower($this->getName() ?? ''), self::FORBIDDEN_NAMES);
+        $name = $this->getName();
+        if ($name === null) {
+            return true;
+        }
+        if ($name === 'localizedfields' && !$this instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            return true;
+        }
+
+        return in_array(strtolower($name), self::FORBIDDEN_NAMES);
     }
 
     public function jsonSerialize(): mixed
