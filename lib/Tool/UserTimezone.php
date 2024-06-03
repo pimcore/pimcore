@@ -28,8 +28,8 @@ final class UserTimezone
 
     public static function applyTimezone(\DateTimeInterface $date): \DateTimeInterface
     {
-        if (self::$userTimezone && method_exists($date, 'setTimezone')) {
-            $date->setTimezone(new \DateTimeZone(self::$userTimezone));
+        if (self::getUserTimezone() && method_exists($date, 'setTimezone')) {
+            $date->setTimezone(new \DateTimeZone(self::getUserTimezone()));
         }
         return $date;
     }
