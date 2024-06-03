@@ -57,9 +57,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
-    public function startJobExecution(Job $job, ?int $ownerId): JobRun
+    public function startJobExecution(
+        Job $job,
+        ?int $ownerId,
+        string $executionContext = 'default'
+    ): JobRun
     {
         $jobRun = $this->jobRunRepository->createFromJob($job, $ownerId);
+        $jobRun->setExecutionContext($executionContext);
         $jobRun->setState(JobRunStates::RUNNING);
         $jobRun->setCurrentStep(0);
         $jobRun->setTotalElements(count($job->getSelectedElements()));

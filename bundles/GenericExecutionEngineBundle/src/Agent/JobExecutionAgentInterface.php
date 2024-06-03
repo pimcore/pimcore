@@ -29,7 +29,11 @@ interface JobExecutionAgentInterface
     /**
      * Start new Job Run based on a job definition
      */
-    public function startJobExecution(Job $job, ?int $ownerId): JobRun;
+    public function startJobExecution(
+        Job $job,
+        ?int $ownerId,
+        string $executionContext = 'default'
+    ): JobRun;
 
     /**
      * Continue execution when a message is finished.
