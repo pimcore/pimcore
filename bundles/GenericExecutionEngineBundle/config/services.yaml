@@ -51,6 +51,8 @@ services:
 
     Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobExecutionSubscriber: ~
 
+    Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobRunStatusChangeSubscriber: ~
+
     Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware: ~
 
     Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface:
