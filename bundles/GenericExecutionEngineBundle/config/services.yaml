@@ -51,7 +51,13 @@ services:
 
     Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobExecutionSubscriber: ~
 
-    Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobRunStatusChangeSubscriber: ~
+    Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobRunStatusChangeSubscriber:
+        tags:
+            -
+                name: 'doctrine.event_listener'
+                event: 'preUpdate'
+                priority: 500
+                connection: 'default'
 
     Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware: ~
 

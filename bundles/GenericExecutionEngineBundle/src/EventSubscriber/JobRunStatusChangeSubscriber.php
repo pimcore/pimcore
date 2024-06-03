@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber;
 
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Events;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Event\JobRunStateChangedEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -26,12 +24,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-#[AsDoctrineListener(event: Events::preUpdate, priority: 500, connection: 'default')]
 final class JobRunStatusChangeSubscriber
 {
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher
-    ){
+    ) {
 
     }
 
