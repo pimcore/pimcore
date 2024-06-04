@@ -52,6 +52,7 @@
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
+    "doctrine/orm": "^2.15",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
@@ -71,7 +72,6 @@
     "nesbot/carbon": "^2.65",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
-    "phpoffice/phpspreadsheet": "^1.24",
     "presta/sitemap-bundle": "^3.3",
     "rybakit/twig-deferred-extension": "^3.0",
     "sabre/dav": "^4.1.2",
@@ -179,7 +179,8 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
+      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
+      "Pimcore\\Bundle\\GenericExecutionEngineBundle\\": "bundles/GenericExecutionEngineBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
