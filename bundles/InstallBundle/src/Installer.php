@@ -25,6 +25,7 @@ use function in_array;
 use PDO;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
+use Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
@@ -74,6 +75,7 @@ class Installer
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
+        'PimcoreGenericExecutionEngineBundle' => PimcoreGenericExecutionEngineBundle::class,
     ];
 
     private LoggerInterface $logger;
