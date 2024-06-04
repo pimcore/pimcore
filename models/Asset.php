@@ -580,6 +580,26 @@ class Asset extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
+            // refresh the inherited properties and update dependencies of each child
+            if (isset($updatedChildren)) {
+                foreach ($updatedChildren as $assetId) {
+                    $refreshChild = self::getById($assetId, ['force' => true]);
+                    if ($refreshChild) {
+                        $refreshChild->renewInheritedProperties();
+                        if ($differentOldPath) {
+                            $refreshChild->addToDependenciesQueue();
+                        }
+                    }
+                }
+            }
+
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
@@ -772,9 +792,6 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
-
-        // add to queue that saves dependencies
-        $this->addToDependenciesQueue();
 
         $this->getDao()->update();
 

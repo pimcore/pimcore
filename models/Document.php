@@ -371,6 +371,22 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
+            // refresh the inherited properties and update dependencies of each child
+            if (isset($updatedChildren)) {
+                foreach ($updatedChildren as $documentId) {
+                    $refreshChild = self::getById($documentId, ['force' => true]);
+                    if ($refreshChild) {
+                        $refreshChild->renewInheritedProperties();
+                        if ($differentOldPath) {
+                            $refreshChild->addToDependenciesQueue();
+                        }
+                    }
+                }
+            }
+
             $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -482,9 +498,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // add to queue that saves dependencies
-        $this->addToDependenciesQueue();
 
         $this->getDao()->update();
 

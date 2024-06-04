@@ -613,6 +613,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
+            // refresh the inherited properties and update dependencies of each child
+            if (isset($updatedChildren)) {
+                foreach ($updatedChildren as $objectId) {
+                    $refreshChild = self::getById($objectId, ['force' => true]);
+                    if ($refreshChild) {
+                        $refreshChild->renewInheritedProperties();
+                        if ($differentOldPath) {
+                            $refreshChild->addToDependenciesQueue();
+                        }
+                    }
+                }
+            }
+
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -718,9 +734,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
         }
-
-        // add to queue that saves dependencies
-        $this->addToDependenciesQueue();
 
         // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
