@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\ElementDependenciesMessage;
-use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
@@ -30,7 +29,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class ElementDependenciesHandler
 {
-    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper)
+    public function __construct(protected LoggerInterface $logger)
     {
     }
 
