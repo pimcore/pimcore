@@ -81,20 +81,19 @@ class NotificationSubscriber implements EventSubscriberInterface
             if (empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
-                $includeAllUsers = $notificationSetting['includeAllUsers'] ?? false;
 
                 if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
-                    $this->handleNotifyPostWorkflowEmail($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles, $includeAllUsers);
+                    $this->handleNotifyPostWorkflowEmail($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
                 }
 
                 if (in_array(self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION, $notificationSetting['channelType'])) {
-                    $this->handleNotifyPostWorkflowPimcoreNotification($transition, $workflow, $subject, $notifyUsers, $notifyRoles, $includeAllUsers);
+                    $this->handleNotifyPostWorkflowPimcoreNotification($transition, $workflow, $subject, $notifyUsers, $notifyRoles);
                 }
             }
         }
     }
 
-    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles, bool $includeAllUsers): void
+    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
     {
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
@@ -107,12 +106,11 @@ class NotificationSubscriber implements EventSubscriberInterface
             $subject,
             $transition->getLabel(),
             $mailType,
-            $mailPath,
-            $includeAllUsers
+            $mailPath
         );
     }
 
-    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles, bool $includeAllUsers): void
+    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
     {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
@@ -121,8 +119,7 @@ class NotificationSubscriber implements EventSubscriberInterface
             $workflow,
             $subjectType,
             $subject,
-            $transition->getLabel(),
-            $includeAllUsers
+            $transition->getLabel()
         );
     }
 
