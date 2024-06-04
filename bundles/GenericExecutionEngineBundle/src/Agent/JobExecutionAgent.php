@@ -61,8 +61,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         Job $job,
         ?int $ownerId,
         string $executionContext = 'default'
-    ): JobRun
-    {
+    ): JobRun {
         $jobRun = $this->jobRunRepository->createFromJob($job, $ownerId);
         $jobRun->setExecutionContext($executionContext);
         $jobRun->setState(JobRunStates::RUNNING);
@@ -82,8 +81,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     public function continueJobMessageExecution(
         GenericExecutionEngineMessageInterface $message,
         ?Throwable $throwable = null
-    ): void
-    {
+    ): void {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
         if (!$this->isRunning($jobRun->getId())) {
             return;
@@ -93,6 +91,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 
         if (!$throwable) {
             $this->handleNextMessage($message);
+
             return;
         }
 
@@ -206,8 +205,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function handleJobExecutionError(
         GenericExecutionEngineMessageInterface $message,
         Throwable $throwable
-    ): void
-    {
+    ): void {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
         $this->genericExecutionEngineLogger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
@@ -245,8 +243,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         JobRun $jobRun,
         GenericExecutionEngineMessageInterface $message,
         string $errorMessage
-    ): void
-    {
+    ): void {
         $this->setJobRunError(
             $jobRun,
             $errorMessage,
@@ -264,8 +261,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function stopJobExecutionOnError(
         JobRun $jobRun,
         string $errorMessage
-    ): void
-    {
+    ): void {
         $this->stopMessengerWorkers();
         $this->setJobRunError($jobRun, $errorMessage, [], false);
         $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
@@ -348,6 +344,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $selectedElements = $job->getSelectedElements();
         if (empty($selectedElements)) {
             $this->executionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
+
             return;
         }
 
@@ -356,7 +353,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
                 $jobRun->getId(),
                 $jobRun->getCurrentStep(),
                 $selectedElement
-                )
+            )
             );
         }
     }

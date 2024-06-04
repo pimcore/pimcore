@@ -40,9 +40,6 @@ final class CurrentMessageProvider implements CurrentMessageProviderInterface
         return new PlainMessage($message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMessageFromSerializedString(string $message): MessageInterface
     {
         try {

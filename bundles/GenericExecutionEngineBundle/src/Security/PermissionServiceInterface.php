@@ -33,7 +33,6 @@ interface PermissionServiceInterface
      */
     public function allowedToSeeAllJobRuns(): void;
 
-
     public function isAllowedToSeeJobRuns(): bool;
 
     public function isAllowedToSeeAllJobRuns(): bool;

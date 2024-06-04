@@ -20,13 +20,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class JobRunStateChangedEvent extends Event
 {
-
     public function __construct(
         private readonly int $jobRunId,
         private readonly string $oldState,
         private readonly string $newState
-    )
-    {
+    ) {
 
     }
 

@@ -41,7 +41,9 @@ abstract class AbstractAutomationActionHandler
     protected ?LoggerInterface $genericExecutionEngineLogger = null;
 
     protected ?JobRunRepositoryInterface $jobRunRepository = null;
+
     private ?JobRunExtractorInterface $jobRunExtractor = null;
+
     private ?JobExecutionAgentInterface $jobExecutionAgent = null;
 
     public function __construct(
@@ -158,8 +160,7 @@ abstract class AbstractAutomationActionHandler
     protected function getSubjectFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
-    ): AbstractElement
-    {
+    ): AbstractElement {
         /** @var AbstractElement|null $subject */
         $subject = $this->jobRunExtractor->getElementFromMessage(
             $message,

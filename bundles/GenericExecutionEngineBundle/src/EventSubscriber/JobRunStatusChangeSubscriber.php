@@ -52,5 +52,4 @@ final class JobRunStatusChangeSubscriber
             }
         }
     }
-
 }

@@ -36,9 +36,6 @@ final class JobStep implements JobStepInterface
         return $this->messageFQCN;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;

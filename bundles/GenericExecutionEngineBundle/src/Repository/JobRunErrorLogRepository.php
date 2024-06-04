@@ -32,8 +32,7 @@ final class JobRunErrorLogRepository implements JobRunErrorLogRepositoryInterfac
         JobRun $jobRun,
         ?int $elementId = null,
         ?string $message = null
-    ): void
-    {
+    ): void {
         $jobRunErrorLog = new JobRunErrorLog(
             $jobRun->getId(),
             $jobRun->getCurrentStep(),

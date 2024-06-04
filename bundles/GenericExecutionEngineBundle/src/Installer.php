@@ -46,7 +46,7 @@ final class Installer extends SettingsStoreAwareInstaller
 
     protected const USER_PERMISSIONS = [
         PermissionConstants::GEE_JOB_RUN,
-        PermissionConstants::GEE_SEE_ALL_JOB_RUNS
+        PermissionConstants::GEE_SEE_ALL_JOB_RUNS,
     ];
 
     /**
@@ -103,7 +103,7 @@ final class Installer extends SettingsStoreAwareInstaller
             $jobRunTable->addColumn('id', 'integer', [
                 'autoincrement' => true,
                 'notnull' => true,
-                'unsigned' => true
+                'unsigned' => true,
             ]);
             $jobRunTable->addColumn('ownerId', 'integer', ['notnull' => false, 'unsigned' => true]);
             $jobRunTable->addColumn('state', 'string', ['notnull' => true, 'length' => 100]);
@@ -135,11 +135,11 @@ final class Installer extends SettingsStoreAwareInstaller
             ]);
             $jobRunTable->addColumn('totalElements', 'integer', [
                 'notnull' => true,
-                'unsigned' => true
+                'unsigned' => true,
             ]);
             $jobRunTable->addColumn('processedElementsForStep', 'integer', [
                 'notnull' => true,
-                'unsigned' => true
+                'unsigned' => true,
             ]);
 
             $jobRunTable->addForeignKeyConstraint(
@@ -167,7 +167,7 @@ final class Installer extends SettingsStoreAwareInstaller
         $logTable->addColumn('id', 'integer', [
             'autoincrement' => true,
             'notnull' => true,
-            'unsigned' => true
+            'unsigned' => true,
         ]);
         $logTable->addColumn('jobRunId', 'integer', ['notnull' => true, 'unsigned' => true]);
         $logTable->addColumn('stepNumber', 'integer', ['notnull' => true, 'unsigned' => true]);

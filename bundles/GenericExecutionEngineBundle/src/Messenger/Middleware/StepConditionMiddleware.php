@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware;
 
-use Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;

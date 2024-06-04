@@ -4,11 +4,14 @@ declare(strict_types=1);
 /**
  * Pimcore
  *
- * This source file is available under following license:
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\DependencyInjection;
@@ -16,7 +19,6 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\DependencyInjection;
 use Exception;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
-use Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobExecutionSubscriber;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

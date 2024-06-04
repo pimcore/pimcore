@@ -22,10 +22,8 @@ use Pimcore\Model\Element\ElementDescriptor;
 final class Job
 {
     /**
-     * @param string $name
      * @param JobStep[] $steps
      * @param ElementDescriptor[] $selectedElements
-     * @param array $environmentData
      */
     public function __construct(
         private readonly string $name,
@@ -38,9 +36,6 @@ final class Job
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -54,17 +49,11 @@ final class Job
         return $this->steps;
     }
 
-    /**
-     * @return array
-     */
     public function getSelectedElements(): array
     {
         return $this->selectedElements;
     }
 
-    /**
-     * @return array
-     */
     public function getEnvironmentData(): array
     {
         return $this->environmentData;

@@ -182,17 +182,11 @@ class JobRun
         }
     }
 
-    /**
-     * @return Job|null
-     */
     public function getJob(): ?Job
     {
         return $this->job;
     }
 
-    /**
-     * @param Job $job
-     */
     public function setJob(Job $job): void
     {
         $this->job = $job;
