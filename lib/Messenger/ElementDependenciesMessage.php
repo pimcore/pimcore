@@ -16,21 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger;
 
+use Pimcore\Model\Element\AbstractElement;
+
 /**
  * @internal
  */
 class ElementDependenciesMessage
 {
-    public function __construct(protected string $type, protected int $id)
+    public function __construct(protected AbstractElement $element)
     {
     }
 
-    public function getId(): int
+    public function getElement(): AbstractElement
     {
-        return $this->id;
-    }
-    public function getType(): string
-    {
-        return $this->type;
+        return $this->element;
     }
 }

@@ -19,6 +19,7 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Model\Dependency;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -35,19 +36,20 @@ class ElementDependenciesHandler
 
     public function __invoke(ElementDependenciesMessage $message): void
     {
-        $this->logger->debug(sprintf('Processing dependencies of %s with ID %s ', $message->getType(), $message->getId()));
-
-        $this->saveDependencies($message->getType(), $message->getId());
+        $this->saveDependencies($message->getElement());
     }
 
 
-    private function saveDependencies(string $type, int $id): void
+    private function saveDependencies(AbstractElement $element): void
     {
+        $id = $element->getId();
+        $type = Service::getElementType($element);
+
+        $this->logger->debug(sprintf('Processing dependencies of %s with ID %s ', $type, $id));
+
         $d = new Dependency();
         $d->setSourceType($type);
         $d->setSourceId($id);
-
-        $element = Service::getElementById($type, $id);
 
         foreach ($element->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $id && $requirement['type'] == $type) {
