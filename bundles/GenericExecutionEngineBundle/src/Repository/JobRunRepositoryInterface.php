@@ -56,5 +56,11 @@ interface JobRunRepositoryInterface
 
     public function getTotalCount(): int;
 
+    public function getRunningJobsByUserId(
+        int $ownerId,
+        array $orderBy = [],
+        int $limit = 10,
+    ): array;
+
     public function getLastJobRunByName(string $name): ?JobRun;
 }
