@@ -12,6 +12,22 @@
 - MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
 #### [DBAL]
 - Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
+#### [Dependency]
+- Dependencies are now resolved by messenger queue and can be turned off. By default, it is done synchronously, but it's possible to make it async by add the following config:
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
+        routing:
+            'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
+```
+and disable it by: 
+```yaml
+pimcore:
+  dependency:
+    enabled: false
+```
 
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
