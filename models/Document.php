@@ -371,6 +371,10 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+
             // add to queue that saves dependencies
             $this->addToDependenciesQueue();
 
