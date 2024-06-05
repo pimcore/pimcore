@@ -342,7 +342,7 @@ require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 // but is done here for demonstration purpose
 require_once PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/Support/Util/Autoloader.php';
 
-Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/Support');
+Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests');
 ```
 
 The `tests/unit.suite.yml` should be fine for a standard unit testing setup without dependencies, but we need to alter the
@@ -355,7 +355,6 @@ suite to use the `\Pimcore\Tests\Support\Helper\Pimcore` helper:
 actor: FunctionalTester
 modules:
     enabled:
-        - \Tests\Support\Helper\Functional
         - \Pimcore\Tests\Support\Helper\Pimcore:
             # CAUTION: the following config means the test runner
             # will drop and re-create the Pimcore DB and purge var/classes
