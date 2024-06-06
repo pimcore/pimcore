@@ -131,6 +131,10 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             return $this->getDateFromTimestamp($data / 1000);
         }
 
+        if (is_string($data)) {
+            return Carbon::parse($data);
+        }
+
         return null;
     }
 
