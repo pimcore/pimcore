@@ -175,6 +175,7 @@ class DateRange extends Data implements
             $startDate = UserTimezone::applyTimezone($data->getStartDate());
             /** @var CarbonInterface $endDate */
             $endDate = UserTimezone::applyTimezone($data->getEndDate());
+
             return 'From ' . $startDate->toDateString() . ' to ' . $endDate->toDateString();
         }
 
