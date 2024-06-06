@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tool\UserTimezone;
 
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -173,7 +174,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d');
+            return UserTimezone::applyTimezone($data)->format('Y-m-d');
         }
 
         return '';
@@ -205,7 +206,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d');
+            return UserTimezone::applyTimezone($data)->format('Y-m-d');
         }
 
         return '';
