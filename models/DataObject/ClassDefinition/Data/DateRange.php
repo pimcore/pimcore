@@ -171,7 +171,11 @@ class DateRange extends Data implements
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
-            return 'From ' . UserTimezone::applyTimezone($data->getStartDate())->toDateString() . ' to ' . UserTimezone::applyTimezone($data->getEndDate())->toDateString();
+            /** @var CarbonInterface $startDate */
+            $startDate = UserTimezone::applyTimezone($data->getStartDate());
+            /** @var CarbonInterface $endDate */
+            $endDate = UserTimezone::applyTimezone($data->getEndDate());
+            return 'From ' . $startDate->toDateString() . ' to ' . $endDate->toDateString();
         }
 
         return '';
