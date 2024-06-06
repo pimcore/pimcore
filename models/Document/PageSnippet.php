@@ -28,8 +28,8 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\SystemSettingsConfig;
 
 /**
- * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
+ * @method Model\Document\PageSnippet\Dao getDao()
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 abstract class PageSnippet extends Model\Document
 {

@@ -365,7 +365,22 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->arrayNode('allowed_formats')
-                                ->defaultValue(['avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'])
+                                ->defaultValue(
+                                    [
+                                        'avif',
+                                        'eps',
+                                        'gif',
+                                        'jpeg',
+                                        'jpg',
+                                        'pjpeg',
+                                        'png',
+                                        'svg',
+                                        'tiff',
+                                        'webm',
+                                        'webp',
+                                        'print',
+                                    ]
+                                )
                                 ->scalarPrototype()->end()
                             ->end()
                             ->floatNode('max_scaling_factor')

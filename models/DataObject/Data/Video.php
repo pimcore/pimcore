@@ -20,41 +20,42 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\Service;
 
 class Video implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    protected string $type;
+    protected ?string $type = null;
 
-    protected string|int|ElementInterface|Asset|\Pimcore\Model\Element\ElementDescriptor $data;
+    protected string|int|Asset|ElementDescriptor|null $data = null;
 
-    protected string|int|Asset|\Pimcore\Model\Element\ElementDescriptor|null $poster = null;
+    protected string|int|Asset|ElementDescriptor|null $poster = null;
 
     protected ?string $title = null;
 
     protected ?string $description = null;
 
-    public function setData(Asset|int|string $data): void
+    public function setData(Asset|int|string|null $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    public function getData(): Asset|int|string
+    public function getData(): Asset|int|string|null
     {
         return $this->data;
     }
 
-    public function setType(string $type): void
+    public function setType(?string $type): void
     {
         $this->type = $type;
         $this->markMeDirty();
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -90,5 +91,25 @@ class Video implements OwnerAwareFieldInterface
     public function getTitle(): ?string
     {
         return $this->title;
+    }
+
+    public function __wakeup(): void
+    {
+        if ($this->data instanceof ElementDescriptor) {
+            $asset = Service::getElementById($this->data->getType(), $this->data->getId());
+            if ($asset instanceof Asset) {
+                $this->data = $asset;
+            } else {
+                $this->data = null;
+            }
+        }
+        if ($this->poster instanceof ElementDescriptor) {
+            $asset = Service::getElementById($this->poster->getType(), $this->poster->getId());
+            if ($asset instanceof Asset) {
+                $this->poster = $asset;
+            } else {
+                $this->poster = null;
+            }
+        }
     }
 }
