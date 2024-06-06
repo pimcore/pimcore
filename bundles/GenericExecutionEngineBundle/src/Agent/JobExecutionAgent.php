@@ -181,13 +181,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 
         if (count($job->getSteps()) <= $nextStep) {
             $jobRun->setCurrentStep(null);
-
-            if ($this->jobRunErrorLogRepository->getLogsByJobRunId($jobRun->getId())) {
-                $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
-            } else {
-                $jobRun->setCurrentMessage(null);
-                $jobRun->setState(JobRunStates::FINISHED);
-            }
+            $this->setCompletionState($jobRun);
             $this->jobRunRepository->update($jobRun);
 
             $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
@@ -361,5 +355,27 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function getLogParams(int $jobRunId): array
     {
         return [self::LOG_JOB_RUN_ID_KEY => $jobRunId];
+    }
+
+    private function setCompletionState(JobRun $jobRun): void {
+
+        $logs = $this->jobRunErrorLogRepository->getLogsByJobRunId
+        (
+                $jobRun->getId(),
+                $jobRun->getCurrentStep()
+        );
+
+        if(empty($logs)) {
+            $jobRun->setCurrentMessage(null);
+            $jobRun->setState(JobRunStates::FINISHED);
+            return;
+        }
+
+        if(count($logs) === $jobRun->getTotalElements()) {
+            $jobRun->setState(JobRunStates::FAILED);
+        }
+        else {
+            $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
+        }
     }
 }

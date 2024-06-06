@@ -31,6 +31,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnexpectedValueException;
 
@@ -45,6 +46,8 @@ abstract class AbstractAutomationActionHandler
     private ?JobRunExtractorInterface $jobRunExtractor = null;
 
     private ?JobExecutionAgentInterface $jobExecutionAgent = null;
+
+    private ?TranslatorInterface $translator = null;
 
     public function __construct(
     ) {
@@ -81,6 +84,25 @@ abstract class AbstractAutomationActionHandler
         if (!$this->genericExecutionEngineLogger) {
             $this->genericExecutionEngineLogger = $genericExecutionEngineLogger;
         }
+    }
+
+    #[Required]
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        if (!$this->translator) {
+            $this->translator = $translator;
+        }
+    }
+
+    public function abortAction(
+        string $translationKey,
+        array $translationParams = [],
+        string $translationDomain = 'default',
+        string $exceptionClassName = Exception::class
+        ): void
+    {
+        $errorMessage = $this->translator->trans($translationKey, $translationParams, $translationDomain);
+        throw new $exceptionClassName($errorMessage);
     }
 
     /**
