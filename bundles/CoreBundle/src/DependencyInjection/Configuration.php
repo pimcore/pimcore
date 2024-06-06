@@ -369,7 +369,7 @@ final class Configuration implements ConfigurationInterface
                                         'tiff',
                                         'webm',
                                         'webp',
-                                        'print'
+                                        'print',
                                     ]
                                 )
                                 ->scalarPrototype()->end()
