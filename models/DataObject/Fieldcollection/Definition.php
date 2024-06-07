@@ -210,8 +210,14 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException
+     */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
