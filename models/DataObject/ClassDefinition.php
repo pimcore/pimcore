@@ -482,7 +482,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function delete(): void
     {
-        if (!$this->isWritable()) {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
