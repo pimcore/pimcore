@@ -15,4 +15,3 @@ This chapter gives an overview of these tools and best practises by covering fol
 * [Usage of Version Control Systems](./01_Version_Control_Systems.md)
 * [Multi Environment Configurations](03_Configuration_Environments.md)
 * [Available Deployment Tools](./05_Deployment_Tools.md)
-

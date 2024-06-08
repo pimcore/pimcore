@@ -89,4 +89,3 @@ class DefaultController extends FrontendController
 |-------------------|-------------|----------------------------------------------------------|
 | `$this->document` | Document    | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
-   

@@ -85,4 +85,3 @@ For example:
 ```
 
 Now, a user is not able to add other elements than specified in the types configuration part.
-

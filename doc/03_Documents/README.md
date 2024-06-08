@@ -83,4 +83,3 @@ bin/console pimcore:documents:cleanup <type1> <type2> <type3>
 - [Inheritance](./11_Inheritance.md)
 - [Working with the PHP API](./09_Working_with_PHP_API.md) 
 - [Predefined Document Types](./07_Predefined_Document_Types.md)
-

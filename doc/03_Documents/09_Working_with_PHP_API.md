@@ -162,6 +162,3 @@ $listing = \Pimcore\Model\Document::getList([
     'limit' => 2
 ]);
 ```
-
-
-

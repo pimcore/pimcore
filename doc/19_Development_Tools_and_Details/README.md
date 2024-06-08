@@ -9,5 +9,4 @@ The topics include insights to
 and Tools like [Logging](./07_Logging.md), [Console CLI](./11_Console_CLI.md), [Magic Parameters](./15_Magic_Parameters.md)
 and much more. 
 
-Just have a look at the sub-pages and dive into the possibilities of Pimcore. 
-
+Just have a look at the sub-pages and dive into the possibilities of Pimcore.
