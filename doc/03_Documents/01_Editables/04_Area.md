@@ -14,8 +14,8 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ## Methods
 
-| Name                | Return        | Description                                                 |
-|---------------------|---------------|-------------------------------------------------------------|
+| Name                | Return             | Description                                                 |
+|---------------------|--------------------|-------------------------------------------------------------|
 | `getElement($name)` | Document\Editable  | Retrieves an editable from within the actual area           |
 
 ## Example
