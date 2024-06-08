@@ -69,7 +69,7 @@ Working with documents is described in detail in our [Create a First Project](..
 ## Cleanup Documents Types
 Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.
 Running the following command removes type specific tables and enum types from the documents table.
-The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder,hardlink ,email`
+The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder, hardlink, email`
 
 You can clean up multiple types at once.
 ```bash

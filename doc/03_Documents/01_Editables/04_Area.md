@@ -49,7 +49,7 @@ Get the params in your brick:
 </div>
 ```
 
-### Accessing Data Within an Area Element
+### Accessing Data within an Area Element
 
 Assuming your area uses a brick `gallery-single-images` which contains a `gallery` block (see CMS demo):
 

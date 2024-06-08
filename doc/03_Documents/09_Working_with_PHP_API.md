@@ -6,13 +6,13 @@ Pimcore provides the object orientated PHP API to work with Documents.
 
 ### Create a New Document
 To create a new document, you need to specify two mandatory attributes:
-* An unique key
+* A unique key
 * A parent ID - ID of the parent document (document, folder and every other type)
  
 You can set also every other value available in documents structure (settings, properties, children etc.).
 
 > Type of the document (page, folder, link, email, snippet etc.) The complete list can be obtained using: `\Pimcore\Model\Document::getTypes()`
-> Every type has it's own model, for example: a link document could be created by `new \Pimcore\Model\Document\Link`.
+> Every type has its own model, for example: a link document could be created by `new \Pimcore\Model\Document\Link`.
 
 The example below, shows how to create simple page document via the PHP API. 
 

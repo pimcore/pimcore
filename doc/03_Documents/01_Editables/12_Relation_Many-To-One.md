@@ -2,7 +2,7 @@
 
 ## General
 
-The relation editable provides the functionality to create a reference to an other element in Pimcore (document, asset, object).
+The relation editable provides the functionality to create a reference to another element in Pimcore (document, asset, object).
 In frontend-mode this editable returns the path of the linked element.
 
 ## Configuration

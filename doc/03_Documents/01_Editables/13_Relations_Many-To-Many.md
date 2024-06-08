@@ -9,7 +9,7 @@ The relations editable provides many to many relation to other Pimcore elements 
 | Name                  | Type      | Description                                                                                                                                                     |
 |-----------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `width`               | integer   | Width for the widget in pixels (optional)                                                                                                                       |
-| `height`              | integer   | Height for the widget in pixels  (optional)                                                                                                                     |
+| `height`              | integer   | Height for the widget in pixels (optional)                                                                                                                      |
 | `title`               | string    | Title for the input-widget                                                                                                                                      |
 | `uploadPath`          | string    | Target path for (inline) uploaded assets                                                                                                                        |
 | `disableInlineUpload` | boolean   | Disable the inline upload for assets. If set to true, the inline upload functionality will be disabled.                                                         |
