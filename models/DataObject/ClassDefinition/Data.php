@@ -76,16 +76,17 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
-        'apipluginbroker', 'byid', 'bypath', 'cachekey', 'cachetag', 'cachetags', 'childamount', 'childpermissions',
-        'children', 'childrensortby', 'childrensortorder', 'childs', 'class', 'classid', 'classname', 'classtitle',
-        'closestparentofclass', 'creationdate', 'currentfullpath', 'dao', 'data', 'definition', 'dependencies',
-        'dirtyfields', 'dirtylanguages', 'fieldname', 'fullpath', 'getinheritedvalues', 'haschildren', 'hassiblings',
-        'hideunpublished', 'id', 'idpath', 'index', 'key', 'language', 'latestversion', 'lazyloadedfieldnames', 'list',
-        'listingcachekey', 'locked', 'modelfactory', 'modificationdate', 'nextparentforinheritance', 'object',
-        'objectvar', 'objectvars', 'omitmandatorycheck', 'parent', 'parentclass', 'parentid', 'path', 'permissions',
-        'permissionsforuser', 'properties', 'property', 'published', 'realfullpath', 'realpath', 'relationdata',
-        'resource', 'scheduledtasks', 'siblings', 'type', 'types', 'usermodification', 'userowner', 'userpermissions',
-        'validtablecolumns', 'value', 'valueforfieldname', 'valuefromparent', 'values', 'versioncount', 'versions',
+        'apipluginbroker', 'baseobject', 'byid', 'bypath', 'cachekey', 'cachetag', 'cachetags', 'childamount',
+        'childpermissions', 'children', 'childrensortby', 'childrensortorder', 'childs', 'class', 'classid',
+        'classname', 'classtitle', 'closestparentofclass', 'creationdate', 'currentfullpath', 'dao', 'data',
+        'definition', 'dependencies', 'dirtyfields', 'dirtylanguages', 'dodelete', 'fieldname', 'fullpath',
+        'getinheritedvalues', 'haschildren', 'hassiblings', 'hideunpublished', 'id', 'idpath', 'index', 'key',
+        'language', 'latestversion', 'lazyloadedfieldnames', 'list', 'listingcachekey', 'locked', 'modelfactory',
+        'modificationdate', 'nextparentforinheritance', 'object', 'objectvar', 'objectvars', 'omitmandatorycheck',
+        'parent', 'parentclass', 'parentid', 'path', 'permissions', 'permissionsforuser', 'properties', 'property',
+        'published', 'realfullpath', 'realpath', 'relationdata', 'resource', 'scheduledtasks', 'siblings', 'type',
+        'types', 'usermodification', 'userowner', 'userpermissions', 'validtablecolumns', 'value', 'valueforfieldname',
+        'valuefromparent', 'values', 'versioncount', 'versions',
     ];
 
     /**

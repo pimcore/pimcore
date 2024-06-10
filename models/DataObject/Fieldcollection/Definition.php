@@ -41,8 +41,8 @@ class Definition extends Model\AbstractModel
      * @var array
      */
     protected const FORBIDDEN_NAMES = [
-        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
-        'object', 'interface', 'default',
+        'abstract', 'class', 'concrete', 'dao', 'data', 'default', 'folder', 'interface', 'items', 'list', 'object',
+        'permissions', 'resource',
     ];
 
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
