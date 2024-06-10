@@ -64,6 +64,7 @@ final class JobRunErrorLogRepository implements JobRunErrorLogRepositoryInterfac
         if($step !== null && $step >= 0) {
             $criteria['step'] = $step;
         }
+
         return $this->getLogRepository()->findBy(
             $criteria,
             $orderBy,

@@ -99,9 +99,9 @@ abstract class AbstractAutomationActionHandler
         array $translationParams = [],
         string $translationDomain = 'default',
         string $exceptionClassName = Exception::class
-        ): void
-    {
+    ): void {
         $errorMessage = $this->translator->trans($translationKey, $translationParams, $translationDomain);
+
         throw new $exceptionClassName($errorMessage);
     }
 

@@ -357,24 +357,24 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         return [self::LOG_JOB_RUN_ID_KEY => $jobRunId];
     }
 
-    private function setCompletionState(JobRun $jobRun): void {
+    private function setCompletionState(JobRun $jobRun): void
+    {
 
-        $logs = $this->jobRunErrorLogRepository->getLogsByJobRunId
-        (
-                $jobRun->getId(),
-                $jobRun->getCurrentStep()
+        $logs = $this->jobRunErrorLogRepository->getLogsByJobRunId(
+            $jobRun->getId(),
+            $jobRun->getCurrentStep()
         );
 
         if(empty($logs)) {
             $jobRun->setCurrentMessage(null);
             $jobRun->setState(JobRunStates::FINISHED);
+
             return;
         }
 
         if(count($logs) === $jobRun->getTotalElements()) {
             $jobRun->setState(JobRunStates::FAILED);
-        }
-        else {
+        } else {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
         }
     }
