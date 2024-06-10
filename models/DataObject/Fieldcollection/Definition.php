@@ -38,7 +38,7 @@ class Definition extends Model\AbstractModel
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
         'abstract', 'class', 'concrete', 'dao', 'data', 'default', 'folder', 'interface', 'items', 'list', 'object',
