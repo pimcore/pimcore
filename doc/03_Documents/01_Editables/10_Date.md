@@ -2,12 +2,12 @@
 
 ### Configuration
 
-| Name                | Type   | Description                                                                                                                                                                                |
-|---------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `format`            | string | A string which describes how to format the date in editmode and frontend (when outputFormat/outputIsoFormat is not defined), [see possible formats](https://docs.sencha.com/extjs/7.0.0/modern/Ext.Date.html)                                                                |
-| `outputFormat`      | string | **Deprecated:** A string which describes how to format the date in frontend, [see possible formats](https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters) |
-| `outputIsoFormat`   | string | A string which describes how to format the date in frontend, [see possible formats](https://carbon.nesbot.com/docs/#iso-format-available-replacements)                                     |
-| `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                         |
+| Name                | Type   | Description                                                                                                                                                                                                   |
+|---------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `format`            | string | A string which describes how to format the date in editmode and frontend (when outputFormat/outputIsoFormat is not defined), [see possible formats](https://docs.sencha.com/extjs/7.0.0/modern/Ext.Date.html) |
+| `outputFormat`      | string | **Deprecated:** A string which describes how to format the date in frontend, [see possible formats](https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters)                |
+| `outputIsoFormat`   | string | A string which describes how to format the date in frontend, [see possible formats](https://carbon.nesbot.com/docs/#iso-format-available-replacements)                                                        |
+| `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                            |
 
 ## Methods
 

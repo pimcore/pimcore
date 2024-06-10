@@ -262,6 +262,3 @@ custom view with product objects.
 The view after switch looks like in the picture.
 
 ![Custom perspective](../img/perspectives_custom_perspective.png)
-
-
-
