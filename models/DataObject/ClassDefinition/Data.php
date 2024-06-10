@@ -1319,7 +1319,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function isForbiddenName(): bool
     {
         $name = $this->getName();
-        if ($name === null) {
+        if ($name === null || $name === '') {
             return true;
         }
         $lowerCasedName = strtolower($name);
