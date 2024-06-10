@@ -94,6 +94,9 @@ abstract class AbstractAutomationActionHandler
         }
     }
 
+    /**
+     * @throws Exception Exception type is based on the provided exceptionClassName
+     */
     public function abortAction(
         string $translationKey,
         array $translationParams = [],
