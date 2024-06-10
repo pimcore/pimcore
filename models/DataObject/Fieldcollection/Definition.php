@@ -58,7 +58,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -84,8 +83,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public static function getByKey(string $key): ?Definition
@@ -118,7 +115,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function save(bool $saveDefinitionFile = true): void
@@ -166,7 +162,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      *
@@ -240,8 +235,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -251,7 +244,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public function getPhpClassFile(): string
     {
@@ -260,7 +252,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected function getInfoDocBlock(): string
     {
