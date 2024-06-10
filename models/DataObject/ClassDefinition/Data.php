@@ -76,16 +76,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
-        'apipluginbroker', 'byid', 'bypath', 'cachetag', 'cachetags', 'childamount', 'childpermissions', 'children',
-        'childrensortby', 'childrensortorder', 'childs', 'class', 'classid', 'classname', 'classtitle',
+        'apipluginbroker', 'byid', 'bypath', 'cachekey', 'cachetag', 'cachetags', 'childamount', 'childpermissions',
+        'children', 'childrensortby', 'childrensortorder', 'childs', 'class', 'classid', 'classname', 'classtitle',
         'closestparentofclass', 'creationdate', 'currentfullpath', 'dao', 'data', 'definition', 'dependencies',
         'dirtyfields', 'dirtylanguages', 'fieldname', 'fullpath', 'getinheritedvalues', 'haschildren', 'hassiblings',
         'hideunpublished', 'id', 'idpath', 'index', 'key', 'language', 'latestversion', 'lazyloadedfieldnames', 'list',
-        'locked', 'modificationdate', 'nextparentforinheritance', 'object', 'omitmandatorycheck', 'parent',
-        'parentclass', 'parentid', 'path', 'permissions', 'permissionsforuser', 'properties', 'property', 'published',
-        'realfullpath', 'realpath', 'relationdata', 'resource', 'scheduledtasks', 'siblings', 'type', 'types',
-        'usermodification', 'userowner', 'userpermissions', 'value', 'valueforfieldname', 'valuefromparent', 'values',
-        'versioncount', 'versions',
+        'listingcachekey', 'locked', 'modificationdate', 'nextparentforinheritance', 'object', 'omitmandatorycheck',
+        'parent', 'parentclass', 'parentid', 'path', 'permissions', 'permissionsforuser', 'properties', 'property',
+        'published', 'realfullpath', 'realpath', 'relationdata', 'resource', 'scheduledtasks', 'siblings', 'type',
+        'types', 'usermodification', 'userowner', 'userpermissions', 'value', 'valueforfieldname', 'valuefromparent',
+        'values', 'versioncount', 'versions',
     ];
 
     /**
