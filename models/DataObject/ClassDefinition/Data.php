@@ -85,7 +85,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'objectvar', 'objectvars', 'omitmandatorycheck', 'parent', 'parentclass', 'parentid', 'path', 'permissions',
         'permissionsforuser', 'properties', 'property', 'published', 'realfullpath', 'realpath', 'relationdata',
         'resource', 'scheduledtasks', 'siblings', 'type', 'types', 'usermodification', 'userowner', 'userpermissions',
-        'value', 'valueforfieldname', 'valuefromparent', 'values', 'versioncount', 'versions',
+        'validtablecolumns', 'value', 'valueforfieldname', 'valuefromparent', 'values', 'versioncount', 'versions',
     ];
 
     /**
