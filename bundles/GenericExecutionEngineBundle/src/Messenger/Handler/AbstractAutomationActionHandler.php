@@ -95,7 +95,7 @@ abstract class AbstractAutomationActionHandler
     }
 
     /**
-     * @template exceptionClassName
+     * @template exceptionClassName of Exception
      * @param class-string<exceptionClassName> $exceptionClassName
      * @throws exceptionClassName
      */
