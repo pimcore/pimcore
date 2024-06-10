@@ -133,7 +133,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         if (is_string($data)) {
-            return Carbon::parse($data);
+            return Carbon::parse($data, 'UTC');
         }
 
         return null;
@@ -143,9 +143,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(float $data, Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromGridEditor(float|string $data, Concrete $object = null, array $params = []): ?Carbon
     {
-        if ($data) {
+        if ($data && is_float($data)) {
             $data = $data * 1000;
         }
 
