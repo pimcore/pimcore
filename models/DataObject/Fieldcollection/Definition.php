@@ -270,6 +270,11 @@ class Definition extends Model\AbstractModel
 
     public function isForbiddenName(): bool
     {
-        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
+        $key = $this->getKey();
+        if ($key === null) {
+            return true;
+        }
+
+        return in_array(strtolower($key), self::FORBIDDEN_NAMES);
     }
 }
