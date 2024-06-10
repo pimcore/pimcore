@@ -31,4 +31,4 @@ use the `OutputTimestampResolver` service and get the timestamp from it instead 
 > take scheduled versions of documents, assets or objects into account. 
 
 See also [Scheduled Block](../03_Documents/01_Editables/42_Scheduled_Block.md) for an editable that uses
-this functionality. 
+this functionality.

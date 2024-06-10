@@ -18,4 +18,3 @@ https://symfony.com/doc/current/contributing/code/bc.html
 - [Upgrade from Version 6 to Version 10](./10_V6_to_V10.md)
 - [Preparing for Version 11](./11_Preparing_for_V11.md)
 - [Upgrade from Version 10 to Version 11](./12_V10_to_V11.md)
-

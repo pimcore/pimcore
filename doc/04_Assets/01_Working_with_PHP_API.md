@@ -133,4 +133,3 @@ This includes for example:
 The `copyright` field will be appended to every `title` and `alt` attribute separated by |.
 
 ---
-

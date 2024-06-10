@@ -4,7 +4,7 @@
 
 The block element is an iterating component which is really powerful.
 Basically a block is only a loop, but you can use other editables within this loop, so it's possible to repeat a set of 
-editables to create structured content (eg. a link list, or a image gallery).
+editables to create structured content (eg. a link list, or an image gallery).
 The items in the loop as well as their order can be defined by the editor with the block controls provided in the editmode. 
 
 ## Configuration
