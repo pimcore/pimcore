@@ -174,7 +174,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof \DateTimeInterface) {
-            return UserTimezone::applyTimezone($data)->format('Y-m-d');
+            return $this->applyTimezone($data)->format('Y-m-d');
         }
 
         return '';
@@ -206,7 +206,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
-            return UserTimezone::applyTimezone($data)->format('Y-m-d');
+            return $this->applyTimezone($data)->format('Y-m-d');
         }
 
         return '';
@@ -401,5 +401,14 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setColumnType(string $columnType): void
     {
         $this->columnType = $columnType;
+    }
+
+    private function applyTimezone(\DateTimeInterface $date): \DateTimeInterface
+    {
+        if ($this->columnType !== 'date') {
+            $date = UserTimezone::applyTimezone($date);
+        }
+
+        return $date;
     }
 }
