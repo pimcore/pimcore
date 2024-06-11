@@ -24,6 +24,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function implode;
 
 /**
  * @internal
@@ -51,6 +52,7 @@ class StorageCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $errors = [];
         $storages = $input->getArgument('storage');
 
         foreach ($storages as $storageName) {
@@ -90,6 +92,7 @@ class StorageCommand extends AbstractCommand
                         }
                     } catch (\Exception $e) {
                         $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
+                        $errors[] = $e->getMessage();
                     }
                     $progressBar->advance();
                 }
@@ -99,6 +102,11 @@ class StorageCommand extends AbstractCommand
         }
 
         $this->io->success('Finished Migrating Storage!');
+
+        if ($errors) {
+            $this->io->warning('Some errors occoured during migrating certain files:');
+            $this->io->writeLn(implode("\n", $errors));
+        }
 
         return 0;
     }
