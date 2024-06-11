@@ -18,7 +18,9 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
+use Pimcore;
 use Pimcore\Config;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
@@ -155,6 +157,16 @@ class Authentication
 
     public static function verifyPassword(User $user, string $password): bool
     {
+        if(class_exists(\Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent::class)) {
+            $credentials = [
+                'username' => $user->getUsername(),
+                'password' => $password,
+            ];
+            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
+            $event = new \Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent($requestHelper->getRequest(), $credentials);
+            \Pimcore::getEventDispatcher()->dispatch($event, 'pimcore.admin.login.credentials');
+        }
+
         if (!$user->getPassword()) {
             // do not allow logins for users without a password
             return false;
