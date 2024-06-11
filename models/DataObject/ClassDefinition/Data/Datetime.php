@@ -180,7 +180,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof \DateTimeInterface) {
-            return UserTimezone::applyTimezone($data)->format('Y-m-d H:i:s');
+            return $this->applyTimezone($data)->format('Y-m-d H:i:s');
         }
 
         return '';
@@ -190,7 +190,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
-            return UserTimezone::applyTimezone($data)->format('Y-m-d H:i');
+            return $this->applyTimezone($data)->format('Y-m-d H:i');
         }
 
         return '';
@@ -418,5 +418,14 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function setColumnType(string $columnType): void
     {
         $this->columnType = $columnType;
+    }
+
+    private function applyTimezone(\DateTimeInterface $date): \DateTimeInterface
+    {
+        if ($this->isRespectTimezone()) {
+            $date = UserTimezone::applyTimezone($date);
+        }
+
+        return $date;
     }
 }
