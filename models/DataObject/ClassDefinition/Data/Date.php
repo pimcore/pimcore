@@ -133,7 +133,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         if (is_string($data)) {
-            return Carbon::parse($data, 'UTC');
+            return Carbon::parse($data);
         }
 
         return null;
