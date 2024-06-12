@@ -139,7 +139,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         if (is_string($data)) {
-            return Carbon::parse($data, 'UTC');
+            return Carbon::parse($data);
         }
 
         return null;
