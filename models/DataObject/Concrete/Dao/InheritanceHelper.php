@@ -242,7 +242,7 @@ class InheritanceHelper
                 $originalEntry = $originalEntryTmp;
                 foreach ($missingIds as $id) {
                     $originalEntry["`" .$this->idField . "`"] = $id;
-                    $this->db->insert($this->querytable, $originalEntry);
+                    $this->db->insert("`" . $this->querytable  . "`", $originalEntry);
                 }
             }
         }
