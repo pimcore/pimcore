@@ -182,7 +182,8 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     align: 'left',
                     sortable: true,
                     renderer: function (d) {
-                        return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
+                        const localeDateTime = pimcore.globalmanager.get('localeDateTime');
+                        return Ext.Date.format(new Date(d*1000), localeDateTime.getDateTimeFormat());
                     }
                 },{
                     text: t("log_pid"),
@@ -270,28 +271,24 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
             this.fromDate = new Ext.form.DateField({
                 name: 'from_date',
                 width: 130,
-                format: pimcore.helpers.intlDateFormatFromLocale("Y-m-d"),
                 xtype: 'datefield'
             });
 
             this.fromTime = new Ext.form.TimeField({
                 name: 'from_time',
                 width: 100,
-                format: pimcore.helpers.intlTimeFormatFromLocale("H:i"),
                 xtype: 'timefield'
             });
 
             this.toDate = new Ext.form.DateField({
                 name: 'to_date',
                 width: 130,
-                format: pimcore.helpers.intlDateFormatFromLocale("Y-m-d"),
                 xtype: 'datefield'
             });
 
             this.toTime = new Ext.form.TimeField({
                 name: 'to_time',
                 width: 100,
-                format: pimcore.helpers.intlTimeFormatFromLocale("H:i"),
                 xtype: 'timefield'
             });
 
