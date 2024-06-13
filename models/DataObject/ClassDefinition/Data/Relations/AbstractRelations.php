@@ -134,7 +134,6 @@ abstract class AbstractRelations extends Data implements
             $object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData => $object->getObject()->getClassId(),
         };
 
-
         if (null === $classId) {
             throw new \Exception('Invalid object type');
         }
@@ -226,9 +225,10 @@ abstract class AbstractRelations extends Data implements
             'newRelations' => $newRelations,
             'existingRelations' => $existingRelations,
             'updatedRelations' => $updatedRelations,
-            'removedRelations' => $removedRelations
+            'removedRelations' => $removedRelations,
         ];
     }
+
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {

@@ -57,6 +57,7 @@ class DeltaCalculationTest extends ModelTestCase
             $object->save();
         }
     }
+
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
@@ -124,17 +125,15 @@ class DeltaCalculationTest extends ModelTestCase
         $this->metaOrderCheck([2, 0, 3], $multipleManyToMany);
     }
 
-
     /**
      * @param array $expectedValues Pass in the CRUD order, C for new, R for existing, U for updated, D for removed
-     * @return void
      */
     protected function deltaCheck(array $expectedValues, $fd, $object): void
     {
         $delta = $fd->calculateDelta($object, [
             'context'=> [
-                'containerType'=>'object'
-            ]
+                'containerType'=>'object',
+            ],
         ]);
 
         $this->assertCount($expectedValues[0], $delta['newRelations'], 'New relations count');
@@ -145,8 +144,8 @@ class DeltaCalculationTest extends ModelTestCase
 
     protected function metaOrderCheck(array $expectedValues, array $data): void
     {
-        foreach ($data as $i => $relation){
-            $this->assertEquals("multiple-some-metadata ". $expectedValues[$i], $relation->getMeta(), 'Metadata order check');
+        foreach ($data as $i => $relation) {
+            $this->assertEquals('multiple-some-metadata '. $expectedValues[$i], $relation->getMeta(), 'Metadata order check');
         }
 
     }
