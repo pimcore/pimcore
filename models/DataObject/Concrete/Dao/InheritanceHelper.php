@@ -234,8 +234,14 @@ class InheritanceHelper
 
                 // create entries for children that don't have an entry yet
                 $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
+
+                $originalEntryTmp = [];
+                foreach ($originalEntry as $key => $entry) {
+                    $originalEntryTmp["`" . $key . "`"] = $entry;
+                }
+                $originalEntry = $originalEntryTmp;
                 foreach ($missingIds as $id) {
-                    $originalEntry[$this->idField] = $id;
+                    $originalEntry["`" .$this->idField . "`"] = $id;
                     $this->db->insert($this->querytable, $originalEntry);
                 }
             }
