@@ -22,7 +22,6 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
-use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
