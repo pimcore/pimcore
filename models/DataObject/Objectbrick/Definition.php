@@ -487,9 +487,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Delete Brick Definition
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
