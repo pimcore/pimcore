@@ -184,6 +184,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return 0;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {

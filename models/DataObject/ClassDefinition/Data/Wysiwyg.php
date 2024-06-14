@@ -70,6 +70,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->excludeFromSearchIndex;
     }
 
+    /**
+     * @return $this
+     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;

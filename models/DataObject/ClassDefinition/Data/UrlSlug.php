@@ -164,6 +164,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->action;
     }
 
+    /**
+     * @return $this
+     */
     public function setAction(?string $action): static
     {
         $this->action = $action;
@@ -466,6 +469,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->domainLabelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setDomainLabelWidth(?int $domainLabelWidth): static
     {
         $this->domainLabelWidth = $domainLabelWidth;

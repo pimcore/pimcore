@@ -340,6 +340,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -581,6 +584,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $dependencies;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -620,6 +626,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRegion(?string $region): static
     {
         $this->region = $region;
@@ -866,6 +875,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->hideLabelsWhenTabsReached;
     }
 
+    /**
+     * @return $this
+     */
     public function setHideLabelsWhenTabsReached(int $hideLabelsWhenTabsReached): static
     {
         $this->hideLabelsWhenTabsReached = $hideLabelsWhenTabsReached;
@@ -881,16 +893,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getMaxTabs(): int
     {
         return $this->maxTabs;
-    }
-
-    public function setLabelWidth(int $labelWidth): void
-    {
-        $this->labelWidth = $labelWidth;
-    }
-
-    public function getLabelWidth(): int
-    {
-        return $this->labelWidth;
     }
 
     public function getPermissionView(): ?array

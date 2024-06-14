@@ -56,6 +56,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
