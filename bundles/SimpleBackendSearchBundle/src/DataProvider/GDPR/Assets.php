@@ -97,7 +97,11 @@ class Assets extends DataProvider\Assets
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 
             if ($element instanceof Asset) {
-                $data = GridData\Asset::getData($element);
+                $data = [];
+                // TODO: remove the class_exists on pimcore 12.0
+                if (class_exists(GridData\Asset::class)) {
+                    $data = GridData\Asset::getData($element);
+                }
                 $data['permissions'] = $element->getUserPermissions();
                 $elements[] = $data;
             }

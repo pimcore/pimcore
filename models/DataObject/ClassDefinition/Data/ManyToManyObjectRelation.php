@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
@@ -178,7 +177,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $referencedObject) {
                 if ($referencedObject instanceof DataObject\Concrete) {
-                    $return[] = GridData\DataObject::getData($referencedObject, $gridFields, null, ['purpose' => 'editmode']);
+                    $return[] = DataObject\Service::gridObjectData($referencedObject, $gridFields, null, ['purpose' => 'editmode']);
                 }
             }
         }

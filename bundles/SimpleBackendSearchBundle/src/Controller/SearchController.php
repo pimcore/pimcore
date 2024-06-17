@@ -334,12 +334,23 @@ class SearchController extends UserAwareController
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed('list')) {
 
-                $data = match (true) {
-                    $element instanceof DataObject\AbstractObject => GridData\DataObject::getData($element, $fields),
-                    $element instanceof Document => GridData\Document::getData($element),
-                    $element instanceof Asset => GridData\Asset::getData($element),
-                    default => null, // Default case if none of the conditions are met
-                };
+                $data = null;
+                if (class_exists(GridData\DataObject::class)) {
+                    $data = match (true) {
+                        $element instanceof DataObject\AbstractObject => GridData\DataObject::getData($element, $fields),
+                        // @phpstan-ignore-next-line checking dataObject once is enough
+                        $element instanceof Document => GridData\Document::getData($element),
+                        // @phpstan-ignore-next-line otherwise have to do class_exists for each element type
+                        $element instanceof Asset => GridData\Asset::getData($element),
+                        default => null
+                    };
+                } else {
+                    // TODO: remove in pimcore/pimcore 12.0, kept only to avoid conflicting admin ui classic bundle < 1.5
+                    $data = match (true) {
+                        $element instanceof DataObject\AbstractObject => DataObject\Service::gridObjectData($element, $fields),
+                        default => null
+                    };
+                }
 
                 if ($data) {
                     $elements[] = $data;
