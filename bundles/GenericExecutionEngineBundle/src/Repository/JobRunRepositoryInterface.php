@@ -36,6 +36,7 @@ interface JobRunRepositoryInterface
 
     /**
      * @throws Exception
+     *
      * @internal
      */
     public function updateLogLocalizedWithDomain(

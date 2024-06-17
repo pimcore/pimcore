@@ -67,6 +67,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     /**
      * @throws Exception
+     *
      * @internal
      */
     public function updateLogLocalizedWithDomain(

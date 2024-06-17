@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 
 use Doctrine\DBAL\Exception;
-use Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
@@ -40,6 +39,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     use StopMessengerWorkersTrait;
 
     private const LOG_JOB_RUN_ID_KEY = '%job_run_id%';
+
     private const LOG_JOB_RUN_NAME_KEY = '%job_run_name%';
 
     private bool $isDev;
@@ -367,7 +367,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     {
         return [
             self::LOG_JOB_RUN_ID_KEY => $jobRun->getId(),
-            self::LOG_JOB_RUN_NAME_KEY => $jobRun->getJob()?->getName()
+            self::LOG_JOB_RUN_NAME_KEY => $jobRun->getJob()?->getName(),
         ];
     }
 
@@ -386,7 +386,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         if(count($logs) === $jobRun->getTotalElements()) {
             $jobRun->setState(JobRunStates::FAILED);
             $message = 'gee_job_failed';
-        } else if(count($logs) > 0) {
+        } elseif(count($logs) > 0) {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
             $message = 'gee_job_finished_with_errors';
         }
