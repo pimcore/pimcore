@@ -24,11 +24,8 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 
 class CollectGarbageMiddleware implements MiddlewareInterface
 {
-    use LoggerAwareTrait;
-
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        $this->logger->debug('Execute collect garbage middleware');
         Pimcore::collectGarbage();
 
         return $stack->next()->handle($envelope, $stack);
