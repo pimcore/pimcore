@@ -566,6 +566,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $dependencies = [];
 
+        if (!$data instanceof Localizedfield) {
+            return [];
+        }
+
         foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if (isset($values[$fd->getName()])) {
