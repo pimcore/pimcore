@@ -18,8 +18,10 @@ namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model\Dependency;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\DataObject\AbstractObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -44,6 +46,8 @@ class ElementDependenciesHandler
 
     private function saveDependencies(AbstractElement $element): void
     {
+        $hideUnpublished = $this->showUnpublished($element);
+
         $id = $element->getId();
         $type = Service::getElementType($element);
 
@@ -61,6 +65,32 @@ class ElementDependenciesHandler
 
             $d->addRequirement($requirement['id'], $requirement['type']);
         }
+        $this->resetHideUnpublished($element, $hideUnpublished);
+
         $d->save();
+
+    }
+
+    private function showUnpublished(AbstractElement $element): ?bool
+    {
+        $hideUnpublished = nulL;
+        if ($element instanceof AbstractObject) {
+            $hideUnpublished = AbstractObject::getHideUnpublished();
+            AbstractObject::setHideUnpublished(false);
+        } elseif ($element instanceof Document) {
+            $hideUnpublished = Document::doHideUnpublished();
+            Document::setHideUnpublished(false);
+        }
+
+        return $hideUnpublished;
+    }
+
+    private function resetHideUnpublished(AbstractElement $element, ?bool $hideUnpublished): void
+    {
+        if ($element instanceof AbstractObject) {
+            AbstractObject::setHideUnpublished($hideUnpublished);
+        } elseif ($element instanceof Document) {
+            Document::setHideUnpublished($hideUnpublished);
+        }
     }
 }
