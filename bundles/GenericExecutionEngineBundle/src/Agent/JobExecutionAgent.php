@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 
 use Doctrine\DBAL\Exception;
+use Pimcore\Bundle\CopilotBundle\AutomationAction\Extractor\JobRunExtractorInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
@@ -39,17 +40,18 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     use StopMessengerWorkersTrait;
 
     private const LOG_JOB_RUN_ID_KEY = '%job_run_id%';
+    private const LOG_JOB_RUN_NAME_KEY = '%job_run_name%';
 
     private bool $isDev;
 
     public function __construct(
-        string $environment,
-        private readonly string $errorHandlingMode,
-        private readonly JobRunRepositoryInterface $jobRunRepository,
+        string                                             $environment,
+        private readonly string                            $errorHandlingMode,
+        private readonly JobRunRepositoryInterface         $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
-        private readonly LoggerInterface $genericExecutionEngineLogger,
-        private readonly MessageBusInterface $executionEngineBus,
-        private readonly Translator $translator
+        private readonly LoggerInterface                   $genericExecutionEngineLogger,
+        private readonly MessageBusInterface               $executionEngineBus,
+        private readonly Translator                        $translator, private readonly JobRunExtractorInterface $jobRunExtractor
     ) {
         $this->isDev = $environment === 'dev';
     }
@@ -68,6 +70,12 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $jobRun->setCurrentStep(0);
         $jobRun->setTotalElements(count($job->getSelectedElements()));
 
+        $this->jobRunRepository->updateLogLocalized(
+            $jobRun,
+            'gee_job_started',
+            $this->getLogParams($jobRun),
+            domain: 'admin'
+        );
         $this->jobRunRepository->update($jobRun);
 
         $this->dispatchStepMessage($jobRun);
@@ -116,7 +124,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->jobRunRepository->updateLogLocalized(
             $jobRun,
             'gee_job_cancelled',
-            $this->getLogParams($jobRun->getId())
+            $this->getLogParams($jobRun),
+            domain: 'admin'
         );
     }
 
@@ -158,7 +167,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->setJobRunError(
                 $jobRun,
                 'gee_error_no_job_definition',
-                $this->getLogParams($jobRun->getId())
+                $this->getLogParams($jobRun)
             );
 
             return;
@@ -262,7 +271,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->jobRunRepository->updateLogLocalized(
             $jobRun,
             'gee_job_failed',
-            $this->getLogParams($jobRun->getId())
+            $this->getLogParams($jobRun),
+            domain: 'admin'
         );
     }
 
@@ -290,7 +300,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $translatedMessage . ' --> Job execution failed.'
             );
-            $this->jobRunRepository->updateLogLocalized($jobRun, $errorMessage, $params);
+            $this->jobRunRepository->updateLogLocalized($jobRun, $errorMessage, $params, domain: 'admin');
         } else {
             $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $errorMessage . ' --> Job execution failed.'
@@ -329,7 +339,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->setJobRunError(
                 $jobRun,
                 'gee_error_missing_message_implementation',
-                ['%message%' => $messageString, '%job_name%' => $job->getName()]
+                ['%message%' => $messageString, '%job_run_name%' => $job->getName()]
             );
 
             return;
@@ -352,30 +362,45 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         }
     }
 
-    private function getLogParams(int $jobRunId): array
+    private function getLogParams(JobRun $jobRun): array
     {
-        return [self::LOG_JOB_RUN_ID_KEY => $jobRunId];
+        return [
+            self::LOG_JOB_RUN_ID_KEY => $jobRun->getId(),
+            self::LOG_JOB_RUN_NAME_KEY => $jobRun->getJob()?->getName()
+        ];
     }
 
+    /**
+     * @throws Exception
+     */
     private function setCompletionState(JobRun $jobRun): void
     {
+        $message = '';
 
         $logs = $this->jobRunErrorLogRepository->getLogsByJobRunId(
             $jobRun->getId(),
             $jobRun->getCurrentStep()
         );
 
+        if(count($logs) === $jobRun->getTotalElements()) {
+            $jobRun->setState(JobRunStates::FAILED);
+            $message = 'gee_job_failed';
+        } else if(count($logs) > 0) {
+            $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
+            $message = 'gee_job_finished_with_errors';
+        }
+
         if(empty($logs)) {
             $jobRun->setCurrentMessage(null);
             $jobRun->setState(JobRunStates::FINISHED);
-
-            return;
+            $message = 'gee_job_finished';
         }
 
-        if(count($logs) === $jobRun->getTotalElements()) {
-            $jobRun->setState(JobRunStates::FAILED);
-        } else {
-            $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
-        }
+        $this->jobRunRepository->updateLogLocalized(
+            $jobRun,
+            $message,
+            $this->getLogParams($jobRun),
+            domain: 'admin'
+        );
     }
 }

@@ -73,9 +73,16 @@ final class JobRunRepository implements JobRunRepositoryInterface
         string $message,
         array $params = [],
         bool $updateCurrentMessage = true,
-        string $defaultLocale = 'en'
+        string $defaultLocale = 'en',
+        string $domain = null
     ): void {
-        $domain = $this->executionContext->getTranslationDomain($jobRun->getExecutionContext());
+        if(!$domain) {
+            $domain = $this->executionContext->getTranslationDomain($jobRun->getExecutionContext());
+        }
+
+        if(!$domain) {
+            $domain = 'admin';
+        }
 
         if ($updateCurrentMessage) {
             $jobRun->setCurrentMessageLocalized(
