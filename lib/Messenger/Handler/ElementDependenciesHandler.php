@@ -35,7 +35,10 @@ class ElementDependenciesHandler
 
     public function __invoke(ElementDependenciesMessage $message): void
     {
-        $this->saveDependencies($message->getElement());
+        $element = Service::getElementById($message->getType(), $message->getId());
+        if ($element instanceof AbstractElement) {
+            $this->saveDependencies($element);
+        }
     }
 
 

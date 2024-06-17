@@ -427,7 +427,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         if (Config::getSystemConfiguration()['dependency']['enabled']) {
             Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new ElementDependenciesMessage($this)
+                new ElementDependenciesMessage(Service::getElementType($this), $this->getId())
             );
         }
     }
