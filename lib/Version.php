@@ -24,6 +24,7 @@ use Composer\InstalledVersions;
 final class Version
 {
     const PACKAGE_NAME = 'pimcore/pimcore';
+
     private const PLATFORM_VERSION_PACKAGE_NAME = 'pimcore/platform-version';
 
     private const MAJOR_VERSION = 11;
