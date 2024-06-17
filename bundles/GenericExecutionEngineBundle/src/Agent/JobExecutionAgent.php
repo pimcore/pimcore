@@ -70,11 +70,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $jobRun->setCurrentStep(0);
         $jobRun->setTotalElements(count($job->getSelectedElements()));
 
-        $this->jobRunRepository->updateLogLocalized(
+        $this->jobRunRepository->updateLogLocalizedWithDomain(
             $jobRun,
             'gee_job_started',
-            $this->getLogParams($jobRun),
-            domain: 'admin'
+            $this->getLogParams($jobRun)
         );
         $this->jobRunRepository->update($jobRun);
 
@@ -121,11 +120,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $jobRun = $this->jobRunRepository->getJobRunById($jobRunId, true);
         $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled.");
         $jobRun->setState(JobRunStates::CANCELLED);
-        $this->jobRunRepository->updateLogLocalized(
+        $this->jobRunRepository->updateLogLocalizedWithDomain(
             $jobRun,
             'gee_job_cancelled',
-            $this->getLogParams($jobRun),
-            domain: 'admin'
+            $this->getLogParams($jobRun)
         );
     }
 
@@ -268,11 +266,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $this->stopMessengerWorkers();
         $this->setJobRunError($jobRun, $errorMessage, [], false);
         $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: JobRun cancelled due to errors.");
-        $this->jobRunRepository->updateLogLocalized(
+        $this->jobRunRepository->updateLogLocalizedWithDomain(
             $jobRun,
             'gee_job_failed',
-            $this->getLogParams($jobRun),
-            domain: 'admin'
+            $this->getLogParams($jobRun)
         );
     }
 
@@ -300,7 +297,11 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $translatedMessage . ' --> Job execution failed.'
             );
-            $this->jobRunRepository->updateLogLocalized($jobRun, $errorMessage, $params, domain: 'admin');
+            $this->jobRunRepository->updateLogLocalizedWithDomain(
+                $jobRun,
+                $errorMessage,
+                $params
+            );
         } else {
             $this->genericExecutionEngineLogger->info(
                 "[JobRun {$jobRun->getId()}]: " . $errorMessage . ' --> Job execution failed.'
@@ -396,11 +397,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $message = 'gee_job_finished';
         }
 
-        $this->jobRunRepository->updateLogLocalized(
+        $this->jobRunRepository->updateLogLocalizedWithDomain(
             $jobRun,
             $message,
-            $this->getLogParams($jobRun),
-            domain: 'admin'
+            $this->getLogParams($jobRun)
         );
     }
 }
