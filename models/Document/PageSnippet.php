@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Config;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
