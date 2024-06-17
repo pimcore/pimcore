@@ -482,22 +482,6 @@ class Service extends Model\Element\Service
         }
     }
 
-    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
-    {
-        if (!$parent = self::hasInheritableParentObject($object)) {
-            return [];
-        }
-
-        if ($inheritedValue = self::getStoreValueForObject($parent, $key, $requestedLanguage)) {
-            return [
-                'parent' => $parent,
-                'value' => $inheritedValue,
-            ];
-        }
-
-        return self::getInheritedData($parent, $key, $requestedLanguage);
-    }
-
     /**
      *
      * @return string[]|null
@@ -1980,6 +1964,26 @@ class Service extends Model\Element\Service
 
         return $fieldName;
     }
+
+    /**
+     * @deprecated Since 11.3, please use \Pimcore\Bundle\AdminBundle\Service\DataObject::getInheritedData() instead
+     */
+    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
+    {
+        if (!$parent = self::hasInheritableParentObject($object)) {
+            return [];
+        }
+
+        if ($inheritedValue = self::getStoreValueForObject($parent, $key, $requestedLanguage)) {
+            return [
+                'parent' => $parent,
+                'value' => $inheritedValue,
+            ];
+        }
+
+        return self::getInheritedData($parent, $key, $requestedLanguage);
+    }
+
 
     public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed
     {
