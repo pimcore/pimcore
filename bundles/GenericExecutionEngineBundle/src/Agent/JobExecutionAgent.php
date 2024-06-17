@@ -51,8 +51,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
         private readonly LoggerInterface $genericExecutionEngineLogger,
         private readonly MessageBusInterface $executionEngineBus,
-        private readonly Translator $translator,
-        private readonly JobRunExtractorInterface $jobRunExtractor
+        private readonly Translator $translator
     ) {
         $this->isDev = $environment === 'dev';
     }
