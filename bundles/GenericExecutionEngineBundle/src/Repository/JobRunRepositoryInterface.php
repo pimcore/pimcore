@@ -26,15 +26,25 @@ interface JobRunRepositoryInterface
 
     public function update(JobRun $jobRun): JobRun;
 
-    /**
-     * @throws Exception
-     */
     public function updateLogLocalized(
         JobRun $jobRun,
         string $message,
         array $params = [],
         bool $updateCurrentMessage = true,
         string $defaultLocale = 'en'
+    ): void;
+
+    /**
+     * @throws Exception
+     * @internal
+     */
+    public function updateLogLocalizedWithDomain(
+        JobRun $jobRun,
+        string $message,
+        array $params = [],
+        bool $updateCurrentMessage = true,
+        string $defaultLocale = 'en',
+        string $domain = 'admin'
     ): void;
 
     /**
