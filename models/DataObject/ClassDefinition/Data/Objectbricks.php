@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;

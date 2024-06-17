@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -602,6 +601,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
+
+        if (!is_array($data)) {
+            return [];
+        }
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {
