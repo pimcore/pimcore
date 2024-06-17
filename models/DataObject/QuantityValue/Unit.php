@@ -90,8 +90,10 @@ class Unit extends Model\AbstractModel
             if (!is_array($table)) {
                 $table = [];
                 $list = new Model\DataObject\QuantityValue\Unit\Listing();
-                $list = $list->load();
-                foreach ($list as $item) {
+                $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+                $list->setOrder(['ASC', 'ASC', 'ASC']);
+
+                foreach ($list->getUnits() as $item) {
                     $table[$item->getId()] = $item;
                 }
 
