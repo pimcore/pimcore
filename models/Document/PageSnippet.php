@@ -243,10 +243,6 @@ abstract class PageSnippet extends Model\Document
 
     public function resolveDependencies(): array
     {
-        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
-            return [];
-        }
-
         $dependencies = [parent::resolveDependencies()];
 
         foreach ($this->getEditables() as $editable) {

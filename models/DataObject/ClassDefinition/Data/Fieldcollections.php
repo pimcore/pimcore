@@ -323,10 +323,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         $dependencies = [];
 
-        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
-            return [];
-        }
-
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {
                 if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {

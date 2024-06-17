@@ -408,10 +408,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $dependencies = [];
 
-        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
-            return [];
-        }
-
         if ($data instanceof DataObject\Objectbrick) {
             $items = $data->getItems();
             foreach ($items as $item) {

@@ -295,10 +295,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         $dependencies = [];
 
-        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
-            return [];
-        }
-
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
             foreach ($data as $item) {

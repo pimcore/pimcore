@@ -602,10 +602,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
-        
-        if (!Config::getSystemConfiguration()['dependency']['enabled'] || !is_array($data)) {
-            return [];
-        }
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {

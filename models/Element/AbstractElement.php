@@ -411,10 +411,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $dependencies = [[]];
 
-        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
-            return [];
-        }
-
         // check for properties
         foreach ($this->getProperties() as $property) {
             $dependencies[] = $property->resolveDependencies();
