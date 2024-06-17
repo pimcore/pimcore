@@ -364,7 +364,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies[] = $field->resolveDependencies($this->$key ?? null);
+                $getter = 'get' . ucfirst($key);
+                $dependencies[] = $field->resolveDependencies($this->$getter());
             }
         }
 
