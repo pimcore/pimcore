@@ -461,6 +461,7 @@ CREATE TABLE `users` (
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `language` varchar(10) DEFAULT 'en',
+  `datetimeLocale` varchar(10) DEFAULT '',
   `contentLanguages` LONGTEXT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
