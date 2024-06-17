@@ -47,6 +47,8 @@ class ElementDependenciesHandler
     private function saveDependencies(AbstractElement $element): void
     {
         $hideUnpublished = $this->showUnpublished($element);
+        $getInheritedValues = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(false);
 
         $id = $element->getId();
         $type = Service::getElementType($element);
@@ -66,6 +68,7 @@ class ElementDependenciesHandler
             $d->addRequirement($requirement['id'], $requirement['type']);
         }
         $this->resetHideUnpublished($element, $hideUnpublished);
+        AbstractObject::setGetInheritedValues($getInheritedValues);
 
         $d->save();
 
