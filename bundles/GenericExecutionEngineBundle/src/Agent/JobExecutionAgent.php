@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 
 use Doctrine\DBAL\Exception;
-use Pimcore\Bundle\CopilotBundle\AutomationAction\Extractor\JobRunExtractorInterface;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
@@ -45,13 +45,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private bool $isDev;
 
     public function __construct(
-        string                                             $environment,
-        private readonly string                            $errorHandlingMode,
-        private readonly JobRunRepositoryInterface         $jobRunRepository,
+        string $environment,
+        private readonly string $errorHandlingMode,
+        private readonly JobRunRepositoryInterface $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
-        private readonly LoggerInterface                   $genericExecutionEngineLogger,
-        private readonly MessageBusInterface               $executionEngineBus,
-        private readonly Translator                        $translator, private readonly JobRunExtractorInterface $jobRunExtractor
+        private readonly LoggerInterface $genericExecutionEngineLogger,
+        private readonly MessageBusInterface $executionEngineBus,
+        private readonly Translator $translator,
+        private readonly JobRunExtractorInterface $jobRunExtractor
     ) {
         $this->isDev = $environment === 'dev';
     }
