@@ -237,8 +237,8 @@ The tokens for password reset are now stored in the DB and are one time use only
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events
-  - Removed `AdminEvents::LOGIN_CREDENTIALS` event.
-  - Removed `AdminEvents::LOGIN_FAILED` event. Use `Symfony\Component\HttpFoundation\Request\LoginFailureEvent` instead.
+  - Removed `AdminEvents::LOGIN_CREDENTIALS` (`pimcore.admin.login.credentials`) event. Use `Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent` instead.
+  - Removed `AdminEvents::LOGIN_FAILED` (`pimcore.admin.login.failed`) event. Use `Symfony\Component\HttpFoundation\Request\LoginFailureEvent` instead.
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed deprecated method `Pimcore\Bundle\AdminBundle\Security\User::getUsername()`, use `getIdentifier()` instead.
 -  Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
