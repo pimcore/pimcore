@@ -527,8 +527,15 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->cropImage($width, $height, $x, $y);
-        $this->resource->setImagePage($width, $height, 0, 0);
+        if ($this->checkPreserveAnimation()) {
+            foreach ($this->resource as $i => $frame) {
+                $frame->cropImage($width, $height, $x, $y);
+                $frame->setImagePage($width, $height, 0, 0);
+            }
+        } else {
+            $this->resource->cropImage($width, $height, $x, $y);
+            $this->resource->setImagePage($width, $height, 0, 0);
+        }
 
         $this->setWidth($width);
         $this->setHeight($height);

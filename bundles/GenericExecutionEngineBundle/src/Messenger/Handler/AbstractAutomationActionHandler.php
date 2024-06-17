@@ -197,7 +197,14 @@ abstract class AbstractAutomationActionHandler
         );
 
         if (!$subject) {
-            throw new UnexpectedValueException('No subject type found');
+            throw new UnexpectedValueException(
+                sprintf(
+                    'No subject type found. Expected types: %s, found %s, %s',
+                    implode(', ', $types),
+                    $message->getElement()?->getId(),
+                    $message->getElement()?->getType()
+                )
+            );
         }
 
         return $subject;

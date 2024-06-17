@@ -57,7 +57,7 @@ class SearchBackendListener implements EventSubscriberInterface
         ];
 
         // used when admin UI classic bundle is installed
-        if (class_exists(AdminEvents::class)) {
+        if (class_exists(AdminEvents::class) && defined(AdminEvents::class . '::OBJECT_LIST_HANDLE_FULLTEXT_QUERY')) {
             $events[AdminEvents::OBJECT_LIST_HANDLE_FULLTEXT_QUERY] = 'onHandleFulltextQuery';
         }
 

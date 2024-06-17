@@ -67,16 +67,17 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     /**
      * @throws Exception
+     *
+     * @internal
      */
-    public function updateLogLocalized(
+    public function updateLogLocalizedWithDomain(
         JobRun $jobRun,
         string $message,
         array $params = [],
         bool $updateCurrentMessage = true,
-        string $defaultLocale = 'en'
+        string $defaultLocale = 'en',
+        string $domain = 'admin'
     ): void {
-        $domain = $this->executionContext->getTranslationDomain($jobRun->getExecutionContext());
-
         if ($updateCurrentMessage) {
             $jobRun->setCurrentMessageLocalized(
                 $this->currentMessageProvider->getTranslationMessages($message, $params, $domain)
@@ -86,6 +87,24 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
         $translatedMessage = $this->translator->trans($message, $params, $domain, $defaultLocale);
         $this->updateLog($jobRun, $translatedMessage);
+    }
+
+    public function updateLogLocalized(
+        JobRun $jobRun,
+        string $message,
+        array $params = [],
+        bool $updateCurrentMessage = true,
+        string $defaultLocale = 'en'
+    ): void {
+        $domain = $this->executionContext->getTranslationDomain($jobRun->getExecutionContext());
+
+        $this->updateLogLocalizedWithDomain(
+            $jobRun,
+            $message,
+            $params,
+            $updateCurrentMessage,
+            $defaultLocale,
+            $domain);
     }
 
     /**
