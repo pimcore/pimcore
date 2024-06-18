@@ -79,7 +79,7 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    protected int $lastLogin;
+    protected int $lastLogin = 0;
 
     protected ?string $keyBindings = null;
 
