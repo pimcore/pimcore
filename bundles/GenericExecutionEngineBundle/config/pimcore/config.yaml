@@ -11,7 +11,8 @@ framework:
         buses:
           generic.execution.engine.bus:
             middleware:
-              - Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware
+              - 'Pimcore\Messenger\Middleware\CollectGarbageMiddleware'
+              - 'Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware'
         enabled: true
         transports:
             pimcore_generic_execution_engine:

@@ -39,7 +39,6 @@ final class StepConditionMiddleware implements MiddlewareInterface
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         $message = $envelope->getMessage();
-
         if ($message instanceof GenericExecutionEngineMessageInterface) {
             if ($this->jobRunExtractor->checkCondition($message)) {
                 return $stack->next()->handle($envelope, $stack);
