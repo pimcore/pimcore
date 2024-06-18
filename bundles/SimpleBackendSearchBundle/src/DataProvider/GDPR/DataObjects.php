@@ -105,7 +105,7 @@ class DataObjects extends DataProvider\DataObjects
             if ($element instanceof Concrete) {
                 if (class_exists(GridData\DataObject::class)) {
                     $data = GridData\DataObject::getData($element);
-                }else {
+                } else {
                     $data = DataObject\Service::gridObjectData($element);
                 }
                 $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;

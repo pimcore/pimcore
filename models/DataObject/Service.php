@@ -19,9 +19,9 @@ namespace Pimcore\Model\DataObject;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\ConfigElementInterface;
-use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
@@ -293,6 +293,7 @@ class Service extends Model\Element\Service
 
     /**
      * @deprecated Keeping in here to avoid bundles to require 11.3 or set a compatibility layer when bundles support both 10 & 11
+     *
      * @todo remove in pimcore 12.0
      *
      * @internal
@@ -557,9 +558,9 @@ class Service extends Model\Element\Service
         });
     }
 
-     /**
+    /**
      * @deprecated Since 11.3, please use GridData\DataObject::getHelperDefinitions() instead (requires pimcore/admin-ui-classic-bundle v1.5)
-      */
+     */
     public static function getHelperDefinitions(): array
     {
         if (class_exists(GridData\DataObject::class)) {
@@ -1983,7 +1984,6 @@ class Service extends Model\Element\Service
 
         return self::getInheritedData($parent, $key, $requestedLanguage);
     }
-
 
     public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed
     {
