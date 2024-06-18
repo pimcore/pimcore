@@ -613,7 +613,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            if ($differentOldPath){
+            if ($differentOldPath) {
                 $this->renewInheritedProperties();
             }
 

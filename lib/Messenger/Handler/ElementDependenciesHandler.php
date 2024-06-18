@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\ElementDependenciesMessage;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\DataObject\AbstractObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -42,7 +42,6 @@ class ElementDependenciesHandler
             $this->saveDependencies($element);
         }
     }
-
 
     private function saveDependencies(AbstractElement $element): void
     {
@@ -76,7 +75,7 @@ class ElementDependenciesHandler
 
     private function showUnpublished(AbstractElement $element): ?bool
     {
-        $hideUnpublished = nulL;
+        $hideUnpublished = null;
         if ($element instanceof AbstractObject) {
             $hideUnpublished = AbstractObject::getHideUnpublished();
             AbstractObject::setHideUnpublished(false);

@@ -424,7 +424,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
-
     public function isLocked(): bool
     {
         if ($this->getLocked()) {

@@ -371,7 +371,7 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            if ($differentOldPath){
+            if ($differentOldPath) {
                 $this->renewInheritedProperties();
             }
 
