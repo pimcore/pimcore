@@ -79,7 +79,7 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    protected int $lastLogin = 0;
+    protected ?int $lastLogin = null;
 
     protected ?string $keyBindings = null;
 
@@ -641,7 +641,7 @@ final class User extends User\UserRole implements UserInterface
         return $mergedWebsiteTranslationLanguagesView;
     }
 
-    public function getLastLogin(): int
+    public function getLastLogin(): ?int
     {
         return $this->lastLogin;
     }
