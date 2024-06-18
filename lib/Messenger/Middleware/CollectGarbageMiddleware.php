@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Messenger\Middleware;
 
 use Pimcore;
-use Pimcore\Bundle\GenericDataIndexBundle\Traits\LoggerAwareTrait;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
