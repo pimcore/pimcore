@@ -8,6 +8,11 @@
 - The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
 #### [Assets]
 - MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
+#### [Grid]: 
+- Moved grid data related function to `admin-classic-ui-bundle` `v1.5`.
+- Method `Service::getHelperDefinitions()` is deprecated here and moved to `admin-classic-ui-bundle`.
+#### [Simple Backend Search]
+- Due to grid data refactoring, please note that in order to run this optional bundle correctly, it is required to install `admin-classic-ui-bundle` `v1.5`
 
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
@@ -48,7 +53,6 @@
   To replace Headless Chrome, upgrade to Gotenberg v8 and upgrade the client library: `composer require gotenberg/gotenberg-php:^2`
 #### [Data Objects]:
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
-- Method `Service::getHelperDefinitions()` is deprecated here and moved to `admin-classic-ui-bundle` `v1.5`.
 - All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
 - `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
 
