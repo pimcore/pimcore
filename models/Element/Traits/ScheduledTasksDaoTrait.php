@@ -31,10 +31,12 @@ trait ScheduledTasksDaoTrait
     public function deleteAllTasks(array $ignoreIds = []): void
     {
         $type = Service::getElementType($this->model);
-        $where = '`cid` = ' . $this->db->quote($this->model->getId()) . ' AND `ctype` = ' . $this->db->quote($type);
-        if ($ignoreIds) {
-            $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+        if ($this->model->getId()) {
+            $where = '`cid` = ' . $this->model->getId() . ' AND `ctype` = ' . $this->db->quote($type);
+            if ($ignoreIds) {
+                $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+            }
+            $this->db->executeStatement('DELETE FROM schedule_tasks WHERE ' . $where);
         }
-        $this->db->executeStatement('DELETE FROM schedule_tasks WHERE ' . $where);
     }
 }

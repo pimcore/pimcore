@@ -63,17 +63,17 @@ And you can see the effect, below:
 | Name                | Type   | Description                                                                                                                                                                                  |
 |---------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `allowed`           | array  | An array of area-ID's which are allowed for this tag. The order of items in the array is also used as the default sorting, but of course you can combine this configuration with **sorting** |
-| `sorting`           | array  | An array of area-ID's in the order you want to display them in the menu.                                                                                                                  |
+| `sorting`           | array  | An array of area-ID's in the order you want to display them in the menu.                                                                                                                     |
 | `params`            | array  | Optional parameter, this can also contain additional brick-specific configurations, see **brick-specific configuration**                                                                     |
 | `globalParams`      | array  | Same as `params` but passed to all bricks independent from the type                                                                                                                          |
 | `group`             | array  | Array with group configuration (see example above).                                                                                                                                          |
 | `manual`            | bool   | Forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                          |
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
-| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. \{"iframe": 1, "teasers": 2\}                                                                     |
+| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. \{"iframe": 1, "teasers": 2\}                                                                                  |
 | `areablock_toolbar` | array  | Array with option that allows you to configure the toolbar. Possible options are `width`, `buttonWidth` and `buttonMaxCharacters`                                                            |
 | `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
-| `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                              |
+| `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                                                                  |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ##### Example
@@ -138,6 +138,6 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
 {% do areaBlock.end() %}
 ```
 
-### Accessing Data Within an Areablock Element
+### Accessing Data within an Areablock Element
 
 See [Block](../06_Block.md) for an example how to get elements from block and areablock editables.

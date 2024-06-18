@@ -64,4 +64,4 @@ if ($request->hasSession()) {
 Symfony framework session is configured by default, so you don't need to configure the session in your `config.yaml`.
 
 
-Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`. 
+Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`.

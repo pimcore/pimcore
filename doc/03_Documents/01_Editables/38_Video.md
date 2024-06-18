@@ -138,4 +138,3 @@ It is possible to limit the available types for this editable. The selection can
 
 
 Read more about [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
-

@@ -32,8 +32,8 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
 
 /**
- * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
+ * @method Model\DataObject\Concrete\Dao getDao()
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -666,6 +666,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
+            //Reset Relational data to force a reload
+            $this->__rawRelationData = null;
+
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }

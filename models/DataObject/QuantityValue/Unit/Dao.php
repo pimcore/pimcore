@@ -74,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(int $id): void
     {
-        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $id);
         if (!$classRaw) {
             throw new Model\Exception\NotFoundException('Unit ' . $id . ' not found.');
         }

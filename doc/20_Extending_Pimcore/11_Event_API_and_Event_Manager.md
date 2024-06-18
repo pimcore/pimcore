@@ -161,4 +161,4 @@ into the /news/in-enim-justo_2/image_1 asset folder.
 
                 }
         });
-```  
+```

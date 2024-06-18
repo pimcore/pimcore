@@ -46,4 +46,3 @@ Pimcore automatically displays an input widget in the edit mode and renders the 
 | [Video](./38_Video.md)                                             | Use the Video editable to insert asset movies in pages content.                                                                                              |
 | [WYSIWYG](./40_WYSIWYG.md)                                         | WYSIWYG editor.                                                                                                                                              |
 | [Scheduled Block](./42_Scheduled_Block.md)                         | Scheduled Blocks allow to schedule content for certain timestamps                                                                                            |
-
