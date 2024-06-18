@@ -96,14 +96,14 @@ class Service
                 $table = Cache\RuntimeCache::get(Unit::CACHE_KEY);
             }
 
-            if (!is_array($table)) {
+            if (!\is_array($table)) {
                 $table = Cache::load(Unit::CACHE_KEY);
-                if (is_array($table)) {
+                if (\is_array($table)) {
                     Cache\RuntimeCache::set(Unit::CACHE_KEY, $table);
                 }
             }
 
-            if (!is_array($table)) {
+            if (!\is_array($table)) {
                 $table = [];
                 $list = new Unit\Listing();
                 $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
