@@ -199,43 +199,16 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      */
     public function configureOptions(): void
     {
-        if (!$this->validUnits) {
-            $table = null;
+        if ($this->validUnits) {
+            return;
+        }
 
-            try {
-                if (RuntimeCache::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
-                    $table = RuntimeCache::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
-                }
+        $table = DataObject\QuantityValue\Service::getQuantityValueUnitsTable();
 
-                if (!is_array($table)) {
-                    $table = Cache::load(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
-                    if (is_array($table)) {
-                        RuntimeCache::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
-                    }
-                }
-
-                if (!is_array($table)) {
-                    $table = [];
-                    $list = new Model\DataObject\QuantityValue\Unit\Listing();
-                    $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
-                    $list->setOrder(['ASC', 'ASC', 'ASC']);
-                    foreach ($list->getUnits() as $item) {
-                        $table[$item->getId()] = $item;
-                    }
-
-                    Cache::save($table, Model\DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
-                    RuntimeCache::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
-                }
-            } catch (\Exception $e) {
-                Logger::error((string) $e);
-            }
-
-            if (is_array($table)) {
-                $this->validUnits = [];
-                /** @var Model\DataObject\QuantityValue\Unit $unit */
-                foreach ($table as $unit) {
-                    $this->validUnits[] = $unit->getId();
-                }
+        if (\is_array($table)) {
+            $this->validUnits = [];
+            foreach ($table as $unit) {
+                $this->validUnits[] = $unit->getId();
             }
         }
     }

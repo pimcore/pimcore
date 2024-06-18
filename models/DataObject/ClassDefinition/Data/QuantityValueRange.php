@@ -324,42 +324,10 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             return;
         }
 
-        $table = null;
-
-        try {
-            if (RuntimeCache::isRegistered(DataObject\QuantityValue\Unit::CACHE_KEY)) {
-                $table = RuntimeCache::get(DataObject\QuantityValue\Unit::CACHE_KEY);
-            }
-
-            if (!\is_array($table)) {
-                $table = Cache::load(DataObject\QuantityValue\Unit::CACHE_KEY);
-
-                if (\is_array($table)) {
-                    RuntimeCache::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
-                }
-            }
-
-            if (!\is_array($table)) {
-                $table = [];
-                $list = new DataObject\QuantityValue\Unit\Listing();
-                $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
-                $list->setOrder(['ASC', 'ASC', 'ASC']);
-
-                foreach ($list->getUnits() as $item) {
-                    $table[$item->getId()] = $item;
-                }
-
-                Cache::save($table, DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
-                RuntimeCache::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
-            }
-        } catch (Exception $e) {
-            Logger::error((string) $e);
-        }
+        $table = DataObject\QuantityValue\Service::getQuantityValueUnitsTable();
 
         if (\is_array($table)) {
             $this->validUnits = [];
-
-            /** @var DataObject\QuantityValue\Unit $unit */
             foreach ($table as $unit) {
                 $this->validUnits[] = $unit->getId();
             }
