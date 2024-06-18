@@ -43,6 +43,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected string $language = 'en';
 
+    protected ?string $datetimeLocale = null;
+
     protected bool $admin = false;
 
     protected bool $active = true;
@@ -727,5 +729,16 @@ final class User extends User\UserRole implements UserInterface
     protected function getFallbackImage(): string
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
+    }
+
+    public function getDatetimeLocale(): ?string
+    {
+        return $this->datetimeLocale;
+    }
+
+    public function setDatetimeLocale(?string $datetimeLocale): static
+    {
+        $this->datetimeLocale = $datetimeLocale;
+        return $this;
     }
 }
