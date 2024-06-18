@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
@@ -400,7 +403,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [[]];
 
@@ -411,6 +414,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return array_merge(...$dependencies);
     }
+
+    protected function addToDependenciesQueue(): void
+    {
+        if (Config::getSystemConfiguration()['dependency']['enabled']) {
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new ElementDependenciesMessage(Service::getElementType($this), $this->getId())
+            );
+        }
+    }
+
 
     public function isLocked(): bool
     {

@@ -613,6 +613,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -719,23 +726,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        // save dependencies
-        $d = new Model\Dependency();
-        $d->setSourceType('object');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // don't add a reference to yourself
-                continue;
-            }
-
-            $d->addRequirement($requirement['id'], $requirement['type']);
-        }
-
-        $d->save();
-
-        //set object to registry
+        // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 

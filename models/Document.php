@@ -371,6 +371,13 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -482,21 +489,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('document');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                // don't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement((int)$requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 

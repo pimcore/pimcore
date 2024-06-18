@@ -128,6 +128,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
+        $this->addDependencyNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -2005,6 +2006,21 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    private function addDependencyNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('dependency')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('enabled')
+                        ->defaultValue(true)
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     /**

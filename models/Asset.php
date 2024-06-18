@@ -581,6 +581,13 @@ class Asset extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath){
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
@@ -774,24 +781,9 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('asset');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // don't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
-
         $this->getDao()->update();
 
-        //set asset to registry
+        // set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
         RuntimeCache::set($cacheKey, $this);
         if (static::class === Asset::class || $typeChanged) {
@@ -1602,8 +1594,11 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return [];
+        }
         $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {

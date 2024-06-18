@@ -35,6 +35,8 @@ framework:
             pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
+            #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
+            #pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
         routing:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
@@ -46,6 +48,7 @@ framework:
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
             'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
+            #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
@@ -339,3 +342,6 @@ pimcore:
         select_options:
             read_target:
                 type: 'symfony-config'
+
+    dependency:
+        enabled: true
