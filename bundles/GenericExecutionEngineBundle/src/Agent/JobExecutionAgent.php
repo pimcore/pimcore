@@ -50,7 +50,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         private readonly JobRunRepositoryInterface $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
         private readonly LoggerInterface $genericExecutionEngineLogger,
-        private readonly MessageBusInterface $genericExecutionEngineBus,
+        private readonly MessageBusInterface $executionEngineBus,
         private readonly Translator $translator
     ) {
         $this->isDev = $environment === 'dev';
@@ -348,13 +348,13 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
 
         $selectedElements = $job->getSelectedElements();
         if (empty($selectedElements)) {
-            $this->genericExecutionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
+            $this->executionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
 
             return;
         }
 
         foreach ($selectedElements as $selectedElement) {
-            $this->genericExecutionEngineBus->dispatch(new $messageString(
+            $this->executionEngineBus->dispatch(new $messageString(
                 $jobRun->getId(),
                 $jobRun->getCurrentStep(),
                 $selectedElement
