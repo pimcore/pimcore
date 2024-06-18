@@ -739,6 +739,7 @@ final class User extends User\UserRole implements UserInterface
     public function setDatetimeLocale(?string $datetimeLocale): static
     {
         $this->datetimeLocale = $datetimeLocale;
+
         return $this;
     }
 }
