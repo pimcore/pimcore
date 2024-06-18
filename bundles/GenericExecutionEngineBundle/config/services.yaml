@@ -28,10 +28,6 @@ services:
     # ---------------------
     # Job Execution Engine
     # ---------------------
-#    Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface:
-#        class: Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgent
-#        arguments:
-#            $environment: '%kernel.environment%'
     Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgent
         arguments:
