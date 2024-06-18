@@ -32,6 +32,7 @@ services:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgent
         arguments:
             $environment: '%kernel.environment%'
+            $executionEngineBus: '@generic.execution.engine.bus'
 
     Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepository
@@ -59,8 +60,6 @@ services:
                 priority: 500
                 connection: 'default'
 
-    Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware: ~
-
     Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractor
 
@@ -76,3 +75,15 @@ services:
     Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContext
 
+
+    # ---------------------
+    # Middleware
+    # ---------------------
+
+    Pimcore\Messenger\Middleware\CollectGarbageMiddleware:
+        tags:
+            - { name: "messenger.middleware" }
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware:
+        tags:
+            - { name: "messenger.middleware" }
