@@ -22,6 +22,7 @@ final class JobRunStateChangedEvent extends Event
 {
     public function __construct(
         private readonly int $jobRunId,
+        private readonly string$jobName,
         private readonly string $oldState,
         private readonly string $newState
     ) {
@@ -31,6 +32,11 @@ final class JobRunStateChangedEvent extends Event
     public function getJobRunId(): int
     {
         return $this->jobRunId;
+    }
+
+    public function getJobName(): string
+    {
+        return $this->jobName;
     }
 
     public function getOldState(): string
