@@ -13,8 +13,8 @@ Create a job as follows
 $job = new Job(
   'my-first-job',
   [
-    new JobStep(MyFirstTestMessage::class, []),
-    new JobStep(MySecondTestMessage::class, []),
+    new JobStep('Step 1', MyFirstTestMessage::class, '', []),
+    new JobStep('Step 2', MySecondTestMessage::class, '', []),
   ],
   [new ElementDescriptor('object', 234)],
   [
