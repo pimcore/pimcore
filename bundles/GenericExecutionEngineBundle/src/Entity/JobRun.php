@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Entity]
 #[Table(name: 'generic_execution_engine_job_run')]
 #[HasLifecycleCallbacks]
-final class JobRun
+class JobRun
 {
     public const DEFAULT_EXECUTION_CONTEXT = 'default';
 
