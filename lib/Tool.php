@@ -214,6 +214,49 @@ final class Tool
         return $languageOptions;
     }
 
+    /**
+     * Trying to get BCP 47 format
+     *
+     * @return array<string, string>
+     *
+     * @throws \Exception
+     */
+    public static function getSupportedJSLocales(): array
+    {
+        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
+        $locale = $localeService->findLocale();
+
+        $cacheKey = 'system_supported_js_locales_' . strtolower((string)$locale);
+        if (!$languageOptions = Cache::load($cacheKey)) {
+            $languages = $localeService->getLocaleList();
+
+            $languageOptions = [];
+            foreach ($languages as $code) {
+                if (substr_count($code, '_') > 1) {
+                    continue;
+                }
+                $codeBCP = str_replace('_', '-', $code);
+
+                $displayName = \Locale::getDisplayName($code, $locale);
+                $displayRegion = \Locale::getDisplayRegion($code, $locale);
+
+                if ($displayRegion) {
+                    $translation = $displayRegion . ' [' . $codeBCP . ']';
+                } else {
+                    $translation = $displayName . ' [' . $codeBCP . ']';
+                }
+
+                $languageOptions[$codeBCP] = $translation;
+            }
+
+            asort($languageOptions);
+
+            Cache::save($languageOptions, $cacheKey, ['system']);
+        }
+
+        return $languageOptions;
+    }
+
     private static function resolveRequest(Request $request = null): ?Request
     {
         if (null === $request) {
