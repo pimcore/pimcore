@@ -51,7 +51,13 @@ final class JobRunStatusChangeSubscriber
             if ($oldStatus !== $newStatus) {
                 $jobRun = $this->jobRunRepository->getJobRunById($entity->getId());
                 $jobName = $jobRun->getJob()?->getName();
-                $event = new JobRunStateChangedEvent($entity->getId(), $jobName, $oldStatus, $newStatus);
+                $event = new JobRunStateChangedEvent(
+                    jobRunId: $entity->getId(),
+                    jobName: $jobName,
+                    jobRunOwnerId: $jobRun->getOwnerId(),
+                    oldState: $oldStatus,
+                    newState: $newStatus
+                );
                 $this->eventDispatcher->dispatch($event);
             }
         }
