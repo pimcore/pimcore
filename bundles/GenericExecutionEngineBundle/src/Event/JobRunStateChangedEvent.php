@@ -22,7 +22,7 @@ final class JobRunStateChangedEvent extends Event
 {
     public function __construct(
         private readonly int $jobRunId,
-        private readonly string$jobName,
+        private readonly string $jobName,
         private readonly int $jobRunOwnerId,
         private readonly string $oldState,
         private readonly string $newState
