@@ -21,9 +21,6 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecut
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Throwable;
 
-/**
- * @internal
- */
 interface JobExecutionAgentInterface
 {
     /**

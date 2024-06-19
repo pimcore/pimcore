@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Event\JobRunStateChangedEvent;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -27,7 +28,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class JobRunStatusChangeSubscriber
 {
     public function __construct(
-        private readonly EventDispatcherInterface $eventDispatcher
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly JobRunRepositoryInterface $jobRunRepository
     ) {
 
     }
@@ -47,7 +49,15 @@ final class JobRunStatusChangeSubscriber
             $newStatus = $args->getNewValue(self::STATE_FIELD);
 
             if ($oldStatus !== $newStatus) {
-                $event = new JobRunStateChangedEvent($entity->getId(), $oldStatus, $newStatus);
+                $jobRun = $this->jobRunRepository->getJobRunById($entity->getId());
+                $jobName = $jobRun->getJob()?->getName();
+                $event = new JobRunStateChangedEvent(
+                    jobRunId: $entity->getId(),
+                    jobName: $jobName,
+                    jobRunOwnerId: $jobRun->getOwnerId(),
+                    oldState: $oldStatus,
+                    newState: $newStatus
+                );
                 $this->eventDispatcher->dispatch($event);
             }
         }
