@@ -33,13 +33,10 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @internal
- */
 #[Entity]
 #[Table(name: 'generic_execution_engine_job_run')]
 #[HasLifecycleCallbacks]
-class JobRun
+final class JobRun
 {
     public const DEFAULT_EXECUTION_CONTEXT = 'default';
 
