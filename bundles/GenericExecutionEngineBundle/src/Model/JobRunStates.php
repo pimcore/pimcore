@@ -17,9 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
-/**
- * @internal
- */
 enum JobRunStates: string
 {
     case RUNNING = 'running';
