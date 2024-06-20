@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @property Document\PageSnippet $document
+ * @property Document $document
  * @property bool $editmode
  */
 abstract class FrontendController extends Controller
@@ -47,7 +47,6 @@ abstract class FrontendController extends Controller
     /**
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
-     *
      *
      * @return mixed
      */
@@ -80,7 +79,6 @@ abstract class FrontendController extends Controller
     /**
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
-     *
      */
     protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
     {
@@ -95,8 +93,6 @@ abstract class FrontendController extends Controller
      * Loads a document editable
      *
      * e.g. `$this->getDocumentEditable('input', 'foobar')`
-     *
-     *
      *
      * @throws \Exception
      */
