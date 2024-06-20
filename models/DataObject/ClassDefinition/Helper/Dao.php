@@ -188,11 +188,11 @@ trait Dao
     protected function indexExists(string $table, string $prefix, string $indexName): bool
     {
         $exist = $this->db->fetchFirstColumn(
-            "SELECT COUNT(*)
+            'SELECT COUNT(*)
                 FROM information_schema.statistics
                 WHERE table_name = ?
                   AND index_name = ?
-                  AND table_schema = DATABASE();",
+                  AND table_schema = DATABASE();',
             [
                 $table,
                 $prefix . $indexName,
