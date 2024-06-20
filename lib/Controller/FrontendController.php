@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @property Document $document
+ * @property Document|null $document
  * @property bool $editmode
  */
 abstract class FrontendController extends Controller
@@ -100,6 +100,9 @@ abstract class FrontendController extends Controller
     {
         if (null === $document) {
             $document = $this->document;
+        }
+        if (!$document instanceof Document\PageSnippet) {
+            throw new \Exception('getDocumentEditable needs a Document\PageSnippet instance');
         }
 
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
