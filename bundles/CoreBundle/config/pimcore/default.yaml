@@ -192,7 +192,7 @@ pimcore:
             map:
                 unknown:
                     class: \Pimcore\Model\Asset\Unknown
-                    matching: [ "/\\.dwg/", "/\\.stp$/" ]
+                    matching: [ "/\\.dwg$/", "/\\.stp$/" ]
                 image:
                     class: \Pimcore\Model\Asset\Image
                     matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
