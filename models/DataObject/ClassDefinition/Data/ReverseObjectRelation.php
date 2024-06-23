@@ -199,6 +199,10 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getClasses(): array
     {
-        return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
+        if($this->ownerClassName) {
+            return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
+        }
+
+        return [];
     }
 }
