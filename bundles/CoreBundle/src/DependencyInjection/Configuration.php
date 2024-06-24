@@ -201,6 +201,12 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('domain')
                     ->defaultValue('')
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return !filter_var($v, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
+                        })
+                        ->thenInvalid('Invalid domain name "%s"')
+                    ->end()
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()

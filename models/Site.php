@@ -220,11 +220,16 @@ final class Site extends AbstractModel
     /**
      * @return $this
      */
-    public function setDomains(mixed $domains): static
+    public function setDomains(array|string $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
         }
+        array_map(static function ($domain) {
+            if (!filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                throw new \InvalidArgumentException(sprintf('Invalid domain name "%s"', $domain));
+            }
+        }, $domains);
         $this->domains = $domains;
 
         return $this;
@@ -302,6 +307,9 @@ final class Site extends AbstractModel
 
     public function setMainDomain(string $mainDomain): void
     {
+        if (!filter_var($mainDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw new \InvalidArgumentException(sprintf('Invalid domain name "%s"', $mainDomain));
+        }
         $this->mainDomain = $mainDomain;
     }
 
