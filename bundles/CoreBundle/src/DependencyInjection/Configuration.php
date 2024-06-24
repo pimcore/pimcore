@@ -203,7 +203,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue('')
                     ->validate()
                         ->ifTrue(function ($v) {
-                            return !filter_var($v, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
+                            return $v && !filter_var($v, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
                         })
                         ->thenInvalid('Invalid domain name "%s"')
                     ->end()

@@ -170,6 +170,10 @@ class SystemSettingsConfig
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
+        if ($values['general.domain'] && !filter_var($values['general.domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw new \InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
+        }
+
         $settings[self::CONFIG_ID] = [
             'general' => [
                 'domain' => $values['general.domain'],

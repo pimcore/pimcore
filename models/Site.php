@@ -307,8 +307,8 @@ final class Site extends AbstractModel
 
     public function setMainDomain(string $mainDomain): void
     {
-        if (!filter_var($mainDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-            throw new \InvalidArgumentException(sprintf('Invalid domain name "%s"', $mainDomain));
+        if ($mainDomain && !filter_var($mainDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw new \InvalidArgumentException(sprintf('Invalid main domain name "%s"', $mainDomain));
         }
         $this->mainDomain = $mainDomain;
     }
