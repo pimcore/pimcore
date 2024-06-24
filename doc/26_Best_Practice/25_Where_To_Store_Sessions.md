@@ -4,4 +4,4 @@ Pimcore uses the Symfony session component to handle sessions. By default, Symfo
 This is fine for most applications, but it can be a performance bottleneck for high-traffic sites.
 
 To avoid blocking requests, you can store sessions in a database or a cache.
-We strongly recommend using a solution like Redis to store sessions.
+To prevent request blocking, consider storing sessions in a database or a cache. Be careful to select a solution that suits your requirements, as using alternatives like Redis may introduce race conditions or other issues.
