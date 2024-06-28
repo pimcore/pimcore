@@ -16,16 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Cache;
-use Pimcore\Cache\RuntimeCache;
+use Pimcore;
 use Pimcore\Db;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 abstract class AbstractQuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -205,7 +204,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
 
         $table = DataObject\QuantityValue\Service::getQuantityValueUnitsTable();
 
-        if (\is_array($table)) {
+        if (is_array($table)) {
             $this->validUnits = [];
             foreach ($table as $unit) {
                 $this->validUnits[] = $unit->getId();
@@ -225,7 +224,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         /** @var UnitConversionService $converter */
-        $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
+        $converter = Pimcore::getContainer()->get(UnitConversionService::class);
 
         $filterValue = $value[0];
         $filterUnit = Model\DataObject\QuantityValue\Unit::getById($value[1]);

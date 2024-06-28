@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Translation;
+use function is_array;
 
 class Service
 {
@@ -49,7 +51,7 @@ class Service
             foreach ($units as $unit) {
                 $unit->save();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -75,7 +77,7 @@ class Service
                         true));
                 }
                 $result[] = $unit->getObjectVars();
-            } catch (\Exception $e) {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -96,14 +98,14 @@ class Service
                 $table = Cache\RuntimeCache::get(Unit::CACHE_KEY);
             }
 
-            if (!\is_array($table)) {
+            if (!is_array($table)) {
                 $table = Cache::load(Unit::CACHE_KEY);
-                if (\is_array($table)) {
+                if (is_array($table)) {
                     Cache\RuntimeCache::set(Unit::CACHE_KEY, $table);
                 }
             }
 
-            if (!\is_array($table)) {
+            if (!is_array($table)) {
                 $table = [];
                 $list = new Unit\Listing();
                 $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
@@ -118,7 +120,7 @@ class Service
             }
 
             return $table;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             return null;
