@@ -190,6 +190,9 @@ pimcore:
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
         type_definitions:
             map:
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.dwg$/", "/\\.stp$/" ]
                 image:
                     class: \Pimcore\Model\Asset\Image
                     matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
@@ -210,9 +213,6 @@ pimcore:
                 video:
                    class: \Pimcore\Model\Asset\Video
                    matching: [ "/video/" ]
-                unknown:
-                    class: \Pimcore\Model\Asset\Unknown
-                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
