@@ -19,10 +19,10 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
 
 /**
  * @internal
@@ -52,6 +52,7 @@ class InstallCommand extends AbstractBundleCommand
 
         if ($this->bundleManager->isInstalled($bundle)) {
             $this->io->success(sprintf('Bundle "%s" is already installed', $bundle->getName()));
+
             return Command::SUCCESS;
         }
 
