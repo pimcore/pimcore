@@ -100,9 +100,9 @@ abstract class FrontendController extends Controller
     {
         if (null === $document) {
             $document = $this->document;
-        }
-        if (!$document instanceof Document\PageSnippet) {
-            throw new \Exception('getDocumentEditable needs a Document\PageSnippet instance');
+            if (!$document instanceof Document\PageSnippet) {
+                throw new \Exception('FrontendController::getDocumentEditable() needs a Document\PageSnippet instance');
+            }
         }
 
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
