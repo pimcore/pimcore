@@ -51,7 +51,7 @@ class Service
             foreach ($units as $unit) {
                 $unit->save();
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 
