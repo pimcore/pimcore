@@ -30,12 +30,24 @@ final class ExecutionContext implements ExecutionContextInterface
 
     public function getTranslationDomain(string $context): string
     {
+        $this->validateContext($context);
+
+        return $this->contexts[$context]['translations_domain'];
+    }
+
+    public function getErrorHandlingFromContext(string $context): ?string
+    {
+        $this->validateContext($context);
+
+        return $this->contexts[$context]['error_handling'] ?? null;
+    }
+
+    private function validateContext(string $context): void
+    {
         if (!isset($this->contexts[$context])) {
             throw new ExecutionContextNotDefinedException(
                 sprintf('Execution context "%s" is not defined.', $context)
             );
         }
-
-        return $this->contexts[$context]['translations_domain'];
     }
 }

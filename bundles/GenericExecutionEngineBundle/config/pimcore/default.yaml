@@ -3,3 +3,4 @@ pimcore_generic_execution_engine:
     execution_context:
         default:
             translations_domain: admin
+            error_handling: 'continue_on_error'
