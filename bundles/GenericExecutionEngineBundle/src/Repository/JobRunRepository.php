@@ -104,7 +104,8 @@ final class JobRunRepository implements JobRunRepositoryInterface
             $params,
             $updateCurrentMessage,
             $defaultLocale,
-            $domain);
+            $domain
+        );
     }
 
     /**

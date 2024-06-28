@@ -19,4 +19,6 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Configuration;
 interface ExecutionContextInterface
 {
     public function getTranslationDomain(string $context): string;
+
+    public function getErrorHandlingFromContext(string $context): ?string;
 }
