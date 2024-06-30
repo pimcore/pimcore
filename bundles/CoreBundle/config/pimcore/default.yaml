@@ -57,6 +57,7 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                max_input_length: -1
                 allow_attributes:
                     pimcore_type: '*'
                     pimcore_id: '*'
