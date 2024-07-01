@@ -142,9 +142,18 @@ class Text
                         if (!preg_match('/pimcore_disable_thumbnail="([^"]+)*"/', $oldTag)) {
                             if (!empty($config)) {
                                 $path = $element->getThumbnail($config);
+
+                                $imgTagWithCustomMetadata = $path->getImageTag();
+                                preg_match('/alt="([^"]*)"/', $imgTagWithCustomMetadata, $altMatches);
+                                preg_match('/title="([^"]*)"/', $imgTagWithCustomMetadata, $titleMatches);
+                                $alt = $altMatches[1] ?? '';
+                                $title = $titleMatches[1] ?? '';
+
                                 $pathHdpi = $element->getThumbnail(array_merge($config, ['highResolution' => 2]));
                                 $additionalAttributes = [
                                     'srcset' => $path . ' 1x, ' . $pathHdpi . ' 2x',
+                                    'alt' => $alt,
+                                    'title' => $title,
                                 ];
                             } elseif ($element->getWidth() > 2000 || $element->getHeight() > 2000) {
                                 // if the image is too large, size it down to 2000px this is the max. for wysiwyg

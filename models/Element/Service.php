@@ -606,8 +606,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
+     * @todo remove in pimcore/pimcore 12.0
      *
+     * @internal
      *
      */
     public static function gridElementData(ElementInterface $element): array

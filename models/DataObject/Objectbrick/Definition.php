@@ -150,7 +150,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
+        if ($this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
         }
 
@@ -487,9 +487,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Delete Brick Definition
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());

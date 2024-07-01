@@ -39,4 +39,3 @@ This looks like the following in editmode:
 A user can now drag documents there from the *Assets* tree:
 
 ![PDF editable - drag a document](../../img/editables_pdf_filled.png)
-

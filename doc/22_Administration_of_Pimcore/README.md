@@ -6,7 +6,3 @@ are:
 * [Backup of Pimcore](./01_Backups.md)
 * [Commandline Interface of Pimcore](./05_Commandline_Interface.md)
 * [Users and Roles](./07_Users_and_Roles.md)
-
-
-
-

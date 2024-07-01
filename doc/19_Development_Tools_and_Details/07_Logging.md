@@ -88,5 +88,3 @@ class SomeService {
 ```
 
 For more, please refer to [Monolog Documentation](https://symfony.com/doc/6.2/logging/channels_handlers.html)
-
-

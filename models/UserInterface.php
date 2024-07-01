@@ -183,7 +183,7 @@ interface UserInterface extends UserRoleInterface
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations(): ?array;
 
-    public function getLastLogin(): int;
+    public function getLastLogin(): ?int;
 
     /**
      * @return $this
