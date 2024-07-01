@@ -36,7 +36,7 @@ class StatusInfo
         $this->translator = $translator;
 
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $this->userLanguage = $user->getLanguage();
+        $this->userLanguage = $user ? $user->getLanguage() : 'en';
     }
 
     public function getToolbarHtml(object $subject): string
