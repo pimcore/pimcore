@@ -113,7 +113,7 @@
     "symfony/security-http": "^6.4",
     "symfony/serializer": "^6.4",
     "symfony/templating": "^6.4",
-    "symfony/translation": "^6.4",
+    "symfony/translation": "6.4.8",
     "symfony/twig-bridge": "^6.4",
     "symfony/twig-bundle": "^6.4",
     "symfony/uid": "^6.4",
