@@ -1,4 +1,11 @@
 # Generic Execution Engine
+:::caution
+
+To use this feature, please enable the `PimcoreGenericExecutionEngineBundle` in your `bundle.php` file and install it accordingly with the following command:
+
+`bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle`
+
+:::
 
 Generic execution engine
 - executes jobs asynchronously via [Symfony Messenger](https://symfony.com/doc/current/messenger.html).
