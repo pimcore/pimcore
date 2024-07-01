@@ -1,5 +1,8 @@
 {# @var places \Pimcore\Workflow\Place\PlaceConfig[] #}
 {# @var translator \Symfony\Contracts\Translation\TranslatorInterface #}
+{% if lang is not defined %}
+    {% set lang = 'en' %}
+{% endif %}
 
 <div class="pimcore-workflow-place-indicator-wrapper">
     {% for place in places %}
