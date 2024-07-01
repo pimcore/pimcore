@@ -10,7 +10,7 @@
     ],
     "fallback_languages": {
       "en": "",
-      "de": ""
+      "de": "en"
     },
     "default_language": "",
     "debug_admin_translations": false

@@ -130,8 +130,8 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "symfony/symfony": "*",
     "sabre/dav": "4.2.2",
+    "symfony/symfony": "*",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0"
   },
