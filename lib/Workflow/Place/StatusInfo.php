@@ -27,6 +27,7 @@ class StatusInfo
     private Environment $twig;
 
     private TranslatorInterface $translator;
+
     private string $userLanguage;
 
     public function __construct(Manager $workflowManager, Environment $twig, TranslatorInterface $translator)
