@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 
 use Doctrine\DBAL\Exception;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
@@ -47,6 +48,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     public function __construct(
         string $environment,
         private readonly string $errorHandlingMode,
+        private readonly ExecutionContextInterface $executionContext,
         private readonly JobRunRepositoryInterface $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
         private readonly LoggerInterface $genericExecutionEngineLogger,
@@ -221,7 +223,12 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $errorMessage,
         );
 
-        match ($this->errorHandlingMode) {
+        $errorHandling = $this->executionContext->getErrorHandlingFromContext($jobRun->getExecutionContext());
+        if ($errorHandling === null) {
+            $errorHandling = $this->errorHandlingMode;
+        }
+
+        match ($errorHandling) {
             ErrorHandlingMode::STOP_ON_FIRST_ERROR->value =>
             $this->stopJobExecutionOnError(
                 $jobRun,
