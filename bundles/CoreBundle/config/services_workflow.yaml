@@ -8,6 +8,8 @@ services:
 
     Pimcore\Workflow\Place\StatusInfo:
         public: true
+        arguments:
+            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
 
     Pimcore\Workflow\Notification\NotificationEmailService:
         public: true
