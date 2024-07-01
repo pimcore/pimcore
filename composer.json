@@ -133,6 +133,7 @@
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
     "symfony/console": "6.4.9 || 7.1.2",
+    "symfony/dependency-injection": "6.4.9 || 7.1.2",
     "symfony/doctrine-bridge": "6.4.9 || 7.1.2",
     "symfony/doctrine-messenger": "6.4.9 || 7.1.2",
     "symfony/error-handler": "6.4.9 || 7.1.2",
