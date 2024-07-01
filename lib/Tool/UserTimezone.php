@@ -27,7 +27,7 @@ final class UserTimezone
 
     public static function setUserTimezone(?string $userTimezone): void
     {
-        if ($userTimezone !== null && !in_array($userTimezone, timezone_identifiers_list())) {
+        if ($userTimezone !== null && !in_array($userTimezone, timezone_identifiers_list(\DateTimeZone::ALL_WITH_BC))) {
             Logger::error('Invalid user timezone: ' . $userTimezone);
             $userTimezone = null;
         }

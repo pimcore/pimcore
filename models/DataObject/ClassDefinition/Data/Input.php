@@ -198,7 +198,7 @@ class Input extends Data implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if(is_string($data)) {
-            if ($this->getRegex() && $data !== '') {
+            if (!$omitMandatoryCheck && $this->getRegex() && $data !== '') {
                 $throwException = false;
                 if (in_array('g', $this->getRegexFlags())) {
                     $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
