@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Tool;
 
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -113,7 +114,7 @@ class Warming
                 self::loadElementToCache($element);
             }
 
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
             sleep(self::getTimoutBetweenIteration());
         }
     }

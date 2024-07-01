@@ -17,13 +17,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Iterator;
 
+use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
+use RecursiveFilterIterator;
+use function is_string;
 
 /**
  * @internal
  */
-final class PrefixRecursiveFilterIterator extends \RecursiveFilterIterator
+final class PrefixRecursiveFilterIterator extends RecursiveFilterIterator
 {
     private string $property;
 
@@ -48,7 +51,7 @@ final class PrefixRecursiveFilterIterator extends \RecursiveFilterIterator
 
         try {
             $property = $page->get($this->property);
-        } catch (\Exception) {
+        } catch (Exception) {
             return false;
         }
 

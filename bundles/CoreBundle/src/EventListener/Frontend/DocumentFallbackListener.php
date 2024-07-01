@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function is_array;
 
 /**
  * If no document was found on the active request (not set by router or by initiator of a sub-request), try to find and

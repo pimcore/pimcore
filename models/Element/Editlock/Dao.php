@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element\Editlock;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal

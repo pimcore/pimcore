@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function in_array;
+use function is_null;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
@@ -251,15 +254,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if ($precision < 1 || $precision > 65) {
-            throw new \InvalidArgumentException('Decimal precision must be a value between 1 and 65');
+            throw new InvalidArgumentException('Decimal precision must be a value between 1 and 65');
         }
 
         if ($scale < 0 || $scale > 30 || $scale > $precision) {
-            throw new \InvalidArgumentException('Decimal scale must be a value between 0 and 30');
+            throw new InvalidArgumentException('Decimal scale must be a value between 0 and 30');
         }
 
         if ($scale > $precision) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Decimal scale can\'t be larger than precision (%d)',
                 $precision
             ));

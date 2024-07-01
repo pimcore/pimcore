@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\Controller;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface;
 use Pimcore\Bundle\XliffBundle\ExportService\ExportServiceInterface;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\ImportDataExtractorInterface;
@@ -42,7 +43,7 @@ class XliffTranslationController extends UserAwareController
     /**
      * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
     {
@@ -90,7 +91,7 @@ class XliffTranslationController extends UserAwareController
     /**
      * @Route("/xliff-import-upload", name="pimcore_bundle_xliff_translation_xliffimportupload", methods={"POST"})
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
     {
@@ -129,7 +130,7 @@ class XliffTranslationController extends UserAwareController
     /**
      * @Route("/xliff-import-element", name="pimcore_bundle_xliff_translation_xliffimportelement", methods={"POST"})
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
     {
@@ -145,7 +146,7 @@ class XliffTranslationController extends UserAwareController
             } else {
                 Logger::warning(sprintf('Could not resolve element %s', $id));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::err($e->getMessage());
 
             return $this->jsonResponse([

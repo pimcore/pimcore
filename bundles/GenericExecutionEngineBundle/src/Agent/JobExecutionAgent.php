@@ -31,6 +31,7 @@ use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
+use function count;
 
 /**
  * @internal

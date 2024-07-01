@@ -15,10 +15,12 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use function is_array;
 
 /**
  * @internal
@@ -29,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true): void
     {

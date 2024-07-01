@@ -21,6 +21,8 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Listing\Dao\AbstractDao;
+use function count;
+use function in_array;
 
 /**
  * @internal

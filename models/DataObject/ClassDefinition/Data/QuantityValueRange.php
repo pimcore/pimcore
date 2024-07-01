@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -61,7 +62,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     public function setUnitWidth(string|int $unitWidth): void
     {
-        if (\is_numeric($unitWidth)) {
+        if (is_numeric($unitWidth)) {
             $unitWidth = (int) $unitWidth;
         }
 
@@ -188,7 +189,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
-        if (\is_array($data) && (isset($data['minimum']) || isset($data['maximum']) || isset($data['unit']))) {
+        if (is_array($data) && (isset($data['minimum']) || isset($data['maximum']) || isset($data['unit']))) {
             if ($data['unit'] === -1 || empty($data['unit'])) {
                 $data['unit'] = null;
             }
@@ -252,7 +253,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\QuantityValueRange
     {
-        if (\is_array($value)) {
+        if (is_array($value)) {
             return new DataObject\Data\QuantityValueRange($value['minimum'], $value['maximum'], $value['unitId']);
         }
 
@@ -296,20 +297,20 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
                 || $data->getUnitId() === null
             )
         ) {
-            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $fieldName));
+            throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
         if (!empty($data)) {
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
-            if (!\is_numeric($minimum) || !\is_numeric($maximum)) {
+            if (!is_numeric($minimum) || !is_numeric($maximum)) {
                 throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
             }
 
             if ($minimum > $maximum) {
                 throw new ValidationException(
-                    \sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
+                    sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
                 );
             }
         }
@@ -331,15 +332,15 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
                 $table = RuntimeCache::get(DataObject\QuantityValue\Unit::CACHE_KEY);
             }
 
-            if (!\is_array($table)) {
+            if (!is_array($table)) {
                 $table = Cache::load(DataObject\QuantityValue\Unit::CACHE_KEY);
 
-                if (\is_array($table)) {
+                if (is_array($table)) {
                     RuntimeCache::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
             }
 
-            if (!\is_array($table)) {
+            if (!is_array($table)) {
                 $table = [];
                 $list = new DataObject\QuantityValue\Unit\Listing();
                 $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
@@ -356,7 +357,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             Logger::error((string) $e);
         }
 
-        if (\is_array($table)) {
+        if (is_array($table)) {
             $this->validUnits = [];
 
             /** @var DataObject\QuantityValue\Unit $unit */

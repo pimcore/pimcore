@@ -22,6 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
 
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
+use UnexpectedValueException;
 
 /**
  * @internal
@@ -101,15 +102,15 @@ class Dao extends AbstractDao
         }
 
         if (!$recipient instanceof User) {
-            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
+            throw new UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
         }
 
         if (empty($data['title'])) {
-            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+            throw new UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
         if (empty($data['message'])) {
-            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
+            throw new UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
         $linkedElement = null;

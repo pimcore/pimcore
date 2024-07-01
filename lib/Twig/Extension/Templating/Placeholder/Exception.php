@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
-class Exception extends \RuntimeException
+use RuntimeException;
+
+class Exception extends RuntimeException
 {
 }

@@ -24,6 +24,8 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function array_key_exists;
+use function in_array;
 
 class SystemSettingsConfig
 {
@@ -222,7 +224,7 @@ class SystemSettingsConfig
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
@@ -232,7 +234,7 @@ class SystemSettingsConfig
                 $target = trim($l);
                 if ($target) {
                     if (in_array($target, $fallbacks)) {
-                        throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
+                        throw new Exception("Language `$source` | `$target` causes an infinte loop.");
                     }
                     $fallbacks[] = $target;
 
@@ -240,7 +242,7 @@ class SystemSettingsConfig
                 }
             }
         } else {
-            throw new \Exception("Language `$source` doesn't exist");
+            throw new Exception("Language `$source` doesn't exist");
         }
     }
 

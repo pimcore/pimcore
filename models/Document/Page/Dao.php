@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Page;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -59,7 +60,7 @@ class Dao extends Model\Document\PageSnippet\Dao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {

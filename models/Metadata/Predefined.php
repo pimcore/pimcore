@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Metadata;
 
+use Exception;
+use Pimcore;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -66,7 +68,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, string $language = ''): ?Predefined
     {
@@ -256,7 +258,7 @@ final class Predefined extends Model\AbstractModel
     public function minimize(): void
     {
         try {
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
             $instance = $loader->build($this->type);
             $this->data = $instance->getDataFromEditMode($this->data);
@@ -268,7 +270,7 @@ final class Predefined extends Model\AbstractModel
     public function expand(): void
     {
         try {
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
             $instance = $loader->build($this->type);
             $this->data = $instance->getDataForEditmode($this->data);

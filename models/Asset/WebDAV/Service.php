@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\WebDAV;
 
 use Pimcore\Model\Asset;
 use Symfony\Component\Filesystem\Filesystem;
+use function is_array;
 
 /**
  * @internal

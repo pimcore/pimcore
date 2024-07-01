@@ -19,6 +19,7 @@ namespace Pimcore\Workflow\Notification;
 use Pimcore\Db;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\User;
+use function count;
 
 class AbstractNotificationService
 {

@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Loader\ImplementationLoader\Exception;
 
+use RuntimeException;
+
 /**
  * @internal
  */
-class UnsupportedException extends \RuntimeException
+class UnsupportedException extends RuntimeException
 {
 }

@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use function strlen;
 
 class Link implements OwnerAwareFieldInterface
 {

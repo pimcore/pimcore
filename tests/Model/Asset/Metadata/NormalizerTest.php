@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset\Metadata;
 
+use Pimcore;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\Metadata\Loader\DataLoader;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use function in_array;
 
 /**
  * Class NormalizerTest
@@ -43,7 +45,7 @@ class NormalizerTest extends ModelTestCase
         }
 
         $this->testAsset = TestHelper::createImageAsset();
-        $this->loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $this->loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
     }
 
     public function tearDown(): void

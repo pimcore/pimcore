@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 use Pimcore\Model\DataObject\Service;
+use function in_array;
 
 /**
  * @method Dao getDao()

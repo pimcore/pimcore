@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor;
 
+use DateTime;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -34,7 +35,7 @@ class ModificationDateProcessor implements ProcessorInterface
             return $url;
         }
 
-        $url->setLastmod(\DateTime::createFromFormat('U', (string)$element->getModificationDate()));
+        $url->setLastmod(DateTime::createFromFormat('U', (string)$element->getModificationDate()));
 
         return $url;
     }

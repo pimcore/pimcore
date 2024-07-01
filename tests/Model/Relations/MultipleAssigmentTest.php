@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Relations;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
@@ -24,6 +26,7 @@ use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use function count;
 
 /**
  * Class MultipleAssigmentTest
@@ -93,7 +96,7 @@ class MultipleAssigmentTest extends ModelTestCase
         try {
             $object->save();
             $this->fail('only one assignment allowed but validation accepted duplicate items');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
@@ -132,7 +135,7 @@ class MultipleAssigmentTest extends ModelTestCase
         try {
             $object->save();
             $this->fail('only one assignment allowed but validation accepted duplicate items');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
@@ -183,7 +186,7 @@ class MultipleAssigmentTest extends ModelTestCase
 
         //clear cache and collect garbage
         Cache::clearAll();
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
 
         //reload data object from database
         $object = MultipleAssignments::getById($id, ['force' => true]);
@@ -230,7 +233,7 @@ class MultipleAssigmentTest extends ModelTestCase
 
         //clear cache and collect garbage
         Cache::clearAll();
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
 
         //reload data object from database
         $object = MultipleAssignments::getById($id, ['force' => true]);

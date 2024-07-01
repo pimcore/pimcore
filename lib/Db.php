@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use Doctrine\DBAL\Connection;
+use Pimcore;
 
 class Db
 {
@@ -35,14 +36,14 @@ class Db
     public static function get(): Connection
     {
         /** @var Connection $db */
-        $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
+        $db = Pimcore::getContainer()->get('doctrine.dbal.default_connection');
 
         return $db;
     }
 
     public static function close(): void
     {
-        $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
+        $db = Pimcore::getContainer()->get('doctrine.dbal.default_connection');
         $db->close();
     }
 }

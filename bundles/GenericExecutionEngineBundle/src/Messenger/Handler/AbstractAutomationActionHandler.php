@@ -34,6 +34,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnexpectedValueException;
+use function array_key_exists;
 
 abstract class AbstractAutomationActionHandler
 {
