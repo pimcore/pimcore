@@ -132,9 +132,7 @@
   "conflict": {
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
-    "symfony/var-exporter": "6.4.9 || 7.1.2",
-    "symfony/string": "6.4.9 || 7.1.2",
-    "symfony/property-info": "6.4.9 || 7.1.2",
+    "symfony/*": "6.4.9 || 7.1.2",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0"
   },
