@@ -19,6 +19,8 @@
 - Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
 #### [Composer]
 - Removed requirement of "phpoffice/phpspreadsheet" due it being not in used, more specifically moved it to the specific bundle who actually use it. Please check and adapt your project's composer requirement accordingly.
+#### [Logging]
+- Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
 #### [Dependency]
 - Dependencies are now resolved by messenger queue and can be turned off. By default, it is done synchronously, but it's possible to make it async by add the following config:
 ```yaml
