@@ -132,7 +132,6 @@
   "conflict": {
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
-    "symfony/http-kernel": "6.4.9 || 7.1.2",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0"
   },
