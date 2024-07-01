@@ -16,7 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Configuration;
 
+/**
+ * @internal
+ */
 interface ExecutionContextInterface
 {
     public function getTranslationDomain(string $context): string;
+
+    public function getErrorHandlingFromContext(string $context): ?string;
 }

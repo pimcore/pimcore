@@ -27,7 +27,7 @@ Local asset videos support the automatic generation and transcoding of videos us
 | Name                       | Arguments            | Return                                                  | Description                                                                                   |
 |----------------------------|----------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 | `getImageThumbnail($name)` | (string/array) $name | string, absolute path to the thumbnail                  | Get a specific image thumbnail of the video, or a thumbnail of the poster image (if assigned) |
-| `getPosterAsset()`         |                      | Pimcore\Model\Asset                                     | Returns the [assigned poster image asset](#posterReturnedValue)                               |
+| `getPosterAsset()`         |                      | Pimcore\Model\Asset                                     | Returns the assigned poster image asset                               |
 | `getThumbnail()`           | (string/array) $name | array, absolute paths to the different video thumbnails | Get a specific video-thumbnail of the video                                                   |
 | `getVideoAsset()`          | -                    | asset                                                   | Returns the video asset object if assigned, otherwise null                                    |
 | `getVideoType()`           | -                    | string, type of the video (asset,youtube,vimeo,url)     | This is to check which video type is assigned                                                 |

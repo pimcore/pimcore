@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->enumNode('error_handling')
                 ->values([ErrorHandlingMode::CONTINUE_ON_ERROR->value, ErrorHandlingMode::STOP_ON_FIRST_ERROR->value])
-                ->info('Specifies how errors should be handled during job run execution.')
+                ->info('Specifies how errors should be handled for all job run executions.')
                 ->defaultValue(ErrorHandlingMode::CONTINUE_ON_ERROR->value)
             ->end()
             ->arrayNode('execution_context')
@@ -40,6 +40,14 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('translations_domain')
                             ->info('Translation domain which should be used by the job run. Default value is "admin".')
+                            ->defaultValue('admin')
+                        ->end()
+                        ->scalarNode('error_handling')
+                            ->info(
+                                'Error handling behavior which should be used by the job run.' .
+                                ' Overrides the global value. Default is "' .
+                                ErrorHandlingMode::CONTINUE_ON_ERROR->value . '".'
+                            )
                             ->defaultValue('admin')
                         ->end()
                     ->end()
