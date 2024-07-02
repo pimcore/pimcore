@@ -426,7 +426,7 @@ class Service extends Model\Element\Service
                 $sitesObjects = $sitesList->load();
 
                 foreach ($sitesObjects as $site) {
-                    if ($site->getRootDocument() && (in_array($urlParts['host'], $site->getDomains()) || $site->getMainDomain() == $urlParts['host'])) {
+                    if ($site->getRootDocument() && isset($urlParts['host']) && (in_array($urlParts['host'], $site->getDomains()) || $site->getMainDomain() == $urlParts['host'])) {
                         if ($document = Document::getByPath($site->getRootDocument() . $urlParts['path'])) {
                             break;
                         }
