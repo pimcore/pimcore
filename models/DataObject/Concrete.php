@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use function array_merge;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -31,8 +32,8 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
 
 /**
- * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
+ * @method Model\DataObject\Concrete\Dao getDao()
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -710,13 +711,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     public function __sleep(): array
     {
         $parentVars = parent::__sleep();
-
         $finalVars = [];
-
-        $blockedVars = [];
+        $blockedVars = ['__rawRelationData'];
 
         if (!$this->isInDumpState()) {
-            $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+            $blockedVars = array_merge(['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'], $blockedVars);
             // do not dump lazy loaded fields for caching
             $lazyLoadedFields = $this->getLazyLoadedFieldNames();
             $blockedVars = array_merge($lazyLoadedFields, $blockedVars);

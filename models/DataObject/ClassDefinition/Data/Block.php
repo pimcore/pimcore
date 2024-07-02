@@ -306,14 +306,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
-                if ($invisible && !is_null($oIndex)) {
+                if ((!array_key_exists($elementName, $blockElement) || $invisible) && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
                     if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
-                        if (isset($items[$oIndex])) {
+                        if (isset($items[$oIndex][$elementName])) {
                             $item = $items[$oIndex][$elementName];
-                            $blockData = $blockElement[$elementName] ?: $item->getData();
+                            $blockData = $blockElement[$elementName] ?? $item->getData();
                             $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
@@ -499,6 +499,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->children;
     }
 
+    /**
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -524,6 +527,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->setFieldDefinitions(null);
     }
 
+    /**
+     * @return $this
+     */
     public function setLayout(?array $layout): static
     {
         $this->layout = $layout;
@@ -820,7 +826,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function setMaxItems(?int $maxItems): void
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
     }
 
     public function isDisallowAddRemove(): bool

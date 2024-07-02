@@ -48,9 +48,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public bool $border = false;
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -367,6 +370,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $this->allowedTypes;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {

@@ -43,16 +43,10 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
 
 define('PIMCORE_PROJECT_ROOT', $projectRoot);
 
-Bootstrap::defineConstants();
+Bootstrap::$isInstaller = true;
+Bootstrap::bootstrap();
 
 Debug::enable();
-
-// Load a startup file if it exists - this is a good place to preconfigure the system
-// before the kernel is loaded - e.g. to set trusted proxies on the request object
-$startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
-if (file_exists($startupFile)) {
-    include_once $startupFile;
-}
 
 $input = new \Symfony\Component\Console\Input\ArgvInput();
 $env = $input->getParameterOption(['--env', '-e'], null, true);

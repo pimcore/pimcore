@@ -4,6 +4,9 @@
 
 Similar to Textarea and Input you can use the WYSIWYG editable in the templates to provide rich-text editing. TinyMce is installed by default in our demo. Another editor can be installed via the wysiwyg-events you find in `events.js`
 
+## Enable TinyMce
+In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
+
 ## Add a Custom Editor
 Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases(documents, objects ...):
 ```javascript

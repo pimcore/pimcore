@@ -64,6 +64,7 @@ use Symfony\Component\Mime\MimeTypes;
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string|null getCurrentFullPath()
+ * @method Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 class Asset extends Element\AbstractElement
 {
@@ -168,7 +169,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -392,7 +393,7 @@ class Asset extends Element\AbstractElement
             $asset->save();
         }
 
-        if (file_exists($tmpFile)) {
+        if ($tmpFile !== null && file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
@@ -405,7 +406,7 @@ class Asset extends Element\AbstractElement
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
-        if ($size = @getimagesize($localPath)) {
+        if ($maxPixels && $size = @getimagesize($localPath)) {
             $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
@@ -731,7 +732,7 @@ class Asset extends Element\AbstractElement
 
                 try {
                     $mimeType = $storage->mimeType($path);
-                } catch(UnableToRetrieveMetadata $e) {
+                } catch (UnableToRetrieveMetadata $e) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);

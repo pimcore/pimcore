@@ -352,6 +352,33 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('assets')
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->arrayNode('thumbnails')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('allowed_formats')
+                                ->defaultValue(
+                                    [
+                                        'avif',
+                                        'eps',
+                                        'gif',
+                                        'jpeg',
+                                        'jpg',
+                                        'pjpeg',
+                                        'png',
+                                        'svg',
+                                        'tiff',
+                                        'webm',
+                                        'webp',
+                                        'print',
+                                    ]
+                                )
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->floatNode('max_scaling_factor')
+                                ->defaultValue(5.0)
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -1971,11 +1998,15 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    /**
+     * @deprecated
+     */
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
                 ->arrayNode('chromium')
+                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('uri')

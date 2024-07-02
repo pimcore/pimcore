@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Notes;
 
 /**
- * @method getLabel()
+ * @method string getLabel()
  *
  * @property array $options
  */
