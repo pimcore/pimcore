@@ -732,7 +732,7 @@ class Asset extends Element\AbstractElement
 
                 try {
                     $mimeType = $storage->mimeType($path);
-                } catch(UnableToRetrieveMetadata $e) {
+                } catch (UnableToRetrieveMetadata $e) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
