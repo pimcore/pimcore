@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
@@ -100,11 +101,11 @@ class Embed extends Model\Document\Editable
         } elseif (is_string($data)) {
             $unserializedData = Serialize::unserialize($data);
             if (!is_array($unserializedData)) {
-                throw new \InvalidArgumentException('Unserialized data must be an array.');
+                throw new InvalidArgumentException('Unserialized data must be an array.');
             }
             $processedData = $unserializedData;
         } else {
-            throw new \InvalidArgumentException('Data must be a string or an array.');
+            throw new InvalidArgumentException('Data must be a string or an array.');
         }
 
         $this->url = $processedData['url'] ?? null;

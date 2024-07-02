@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -295,11 +296,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         } elseif (is_string($data)) {
             $unserializedData = Serialize::unserialize($data);
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
-                throw new \InvalidArgumentException('Unserialized data must be an array or null.');
+                throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }
             $processedData = $unserializedData;
         } else {
-            throw new \InvalidArgumentException('Data must be a string, an array or null.');
+            throw new InvalidArgumentException('Data must be a string, an array or null.');
         }
 
         $this->data = $processedData;

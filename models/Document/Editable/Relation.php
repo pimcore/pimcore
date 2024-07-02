@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -114,11 +115,11 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         } elseif (is_string($data)) {
             $unserializedData = Serialize::unserialize($data);
             if (!is_array($unserializedData)) {
-                throw new \InvalidArgumentException('Unserialized data must be an array.');
+                throw new InvalidArgumentException('Unserialized data must be an array.');
             }
             $processedData = $unserializedData;
         } else {
-            throw new \InvalidArgumentException('Data must be a string or an array.');
+            throw new InvalidArgumentException('Data must be a string or an array.');
         }
 
         $this->id = $processedData['id'] ?? null;
