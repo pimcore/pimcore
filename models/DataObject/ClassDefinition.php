@@ -489,9 +489,6 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return $cd;
     }
 
-    /**
-     * @throws Exception\DefinitionWriteException
-     */
     public function delete(): void
     {
         if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {

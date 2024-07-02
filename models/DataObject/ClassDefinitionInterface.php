@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\VarExportInterface;
+use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use Pimcore\Model\ModelInterface;
 
 interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterface, ModelInterface, VarExportInterface
@@ -50,6 +51,9 @@ interface ClassDefinitionInterface extends FieldDefinitionEnrichmentModelInterfa
      */
     public function generateClassFiles(bool $generateDefinitionFile = true): void;
 
+    /**
+     * @throws DefinitionWriteException
+     */
     public function delete(): void;
 
     /**
