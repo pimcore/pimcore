@@ -331,10 +331,6 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return is_string($name);
     }
 
-    /**
-     * @throws Exception
-     * @throws DataObject\Exception\DefinitionWriteException
-     */
     public function save(bool $saveDefinitionFile = true): void
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
