@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
 use Exception;
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 use function count;
 use function in_array;
@@ -238,10 +239,11 @@ class InheritanceHelper
                 $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
-                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
+                $originalEntry = Helper::quoteDataIdentifiers($this->db, $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]));
+
                 foreach ($missingIds as $id) {
-                    $originalEntry[$this->idField] = $id;
-                    $this->db->insert($this->querytable, $originalEntry);
+                    $originalEntry[$this->db->quoteIdentifier($this->idField)] = $id;
+                    $this->db->insert($this->db->quoteIdentifier($this->querytable), $originalEntry);
                 }
             }
         }
