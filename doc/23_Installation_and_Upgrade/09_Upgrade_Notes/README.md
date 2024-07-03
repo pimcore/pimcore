@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.4.0
+### General
+#### [Logging]
+- Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
+
 ## Pimcore 11.3.0
 ### General
 #### [System Settings]
