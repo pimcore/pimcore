@@ -48,7 +48,7 @@ class Configuration implements ConfigurationInterface
                                 ' Overrides the global value. Default is "' .
                                 ErrorHandlingMode::CONTINUE_ON_ERROR->value . '".'
                             )
-                            ->defaultValue('admin')
+                            ->defaultValue(ErrorHandlingMode::CONTINUE_ON_ERROR->value)
                         ->end()
                     ->end()
                 ->end()
