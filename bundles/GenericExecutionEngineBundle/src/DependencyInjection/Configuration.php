@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
                             ->values(
                                 [
                                     ErrorHandlingMode::CONTINUE_ON_ERROR->value,
-                                    ErrorHandlingMode::STOP_ON_FIRST_ERROR->value
+                                    ErrorHandlingMode::STOP_ON_FIRST_ERROR->value,
                                 ]
                             )
                             ->info(
