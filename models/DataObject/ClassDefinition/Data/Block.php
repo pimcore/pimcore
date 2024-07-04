@@ -817,7 +817,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
                 $params['context'] = [
                     'object' => $params['owner']->getObject(),
-                    'brickField' => 'block',
+                    'brickField' => $params['fieldname'],
                     'containerKey' => $params['owner']->getType(),
                     'fieldname' => $params['owner']->getFieldname(),
                 ];
