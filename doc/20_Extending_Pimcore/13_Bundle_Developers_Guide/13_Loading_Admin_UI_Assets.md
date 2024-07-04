@@ -83,7 +83,7 @@ class AdminAssetsListener implements EventSubscriberInterface
     {
         $event->addPaths([
             '/bundles/app/js/admin.js'
-        ]));
+        ]);
     }
 }
 ```
