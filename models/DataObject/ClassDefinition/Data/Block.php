@@ -826,10 +826,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($container, $setter)) {
                     $container->$setter($data);
-                    $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
-            $this->preSetData($container, $data, $params);
+            $this->markLazyloadedFieldAsLoaded($container);
         }
 
         return is_array($data) ? $data : [];
