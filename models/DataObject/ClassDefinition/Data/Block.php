@@ -814,6 +814,22 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $data = $container->getObjectVar($this->getName());
         } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+                $params['context'] = [
+                    'object' => $params['owner']->getObject(),
+                    'brickField' => 'block',
+                    'containerKey' => $params['owner']->getType(),
+                    'fieldname' => $params['owner']->getFieldname(),
+                ];
+                $data = $this->load($container, $params);
+
+                $setter = 'set' . ucfirst($this->getName());
+                if (method_exists($container, $setter)) {
+                    $container->$setter($data);
+                    $this->markLazyloadedFieldAsLoaded($container);
+                }
+            }
+            $this->preSetData($container, $data, $params);
         }
 
         return is_array($data) ? $data : [];
