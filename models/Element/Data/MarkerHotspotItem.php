@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element\Data;
 
+use ArrayAccess;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
  */
-class MarkerHotspotItem implements \ArrayAccess
+class MarkerHotspotItem implements ArrayAccess
 {
     public string $name = '';
 

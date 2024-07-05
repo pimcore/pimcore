@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use function array_key_exists;
 
 /**
  * @internal
@@ -52,8 +54,8 @@ class PublicServicesController extends Controller
                 return $response;
             }
 
-            throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
-        } catch (\Exception $e) {
+            throw new Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
 
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -23,6 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use function is_array;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
@@ -78,7 +80,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                 if ($class instanceof DataObject\ClassDefinition) {
                     $this->ownerClassName = $class->getName();
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error($e->getMessage());
             }
         }
@@ -97,7 +99,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $this->ownerClassId = $class->getId();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error($e->getMessage());
             }
         }

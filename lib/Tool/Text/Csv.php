@@ -18,22 +18,30 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool\Text;
 
+use Exception;
+use stdClass;
+use function array_key_exists;
+use function chr;
+use function count;
+use function is_null;
+use function ord;
+
 /**
  * @internal
  */
 class Csv
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function detect(string $data): \stdClass
+    public function detect(string $data): stdClass
     {
         $linefeed = $this->guessLinefeed($data);
         $data = rtrim($data, $linefeed);
         $count = count(explode($linefeed, $data));
         // threshold is ten, so add one to account for extra linefeed that is supposed to be at the end
         if ($count < 10) {
-            throw new \Exception('You must provide at least ten lines in your sample data');
+            throw new Exception('You must provide at least ten lines in your sample data');
         }
         [$quote, $delim] = $this->guessQuoteAndDelim($data);
         if (!$quote) {
@@ -42,11 +50,11 @@ class Csv
 
         if (is_null($delim)) {
             if (!$delim = $this->guessDelim($data, $linefeed, $quote)) {
-                throw new \Exception('Unable to determine the file\'s dialect.');
+                throw new Exception('Unable to determine the file\'s dialect.');
             }
         }
 
-        $dialect = new \stdClass();
+        $dialect = new stdClass();
         $dialect->quotechar = $quote;
         $dialect->delimiter = $delim;
         $dialect->lineterminator = $linefeed;

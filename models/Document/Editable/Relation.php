@@ -19,6 +19,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use Pimcore\Db;
 use Pimcore\Event\Model\DataObject\ClassDefinition\UrlSlugEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -29,6 +30,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
+use function count;
+use function is_array;
+use function strlen;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
@@ -202,7 +206,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     // relation needs to be an array with src_id, dest_id, type, fieldname
                     try {
                         $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::error((string)$e);
                         if ($e instanceof UniqueConstraintViolationException) {
                             // check if the slug action can be resolved.
@@ -213,14 +217,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                                 // retrying the transaction should success the next time
                                 try {
                                     $existingSlug->getAction();
-                                } catch (\Exception $e) {
+                                } catch (Exception $e) {
                                     $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
 
                                     return;
                                 }
 
                                 // if now exception is thrown then the slug is owned by a diffrent object/field
-                                throw new \Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
+                                throw new Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
                                     . $existingSlug->getObjectId() . ', fieldname: ' . $existingSlug->getFieldname());
                             }
                         }
@@ -248,7 +252,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         if ($data && !is_array($data)) {
-            throw new \Exception('Slug data not valid');
+            throw new Exception('Slug data not valid');
         }
 
         if (is_array($data) && count($data) > 0) {
@@ -262,7 +266,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'siteId' => $slugItem->getSiteId() ?? 0,
                     ];
                 } else {
-                    throw new \Exception('expected instance of UrlSlug');
+                    throw new Exception('expected instance of UrlSlug');
                 }
             }
 

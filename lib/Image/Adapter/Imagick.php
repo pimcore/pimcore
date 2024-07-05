@@ -16,12 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Image\Adapter;
 
+use Exception;
+use ImagickDraw;
+use ImagickPixel;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\Filesystem\Filesystem;
+use function constant;
+use function defined;
+use function in_array;
+use function is_null;
+use function is_string;
 
 class Imagick extends Adapter
 {
@@ -91,7 +99,7 @@ class Imagick extends Adapter
                 if ($this->isVectorGraphic($imagePath)) {
                     // only for vector graphics
                     // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                    $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                    $i->setBackgroundColor(new ImagickPixel('transparent'));
                     //for certain edge-cases simply setting the background-color to transparent does not seem to work
                     //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
@@ -136,12 +144,12 @@ class Imagick extends Adapter
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error('Unable to load image ' . $imagePath . ': ' . $e);
 
             return false;
@@ -269,7 +277,7 @@ class Imagick extends Adapter
         }
 
         if (!$success) {
-            throw new \Exception('Unable to write image: ' . $path);
+            throw new Exception('Unable to write image: ' . $path);
         }
 
         if ($realTargetPath) {
@@ -379,7 +387,7 @@ class Imagick extends Adapter
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                     $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::warn((string) $e);
                 }
             }
@@ -630,7 +638,7 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->rotateImage(new \ImagickPixel('none'), $angle);
+        $this->resource->rotateImage(new ImagickPixel('none'), $angle);
         $this->setWidth($this->resource->getimagewidth());
         $this->setHeight($this->resource->getimageheight());
 
@@ -662,12 +670,12 @@ class Imagick extends Adapter
         $imageWidth = $this->resource->getImageWidth();
         $imageHeight = $this->resource->getImageHeight();
 
-        $rectangle = new \ImagickDraw();
-        $rectangle->setFillColor(new \ImagickPixel('black'));
+        $rectangle = new ImagickDraw();
+        $rectangle->setFillColor(new ImagickPixel('black'));
         $rectangle->roundRectangle(0, 0, $imageWidth - 1, $imageHeight - 1, $width, $height);
 
         $mask = new \Imagick();
-        $mask->newImage($imageWidth, $imageHeight, new \ImagickPixel('transparent'), 'png');
+        $mask->newImage($imageWidth, $imageHeight, new ImagickPixel('transparent'), 'png');
         $mask->drawImage($rectangle);
 
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
@@ -684,7 +692,7 @@ class Imagick extends Adapter
             $newImage = new \Imagick();
 
             if ($mode == 'asTexture') {
-                $newImage->newImage($this->getWidth(), $this->getHeight(), new \ImagickPixel());
+                $newImage->newImage($this->getWidth(), $this->getHeight(), new ImagickPixel());
                 $texture = new \Imagick($image);
                 $newImage = $newImage->textureImage($texture);
             } else {
@@ -911,7 +919,7 @@ class Imagick extends Adapter
                     return true;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::err((string) $e);
         }
 
@@ -1023,12 +1031,12 @@ class Imagick extends Adapter
             // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
             $image = new \Imagick();
-            $image->newImage(1, 1, new \ImagickPixel('red'));
+            $image->newImage(1, 1, new ImagickPixel('red'));
             $image->writeImage($format . ':' . $tmpFile);
             unlink($tmpFile);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

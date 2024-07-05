@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
@@ -61,9 +64,9 @@ final class WebsiteSetting extends AbstractModel
         try {
             $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$setting) {
-                throw new \Exception('Website setting in registry is null');
+                throw new Exception('Website setting in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $setting = new self();
                 $setting->getDao()->getById($id);
@@ -82,7 +85,7 @@ final class WebsiteSetting extends AbstractModel
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $siteId = null, string $language = null, string $fallbackLanguage = null): ?WebsiteSetting
     {

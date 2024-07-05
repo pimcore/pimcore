@@ -16,16 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Iterator;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
+class Relations extends Model\Document\Editable implements Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * @internal

@@ -23,6 +23,10 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {

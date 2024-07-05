@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Exception;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
@@ -47,7 +48,7 @@ final class Version20231127124738 extends AbstractMigration implements Container
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function regenerate(): void
     {

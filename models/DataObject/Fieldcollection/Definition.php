@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
@@ -27,6 +29,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -87,7 +90,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByKey(string $key): ?Definition
     {
@@ -98,9 +101,9 @@ class Definition extends Model\AbstractModel
         try {
             $fc = RuntimeCache::get($cacheKey);
             if (!$fc) {
-                throw new \Exception('FieldCollection in registry is not valid');
+                throw new Exception('FieldCollection in registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $def = new Definition();
             $def->setKey($key);
             $fieldFile = $def->getDefinitionFile();
@@ -119,20 +122,20 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
-            throw new \Exception('A field-collection needs a key to be saved!');
+            throw new Exception('A field-collection needs a key to be saved!');
         }
 
         if ($this->isForbiddenName()) {
-            throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
+            throw new Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
         if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
-            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
         }
 
@@ -147,7 +150,7 @@ class Definition extends Model\AbstractModel
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
-                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
@@ -180,7 +183,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @throws DataObject\Exception\DefinitionWriteException
      *
      * @internal
@@ -213,7 +216,7 @@ class Definition extends Model\AbstractModel
             $filesystem->dumpFile($definitionFile, $data);
         }
 
-        \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
+        Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
@@ -287,7 +290,7 @@ class Definition extends Model\AbstractModel
         $cd = '/**' . "\n";
         $cd .= " * Fields Summary:\n";
 
-        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        $fieldDefinitionDocBlockBuilder = Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
         foreach ($this->getFieldDefinitions() as $fieldDefinition) {
             $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }

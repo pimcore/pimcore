@@ -15,12 +15,14 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -130,7 +132,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if (!$oldData || $oldData->getConsent() != $data) {
-            $service = \Pimcore::getContainer()->get(Service::class);
+            $service = Pimcore::getContainer()->get(Service::class);
 
             if ($data == true) {
                 $note = $service->insertConsentNote($object, $this->getName(), 'Manually by User via Pimcore Backend.');
@@ -160,7 +162,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $consent = $data['consent'];
         }
 
-        $service = \Pimcore::getContainer()->get(Service::class);
+        $service = Pimcore::getContainer()->get(Service::class);
 
         $originalNote = null;
         if (!empty($data['noteId'])) {

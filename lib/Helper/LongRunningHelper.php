@@ -23,6 +23,8 @@ use LogicException;
 use Monolog\Handler\HandlerInterface;
 use Pimcore\Cache\RuntimeCache;
 use Psr\Log\LoggerAwareTrait;
+use function count;
+use function is_array;
 
 final class LongRunningHelper
 {

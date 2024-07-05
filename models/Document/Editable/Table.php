@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
+use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

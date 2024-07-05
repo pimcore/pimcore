@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function in_array;
+use function is_string;
 
 class Input extends Data implements
     ResourcePersistenceAwareInterface,

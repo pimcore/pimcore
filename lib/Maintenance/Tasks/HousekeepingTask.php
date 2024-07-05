@@ -17,6 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
+use RecursiveCallbackFilterIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * @internal
@@ -48,8 +52,8 @@ class HousekeepingTask implements TaskInterface
             return;
         }
 
-        $directory = new \RecursiveDirectoryIterator($folder);
-        $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($seconds) {
+        $directory = new RecursiveDirectoryIterator($folder);
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($seconds) {
             if (strpos($current->getFilename(), '-low-quality-preview.svg')) {
                 // do not delete low quality image previews
                 return false;
@@ -66,11 +70,11 @@ class HousekeepingTask implements TaskInterface
             return false;
         });
 
-        $iterator = new \RecursiveIteratorIterator($filter);
+        $iterator = new RecursiveIteratorIterator($filter);
 
         foreach ($iterator as $file) {
             /**
-             * @var \SplFileInfo $file
+             * @var SplFileInfo $file
              */
             if ($file->isFile()) {
                 @unlink($file->getPathname());

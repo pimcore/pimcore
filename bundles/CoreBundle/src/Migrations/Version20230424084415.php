@@ -18,6 +18,8 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Db;
+use function array_key_exists;
+use function is_array;
 
 class Version20230424084415 extends AbstractMigration
 {

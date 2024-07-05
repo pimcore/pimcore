@@ -22,6 +22,7 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Service;
+use function array_key_exists;
 
 class Assets extends DataProvider\Assets
 {

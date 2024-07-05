@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function is_array;
 
 class Video extends Data implements
     ResourcePersistenceAwareInterface,
