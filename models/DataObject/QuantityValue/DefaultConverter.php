@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\Exception\UnsupportedException;
@@ -24,7 +25,7 @@ class DefaultConverter implements QuantityValueConverterInterface
 {
     /**
      * @throws UnsupportedException If $quantityValue is no QuantityValue
-     * @throws \Exception
+     * @throws Exception
      */
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue
     {
@@ -33,7 +34,7 @@ class DefaultConverter implements QuantityValueConverterInterface
         }
         $fromUnit = $quantityValue->getUnit();
         if (!$fromUnit instanceof Unit) {
-            throw new \Exception('Quantity value has no unit');
+            throw new Exception('Quantity value has no unit');
         }
 
         $fromBaseUnit = $fromUnit->getBaseunit();
@@ -65,7 +66,7 @@ class DefaultConverter implements QuantityValueConverterInterface
         }
 
         if ($fromBaseUnit->getId() !== $toBaseUnit->getId()) {
-            throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
+            throw new Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
         }
 
         $convertedValue = ($quantityValue->getValue() * $fromUnit->getFactor() - $fromUnit->getConversionOffset()) / $toUnit->getFactor() + $toUnit->getConversionOffset();

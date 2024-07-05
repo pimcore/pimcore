@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
+use function is_resource;
+use function is_string;
 
 /**
  * @internal
@@ -51,7 +54,7 @@ class Folder extends DAV\Collection
         foreach ($childrenList as $child) {
             try {
                 $children[] = $this->getChild($child);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::warning((string) $e);
             }
         }
@@ -156,7 +159,7 @@ class Folder extends DAV\Collection
 
     /**
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -173,7 +176,7 @@ class Folder extends DAV\Collection
      * @return $this
      *
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function setName($name): static
     {

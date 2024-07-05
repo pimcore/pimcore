@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Listing;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
+use function count;
 
 /**
  * @internal

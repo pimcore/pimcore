@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -26,6 +28,8 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
+use function count;
+use function is_array;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
@@ -237,7 +241,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -261,7 +265,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return ',' . implode(',', $d) . ',';
         }
 
-        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
+        throw new Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -780,7 +784,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -789,7 +793,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     /**

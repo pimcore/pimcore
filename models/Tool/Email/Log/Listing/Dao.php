@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\Email\Log\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -60,7 +61,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM email_log ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

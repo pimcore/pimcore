@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable\Area;
 
+use Exception;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
 use Symfony\Component\HttpFoundation\Request;
@@ -152,7 +153,7 @@ class Info
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDocumentElement(string $name, string $type = ''): ?Editable
     {

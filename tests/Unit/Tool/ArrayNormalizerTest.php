@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Unit\Tool;
 
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\ArrayNormalizer;
+use function in_array;
 
 class ArrayNormalizerTest extends TestCase
 {

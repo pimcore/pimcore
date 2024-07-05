@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
 use Pimcore\Model\DataObject;
 
 /**
@@ -45,7 +46,7 @@ class Folder extends DataObject
     public function delete(): void
     {
         if ($this->getId() == 1) {
-            throw new \Exception('root-node cannot be deleted');
+            throw new Exception('root-node cannot be deleted');
         }
 
         parent::delete();

@@ -18,6 +18,8 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\Traits\SimpleNormalizerTrait;
 use Pimcore\Normalizer\NormalizerInterface;
+use function get_class;
+use function is_scalar;
 
 abstract class Data implements DataDefinitionInterface, NormalizerInterface
 {

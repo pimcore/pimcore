@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-use function array_merge;
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -30,6 +32,16 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
+use function array_key_exists;
+use function array_merge;
+use function call_user_func_array;
+use function get_called_class;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_null;
+use function is_string;
+use function strlen;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
@@ -145,7 +157,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                             $params['resetInvalidFields'] = true;
                         }
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
@@ -156,7 +168,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 $fd->checkValidity($value, $omitMandatoryCheck, $params);
 
                                 DataObject::setGetInheritedValues($getInheritedValues);
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
@@ -181,7 +193,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'message' => 'Validation failed: ',
             'separator' => ' / ',
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION);
+        Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION);
         $validationExceptions = $preUpdateEvent->getArgument('validationExceptions');
 
         if ($validationExceptions) {
@@ -231,7 +243,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
-        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
         );
 
@@ -260,7 +272,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
+                Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
             }
 
             // scheduled tasks are saved always, they are not versioned!
@@ -285,17 +297,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
+                Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
 
             return $version;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $postUpdateFailureEvent = new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
                 'isAutoSave' => $isAutoSave,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+            Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -383,7 +395,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getClass(): ClassDefinition
     {
@@ -533,7 +545,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return Model\Listing\AbstractListing|Concrete|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function __callStatic(string $method, array $arguments)
     {
@@ -560,7 +572,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $localizedFieldDefinition = $localizedField->getFieldDefinition($realPropertyName);
                 if ($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
                     $realPropertyName = 'localizedfields';
-                    \array_unshift($arguments, $localizedFieldDefinition->getName());
+                    array_unshift($arguments, $localizedFieldDefinition->getName());
                 }
             }
         }
@@ -568,14 +580,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
             $field = $classDefinition->getFieldDefinition($realPropertyName);
             if (!$field->isFilterable()) {
-                throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
+                throw new Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
             $db = Db::get();
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                $localizedPropertyName = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $field not set.') : $arguments[0];
-                $value = array_key_exists(1, $arguments) ? $arguments[1] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
+                $localizedPropertyName = empty($arguments[0]) ? throw new InvalidArgumentException('Mandatory argument $field not set.') : $arguments[0];
+                $value = array_key_exists(1, $arguments) ? $arguments[1] : throw new InvalidArgumentException('Mandatory argument $value not set.');
                 $locale = $arguments[2] ?? null;
                 $limit = $arguments[3] ?? null;
                 $offset = $arguments[4] ?? 0;
@@ -586,11 +598,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
 
-                    throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
+                    throw new Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
                 if (!$localizedField->isFilterable()) {
-                    throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
+                    throw new Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
                 $defaultCondition = $db->quoteIdentifier($localizedPropertyName) . ' = ' . $db->quote($value) . ' ';
@@ -600,7 +612,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                 $listConfig['locale'] = $locale;
             } else {
-                $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
+                $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new InvalidArgumentException('Mandatory argument $value not set.');
                 $limit = $arguments[1] ?? null;
                 $offset = $arguments[2] ?? 0;
                 $objectTypes = $arguments[3] ?? null;
@@ -639,18 +651,18 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             return call_user_func_array([parent::class, $method], $arguments);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // there is no property for the called method, so throw an exception
             Logger::error('Class: DataObject\\Concrete => call to undefined static method '.$method);
 
-            throw new \Exception('Call to undefined static method '.$method.' in class DataObject\\Concrete');
+            throw new Exception('Call to undefined static method '.$method.' in class DataObject\\Concrete');
         }
     }
 
     /**
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(array $parameters = []): static
     {
