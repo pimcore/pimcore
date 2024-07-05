@@ -184,5 +184,3 @@ The decisions are made in the following order:
 1. default value generator. if defined the process stops here
 2. parent value if inheritance is enabled
 3. fixed default value
-
- 

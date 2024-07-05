@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\EventListener;
 
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Event\AssetEvents;
@@ -23,8 +24,10 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -39,7 +42,7 @@ class SearchBackendListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return [
+        $events = [
             DataObjectEvents::POST_ADD => 'onPostAddUpdateElement',
             DocumentEvents::POST_ADD => 'onPostAddUpdateElement',
             AssetEvents::POST_ADD => 'onPostAddUpdateElement',
@@ -52,6 +55,13 @@ class SearchBackendListener implements EventSubscriberInterface
             DocumentEvents::POST_UPDATE => 'onPostAddUpdateElement',
             AssetEvents::POST_UPDATE => 'onPostAddUpdateElement',
         ];
+
+        // used when admin UI classic bundle is installed
+        if (class_exists(AdminEvents::class) && defined(AdminEvents::class . '::OBJECT_LIST_HANDLE_FULLTEXT_QUERY')) {
+            $events[AdminEvents::OBJECT_LIST_HANDLE_FULLTEXT_QUERY] = 'onHandleFulltextQuery';
+        }
+
+        return $events;
     }
 
     public function onPostAddUpdateElement(ElementEventInterface $e): void
@@ -77,5 +87,16 @@ class SearchBackendListener implements EventSubscriberInterface
         if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->delete();
         }
+    }
+
+    public function onHandleFulltextQuery(GenericEvent $e): void
+    {
+        $query = $e->getArgument('query');
+        /** @var Listing $list */
+        $list = $e->getArgument('list');
+        $e->setArgument(
+            'condition',
+            'oo_id IN (SELECT id FROM search_backend_data WHERE maintype = "object" AND MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))'
+        );
     }
 }

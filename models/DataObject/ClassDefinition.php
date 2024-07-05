@@ -374,7 +374,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
         }
 
-        $this->setModificationDate(time());
+        // if definition file is not saved, modification date should not be updated
+        if ($saveDefinitionFile) {
+            $this->setModificationDate(time());
+        }
 
         $this->getDao()->save($isUpdate);
 

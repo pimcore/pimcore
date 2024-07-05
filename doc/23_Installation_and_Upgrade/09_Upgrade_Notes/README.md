@@ -1,5 +1,41 @@
 # Upgrade Notes
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Html to Image]
+- [Gotenberg] Bumped the lowest requirement of `gotenberg-php` from `^2.0` to `^2.4` to add support of passing screenshot size
+#### [Assets]
+- MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
+#### [Grid]: 
+- Moved grid data related function to `admin-classic-ui-bundle` `v1.5`.
+- Method `Service::getHelperDefinitions()` is deprecated here and moved to `admin-classic-ui-bundle`.
+#### [Simple Backend Search]
+- Due to grid data refactoring, please note that in order to run this optional bundle correctly, it is required to install `admin-classic-ui-bundle` `v1.5`
+#### [DBAL]
+- Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
+#### [Composer]
+- Removed requirement of "phpoffice/phpspreadsheet" due it being not in used, more specifically moved it to the specific bundle who actually use it. Please check and adapt your project's composer requirement accordingly.
+#### [Dependency]
+- Dependencies are now resolved by messenger queue and can be turned off. By default, it is done synchronously, but it's possible to make it async by add the following config:
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
+        routing:
+            'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
+```
+and disable it by: 
+```yaml
+pimcore:
+  dependency:
+    enabled: false
+```
+
 ## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
 ### Assets Thumbnails
 - Thumbnail generation for Assets, Documents and Videos now only support the following formats out of the box: `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'`.
@@ -41,6 +77,7 @@
 - Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
 - All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
 - `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
+
 -----------------
 ### General
 #### [Localization]

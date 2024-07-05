@@ -149,6 +149,9 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
                 if ($object instanceof Hotspotimage) {
                     $reflectionProperty = ReflectionHelper::getProperty($object, 'image');
                 }
+                if ($object instanceof ExternalImage) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'url');
+                }
 
                 if ($reflectionProperty instanceof ReflectionProperty) {
                     return !($reflectionProperty->getValue($object) instanceof ElementDescriptor);
