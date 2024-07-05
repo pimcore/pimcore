@@ -16,6 +16,7 @@
 namespace Pimcore;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
@@ -170,6 +171,10 @@ class SystemSettingsConfig
         // check if there's a fallback language endless loop
         foreach ($fallbackLanguages as $sourceLang => $targetLang) {
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
+        }
+
+        if ($values['general.domain'] && !filter_var($values['general.domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
         }
 
         $settings[self::CONFIG_ID] = [
