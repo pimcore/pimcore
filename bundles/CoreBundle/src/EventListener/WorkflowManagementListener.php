@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Exception;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
@@ -30,6 +31,7 @@ use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\Manager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function count;
 
 /**
  * @internal
@@ -111,7 +113,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private static function extractElementFromEvent(GenericEvent $e): ElementInterface
     {
@@ -124,7 +126,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
         }
 
         if (empty($element)) {
-            throw new \Exception('No element found in event');
+            throw new Exception('No element found in event');
         }
 
         return $element;

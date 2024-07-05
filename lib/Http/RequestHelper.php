@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
+use LogicException;
+use Pimcore;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +47,7 @@ class RequestHelper
     public function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
-            throw new \LogicException('A Request must be available.');
+            throw new LogicException('A Request must be available.');
         }
 
         return $this->requestStack->getCurrentRequest();
@@ -69,7 +71,7 @@ class RequestHelper
     {
         $mainRequest = $this->requestStack->getMainRequest();
         if (null === $mainRequest) {
-            throw new \LogicException('There is no main request available.');
+            throw new LogicException('There is no main request available.');
         }
 
         return $mainRequest;
@@ -96,7 +98,7 @@ class RequestHelper
      */
     private function detectFrontendRequest(Request $request): bool
     {
-        if (\Pimcore::inAdmin()) {
+        if (Pimcore::inAdmin()) {
             return false;
         }
 

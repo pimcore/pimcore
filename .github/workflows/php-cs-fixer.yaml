@@ -8,7 +8,7 @@ on:
             - "*_actions"
             - "feature-*"
     pull_request_target:
-        types: [ opened,closed,synchronize ]
+        types: [ opened,synchronize ]
 
 permissions:
     contents: write

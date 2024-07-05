@@ -16,11 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
+use Exception;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Dao\AbstractDao;
+use function is_array;
 
 /**
  * @internal
@@ -39,7 +41,7 @@ class Dao extends AbstractDao
             } elseif ($element instanceof Model\DataObject\AbstractObject) {
                 $maintype = 'object';
             } else {
-                throw new \Exception('unknown type of element with id [ '.$element->getId().' ] ');
+                throw new Exception('unknown type of element with id [ '.$element->getId().' ] ');
             }
 
             $data = $this->db->fetchAssociative('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
@@ -49,7 +51,7 @@ class Dao extends AbstractDao
                 $this->assignVariablesToModel($data);
                 $this->model->setId(new Backend\Data\Id($element));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
@@ -108,7 +110,7 @@ class Dao extends AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT @@innodb_ft_min_token_size');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 3;
         }
     }
@@ -117,7 +119,7 @@ class Dao extends AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT @@innodb_ft_max_token_size');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 84;
         }
     }

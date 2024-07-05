@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Property\Dao getDao()

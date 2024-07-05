@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Cache;
 use Pimcore\Document\Editable\EditableHandler;
@@ -23,6 +24,8 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DeviceDetector;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -78,7 +81,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
 

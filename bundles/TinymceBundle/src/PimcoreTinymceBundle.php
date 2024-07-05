@@ -21,6 +21,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Helper\EncoreHelper;
+use function dirname;
 
 class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
@@ -58,7 +59,7 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundl
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 
     private function getAllJsPaths(): array

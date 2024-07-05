@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Exception;
+use LogicException;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -26,6 +28,9 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
+use function array_key_exists;
+use function count;
+use function is_array;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -135,7 +140,7 @@ abstract class AbstractRelations extends Data implements
         };
 
         if (null === $classId) {
-            throw new \Exception('Invalid object type');
+            throw new Exception('Invalid object type');
         }
 
         if ($data !== null) {
@@ -153,7 +158,7 @@ abstract class AbstractRelations extends Data implements
                     // relation needs to be an array with src_id, dest_id, type, fieldname
                     try {
                         $db->insert('object_relations_'.$classId, Db\Helper::quoteDataIdentifiers($db, $relation));
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::error(
                             'It seems that the relation '.$relation['src_id'].' => '.$relation['dest_id']
                             .' (fieldname: '.$this->getName().') already exist -> please check immediately!'
@@ -447,7 +452,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     protected function buildUniqueKeyForAppending(object $item): string
     {
@@ -461,7 +466,7 @@ abstract class AbstractRelations extends Data implements
             return $elementType . $id;
         }
 
-        throw new \LogicException('Unexpected item type: ' . get_debug_type($item));
+        throw new LogicException('Unexpected item type: ' . get_debug_type($item));
     }
 
     public function isEqual(mixed $array1, mixed $array2): bool
@@ -499,7 +504,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item): void
     {
@@ -518,7 +523,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item): void
     {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Pimcore\Maintenance\Executor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,7 +37,7 @@ final class RegisterMaintenanceTaskPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('pimcore.maintenance.task') as $id => $tags) {
             if (!isset($tags[0]['type'])) {
-                throw new \InvalidArgumentException('Tagged Maintenance Task `'.$id.'` needs to a `type` attribute.');
+                throw new InvalidArgumentException('Tagged Maintenance Task `'.$id.'` needs to a `type` attribute.');
             }
 
             $definition->addMethodCall('registerTask', [$tags[0]['type'], new Reference($id), $tags[0]['messengerMessageClass'] ?? null]);

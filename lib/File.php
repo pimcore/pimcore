@@ -21,6 +21,8 @@ use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
 use Symfony\Component\Filesystem\Filesystem;
+use function dirname;
+use function function_exists;
 
 /**
  * @internal
@@ -50,7 +52,7 @@ class File
         $filesystem = new Filesystem();
         $filesystem->dumpFile($path, $data);
 
-        if (\function_exists('opcache_invalidate')) {
+        if (function_exists('opcache_invalidate')) {
             opcache_invalidate($path);
         }
     }

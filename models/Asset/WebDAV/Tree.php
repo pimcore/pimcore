@@ -16,10 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Sabre\DAV;
+use function array_key_exists;
+use function count;
+use function dirname;
 
 /**
  * @internal
@@ -79,7 +83,7 @@ class Tree extends DAV\Tree
             $user = \Pimcore\Tool\Admin::getCurrentUser();
             $asset->setUserModification($user->getId());
             $asset->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
     }
