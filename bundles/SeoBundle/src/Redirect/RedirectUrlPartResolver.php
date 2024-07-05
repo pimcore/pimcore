@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use InvalidArgumentException;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -64,7 +65,7 @@ class RedirectUrlPartResolver
         }
 
         if (null === $part) {
-            throw new \InvalidArgumentException(sprintf('Unsupported request URI part type "%s"', $type));
+            throw new InvalidArgumentException(sprintf('Unsupported request URI part type "%s"', $type));
         }
 
         $this->parts[$type] = urldecode($part);

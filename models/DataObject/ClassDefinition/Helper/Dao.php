@@ -16,6 +16,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use function count;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -199,7 +202,7 @@ trait Dao
             ]
         );
 
-        return (\count($exist) > 0) && (1 === $exist[0]);
+        return (count($exist) > 0) && (1 === $exist[0]);
     }
 
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool

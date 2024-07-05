@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Doctrine\DBAL\Connection;
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -37,19 +40,19 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         }
 
         if (empty($sessionId)) {
-            throw new \InvalidArgumentException('Pass sessionId to activate the maintenance mode');
+            throw new InvalidArgumentException('Pass sessionId to activate the maintenance mode');
         }
 
         $this->addEntry($sessionId);
 
-        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_ACTIVATE);
+        Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
 
     public function deactivate(): void
     {
         $this->removeEntry();
 
-        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
+        Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
     public function isActive(string $matchSessionId = null): bool
@@ -58,7 +61,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
             if (!$this->db->isConnected()) {
                 $this->db->connect();
             }
-        } catch (\Exception) {
+        } catch (Exception) {
             return false;
         }
 
@@ -80,7 +83,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             $tmpStore = TmpStore::get(self::ENTRY_ID);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist
             return null;
         }
@@ -92,7 +95,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             TmpStore::delete(self::ENTRY_ID);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist
         }
     }

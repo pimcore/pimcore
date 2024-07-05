@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
+use function strlen;
 
 trait Text
 {

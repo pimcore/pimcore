@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Renderer;
 
+use Exception;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
@@ -45,7 +46,7 @@ class EditableRenderer implements LoggerAwareInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], bool $editmode = null): Editable\EditableInterface
     {
@@ -92,7 +93,7 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * Renders an editable
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null): Editable\EditableInterface
     {

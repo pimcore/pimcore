@@ -15,9 +15,14 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
+use function count;
+use function in_array;
+use function is_null;
+use function strlen;
 
 /**
  * @internal
@@ -43,14 +48,14 @@ class Dao extends Model\Dao\AbstractDao
      * Save object to database
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @todo: not all save methods return a boolean, why this one?
      */
     public function save(): bool
     {
         if (strlen(trim(strip_tags($this->model->getName()))) < 1) {
-            throw new \Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
+            throw new Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
         }
 
         $this->db->beginTransaction();
@@ -85,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
@@ -95,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -109,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->executeStatement('DELETE FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
@@ -163,7 +168,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setTagsForElement(string $cType, int $cId, array $tags): void
     {
@@ -177,7 +182,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;

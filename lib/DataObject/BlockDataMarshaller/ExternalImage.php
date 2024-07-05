@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
+use function is_array;
 
 /**
  * @internal

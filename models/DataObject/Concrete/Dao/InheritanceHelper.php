@@ -17,8 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
+use function count;
+use function in_array;
+use function is_array;
+use function is_null;
 
 /**
  * @internal
@@ -149,7 +154,7 @@ class InheritanceHelper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function doUpdate(int $oo_id, bool $createMissingChildrenRows = false, array $params = []): void
     {
@@ -574,7 +579,7 @@ class InheritanceHelper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function updateQueryTable(int $oo_id, array $ids, string $fieldname): void
     {

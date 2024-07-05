@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Video;
 
 use Exception;
+use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
@@ -27,6 +28,7 @@ use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
+use function is_string;
 
 /**
  * @property Model\Asset\Video|null $asset
@@ -70,7 +72,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
             'pathReference' => $pathReference,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -129,7 +131,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 );
 
                 if (!$storage->fileExists($cacheFilePath)) {
-                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
+                    $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
                     $lock->acquire(true);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
@@ -158,7 +160,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                             $deferred,
                             $generated
                         );
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath() . ': ' . $e);
                     }
                 }
@@ -176,7 +178,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
             'deferred' => $deferred,
             'generated' => $generated,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
     }
 
     /**
@@ -208,7 +210,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getMedia(string $name, int $highRes = 1): ?Image\ThumbnailInterface
     {
@@ -230,7 +232,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
 
                 return $thumb ?? null;
             } else {
-                throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+                throw new Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
             }
         }
 

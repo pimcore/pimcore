@@ -20,6 +20,7 @@ use Exception;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal

@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use function func_get_args;
 
 /**
  * @group dataTypeLocal

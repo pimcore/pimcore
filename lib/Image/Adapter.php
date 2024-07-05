@@ -16,6 +16,7 @@
 namespace Pimcore\Image;
 
 use Pimcore\Logger;
+use function is_array;
 
 abstract class Adapter
 {

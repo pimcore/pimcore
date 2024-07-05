@@ -17,14 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\Response;
 
+use InvalidArgumentException;
+use PHPUnit_Framework_MockObject_MockObject;
 use Pimcore\Http\Response\CodeInjector;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Tests\Support\Test\TestCase;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjectorTest extends TestCase
 {
-    private ResponseHelper|\PHPUnit_Framework_MockObject_MockObject $responseHelper;
+    private ResponseHelper|PHPUnit_Framework_MockObject_MockObject $responseHelper;
 
     private CodeInjector $injector;
 
@@ -91,14 +94,14 @@ class CodeInjectorTest extends TestCase
      */
     public function testInvalidPosition(string $position): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->injector->injectIntoHtml('foo', 'bar', CodeInjector::SELECTOR_BODY, $position);
     }
 
     public function presetSelectorProvider(): array
     {
-        $reflector = new \ReflectionClass(CodeInjector::class);
+        $reflector = new ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('presetSelectors');
 
@@ -112,7 +115,7 @@ class CodeInjectorTest extends TestCase
 
     public function validPositionProvider(): array
     {
-        $reflector = new \ReflectionClass(CodeInjector::class);
+        $reflector = new ReflectionClass(CodeInjector::class);
 
         $property = $reflector->getProperty('validPositions');
 

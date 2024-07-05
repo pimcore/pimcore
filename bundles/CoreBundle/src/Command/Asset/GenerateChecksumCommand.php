@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
+use Exception;
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
@@ -109,12 +111,12 @@ class GenerateChecksumCommand extends AbstractCommand
 
                     $this->output->writeln(' generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                     $asset->generateChecksum();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->output->writeln(' error generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                 }
             }
 
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
 
         return 0;

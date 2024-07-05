@@ -18,6 +18,7 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\TmpStore;
+use function is_array;
 
 /**
  * @internal

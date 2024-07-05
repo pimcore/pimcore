@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
+use InvalidArgumentException;
+
 final class EncoreHelper
 {
     public static function getBuildPathsFromEntrypoints(string $entrypointsFile, string $type = 'js'): array
     {
         if (!file_exists($entrypointsFile)) {
-            throw new \InvalidArgumentException(sprintf('The file "%s" does not exist.', $entrypointsFile));
+            throw new InvalidArgumentException(sprintf('The file "%s" does not exist.', $entrypointsFile));
         }
 
         $entrypointsContent = file_get_contents($entrypointsFile);

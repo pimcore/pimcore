@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Pimcore;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -76,7 +78,7 @@ class Page extends PageSnippet
         $path = parent::getFullPath($force);
 
         // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
-        if (!\Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
+        if (!Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if (!empty($prettyUrl) && strlen($prettyUrl) > 1) {
@@ -118,7 +120,7 @@ class Page extends PageSnippet
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
         if ($documentsConfig['generate_preview'] ?? false) {
-            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new GeneratePagePreviewMessage($this->getId(), \Pimcore\Tool::getHostUrl())
             );
         }

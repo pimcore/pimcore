@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Service\Element;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Version;
@@ -58,7 +60,7 @@ class VersionTest extends TestCase
 
     protected function setStorageAdapter(VersionStorageAdapterInterface $adapter): void
     {
-        $proxy = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $proxy = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
         $proxy->setStorageAdapter($adapter);
     }
 
@@ -76,7 +78,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testDisable(): void
     {

@@ -19,6 +19,7 @@ namespace Pimcore\Workflow\Place;
 use Pimcore\Helper\ContrastColor;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\WorkflowInterface;
+use function in_array;
 
 class PlaceConfig
 {

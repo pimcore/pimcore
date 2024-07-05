@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Console\Traits;
 
+use Pimcore;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,6 +24,7 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Webmozarts\Console\Parallelization\ErrorHandler\ErrorHandler;
 use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
+use function func_get_args;
 
 trait Parallelization
 {
@@ -58,7 +60,7 @@ trait Parallelization
             if ($output->isVeryVerbose()) {
                 $output->writeln('Collect garbage.');
             }
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
     }
 
@@ -77,7 +79,7 @@ trait Parallelization
      */
     private function lock(): bool
     {
-        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getName(), 86400);
+        $this->lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getName(), 86400);
 
         if (!$this->lock->acquire()) {
             $this->lock = null;
