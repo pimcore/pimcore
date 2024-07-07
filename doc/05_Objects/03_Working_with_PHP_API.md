@@ -446,15 +446,18 @@ on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 <?php
 // get all news with ratings that is stored in a not Pimcore related table
- 
-/** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
+
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set  callback
 $list->onCreateQueryBuilder(
-    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
-        $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
-                    'orderItemObjects.id = orderItem.product__id');
+    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
+        $queryBuilder->join(
+            'object_news',
+            'objects',
+            'orderItemObjects',
+            'orderItemObjects.id = object_news.product__id'
+        );
     }
 );
 ```
@@ -466,8 +469,7 @@ You can access and print the internal query which is based on `\Doctrine\DBAL\Qu
 ```php
 <?php
 // get all news with ratings that is stored in a not Pimcore related table
- 
-/** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
+
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQueryBuilder callback
