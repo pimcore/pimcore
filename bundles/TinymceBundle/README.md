@@ -100,7 +100,7 @@ pimcore.plugin.YourTinymceEditorConfigBundle = Class.create({
     }
 });
 
-var YourTinymceEditorConfigBundlePlugin = new pimcore.plugin.YourTinymceEditorConfigBundle();    
+const YourTinymceEditorConfigBundlePlugin = new pimcore.plugin.YourTinymceEditorConfigBundle();    
 ```
 
 
