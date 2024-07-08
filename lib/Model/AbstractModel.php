@@ -229,7 +229,11 @@ abstract class AbstractModel implements ModelInterface
                 $r = call_user_func_array([$this->getDao(), $method], $args);
 
                 return $r;
-            } catch (Exception $e) {
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                // no logs on duplicates
+                throw $e;
+            } catch (\Exception $e) {
+                // log any other issue
                 Logger::emergency((string) $e);
 
                 throw $e;
