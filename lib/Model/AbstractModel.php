@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model;
 
+use BadMethodCallException;
 use Exception;
 use Pimcore;
 use Pimcore\Logger;
@@ -220,7 +221,7 @@ abstract class AbstractModel implements ModelInterface
     {
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
         if (!is_callable([$this, $method])) {
-            throw new \BadMethodCallException("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
+            throw new BadMethodCallException("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
         }
 
         // check if the method is defined in dao
@@ -229,7 +230,7 @@ abstract class AbstractModel implements ModelInterface
             return call_user_func_array([$dao, $method], $args);
         }
 
-        throw new \BadMethodCallException('Call to undefined method ' . $method . ' in class ' . get_class($this));
+        throw new BadMethodCallException('Call to undefined method ' . $method . ' in class ' . get_class($this));
     }
 
     public function __clone(): void
