@@ -730,7 +730,7 @@ class Installer
 
     protected function getDataFiles(): array
     {
-        return glob(PIMCORE_PROJECT_ROOT . '/dump/*{.sql,.sql.gz}', (\defined('GLOB_BRACE') ? \GLOB_BRACE : 0));
+        return glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql*');
     }
 
     protected function createOrUpdateUser(Connection $db, array $config = []): void
