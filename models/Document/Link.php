@@ -16,11 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use function array_key_exists;
+use function in_array;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Link\Dao getDao()
@@ -76,7 +80,7 @@ class Link extends Model\Document
      */
     protected string $href = '';
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
 
@@ -282,7 +286,7 @@ class Link extends Model\Document
             if ($this->internal) {
                 if ($this->internalType == 'document') {
                     if ($this->getId() == $this->internal) {
-                        throw new \Exception('Prevented infinite redirection loop: attempted to linking "' . $this->getKey() . '" to itself. ');
+                        throw new Exception('Prevented infinite redirection loop: attempted to linking "' . $this->getKey() . '" to itself. ');
                     }
                     $this->object = Document::getById($this->internal);
                 } elseif ($this->internalType == 'asset') {
@@ -291,7 +295,7 @@ class Link extends Model\Document
                     $this->object = Model\DataObject\Concrete::getById($this->internal);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warn((string) $e);
             $this->internalType = '';
             $this->internal = null;

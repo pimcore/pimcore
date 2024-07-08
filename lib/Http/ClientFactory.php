@@ -20,6 +20,7 @@ use Composer\CaBundle\CaBundle;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Config;
+use function function_exists;
 
 /**
  * @internal

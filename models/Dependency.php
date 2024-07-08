@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use function array_slice;
+use function count;
+
 /**
  * @internal
  *

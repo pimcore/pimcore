@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Exception;
 use Pimcore\Document;
 use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
@@ -25,6 +26,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
+use function ord;
 
 /**
  * @internal
@@ -83,7 +85,7 @@ class HelpersExtension extends AbstractExtension
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getImageVersionPreview(string $file): string
     {
@@ -101,7 +103,7 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getAssetVersionPreview(string $file): string
     {
@@ -113,7 +115,7 @@ class HelpersExtension extends AbstractExtension
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function breachAttackRandomContent(): string
     {

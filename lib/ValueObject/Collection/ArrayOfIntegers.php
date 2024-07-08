@@ -18,6 +18,8 @@ declare(strict_types = 1);
 namespace Pimcore\ValueObject\Collection;
 
 use ValueError;
+use function gettype;
+use function is_int;
 
 final class ArrayOfIntegers
 {

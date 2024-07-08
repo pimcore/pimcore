@@ -15,10 +15,19 @@
 
 namespace Pimcore\Model;
 
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use function array_key_exists;
+use function call_user_func_array;
+use function count;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_callable;
 
 /**
  * @method void beginTransaction()
@@ -61,7 +70,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function initDao(string $key = null, bool $forceDetection = false): void
     {
@@ -98,7 +107,7 @@ abstract class AbstractModel implements ModelInterface
         if (!$dao) {
             Logger::critical('No dao implementation found for: ' . $myClass);
 
-            throw new \Exception('No dao implementation found for: ' . $myClass);
+            throw new Exception('No dao implementation found for: ' . $myClass);
         }
 
         self::$daoClassCache[$cacheKey] = $dao;
@@ -203,7 +212,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @return mixed
      */
@@ -238,18 +247,18 @@ abstract class AbstractModel implements ModelInterface
 
     protected static function getModelFactory(): Factory
     {
-        return \Pimcore::getContainer()->get('pimcore.model.factory');
+        return Pimcore::getContainer()->get('pimcore.model.factory');
     }
 
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function checkCreateData(array $data): void
     {
         if (isset($data['id'])) {
-            throw new \Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));
+            throw new Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));
         }
     }
 }

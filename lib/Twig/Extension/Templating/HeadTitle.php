@@ -43,6 +43,7 @@ use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Twig\Extension\RuntimeExtensionInterface;
+use function in_array;
 
 class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
 {

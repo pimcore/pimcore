@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Generator;
+use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
+use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -98,7 +101,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -384,7 +387,7 @@ EOT;
 
     private function isIgnoreEditmodeIndices(): bool
     {
-        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $requestStack = Pimcore::getContainer()->get('request_stack');
         $request = $requestStack->getCurrentRequest();
         if ($request === null) {
             return false;

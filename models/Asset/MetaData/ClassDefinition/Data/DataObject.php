@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Service;
+use function is_string;
 
 class DataObject extends Data
 {

@@ -215,6 +215,3 @@ These will show up as split button entries in the "add marker/add hotspot" menu.
 	}]
 }
 ```
-
-
-

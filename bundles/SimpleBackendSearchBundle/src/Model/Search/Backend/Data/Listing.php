@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
+use Exception;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Model\Listing\AbstractListing;
+use function in_array;
 
 /**
  * @internal
@@ -48,7 +50,7 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct()
     {

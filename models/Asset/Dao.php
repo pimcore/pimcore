@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\Asset;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
@@ -22,6 +24,10 @@ use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
+use function count;
+use function in_array;
+use function is_array;
+use function is_scalar;
 
 /**
  * @internal
@@ -51,13 +57,14 @@ class Dao extends Model\Element\Dao
                 WHERE assets.id = ?", [$id]);
 
         if ($data) {
+            $data['hasMetaData'] = (bool)$data['hasMetaData'];
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
                 $metadataRaw = $this->db->fetchAllAssociative('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
                 $metadata = [];
                 foreach ($metadataRaw as $md) {
-                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                    $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
                     $transformedData = $md['data'];
 
@@ -139,7 +146,7 @@ class Dao extends Model\Element\Dao
                 $metadataItem['cid'] = $this->model->getId();
                 unset($metadataItem['config']);
 
-                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
                 $dataForResource = $metadataItem['data'];
 
@@ -224,7 +231,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -270,7 +277,7 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception) {
+            } catch (Exception) {
                 Logger::error(
                     "can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath()
                 );
@@ -297,7 +304,7 @@ class Dao extends Model\Element\Dao
 
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(`path`,filename) as `path` FROM assets WHERE id = ?', [$this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error('could not get  current asset path from DB');
         }
 
@@ -486,7 +493,7 @@ class Dao extends Model\Element\Dao
                     return true;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for asset ' . $this->model->getId());
         }
 

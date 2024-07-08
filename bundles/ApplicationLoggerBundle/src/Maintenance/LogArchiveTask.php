@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use Carbon\Carbon;
 use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
@@ -49,7 +50,7 @@ class LogArchiveTask implements TaskInterface
         $db = $this->db;
         $storage = Storage::get('application_log');
 
-        $date = new \DateTime('now');
+        $date = new DateTime('now');
         $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {

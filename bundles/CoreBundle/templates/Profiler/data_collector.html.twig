@@ -13,6 +13,12 @@
     {% set text %}
         {# this is the content displayed when hovering the mouse over
            the toolbar panel #}
+
+        <div class="sf-toolbar-info-piece">
+            <b>Platform Version</b>
+            <span>{{ collector.platformVersion ?: '~'  }}</span>
+        </div>
+
         <div class="sf-toolbar-info-piece">
             <b>Version</b>
             <span>{{ collector.version }} build {{ collector.revision }}</span>
@@ -44,6 +50,11 @@
     <h2>Pimcore</h2>
 
     <div class="metrics">
+        <div class="metric">
+            <span class="value">{{ collector.platformVersion ?: '~' }}</span>
+            <span class="label">Platform Version</span>
+        </div>
+
         <div class="metric">
             <span class="value">{{ collector.version }}</span>
             <span class="label">Version</span>

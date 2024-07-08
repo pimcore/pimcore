@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use Composer\InstalledVersions;
+use OutOfBoundsException;
 
 /**
  * @internal
@@ -24,6 +25,8 @@ use Composer\InstalledVersions;
 final class Version
 {
     const PACKAGE_NAME = 'pimcore/pimcore';
+
+    private const PLATFORM_VERSION_PACKAGE_NAME = 'pimcore/platform-version';
 
     private const MAJOR_VERSION = 11;
 
@@ -40,5 +43,14 @@ final class Version
     public static function getRevision(): string
     {
         return InstalledVersions::getReference(self::PACKAGE_NAME);
+    }
+
+    public static function getPlatformVersion(): ?string
+    {
+        try {
+            return InstalledVersions::getPrettyVersion(self::PLATFORM_VERSION_PACKAGE_NAME);
+        } catch (OutOfBoundsException $e) {
+            return null;
+        }
     }
 }

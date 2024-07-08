@@ -16,18 +16,28 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Listing;
 
+use Countable;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
+use InvalidArgumentException;
+use Iterator;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_int;
+use function is_null;
+use function is_string;
 
 /**
  * @method AbstractDao getDao()
  * @method QueryBuilder getQueryBuilder()
  */
-abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
+abstract class AbstractListing extends AbstractModel implements Iterator, Countable
 {
     protected array $order = [];
 
@@ -121,7 +131,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return $this
      *
-     * @throws \InvalidArgumentException If the order is invalid
+     * @throws InvalidArgumentException If the order is invalid
      */
     public function setOrder(array|string $order): static
     {
@@ -138,7 +148,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
             if (in_array($o, $this->validOrders)) {
                 $this->order[] = $o;
             } else {
-                throw new \InvalidArgumentException('Invalid order: ' . $o);
+                throw new InvalidArgumentException('Invalid order: ' . $o);
             }
         }
 
@@ -153,7 +163,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return $this
      *
-     * @throws \InvalidArgumentException If the order key is invalid
+     * @throws InvalidArgumentException If the order key is invalid
      */
     public function setOrderKey(array|string $orderKey, bool $quote = true): static
     {
@@ -171,7 +181,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
             } elseif ($this->isValidOrderKey($o)) {
                 $this->orderKey[] = $this->quoteIdentifier($o);
             } else {
-                throw new \InvalidArgumentException('Invalid order key: ' . $o);
+                throw new InvalidArgumentException('Invalid order key: ' . $o);
             }
         }
 
@@ -264,13 +274,13 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 }
             } else {
                 if (is_bool($param)) {
-                    $type = \PDO::PARAM_BOOL;
+                    $type = ParameterType::BOOLEAN;
                 } elseif (is_int($param)) {
-                    $type = \PDO::PARAM_INT;
+                    $type = ParameterType::INTEGER;
                 } elseif (is_null($param)) {
-                    $type = \PDO::PARAM_NULL;
+                    $type = ParameterType::NULL;
                 } else {
-                    $type = \PDO::PARAM_STR;
+                    $type = ParameterType::STRING;
                 }
 
                 $conditionVariableTypes[$pkey] = $type;

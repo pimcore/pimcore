@@ -33,4 +33,3 @@ and its methods `giveConsent` and `revokeConsent`. Please make sure that your Da
     **/
     $consentService->giveConsent($customer, "directMailing", $consentMessage, $metaInfo);
 ``` 
-

@@ -39,5 +39,3 @@ The textarea editable is very similar to the [Input](./16_Input.md) editable, th
 In the editmode, you can see the textarea and the predefined `placeholder`.
  
 ![Product description textarea - editmode](../../img/editable_textarea_editmode_preview.png)
-
-

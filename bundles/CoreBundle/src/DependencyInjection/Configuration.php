@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use const PASSWORD_ARGON2I;
+use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -25,6 +27,10 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use function array_key_exists;
+use function count;
+use function defined;
+use function is_string;
 
 /**
  * @internal
@@ -128,6 +134,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
+        $this->addDependencyNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -200,6 +207,12 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('domain')
                     ->defaultValue('')
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return $v && !filter_var($v, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
+                        })
+                        ->thenInvalid('Invalid domain name "%s"')
+                    ->end()
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -361,6 +374,33 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('assets')
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->arrayNode('thumbnails')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('allowed_formats')
+                                ->defaultValue(
+                                    [
+                                        'avif',
+                                        'eps',
+                                        'gif',
+                                        'jpeg',
+                                        'jpg',
+                                        'pjpeg',
+                                        'png',
+                                        'svg',
+                                        'tiff',
+                                        'webm',
+                                        'webp',
+                                        'print',
+                                    ]
+                                )
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->floatNode('max_scaling_factor')
+                                ->defaultValue(5.0)
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -1084,8 +1124,8 @@ final class Configuration implements ConfigurationInterface
                                     ->values(array_filter([
                                         PASSWORD_DEFAULT,
                                         PASSWORD_BCRYPT,
-                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
-                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                        defined('PASSWORD_ARGON2I') ? PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : null,
                                     ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
@@ -1978,6 +2018,21 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    private function addDependencyNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('dependency')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('enabled')
+                        ->defaultValue(true)
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     /**

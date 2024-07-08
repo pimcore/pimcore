@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use InvalidArgumentException;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -100,7 +101,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
         }
 
         if (!$bundle instanceof PimcoreBundleInterface) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Bundle "%s" does not implement %s',
                 $bundle->getName(),
                 PimcoreBundleInterface::class
@@ -128,7 +129,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
     protected function getShortClassName(string $className): ?string
     {
         if (!class_exists($className)) {
-            throw new \InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
+            throw new InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
         }
 
         $parts = explode('\\', $className);

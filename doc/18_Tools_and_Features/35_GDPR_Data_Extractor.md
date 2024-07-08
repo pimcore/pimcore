@@ -97,4 +97,4 @@ The following functions need to be implemented:
     ```
 
 For an example see the implementation for the [customers data provider](https://github.com/pimcore/customer-data-framework/blob/master/src/GDPR/DataProvider/Customers.php) 
-in our customer management framework. 
+in our customer management framework.

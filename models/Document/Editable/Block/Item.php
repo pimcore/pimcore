@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable\Block;
 
 use Pimcore\Model\Document;
+use function get_class;
 
 class Item extends AbstractBlockItem
 {

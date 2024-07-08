@@ -16,11 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use Exception;
 use GuzzleHttp\RequestOptions;
+use Locale;
+use Pimcore;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
 
 final class Tool
 {
@@ -179,11 +186,11 @@ final class Tool
     /**
      * @return array<string, string>
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getSupportedLocales(): array
     {
-        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
+        $localeService = Pimcore::getContainer()->get(LocaleServiceInterface::class);
         $locale = $localeService->findLocale();
 
         $cacheKey = 'system_supported_locales_' . strtolower((string) $locale);
@@ -192,8 +199,8 @@ final class Tool
 
             $languageOptions = [];
             foreach ($languages as $code) {
-                $translation = \Locale::getDisplayLanguage($code, $locale);
-                $displayRegion = \Locale::getDisplayRegion($code, $locale);
+                $translation = Locale::getDisplayLanguage($code, $locale);
+                $displayRegion = Locale::getDisplayRegion($code, $locale);
 
                 if ($displayRegion) {
                     $translation .= ' (' . $displayRegion . ')';
@@ -214,12 +221,55 @@ final class Tool
         return $languageOptions;
     }
 
+    /**
+     * Trying to get BCP 47 format
+     *
+     * @return array<string, string>
+     *
+     * @throws Exception
+     */
+    public static function getSupportedJSLocales(): array
+    {
+        $localeService = Pimcore::getContainer()->get(LocaleServiceInterface::class);
+        $locale = $localeService->findLocale();
+
+        $cacheKey = 'system_supported_js_locales_' . strtolower((string)$locale);
+        if (!$languageOptions = Cache::load($cacheKey)) {
+            $languages = $localeService->getLocaleList();
+
+            $languageOptions = [];
+            foreach ($languages as $code) {
+                if (substr_count($code, '_') > 1) {
+                    continue;
+                }
+                $codeBCP = str_replace('_', '-', $code);
+
+                $displayName = Locale::getDisplayName($code, $locale);
+                $displayRegion = Locale::getDisplayRegion($code, $locale);
+
+                if ($displayRegion) {
+                    $translation = $displayRegion . ' [' . $codeBCP . ']';
+                } else {
+                    $translation = $displayName . ' [' . $codeBCP . ']';
+                }
+
+                $languageOptions[$codeBCP] = $translation;
+            }
+
+            asort($languageOptions);
+
+            Cache::save($languageOptions, $cacheKey, ['system']);
+        }
+
+        return $languageOptions;
+    }
+
     private static function resolveRequest(Request $request = null): ?Request
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
-            if (\Pimcore::hasContainer()) {
-                $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
+            if (Pimcore::hasContainer()) {
+                $request = Pimcore::getContainer()->get('request_stack')->getMainRequest();
             } else {
                 if (null !== self::$currentRequest) {
                     return self::$currentRequest;
@@ -233,14 +283,14 @@ final class Tool
     public static function isFrontend(Request $request = null): bool
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
+            $request = Pimcore::getContainer()->get('request_stack')->getMainRequest();
         }
 
         if (null === $request) {
             return false;
         }
 
-        return \Pimcore::getContainer()
+        return Pimcore::getContainer()
             ->get(RequestHelper::class)
             ->isFrontendRequest($request);
     }
@@ -258,7 +308,7 @@ final class Tool
             return false;
         }
 
-        return \Pimcore::getContainer()
+        return Pimcore::getContainer()
             ->get(RequestHelper::class)
             ->isFrontendRequestByAdmin($request);
     }
@@ -306,7 +356,7 @@ final class Tool
         );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (in_array('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
+        if (in_array('pimcore_outputfilters_disabled', $requestKeys) && Pimcore::inDebugMode()) {
             return false;
         }
 
@@ -431,7 +481,7 @@ final class Tool
             return null;
         }
 
-        return \Pimcore::getContainer()
+        return Pimcore::getContainer()
             ->get(RequestHelper::class)
             ->getAnonymizedClientIp($request);
     }
@@ -439,7 +489,7 @@ final class Tool
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getMail(array|string $recipients = null, string $subject = null): Mail
     {
@@ -464,7 +514,7 @@ final class Tool
 
     public static function getHttpData(string $url, array $paramsGet = [], array $paramsPost = [], array $options = []): false|string
     {
-        $client = \Pimcore::getContainer()->get('pimcore.http_client');
+        $client = Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';
 
         if (!isset($options['timeout'])) {
@@ -499,7 +549,7 @@ final class Tool
             if ($response->getStatusCode() < 300) {
                 return (string)$response->getBody();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return false;
@@ -591,7 +641,7 @@ final class Tool
         $dirs = array_map('basename', $dirs);
         $dirs = array_filter($dirs, function ($value) {
             // this filters out "old" build directories, which end with a ~
-            return !(bool) \preg_match('/~$/', $value);
+            return !(bool) preg_match('/~$/', $value);
         });
 
         return array_values($dirs);

@@ -16,14 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
+use function array_key_exists;
+use function is_array;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -400,7 +406,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [[]];
 
@@ -410,6 +416,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         return array_merge(...$dependencies);
+    }
+
+    protected function addToDependenciesQueue(): void
+    {
+        if (Config::getSystemConfiguration()['dependency']['enabled']) {
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new ElementDependenciesMessage(Service::getElementType($this), $this->getId())
+            );
+        }
     }
 
     public function isLocked(): bool
@@ -425,7 +440,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -462,7 +477,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-            \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+            Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
             $permissions[$type] = $event->getArgument('isAllowed');
         }
@@ -495,7 +510,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+        Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }
@@ -521,12 +536,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function validatePathLength(): void
     {
         if (mb_strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
+            throw new Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
 
@@ -553,7 +568,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      *
@@ -634,7 +649,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->removeInheritedProperties();
         }
 
-        return array_diff(parent::__sleep(), $this->getBlockedVars());
+        return array_diff(parent::__sleep(), $this->getBlockedVars(), self::getBlockedVars());
     }
 
     public function __wakeup(): void

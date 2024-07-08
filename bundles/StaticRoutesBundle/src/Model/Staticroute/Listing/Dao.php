@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute\Listing;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
+use function count;
 
 /**
  * @internal

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
+use Carbon\Carbon;
+use Pimcore\Tool\UserTimezone;
+
 class Date extends Data
 {
     public function getDataFromEditMode(mixed $data, array $params = []): mixed
@@ -38,6 +41,8 @@ class Date extends Data
             return '';
         }
 
-        return date('m/d/Y', (int) $value);
+        $date = Carbon::createFromTimestamp((int) $value);
+
+        return UserTimezone::applyTimezone($date)->format('Y-m-d');
     }
 }
