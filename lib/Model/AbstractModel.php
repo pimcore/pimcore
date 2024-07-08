@@ -232,7 +232,7 @@ abstract class AbstractModel implements ModelInterface
             } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                 // no logs on duplicates
                 throw $e;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // log any other issue
                 Logger::emergency((string) $e);
 
