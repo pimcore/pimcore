@@ -84,11 +84,11 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
 
-    public function isVersionUsedInScheduler(Model\Version $version, string $ctype): bool
+    public function isVersionUsedInScheduler(Model\Version $version): bool
     {
         $exists = $this->db->fetchOne(
             'SELECT id FROM schedule_tasks WHERE active = 1 AND version = ? AND ctype = ?',
-            [$version->getId(), $ctype]
+            [$version->getId(), $version->getCtype()]
         );
 
         return (bool) $exists;

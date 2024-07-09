@@ -129,7 +129,7 @@ class VersionsCleanupTask implements TaskInterface
                 }
 
                 // do not delete versions referenced in the scheduler
-                if ($dao->isVersionUsedInScheduler($version, $version->getCtype())) {
+                if ($dao->isVersionUsedInScheduler($version)) {
                     $ignoredIds[] = $version->getId();
 
                     continue;
