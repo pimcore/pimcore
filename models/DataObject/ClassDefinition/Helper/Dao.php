@@ -189,10 +189,10 @@ trait Dao
     {
         $exist = $this->db->fetchFirstColumn(
             'SELECT COUNT(*)
-                FROM information_schema.statistics
-                WHERE table_name = ?
-                  AND index_name = ?
-                  AND table_schema = DATABASE();',
+            FROM information_schema.statistics
+            WHERE table_name = ?
+                AND index_name = ?
+                AND table_schema = DATABASE();',
             [
                 $table,
                 $prefix . $indexName,
