@@ -819,8 +819,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             if (method_exists($container, $setter)) {
                 $container->$setter($data);
             }
-            $this->preSetData($container, $data, $params);
         }
+        $this->preSetData($container, $data, $params);
 
         return is_array($data) ? $data : [];
     }
