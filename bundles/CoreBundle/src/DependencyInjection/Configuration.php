@@ -60,7 +60,7 @@ final class Configuration implements ConfigurationInterface
                             ->prototype('scalar')->end()
                         ->end()
                         ->booleanNode('handle_composer')
-                            ->info('Define wheter it should be scanning bundles through composer /vendor folder or not')
+                            ->info('Define whether it should be scanning bundles through composer /vendor folder or not')
                             ->defaultTrue()
                         ->end()
                     ->end()
