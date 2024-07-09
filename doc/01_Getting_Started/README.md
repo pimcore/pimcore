@@ -1,4 +1,4 @@
-# Getting Started With Pimcore
+    # Getting Started With Pimcore
 
 This section provides a quick getting started tutorial for Pimcore and covers the following topics: 
 
