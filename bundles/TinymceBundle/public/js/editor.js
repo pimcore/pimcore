@@ -58,10 +58,10 @@ pimcore.bundle.tinymce.editor = Class.create({
 
         const toolbar1 = 'undo redo | blocks | ' +
             'bold italic | alignleft aligncenter ' +
-            'alignright alignjustify | link';
+            'alignright alignjustify | link hr charmap';
 
         const toolbar2 = 'table | bullist numlist outdent indent | removeformat | ' +
-            'charmap code | searchreplace visualblocks help';
+            'code | searchreplace visualblocks help';
 
         let toolbar;
         if (e.detail.context === 'translation') {
