@@ -97,7 +97,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class AppAdminBundle extends AbstractPimcoreBundle
 {
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [
             '/bundles/appadmin/js/pimcore/editmode.js'
@@ -133,11 +133,11 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onEditmodeJsPaths(PathsEvent $event)
+    public function onEditmodeJsPaths(PathsEvent $event): void
     {
-        $event->setPaths(array_merge($event->getPaths(), [
+        $event->addPaths([
             '/bundles/app/js/pimcore/editmode.js'
-        ]));
+        ]);
     }
 }
 ```
