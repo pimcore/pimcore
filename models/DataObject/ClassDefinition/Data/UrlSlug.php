@@ -463,7 +463,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-    public function preGetData(mixed $container, array $params = []): array
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof Model\DataObject\Concrete) {
