@@ -60,7 +60,9 @@ pimcore.bundle.tinymce.editor = Class.create({
             'bold italic | alignleft aligncenter ' +
             'alignright alignjustify | link';
 
-        const toolbar2 = 'table | bullist numlist outdent indent | removeformat | code | help';
+        const toolbar2 = 'table | bullist numlist outdent indent | removeformat | ' +
+            'charmap code | searchreplace visualblocks help';
+
         let toolbar;
         if (e.detail.context === 'translation') {
             toolbar = {
@@ -92,8 +94,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             height: 500,
             menubar: false,
             plugins: [
-                'autolink', 'lists', 'link', 'image', 'code',
-                'media', 'table', 'help', 'wordcount'
+                'advlist', 'autolink', 'charmap', 'code', 'help', 'image', 'link', 'lists',
+                'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
             ],
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
