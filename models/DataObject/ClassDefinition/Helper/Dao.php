@@ -185,16 +185,24 @@ trait Dao
     /**
      * For MariaDB, it would be possible to use 'ADD/DROP INDEX IF EXISTS' but this is not supported by MySQL
      */
-    protected function indexExists(string $table, string $prefix, mixed $indexName): bool
+    protected function indexExists(string $table, string $prefix, string $indexName): bool
     {
         $exist = $this->db->fetchFirstColumn(
-            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_name = '${table}' AND index_name = '${prefix}${indexName}' AND table_schema = DATABASE();"
+            'SELECT COUNT(*)
+            FROM information_schema.statistics
+            WHERE table_name = ?
+                AND index_name = ?
+                AND table_schema = DATABASE();',
+            [
+                $table,
+                $prefix . $indexName,
+            ]
         );
 
         return (\count($exist) > 0) && (1 === $exist[0]);
     }
 
-    protected function indexDoesNotExist(string $table, string $prefix, mixed $indexName): bool
+    protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
     {
         return !$this->indexExists($table, $prefix, $indexName);
     }
