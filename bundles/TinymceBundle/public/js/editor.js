@@ -51,7 +51,10 @@ pimcore.bundle.tinymce.editor = Class.create({
             language = userLanguage;
         }
         if(language !== 'en') {
-            language = {language: language};
+            language = {
+                language_url: '/bundles/pimcoretinymce/js/langs/' + language + '.js',
+                language: language,
+            };
         } else {
             language = {};
         }
