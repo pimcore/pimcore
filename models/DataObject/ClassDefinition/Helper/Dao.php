@@ -191,7 +191,7 @@ trait Dao
     protected function indexExists(string $table, string $prefix, mixed $indexName): bool
     {
         $exist = $this->db->fetchFirstColumn(
-            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_name = '${table}' AND index_name = '${prefix}${indexName}' AND table_schema = DATABASE();"
+            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_name = '{$table}' AND index_name = '{$prefix}{$indexName}' AND table_schema = DATABASE();"
         );
 
         return (count($exist) > 0) && (1 === $exist[0]);
