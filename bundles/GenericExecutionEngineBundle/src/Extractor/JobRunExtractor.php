@@ -109,6 +109,9 @@ final class JobRunExtractor implements JobRunExtractorInterface
         return $variables;
     }
 
+    /**
+     * @deprecated will be removed with Pimcore 12. Use getSubjectFromMessage() in AbstractAutomationActionHandler.
+     */
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]

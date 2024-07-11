@@ -17,14 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepExecutionMode;
 use Pimcore\Model\Element\ElementDescriptor;
 
 abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineMessageInterface
 {
+    /**
+     * @param ElementDescriptor[] $elements
+     */
     public function __construct(
         protected int $jobRunId,
         protected int $currentJobStep,
-        protected ?ElementDescriptor $element = null
+        /** @deprecated Parameter $element will be removed with Pimcore 12. Use $elements instead. */
+        protected ?ElementDescriptor $element = null,
+        protected array $elements = []
     ) {
     }
 
@@ -38,8 +44,28 @@ abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineM
         return $this->currentJobStep;
     }
 
+    /**
+     * @deprecated will be removed with Pimcore 12. Use getElements() instead.
+     */
     public function getElement(): ?ElementDescriptor
     {
         return $this->element;
+    }
+
+    public function getElements(): array
+    {
+        return $this->elements;
+    }
+
+    /**
+     * @deprecated will be removed with Pimcore 12. Use constructor instead.
+     */
+    public function setElements(array $elements): void
+    {
+        $this->elements = $elements;
+    }
+
+    public function getExecutionMode(): StepExecutionMode {
+        return StepExecutionMode::FOR_EACH;
     }
 }

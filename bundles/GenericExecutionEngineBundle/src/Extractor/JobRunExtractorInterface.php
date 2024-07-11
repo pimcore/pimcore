@@ -45,6 +45,9 @@ interface JobRunExtractorInterface
         array $params = []
     ): void;
 
+    /**
+     * @deprecated will be removed with Pimcore 12. Use getSubjectFromMessages() in AbstractAutomationActionHandler.
+     */
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
