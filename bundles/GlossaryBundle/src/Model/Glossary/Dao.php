@@ -15,9 +15,12 @@
 
 namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
+use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
+use function in_array;
+use function is_bool;
 
 /**
  * @internal
@@ -48,7 +51,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -68,7 +71,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

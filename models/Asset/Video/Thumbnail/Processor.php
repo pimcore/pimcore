@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
+use Exception;
+use Pimcore;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Messenger\VideoConvertMessage;
@@ -24,6 +26,12 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Lock\LockFactory;
+use function array_key_exists;
+use function call_user_func_array;
+use function count;
+use function dirname;
+use function is_array;
+use function is_resource;
 
 /**
  * @internal
@@ -56,12 +64,12 @@ class Processor
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function process(Model\Asset\Video $asset, Config $config, array $onlyFormats = []): ?Processor
     {
         if (!\Pimcore\Video::isAvailable()) {
-            throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
+            throw new Exception('No ffmpeg executable found, please configure the correct path in the system settings');
         }
 
         $storage = Storage::get('thumbnail');
@@ -104,7 +112,7 @@ class Processor
                     return null;
                 }
             } elseif ($customSetting[$config->getName()]['status'] == 'error') {
-                throw new \Exception('Unable to convert video, see logs for details.');
+                throw new Exception('Unable to convert video, see logs for details.');
             }
         }
 
@@ -156,7 +164,7 @@ class Processor
 
         $instance->save();
 
-        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VideoConvertMessage($instance->getProcessId())
         );
 
@@ -205,7 +213,7 @@ class Processor
         $conversionStatus = 'finished';
 
         // check if there is already a transcoding process running, wait if so ...
-        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('video-transcoding', 7200);
+        $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock('video-transcoding', 7200);
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
@@ -261,7 +269,7 @@ class Processor
                 }
 
                 $converter->destroy();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
             }
         }

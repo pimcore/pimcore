@@ -21,6 +21,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

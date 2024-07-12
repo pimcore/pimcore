@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document;
 
+use Exception;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
@@ -98,7 +99,7 @@ class StaticPageGenerator
             }
 
             $storage->write($storagePath, $response);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
 
             return false;

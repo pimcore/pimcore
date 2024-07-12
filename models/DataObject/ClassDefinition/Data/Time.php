@@ -19,6 +19,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use function is_string;
+use function strlen;
 
 class Time extends Model\DataObject\ClassDefinition\Data\Input
 {

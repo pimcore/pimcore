@@ -17,6 +17,11 @@ namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use function count;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal

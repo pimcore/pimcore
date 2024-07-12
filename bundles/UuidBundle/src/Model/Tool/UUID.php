@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\UuidBundle\Model\Tool;
 
 use Exception;
+use Pimcore;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Dao;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -82,7 +83,7 @@ final class UUID extends Model\AbstractModel
      */
     public function setSystemInstanceIdentifier(): static
     {
-        $instanceIdentifier = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
+        $instanceIdentifier = Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (empty($instanceIdentifier)) {
             throw new Exception('No instance identifier set in system config!');
         }

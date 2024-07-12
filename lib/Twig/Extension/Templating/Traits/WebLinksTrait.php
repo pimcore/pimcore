@@ -17,7 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Traits;
 
+use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
+use function call_user_func;
+use function is_bool;
 
 /**
  * @internal
@@ -59,7 +62,7 @@ trait WebLinksTrait
         $this->webLinkAttributes = $webLinkAttributes;
     }
 
-    protected function handleWebLink(\stdClass $item, string $source, array $itemAttributes): void
+    protected function handleWebLink(stdClass $item, string $source, array $itemAttributes): void
     {
         if (empty($source)) {
             return;

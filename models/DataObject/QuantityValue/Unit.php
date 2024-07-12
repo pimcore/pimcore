@@ -15,11 +15,13 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Event\DataObjectQuantityValueEvents;
 use Pimcore\Event\Model\DataObject\QuantityValueUnitEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use function is_array;
 
 /**
  * @method \Pimcore\Model\DataObject\QuantityValue\Unit\Dao getDao()
@@ -98,7 +100,7 @@ class Unit extends Model\AbstractModel
                 Cache::save($table, self::CACHE_KEY, [], null, 995, true);
                 Cache\RuntimeCache::set(self::CACHE_KEY, $table);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
 

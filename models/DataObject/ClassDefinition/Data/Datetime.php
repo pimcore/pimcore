@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -24,6 +25,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
+use function is_float;
+use function is_string;
+use function strlen;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -179,7 +183,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        if ($data instanceof \DateTimeInterface) {
+        if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d H:i:s');
         }
 
@@ -189,7 +193,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \DateTimeInterface) {
+        if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d H:i');
         }
 
@@ -343,8 +347,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
-        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
+        $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
+        $newValue = $newValue instanceof DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
     }
@@ -420,7 +424,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->columnType = $columnType;
     }
 
-    private function applyTimezone(\DateTimeInterface $date): \DateTimeInterface
+    private function applyTimezone(DateTimeInterface $date): DateTimeInterface
     {
         if ($this->isRespectTimezone()) {
             $date = UserTimezone::applyTimezone($date);

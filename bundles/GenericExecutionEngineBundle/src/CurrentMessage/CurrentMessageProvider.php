@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage;
 use JsonException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidJsonMessageException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function is_array;
 
 /**
  * @internal

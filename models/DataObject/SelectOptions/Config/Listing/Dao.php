@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\SelectOptions\Config\Listing;
 
 use Pimcore\Model\DataObject\SelectOptions\Config;
+use function count;
 
 /**
  * @internal

@@ -15,6 +15,7 @@
 
 namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
 
+use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
 use Pimcore\Model;
@@ -63,7 +64,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM glossary ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Helper;
 
 use League\Csv\EscapeFormula;
+use function in_array;
 
 /**
  * @deprecated and will be removed in Pimcore 12. Use \League\Csv\EscapeFormula instead.

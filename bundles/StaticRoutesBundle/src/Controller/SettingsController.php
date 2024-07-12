@@ -23,6 +23,9 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use function is_array;
+use function is_scalar;
+use function is_string;
 
 class SettingsController extends UserAwareController
 {

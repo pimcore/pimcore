@@ -23,6 +23,7 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use function array_key_exists;
 
 class DataObjects extends DataProvider\DataObjects
 {
