@@ -143,4 +143,3 @@ The `purpose` parameter can take the following values:
 | groupId   | group id |
 | keyId     | key id |
 | keyDefinition | the fielddefinition of the classificationstore attribute |
-

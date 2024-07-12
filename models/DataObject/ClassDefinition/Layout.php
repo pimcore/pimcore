@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
+use function count;
+use function in_array;
 
 class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterface
 {

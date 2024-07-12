@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Exception;
+use function in_array;
+
 class DeviceDetector
 {
     protected array $validDeviceTypes = ['phone', 'tablet', 'desktop'];
@@ -85,7 +88,7 @@ class DeviceDetector
      * Set the device type manually. Possible values for type: 'desktop', 'tablet', or 'phone'
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setDeviceType(string $type): void
     {
@@ -103,7 +106,7 @@ class DeviceDetector
             $instance->isDesktop = false;
             $instance->isTablet = false;
         } else {
-            throw new \Exception(sprintf('Unknown device "%s".', $type));
+            throw new Exception(sprintf('Unknown device "%s".', $type));
         }
     }
 

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Translation;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
@@ -27,6 +28,10 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function array_key_exists;
+use function call_user_func_array;
+use function get_class;
+use function strlen;
 
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface
 {
@@ -211,7 +216,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale): string
     {
@@ -238,7 +243,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
             } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
-                    throw new \Exception("Message ID's longer than 190 characters are invalid!");
+                    throw new Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
                 // no translation found create key

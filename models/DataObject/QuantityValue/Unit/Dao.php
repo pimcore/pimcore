@@ -17,6 +17,10 @@ namespace Pimcore\Model\DataObject\QuantityValue\Unit;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -74,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(int $id): void
     {
-        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $id);
         if (!$classRaw) {
             throw new Model\Exception\NotFoundException('Unit ' . $id . ' not found.');
         }

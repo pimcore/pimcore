@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use function count;
+use function func_get_args;
+use function is_array;
 
 final class DefinitionModifier
 {

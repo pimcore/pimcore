@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use const PHP_SAPI;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
@@ -24,6 +27,10 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function constant;
+use function define;
+use function defined;
+use function in_array;
 
 class Bootstrap
 {
@@ -68,7 +75,7 @@ class Bootstrap
         }
 
         // activate inheritance for cli-scripts
-        \Pimcore::unsetAdminMode();
+        Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
         DataObject::setHideUnpublished(true);
         DataObject::setGetInheritedValues(true);
@@ -103,7 +110,7 @@ class Bootstrap
 
     public static function bootstrap(): void
     {
-        $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
+        $isCli = in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
 
         // BC Layer when using the public/index.php without symfony runtime pimcore/skeleton #128 OR without pimcore/skeleton #183 (< 11.0.4)
         if (!Tool::hasCurrentRequest() && !$isCli && !isset($_ENV['SYMFONY_DOTENV_VARS'])) {
@@ -243,15 +250,15 @@ class Bootstrap
         }
 
         if (!class_exists($kernelClass)) {
-            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s not found', $kernelClass));
+            throw new InvalidArgumentException(sprintf('Defined Kernel Class %s not found', $kernelClass));
         }
 
         if (!is_subclass_of($kernelClass, Kernel::class)) {
-            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s needs to extend the \Pimcore\Kernel Class', $kernelClass));
+            throw new InvalidArgumentException(sprintf('Defined Kernel Class %s needs to extend the \Pimcore\Kernel Class', $kernelClass));
         }
 
         $kernel = new $kernelClass($environment, $debug);
-        \Pimcore::setKernel($kernel);
+        Pimcore::setKernel($kernel);
         $kernel->boot();
 
         $conf = Config::getSystemConfiguration();

@@ -168,5 +168,3 @@ Please adapt and use these [scripts](https://gist.github.com/dvesh3/50a1a99fd337
   ```bash
   bin/console doctrine:migration:exec 'Pimcore\Bundle\CoreBundle\Migrations\Version20230508121105'
   ```
-    
-

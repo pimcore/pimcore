@@ -19,6 +19,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use function count;
 
 /**
  * @internal

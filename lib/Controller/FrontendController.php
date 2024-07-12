@@ -16,13 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller;
 
+use Exception;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use function in_array;
 
 /**
  * @property Document\PageSnippet $document
@@ -61,20 +64,20 @@ abstract class FrontendController extends Controller
             return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
-        throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
+        throw new RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
     public function __set(string $name, mixed $value): void
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Property "%s" is a request attribute and can\'t be set on the controller instance',
                 $name
             ));
         }
 
-        throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
+        throw new RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
     /**
@@ -98,7 +101,7 @@ abstract class FrontendController extends Controller
      *
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {

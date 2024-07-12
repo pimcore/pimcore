@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use DOMElement;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
@@ -23,6 +25,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use function is_string;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
@@ -52,7 +55,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
-        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+        return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
     public function setToolbarConfig(string $toolbarConfig): void
@@ -243,7 +246,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $html = new DomCrawler($data);
             $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-            /** @var \DOMElement $el */
+            /** @var DOMElement $el */
             foreach ($es as $el) {
                 if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
                     $type = $el->getAttribute('pimcore_type');

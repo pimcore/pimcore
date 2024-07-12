@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Schedule;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -49,9 +50,9 @@ class Task extends Model\AbstractModel
         try {
             $task = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$task) {
-                throw new \Exception('Scheduled Task in Registry is not valid');
+                throw new Exception('Scheduled Task in Registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $task = new self();
                 $task->getDao()->getById($id);

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use function count;
+use function is_array;
+
 /**
  * @internal
  */

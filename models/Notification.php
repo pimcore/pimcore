@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
@@ -92,7 +93,7 @@ class Notification extends AbstractModel
 
         try {
             $notification = Cache\RuntimeCache::get($cacheKey);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             try {
                 $notification = new self();
                 $notification->getDao()->getById($id);

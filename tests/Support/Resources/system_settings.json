@@ -2,7 +2,6 @@
   "general": {
     "domain": "pimcore-test.dev",
     "redirect_to_maindomain": false,
-    "language": "en",
     "valid_languages": [
       "en",
       "de",
@@ -10,7 +9,7 @@
     ],
     "fallback_languages": {
       "en": "",
-      "de": ""
+      "de": "en"
     },
     "default_language": "",
     "debug_admin_translations": false

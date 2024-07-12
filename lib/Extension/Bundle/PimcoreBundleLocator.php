@@ -18,9 +18,12 @@ namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Composer;
 use Pimcore\Tool\ClassUtils;
+use ReflectionClass;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use function count;
+use function is_array;
 
 /**
  * @internal
@@ -142,7 +145,7 @@ class PimcoreBundleLocator
             return;
         }
 
-        $reflector = new \ReflectionClass($bundle);
+        $reflector = new ReflectionClass($bundle);
         if (!$reflector->isInstantiable() || !$reflector->implementsInterface(PimcoreBundleInterface::class)) {
             return;
         }

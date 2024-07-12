@@ -15,8 +15,19 @@
 
 namespace Pimcore\Model\Tool\Email\Log;
 
+use DateTimeInterface;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
+use stdClass;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_int;
+use function is_null;
+use function is_object;
+use function is_string;
 
 /**
  * @internal
@@ -88,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->update(self::$dbTable, $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
@@ -113,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
     protected function createJsonLoggingObject(array|string $data): array|string
     {
         if (!is_array($data)) {
-            return json_encode(new \stdClass());
+            return json_encode(new stdClass());
         } else {
             $loggingData = [];
             foreach ($data as $key => $value) {
@@ -130,15 +141,15 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    protected function prepareLoggingData(string $key, mixed $value): \stdClass
+    protected function prepareLoggingData(string $key, mixed $value): stdClass
     {
-        $class = new \stdClass();
+        $class = new stdClass();
         $class->key = $key; // key has to be a string otherwise the treeGrid won't work
 
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = ['type' => 'simple',
                 'value' => $value, ];
-        } elseif ($value instanceof \DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             $class->data = ['type' => 'simple',
                 'value' => $value->format('Y-m-d H:i'), ];
         } elseif (is_object($value) && method_exists($value, 'getId')) {

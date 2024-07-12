@@ -17,8 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
-use function in_array;
-use function is_array;
+use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
@@ -54,10 +53,18 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
-use function strlen;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
+use function array_key_exists;
+use function dirname;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_null;
+use function is_resource;
+use function is_string;
+use function strlen;
 
 /**
  * @method Dao getDao()
@@ -277,7 +284,7 @@ class Asset extends Element\AbstractElement
             try {
                 $asset->getDao()->getById($id);
 
-                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
+                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
                 /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
@@ -300,7 +307,7 @@ class Asset extends Element\AbstractElement
         }
 
         if ($asset && static::typeMatch($asset)) {
-            \Pimcore::getEventDispatcher()->dispatch(
+            Pimcore::getEventDispatcher()->dispatch(
                 new AssetEvent($asset, ['params' => $params]),
                 AssetEvents::POST_LOAD
             );
@@ -332,7 +339,7 @@ class Asset extends Element\AbstractElement
                 $mimeTypeGuessData = $tmpFile;
 
                 if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                    throw new \InvalidArgumentException('Invalid filename');
+                    throw new InvalidArgumentException('Invalid filename');
                 }
 
                 if (array_key_exists('data', $data)) {
@@ -381,7 +388,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($className);
@@ -582,6 +589,13 @@ class Asset extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             if ($this->getDataChanged()) {
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
@@ -745,7 +759,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
@@ -776,24 +790,9 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('asset');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
-                // don't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
-
         $this->getDao()->update();
 
-        //set asset to registry
+        // set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
         RuntimeCache::set($cacheKey, $this);
         if (static::class === Asset::class || $typeChanged) {
@@ -1604,8 +1603,11 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return [];
+        }
         $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {
@@ -1751,7 +1753,7 @@ class Asset extends Element\AbstractElement
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();
-        if (!\preg_match('@^(https?|data):@', $path)) {
+        if (!preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 

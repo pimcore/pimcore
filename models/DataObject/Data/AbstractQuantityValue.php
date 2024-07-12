@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
@@ -23,6 +24,7 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function is_string;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
@@ -68,7 +70,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     /**
      * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function convertTo(Unit|string $unit): AbstractQuantityValue
     {

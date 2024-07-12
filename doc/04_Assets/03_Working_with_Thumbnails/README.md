@@ -36,5 +36,3 @@ pimcore:
 * [Image Thumbnails](./01_Image_Thumbnails.md)
 * [Video Thumbnails](./03_Video_Thumbnails.md)
 * [Asset Document Thumbnails](./05_Document_Thumbnails.md)
-
-

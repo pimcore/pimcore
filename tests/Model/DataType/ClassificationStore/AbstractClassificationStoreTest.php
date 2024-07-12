@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use function count;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
@@ -201,7 +203,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                         break;
 
                     default:
-                        throw new \Exception($keyName . ' not supported');
+                        throw new Exception($keyName . ' not supported');
                 }
 
                 $definition->setName($keyName);

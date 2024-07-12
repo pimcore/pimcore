@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow;
 
+use DateTime;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
+use function in_array;
 
 class Service
 {
@@ -38,7 +40,7 @@ class Service
         } elseif (in_array($fc['fieldType'], ['date', 'datetime'])) {
             $data['type'] = 'date';
 
-            $dateTime = new \DateTime();
+            $dateTime = new DateTime();
 
             if (empty($fc['timeformat']) || $fc['timeformat'] === 'milliseconds') {
                 $dateTime->setTimestamp($value / 1000);
@@ -112,7 +114,7 @@ class Service
         foreach ($noteData as $row) {
             if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
                 /**
-                 * @var \DateTime $date
+                 * @var DateTime $date
                  */
                 $date = $row['value'];
                 $note->setDate($date->getTimestamp());
