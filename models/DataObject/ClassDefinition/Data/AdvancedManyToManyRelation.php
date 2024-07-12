@@ -409,6 +409,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
+                if (!($metaObject instanceof DataObject\Data\ElementMetadata)) {
+                    continue;
+                }
+
                 $o = $metaObject->getElement();
                 if (!$o) {
                     continue;
