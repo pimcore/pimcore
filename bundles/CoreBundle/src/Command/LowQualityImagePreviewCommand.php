@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Exception;
-use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
@@ -116,12 +114,12 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                     try {
                         $this->output->writeln('generating low-quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
                         $image->generateLowQualityPreview();
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $this->output->writeln('<error>'.$e->getMessage().'</error>');
                     }
                 }
             }
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
         }
 
         $progressBar->finish();

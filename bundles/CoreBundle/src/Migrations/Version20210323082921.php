@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Config;
-use function is_array;
 
 /**
  * @internal

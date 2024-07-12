@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Document\Areabrick\Exception;
 
-use RuntimeException;
-
-class ConfigurationException extends RuntimeException
+class ConfigurationException extends \RuntimeException
 {
 }

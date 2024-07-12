@@ -16,15 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-use __PHP_Incomplete_Class;
-use Exception;
-use Iterator;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use function count;
-use function in_array;
 
 /**
  * @template TItem of Model\DataObject\Fieldcollection\Data\AbstractData
@@ -33,14 +28,14 @@ use function in_array;
  * @method Fieldcollection\Dao getDao()
  * @method TItem[] load(Concrete $object)
  */
-class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndicatorInterface, ObjectAwareFieldInterface
+class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @internal
      *
-     * @var array<TItem|__PHP_Incomplete_Class>
+     * @var array<TItem|\__PHP_Incomplete_Class>
      */
     protected array $items = [];
 
@@ -116,7 +111,7 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
     /**
      * @param array<string, mixed> $params
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(Concrete $object, array $params = []): void
     {
@@ -139,7 +134,7 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
                     $collection->setObject($object);
                     $collection->getDao()->save($object, $params, $saveRelationalData);
                 } else {
-                    throw new Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
+                    throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                 }
             }
         }
@@ -230,7 +225,7 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @internal
      */
@@ -311,7 +306,7 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
     public function __wakeup(): void
     {
         foreach ($this->items as $key => $item) {
-            if ($item instanceof __PHP_Incomplete_Class) {
+            if ($item instanceof \__PHP_Incomplete_Class) {
                 unset($this->items[$key]);
                 Logger::error('fieldcollection item ' . $key . ' does not exist anymore');
             }

@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Exception;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 
@@ -57,7 +56,7 @@ trait ObjectVarTrait
      *
      * @return $this
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function setObjectVar(string $var, mixed $value, bool $silent = false): static
     {
@@ -66,7 +65,7 @@ trait ObjectVarTrait
                 return $this;
             }
 
-            throw new Exception('property ' . $var . ' does not exist');
+            throw new \Exception('property ' . $var . ' does not exist');
         }
         $this->$var = $value;
 

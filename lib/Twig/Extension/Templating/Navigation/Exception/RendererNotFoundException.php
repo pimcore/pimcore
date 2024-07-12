@@ -17,9 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
-use InvalidArgumentException;
-
-class RendererNotFoundException extends InvalidArgumentException
+class RendererNotFoundException extends \InvalidArgumentException
 {
     public static function create(string $name): static
     {

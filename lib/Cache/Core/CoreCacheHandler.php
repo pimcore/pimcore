@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Core;
 
-use Closure;
-use DateInterval;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Event\CoreCacheEvents;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
@@ -32,12 +30,6 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Throwable;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_scalar;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
@@ -129,7 +121,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     protected bool $writeInProgress = false;
 
-    protected Closure $emptyCacheItemClosure;
+    protected \Closure $emptyCacheItemClosure;
 
     public function __construct(TagAwareAdapterInterface $adapter, WriteLock $writeLock, EventDispatcherInterface $dispatcher)
     {
@@ -286,7 +278,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      *
      */
-    public function save(string $key, mixed $data, array $tags = [], DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false): bool
+    public function save(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false): bool
     {
         if ($this->writeInProgress) {
             return false;
@@ -444,7 +436,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         return $tags;
     }
 
-    protected function storeCacheData(string $key, mixed $data, array $tags = [], DateInterval|int $lifetime = null, bool $force = false): bool
+    protected function storeCacheData(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, bool $force = false): bool
     {
         if ($this->writeInProgress) {
             return false;
@@ -520,7 +512,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                     $itemData = serialize($itemData);
                 }
                 $itemSizeText = formatBytes(mb_strlen((string) $itemData));
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 $itemSizeText = 'unknown';
             }
 

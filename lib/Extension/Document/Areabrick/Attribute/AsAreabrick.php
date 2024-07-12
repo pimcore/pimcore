@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Document\Areabrick\Attribute;
 
-use Attribute;
-
-#[Attribute(Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class AsAreabrick
 {
     public function __construct(

@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Document\Areabrick;
 
-use JsonSerializable;
-
-class EditableDialogBoxConfiguration implements JsonSerializable
+class EditableDialogBoxConfiguration implements \JsonSerializable
 {
     protected ?string $id = null;
 

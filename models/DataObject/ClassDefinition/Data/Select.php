@@ -17,16 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use InvalidArgumentException;
-use JsonSerializable;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function array_key_exists;
-use function count;
-use function is_array;
 
 class Select extends Data implements
     ResourcePersistenceAwareInterface,
@@ -34,7 +30,7 @@ class Select extends Data implements
     TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    JsonSerializable,
+    \JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,

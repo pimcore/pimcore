@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use League\Flysystem\FilesystemOperator;
-use Pimcore;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -40,7 +39,7 @@ class Storage
 
     public static function get(string $name): FilesystemOperator
     {
-        $storage = Pimcore::getContainer()->get(self::class);
+        $storage = \Pimcore::getContainer()->get(self::class);
 
         return $storage->getStorage($name);
     }

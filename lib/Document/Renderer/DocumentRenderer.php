@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Renderer;
 
-use Exception;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
@@ -90,7 +89,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
         try {
             $request = $this->requestHelper->getCurrentRequest();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             $host = null;
             if($site = Frontend::getSiteForDocument($document)) {

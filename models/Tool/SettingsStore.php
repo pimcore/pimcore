@@ -16,10 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Tool;
 
-use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
-use function in_array;
 
 /**
  * @method Dao getDao()
@@ -81,12 +79,12 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private static function validateType(string $type): bool
     {
         if (!in_array($type, self::ALLOWED_TYPES)) {
-            throw new Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::ALLOWED_TYPES)));
+            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::ALLOWED_TYPES)));
         }
 
         return true;
@@ -95,7 +93,7 @@ final class SettingsStore extends Model\AbstractModel
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
     {
@@ -162,7 +160,7 @@ final class SettingsStore extends Model\AbstractModel
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function setType(string $type): void
     {

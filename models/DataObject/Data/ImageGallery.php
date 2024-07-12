@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Iterator;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class ImageGallery implements Iterator, OwnerAwareFieldInterface
+class ImageGallery implements \Iterator, OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 

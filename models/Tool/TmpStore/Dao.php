@@ -15,11 +15,8 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
-use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
-use function is_array;
-use function is_object;
 
 /**
  * @internal
@@ -47,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
             ], $this->getPrimaryKey('tmp_store'));
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

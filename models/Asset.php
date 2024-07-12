@@ -17,7 +17,8 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
-use InvalidArgumentException;
+use function in_array;
+use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
@@ -53,18 +54,10 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
+use function strlen;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
-use function array_key_exists;
-use function dirname;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_resource;
-use function is_string;
-use function strlen;
 
 /**
  * @method Dao getDao()
@@ -284,7 +277,7 @@ class Asset extends Element\AbstractElement
             try {
                 $asset->getDao()->getById($id);
 
-                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
                 /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
@@ -307,7 +300,7 @@ class Asset extends Element\AbstractElement
         }
 
         if ($asset && static::typeMatch($asset)) {
-            Pimcore::getEventDispatcher()->dispatch(
+            \Pimcore::getEventDispatcher()->dispatch(
                 new AssetEvent($asset, ['params' => $params]),
                 AssetEvents::POST_LOAD
             );
@@ -339,7 +332,7 @@ class Asset extends Element\AbstractElement
                 $mimeTypeGuessData = $tmpFile;
 
                 if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                    throw new InvalidArgumentException('Invalid filename');
+                    throw new \InvalidArgumentException('Invalid filename');
                 }
 
                 if (array_key_exists('data', $data)) {
@@ -388,7 +381,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($className);
@@ -759,7 +752,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
@@ -1753,7 +1746,7 @@ class Asset extends Element\AbstractElement
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();
-        if (!preg_match('@^(https?|data):@', $path)) {
+        if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 

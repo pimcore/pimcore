@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
-use Exception;
+use function implode;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Psr\Container\ContainerInterface;
@@ -25,7 +25,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function implode;
 
 /**
  * @internal
@@ -63,7 +62,7 @@ class StorageCommand extends AbstractCommand
             try {
                 $sourceStorage = $this->locator->get($storageSourceName);
                 $targetStorage = $this->locator->get($storageTargetName);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageTargetName));
 
                 continue;
@@ -91,7 +90,7 @@ class StorageCommand extends AbstractCommand
                         } else {
                             $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                         $errors[] = $e->getMessage();
                     }

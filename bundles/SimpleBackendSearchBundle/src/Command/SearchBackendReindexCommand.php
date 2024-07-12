@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Command;
 
-use Exception;
-use Pimcore;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
@@ -40,7 +38,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SearchBackendReindexCommand extends AbstractCommand
 {
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -97,11 +95,11 @@ class SearchBackendReindexCommand extends AbstractCommand
                         }
 
                         $searchEntry->save();
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         Logger::err((string) $e);
                     }
                 }
-                Pimcore::collectGarbage();
+                \Pimcore::collectGarbage();
             }
         }
 
@@ -111,7 +109,7 @@ class SearchBackendReindexCommand extends AbstractCommand
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function saveAsset(Asset $asset): void
     {

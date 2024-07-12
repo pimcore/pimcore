@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
-use DateTime;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -51,7 +50,7 @@ class ResponseHelper
         }
 
         if (!$response->headers->has('Expires') || $force) {
-            $response->setExpires(new DateTime('Tue, 01 Jan 1980 00:00:00 GMT'));
+            $response->setExpires(new \DateTime('Tue, 01 Jan 1980 00:00:00 GMT'));
         }
     }
 

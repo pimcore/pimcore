@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
-use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
@@ -116,7 +115,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->html = $result;
         }
 
-        $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);

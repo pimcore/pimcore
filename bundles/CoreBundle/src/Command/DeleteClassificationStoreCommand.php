@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Exception;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
@@ -47,7 +46,7 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         $storeId = $input->getArgument('storeId');
 
         if (!is_numeric($storeId)) {
-            throw new Exception('Invalid store ID');
+            throw new \Exception('Invalid store ID');
         }
 
         $db = Db::get();

@@ -16,12 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
-use Exception;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
-use function strlen;
 
 /**
  * @method Dao getDao()
@@ -73,7 +71,7 @@ class Document extends Model\Asset
             // read from blob here, because in $this->update() $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
             $this->setCustomSetting('document_page_count', $pageCount);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::error((string) $e);
             $this->setCustomSetting('document_page_count', 'failed');
         }
@@ -129,7 +127,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getText(int $page = null): ?string
     {

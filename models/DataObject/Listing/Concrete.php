@@ -16,10 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Listing;
 
-use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use function in_array;
 
 /**
  * @method DataObject\Listing\Concrete\Dao getDao()
@@ -48,7 +46,7 @@ abstract class Concrete extends Model\DataObject\Listing
     protected bool $ignoreLocalizedFields = false;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct()
     {
@@ -126,14 +124,14 @@ abstract class Concrete extends Model\DataObject\Listing
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function addFieldCollection(string $type, string $fieldname = null): void
     {
         $this->setData(null);
 
         if (empty($type)) {
-            throw new Exception('No fieldcollectiontype given');
+            throw new \Exception('No fieldcollectiontype given');
         }
 
         DataObject\Fieldcollection\Definition::getByKey($type);
@@ -144,7 +142,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @return $this
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function setFieldCollections(array $fieldCollections): static
     {
@@ -170,14 +168,14 @@ abstract class Concrete extends Model\DataObject\Listing
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function addObjectbrick(string $type): void
     {
         $this->setData(null);
 
         if (empty($type)) {
-            throw new Exception('No objectbrick given');
+            throw new \Exception('No objectbrick given');
         }
 
         DataObject\Objectbrick\Definition::getByKey($type);
@@ -190,7 +188,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @return $this
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function setObjectbricks(array $objectbricks): static
     {

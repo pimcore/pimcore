@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Document\PageSnippet;
 
-use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 
@@ -46,7 +45,7 @@ abstract class Dao extends Model\Document\Dao
         $editablesRaw = $this->db->fetchAllAssociative('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
 
         $editables = [];
-        $loader = Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
+        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
 
         foreach ($editablesRaw as $editableRaw) {
             /** @var Document\Editable $editable */

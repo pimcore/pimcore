@@ -20,7 +20,6 @@ namespace Pimcore\HttpKernel\BundleCollection;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use function get_class;
 
 class Item extends AbstractItem
 {

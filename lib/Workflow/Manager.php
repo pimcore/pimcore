@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow;
 
-use Exception;
-use Pimcore;
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Asset;
@@ -36,8 +34,6 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function in_array;
-use function is_null;
 
 class Manager
 {
@@ -209,14 +205,14 @@ class Manager
     {
         $config = $this->getWorkflowConfig($workflowName);
 
-        return Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
+        return \Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
     }
 
     /**
      *
      *
      * @throws ValidationException
-     * @throws Exception
+     * @throws \Exception
      */
     public function applyWithAdditionalData(
         WorkflowInterface $workflow,
@@ -248,7 +244,7 @@ class Manager
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function applyGlobalAction(
         WorkflowInterface $workflow,
@@ -294,7 +290,7 @@ class Manager
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function getTransitionByName(string $workflowName, string $transitionName): ?\Symfony\Component\Workflow\Transition
     {
@@ -319,7 +315,7 @@ class Manager
      *
      * @return bool true if initial state was applied
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function ensureInitialPlace(string $workflowName, object $subject): bool
     {

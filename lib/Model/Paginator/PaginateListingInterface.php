@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Paginator;
 
-use Countable;
-
-interface PaginateListingInterface extends Countable, \Iterator
+interface PaginateListingInterface extends \Countable, \Iterator
 {
     /**
      * Returns a collection of items for a page.

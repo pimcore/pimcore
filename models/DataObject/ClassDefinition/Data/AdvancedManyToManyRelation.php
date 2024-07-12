@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
-use Pimcore;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -27,10 +26,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
@@ -146,7 +141,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                     if ($source instanceof DataObject\Concrete) {
                         /** @var DataObject\Data\ElementMetadata $metaData */
-                        $metaData = Pimcore::getContainer()->get('pimcore.model.factory')
+                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(
                                 'Pimcore\Model\DataObject\Data\ElementMetadata',
                                 [
@@ -191,7 +186,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -214,7 +209,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return ',' . implode(',', $d) . ',';
         }
 
-        throw new Exception('invalid data passed to getDataForQueryResource - must be array');
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -361,7 +356,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 if ($e instanceof Element\ElementInterface) {
                     /** @var DataObject\Data\ElementMetadata $metaData */
-                    $metaData = Pimcore::getContainer()->get('pimcore.model.factory')
+                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build(
                             'Pimcore\Model\DataObject\Data\ElementMetadata',
                             [
@@ -705,7 +700,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ElementMetadata $temp */
-        $temp = Pimcore::getContainer()->get('pimcore.model.factory')
+        $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build(
                 'Pimcore\Model\DataObject\Data\ElementMetadata',
                 [

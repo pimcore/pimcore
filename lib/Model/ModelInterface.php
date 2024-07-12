@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
-use Exception;
 use Pimcore\Model\Dao\DaoInterface;
 
 interface ModelInterface
@@ -26,7 +25,7 @@ interface ModelInterface
     public function setDao(Dao\AbstractDao $dao): static;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function initDao(string $key = null, bool $forceDetection = false): void;
 

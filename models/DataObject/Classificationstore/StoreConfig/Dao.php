@@ -15,12 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 
-use Exception;
 use Pimcore\Model;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_object;
 
 /**
  * @internal
@@ -74,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): void
     {
@@ -94,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function update(): void
     {

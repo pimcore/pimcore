@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable\Exception;
 
-use RuntimeException;
-
-class NotFoundException extends RuntimeException
+class NotFoundException extends \RuntimeException
 {
 }

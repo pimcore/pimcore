@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Exception;
-
-class DuplicateFullPathException extends Exception
+class DuplicateFullPathException extends \Exception
 {
     private ?ElementInterface $causeElement = null;
 

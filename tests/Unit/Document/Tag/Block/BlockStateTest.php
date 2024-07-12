@@ -20,8 +20,6 @@ namespace Pimcore\Tests\Unit\Document\Tag\Block;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Tests\Support\Test\TestCase;
-use UnderflowException;
-use function count;
 
 /**
  * @covers BlockState
@@ -61,7 +59,7 @@ class BlockStateTest extends TestCase
 
     public function testPopBlocksThrowsExceptionIfEmpty(): void
     {
-        $this->expectException(UnderflowException::class);
+        $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popBlock();
     }
@@ -110,7 +108,7 @@ class BlockStateTest extends TestCase
 
     public function testPopIndexesThrowsExceptionIfEmpty(): void
     {
-        $this->expectException(UnderflowException::class);
+        $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popIndex();
     }

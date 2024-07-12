@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Exception;
 use Pimcore\Model\DataObject\Concrete;
 
 interface LayoutDefinitionEnrichmentInterface
@@ -30,7 +29,7 @@ interface LayoutDefinitionEnrichmentInterface
      *
      * @return $this
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static;
 }

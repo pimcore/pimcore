@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Carbon\Carbon;
-use Exception;
-use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -29,7 +27,6 @@ use Pimcore\Model\DataObject\Data\RgbaColor;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function count;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {
@@ -37,7 +34,7 @@ class GeneralTest extends AbstractClassificationStoreTest
     {
         parent::setUp();
 
-        Pimcore::setAdminMode();
+        \Pimcore::setAdminMode();
         TestHelper::cleanUp();
     }
 
@@ -158,7 +155,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function createCsObject(): \Pimcore\Model\DataObject\Csstore
     {

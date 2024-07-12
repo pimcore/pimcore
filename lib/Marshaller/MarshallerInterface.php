@@ -16,21 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Marshaller;
 
-use Exception;
-
 interface MarshallerInterface
 {
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function marshal(mixed $value, array $params = []): mixed;
 
     /**
      *
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
     public function unmarshal(mixed $value, array $params = []): mixed;
 }

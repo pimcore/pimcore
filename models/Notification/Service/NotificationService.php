@@ -23,9 +23,6 @@ use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use UnexpectedValueException;
-use function is_string;
-use function strlen;
 
 /**
  * @internal
@@ -45,7 +42,7 @@ class NotificationService
 
     /**
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function sendToUser(
         int $userId,
@@ -60,15 +57,15 @@ class NotificationService
         $recipient = User::getById($userId);
 
         if (!$recipient instanceof User) {
-            throw new UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
+            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
         }
 
         if (empty($title)) {
-            throw new UnexpectedValueException('Title of the Notification cannot be empty');
+            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
         if (empty($message)) {
-            throw new UnexpectedValueException('Message text of the Notification cannot be empty');
+            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
         $notification = new Notification();
@@ -84,7 +81,7 @@ class NotificationService
 
     /**
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function sendToGroup(
         int $groupId,
@@ -96,7 +93,7 @@ class NotificationService
         $group = User\Role::getById($groupId);
 
         if (!$group instanceof User\Role) {
-            throw new UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
+            throw new \UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
         }
 
         $listing = new User\Listing();
@@ -133,14 +130,14 @@ class NotificationService
     /**
      *
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function find(int $id): Notification
     {
         $notification = Notification::getById($id);
 
         if (!$notification instanceof Notification) {
-            throw new UnexpectedValueException("Notification with the ID {$id} doesn't exists");
+            throw new \UnexpectedValueException("Notification with the ID {$id} doesn't exists");
         }
 
         return $notification;
@@ -149,7 +146,7 @@ class NotificationService
     /**
      *
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {

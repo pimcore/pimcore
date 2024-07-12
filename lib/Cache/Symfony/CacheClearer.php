@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
-use Closure;
 use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -30,7 +29,7 @@ class CacheClearer
 {
     private int $processTimeout;
 
-    private ?Closure $runCallback = null;
+    private ?\Closure $runCallback = null;
 
     public function __construct(array $options = [])
     {
@@ -87,7 +86,7 @@ class CacheClearer
         return $this->runCommand('cache:warmup', $resolver->resolve($options));
     }
 
-    public function setRunCallback(Closure $runCallback = null): void
+    public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }

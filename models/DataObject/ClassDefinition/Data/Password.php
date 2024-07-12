@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -24,10 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
-use function array_key_exists;
-use function in_array;
-use function is_string;
-use function strlen;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -396,7 +391,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      *
-     * @throws Model\Element\ValidationException|Exception
+     * @throws Model\Element\ValidationException|\Exception
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {

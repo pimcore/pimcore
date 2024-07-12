@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use const PASSWORD_ARGON2I;
-use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -27,10 +25,6 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use function array_key_exists;
-use function count;
-use function defined;
-use function is_string;
 
 /**
  * @internal
@@ -1124,8 +1118,8 @@ final class Configuration implements ConfigurationInterface
                                     ->values(array_filter([
                                         PASSWORD_DEFAULT,
                                         PASSWORD_BCRYPT,
-                                        defined('PASSWORD_ARGON2I') ? PASSWORD_ARGON2I : null,
-                                        defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : null,
+                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
                                     ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()

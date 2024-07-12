@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use InvalidArgumentException;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -29,8 +28,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function get_class;
-use function in_array;
 
 /**
  * @internal
@@ -131,7 +128,7 @@ class PimcoreBundleManager
         $manuallyRegisteredBundles = $this->getManuallyRegisteredBundles();
 
         if (!isset($manuallyRegisteredBundles[$bundleClass])) {
-            throw new InvalidArgumentException(sprintf('Bundle "%s" is not registered.
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered.
                 Maybe you forgot to add it in the "config/bundles.php" or "Kernel::registerBundles()?', $bundleClass));
         }
 

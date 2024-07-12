@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Http\Exception\ResponseException;
@@ -64,7 +63,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         // further checks are only valid for default context
         $request = $event->getRequest();
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            if (Pimcore::inDebugMode()) {
+            if (\Pimcore::inDebugMode()) {
                 return;
             }
 

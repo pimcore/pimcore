@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Exception;
 
-use InvalidArgumentException;
-
-class BundleNotFoundException extends InvalidArgumentException
+class BundleNotFoundException extends \InvalidArgumentException
 {
 }

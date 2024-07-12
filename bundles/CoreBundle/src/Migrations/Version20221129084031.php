@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Exception;
 use Pimcore\Model\DataObject\Objectbrick\Definition\Listing;
 
 final class Version20221129084031 extends AbstractMigration
@@ -40,7 +39,7 @@ final class Version20221129084031 extends AbstractMigration
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function regenerateObjectBricks(): void
     {

@@ -16,12 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Exception;
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
@@ -175,7 +173,7 @@ final class Tag extends Model\AbstractModel
     {
         try {
             return (new self)->getDao()->getByPath($path);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -346,7 +344,7 @@ final class Tag extends Model\AbstractModel
     /**
      * Deletes a tag
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function delete(): void
     {

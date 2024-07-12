@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
-use Exception;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
@@ -26,7 +25,6 @@ use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function count;
 
 /**
  * Class DocumentTest
@@ -83,7 +81,7 @@ class DocumentTest extends ModelTestCase
      */
     public function testParentIs0(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createEmptyDocumentPage('', false);
         $this->assertTrue($savedObject->getId() == 0);
@@ -97,7 +95,7 @@ class DocumentTest extends ModelTestCase
      */
     public function testParentIdentical(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
         $savedObject = TestHelper::createEmptyDocumentPage();
         $this->assertTrue($savedObject->getId() > 0);
@@ -113,7 +111,7 @@ class DocumentTest extends ModelTestCase
      */
     public function testParentNotFound(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyDocumentPage('', false);
         $this->assertTrue($savedObject->getId() == 0);
@@ -296,7 +294,7 @@ class DocumentTest extends ModelTestCase
         $testFirstPage->setPublished(true);
         $testFirstPage->save();
 
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('This document is already part of the main document chain, please choose a different one.');
         $testSecondPage->setContentMainDocumentId($testFirstPage->getId(), true);
     }

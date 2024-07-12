@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -217,7 +216,7 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         // combine the pimcore scripts in non-devmode
-        if (Pimcore::disableMinifyJs()) {
+        if (\Pimcore::disableMinifyJs()) {
             foreach ($scripts as $script) {
                 $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
                 $headHtml .= "\n";
@@ -252,7 +251,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     protected function getEditmodeLibraries(): array
     {
-        $disableMinifyJs = Pimcore::disableMinifyJs();
+        $disableMinifyJs = \Pimcore::disableMinifyJs();
 
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',

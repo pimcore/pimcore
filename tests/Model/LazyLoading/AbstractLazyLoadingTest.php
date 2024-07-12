@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
-use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -25,7 +24,6 @@ use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function is_array;
 
 class AbstractLazyLoadingTest extends ModelTestCase
 {
@@ -83,7 +81,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function createChildDataObject(AbstractObject $parent): LazyLoading
     {
@@ -98,7 +96,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function loadRelations(): RelationTest\Listing
     {

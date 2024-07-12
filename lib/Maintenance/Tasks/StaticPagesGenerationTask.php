@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Exception;
-use Pimcore;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Document;
@@ -71,12 +69,12 @@ class StaticPagesGenerationTask implements TaskInterface
                         if ($generate) {
                             $this->generator->generate($page, ['is_cli' => true]);
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $this->logger->debug('Unable to generate Static Page for document ID:' . $page->getId() . ', reason: ' . $e->getMessage());
                     }
                 }
             }
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
         }
     }
 }

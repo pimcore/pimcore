@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Session\Attribute\Exception;
 
-use RuntimeException;
-
-class AttributeBagLockedException extends RuntimeException
+class AttributeBagLockedException extends \RuntimeException
 {
 }

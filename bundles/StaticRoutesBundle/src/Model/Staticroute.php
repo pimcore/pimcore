@@ -16,18 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Model;
 
-use Exception;
-use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method bool isWriteable()
@@ -117,9 +110,9 @@ final class Staticroute extends AbstractModel
         try {
             $route = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$route) {
-                throw new Exception('Route in registry is null');
+                throw new \Exception('Route in registry is null');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             try {
                 $route = new self();
                 $route->setId($id);
@@ -136,7 +129,7 @@ final class Staticroute extends AbstractModel
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getByName(string $name, int $siteId = null): ?Staticroute
     {
@@ -377,7 +370,7 @@ final class Staticroute extends AbstractModel
 
         // merge with defaults
         // merge router.request_context params e.g. "_locale"
-        $requestParameters = Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
+        $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
         $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = [];
@@ -450,7 +443,7 @@ final class Staticroute extends AbstractModel
             'params' => $urlParams,
             'encode' => $encode,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
         $url = $event->getArgument('frontendPath');
 
         return $url;
@@ -459,7 +452,7 @@ final class Staticroute extends AbstractModel
     /**
      * @internal
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function match(string $path, array $params = []): false|array
     {

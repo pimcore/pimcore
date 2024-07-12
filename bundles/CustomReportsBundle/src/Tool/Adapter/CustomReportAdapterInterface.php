@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
-use stdClass;
-
 interface CustomReportAdapterInterface
 {
     /**
@@ -34,7 +32,7 @@ interface CustomReportAdapterInterface
      *
      *
      */
-    public function getColumns(?stdClass $configuration): array;
+    public function getColumns(?\stdClass $configuration): array;
 
     /**
      * returns all available values for given field with given filters and drillDownFilters

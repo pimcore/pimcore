@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Test;
 
-use Pimcore;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
@@ -26,7 +25,7 @@ abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\Kerne
     {
         $kernel = parent::createKernel($options);
 
-        Pimcore::setKernel($kernel);
+        \Pimcore::setKernel($kernel);
 
         return $kernel;
     }

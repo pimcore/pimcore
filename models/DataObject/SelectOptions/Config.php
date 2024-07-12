@@ -16,10 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\SelectOptions;
 
-use Exception;
-use InvalidArgumentException;
-use JsonSerializable;
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\OptionsProvider\SelectOptionsOptionsProvider;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumperInterface;
@@ -31,9 +27,6 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Traits\LocateFileTrait;
 use Pimcore\Model\Exception\NotFoundException;
-use RuntimeException;
-use function get_class;
-use function in_array;
 
 /**
  * @method bool isWriteable()
@@ -41,7 +34,7 @@ use function in_array;
  * @method void delete()
  * @method Config\Dao getDao()
  */
-final class Config extends AbstractModel implements JsonSerializable
+final class Config extends AbstractModel implements \JsonSerializable
 {
     use LocateFileTrait;
 
@@ -80,7 +73,7 @@ final class Config extends AbstractModel implements JsonSerializable
     {
         $reservedWordsHelper = new ReservedWordsHelper();
         if ($reservedWordsHelper->isReservedWord($id)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'ID must not be one of reserved words: ' . implode(', ', $reservedWordsHelper->getAllReservedWords()),
                 1677241981466
             );
@@ -195,9 +188,9 @@ final class Config extends AbstractModel implements JsonSerializable
         try {
             $selectOptions = RuntimeCache::get($cacheKey);
             if (!$selectOptions instanceof self) {
-                throw new RuntimeException('Select options in registry is invalid', 1678353750987);
+                throw new \RuntimeException('Select options in registry is invalid', 1678353750987);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             try {
                 $selectOptions = new self();
                 /** @var Config\Dao $dao */
@@ -222,7 +215,7 @@ final class Config extends AbstractModel implements JsonSerializable
         // Check whether ID is available
         $id = $data[static::PROPERTY_ID] ?? null;
         if (empty($id)) {
-            throw new RuntimeException('ID is mandatory for select options definition', 1676646778230);
+            throw new \RuntimeException('ID is mandatory for select options definition', 1676646778230);
         }
 
         $group = $data[static::PROPERTY_GROUP] ?? null;
@@ -359,13 +352,13 @@ final class Config extends AbstractModel implements JsonSerializable
     }
 
     /**
-     * @throws Exception if configured interfaces or traits don't exist
+     * @throws \Exception if configured interfaces or traits don't exist
      *
      * @internal
      */
     public function generateEnumFiles(): void
     {
-        Pimcore::getContainer()->get(PHPSelectOptionsEnumDumperInterface::class)->dumpPHPEnum($this);
+        \Pimcore::getContainer()->get(PHPSelectOptionsEnumDumperInterface::class)->dumpPHPEnum($this);
     }
 
     /**

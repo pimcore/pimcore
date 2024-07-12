@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleLocator;
 
-use RuntimeException;
-
-class NotFoundException extends RuntimeException
+class NotFoundException extends \RuntimeException
 {
 }

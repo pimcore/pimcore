@@ -15,15 +15,12 @@
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
-use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
-use function in_array;
-use function is_bool;
 
 /**
  * @internal
@@ -96,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): void
     {

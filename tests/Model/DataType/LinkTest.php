@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Exception;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Data\Link;
@@ -25,8 +24,6 @@ use Pimcore\Model\DataObject\unittestLink;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use Throwable;
-use TypeError;
 
 /**
  * Class LinkTest
@@ -61,7 +58,7 @@ class LinkTest extends ModelTestCase
     /**
      * Prepares objects for internal link tests
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function setupInternalLinkObjects(): void
     {
@@ -79,7 +76,7 @@ class LinkTest extends ModelTestCase
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function createLinkObject(): unittestLink
     {
@@ -94,7 +91,7 @@ class LinkTest extends ModelTestCase
     /**
      * Verifies that Link data is loaded correctly after save and reload
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function testSave(): void
     {
@@ -144,7 +141,7 @@ class LinkTest extends ModelTestCase
     /**
      * Verifies that Link data throws correct exceptions if invalid data is given
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function testCheckValidity(): void
     {
@@ -153,8 +150,8 @@ class LinkTest extends ModelTestCase
             $linkObject->setTestlink('https://pimcore.com/');
             $linkObject->setLtestlink('https://pimcore.com/');
             $this->fail('Expected a TypeError');
-        } catch (Throwable $e) {
-            $this->assertInstanceOf(TypeError::class, $e);
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(\TypeError::class, $e);
         }
     }
 }

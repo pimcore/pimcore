@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
-use function is_array;
 
 class DateRange extends Data implements
     ResourcePersistenceAwareInterface,
@@ -135,7 +134,7 @@ class DateRange extends Data implements
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
-        if (is_array($data) && isset($data['start_date'], $data['end_date'])) {
+        if (\is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
             $endDate = $this->getDateFromTimestamp($data['end_date'] / 1000);
 
@@ -195,7 +194,7 @@ class DateRange extends Data implements
         if ($data instanceof CarbonPeriod) {
             $dates = $data->map(static fn (Carbon $date) => UserTimezone::applyTimezone($date)->format('Y-m-d'));
 
-            return implode(',', iterator_to_array($dates));
+            return \implode(',', \iterator_to_array($dates));
         }
 
         return '';
@@ -222,8 +221,8 @@ class DateRange extends Data implements
 
     public function denormalize(mixed $value, array $params = []): ?CarbonPeriod
     {
-        if (is_array($value)) {
-            return CarbonPeriod::create(reset($value), end($value));
+        if (\is_array($value)) {
+            return CarbonPeriod::create(\reset($value), \end($value));
         }
 
         return null;
@@ -256,7 +255,7 @@ class DateRange extends Data implements
         $fieldName = $this->getName();
 
         if (true === $isEmpty && false === $omitMandatoryCheck && $this->getMandatory()) {
-            throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
+            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
         if (false === $isEmpty && false === $omitMandatoryCheck) {
@@ -265,13 +264,13 @@ class DateRange extends Data implements
 
             if (!$startDate instanceof CarbonInterface || !$endDate instanceof CarbonInterface) {
                 throw new ValidationException(
-                    sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
+                    \sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
                 );
             }
 
             if ($startDate->greaterThan($endDate)) {
                 throw new ValidationException(
-                    sprintf('Start value in field [ %s ] is bigger than the end value', $fieldName)
+                    \sprintf('Start value in field [ %s ] is bigger than the end value', $fieldName)
                 );
             }
         }

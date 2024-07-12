@@ -18,7 +18,6 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 use Pimcore\Model\User\Role;
-use function count;
 
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()

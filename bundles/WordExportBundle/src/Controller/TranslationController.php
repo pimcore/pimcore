@@ -15,9 +15,6 @@
 
 namespace Pimcore\Bundle\WordExportBundle\Controller;
 
-use DOMDocument;
-use Exception;
-use Locale;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Logger;
@@ -33,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use function in_array;
 
 /**
  * @Route("/translation")
@@ -171,7 +167,7 @@ class TranslationController extends UserAwareController
                     unset($dom);
 
                     // force closing tags
-                    $doc = new DOMDocument();
+                    $doc = new \DOMDocument();
                     libxml_use_internal_errors(true);
                     $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
                     libxml_clear_errors();
@@ -194,7 +190,7 @@ class TranslationController extends UserAwareController
 
                         $locale = str_replace('-', '_', $source);
                         if (!Tool::isValidLanguage($locale)) {
-                            $locale = Locale::getPrimaryLanguage($locale);
+                            $locale = \Locale::getPrimaryLanguage($locale);
                         }
 
                         $output .= '
@@ -238,7 +234,7 @@ class TranslationController extends UserAwareController
                     fwrite($f, $output);
                     fclose($f);
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error('Word Export: ' . $e);
 
                 throw $e;

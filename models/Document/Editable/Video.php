@@ -16,20 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use DateTime;
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function func_get_args;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -456,7 +448,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
                 if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
-                    $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);
+                    $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode((string)$image);
@@ -533,7 +525,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         // only display error message in debug mode
-        if (!Pimcore::inDebugMode()) {
+        if (!\Pimcore::inDebugMode()) {
             $message = '';
         }
 
@@ -841,7 +833,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         if ($video) {
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">' . "\n";
 
-            $uploadDate = new DateTime();
+            $uploadDate = new \DateTime();
             $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [

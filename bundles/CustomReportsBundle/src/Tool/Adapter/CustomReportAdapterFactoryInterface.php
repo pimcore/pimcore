@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
-use stdClass;
 
 interface CustomReportAdapterFactoryInterface
 {
@@ -26,5 +25,5 @@ interface CustomReportAdapterFactoryInterface
      *
      *
      */
-    public function create(stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface;
+    public function create(\stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface;
 }

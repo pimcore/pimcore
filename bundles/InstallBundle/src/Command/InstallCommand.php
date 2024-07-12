@@ -17,13 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use function explode;
+use function implode;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -33,9 +34,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use function count;
-use function explode;
-use function implode;
 
 /**
  * @method Application getApplication()
@@ -292,7 +290,7 @@ class InstallCommand extends Command
             } else {
                 $validator = function ($answer) use ($name) {
                     if (empty($answer)) {
-                        throw new RuntimeException(sprintf('%s cannot be empty', $name));
+                        throw new \RuntimeException(sprintf('%s cannot be empty', $name));
                     }
 
                     return $answer;

@@ -16,14 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\SelectOptions\Config;
 
-use ArrayIterator;
-use IteratorAggregate;
 use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\SelectOptions\Config\Listing\Dao getDao()
  */
-class Listing extends Model\AbstractModel implements IteratorAggregate
+class Listing extends Model\AbstractModel implements \IteratorAggregate
 {
     /**
      * @internal
@@ -67,11 +65,11 @@ class Listing extends Model\AbstractModel implements IteratorAggregate
     }
 
     /**
-     * @return ArrayIterator<\Pimcore\Model\DataObject\SelectOptions\Config>
+     * @return \ArrayIterator<\Pimcore\Model\DataObject\SelectOptions\Config>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
-        return new ArrayIterator($this->getSelectOptions());
+        return new \ArrayIterator($this->getSelectOptions());
     }
 
     public function hasConfig(?string $id): bool

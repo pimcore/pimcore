@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use DateTime;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Model\Asset;
@@ -25,7 +24,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use function in_array;
 
 /**
  * @internal
@@ -139,7 +137,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         }
 
         if ($lastModifiedSince = $input->getOption('last-modified-since')) {
-            $lastModifiedSinceDate = DateTime::createFromFormat(self::DATE_FORMAT, $lastModifiedSince);
+            $lastModifiedSinceDate = \DateTime::createFromFormat(self::DATE_FORMAT, $lastModifiedSince);
             $conditions[] = 'modificationDate >= ?';
             $conditionVariables[] = $lastModifiedSinceDate->getTimestamp();
         }

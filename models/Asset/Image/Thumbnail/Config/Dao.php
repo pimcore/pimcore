@@ -15,12 +15,9 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
-use Exception;
-use Pimcore;
 use Pimcore\Config;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @internal
@@ -46,7 +43,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function getByName(string $id = null): void
     {
@@ -79,7 +76,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(bool $forceClearTempFiles = false): void
     {
@@ -161,7 +158,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $enabled = Config::getSystemConfiguration('assets')['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new CleanupThumbnailsMessage('image', $this->model->getName())
             );
         }

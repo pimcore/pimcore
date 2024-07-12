@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Localizedfield;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -27,10 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @internal
@@ -82,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(array $params = []): void
     {
@@ -111,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new Exception('need owner from container implementation');
+            throw new \Exception('need owner from container implementation');
         }
 
         $this->model->_setOwner($params['owner']);
@@ -225,7 +220,7 @@ class Dao extends Model\Dao\AbstractDao
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 try {
                     $this->db->rollBack();
-                } catch (Exception $er) {
+                } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info((string) $er);
                 }
@@ -266,7 +261,7 @@ class Dao extends Model\Dao\AbstractDao
                     // by the following DDL
                     try {
                         $this->db->rollBack();
-                    } catch (Exception $er) {
+                    } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::info((string) $er);
                     }
@@ -493,13 +488,13 @@ class Dao extends Model\Dao\AbstractDao
                     $fd->delete($object, $params);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
                 try {
                     $this->db->rollBack();
-                } catch (Exception $er) {
+                } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info((string) $er);
                 }
@@ -548,7 +543,7 @@ class Dao extends Model\Dao\AbstractDao
             $index = $context['index'] ?? $context['containerKey'] ?? null;
             $containerName = $context['fieldname'];
             if (!$context['containerType']) {
-                throw new Exception('no container type set');
+                throw new \Exception('no container type set');
             }
 
             $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
@@ -630,7 +625,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new Exception('need owner from container implementation');
+            throw new \Exception('need owner from container implementation');
         }
 
         $this->model->_setOwner($params['owner']);
@@ -779,7 +774,7 @@ QUERY;
 
                 // execute
                 $this->db->executeQuery($viewQuery);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error((string) $e);
             }
         }
@@ -787,7 +782,7 @@ QUERY;
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function createUpdateTable(array $params = []): void
     {

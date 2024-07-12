@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
@@ -92,7 +91,7 @@ class ResetPasswordCommand extends AbstractCommand
         $question = new Question('Please enter the new password: ');
         $question->setValidator(function ($value) {
             if (empty(trim($value))) {
-                throw new Exception('The password cannot be empty');
+                throw new \Exception('The password cannot be empty');
             }
 
             return $value;

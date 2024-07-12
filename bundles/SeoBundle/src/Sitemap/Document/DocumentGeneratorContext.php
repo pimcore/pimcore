@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
-use InvalidArgumentException;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContext;
 use Pimcore\Model\Site;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
@@ -35,7 +34,7 @@ class DocumentGeneratorContext extends GeneratorContext
         }
 
         if (isset($parameters['site']) && !$parameters['site'] instanceof Site) {
-            throw new InvalidArgumentException(sprintf('Site parameter must be an instance of %s', Site::class));
+            throw new \InvalidArgumentException(sprintf('Site parameter must be an instance of %s', Site::class));
         }
 
         parent::__construct($urlContainer, $section, $parameters);

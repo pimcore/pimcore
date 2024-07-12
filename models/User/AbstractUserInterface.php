@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
-use Exception;
 use Pimcore\Model\ModelInterface;
 
 /**
@@ -51,12 +50,12 @@ interface AbstractUserInterface extends ModelInterface
     /**
      * @return $this
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): static;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function delete(): void;
 

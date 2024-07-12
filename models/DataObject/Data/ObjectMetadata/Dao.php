@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\Data\ObjectMetadata;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
-use function in_array;
 
 /**
  * @internal

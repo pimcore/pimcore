@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -25,8 +24,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerInterface;
-use function count;
-use function is_null;
 
 /**
  * @internal
@@ -167,7 +164,7 @@ class VersionsCleanupTask implements TaskInterface
 
                 // call the garbage collector if memory consumption is > 100MB
                 if (memory_get_usage() > 100000000) {
-                    Pimcore::collectGarbage();
+                    \Pimcore::collectGarbage();
                 }
             }
         }

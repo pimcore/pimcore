@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -142,7 +141,7 @@ class ClassesRebuildCommand extends AbstractCommand
 
             try {
                 $brickDefinition->save(false);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $output->write((string)$e);
             }
         }

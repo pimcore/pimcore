@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
-use Exception;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
@@ -258,7 +257,7 @@ class RedirectsController extends UserAwareController
             }
 
             return $this->jsonResponse(['success' => true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
             return $this->jsonResponse(['success' => false]);

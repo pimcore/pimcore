@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Model;
 
-use Exception;
-use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
@@ -27,8 +25,6 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
-use function in_array;
-use function is_string;
 
 /**
  * @method \Pimcore\Bundle\SeoBundle\Model\Redirect\Dao getDao()
@@ -166,7 +162,7 @@ final class Redirect extends AbstractModel
     public function setType(string $type): void
     {
         if (!empty($type) && !in_array($type, self::TYPES)) {
-            throw new InvalidArgumentException(sprintf('Invalid type "%s"', $type));
+            throw new \InvalidArgumentException(sprintf('Invalid type "%s"', $type));
         }
 
         $this->type = $type;
@@ -229,7 +225,7 @@ final class Redirect extends AbstractModel
         // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Cache::clearTag('redirect');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::crit((string) $e);
         }
     }

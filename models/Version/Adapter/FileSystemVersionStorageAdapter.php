@@ -22,7 +22,6 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model\Version;
 use Pimcore\Tool\Storage;
-use function dirname;
 
 /**
  * @internal

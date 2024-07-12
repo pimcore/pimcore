@@ -16,11 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Exception;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use function is_null;
-use function strlen;
 
 class RgbaColor implements OwnerAwareFieldInterface
 {
@@ -130,7 +127,7 @@ class RgbaColor implements OwnerAwareFieldInterface
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function setHex(string $hexValue): void
     {
@@ -148,7 +145,7 @@ class RgbaColor implements OwnerAwareFieldInterface
             $this->setB($b);
             $this->setA($a);
         } else {
-            throw new Exception('Format must be either hex6 or hex8 with or without leading hash');
+            throw new \Exception('Format must be either hex6 or hex8 with or without leading hash');
         }
         $this->markMeDirty();
     }

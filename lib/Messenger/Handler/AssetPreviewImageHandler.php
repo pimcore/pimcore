@@ -22,8 +22,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
-use Throwable;
-use function count;
 
 /**
  * @internal
@@ -59,7 +57,7 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
                 }
 
                 $ack->ack($message);
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 $ack->nack($e);
             }
         }
@@ -68,6 +66,6 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
     // @phpstan-ignore-next-line
     private function shouldFlush(): bool
     {
-        return 5 <= count($this->jobs);
+        return 5 <= \count($this->jobs);
     }
 }

@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -24,7 +23,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
-use function in_array;
 
 /**
  * @internal
@@ -47,7 +45,7 @@ class PermissionChecker
                 if ($element instanceof Document) {
                     $type = 'document';
                 } else {
-                    throw new Exception('type not supported');
+                    throw new \Exception('type not supported');
                 }
             }
         }
@@ -136,7 +134,7 @@ class PermissionChecker
                             continue;
                         }
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     Logger::warn('Unable to get permission '.$type.' for object '.$element->getId());
                 }
             }

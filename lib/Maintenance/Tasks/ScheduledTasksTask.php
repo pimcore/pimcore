@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Exception;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -122,7 +121,7 @@ class ScheduledTasksTask implements TaskInterface
 
                 $task->setActive(false);
                 $task->save();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->logger->error('There was a problem with the scheduled task ID: '.$task->getId());
                 $this->logger->error((string) $e);
             }

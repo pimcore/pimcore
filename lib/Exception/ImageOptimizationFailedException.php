@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Exception;
 
-use RuntimeException;
-
-class ImageOptimizationFailedException extends RuntimeException
+class ImageOptimizationFailedException extends \RuntimeException
 {
 }

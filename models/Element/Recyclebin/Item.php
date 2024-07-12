@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
-use Exception;
 use League\Flysystem\StorageAttributes;
-use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -34,7 +32,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
-use function get_class;
 
 /**
  * @internal
@@ -89,7 +86,7 @@ class Item extends Model\AbstractModel
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function restore(Model\User $user = null): void
     {
@@ -119,7 +116,7 @@ class Item extends Model\AbstractModel
             Model\Version::disable();
             $className = get_class($element);
             /** @var Document|Asset|AbstractObject $dummy */
-            $dummy = Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
             $dummy->setParentId($element->getParentId() ?: 1);
             $dummy->setKey($element->getKey());
@@ -133,7 +130,7 @@ class Item extends Model\AbstractModel
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
             if ($parent && !$parent->isAllowed('publish')) {
-                throw new Exception('Not sufficient permissions');
+                throw new \Exception('Not sufficient permissions');
             }
         }
 
@@ -144,7 +141,7 @@ class Item extends Model\AbstractModel
             $this->doRecursiveRestore($element);
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::error((string) $e);
             if ($dummy) {
                 $dummy->delete();
@@ -250,7 +247,7 @@ class Item extends Model\AbstractModel
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function doRecursiveRestore(Element\ElementInterface $element): void
     {

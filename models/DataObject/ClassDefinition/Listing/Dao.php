@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Listing;
 
-use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -51,7 +50,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM classes ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }

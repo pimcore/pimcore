@@ -15,11 +15,10 @@
 
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore;
-use Pimcore\Model\DataObject\ClassDefinition\Data\User;
-use Pimcore\Tests\Support\Test\TestCase;
 use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertNotEmpty;
+use Pimcore\Model\DataObject\ClassDefinition\Data\User;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class UserTest extends TestCase
 {
@@ -56,15 +55,15 @@ class UserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->inAdmin = Pimcore::inAdmin();
+        $this->inAdmin = \Pimcore::inAdmin();
     }
 
     protected function tearDown(): void
     {
         if ($this->inAdmin) {
-            Pimcore::setAdminMode();
+            \Pimcore::setAdminMode();
         } else {
-            Pimcore::unsetAdminMode();
+            \Pimcore::unsetAdminMode();
         }
 
         parent::tearDown();
@@ -72,7 +71,7 @@ class UserTest extends TestCase
 
     public function test__set_stateDoesNotPopulateSelectOptionsWhenNotInAdminMode(): void
     {
-        Pimcore::unsetAdminMode();
+        \Pimcore::unsetAdminMode();
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 
@@ -81,7 +80,7 @@ class UserTest extends TestCase
 
     public function test__set_statePopulatesSelectOptionsIbAdminMode(): void
     {
-        Pimcore::setAdminMode();
+        \Pimcore::setAdminMode();
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 

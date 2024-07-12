@@ -16,13 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
-use Exception;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * @internal
@@ -75,7 +73,7 @@ class AssetUpdateTasksHandler
             }
 
             if ($asset->getCustomSetting('document_page_count') === 'failed') {
-                throw new RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+                throw new \RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
             }
         }
 
@@ -125,7 +123,7 @@ class AssetUpdateTasksHandler
                 $image->setCustomSetting('imageHeight', $dimensions['height']);
                 $imageDimensionsCalculated = true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->warning('Problem getting the dimensions of the image with ID ' . $image->getId());
         }
 
@@ -136,7 +134,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->handleEmbeddedMetaData();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
         }
 
@@ -148,7 +146,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->generateLowQualityPreview();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
         }
     }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use Composer\InstalledVersions;
-use OutOfBoundsException;
 
 /**
  * @internal
@@ -49,7 +48,7 @@ final class Version
     {
         try {
             return InstalledVersions::getPrettyVersion(self::PLATFORM_VERSION_PACKAGE_NAME);
-        } catch (OutOfBoundsException $e) {
+        } catch (\OutOfBoundsException $e) {
             return null;
         }
     }

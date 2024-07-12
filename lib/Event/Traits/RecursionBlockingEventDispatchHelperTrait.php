@@ -16,9 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Traits;
 
-use Pimcore;
-use function get_class;
-
 /**
  * @internal
  */
@@ -33,10 +30,10 @@ trait RecursionBlockingEventDispatchHelperTrait
      */
     protected function dispatchEvent(object $event, string $eventName = null): void
     {
-        $eventName ??= get_class($event);
+        $eventName ??= \get_class($event);
         if (!isset($this->activeDispatchingEvents[$eventName])) {
             $this->activeDispatchingEvents[$eventName] = true;
-            Pimcore::getEventDispatcher()->dispatch($event, $eventName);
+            \Pimcore::getEventDispatcher()->dispatch($event, $eventName);
             unset($this->activeDispatchingEvents[$eventName]);
         }
     }

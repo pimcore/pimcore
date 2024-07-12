@@ -16,9 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper\DataType;
 
-use DateTime;
-use Exception;
-use InvalidArgumentException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
@@ -34,12 +31,6 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
-use TypeError;
-use function array_slice;
-use function count;
-use function get_class;
-use function is_array;
-use function is_null;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
@@ -137,10 +128,10 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var DateTime $value */
+        /** @var \DateTime $value */
         $value = $object->$getter();
 
-        $expected = new DateTime();
+        $expected = new \DateTime();
         $expected->setDate(2000, 12, 24);
 
         //set time for datetime isEqual comparison
@@ -637,7 +628,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $paths = [];
         foreach ($elements as $element) {
             if (!($element instanceof ElementInterface)) {
-                throw new InvalidArgumentException(sprintf('Invalid element. Must be an instance of %s', ElementInterface::class));
+                throw new \InvalidArgumentException(sprintf('Invalid element. Must be an instance of %s', ElementInterface::class));
             }
 
             $paths[] = $element->getRealFullPath();
@@ -900,7 +891,7 @@ class TestDataHelper extends AbstractTestDataHelper
         try {
             $object->$setter(1.234);
             $this->fail('expected an instance of Geobounds');
-        } catch (TypeError $e) {
+        } catch (\TypeError $e) {
         }
     }
 
@@ -911,7 +902,7 @@ class TestDataHelper extends AbstractTestDataHelper
         try {
             $object->$setter(1.234);
             $this->fail('expected an instance of Geopoint');
-        } catch (TypeError $e) {
+        } catch (\TypeError $e) {
         }
     }
 
@@ -929,7 +920,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
     }
@@ -943,7 +934,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
     }
@@ -957,14 +948,14 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
 
         try {
             $object->$setter('#FF0000');
             $this->fail('expected an instance of RgbaColor');
-        } catch (TypeError $e) {
+        } catch (\TypeError $e) {
         }
     }
 

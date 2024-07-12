@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\OptionsProvider;
 
-use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\SelectOptions\Config;
@@ -33,7 +32,7 @@ class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
         $configurationId = $fieldDefinition->getOptionsProviderData();
         $selectOptionsConfiguration = Config::getById($configurationId);
         if ($selectOptionsConfiguration === null) {
-            throw new Exception('Missing select options configuration ' . $configurationId, 1677137682677);
+            throw new \Exception('Missing select options configuration ' . $configurationId, 1677137682677);
         }
 
         return array_map(

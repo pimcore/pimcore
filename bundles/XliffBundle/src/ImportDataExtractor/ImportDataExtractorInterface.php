@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImportDataExtractor;
 
-use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 
 interface ImportDataExtractorInterface
@@ -24,7 +23,7 @@ interface ImportDataExtractorInterface
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function extractElement(string $importId, int $stepId): ?AttributeSet;
 
@@ -33,7 +32,7 @@ interface ImportDataExtractorInterface
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function countSteps(string $importId): int;
 }

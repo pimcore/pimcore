@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -36,7 +35,7 @@ class PHPClassDumper implements PHPClassDumperInterface
 
         $this->filesystem->dumpFile($classFilePath, $phpClass);
         if (!file_exists($classFilePath)) {
-            throw new Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $classFilePath));
+            throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $classFilePath));
         }
 
         $listingClassFilePath = $classDefinition->getPhpListingClassFile();
@@ -44,7 +43,7 @@ class PHPClassDumper implements PHPClassDumperInterface
 
         $this->filesystem->dumpFile($listingClassFilePath, $listingPhpClass);
         if (!file_exists($listingClassFilePath)) {
-            throw new Exception(
+            throw new \Exception(
                 sprintf('Cannot write class file in %s please check the rights on this directory', $listingClassFilePath)
             );
         }

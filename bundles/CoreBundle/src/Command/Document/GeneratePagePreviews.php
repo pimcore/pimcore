@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
-use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Document;
@@ -115,7 +114,7 @@ class GeneratePagePreviews extends AbstractCommand
              */
             try {
                 $success = Document\Service::generatePagePreview($doc->getId(), null, $hostUrl);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->io->error($e->getMessage());
             }
         }

@@ -22,9 +22,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use function is_array;
-use function is_null;
-use function is_object;
 
 class RgbaColor extends Data implements
     ResourcePersistenceAwareInterface,

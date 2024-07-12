@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
-use Exception;
-use Pimcore;
 use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
@@ -34,11 +32,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
-use function array_key_exists;
-use function count;
-use function dirname;
-use function get_class;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
@@ -81,7 +74,7 @@ class Service extends Model\Element\Service
      */
     public static function render(Document\PageSnippet $document, array $attributes = [], bool $useLayout = false, array $query = [], array $options = []): string
     {
-        $container = Pimcore::getContainer();
+        $container = \Pimcore::getContainer();
 
         $renderer = $container->get(DocumentRendererInterface::class);
 
@@ -96,7 +89,7 @@ class Service extends Model\Element\Service
      *
      * @return Page|Document|null copied document
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function copyRecursive(Document $target, Document $source, bool $initial = true): Page|Document|null
     {
@@ -118,7 +111,7 @@ class Service extends Model\Element\Service
         $event = new DocumentEvent($source, [
             'target_element' => $target,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
         $target = $event->getArgument('target_element');
 
         /** @var Document $new */
@@ -151,7 +144,7 @@ class Service extends Model\Element\Service
         $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -171,7 +164,7 @@ class Service extends Model\Element\Service
         $event = new DocumentEvent($source, [
             'target_element' => $target,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
         $target = $event->getArgument('target_element');
 
         /**
@@ -220,7 +213,7 @@ class Service extends Model\Element\Service
         $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -234,14 +227,14 @@ class Service extends Model\Element\Service
     {
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new Exception('Source and target have to be the same type');
+            throw new \Exception('Source and target have to be the same type');
         }
 
         // triggers actions before document cloning
         $event = new DocumentEvent($source, [
             'target_element' => $target,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
         $target = $event->getArgument('target_element');
 
         if ($source instanceof Document\PageSnippet) {
@@ -333,7 +326,7 @@ class Service extends Model\Element\Service
 
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         return false;
@@ -451,7 +444,7 @@ class Service extends Model\Element\Service
         $list->setUnpublished(true);
         $key = Element\Service::getValidKey($element->getKey(), 'document');
         if (!$key) {
-            throw new Exception('No item key set.');
+            throw new \Exception('No item key set.');
         }
         if ($nr) {
             $key = $key . '_' . $nr;
@@ -459,7 +452,7 @@ class Service extends Model\Element\Service
 
         $parent = $element->getParent();
         if (!$parent) {
-            throw new Exception('You have to set a parent document to determine a unique Key');
+            throw new \Exception('You have to set a parent document to determine a unique Key');
         }
 
         if (!$element->getId()) {
@@ -553,7 +546,7 @@ class Service extends Model\Element\Service
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @internal
      */

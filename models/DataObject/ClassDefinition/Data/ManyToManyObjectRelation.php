@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Exception;
-use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
@@ -26,8 +24,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
-use function count;
-use function is_array;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
@@ -136,7 +132,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
@@ -160,7 +156,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return ',' . implode(',', $ids) . ',';
         }
 
-        throw new Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
     }
 
     /**
@@ -455,7 +451,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $this->visibleFieldDefinitions = [];
 
-        $translator = Pimcore::getContainer()->get('translator');
+        $translator = \Pimcore::getContainer()->get('translator');
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {

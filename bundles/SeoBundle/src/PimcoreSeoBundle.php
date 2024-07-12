@@ -23,7 +23,6 @@ use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Presta\SitemapBundle\PrestaSitemapBundle;
-use function dirname;
 
 class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminClassicInterface
 {
@@ -55,7 +54,7 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
 
     public function getPath(): string
     {
-        return dirname(__DIR__);
+        return \dirname(__DIR__);
     }
 
     public static function registerDependentBundles(BundleCollection $collection): void

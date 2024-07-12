@@ -30,7 +30,6 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
-use function is_null;
 
 /**
  * @internal

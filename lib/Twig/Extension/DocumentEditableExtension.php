@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use Exception;
-use Generator;
 use Pimcore\Model\Document\Editable\BlockInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
@@ -74,7 +72,7 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * @internal
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
     {
@@ -94,7 +92,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      *
      */
-    public function getBlockIterator(BlockInterface $block): Generator
+    public function getBlockIterator(BlockInterface $block): \Generator
     {
         return $block->getIterator();
     }

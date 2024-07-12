@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
-use Exception;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 
@@ -58,7 +57,7 @@ interface ImageThumbnailInterface
     /**
      * @internal
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function getLocalFile(): ?string;
 

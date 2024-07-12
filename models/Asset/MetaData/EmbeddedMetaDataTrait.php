@@ -16,21 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData;
 
-use Exception;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use RuntimeException;
 use Symfony\Component\Process\Process;
-use function count;
-use function function_exists;
-use function is_array;
-use function is_string;
-use function strlen;
 
 trait EmbeddedMetaDataTrait
 {
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
     {
@@ -44,7 +37,7 @@ trait EmbeddedMetaDataTrait
     /**
      * @internal
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
     {
@@ -54,7 +47,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
@@ -82,7 +75,7 @@ trait EmbeddedMetaDataTrait
         } else {
             try {
                 $xmp = $this->flattenArray($this->getXMPData($filePath));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $xmp = [];
                 Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
                     . $e->getMessage());
@@ -133,7 +126,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getXMPData(?string $filePath = null): array
     {
@@ -147,7 +140,7 @@ trait EmbeddedMetaDataTrait
             $chunkSize = 1024;
 
             if (($file_pointer = fopen($filePath, 'rb')) === false) {
-                throw new RuntimeException('Could not open file for reading');
+                throw new \RuntimeException('Could not open file for reading');
             }
 
             $tag = '<x:xmpmeta';
@@ -183,7 +176,7 @@ trait EmbeddedMetaDataTrait
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
-                    throw new RuntimeException('No close tag found.  Possibly corrupted file.');
+                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
                 } else {
                     $buffer = substr($buffer, 0, $position + $tagLength);
                 }

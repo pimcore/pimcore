@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
-use InvalidArgumentException;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -61,7 +60,7 @@ class LazyLoadedItemTest extends TestCase
 
     public function testExceptionOnInvalidClass(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The class "FooBarBazingaDummyClassName" does not exist');
         new LazyLoadedItem('FooBarBazingaDummyClassName');
     }

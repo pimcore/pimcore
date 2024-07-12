@@ -19,7 +19,6 @@ namespace Pimcore\Workflow\Place;
 use Pimcore\Workflow\Manager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
-use function is_null;
 
 class StatusInfo
 {

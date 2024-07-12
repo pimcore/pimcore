@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Exception;
 use Pimcore\Model\DataObject;
-use function is_callable;
 
 trait QueryBuilderHelperTrait
 {
@@ -162,7 +160,7 @@ trait QueryBuilderHelperTrait
             if ($query->getQueryPart($part)) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // do nothing
         }
 

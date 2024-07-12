@@ -15,15 +15,12 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use Exception;
-use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
-use function in_array;
 
 /**
  * @internal
@@ -47,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): void
     {
@@ -131,7 +128,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]);
 
                         /** @var MarshallerService $marshallerService */
-                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
@@ -195,7 +192,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function load(): void
     {
@@ -247,7 +244,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($fd instanceof NormalizerInterface) {
                 /** @var MarshallerService $marshallerService */
-                $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+                $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
 
                 if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                     $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());

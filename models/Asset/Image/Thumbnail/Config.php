@@ -16,15 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
-use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method bool isWriteable()
@@ -161,7 +156,7 @@ final class Config extends Model\AbstractModel
         if (is_string($config)) {
             try {
                 $thumbnail = self::getByName($config);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
 
                 return null;
@@ -183,7 +178,7 @@ final class Config extends Model\AbstractModel
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getByName(string $name): ?Config
     {
@@ -196,11 +191,11 @@ final class Config extends Model\AbstractModel
         try {
             $thumbnail = RuntimeCache::get($cacheKey);
             if (!$thumbnail) {
-                throw new Exception('Thumbnail in registry is null');
+                throw new \Exception('Thumbnail in registry is null');
             }
 
             $thumbnail->setName($name);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */

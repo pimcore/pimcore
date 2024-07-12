@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use DateTimeInterface;
-use Exception;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Config;
@@ -38,7 +36,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use function in_array;
 
 /**
  * @internal
@@ -105,7 +102,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
-                $date = date(DateTimeInterface::ATOM, $storage->lastModified($filename));
+                $date = date(\DateTimeInterface::ATOM, $storage->lastModified($filename));
 
                 $reponse = new Response(
                     $content, Response::HTTP_OK, [
@@ -116,7 +113,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
                 $event->setResponse($reponse);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::error($e->getMessage());
         }
     }
@@ -165,7 +162,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
                     || $this->staticPageGenerator->pageExists($document)) {
                     $this->staticPageGenerator->remove($document);
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error((string) $e);
 
                 return;

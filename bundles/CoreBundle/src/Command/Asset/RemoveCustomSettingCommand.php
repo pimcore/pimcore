@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
-use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
@@ -97,7 +96,7 @@ class RemoveCustomSettingCommand extends AbstractCommand
                 $asset->getDao()->updateCustomSettings();
             }
 
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
         }
 
         return 0;

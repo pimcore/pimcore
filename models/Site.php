@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
-use Exception;
 use InvalidArgumentException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -26,7 +25,6 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
-use function is_string;
 
 /**
  * @method Site\Dao getDao()
@@ -63,7 +61,7 @@ final class Site extends AbstractModel
     protected ?int $modificationDate = null;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getById(int $id): ?Site
     {
@@ -104,7 +102,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getByDomain(string $domain): ?Site
     {
@@ -134,7 +132,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getBy(mixed $mixed): ?Site
     {
@@ -173,7 +171,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getCurrentSite(): Site
     {
@@ -181,7 +179,7 @@ final class Site extends AbstractModel
             return self::$currentSite;
         }
 
-        throw new Exception('This request/process is not inside a subsite');
+        throw new \Exception('This request/process is not inside a subsite');
     }
 
     /**
@@ -340,7 +338,7 @@ final class Site extends AbstractModel
         // this is mostly called in Site\Dao not here
         try {
             Cache::clearTag('site');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::crit((string) $e);
         }
     }

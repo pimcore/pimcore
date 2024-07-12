@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
 
 use Doctrine\DBAL\Exception\DeadlockException;
-use Exception;
 use ForceUTF8\Encoding;
-use Pimcore;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model\SearchBackendEvent;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\SearchBackendEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data\Dao;
@@ -31,7 +29,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function is_array;
 
 /**
  * @internal
@@ -382,7 +379,7 @@ class Data extends AbstractModel
             if (is_array($elementMetadata)) {
                 foreach ($elementMetadata as $md) {
                     try {
-                        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                         /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
                         $instance = $loader->build($md['type']);
                         $dataForSearchIndex = $instance->getDataForSearchIndex($md['data'], $md);
@@ -405,7 +402,7 @@ class Data extends AbstractModel
                             $contentText = preg_replace('/[ ]+/', ' ', $contentText);
                             $this->data .= ' ' . $contentText;
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         Logger::error((string) $e);
                     }
                 }
@@ -417,7 +414,7 @@ class Data extends AbstractModel
                         $contentText = Encoding::toUTF8($contentText);
                         $this->data .= ' ' . $contentText;
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     Logger::error((string) $e);
                 }
             } elseif ($element instanceof Asset\Image) {
@@ -430,7 +427,7 @@ class Data extends AbstractModel
                             $this->data .= ' ' . $key . ' : ' . $value;
                         }
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     Logger::error((string) $e);
                 }
             }
@@ -482,7 +479,7 @@ class Data extends AbstractModel
 
         $wordOccurrences = [];
         foreach ($words as $key => $word) {
-            $wordLength = mb_strlen($word);
+            $wordLength = \mb_strlen($word);
             if ($wordLength < $minWordLength || $wordLength > $maxWordLength) {
                 unset($words[$key]);
 
@@ -514,7 +511,7 @@ class Data extends AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): void
     {
@@ -531,10 +528,10 @@ class Data extends AbstractModel
                     $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     try {
                         $this->rollBack();
-                    } catch (Exception $er) {
+                    } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::error((string) $er);
                     }
@@ -555,7 +552,7 @@ class Data extends AbstractModel
 
             $this->dispatchEvent(new SearchBackendEvent($this), SearchBackendEvents::POST_SAVE);
         } else {
-            throw new Exception('Search\\Backend\\Data cannot be saved - no id set!');
+            throw new \Exception('Search\\Backend\\Data cannot be saved - no id set!');
         }
     }
 }

@@ -17,9 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
 use Doctrine\DBAL\Exception\SyntaxErrorException;
-use Exception;
-use InvalidArgumentException;
-use Pimcore;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -44,10 +41,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function strlen;
 
 /**
  * @Route("/search")
@@ -333,7 +326,7 @@ class SearchController extends UserAwareController
         try {
             $hits = $searcherList->load();
         } catch (SyntaxErrorException $syntaxErrorException) {
-            throw new InvalidArgumentException('Check your arguments.');
+            throw new \InvalidArgumentException('Check your arguments.');
         }
 
         $elements = [];
@@ -629,12 +622,12 @@ class SearchController extends UserAwareController
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
     {
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
-        Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();
 
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;

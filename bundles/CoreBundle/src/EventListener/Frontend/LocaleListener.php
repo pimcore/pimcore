@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Locale;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -51,9 +50,9 @@ class LocaleListener implements EventSubscriberInterface
 
             // now we prepare everything for setlocale()
             $localeList = [$locale . '.utf8'];
-            $primaryLanguage = Locale::getPrimaryLanguage($locale);
+            $primaryLanguage = \Locale::getPrimaryLanguage($locale);
 
-            if (Locale::getRegion($locale)) {
+            if (\Locale::getRegion($locale)) {
                 // add only the language to the list as a fallback
                 $localeList[] = $primaryLanguage . '.utf8';
             } else {

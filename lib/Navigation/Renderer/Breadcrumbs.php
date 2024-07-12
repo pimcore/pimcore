@@ -39,10 +39,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Renderer;
 
-use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
-use function strlen;
 
 class Breadcrumbs extends AbstractRenderer
 {
@@ -229,7 +227,7 @@ class Breadcrumbs extends AbstractRenderer
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function renderTemplate(Container $container, ?string $partial = null): string
     {
@@ -238,7 +236,7 @@ class Breadcrumbs extends AbstractRenderer
         }
 
         if (empty($partial)) {
-            throw new Exception('Unable to render menu: No partial view script provided');
+            throw new \Exception('Unable to render menu: No partial view script provided');
         }
 
         $pages = $this->getPages($container);

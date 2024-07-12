@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
-use Exception;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
@@ -26,7 +25,6 @@ use Pimcore\Model\Element\Service;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
-use Throwable;
 
 /**
  * @internal
@@ -56,14 +54,14 @@ class SanityCheckHandler implements BatchHandlerInterface
                 }
 
                 $ack->ack($message);
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 $ack->nack($e);
             }
         }
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function performSanityCheck(ElementInterface $element): void
     {

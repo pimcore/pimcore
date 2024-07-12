@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService\Importer;
 
-use Exception;
-use Pimcore;
 use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent;
@@ -32,7 +30,7 @@ class AbstractElementImporter implements ImporterInterface
         $element = $translationItem->getElement();
 
         $event = new TranslationXliffEvent($attributeSet);
-        Pimcore::getEventDispatcher()->dispatch($event, XliffEvents::XLIFF_ATTRIBUTE_SET_IMPORT);
+        \Pimcore::getEventDispatcher()->dispatch($event, XliffEvents::XLIFF_ATTRIBUTE_SET_IMPORT);
 
         $attributeSet = $event->getAttributeSet();
 
@@ -51,7 +49,7 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
@@ -66,14 +64,14 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     protected function saveElement(Element\ElementInterface $element): void
     {
         try {
             $element->save();
-        } catch (Exception $e) {
-            throw new Exception('Unable to save ' . Element\Service::getElementType($element) . ' with id ' . $element->getId() . ' because of the following reason: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception('Unable to save ' . Element\Service::getElementType($element) . ' with id ' . $element->getId() . ' because of the following reason: ' . $e->getMessage());
         }
     }
 }

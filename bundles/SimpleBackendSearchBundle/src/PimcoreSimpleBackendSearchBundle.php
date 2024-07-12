@@ -20,7 +20,6 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use function dirname;
 
 class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
@@ -50,6 +49,6 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements 
 
     public function getPath(): string
     {
-        return dirname(__DIR__);
+        return \dirname(__DIR__);
     }
 }

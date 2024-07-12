@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\Response;
-use UnderflowException;
 
 /**
  * This stack can be used to collect responses to be sent from parts which cannot
@@ -58,7 +57,7 @@ class ResponseStack
     public function pop(): Response
     {
         if (empty($this->responses)) {
-            throw new UnderflowException('There are no responses on the stack.');
+            throw new \UnderflowException('There are no responses on the stack.');
         }
 
         return array_pop($this->responses);
@@ -67,7 +66,7 @@ class ResponseStack
     public function getLastResponse(): Response
     {
         if (empty($this->responses)) {
-            throw new UnderflowException('There are no responses on the stack.');
+            throw new \UnderflowException('There are no responses on the stack.');
         }
 
         return end($this->responses);

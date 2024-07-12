@@ -39,7 +39,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Renderer;
 
-use Exception;
 use Pimcore\Navigation\Container;
 
 interface RendererInterface
@@ -54,7 +53,7 @@ interface RendererInterface
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function render(Container $container): string;
 }

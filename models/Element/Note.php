@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Exception;
-use Pimcore;
 use Pimcore\Event\Model\ModelEvent;
 use Pimcore\Event\NoteEvents;
 use Pimcore\Model;
@@ -120,14 +118,14 @@ final class Note extends Model\AbstractModel
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function save(): void
     {
         // check if there's a valid user
         if (!$this->getUser()) {
             // try to use the logged in user
-            if (Pimcore::inAdmin()) {
+            if (\Pimcore::inAdmin()) {
                 if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
                     $this->setUser($user->getId());
                 }
@@ -138,7 +136,7 @@ final class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_ADD);
+            \Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_ADD);
         }
     }
 

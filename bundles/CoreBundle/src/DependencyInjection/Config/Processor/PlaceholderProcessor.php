@@ -17,9 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor;
 
-use function is_array;
-use function is_string;
-
 /**
  * @internal
  */

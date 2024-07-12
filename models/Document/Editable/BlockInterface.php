@@ -17,11 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use Generator;
-
 interface BlockInterface
 {
-    public function getIterator(): Generator;
+    public function getIterator(): \Generator;
 
     /**
      * Is executed at the beginning of the loop and setup some general settings

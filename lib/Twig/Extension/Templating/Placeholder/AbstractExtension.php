@@ -39,14 +39,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
-use ArrayAccess;
-use Countable;
-use IteratorAggregate;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
-use Traversable;
 use Twig\Extension\RuntimeExtensionInterface;
-use function call_user_func_array;
-use function count;
 
 /**
  * @method void set(mixed $value)
@@ -65,7 +59,7 @@ use function count;
  * @method void captureEnd()
  *
  */
-abstract class AbstractExtension implements IteratorAggregate, Countable, ArrayAccess, RuntimeExtensionInterface
+abstract class AbstractExtension implements \IteratorAggregate, \Countable, \ArrayAccess, RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
@@ -296,7 +290,7 @@ abstract class AbstractExtension implements IteratorAggregate, Countable, ArrayA
      * IteratorAggregate: get Iterator
      *
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         return $this->getContainer()->getIterator();
     }

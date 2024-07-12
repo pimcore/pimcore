@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Exception;
 
-use Exception;
-
-class DefinitionWriteException extends Exception
+class DefinitionWriteException extends \Exception
 {
     public function __construct()
     {

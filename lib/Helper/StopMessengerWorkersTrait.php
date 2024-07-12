@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use Exception;
-use Pimcore;
 use Pimcore\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -29,7 +27,7 @@ trait StopMessengerWorkersTrait
 {
     protected function stopMessengerWorkers(): void
     {
-        $app = new Application(Pimcore::getKernel());
+        $app = new Application(\Pimcore::getKernel());
         $app->setAutoExit(false);
 
         $input = new ArrayInput([
@@ -46,7 +44,7 @@ trait StopMessengerWorkersTrait
             // return the output, don't use if you used NullOutput()
             $content = $output->fetch();
 
-            throw new Exception('Running messenger:stop-workers failed, output was: ' . $content);
+            throw new \Exception('Running messenger:stop-workers failed, output was: ' . $content);
         }
     }
 }

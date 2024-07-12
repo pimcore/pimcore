@@ -17,11 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Tag\Block;
 
-use LogicException;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Tests\Support\Test\TestCase;
-use ReflectionClass;
-use RuntimeException;
 
 class BlockStateStackTest extends TestCase
 {
@@ -71,7 +68,7 @@ class BlockStateStackTest extends TestCase
         $stack->push();
         $stack->pop();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Can\'t pop the last state off the stack');
 
         $stack->pop();
@@ -81,7 +78,7 @@ class BlockStateStackTest extends TestCase
     {
         // this should never happen, but just to check if the current state
         // handles an empty state properly
-        $reflector = new ReflectionClass(BlockStateStack::class);
+        $reflector = new \ReflectionClass(BlockStateStack::class);
 
         /** @var BlockStateStack $stack */
         $stack = $reflector->newInstanceWithoutConstructor();
@@ -89,7 +86,7 @@ class BlockStateStackTest extends TestCase
         $this->assertInstanceOf(BlockStateStack::class, $stack);
         $this->assertEquals(0, $stack->count());
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('State stack is empty');
 
         $stack->getCurrentState();

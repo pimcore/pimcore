@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
-use Exception;
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
@@ -26,10 +24,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
-use function in_array;
-use function is_array;
-use function is_callable;
-use function is_scalar;
 
 class LocationAwareConfigRepository
 {
@@ -121,14 +115,14 @@ class LocationAwareConfigRepository
     /**
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function isWriteable(?string $key = null, ?string $dataSource = null): bool
     {
         $key = $key ?: uniqid('pimcore_random_key_', true);
         $writeTarget = $this->getWriteTarget();
 
-        if ($writeTarget === self::LOCATION_SYMFONY_CONFIG && !Pimcore::getKernel()->isDebug()) {
+        if ($writeTarget === self::LOCATION_SYMFONY_CONFIG && !\Pimcore::getKernel()->isDebug()) {
             return false;
         } elseif ($writeTarget === self::LOCATION_DISABLED) {
             return false;
@@ -144,14 +138,14 @@ class LocationAwareConfigRepository
     /**
      * @return string Can be either yaml (var/config/...) or "settings-store". defaults to "yaml"
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function getWriteTarget(): string
     {
         $writeLocation = $this->storageConfig[self::WRITE_TARGET][self::TYPE];
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
-            throw new Exception(sprintf('Invalid write location: %s', $writeLocation));
+            throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
         }
 
         return $writeLocation;
@@ -166,7 +160,7 @@ class LocationAwareConfigRepository
         $readLocation = $this->storageConfig[self::READ_TARGET][self::TYPE];
 
         if ($readLocation && !in_array($readLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
-            throw new Exception(sprintf('Invalid read location: %s', $readLocation));
+            throw new \Exception(sprintf('Invalid read location: %s', $readLocation));
         }
 
         return $readLocation ? [$readLocation] : [];
@@ -174,7 +168,7 @@ class LocationAwareConfigRepository
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function saveConfig(string $key, mixed $data, callable $yamlStructureCallback = null): void
     {
@@ -208,7 +202,7 @@ class LocationAwareConfigRepository
 
     private function searchAndReplaceMissingParameters(array &$data): void
     {
-        $container = Pimcore::getContainer();
+        $container = \Pimcore::getContainer();
 
         foreach ($data as $key => &$value) {
             if (is_array($value)) {
@@ -244,12 +238,12 @@ class LocationAwareConfigRepository
 
     /**
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function deleteData(string $key, ?string $dataSource): void
     {
         if (!$this->isWriteable($key)) {
-            throw new Exception('You are trying to delete a non-writable configuration.');
+            throw new \Exception('You are trying to delete a non-writable configuration.');
         }
 
         if ($dataSource === self::LOCATION_SYMFONY_CONFIG) {

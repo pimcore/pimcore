@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Attribute;
 
-use Attribute;
-
 /**
  * Allows to set HTTP headers on the response via attributes. The attribute will
  * be processed by ResponseHeaderListener which will set the HTTP headers on the
@@ -27,7 +25,7 @@ use Attribute;
  * See ResponseHeaderBag for documentation on the fields.
  *
  */
-#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
 final class ResponseHeader
 {
     public function __construct(

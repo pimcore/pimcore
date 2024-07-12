@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
-use Pimcore;
-
 class Logger
 {
     /**
@@ -26,8 +24,8 @@ class Logger
      */
     public static function log(string $message, string $level = 'info', array $context = []): void
     {
-        if (Pimcore::hasContainer()) {
-            $logger = Pimcore::getContainer()->get('monolog.logger.pimcore');
+        if (\Pimcore::hasContainer()) {
+            $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore');
             $logger->$level($message, $context);
         }
     }

@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Exception;
 
-use Exception;
-
-class ConfigWriteException extends Exception
+class ConfigWriteException extends \Exception
 {
 }

@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use Exception;
-use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
@@ -26,10 +24,6 @@ use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -90,7 +84,7 @@ class Area extends Model\Document\Editable
         if ($config instanceof BlockInterface || $config instanceof Area) {
             // Unsupported element was passed (e.g., Block, Areablock, ...)
             // or an Areas was passed, which is not supported to avoid too long editable names
-            throw new Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
+            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
         } elseif ($config instanceof Model\Document\Editable) {
             // Map editable to array config
             $config = [
@@ -110,7 +104,7 @@ class Area extends Model\Document\Editable
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
             if (!$editable instanceof Model\Document\Editable) {
-                throw new Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
+                throw new \Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
             }
 
             $editable->setInDialogBox($dialogId);
@@ -153,7 +147,7 @@ class Area extends Model\Document\Editable
         $config = $this->getConfig();
 
         // TODO inject area handler via DI when editables are built by container
-        $editableHandler = Pimcore::getContainer()->get(EditableHandler::class);
+        $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
 
         // push current block name
         $blockState = $this->getBlockState();
@@ -165,7 +159,7 @@ class Area extends Model\Document\Editable
         // start at first index
         $blockState->pushIndex(1);
 
-        $areabrickManager = Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
 
         $dialogConfig = null;
         $brick = $areabrickManager->getBrick($this->config['type']);
@@ -199,10 +193,10 @@ class Area extends Model\Document\Editable
         $info->setParams($params);
 
         if ($dialogConfig) {
-            $editableRenderer = Pimcore::getContainer()->get(EditableRenderer::class);
+            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
             $items = $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
             $dialogConfig->setItems($items);
-            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . json_encode($dialogConfig) . '</template>');
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
         }
 
         echo $editableHandler->renderAreaFrontend($info);

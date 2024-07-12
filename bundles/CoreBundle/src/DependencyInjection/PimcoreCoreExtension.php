@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
@@ -48,7 +47,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
-        Pimcore::disableShutdown();
+        \Pimcore::disableShutdown();
 
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
         if (!$container->hasParameter('.container.dumper.inline_class_loader')) {

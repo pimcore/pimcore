@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Document;
 
-use Exception;
-use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
@@ -30,7 +28,6 @@ use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
-use function is_string;
 
 /**
  * @property Model\Asset\Document|null $asset
@@ -68,7 +65,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
             'pathReference' => $pathReference,
             'frontendPath' => $path,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -104,7 +101,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                         $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath() . ': ' . $e);
             }
         }
@@ -120,7 +117,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
             'deferred' => $deferred,
             'generated' => $generated,
         ]);
-        Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
     }
 
     /**
@@ -138,7 +135,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         );
 
         if (!$storage->fileExists($cacheFilePath)) {
-            $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
+            $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
             if ($lock->acquire()) {
                 $tempFile = File::getLocalTempFilePath('png');
 

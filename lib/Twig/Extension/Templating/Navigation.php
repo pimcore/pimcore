@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Exception;
-use InvalidArgumentException;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\Breadcrumbs;
@@ -29,7 +27,6 @@ use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundExcep
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
 use Twig\Extension\RuntimeExtensionInterface;
-use function call_user_func_array;
 
 /**
  * @method MenuRenderer menu()
@@ -56,7 +53,7 @@ class Navigation implements RuntimeExtensionInterface
      *
      *
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function build(array $params): Container
     {
@@ -99,7 +96,7 @@ class Navigation implements RuntimeExtensionInterface
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {
-            throw new InvalidArgumentException(sprintf('Method "%s" does not exist on renderer "%s"', $renderMethod, $rendererName));
+            throw new \InvalidArgumentException(sprintf('Method "%s" does not exist on renderer "%s"', $renderMethod, $rendererName));
         }
 
         $args = array_merge([$container], array_values($rendererArguments));

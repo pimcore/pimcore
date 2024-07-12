@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Pimcore;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -86,7 +85,7 @@ class AdminStyle
                 $site = Site::getByRootId($element->getId());
 
                 if ($site instanceof Site) {
-                    $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+                    $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
