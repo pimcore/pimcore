@@ -99,7 +99,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->removeIndices($table, $columnsToRemove, $protectedColums);
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
         $this->tableDefinitions = [];
     }
