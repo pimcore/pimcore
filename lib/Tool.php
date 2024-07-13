@@ -35,6 +35,8 @@ final class Tool
 
     protected static array $validLanguages = [];
 
+    protected static array $requiredLanguages = [];
+
     /**
      * Sets the current request to operate on
      *
@@ -111,6 +113,26 @@ final class Tool
         return self::$validLanguages;
     }
 
+    public static function getRequiredLanguages(): array
+    {
+        if (empty(self::$requiredLanguages) === true) {
+            $config = SystemSettingsConfig::get()['general'];
+            if (empty($config['required_languages'])) {
+                return Tool::getValidLanguages();
+            }
+
+            $requiredLanguages = $config['required_languages'];
+
+            if (!is_array($requiredLanguages)) {
+                $requiredLanguages = Tool::getValidLanguages();
+            }
+
+            self::$requiredLanguages = $requiredLanguages;
+        }
+
+        return self::$requiredLanguages;
+    }
+
     /**
      * @return string[]
      *
@@ -182,6 +204,49 @@ final class Tool
                 }
 
                 $languageOptions[$code] = $translation;
+            }
+
+            asort($languageOptions);
+
+            Cache::save($languageOptions, $cacheKey, ['system']);
+        }
+
+        return $languageOptions;
+    }
+
+    /**
+     * Trying to get BCP 47 format
+     *
+     * @return array<string, string>
+     *
+     * @throws \Exception
+     */
+    public static function getSupportedJSLocales(): array
+    {
+        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
+        $locale = $localeService->findLocale();
+
+        $cacheKey = 'system_supported_js_locales_' . strtolower((string)$locale);
+        if (!$languageOptions = Cache::load($cacheKey)) {
+            $languages = $localeService->getLocaleList();
+
+            $languageOptions = [];
+            foreach ($languages as $code) {
+                if (substr_count($code, '_') > 1) {
+                    continue;
+                }
+                $codeBCP = str_replace('_', '-', $code);
+
+                $displayName = \Locale::getDisplayName($code, $locale);
+                $displayRegion = \Locale::getDisplayRegion($code, $locale);
+
+                if ($displayRegion) {
+                    $translation = $displayRegion . ' [' . $codeBCP . ']';
+                } else {
+                    $translation = $displayName . ' [' . $codeBCP . ']';
+                }
+
+                $languageOptions[$codeBCP] = $translation;
             }
 
             asort($languageOptions);

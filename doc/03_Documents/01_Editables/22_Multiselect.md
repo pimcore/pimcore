@@ -27,18 +27,18 @@ Also, it shows the list of chosen elements in the frontend.
 
 ```twig
 {% if editmode %}
-    {{ pimcore_multiselect('categories', {
-        'width': 200,
-        'height': 100,
-        'store': [
-            ['cars', 'Cars'],
-            ['motorcycles', 'Motorcycles'],
-            ['accessories', 'Accessories'],
+    {{ pimcore_multiselect("categories", {
+        "width": 200,
+        "height": 100,
+        "store": [
+            ["cars", "Cars"],
+            ["motorcycles", "Motorcycles"],
+            ["accessories", "Accessories"],
         ]
     }) }}
 {% else %}
-    <p>{{ 'This page is linked to' | trans }}
-        {% for categoryKey in pimcore_multiselect('categories').getData %}
+    <p>{{ "This page is linked to" | trans }}
+        {% for categoryKey in pimcore_multiselect("categories").getData %}
             <span>
             {{ categoryKey | trans }}
         </span>

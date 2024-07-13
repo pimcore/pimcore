@@ -291,4 +291,3 @@ For example errors are more important than just info entries.
 The archive function automatically creates new database tables to archive the log entries in the form `application_logs_archive_*`. 
 In the above example log entries will be moved after 30 days to these archive tables. 
 Optionally a different database name for the archive tables can be defined. 
-

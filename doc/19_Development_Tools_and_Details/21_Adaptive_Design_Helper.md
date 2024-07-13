@@ -45,5 +45,4 @@ The Pimcore output-cache is aware of this feature and just works as expected.
 
 If you're using a caching proxy like Varnish you have to take the value of the cookie 
 `forceDeviceType` into the hash calculation, otherwise there's just one hash for different contents 
-of an URL (phone, tablet, desktop). 
- 
+of an URL (phone, tablet, desktop).

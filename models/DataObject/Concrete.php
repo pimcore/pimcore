@@ -356,7 +356,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $tags;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -364,7 +364,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies[] = $field->resolveDependencies($this->$key ?? null);
+                $getter = 'get' . ucfirst($key);
+                $dependencies[] = $field->resolveDependencies($this->$getter());
             }
         }
 
@@ -447,6 +448,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;
@@ -665,6 +667,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
+            //Reset Relational data to force a reload
+            $this->__rawRelationData = null;
+
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }

@@ -11,3 +11,4 @@ replace `CLASSNAME` with the actual name of the class of which dialog you'd like
  ![Admin translation configuration](../img/object-create-dialog-admin-translations.png)  
  
  ![add object dialog box](../img/object-create-dialog-box.png)
+ 

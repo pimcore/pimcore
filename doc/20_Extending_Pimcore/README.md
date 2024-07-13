@@ -32,4 +32,4 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
  
 * Add [**Custom Persistent Models**](./17_Custom_Persistent_Models.md) to save additional information. 
 
-* [**Create Bundles and Pimcore Bundles**](13_Bundle_Developers_Guide/README.md) when you want to add complex and extensive functionalities to Pimcore. 
+* [**Create Bundles and Pimcore Bundles**](13_Bundle_Developers_Guide/README.md) when you want to add complex and extensive functionalities to Pimcore.

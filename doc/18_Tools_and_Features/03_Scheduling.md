@@ -49,4 +49,3 @@ In the database:
 # id, cid, ctype, date, action, version, active
 '8', '76', 'object', '1474034700', 'publish', NULL, '0'
 ```
- 

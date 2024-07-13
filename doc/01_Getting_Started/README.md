@@ -12,4 +12,3 @@ This section provides a quick getting started tutorial for Pimcore and covers th
 4. [Configuration](./04_Configuration.md)
 5. [Architecture Overview](./05_Architecture_Overview.md)
 6. [Creating your First Project](./06_Create_a_First_Project.md)
-
