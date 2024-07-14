@@ -61,7 +61,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $fcType = substr($fieldDescriptor, 0, $idx);
-                $fcType = $collectionNames[$fcType] ?? $fcType;
+                $fcType = $collectionNames[strtolower($fcType)] ?? $fcType;
 
                 if (!$this->checkIfFcExists($fcType, $tableName)) {
                     continue;
