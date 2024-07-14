@@ -40,7 +40,7 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
         $mapLowerToCamelCase = [];
         $files = array_diff(scandir($dir), ['..', '.']);
         foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
+            $classname = lcfirst(str_replace('.php', '', $file));
             $mapLowerToCamelCase[strtolower($classname)] = $classname ;
         }
 
