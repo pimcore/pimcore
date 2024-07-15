@@ -4,6 +4,9 @@
 ### General
 #### [Logging]
 - Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
+#### [Twig Deferred Extension]
+- Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
+  If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
 
 ## Pimcore 11.3.0
 ### General
