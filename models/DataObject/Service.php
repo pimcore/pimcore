@@ -1706,6 +1706,20 @@ class Service extends Model\Element\Service
         if ($returnMappedFieldNames) {
             $tmp = [];
             foreach ($mappedFieldnames as $key => $value) {
+                $titleTranslation = Model\Translation::getByKey(
+                    $key,
+                    Model\Translation::DOMAIN_ADMIN
+                );
+
+                if (
+                    !empty($titleTranslation)
+                    && $titleTranslation->hasTranslation($requestedLanguage)
+                    && !empty($titleTranslation->getTranslation($requestedLanguage))
+                ) {
+                    $tmp[] = '"' . $titleTranslation->getTranslation($requestedLanguage) . '"';
+                    continue;
+                }
+                
                 $tmp[$value] = $objectData[$key];
             }
             $objectData = $tmp;
