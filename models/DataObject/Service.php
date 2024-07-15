@@ -1717,9 +1717,10 @@ class Service extends Model\Element\Service
                     && !empty($titleTranslation->getTranslation($requestedLanguage))
                 ) {
                     $tmp[] = '"' . $titleTranslation->getTranslation($requestedLanguage) . '"';
+
                     continue;
                 }
-                
+
                 $tmp[$value] = $objectData[$key];
             }
             $objectData = $tmp;
