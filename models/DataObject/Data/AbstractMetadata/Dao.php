@@ -25,7 +25,9 @@ use Pimcore\Model\DataObject;
 class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
+
     protected const UNIQUE_KEY_NAME = 'metadata_un';
+
     protected ?array $tableDefinitions = null;
 
     public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void

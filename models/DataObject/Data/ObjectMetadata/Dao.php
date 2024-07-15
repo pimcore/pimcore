@@ -78,5 +78,4 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             return null;
         }
     }
-
 }
