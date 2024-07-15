@@ -445,18 +445,20 @@ It is possible to access and modify the internal query from every object listing
 on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 <?php
-// get all news with ratings that is stored in a not Pimcore related table
+// This example lists all cars that have been sold.
 
-$list = new Pimcore\Model\DataObject\News\Listing();
- 
-// set  callback
+use Doctrine\DBAL\Query\QueryBuilder;
+use Pimcore\Model\DataObject\Car\Listing;
+
+$list = new Listing();
+
 $list->onCreateQueryBuilder(
-    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
+    function (QueryBuilder $queryBuilder) {
         $queryBuilder->join(
-            'object_news',
-            'objects',
-            'orderItemObjects',
-            'orderItemObjects.id = object_news.product__id'
+            'object_localized_CAR_en',
+            'object_query_EF_OSOI',
+            'onlineOrderItem',
+            'onlineOrderItem.product__id = object_localized_CAR_en.id'
         );
     }
 );
@@ -468,13 +470,16 @@ You can access and print the internal query which is based on `\Doctrine\DBAL\Qu
 
 ```php
 <?php
-// get all news with ratings that is stored in a not Pimcore related table
 
-$list = new Pimcore\Model\DataObject\News\Listing();
- 
-// set onCreateQueryBuilder callback
-$list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
-    // echo query
-    echo $queryBuilder->getSQL();
-});
+use Doctrine\DBAL\Query\QueryBuilder;
+use Pimcore\Model\DataObject\Car\Listing;
+
+$list = new Listing();
+
+$list->onCreateQueryBuilder(
+    function (QueryBuilder $queryBuilder) {
+        // echo query
+        echo $queryBuilder->getSQL();
+    }
+);
 ```
