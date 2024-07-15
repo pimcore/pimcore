@@ -73,7 +73,6 @@
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
     "presta/sitemap-bundle": "^3.3",
-    "rybakit/twig-deferred-extension": "^3.0",
     "sabre/dav": "^4.1.2",
     "scheb/2fa-bundle": "^6.0",
     "scheb/2fa-google-authenticator": "^6.0",
