@@ -421,12 +421,12 @@ class Service extends Model\Element\Service
             $document = Document::getByPath($urlParts['path']);
 
             // search for a page in a site
-            if (!$document) {
+            if (!$document && isset($urlParts['host'])) {
                 $sitesList = new Model\Site\Listing();
                 $sitesObjects = $sitesList->load();
 
                 foreach ($sitesObjects as $site) {
-                    if ($site->getRootDocument() && isset($urlParts['host']) && (in_array($urlParts['host'], $site->getDomains()) || $site->getMainDomain() == $urlParts['host'])) {
+                    if ($site->getRootDocument() && (in_array($urlParts['host'], $site->getDomains()) || $site->getMainDomain() == $urlParts['host'])) {
                         if ($document = Document::getByPath($site->getRootDocument() . $urlParts['path'])) {
                             break;
                         }
