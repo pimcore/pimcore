@@ -187,6 +187,9 @@ class SystemSettingsConfig
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
             ],
+            'password' => [
+                'bsi_standards' => $values['password.bsi_standards'],
+            ],            
             'documents' => [
                 'versions' => [
                     'days' => $values['documents.versions.days'] ?? null,
@@ -256,6 +259,7 @@ class SystemSettingsConfig
         $containerConfig = \Pimcore\Config::getSystemConfiguration();
         $data = [
             'general' => $containerConfig['general'],
+            'password' => $containerConfig['password'],
             'documents' => $containerConfig['documents'],
             'objects' => $containerConfig['objects'],
             'assets' => $containerConfig['assets'],
