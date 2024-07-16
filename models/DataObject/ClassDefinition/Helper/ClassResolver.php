@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use Pimcore;
+
 /**
  * @internal
  */
@@ -23,12 +25,6 @@ abstract class ClassResolver
 {
     private static array $cache;
 
-    /**
-     * @param string|null $class
-     * @param callable|null $validationCallback
-     *
-     * @return object|null
-     */
     protected static function resolve(?string $class, callable $validationCallback = null): ?object
     {
         if (!$class) {
@@ -36,7 +32,7 @@ abstract class ClassResolver
         }
 
         return self::$cache[$class] ??= self::returnValidServiceOrNull(
-            str_starts_with($class, '@') ? \Pimcore::getContainer()->get(substr($class, 1)) : new $class,
+            str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
             $validationCallback
         );
     }

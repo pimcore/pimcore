@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model;
 
+use InvalidArgumentException;
 use Pimcore\Model\Element\ElementInterface;
 
 interface ElementEventInterface
@@ -29,7 +30,7 @@ interface ElementEventInterface
      *
      * @return mixed Contents of array key
      *
-     * @throws \InvalidArgumentException If key is not found.
+     * @throws InvalidArgumentException If key is not found.
      */
     public function getArgument(string $key): mixed;
 
@@ -46,7 +47,6 @@ interface ElementEventInterface
     /**
      * Getter for all arguments.
      *
-     * @return array
      */
     public function getArguments(): array;
 
@@ -64,7 +64,6 @@ interface ElementEventInterface
      *
      * @param string $key Key of arguments array
      *
-     * @return bool
      */
     public function hasArgument(string $key): bool;
 }

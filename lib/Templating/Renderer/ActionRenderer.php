@@ -40,8 +40,6 @@ class ActionRenderer
      * @param mixed $uri     A URI
      * @param array  $options An array of options
      *
-     * @return string
-     *
      * @see HttpKernelRuntime::renderFragment()
      */
     public function render(mixed $uri, array $options = []): string
@@ -56,11 +54,7 @@ class ActionRenderer
     /**
      * Create a document controller reference
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param array $query
      *
-     * @return ControllerReference
      */
     public function createDocumentReference(Document\PageSnippet $document, array $attributes = [], array $query = []): ControllerReference
     {
@@ -72,11 +66,7 @@ class ActionRenderer
     /**
      * Add document params to params array
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param string $context
      *
-     * @return array
      */
     public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [], string $context = PimcoreContextResolver::CONTEXT_DEFAULT): array
     {

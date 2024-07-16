@@ -24,9 +24,6 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Date implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
@@ -39,9 +36,6 @@ class Date implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof Carbon) {

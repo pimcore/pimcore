@@ -13,8 +13,8 @@ or (e.g. in *prod* environments) you can configure everything via real environme
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/11.x/var/config>
+* [https://github.com/pimcore/demo/tree/11.x/config/pimcore](https://github.com/pimcore/demo/tree/11.x/config/pimcore) 
+* [https://github.com/pimcore/demo/tree/11.x/var/config](https://github.com/pimcore/demo/tree/11.x/var/config)
 
 
 ## Configuration Storage Locations & Fallbacks
@@ -59,38 +59,60 @@ pimcore:
     config_location:
         image_thumbnails:
             write_target:
-	          type: 'symfony-config'
-              options:
+                type: 'symfony-config'
+                options:
                 directory: '/var/www/html/var/config/image-thumbnails'
         video_thumbnails:
             write_target:
-	          type: 'disabled'
+                type: 'disabled'
         document_types:
             write_target:
-	          type: 'disabled'
+                type: 'disabled'
         predefined_properties:
             write_target:
-	          type: 'settings-store'
+                type: 'settings-store'
         predefined_asset_metadata:
             write_target:
-	          type: 'symfony-config'
-              options:
+                type: 'symfony-config'
+                options:
                 directory: '/var/www/html/var/config/predefined_asset_metadata'
         perspectives:
             write_target:
-	          type: 'symfony-config'
-              options:
+                type: 'symfony-config'
+                options:
                 directory: '/var/www/html/var/config/perspectives'
         custom_views:
             write_target:
-	          type: 'symfony-config'
-              options:
+                type: 'symfony-config'
+                options:
                 directory: '/var/www/html/var/config/custom_views'
         object_custom_layouts:
             write_target:
-	          type: 'symfony-config'
-              options:
+                type: 'symfony-config'
+                options:
                 directory: '/var/www/html/var/config/object_custom_layouts'
+        select_options:
+            write_target:
+                type: 'symfony-config'
+                options:
+                    directory: '/var/www/html/var/config/select_options'
+```
+
+and for some specific optional bundles are:
+
+```yaml
+pimcore_custom_reports:
+    config_location:
+        custom_reports:
+            write_target:
+                type: 'symfony-config'
+
+pimcore_static_routes:
+    config_location:
+        staticroutes:
+            write_target:
+                type: 'symfony-config'
+       ...
 ```
 
 #### Production environment with `symfony-config`
@@ -102,9 +124,9 @@ You can do so by adding the following to your `symfony-config`. e.g.:
 ```yaml
 pimcore:
     config_location:
-        custom_reports:
+        predefined_properties:
             write_target:
-	          type: 'settings-store'
+                type: 'settings-store'
 ```
 
 #### Revalidate existing configuration on production

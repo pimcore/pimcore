@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use Exception;
+
 /**
  * @internal
  */
@@ -24,11 +26,9 @@ class Document
     /**
      * Singleton for Pimcore\Document
      *
-     * @param string|null $adapter
      *
-     * @return Document\Adapter|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getInstance(string $adapter = null): ?Document\Adapter
     {
@@ -38,14 +38,14 @@ class Document
                 if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
-                    throw new \Exception('document-transcode adapter `' . $adapter . '´ does not exist.');
+                    throw new Exception('document-transcode adapter `' . $adapter . '´ does not exist.');
                 }
             } else {
                 if ($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::crit('Unable to load document adapter: ' . $e->getMessage());
 
             throw $e;
@@ -57,7 +57,6 @@ class Document
     /**
      * Checks if adapter is available.
      *
-     * @return bool
      */
     public static function isAvailable(): bool
     {
@@ -71,9 +70,7 @@ class Document
     /**
      * Checks if a file type is supported by the adapter.
      *
-     * @param string $filetype
      *
-     * @return bool
      */
     public static function isFileTypeSupported(string $filetype): bool
     {
@@ -87,7 +84,6 @@ class Document
     /**
      * Returns adapter class if exists or false if doesn't exist
      *
-     * @return Document\Adapter|null
      */
     public static function getDefaultAdapter(): ?Document\Adapter
     {
@@ -101,7 +97,7 @@ class Document
                     if ($adapter->isAvailable()) {
                         return $adapter;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::warning((string) $e);
                 }
             }

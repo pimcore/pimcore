@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document;
 
+use Exception;
 use Pimcore\Model\Asset;
 
 /**
@@ -49,18 +50,16 @@ abstract class Adapter
     abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed;
 
     /**
-     * @param Asset\Document|null $asset
-     *
      * @return resource
+     *
+     * @throws Exception
      */
     abstract public function getPdf(?Asset\Document $asset = null);
 
     abstract public function isFileTypeSupported(string $fileType): bool;
 
     /**
-     * @return int
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     abstract public function getPageCount(): int;
 

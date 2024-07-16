@@ -29,8 +29,6 @@ class TagEvent extends Event
     /**
      * TagEvent constructor.
      *
-     * @param Tag $tag
-     * @param array $arguments
      */
     public function __construct(Tag $tag, array $arguments = [])
     {

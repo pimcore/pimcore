@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element\WorkflowState;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
@@ -26,9 +27,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $cid
-     * @param string $ctype
-     * @param string $workflow
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -36,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
-        if (empty($data['cid'])) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException('WorkflowStatus item for workflow ' . $workflow . ' with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
         }
         $this->assignVariablesToModel($data);
@@ -45,7 +43,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */

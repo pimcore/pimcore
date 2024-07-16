@@ -39,7 +39,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation;
 
-class Container implements \RecursiveIterator, \Countable
+use Countable;
+use Exception;
+use RecursiveIterator;
+use RecursiveIteratorIterator;
+use function array_key_exists;
+use function count;
+use function get_class;
+use function in_array;
+use function is_array;
+
+class Container implements RecursiveIterator, Countable
 {
     /**
      * Contains sub pages
@@ -51,14 +61,12 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * An index that contains the order in which to iterate pages
      *
-     * @var array
      */
     protected array $_index = [];
 
     /**
      * Whether index is dirty and needs to be re-arranged
      *
-     * @var bool
      */
     protected bool $_dirtyIndex = false;
 
@@ -107,18 +115,18 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception if page is invalid
+     * @throws Exception if page is invalid
      */
     public function addPage(Page|array $page): static
     {
         if ($page === $this) {
-            throw new \Exception('A page cannot have itself as a parent');
+            throw new Exception('A page cannot have itself as a parent');
         }
 
         if (is_array($page)) {
             $page = Page::factory($page);
         } elseif (!$page instanceof Page) {
-            throw new \Exception('Invalid argument: $page must be an instance of \Pimcore\Navigation\Page or an array');
+            throw new Exception('Invalid argument: $page must be an instance of \Pimcore\Navigation\Page or an array');
         }
 
         $hash = $page->hashCode();
@@ -146,7 +154,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception if $pages is not array or Container
+     * @throws Exception if $pages is not array or Container
      */
     public function addPages(array $pages): static
     {
@@ -193,13 +201,11 @@ class Container implements \RecursiveIterator, \Countable
     {
         if ($page instanceof Page) {
             $hash = $page->hashCode();
-        } elseif (is_int($page)) {
+        } else {
             $this->_sort();
             if (!$hash = array_search($page, $this->_index)) {
                 return false;
             }
-        } else {
-            return false;
         }
 
         if (isset($this->_pages[$hash])) {
@@ -300,7 +306,7 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function findOneBy(string $property, mixed $value, bool $useRegex = false): ?Page
     {
-        $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
@@ -368,7 +374,7 @@ class Container implements \RecursiveIterator, \Countable
     {
         $found = [];
 
-        $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
@@ -473,7 +479,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return mixed  Pimcore\Navigation|array|null    matching page, array of pages
      *                                              or null
      *
-     * @throws \Exception            if method does not exist
+     * @throws Exception            if method does not exist
      */
     public function __call(string $method, array $arguments): mixed
     {
@@ -481,13 +487,12 @@ class Container implements \RecursiveIterator, \Countable
             return $this->{$match[1]}($match[2], $arguments[0], !empty($arguments[1]));
         }
 
-        throw new \Exception(sprintf('Bad method call: Unknown method %s::%s', get_class($this), $method));
+        throw new Exception(sprintf('Bad method call: Unknown method %s::%s', get_class($this), $method));
     }
 
     /**
      * Returns an array representation of all pages in container
      *
-     * @return array
      */
     public function toArray(): array
     {
@@ -504,9 +509,8 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return Page
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function current(): Page
     {
@@ -517,7 +521,7 @@ class Container implements \RecursiveIterator, \Countable
             return $this->_pages[$hash];
         }
 
-        throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
+        throw new Exception('Corruption detected in container; invalid key found in internal iterator');
     }
 
     public function key(): int|string|null

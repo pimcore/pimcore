@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
+use Exception;
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,13 +29,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:assets:generate-checksums',
+    description: 'Re-generates checksum for specific or all assets',
+)]
 class GenerateChecksumCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:assets:generate-checksums')
-            ->setDescription('Re-generates checksum for specific or all assets')
             ->addOption(
                 'id',
                 null,
@@ -59,9 +64,6 @@ class GenerateChecksumCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
@@ -109,12 +111,12 @@ class GenerateChecksumCommand extends AbstractCommand
 
                     $this->output->writeln(' generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                     $asset->generateChecksum();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->output->writeln(' error generating checksum for asset: ' . $asset->getRealFullPath() . ' | ' . $asset->getId());
                 }
             }
 
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
 
         return 0;

@@ -23,8 +23,5 @@ use Pimcore\Model;
  */
 class Text extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'text';
 }

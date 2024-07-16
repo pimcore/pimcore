@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
+use LogicException;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
@@ -29,6 +30,7 @@ use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
+use function in_array;
 
 /**
  * @internal
@@ -45,7 +47,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * Determines if unpublished documents should be matched, even when not in admin mode. This
      * is mainly needed for maintencance jobs/scripts.
      *
-     * @var bool
      */
     private bool $forceHandleUnpublishedDocuments = false;
 
@@ -88,9 +89,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         return $this->directRouteDocumentTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
@@ -104,9 +102,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());
@@ -158,10 +153,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * Build a route for a document. Context is only set from match mode, not when generating URLs.
      *
-     * @param Document $document
-     * @param DynamicRequestContext|null $context
      *
-     * @return DocumentRoute|null
      */
     public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null): ?DocumentRoute
     {
@@ -220,7 +212,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         try {
             $request = $context ? $context->getRequest() : $this->requestHelper->getMainRequest();
             $isAdminRequest = $this->requestHelper->isFrontendRequestByAdmin($request);
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             // catch logic exception here - when the exception fires, it is no admin request
             $isAdminRequest = false;
         }
@@ -286,7 +278,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // only do redirecting with GET requests
         if ($context->getRequest()->getMethod() === 'GET') {
             if (($this->config['documents']['allow_trailing_slash'] ?? null) === 'no') {
-                if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
+                if ($redirectTargetUrl !== '/' && str_ends_with($redirectTargetUrl, '/')) {
                     $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
                 }
             }

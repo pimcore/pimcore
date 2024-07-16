@@ -20,6 +20,7 @@ use Pimcore\Mail;
 use Pimcore\Mail\Plugins\RedirectingPlugin;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Message;
 use Symfony\Component\Mime\RawMessage;
 
 class Mailer implements MailerInterface
@@ -34,13 +35,14 @@ class Mailer implements MailerInterface
         $this->redirectPlugin = $redirectPlugin;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function send(RawMessage $message, Envelope $envelope = null): void
     {
         if ($message instanceof Mail) {
             $this->redirectPlugin->beforeSendPerformed($message);
+        }
+
+        if($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
+            $message->getHeaders()->addTextHeader('X-Transport', 'main');
         }
 
         $this->mailer->send($message, $envelope);

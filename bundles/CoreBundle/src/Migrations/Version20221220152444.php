@@ -56,7 +56,7 @@ final class Version20221220152444 extends AbstractMigration
 
         $this->warnIf(
             $enableBundle,
-            'Please make sure to enable the BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php'
+            'Please make sure to enable the Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php'
         );
     }
 
@@ -82,6 +82,6 @@ final class Version20221220152444 extends AbstractMigration
             true,
             "Please check your Web2Print settings and permissions. The 'Enable Web2Print documents in default documents view' will be disabled"
         );
-        $this->write('Please deactivate the BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php');
+        $this->write('Please deactivate the Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php');
     }
 }

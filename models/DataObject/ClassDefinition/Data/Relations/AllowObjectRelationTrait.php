@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use function count;
+use function in_array;
 
 /**
  * @internal
@@ -27,9 +29,7 @@ trait AllowObjectRelationTrait
     /**
      * Checks if an object is an allowed relation
      *
-     * @param DataObject\AbstractObject $object
      *
-     * @return bool
      *
      * @internal
      */

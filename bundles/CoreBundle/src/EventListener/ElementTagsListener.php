@@ -29,9 +29,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ElementTagsListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

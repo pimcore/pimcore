@@ -41,7 +41,7 @@ These rules will detect the following hashes:
  - SHA-512, BLAKE-512, SWIFFT
 
 
-We recommend using `password_hash` as algorithm.
+We recommend using `password_hash` as algorithm, any other algorithm is deprecated since Pimcore 11.2 and will be removed in Pimcore 12.
  
 
 ![Password Configuration](../../../img/classes-datatypes-text4.jpg)
@@ -70,5 +70,3 @@ on selected text in the WYSIWYG widget. The text is stored as HTML.
 ## Input Quantity Value
 
 Quite similar to [Quantity Value](55_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
-
-

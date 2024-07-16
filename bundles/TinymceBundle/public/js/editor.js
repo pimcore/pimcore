@@ -26,10 +26,20 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (e.detail.context === 'object') {
             if (!isNaN(e.detail.config.maxCharacters) && e.detail.config.maxCharacters > 0) {
                 this.maxChars = e.detail.config.maxCharacters;
+            }else{
+                this.maxChars = -1;
             }
         }
 
         this.config = e.detail.config;
+
+        if(this.config.toolbarConfig) {
+            const useNativeJson = Ext.USE_NATIVE_JSON;
+            Ext.USE_NATIVE_JSON = false;
+            const elementCustomConfig = Ext.decode(this.config.toolbarConfig);
+            Ext.USE_NATIVE_JSON = useNativeJson;
+            this.config = mergeObject(this.config, elementCustomConfig);
+        }
     },
 
     createWysiwyg: function (e) {
@@ -75,30 +85,38 @@ pimcore.bundle.tinymce.editor = Class.create({
             defaultConfig = pimcore[e.detail.context][subSpace].wysiwyg ? pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 
+        const maxChars = this.maxChars;
+
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
             menubar: false,
             plugins: [
                 'autolink', 'lists', 'link', 'image', 'code',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                'media', 'table', 'help', 'wordcount'
             ],
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
             base_url: '/bundles/pimcoretinymce/build/tinymce',
             suffix: '.min',
             convert_urls: false,
-            extended_valid_elements: 'a[name|href|target|title|pimcore_id|pimcore_type],img[style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
+            convert_unsafe_embeds: true,
+            extended_valid_elements: 'a[class|name|href|target|title|pimcore_id|pimcore_type],img[class|style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
+                    tinymce.activeEditor.getBody().style.border = '';
+                    tinymce.activeEditor.getElement().setAttribute('title', '');
+
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-                    if (this.maxChars !== -1 && charCount > this.maxChars) {
-                        pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
+
+                    if (maxChars !== -1 && charCount > maxChars) {
+                        tinymce.activeEditor.getBody().style.border = '1px solid red';
+                        tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
                     }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
-                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
+                            data: tinymce.activeEditor.getContent(),
                             context: e.detail.context
                         }
                     }));
@@ -107,7 +125,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
-                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
+                            data: tinymce.activeEditor.getContent(),
                             context: e.detail.context
                         }
                     }));
@@ -185,19 +203,19 @@ pimcore.bundle.tinymce.editor = Class.create({
 
                 additionalAttributes = mergeObject(additionalAttributes, {
                     src: uri,
-                    pimcore_type: 'asset',
-                    pimcore_id: id,
                     target: '_blank',
-                    alt: 'asset_image'
+                    alt: 'asset_image',
+                    pimcore_id: id,
+                    pimcore_type: 'asset'
                 });
                 tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('img', additionalAttributes));
                 return true;
             } else {
                 tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                     href: uri,
-                    pimcore_type: 'asset',
+                    target: '_blank',
                     pimcore_id: id,
-                    target: '_blank'
+                    pimcore_type: 'asset'
                 }, wrappedText));
                 return true;
             }
@@ -207,8 +225,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             || data.type === "hardlink" || data.type === "link")) {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
-                pimcore_type: 'document',
-                pimcore_id: id
+                pimcore_id: id,
+                pimcore_type: 'document'
             }, wrappedText));
             return true;
         }
@@ -216,8 +234,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (data.elementType === "object") {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
-                pimcore_type: 'object',
-                pimcore_id: id
+                pimcore_id: id,
+                pimcore_type: 'object'
             }, wrappedText));
             return true;
         }

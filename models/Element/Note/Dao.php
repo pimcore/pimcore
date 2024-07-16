@@ -15,11 +15,15 @@
 
 namespace Pimcore\Model\Element\Note;
 
+use DateTime;
+use DateTimeInterface;
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use function in_array;
 
 /**
  * @internal
@@ -29,7 +33,6 @@ use Pimcore\Model\Document;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -67,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             } elseif ($type == 'date') {
                 if ($data > 0) {
-                    $date = new \DateTime();
+                    $date = new DateTime();
                     $date->setTimestamp($data);
                     $data = $date;
                 }
@@ -85,9 +88,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Saves note to database.
-     * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): bool
     {
@@ -128,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = $data->getId();
                 }
             } elseif ($type == 'date') {
-                if ($data instanceof \DateTimeInterface) {
+                if ($data instanceof DateTimeInterface) {
                     $data = $data->getTimestamp();
                 }
             } elseif ($type == 'bool') {
@@ -147,7 +149,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Deletes note from database.
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -156,7 +158,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /** Deletes note data from database.
-     * @throws \Exception
+     * @throws Exception
      */
     protected function deleteData(): void
     {

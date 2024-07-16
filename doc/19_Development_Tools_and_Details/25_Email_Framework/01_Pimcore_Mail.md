@@ -4,11 +4,11 @@ The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://sy
 Class and adds some features for the usage with Pimcore.
 
 If email settings are configured in your `config/config.yaml` then on initializing
-`Pimcore\Mail` object, these settings applied automatically. It is required to configure [email settings](./README.md#page_General-Information) prior to using Pimcore\Mail.
+`Pimcore\Mail` object, these settings applied automatically. It is required to configure [email settings](./README.md#general-information) prior to using Pimcore\Mail.
 
 The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS,
 normalizing URLs and Twig expressions ...). Note that all CSS files are embedded
-to the html with a `<style>` tag because the image paths are also normalised.
+to the html with a `<style>` tag because the image paths are also normalized.
 
 ## Useful Methods
 

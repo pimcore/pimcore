@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Property\Dao getDao()
@@ -43,8 +45,6 @@ final class Property extends AbstractModel
 
     /**
      * @internal
-     *
-     * @param mixed $data
      *
      * @return $this
      */
@@ -74,8 +74,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setDataFromResource(mixed $data): static
@@ -95,6 +93,13 @@ final class Property extends AbstractModel
         }
 
         return $this;
+    }
+
+    public function save(): void
+    {
+        $this->getDao()->save();
+
+        \Pimcore\Cache::remove($this->getCtype() . '_properties_' . $this->getCid());
     }
 
     public function getCid(): ?int
@@ -146,7 +151,6 @@ final class Property extends AbstractModel
     /**
      * enum('document','asset','object')
      *
-     * @param string $ctype
      *
      * @return $this
      */
@@ -185,7 +189,6 @@ final class Property extends AbstractModel
     /**
      * enum('text','document','asset','object','bool','select')
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -209,7 +212,6 @@ final class Property extends AbstractModel
     /**
      * Alias for getInherited()
      *
-     * @return bool
      */
     public function isInherited(): bool
     {
@@ -254,7 +256,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function resolveDependencies(): array
     {
@@ -283,7 +284,6 @@ final class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
-     * @param array $idMapping
      *
      * @internal
      */
@@ -303,7 +303,6 @@ final class Property extends AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function serialize(): array
     {

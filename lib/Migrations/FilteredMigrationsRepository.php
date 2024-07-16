@@ -21,6 +21,7 @@ use Doctrine\Migrations\FilesystemMigrationsRepository;
 use Doctrine\Migrations\Metadata\AvailableMigration;
 use Doctrine\Migrations\Metadata\AvailableMigrationsSet;
 use Doctrine\Migrations\Version\Version;
+use function get_class;
 
 /**
  * @internal
@@ -73,9 +74,8 @@ final class FilteredMigrationsRepository implements \Doctrine\Migrations\Migrati
         }
 
         $filteredMigrations = [];
-        $items = $migrations->getItems();
-        foreach ($items as $migration) {
-            if (strpos(get_class($migration->getMigration()), $this->prefix) === 0) {
+        foreach ($migrations->getItems() as $migration) {
+            if (str_starts_with(get_class($migration->getMigration()), $this->prefix)) {
                 $filteredMigrations[] = $migration;
             }
         }

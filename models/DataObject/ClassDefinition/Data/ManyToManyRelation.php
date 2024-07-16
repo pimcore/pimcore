@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -26,6 +28,8 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
+use function count;
+use function is_array;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
@@ -41,7 +45,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
@@ -53,7 +56,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      *
-     * @var string
      */
     public string $assetUploadPath;
 
@@ -82,7 +84,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @internal
      *
-     * @var array
      */
     public array $assetTypes = [];
 
@@ -96,7 +97,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @internal
      *
-     * @var array
      */
     public array $documentTypes = [];
 
@@ -110,6 +110,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->objectsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -122,6 +125,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->documentsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -134,6 +140,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->documentTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -146,6 +155,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -161,6 +173,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetTypes;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -168,9 +183,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
@@ -199,9 +211,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $elements = [
@@ -224,18 +233,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $elements['dirty'] = true;
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $elements;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -259,15 +265,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return ',' . implode(',', $d) . ',';
         }
 
-        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
+        throw new Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -299,11 +301,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -332,16 +330,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
             }
         }
+
         //must return array if data shall be set
         return $elements;
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
@@ -349,11 +345,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
      *
      * @todo: $pathes is undefined
      */
@@ -363,11 +355,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -389,9 +377,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -424,9 +409,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -468,9 +450,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
@@ -510,9 +489,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
@@ -524,9 +500,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -551,6 +530,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetInlineDownloadAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;
@@ -573,9 +555,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->allowToClearRelation = $allowToClearRelation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -584,11 +563,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -604,9 +580,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $value;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -630,9 +603,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->documentTypes = $mainDefinition->documentTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getPhpdocType(): string
     {
         return $this->getPhpDocClassString(true);
@@ -659,10 +629,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** See marshal
      *
-     * @param mixed $value
-     * @param array $params
      *
-     * @return array|null
      */
     public function denormalize(mixed $value, array $params = []): ?array
     {
@@ -686,9 +653,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param array $item
      *
-     * @return string
      */
     public function buildUniqueKeyForDiffEditor(array $item): string
     {
@@ -704,11 +669,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @param Element\ElementInterface[]|null $originalData
-     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     protected function processDiffDataForEditMode(?array $originalData, ?array $data, Concrete $object = null, array $params = []): ?array
     {
@@ -764,9 +726,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $originalData = $data;
@@ -776,14 +735,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /** See parent class.
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];
@@ -802,9 +754,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
@@ -820,17 +769,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->enableTextSelection = $enableTextSelection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
         if ($data instanceof Element\ElementInterface) {
@@ -841,7 +784,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -850,17 +793,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

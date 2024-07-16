@@ -23,6 +23,9 @@ use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use UnexpectedValueException;
+use function is_string;
+use function strlen;
 
 /**
  * @internal
@@ -34,7 +37,6 @@ class NotificationService
     /**
      * NotificationService constructor.
      *
-     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -42,13 +44,8 @@ class NotificationService
     }
 
     /**
-     * @param int $userId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function sendToUser(
         int $userId,
@@ -63,15 +60,15 @@ class NotificationService
         $recipient = User::getById($userId);
 
         if (!$recipient instanceof User) {
-            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
+            throw new UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
         }
 
         if (empty($title)) {
-            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+            throw new UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
         if (empty($message)) {
-            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
+            throw new UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
         $notification = new Notification();
@@ -86,13 +83,8 @@ class NotificationService
     }
 
     /**
-     * @param int $groupId
-     * @param int $fromUser
-     * @param string $title
-     * @param string $message
-     * @param ElementInterface|null $element
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function sendToGroup(
         int $groupId,
@@ -104,7 +96,7 @@ class NotificationService
         $group = User\Role::getById($groupId);
 
         if (!$group instanceof User\Role) {
-            throw new \UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
+            throw new UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
         }
 
         $listing = new User\Listing();
@@ -139,30 +131,25 @@ class NotificationService
     }
 
     /**
-     * @param int $id
      *
-     * @return Notification
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function find(int $id): Notification
     {
         $notification = Notification::getById($id);
 
         if (!$notification instanceof Notification) {
-            throw new \UnexpectedValueException("Notification with the ID {$id} doesn't exists");
+            throw new UnexpectedValueException("Notification with the ID {$id} doesn't exists");
         }
 
         return $notification;
     }
 
     /**
-     * @param int $id
-     * @param int|null $recipientId
      *
-     * @return Notification
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {
@@ -182,25 +169,46 @@ class NotificationService
         return $notification;
     }
 
+    /**
+     * @param array<string, mixed> $filter
+     * @param array{offset?: int|string, limit?: int|string|null} $options
+     *
+     * @return array{total: int, data: Notification[]}
+     */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
 
-        if (!empty($filter)) {
+        if ($filter) {
             $conditions = [];
+            $conditionVariables = [];
             foreach ($filter as $key => $value) {
-                $conditions[] = $key . ' = :' . $key;
+                if (isset($value['condition'])) {
+                    $conditions[] = $value['condition'];
+                    $conditionVariables[] = $value['conditionVariables'] ?? [];
+                } else {
+                    $conditions[] = $key . ' = :' . $key;
+                    $conditionVariables[] = [$key => $value];
+                }
             }
 
             $condition = implode(' AND ', $conditions);
-            $listing->setCondition($condition, $filter);
+            $listing->setCondition($condition, array_merge(...$conditionVariables));
         }
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $options += ['offset' => 0, 'limit' => 0];
-        $offset = (int) $options['offset'];
-        $limit = (int) $options['limit'];
+        $offset = $options['offset'] ?? 0;
+        $limit = $options['limit'] ?? null;
+
+        if (is_string($offset)) {
+            //TODO: Trigger deprecation
+            $offset = (int) $offset;
+        }
+        if (is_string($limit)) {
+            //TODO: Trigger deprecation
+            $limit = (int) $limit;
+        }
 
         $this->beginTransaction();
 

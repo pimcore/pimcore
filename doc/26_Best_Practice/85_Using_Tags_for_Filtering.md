@@ -117,7 +117,7 @@ Important to know:
 
                 //decide if child tags should be considered or not
                 if ($request->get("considerChildTags") == "true") {
-                    $tag = \Pimcore\Model\Element\Tag::getById($tagId);
+                    $tag = \Pimcore\Model\Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         //get ID path of tag or filtering the child tags
                         $tagPath = $tag->getFullIdPath();

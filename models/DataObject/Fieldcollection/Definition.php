@@ -16,14 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
+use Pimcore\Event\FieldcollectionDefinitionEvents;
+use Pimcore\Event\Model\DataObject\FieldcollectionDefinitionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -36,18 +42,16 @@ class Definition extends Model\AbstractModel
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
     use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
-        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
-        'object', 'interface', 'default',
+        'abstract', 'abstractdata', 'class', 'concrete', 'dao', 'data', 'default', 'folder', 'interface', 'items',
+        'list', 'object', 'permissions', 'resource',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
@@ -61,8 +65,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -88,11 +90,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
-     *
-     * @return self|null
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByKey(string $key): ?Definition
     {
@@ -103,9 +101,9 @@ class Definition extends Model\AbstractModel
         try {
             $fc = RuntimeCache::get($cacheKey);
             if (!$fc) {
-                throw new \Exception('FieldCollection in registry is not valid');
+                throw new Exception('FieldCollection in registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $def = new Definition();
             $def->setKey($key);
             $fieldFile = $def->getDefinitionFile();
@@ -124,29 +122,35 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
-            throw new \Exception('A field-collection needs a key to be saved!');
+            throw new Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
-            throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
+        if ($this->isForbiddenName()) {
+            throw new Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
         if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
-            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
+        }
+
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_UPDATE);
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
-                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
@@ -159,25 +163,27 @@ class Definition extends Model\AbstractModel
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
         }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_UPDATE);
+        }
     }
 
     /**
-     * @param bool $generateDefinitionFile
-     *
-     * @throws \Exception
+     * @throws Exception
      * @throws DataObject\Exception\DefinitionWriteException
      *
      * @internal
@@ -210,7 +216,7 @@ class Definition extends Model\AbstractModel
             $filesystem->dumpFile($definitionFile, $data);
         }
 
-        \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
+        Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
@@ -220,27 +226,36 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException
+     */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_DELETE);
+
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
         $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->delete($class);
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->delete($class);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
         }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_DELETE);
     }
 
     /**
@@ -252,10 +267,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param string|null $key
-     *
-     * @return string
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -265,8 +276,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @return string
      */
     public function getPhpClassFile(): string
     {
@@ -275,15 +284,13 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @return string
      */
     protected function getInfoDocBlock(): string
     {
         $cd = '/**' . "\n";
         $cd .= " * Fields Summary:\n";
 
-        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        $fieldDefinitionDocBlockBuilder = Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
         foreach ($this->getFieldDefinitions() as $fieldDefinition) {
             $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
@@ -295,6 +302,14 @@ class Definition extends Model\AbstractModel
 
     public function isForbiddenName(): bool
     {
-        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
+        $key = $this->getKey();
+        if ($key === null || $key === '') {
+            return true;
+        }
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $key)) {
+            return true;
+        }
+
+        return in_array(strtolower($key), self::FORBIDDEN_NAMES);
     }
 }

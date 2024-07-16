@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use DateTime;
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Pimcore\Model\Element\Recyclebin;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,13 +29,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:recyclebin:cleanup',
+    description: 'Cleanup recyclebin entries'
+)]
 class RecyclebinCleanupCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:recyclebin:cleanup')
-            ->setDescription('Cleanup recyclebin entries')
             ->addOption(
                 'older-than-days',
                 'd',
@@ -41,20 +46,17 @@ class RecyclebinCleanupCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $daysAgo = $input->getOption('older-than-days');
 
         if (!isset($daysAgo)) {
-            throw new \Exception('Missing option "--older-than-days"');
+            throw new Exception('Missing option "--older-than-days"');
         } elseif (!is_numeric($daysAgo)) {
-            throw new \Exception('The "--older-than-days" option value should be numeric');
+            throw new Exception('The "--older-than-days" option value should be numeric');
         }
 
-        $date = new \DateTime("-{$daysAgo} days");
+        $date = new DateTime("-{$daysAgo} days");
         $dateTimestamp = $date->getTimestamp();
         $recyclebinItems = new Recyclebin\Item\Listing();
         $recyclebinItems->setCondition("date < $dateTimestamp");
@@ -62,7 +64,7 @@ class RecyclebinCleanupCommand extends AbstractCommand
         foreach ($recyclebinItems->load() as $recyclebinItem) {
             try {
                 $recyclebinItem->delete();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $msg = "Could not delete {$recyclebinItem->getPath()} ({$recyclebinItem->getId()}) because of: {$e->getMessage()}";
                 Logger::error($msg);
                 $this->output->writeln($msg);

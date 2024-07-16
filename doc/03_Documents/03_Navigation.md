@@ -270,8 +270,11 @@ For example, generate bootstrap 4.0 style navigation:
 ```
 
 ## Adding Custom Items to the Navigation
-
-In the following example we're adding news items (objects) to the navigation using Twig Extension. 
+ 
+In the following example we're adding 
+- news items (objects) to an existing navigation with the "pageCallback" attribute 
+- category items (objects) to the root Navigation with the "rootCallback" attribute 
+using Twig Extension. 
 
 ```php
 <?php
@@ -279,6 +282,7 @@ In the following example we're adding news items (objects) to the navigation usi
 namespace App\Twig\Extension;
 
 use App\Website\LinkGenerator\NewsLinkGenerator;
+use App\Website\LinkGenerator\CategoryLinkGenerator; 
 use Pimcore\Model\Document;
 use Pimcore\Navigation\Container;
 use Pimcore\Twig\Extension\Templating\Navigation;
@@ -289,11 +293,13 @@ class NavigationExtension extends AbstractExtension
 {
     protected Navigation $navigationHelper;
     protected NewsLinkGenerator $newsLinkGenerator;
+    protected CategoryLinkGenerator $categoryLinkGenerator;
 
-    public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
+    public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator, CategoryLinkGenerator $categoryLinkGenerator)
     {
         $this->navigationHelper = $navigationHelper;
-        $this->$newsLinkGenerator = $newsLinkGenerator;
+        $this->newsLinkGenerator = $newsLinkGenerator;
+        $this->categoryLinkGenerator = $categoryLinkGenerator;
     }
 
     /**
@@ -302,14 +308,14 @@ class NavigationExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
+            new TwigFunction('app_navigation_links', [$this, 'getNavigationLinks'])
         ];
     }
 
     /**
      * @throws \Exception
      */
-    public function getNewsLinks(Document $document, Document $startNode): Container
+    public function getNavigationLinks(Document $document, Document $startNode): Container
     {
         $navigation = $this->navigationHelper->build([
             'active' => $document,
@@ -330,6 +336,19 @@ class NavigationExtension extends AbstractExtension
                         $page->addPage($uri);
                     }
                 }
+            },
+            'rootCallback' => function(Container $navigation) {
+                $list = new \Pimcore\Model\DataObject\Category\Listing;
+                $list->load();
+                foreach($list as $category) {
+                    $detailLink = $this->categoryLinkGenerator->generate($category);
+                    $categoryDocument = new \Pimcore\Navigation\Page\Document([
+                        "label" => $category->getName(),
+                        "id" => "object-" . $category->getId(),
+                        "uri" => $detailLink,
+                    ]);
+                    $navigation->addPage($categoryDocument);
+                }
             }
         ]);
 
@@ -339,12 +358,7 @@ class NavigationExtension extends AbstractExtension
 ```
 
 ```twig
-{% set mainNav = pimcore_build_nav({
-    active: document,
-    root: mainNavStartNode,
-}) %}
-
-{% set mainNavigation =  app_navigation_news_links(document, navStartNode) %}
+{% set navigation = app_navigation_news_links(document, navStartNode) %}
 
 <div class="my-navigation">
     {{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {
@@ -463,8 +477,8 @@ You can disable the navigation cache by setting the `cache` argument to `false`.
 
 **A document does not show up in the navigation. Why?**
 
-Please make sure that the documents and its parent documents are published and that the document it self as well as all it's parents have a navigation name set. 
-Neither the document itself nor one of it's parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
+Please make sure that the documents and its parent documents are published and that the document itself as well as all its parents have a navigation name set. 
+Neither the document itself nor one of its parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
 
 **Why is the navigation not appearing?**
 

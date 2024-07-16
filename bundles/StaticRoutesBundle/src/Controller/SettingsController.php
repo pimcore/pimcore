@@ -23,6 +23,9 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use function is_array;
+use function is_scalar;
+use function is_string;
 
 class SettingsController extends UserAwareController
 {
@@ -31,9 +34,7 @@ class SettingsController extends UserAwareController
     /**
      * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function staticroutesAction(Request $request): JsonResponse
     {
@@ -113,9 +114,7 @@ class SettingsController extends UserAwareController
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
                 $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
+                $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 $routes[] = $route;
             }
 

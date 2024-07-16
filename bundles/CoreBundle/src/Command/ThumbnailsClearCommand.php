@@ -18,20 +18,24 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function in_array;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:thumbnails:clear',
+    description: 'Clear certain image or video thumbnails (temp. files)'
+)]
 class ThumbnailsClearCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:thumbnails:clear')
-            ->setDescription('Clear certain image or video thumbnails (temp. files)')
             ->addOption(
                 'type',
                 null,
@@ -46,9 +50,6 @@ class ThumbnailsClearCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $possibleOptions = ['image', 'video'];

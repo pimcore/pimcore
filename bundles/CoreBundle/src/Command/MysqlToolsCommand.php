@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +27,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name:'pimcore:mysql-tools',
+    description: 'Optimize and warmup mysql database',
+    aliases: ['mysql-tools']
+)]
 class MysqlToolsCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:mysql-tools')
-            ->setAliases(['mysql-tools'])
-            ->setDescription('Optimize and warmup mysql database')
             ->addOption(
                 'mode',
                 'm',
@@ -41,9 +45,6 @@ class MysqlToolsCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // display error message
@@ -63,7 +64,7 @@ class MysqlToolsCommand extends AbstractCommand
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
                     $db->executeQuery('OPTIMIZE TABLE ' . $t);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }
@@ -77,7 +78,7 @@ class MysqlToolsCommand extends AbstractCommand
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
                     Logger::debug('Result: ' . $res);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }

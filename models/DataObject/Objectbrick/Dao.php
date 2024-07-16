@@ -15,11 +15,13 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use function is_array;
 
 /**
  * @internal
@@ -46,7 +48,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
             try {
                 $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $results = [];
             }
 
@@ -121,10 +123,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {

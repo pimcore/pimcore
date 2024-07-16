@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Exception;
+use InvalidArgumentException;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\Breadcrumbs;
@@ -27,6 +29,7 @@ use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundExcep
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use function call_user_func_array;
 
 /**
  * @method MenuRenderer menu()
@@ -51,11 +54,9 @@ class Navigation implements RuntimeExtensionInterface
      * Builds a navigation container by passing params
      * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'cacheLifetime', 'maxDepth', 'active', 'markActiveTrail'
      *
-     * @param array $params
      *
-     * @return Container
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function build(array $params): Container
     {
@@ -65,9 +66,7 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Get a named renderer
      *
-     * @param string $alias
      *
-     * @return RendererInterface
      */
     public function getRenderer(string $alias): RendererInterface
     {
@@ -87,12 +86,9 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Renders a navigation with the given renderer
      *
-     * @param Container $container
-     * @param string $rendererName
      * @param string $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
      * @param array<int, mixed> $rendererArguments      Option arguments to pass to the render method after the container
      *
-     * @return string
      */
     public function render(
         Container $container,
@@ -103,7 +99,7 @@ class Navigation implements RuntimeExtensionInterface
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {
-            throw new \InvalidArgumentException(sprintf('Method "%s" does not exist on renderer "%s"', $renderMethod, $rendererName));
+            throw new InvalidArgumentException(sprintf('Method "%s" does not exist on renderer "%s"', $renderMethod, $rendererName));
         }
 
         $args = array_merge([$container], array_values($rendererArguments));
@@ -114,10 +110,7 @@ class Navigation implements RuntimeExtensionInterface
     /**
      * Magic overload is an alias to getRenderer()
      *
-     * @param string $method
-     * @param array $arguments
      *
-     * @return RendererInterface
      */
     public function __call(string $method, array $arguments = []): RendererInterface
     {

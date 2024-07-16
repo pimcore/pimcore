@@ -16,7 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache;
 
-class RuntimeCache extends \ArrayObject
+use ArrayObject;
+use Exception;
+use Pimcore;
+
+class RuntimeCache extends ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 
@@ -24,10 +28,11 @@ class RuntimeCache extends \ArrayObject
 
     protected static ?RuntimeCache $instance = null;
 
+    private static bool $disabled = false;
+
     /**
      * Retrieves the default registry instance.
      *
-     * @return self
      */
     public static function getInstance(): self
     {
@@ -35,8 +40,8 @@ class RuntimeCache extends \ArrayObject
             return self::$instance;
         }
 
-        if (\Pimcore::hasContainer()) {
-            $container = \Pimcore::getContainer();
+        if (Pimcore::hasContainer()) {
+            $container = Pimcore::getContainer();
 
             /** @var self $instance */
             $instance = null;
@@ -72,6 +77,33 @@ class RuntimeCache extends \ArrayObject
     }
 
     /**
+     * disables the caching for the current process, this is useful for importers, ...
+     * There are no new objects will be cached after that
+     *
+     * @static
+     */
+    public static function disable(): void
+    {
+        self::$disabled = true;
+    }
+
+    /**
+     * see @ self::disable()
+     * just enabled the caching in the current process
+     *
+     * @static
+     */
+    public static function enable(): void
+    {
+        self::$disabled = false;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return !self::$disabled;
+    }
+
+    /**
      * getter method, basically same as offsetGet().
      *
      * This method can be called from an object of type \Pimcore\Cache\Runtime, or it
@@ -80,16 +112,14 @@ class RuntimeCache extends \ArrayObject
      *
      * @param string $index - get the value associated with $index
      *
-     * @return mixed
-     *
-     * @throws \Exception if no entry is registered for $index.
+     * @throws Exception if no entry is registered for $index.
      */
     public static function get(string $index): mixed
     {
         $instance = self::getInstance();
 
         if (!$instance->offsetExists($index)) {
-            throw new \Exception("No entry is registered for key '$index'");
+            throw new Exception("No entry is registered for key '$index'");
         }
 
         return $instance->offsetGet($index);
@@ -106,7 +136,6 @@ class RuntimeCache extends \ArrayObject
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
      *
-     * @return void
      */
     public static function set(string $index, mixed $value): void
     {
@@ -118,9 +147,7 @@ class RuntimeCache extends \ArrayObject
      * Returns TRUE if the $index is a named value in the registry,
      * or FALSE if $index was not found in the registry.
      *
-     * @param string $index
      *
-     * @return bool
      */
     public static function isRegistered(string $index): bool
     {
@@ -141,19 +168,19 @@ class RuntimeCache extends \ArrayObject
         parent::__construct($array, $flags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($index, $value): void
     {
+        // check if caching is disabled for this process
+        if (self::$disabled) {
+            return;
+        }
+
         parent::offsetSet($index, $value);
     }
 
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
      *
-     * @param mixed $data
-     * @param string $id
      */
     public static function save(mixed $data, string $id): void
     {
@@ -163,9 +190,7 @@ class RuntimeCache extends \ArrayObject
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
      *
-     * @param string $id
      *
-     * @return mixed
      */
     public static function load(string $id): mixed
     {
@@ -184,7 +209,7 @@ class RuntimeCache extends \ArrayObject
             }
         }
 
-        \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
+        Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
         self::$instance = $newInstance;
     }
 }

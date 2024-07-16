@@ -16,11 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImportDataExtractor;
 
+use Exception;
+use Locale;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface;
 use Pimcore\Tool;
+use SimpleXMLElement;
+use function count;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {
@@ -34,9 +38,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $this->translationItemResolver = $translationItemResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function extractElement(string $importId, int $stepId): ?AttributeSet
     {
         $xliff = $this->loadFile($importId);
@@ -48,13 +49,13 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         // see https://en.wikipedia.org/wiki/IETF_language_tag
         $target = str_replace('-', '_', (string)$target);
         if (!Tool::isValidLanguage($target)) {
-            $target = \Locale::getPrimaryLanguage($target);
+            $target = Locale::getPrimaryLanguage($target);
         }
         if (!Tool::isValidLanguage($target)) {
-            throw new \Exception(sprintf('invalid language %s', $file['target-language']));
+            throw new Exception(sprintf('invalid language %s', $file['target-language']));
         }
 
-        list($type, $id) = explode('-', (string)$file['original']);
+        [$type, $id] = explode('-', (string)$file['original']);
 
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
@@ -69,7 +70,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         }
 
         foreach ($file->body->{'trans-unit'} as $transUnit) {
-            list($type, $name) = explode(Xliff12Exporter::DELIMITER, (string)$transUnit['id']);
+            [$type, $name] = explode(Xliff12Exporter::DELIMITER, (string)$transUnit['id']);
 
             if (!isset($transUnit->target)) {
                 continue;
@@ -89,9 +90,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $importId . '.xliff';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function countSteps(string $importId): int
     {
         $xliff = $this->loadFile($importId);
@@ -100,9 +98,9 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    private function loadFile(string $importId): \SimpleXMLElement
+    private function loadFile(string $importId): SimpleXMLElement
     {
         return simplexml_load_file($this->getImportFilePath($importId), null, LIBXML_NOCDATA);
     }

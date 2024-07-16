@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor;
 
+use DateTime;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -28,16 +29,13 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
  */
 class ModificationDateProcessor implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): Url|UrlConcrete|null
     {
         if (!$url instanceof UrlConcrete) {
             return $url;
         }
 
-        $url->setLastmod(\DateTime::createFromFormat('U', (string)$element->getModificationDate()));
+        $url->setLastmod(DateTime::createFromFormat('U', (string)$element->getModificationDate()));
 
         return $url;
     }

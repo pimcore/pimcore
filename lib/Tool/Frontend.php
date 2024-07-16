@@ -29,7 +29,7 @@ final class Frontend
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (strpos($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/') !== 0) {
+            if (!str_starts_with($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/')) {
                 $inSite = false;
             }
         }
@@ -98,6 +98,9 @@ final class Frontend
         return $siteMapping;
     }
 
+    /**
+     * @return false|array{enabled: true, lifetime: int|null}
+     */
     public static function isOutputCacheEnabled(): bool|array
     {
         $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);

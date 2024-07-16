@@ -16,6 +16,8 @@
 namespace Pimcore\Model\DataObject\Listing\Concrete;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Exception;
+use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -37,25 +39,24 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return int[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function loadIdList(): array
     {
         try {
             return parent::loadIdList();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
     }
 
     /**
-     * @param \Exception $e
      *
      * @return int[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function exceptionHandler(\Exception $e): array
+    protected function exceptionHandler(Exception $e): array
     {
         // create view if it doesn't exist already // HACK
         $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
@@ -75,9 +76,8 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalizedBrickLanguage(): ?string
     {
@@ -92,7 +92,7 @@ class Dao extends Model\DataObject\Listing\Dao
         }
 
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+            $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if (Tool::isValidLanguage((string)$locale)) {
                 $language = (string)$locale;
             }
@@ -106,9 +106,8 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTableName(): string
     {
@@ -125,12 +124,12 @@ class Dao extends Model\DataObject\Listing\Dao
                             $language = (string)$this->model->getLocale();
                         }
                         if (!$language && DataObject\Localizedfield::isStrictMode()) {
-                            throw new \Exception('could not resolve locale: ' . $this->model->getLocale());
+                            throw new Exception('could not resolve locale: ' . $this->model->getLocale());
                         }
                     }
 
                     if (!$language) {
-                        $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+                        $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
                         if (Tool::isValidLanguage((string)$locale)) {
                             $language = (string)$locale;
                         }
@@ -141,7 +140,7 @@ class Dao extends Model\DataObject\Listing\Dao
                     }
 
                     if (!$language) {
-                        throw new \Exception('No valid language/locale set. Use $list->setLocale() to add a language to the listing, or register a global locale');
+                        throw new Exception('No valid language/locale set. Use $list->setLocale() to add a language to the listing, or register a global locale');
                     }
                     $this->tableName = 'object_localized_' . $this->model->getClassId() . '_' . $language;
                 }
@@ -152,11 +151,10 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function applyJoins(DoctrineQueryBuilder $queryBuilder): static
     {

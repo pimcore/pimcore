@@ -21,8 +21,5 @@ namespace Pimcore\Model\Document;
  */
 class Snippet extends \Pimcore\Model\Document\PageSnippet
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'snippet';
 }

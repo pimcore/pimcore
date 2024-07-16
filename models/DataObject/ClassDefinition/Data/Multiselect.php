@@ -16,13 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use JsonSerializable;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Throwable;
+use function is_array;
+use function is_string;
+use function strlen;
 
 class Multiselect extends Data implements
     ResourcePersistenceAwareInterface,
@@ -30,69 +38,59 @@ class Multiselect extends Data implements
     TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    \JsonSerializable,
+    JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,
-    DataContainerAwareInterface
+    DataContainerAwareInterface,
+    OptionsProviderInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\DefaultValueTrait;
+    use OptionsProviderTrait;
 
     /**
      * Available options to select
      *
      * @internal
      *
-     * @var array|null
      */
     public ?array $options = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $maxItems = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $renderType = null;
-
-    /**
-     * Options provider class
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    public ?string $optionsProviderClass = null;
-
-    /**
-     * Options provider data
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    public ?string $optionsProviderData = null;
 
     /**
      * @internal
      */
     public bool $dynamicOptions = false;
 
+    /**
+     * @internal
+     */
+    public ?array $defaultValue = null;
+
     public function getOptions(): ?array
     {
         return $this->options;
     }
 
+    /**
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         $this->options = $options;
@@ -100,9 +98,12 @@ class Multiselect extends Data implements
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxItems(?int $maxItems): static
     {
-        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        $this->maxItems = $maxItems;
 
         return $this;
     }
@@ -112,6 +113,9 @@ class Multiselect extends Data implements
         return $this->maxItems;
     }
 
+    /**
+     * @return $this
+     */
     public function setRenderType(?string $renderType): static
     {
         $this->renderType = $renderType;
@@ -125,31 +129,47 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @return $this
+     */
+    public function setDefaultValue(array|string|null $defaultValue): static
+    {
+        if (is_string($defaultValue)) {
+            $defaultValue = $defaultValue !== '' ? [$defaultValue] : null;
+        }
+        $this->defaultValue = $defaultValue;
+
+        return $this;
+    }
+
+    public function getDefaultValue(): ?array
+    {
+        return $this->defaultValue;
+    }
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_array($data)) {
+        if (!$this->isEmpty($data) && is_array($data)) {
             return implode(',', $data);
         }
 
-        return null;
+        $defaultValue = $this->handleDefaultValue($data, $object, $params);
+
+        if (is_array($defaultValue)) {
+            return implode(',', array_map(fn ($v) => $v['value'] ?? $v, $defaultValue));
+        }
+
+        return $defaultValue;
     }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -163,16 +183,13 @@ class Multiselect extends Data implements
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (!empty($data) && is_array($data)) {
-            return ','.implode(',', $data).',';
+        $dataForResource = $this->getDataForResource($data, $object, $params);
+        if ($dataForResource) {
+            return ','.$dataForResource.',';
         }
 
         return null;
@@ -181,19 +198,11 @@ class Multiselect extends Data implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if (is_array($data)) {
-            return implode(',', $data);
-        }
-
-        return null;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
@@ -203,7 +212,7 @@ class Multiselect extends Data implements
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
 
-        if ($optionsProvider === null) {
+        if ($this->useConfiguredOptions() || $optionsProvider === null) {
             return $this->getDataForEditmode($data, $object, $params);
         }
 
@@ -214,7 +223,7 @@ class Multiselect extends Data implements
         }
 
         $context['fieldname'] = $this->getName();
-        $options = $optionsProvider->{'getOptions'}($context, $this);
+        $options = $optionsProvider->getOptions($context, $this);
         $this->setOptions($options);
 
         if (isset($params['purpose']) && $params['purpose'] === 'editmode') {
@@ -227,11 +236,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return mixed
      *
      * @see Data::getDataFromEditmode
      *
@@ -241,10 +246,7 @@ class Multiselect extends Data implements
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = $data[0]['data'];
         if (is_string($data) && $data !== '') {
@@ -255,11 +257,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -268,16 +266,13 @@ class Multiselect extends Data implements
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
-                return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             }, $data));
         }
 
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -289,9 +284,6 @@ class Multiselect extends Data implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -315,11 +307,7 @@ class Multiselect extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
@@ -335,11 +323,8 @@ class Multiselect extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -361,8 +346,8 @@ class Multiselect extends Data implements
             }
 
             $value = $operator === '='
-                ? "'%,".$value.",%'"
-                : "'%,%".$value."%,%'";
+                ? $db->quote('%,'. $value . ',%')
+                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }
@@ -370,9 +355,6 @@ class Multiselect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -381,11 +363,8 @@ class Multiselect extends Data implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array|string
     {
@@ -425,26 +404,6 @@ class Multiselect extends Data implements
         $this->options = $mainDefinition->options;
     }
 
-    public function getOptionsProviderClass(): ?string
-    {
-        return $this->optionsProviderClass;
-    }
-
-    public function setOptionsProviderClass(?string $optionsProviderClass): void
-    {
-        $this->optionsProviderClass = $optionsProviderClass;
-    }
-
-    public function getOptionsProviderData(): ?string
-    {
-        return $this->optionsProviderData;
-    }
-
-    public function setOptionsProviderData(?string $optionsProviderData): void
-    {
-        $this->optionsProviderData = $optionsProviderData;
-    }
-
     public function appendData(?array $existingData, array $additionalData): array
     {
         if (!is_array($existingData)) {
@@ -456,7 +415,7 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    public function removeData(mixed $existingData, mixed $removeData): array
+    public function removeData(?array $existingData, array $removeData): array
     {
         if (!is_array($existingData)) {
             $existingData = [];
@@ -467,9 +426,6 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -482,21 +438,18 @@ class Multiselect extends Data implements
 
     public function jsonSerialize(): mixed
     {
-        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
 
-        if ($this->getOptionsProviderClass()) {
+        if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass()) {
             $blockedVars[] = 'options';
         }
 
@@ -526,23 +479,20 @@ class Multiselect extends Data implements
     /**
      * Perform sanity checks, see #5010.
      *
-     * @param mixed $containerDefinition
-     * @param array $params
      */
     public function preSave(mixed $containerDefinition, array $params = []): void
     {
-        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
         );
-        if ($optionsProvider) {
+        if (!$this->useConfiguredOptions() && $optionsProvider !== null) {
             $context = [];
             $context['fieldname'] = $this->getName();
 
             try {
                 $options = $optionsProvider->getOptions($context, $this);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // error from getOptions => no values => no comma => no problems
                 $options = null;
             }
@@ -552,7 +502,7 @@ class Multiselect extends Data implements
         if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
             return $containsComma || str_contains((string)$option['value'], ',');
         }, false)) {
-            throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
+            throw new Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
         }
     }
 
@@ -562,7 +512,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * {@inheritdoc}
+     * @return $this
      */
     public function enrichFieldDefinition(array $context = []): static
     {
@@ -572,9 +522,6 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
@@ -596,5 +543,27 @@ class Multiselect extends Data implements
     public function getFieldType(): string
     {
         return 'multiselect';
+    }
+
+    protected function doGetDefaultValue(Concrete $object, array $context = []): mixed
+    {
+        /** @var SelectOptionsProviderInterface|MultiSelectOptionsProviderInterface|null $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
+        if ($optionsProvider instanceof SelectOptionsProviderInterface) {
+            $context['object'] = $object;
+            $context['class'] = $object->getClass();
+
+            $context['fieldname'] = $this->getName();
+            if (!isset($context['purpose'])) {
+                $context['purpose'] = 'layout';
+            }
+
+            return $optionsProvider->getDefaultValue($context, $this);
+        }
+
+        return $this->getDefaultValue();
     }
 }

@@ -16,10 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
+use Exception;
 use Pimcore\Logger;
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
+use Pimcore\Model\ModelInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -42,7 +43,6 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     /**
      * Get type.
      *
-     * @return string
      */
     protected function getType(): string
     {
@@ -52,9 +52,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     /**
      * Get definition name from filename (e.g. custom_definition_Customer_export.json -> Customer).
      *
-     * @param string $filename
      *
-     * @return string|null
      */
     protected function getDefinitionName(string $filename): ?string
     {
@@ -69,18 +67,16 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     /**
      * Try to load definition by name.
      *
-     * @param string $name
      *
-     * @return null|AbstractModel
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function loadDefinition(string $name): ?AbstractModel
+    protected function loadDefinition(string $name): ?ModelInterface
     {
         return CustomLayout::getByName($name);
     }
 
-    protected function createDefinition(string $name): ?AbstractModel
+    protected function createDefinition(string $name): ?ModelInterface
     {
         $className = $this->input->getOption('class-name');
         if ($className) {
@@ -98,13 +94,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
         return null;
     }
 
-    /**
-     * @param AbstractModel $definition
-     * @param string|null $json
-     *
-     * @return bool
-     */
-    protected function import(AbstractModel $definition, string $json = null): bool
+    protected function import(ModelInterface $definition, string $json = null): bool
     {
         if (!$definition instanceof CustomLayout) {
             return false;
@@ -123,7 +113,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
             $definition->save();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
         }
 

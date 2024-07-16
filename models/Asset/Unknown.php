@@ -23,8 +23,5 @@ use Pimcore\Model;
  */
 class Unknown extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'unknown';
 }

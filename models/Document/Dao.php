@@ -15,11 +15,15 @@
 
 namespace Pimcore\Model\Document;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
+use function in_array;
+use function is_array;
+use function is_bool;
 
 /**
  * @internal
@@ -33,7 +37,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -43,7 +46,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
@@ -54,7 +57,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -63,7 +65,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             // try to find a page with a pretty URL (use the original $path)
@@ -71,7 +73,7 @@ class Dao extends Model\Element\Dao
                 'prettyUrl' => $path,
             ]);
 
-            if (!empty($data['id'])) {
+            if ($data) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
@@ -97,7 +99,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {
@@ -167,7 +169,7 @@ class Dao extends Model\Element\Dao
     /**
      * Delete the row from the database. (based on the model id)
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -177,7 +179,7 @@ class Dao extends Model\Element\Dao
     /**
      * Update document workspaces..
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateWorkspaces(): void
     {
@@ -191,9 +193,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
-     * @param string $oldPath
      *
-     * @return array
      *
      * @internal
      */
@@ -223,7 +223,6 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the current full document path from the database.
      *
-     * @return string|null
      */
     public function getCurrentFullPath(): ?string
     {
@@ -231,7 +230,7 @@ class Dao extends Model\Element\Dao
 
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error('could not  get current document path from DB');
         }
 
@@ -255,22 +254,30 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns properties for the object from the database and assigns these.
+     * Returns properties for the object from the database
      *
-     * @param bool $onlyInherited
-     * @param bool $onlyDirect
-     *
-     * @return array
+     * @throws Exception
      */
     public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
         $properties = [];
 
         if ($onlyDirect) {
-            $propertiesRaw = $this->db->fetchAllAssociative("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    "SELECT * FROM properties WHERE cid = ? AND ctype='document'",
+                    [$this->model->getId()]
+                );
         } else {
             $parentIds = $this->getParentIds();
-            $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw =
+                $this->db->fetchAllAssociative(
+                    'SELECT * FROM properties WHERE
+                             (
+                                 (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ?
+                             ) AND ctype='document'",
+                    [$this->model->getId()]
+                );
         }
 
         // because this should be faster than mysql
@@ -283,7 +290,7 @@ class Dao extends Model\Element\Dao
                 $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                if (isset($id)) {
+                if ($id !== null) {
                     $property->setCid($id);
                 }
                 $property->setName($propertyRaw['name']);
@@ -303,17 +310,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath());
+            } catch (Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited || $onlyDirect) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -367,7 +369,6 @@ class Dao extends Model\Element\Dao
      *
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?User $user = null): int
     {
@@ -395,9 +396,7 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
-     * @param bool|null $includingUnpublished
      *
-     * @return bool
      */
     public function hasSiblings(?bool $includingUnpublished = null): bool
     {
@@ -427,9 +426,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document is locked.
      *
-     * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function isLocked(): bool
     {
@@ -455,7 +453,7 @@ class Dao extends Model\Element\Dao
     /**
      * Update the lock value for the document.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateLocks(): void
     {
@@ -472,7 +470,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes locks from the document and its children.
      *
-     * @return array
      */
     public function unlockPropagate(): array
     {
@@ -483,10 +480,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -498,10 +492,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param string $type
      * @param Model\User $user
      *
-     * @return bool
      */
     public function isAllowed(string $type, User $user): bool
     {
@@ -542,7 +534,7 @@ class Dao extends Model\Element\Dao
                     return true;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for document ' . $this->model->getId());
         }
 
@@ -550,11 +542,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -564,7 +554,6 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param int $index
      */
     public function saveIndex(int $index): void
     {
@@ -578,7 +567,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return int
      */
     public function getNextIndex(): int
     {

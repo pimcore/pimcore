@@ -17,6 +17,8 @@ namespace Pimcore\Model\Property;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function is_array;
+use function is_object;
 
 /**
  * @internal
@@ -42,6 +44,14 @@ class Dao extends Model\Dao\AbstractDao
 
         if (is_array($data) || is_object($data)) {
             $data = \Pimcore\Tool\Serialize::serialize($data);
+        }
+
+        $cpath = $this->model->getCpath();
+        if(empty($cpath)) {
+            $element = Model\Element\Service::getElementById($this->model->getCtype(), $this->model->getCid());
+            if($element instanceof Model\Element\ElementInterface) {
+                $cpath = $element->getRealFullPath();
+            }
         }
 
         $saveData = [

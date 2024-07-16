@@ -23,6 +23,7 @@ framework:
     php_errors:
         log: true
     assets: ~
+    http_method_override: false
     mailer:
         enabled: true
         transports:
@@ -34,6 +35,8 @@ framework:
             pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
+            #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
+            #pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
         routing:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
@@ -45,10 +48,10 @@ framework:
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
             'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
+            #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
-        reset_on_message: true
     rate_limiter:
         reset_password:
             policy: 'fixed_window'
@@ -63,24 +66,40 @@ framework:
                 allow_relative_links: true
                 allow_relative_medias: true
                 allow_elements:
-                    span : [ 'class', 'style', 'id' ]
-                    div : [ 'class', 'style', 'id' ]
+                    span: [ 'class', 'style', 'id' ]
+                    div: [ 'class', 'style', 'id' ]
                     p: [ 'class', 'style', 'id' ]
                     strong: 'class'
                     em: 'class'
-                    h1: ['class', 'id']
-                    a: ['class', 'id', 'href', 'target', 'title', 'rel']
-                    table: ['class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id']
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel', 'style' ]
+                    table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
                     colgroup: 'class'
-                    col: ['class', 'style', 'id']
-                    tbody: ['class', 'id']
-                    tr: ['class', 'id']
-                    td: ['class', 'id']
-                    ul: ['class', 'style', 'id']
-                    li: ['class', 'style', 'id']
-                    ol: ['class', 'style', 'id']
+                    col: [ 'class', 'style', 'id' ]
+                    thead: [ 'class', 'id' ]
+                    tbody: [ 'class', 'id' ]
+                    tr: [ 'class', 'id' ]
+                    td: [ 'class', 'id' ]
+                    th: [ 'class', 'id', 'scope' ]
+                    ul: [ 'class', 'style', 'id' ]
+                    li: [ 'class', 'style', 'id' ]
+                    ol: [ 'class', 'style', 'id' ]
+                    u: [ 'class', 'id' ]
+                    i: [ 'class', 'id' ]
+                    b: [ 'class', 'id' ]
+                    caption: [ 'class', 'id' ]
+                    sub: [ 'class', 'id' ]
+                    sup: [ 'class', 'id' ]
+                    blockquote: [ 'class', 'id' ]
+                    s: [ 'class', 'id' ]
+                    iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
-                    img: ['alt', 'style', 'src']
+                    img: [ 'alt', 'style', 'src' ]
             pimcore.translation_sanitizer:
                 allow_attributes:
                     pimcore_type: '*'
@@ -108,6 +127,8 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        document: ~
+        editmode: false
     paths:
         '%kernel.project_dir%/templates': App
 
@@ -169,6 +190,9 @@ pimcore:
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
         type_definitions:
             map:
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.dwg$/", "/\\.stp$/" ]
                 image:
                     class: \Pimcore\Model\Asset\Image
                     matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
@@ -189,9 +213,6 @@ pimcore:
                 video:
                    class: \Pimcore\Model\Asset\Video
                    matching: [ "/video/" ]
-                unknown:
-                    class: \Pimcore\Model\Asset\Unknown
-                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
@@ -316,3 +337,11 @@ pimcore:
 
     gotenberg:
         base_url: 'http://gotenberg:3000'
+
+    config_location:
+        select_options:
+            read_target:
+                type: 'symfony-config'
+
+    dependency:
+        enabled: true

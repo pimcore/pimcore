@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use function count;
+use function in_array;
 
 /**
  * @internal
@@ -27,9 +29,7 @@ trait AllowAssetRelationTrait
     /**
      * Checks if an asset is an allowed relation
      *
-     * @param Asset $asset
      *
-     * @return bool
      *
      * @internal
      */

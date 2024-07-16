@@ -16,17 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Exception;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
-class ResponseException extends \Exception
+class ResponseException extends Exception
 {
     protected Response $response;
 
-    /**
-     * @param Response $response
-     * @param \Exception|null $previous
-     */
-    public function __construct(Response $response, \Exception $previous = null)
+    public function __construct(Response $response, Exception $previous = null)
     {
         parent::__construct('', 0, $previous);
 

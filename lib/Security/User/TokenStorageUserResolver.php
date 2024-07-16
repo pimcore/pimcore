@@ -18,6 +18,7 @@ namespace Pimcore\Security\User;
 use Pimcore\Model\User;
 use Pimcore\Security\User\User as UserProxy;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use function is_object;
 
 /**
  * Resolves the current pimcore user from the token storage.
@@ -45,7 +46,6 @@ class TokenStorageUserResolver
      *
      * The proxy is the wrapping Pimcore\Security\User\User object implementing UserInterface.
      *
-     * @return UserProxy|null
      */
     public function getUserProxy(): ?\Pimcore\Security\User\User
     {

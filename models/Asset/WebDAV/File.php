@@ -16,11 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Exception;
 use Pimcore\File as FileHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
+use function is_resource;
 
 /**
  * @internal
@@ -45,7 +47,7 @@ class File extends DAV\File
      * @return $this
      *
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function setName($name): static
     {
@@ -64,7 +66,7 @@ class File extends DAV\File
 
     /**
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -100,7 +102,7 @@ class File extends DAV\File
      * @param resource $data
      *
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      *
      * @return null
      */
@@ -146,7 +148,6 @@ class File extends DAV\File
     /**
      * Get a hash of the file for an unique identifier
      *
-     * @return string
      */
     public function getETag(): string
     {
@@ -156,7 +157,6 @@ class File extends DAV\File
     /**
      * Returns the mimetype of the asset
      *
-     * @return string
      */
     public function getContentType(): string
     {
@@ -166,7 +166,6 @@ class File extends DAV\File
     /**
      * Get size of file in bytes
      *
-     * @return int
      */
     public function getSize(): int
     {

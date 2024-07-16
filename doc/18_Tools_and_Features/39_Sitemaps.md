@@ -51,7 +51,7 @@ For details see:
 
 * [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/2-configuration.md#configuring-your-application-base-url)
 * [Symfony Documentation on the Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands)
-* [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php)
+* [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/UrlGenerator.php)
 
 
 ## Sitemap Generators
@@ -63,7 +63,7 @@ which is expected to add entries to the URL container:
 ```php
 <?php
 
-namespace Pimcore\Sitemap;
+namespace Pimcore\Bundle\SeoBundle\Sitemap;
 
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 
@@ -76,13 +76,13 @@ interface GeneratorInterface
 }
 ```
 
-When the sitemap bundle fires its `SitemapPopulateEvent::ON_SITEMAP_POPULATE` event, Pimcore will iterate through every
+When the sitemap bundle fires its `SitemapPopulateEvent::class` event, Pimcore will iterate through every
 registered generator and call the `populate()` method. To make a generator available to the event handler, it needs to be
 registered via config. `generator_id` in the config below references a generator which was previously registered
 as service. As you can see, generators can be enabled/disabled and ordered by priority.
 
 ```yaml
-pimcore:
+pimcore_seo:
     sitemaps:
         generators:
             app_news:
@@ -102,25 +102,29 @@ pimcore:
 For more advanced use cases involving Pimcore models, Pimcore defines an `AbstractElementGenerator` which is extendable
 via pluggable filters and processors. This makes it possible to define reusable behaviour in a filter/processor which can
 be used from multiple generators. A **filter** determines if an element can be added to the sitemap and if it is able to handle children (it's up to the
-generator to query for this information). For example the [PropertiesFilter](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Element/Filter/PropertiesFilter.php)
-excludes elements with a property `sitemaps_exclude`. A **processor** can enhance an entry before it is added to the container. For example, the [ModificationDateProcessor](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Element/Processor/ModificationDateProcessor.php)
+generator to query for this information). For example the [PropertiesFilter](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Element/Filter/PropertiesFilter.php)
+excludes elements with a property `sitemaps_exclude`. A **processor** can enhance an entry before it is added to the container. For example, the [ModificationDateProcessor](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Element/Processor/ModificationDateProcessor.php)
 adds the modification date of an element to the url.
 
-Which filters and processors to use can be defined on the generator level. For example, the [`DocumentTreeGenerator`](#page_The-DocumentTreeGenerator)
+Which filters and processors to use can be defined on the generator level. For example, the [`DocumentTreeGenerator`](#the-documenttreegenerator)
 which is enabled by default is defined as follows:
 
 ```yaml
 services:
-    Pimcore\Sitemap\Document\DocumentTreeGenerator:
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentTreeGenerator:
         arguments:
             $filters:
-                - '@Pimcore\Sitemap\Element\Filter\PublishedFilter'
-                - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
-                - '@Pimcore\Sitemap\Document\Filter\DocumentTypeFilter'
-                - '@Pimcore\Sitemap\Document\Filter\SiteRootFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PublishedFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PropertiesFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\DocumentTypeFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\SiteRootFilter'
             $processors:
-                - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
-                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor'
+            $options:
+                handleMainDomain: true
+                handleCurrentSite: false
+                handleSites: true
 ```
 
 If you need to influence the behaviour of the document tree sitemap either overwrite the core service definition or define
@@ -130,23 +134,23 @@ as service and can directly be consumed.
 
 | Filter                                               | Description                                                                                                                                                                                                                                                                                                        |
 |------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Pimcore\Sitemap\Element\Filter\PropertiesFilter`    | Excludes elements with the boolean property `sitemaps_exclude` set to true and excludes children handling of elements with the boolean property `sitemaps_exclude_children` set to true.                                                                                                                           |
-| `Pimcore\Sitemap\Element\Filter\PublishedFilter`     | Excludes unpublished elements.                                                                                                                                                                                                                                                                                     |
-| `Pimcore\Sitemap\Document\Filter\DocumentTypeFilter` | Used by the `DocumentTreeGenerator`. Excludes documents not matching the list of defined types and handles children only for defined types.                                                                                                                                                                        |
-| `Pimcore\Sitemap\Document\Filter\SiteRootFilter`     | Used by the `DocumentTreeGenerator`. Excludes documents which are root documents of a site when the currently processed site doesn't match the document. E.g. if a document is a site root and the main site is currently processed, it will be excluded for the main site, but later be used for the actual site. |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PropertiesFilter`    | Excludes elements with the boolean property `sitemaps_exclude` set to true and excludes children handling of elements with the boolean property `sitemaps_exclude_children` set to true.                                                                                                                           |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PublishedFilter`     | Excludes unpublished elements.                                                                                                                                                                                                                                                                                     |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\DocumentTypeFilter` | Used by the `DocumentTreeGenerator`. Excludes documents not matching the list of defined types and handles children only for defined types.                                                                                                                                                                        |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\SiteRootFilter`     | Used by the `DocumentTreeGenerator`. Excludes documents which are root documents of a site when the currently processed site doesn't match the document. E.g. if a document is a site root and the main site is currently processed, it will be excluded for the main site, but later be used for the actual site. |
 
 | Processor                                                     | Description                                                                                                                                                                     |
 |---------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Pimcore\Sitemap\Element\Processor\ModificationDateProcessor` | Adds the modification date of an element as `lastmod` property.                                                                                                                 |
-| `Pimcore\Sitemap\Element\Processor\PropertiesProcessor`       | Reads the properties `sitemaps_changefreq` and `sitemaps_priority` if set on the element and adds them to the sitemap entry to easily set those properties on an element level. |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor` | Adds the modification date of an element as `lastmod` property.                                                                                                                 |
+| `Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor`       | Reads the properties `sitemaps_changefreq` and `sitemaps_priority` if set on the element and adds them to the sitemap entry to easily set those properties on an element level. |
 
 
 #### The DocumentTreeGenerator
 
-Pimcore ships a default generator for documents implemented in [`DocumentTreeGenerator`](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/Document/DocumentTreeGenerator.php).
+Pimcore ships a default generator for documents implemented in [`DocumentTreeGenerator`](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Document/DocumentTreeGenerator.php).
 This generator iterates the whole document tree and adds entries for every document while taking care of handling sites and
-hardlinks. It uses the the host names configured as main/site domain and falls back to the request context host by using
-the [url generator service](#page_Generating-absolute-URLs). You can either disable the default generator completely as shown in the example above or define your own service using the
+hardlinks. It uses the host names configured as main/site domain and falls back to the request context host by using
+the [url generator service](#generating-absolute-urls). You can either disable the default generator completely as shown in the example above or define your own service using the
 `DocumentTreeGenerator` class with your own filters/processors. The default service definition can be found in
 [sitemaps.yaml in the CoreBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/config/sitemaps.yaml).
 
@@ -163,8 +167,8 @@ could look like the following:
 namespace App\Sitemaps;
 
 use Pimcore\Model\DataObject\BlogArticle;
-use Pimcore\Sitemap\Element\AbstractElementGenerator;
-use Pimcore\Sitemap\Element\GeneratorContext;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\AbstractElementGenerator;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContext;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -246,11 +250,11 @@ services:
     App\Sitemaps\BlogGenerator:
         arguments:
             $filters:
-                - '@Pimcore\Sitemap\Element\Filter\PublishedFilter'
-                - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PublishedFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PropertiesFilter'
             $processors:
-                - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
-                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor'
 ```
 
 Make the generator available to the core listener by registering it on the configuration:
@@ -258,7 +262,7 @@ Make the generator available to the core listener by registering it on the confi
 ```yaml
 # config.yaml
 
-pimcore:
+pimcore_seo:
     sitemaps:
         generators:
             app_blog:
@@ -277,8 +281,8 @@ date older than a year could look like the following:
 namespace App\Sitemaps\Filter;
 
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\FilterInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 
 class AgeFilter implements FilterInterface
 {
@@ -337,8 +341,8 @@ to each entry.
 namespace App\Sitemaps\Processor;
 
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
-use Pimcore\Sitemap\Element\ProcessorInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 
@@ -382,7 +386,7 @@ services:
 
 ### Generating absolute URLs
 
-To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
+To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands).
 See core processors/generators and [demo](https://github.com/pimcore/demo/tree/11.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
@@ -393,9 +397,9 @@ for details. As example how to use the URL generator in a processor:
 namespace App\Sitemaps\Processor;
 
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
-use Pimcore\Sitemap\Element\ProcessorInterface;
-use Pimcore\Sitemap\UrlGeneratorInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 
@@ -417,4 +421,3 @@ class RandomPathProcessor implements ProcessorInterface
     }
 }
 ```
-

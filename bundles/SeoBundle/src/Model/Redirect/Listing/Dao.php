@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 use Pimcore\Model;
@@ -29,7 +30,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Redirect elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM redirects ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

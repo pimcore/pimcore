@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -42,9 +43,6 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -79,18 +77,16 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     /**
      * Do context specific initialization
      *
-     * @param string $context
-     * @param Request $request
      */
     protected function initializeContext(string $context, Request $request): void
     {
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
-            \Pimcore::setAdminMode();
+            Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
             DataObject::setHideUnpublished(false);
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
-            \Pimcore::unsetAdminMode();
+            Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
             DataObject::setHideUnpublished(true);
             DataObject::setGetInheritedValues(true);

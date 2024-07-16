@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Symfony\Component\DomCrawler\Crawler;
+use function is_string;
 
 /**
  * @internal
@@ -27,9 +28,6 @@ class DomCrawler extends Crawler
 
     private bool $wrappedHtmlFragment = false;
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct($node = null, string $uri = null, string $baseHref = null)
     {
         if (is_string($node)) {
@@ -44,9 +42,6 @@ class DomCrawler extends Crawler
         parent::__construct($node, $uri, $baseHref);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function html(string $default = null): string
     {
         if ($this->wrappedHtmlFragment) {

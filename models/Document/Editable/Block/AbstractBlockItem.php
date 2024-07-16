@@ -17,27 +17,25 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable\Block;
 
 use Pimcore\Model\Document;
+use function get_class;
 
 abstract class AbstractBlockItem
 {
     /**
      * @internal
      *
-     * @var Document\PageSnippet
      */
     protected Document\PageSnippet $document;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $parentBlockNames;
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $index;
 

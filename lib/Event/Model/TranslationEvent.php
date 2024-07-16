@@ -29,7 +29,6 @@ class TranslationEvent extends Event
     /**
      * AssetEvent constructor.
      *
-     * @param Translation $translation
      * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
     public function __construct(Translation $translation, array $arguments = [])

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Pimcore;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -34,8 +35,11 @@ class AdminStyle
 
     protected ?array $elementQtipConfig = null;
 
+    protected ?string $elementText = null;
+
     public function __construct(ElementInterface $element)
     {
+        $this->setElementText($element->getKey());
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
@@ -66,7 +70,7 @@ class AdminStyle
 
                 $fileExt = pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 if ($fileExt) {
-                    $this->elementIconClass .= ' pimcore_icon_' . pathinfo($element->getFilename(), PATHINFO_EXTENSION);
+                    $this->elementIconClass .= ' pimcore_icon_' . strtolower(pathinfo($element->getFilename(), PATHINFO_EXTENSION));
                 }
             }
         } elseif ($element instanceof Document) {
@@ -82,7 +86,7 @@ class AdminStyle
                 $site = Site::getByRootId($element->getId());
 
                 if ($site instanceof Site) {
-                    $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
+                    $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
@@ -161,5 +165,15 @@ class AdminStyle
     public function setElementQtipConfig(?array $elementQtipConfig): void
     {
         $this->elementQtipConfig = $elementQtipConfig;
+    }
+
+    public function getElementText(): ?string
+    {
+        return $this->elementText;
+    }
+
+    public function setElementText(?string $elementText): void
+    {
+        $this->elementText = $elementText;
     }
 }

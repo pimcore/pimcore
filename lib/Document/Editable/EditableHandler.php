@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
+use Exception;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
@@ -40,6 +41,7 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function in_array;
 
 /**
  * @internal
@@ -132,7 +134,7 @@ class EditableHandler implements LoggerAwareInterface
                         // build URL to icon
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $icon = '';
                 }
             }
@@ -239,9 +241,7 @@ class EditableHandler implements LoggerAwareInterface
      * Try to get the brick template from getTemplate() method. If method returns null and brick implements
      * TemplateAreabrickInterface, fall back to auto-resolving the template reference. See interface for examples.
      *
-     * @param AreabrickInterface $brick
      *
-     * @return null|string
      */
     protected function resolveBrickTemplate(AreabrickInterface $brick): ?string
     {
@@ -272,9 +272,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * Return either bundle or global (= app/Resources) template reference
      *
-     * @param TemplateAreabrickInterface $brick
      *
-     * @return string
      */
     protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick): string
     {

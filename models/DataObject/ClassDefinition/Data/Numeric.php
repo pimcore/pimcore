@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function in_array;
+use function is_null;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
@@ -47,7 +50,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float|int|string|null
      */
     public string|int|null|float $defaultValue = null;
 
@@ -64,14 +66,12 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $minValue = null;
 
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $maxValue = null;
 
@@ -87,7 +87,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @internal
      *
-     * @var int|null
      */
     public ?int $decimalSize = null;
 
@@ -97,7 +96,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @internal
      *
-     * @var int|null
      */
     public ?int $decimalPrecision = null;
 
@@ -256,15 +254,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if ($precision < 1 || $precision > 65) {
-            throw new \InvalidArgumentException('Decimal precision must be a value between 1 and 65');
+            throw new InvalidArgumentException('Decimal precision must be a value between 1 and 65');
         }
 
         if ($scale < 0 || $scale > 30 || $scale > $precision) {
-            throw new \InvalidArgumentException('Decimal scale must be a value between 0 and 30');
+            throw new InvalidArgumentException('Decimal scale must be a value between 0 and 30');
         }
 
         if ($scale > $precision) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Decimal scale can\'t be larger than precision (%d)',
                 $precision
             ));
@@ -274,11 +272,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -294,11 +288,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -313,11 +303,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
@@ -330,11 +316,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return float|int|string|null
      *
      * @see Data::getDataForEditmode
      */
@@ -344,11 +326,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|int|string|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -358,11 +336,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
      *
      * @see Data::getVersionPreview
      */
@@ -371,9 +345,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return (string) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -391,7 +362,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 throw new Model\Element\ValidationException('Value exceeds PHP_INT_MAX please use an input data type instead of numeric!');
             }
 
-            if ($this->getInteger() && strpos((string) $data, '.') !== false) {
+            if ($this->getInteger() && str_contains((string)$data, '.')) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
             }
 
@@ -409,9 +380,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params) ?? '';
@@ -422,11 +390,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -449,12 +414,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 
+        if ($operator === 'in') {
+            $formattedValues = implode(',', array_map(floatval(...), explode(',', $value)));
+
+            return $key . ' ' . $operator . ' (' . $formattedValues . ')';
+        }
+
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -467,22 +435,23 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     private function toNumeric(mixed $value): float|int|string
     {
+        if ($this->getInteger()) {
+            return (int) $value;
+        }
+
         $value = str_replace(',', '.', (string) $value);
 
         if ($this->isDecimalType()) {
             return $value;
         }
 
-        if (strpos($value, '.') === false) {
+        if (!str_contains($value, '.')) {
             return (int) $value;
         }
 
         return (float) $value;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if (!is_null($data) && $this->getDecimalPrecision()) {
@@ -492,9 +461,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

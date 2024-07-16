@@ -39,6 +39,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Renderer;
 
+use Exception;
 use Pimcore\Navigation\Container;
 
 interface RendererInterface
@@ -51,11 +52,9 @@ interface RendererInterface
     public function setRenderInvisible(bool $renderInvisible = true): static;
 
     /**
-     * @param Container $container
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function render(Container $container): string;
 }

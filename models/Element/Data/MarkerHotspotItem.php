@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element\Data;
 
+use ArrayAccess;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
  */
-class MarkerHotspotItem implements \ArrayAccess
+class MarkerHotspotItem implements ArrayAccess
 {
     public string $name = '';
 
@@ -72,7 +74,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -82,7 +83,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -99,7 +99,6 @@ class MarkerHotspotItem implements \ArrayAccess
 
     /**
      * @param string $offset
-     * @param mixed $value
      */
     public function offsetSet($offset, mixed $value): void
     {

@@ -27,9 +27,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UrlSlugUpdateListener implements EventSubscriberInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -46,7 +43,7 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
         $data = $event->getData();
         // check for previous slugs and create redirects
-        if (!is_array($data) || !$pimcore_seo_redirects['auto_create_redirects']) {
+        if (!$pimcore_seo_redirects['auto_create_redirects']) {
             return;
         }
 

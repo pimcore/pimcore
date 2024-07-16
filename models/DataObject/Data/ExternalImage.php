@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function is_null;
 
 class ExternalImage implements OwnerAwareFieldInterface
 {
@@ -25,9 +26,6 @@ class ExternalImage implements OwnerAwareFieldInterface
 
     protected ?string $url = null;
 
-    /**
-     * @param string|null $url
-     */
     public function __construct(string $url = null)
     {
         $this->url = $url;

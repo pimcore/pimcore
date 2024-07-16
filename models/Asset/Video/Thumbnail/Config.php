@@ -16,8 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
+use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model;
+use function array_key_exists;
+use function is_array;
 
 /**
  * @method bool isWriteable()
@@ -44,79 +47,67 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     public array $medias = [];
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $group = '';
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $videoBitrate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $audioBitrate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     public ?string $filenameSuffix = null;
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?Config
     {
@@ -125,9 +116,9 @@ final class Config extends Model\AbstractModel
         try {
             $thumbnail = RuntimeCache::get($cacheKey);
             if (!$thumbnail) {
-                throw new \Exception('Thumbnail in registry is null');
+                throw new Exception('Thumbnail in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Video\Thumbnail\Config\Dao $dao */
@@ -145,7 +136,6 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return Config
      */
     public static function getPreviewConfig(): Config
     {
@@ -175,11 +165,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      *
      * @internal
      */
@@ -340,20 +326,17 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public function getEstimatedDimensions(): array
     {
         $dimensions = [];
         $transformations = $this->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    if (is_array($transformation['arguments'])) {
-                        foreach ($transformation['arguments'] as $key => $value) {
-                            if ($key == 'width' || $key == 'height') {
-                                $dimensions[$key] = $value;
-                            }
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                if (is_array($transformation['arguments'])) {
+                    foreach ($transformation['arguments'] as $key => $value) {
+                        if ($key == 'width' || $key == 'height') {
+                            $dimensions[$key] = $value;
                         }
                     }
                 }

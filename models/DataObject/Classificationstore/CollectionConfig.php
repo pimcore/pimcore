@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
@@ -35,7 +36,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Store ID
      *
-     * @var int
      */
     protected int $storeId = 1;
 
@@ -44,7 +44,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * The collection description.
      *
-     * @var string
      */
     protected string $description = '';
 
@@ -79,13 +78,9 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param int $storeId
-     * @param bool|null $force
      *
-     * @return self|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $storeId = 1, ?bool $force = false): ?CollectionConfig
     {
@@ -151,7 +146,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -161,7 +155,6 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\CollectionConfig
      */

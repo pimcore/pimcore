@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 class Geopoint extends AbstractGeo implements
     ResourcePersistenceAwareInterface,
@@ -30,11 +31,7 @@ class Geopoint extends AbstractGeo implements
     NormalizerInterface
 {
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -55,11 +52,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\GeoCoordinates|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -82,11 +75,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -96,11 +85,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -118,11 +103,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\GeoCoordinates|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -136,11 +117,8 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
@@ -148,11 +126,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -166,9 +140,6 @@ class Geopoint extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -184,9 +155,6 @@ class Geopoint extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -220,20 +188,14 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param DataObject\Data\GeoCoordinates|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?DataObject\Data\GeoCoordinates $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Translation;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
@@ -27,6 +28,10 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function array_key_exists;
+use function call_user_func_array;
+use function get_class;
+use function strlen;
 
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface
 {
@@ -43,7 +48,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * the message. Can be useful for debugging and to get an overview over used translation keys on
      * a page.
      *
-     * @var bool
      */
     protected bool $disableTranslations = false;
 
@@ -58,11 +62,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $id = trim($id);
@@ -107,9 +106,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $term;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLocale(string $locale): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -117,11 +113,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
     public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -131,11 +122,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return MessageCatalogueInterface
-     */
     public function getCatalogue(string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
@@ -152,8 +138,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @param string $domain
-     * @param string $locale
      */
     public function lazyInitialize(string $domain, string $locale): void
     {
@@ -233,10 +217,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * Resets the initialization of a specific catalogue
      *
-     * @param string $domain
-     * @param string $locale
      *
-     * @return void
      */
     public function resetInitialization(string $domain, string $locale): void
     {
@@ -253,7 +234,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale): string
     {
@@ -264,7 +245,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $normalizedId = $id;
 
         //translate only plural form(seperated by pipe "|") with count param
-        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
+        if (isset($parameters['%count%']) && $translated && str_contains($normalizedId, '|')) {
             $normalizedId = $id = $translated;
             $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
@@ -280,7 +261,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
             } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
-                    throw new \Exception("Message ID's longer than 190 characters are invalid!");
+                    throw new Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
                 // no translation found create key
@@ -299,8 +280,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         $t->setKey($id);
 
                         // add all available languages
-                        $availableLanguages = Translation::getValidLanguages();
-                        foreach ($availableLanguages as $language) {
+                        foreach (Translation::getValidLanguages() as $language) {
                             $t->addTranslation($language, '');
                         }
                     }
@@ -341,7 +321,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return string
      */
     public function getAdminPath(): string
     {
@@ -349,7 +328,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param string $adminPath
      *
      * @internal
      */
@@ -361,7 +339,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return array
      */
     public function getAdminTranslationMapping(): array
     {
@@ -371,7 +348,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @param array $adminTranslationMapping
      */
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
     {
@@ -381,7 +357,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @internal
      *
-     * @return Kernel
      */
     public function getKernel(): Kernel
     {
@@ -389,7 +364,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param Kernel $kernel
      *
      * @internal
      */
@@ -431,7 +405,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param string $cacheDir
      *
      * @return string[]
      */

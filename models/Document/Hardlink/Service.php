@@ -16,19 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Hardlink;
 
+use Exception;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
-use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Tool\Serialize;
+use function dirname;
+use function get_class;
+use function strlen;
 
 class Service
 {
     /**
-     * @param Document $doc
      *
-     * @return WrapperInterface|Hardlink|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function wrap(Document $doc): Wrapper\WrapperInterface|Wrapper\Hardlink|null
     {
@@ -60,8 +61,6 @@ class Service
      *
      * @static
      *
-     * @param Document $doc
-     *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
@@ -84,12 +83,9 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
-     * @return WrapperInterface|Hardlink|null
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      *
@@ -120,12 +116,9 @@ class Service
     }
 
     /**
-     * @param Document\Hardlink $hardlink
-     * @param string $path
      *
-     * @return WrapperInterface|Hardlink|null
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */

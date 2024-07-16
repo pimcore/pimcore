@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool\Requirements;
 
+use ArrayAccess;
+
 /**
  * @internal
  */
-final class Check implements \ArrayAccess
+final class Check implements ArrayAccess
 {
     const STATE_OK = 1;
 
@@ -89,7 +91,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -99,7 +100,6 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string|int|null
      */
     public function offsetGet($offset): string|int|null
     {

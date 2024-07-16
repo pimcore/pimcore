@@ -39,14 +39,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
+use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function count;
+use function is_array;
+use function is_string;
 
 /**
  * HeadLink
@@ -70,7 +75,6 @@ class HeadLink extends CacheBusterAware
     /**
      * $_validAttributes
      *
-     * @var array
      */
     protected array $_itemKeys = [
         'charset',
@@ -103,8 +107,6 @@ class HeadLink extends CacheBusterAware
      *
      * Use PHP_EOL as separator
      *
-     * @param ContainerService $containerService
-     * @param WebLinkExtension $webLinkExtension
      */
     public function __construct(
         ContainerService $containerService,
@@ -122,8 +124,6 @@ class HeadLink extends CacheBusterAware
      * Returns current object instance. Optionally, allows passing array of
      * values to build link.
      *
-     * @param array|null $attributes
-     * @param string $placement
      *
      * @return $this
      */
@@ -207,13 +207,11 @@ class HeadLink extends CacheBusterAware
     /**
      * Check if value is valid
      *
-     * @param  mixed $value
      *
-     * @return bool
      */
     protected function _isValid(mixed $value): bool
     {
-        if (!$value instanceof \stdClass) {
+        if (!$value instanceof stdClass) {
             return false;
         }
 
@@ -230,9 +228,8 @@ class HeadLink extends CacheBusterAware
     /**
      * append()
      *
-     * @param  \stdClass $value
+     * @param  stdClass $value
      *
-     * @return void
      */
     public function append($value): void
     {
@@ -247,9 +244,7 @@ class HeadLink extends CacheBusterAware
      * offsetSet()
      *
      * @param  string|int $offset
-     * @param mixed $value
      *
-     * @return void
      */
     public function offsetSet($offset, mixed $value): void
     {
@@ -263,7 +258,7 @@ class HeadLink extends CacheBusterAware
     /**
      * prepend()
      *
-     * @param \stdClass $value
+     * @param stdClass $value
      */
     public function prepend($value): void
     {
@@ -277,7 +272,7 @@ class HeadLink extends CacheBusterAware
     /**
      * set()
      *
-     * @param \stdClass $value
+     * @param stdClass $value
      */
     public function set($value): void
     {
@@ -291,11 +286,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create HTML link element from data item
      *
-     * @param  \stdClass $item
      *
-     * @return string
      */
-    public function itemToString(\stdClass $item): string
+    public function itemToString(stdClass $item): string
     {
         $attributes = (array) $item;
         $link = '<link ';
@@ -333,9 +326,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Render link elements as string
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {
@@ -373,7 +364,7 @@ class HeadLink extends CacheBusterAware
             $event = new GenericEvent($this, [
                 'item' => $item,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
 
             $source = $item->href ?? '';
             $itemAttributes = isset($item->extras) ? $item->extras : [];
@@ -391,11 +382,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create data item for stack
      *
-     * @param  array $attributes
      *
-     * @return \stdClass
      */
-    public function createData(array $attributes): \stdClass
+    public function createData(array $attributes): stdClass
     {
         $data = (object) $attributes;
 
@@ -405,11 +394,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for stylesheet link item
      *
-     * @param  array $args
-     *
-     * @return \stdClass|false Returns fals if stylesheet is a duplicate
+     * @return stdClass|false Returns false if stylesheet is a duplicate
      */
-    public function createDataStylesheet(array $args): bool|\stdClass
+    public function createDataStylesheet(array $args): bool|stdClass
     {
         $rel = 'stylesheet';
         $type = 'text/css';
@@ -432,9 +419,7 @@ class HeadLink extends CacheBusterAware
         }
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
-            if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
-                $conditionalStylesheet = $conditionalStylesheet;
-            } else {
+            if (empty($conditionalStylesheet) || !is_string($conditionalStylesheet)) {
                 $conditionalStylesheet = null;
             }
         }
@@ -452,9 +437,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Is the linked stylesheet a duplicate?
      *
-     * @param string $uri
      *
-     * @return bool
      */
     protected function _isDuplicateStylesheet(string $uri): bool
     {
@@ -470,11 +453,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for alternate link item
      *
-     * @param  array $args
      *
-     * @return \stdClass
      */
-    public function createDataAlternate(array $args): \stdClass
+    public function createDataAlternate(array $args): stdClass
     {
         if (3 > count($args)) {
             throw new Exception(sprintf('Alternate tags require 3 arguments; %s provided', count($args)));
@@ -507,9 +488,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Apply any overrides specified in the 'extras' array
      *
-     * @param array $attributes
      *
-     * @return array
      */
     protected function _applyExtras(array $attributes): array
     {

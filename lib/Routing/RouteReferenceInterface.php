@@ -23,14 +23,12 @@ interface RouteReferenceInterface
     /**
      * Get route name
      *
-     * @return string
      */
     public function getRoute(): string;
 
     /**
      * Get parameters to use when generating the route
      *
-     * @return array
      */
     public function getParameters(): array;
 
@@ -39,7 +37,6 @@ interface RouteReferenceInterface
      *
      * @see UrlGeneratorInterface
      *
-     * @return int
      */
     public function getType(): int;
 }

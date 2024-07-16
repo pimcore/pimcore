@@ -17,10 +17,14 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
 use Doctrine\DBAL\Exception\SyntaxErrorException;
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
@@ -30,6 +34,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\AdminStyle;
@@ -39,6 +44,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function strlen;
 
 /**
  * @Route("/search")
@@ -119,7 +128,7 @@ class SearchController extends UserAwareController
 
             foreach ($fields as $f) {
                 $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
+                if (str_starts_with($f, '~')) {
                     //                    $type = $parts[1];
                     //                    $field = $parts[2];
                     //                    $keyid = $parts[3];
@@ -133,6 +142,7 @@ class SearchController extends UserAwareController
         // filtering for objects
         if (!empty($allParams['filter']) && !empty($allParams['class'])) {
             $class = DataObject\ClassDefinition::getByName($allParams['class']);
+            $localizedFields = $class->getFieldDefinition('localizedfields');
 
             // add Localized Fields filtering
             $params = $this->decodeJson($allParams['filter']);
@@ -141,12 +151,12 @@ class SearchController extends UserAwareController
 
             foreach ($params as $paramConditionObject) {
                 //this loop divides filter parameters to localized and unlocalized groups
-                $definitionExists = in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())
-                    || $class->getFieldDefinition($paramConditionObject['property']);
-                if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
+                if (in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } else {
+                } elseif ($localizedFields instanceof Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
                     $localizedFieldsFilters[] = $paramConditionObject;
+                } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 
@@ -187,7 +197,7 @@ class SearchController extends UserAwareController
             }
         }
 
-        if (is_array($types) && !empty($types[0])) {
+        if ($types[0]) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -198,7 +208,7 @@ class SearchController extends UserAwareController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) && !empty($subtypes[0])) {
+        if ($subtypes[0]) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -206,7 +216,7 @@ class SearchController extends UserAwareController
             $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) && !empty($classnames[0])) {
+        if ($classnames[0]) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -222,15 +232,13 @@ class SearchController extends UserAwareController
             $tagIds = $allParams['tagIds'];
 
             $tagsTypeCondition = '';
-            if (is_array($types) && !empty($types[0])) {
+            if ($types[0]) {
                 $tagsTypeCondition = 'ctype IN (\'' . implode('\',\'', $types) . '\') AND';
-            } elseif (!is_array($types)) {
-                $tagsTypeCondition = 'ctype = ' . $db->quote($types) . ' AND ';
             }
 
             foreach ($tagIds as $tagId) {
                 if (($allParams['considerChildTags'] ?? 'false') === 'true') {
-                    $tag = Element\Tag::getById($tagId);
+                    $tag = Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
                         $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote(Helper::escapeLike($tagPath) . '%') . '))';
@@ -325,20 +333,30 @@ class SearchController extends UserAwareController
         try {
             $hits = $searcherList->load();
         } catch (SyntaxErrorException $syntaxErrorException) {
-            throw new \InvalidArgumentException('Check your arguments.');
+            throw new InvalidArgumentException('Check your arguments.');
         }
 
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed('list')) {
+
                 $data = null;
-                if ($element instanceof DataObject\AbstractObject) {
-                    $data = DataObject\Service::gridObjectData($element, $fields);
-                } elseif ($element instanceof Document) {
-                    $data = Document\Service::gridDocumentData($element);
-                } elseif ($element instanceof Asset) {
-                    $data = Asset\Service::gridAssetData($element);
+                if (class_exists(GridData\DataObject::class)) {
+                    $data = match (true) {
+                        $element instanceof DataObject\AbstractObject => GridData\DataObject::getData($element, $fields),
+                        // @phpstan-ignore-next-line checking dataObject once is enough
+                        $element instanceof Document => GridData\Document::getData($element),
+                        // @phpstan-ignore-next-line otherwise have to do class_exists for each element type
+                        $element instanceof Asset => GridData\Asset::getData($element),
+                        default => null
+                    };
+                } else {
+                    // TODO: remove in pimcore/pimcore 12.0, kept only to avoid conflicting admin ui classic bundle < 1.5
+                    $data = match (true) {
+                        $element instanceof DataObject\AbstractObject => DataObject\Service::gridObjectData($element, $fields),
+                        default => null
+                    };
                 }
 
                 if ($data) {
@@ -382,9 +400,7 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param array $types
      *
-     * @return string
      *
      * @internal
      */
@@ -471,10 +487,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return JsonResponse
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -546,10 +559,7 @@ class SearchController extends UserAwareController
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
      *
-     * @param Request $request
-     * @param Config $config
      *
-     * @return JsonResponse
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
@@ -618,16 +628,13 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @param ElementInterface $element
-     * @param int|null $context
-     * @param array $data
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
     {
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
-        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();
 
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;

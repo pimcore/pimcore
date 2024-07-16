@@ -32,8 +32,6 @@ class ResolveUploadTargetEvent extends Event
     /**
      * ResolveUploadTargetEvent constructor.
      *
-     * @param int $parentId
-     * @param string $filename
      * @param array $context contextual information
      */
     public function __construct(int $parentId, string $filename, array $context)

@@ -31,7 +31,6 @@ trait OwnerAwareFieldTrait
     protected ?string $_language = null;
 
     /**
-     * @param mixed $owner
      *
      * @return $this
      *
@@ -62,8 +61,6 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      *
-     * @param string|null $fieldname
-     *
      * @return $this;
      */
     public function _setOwnerFieldname(?string $fieldname): static
@@ -75,8 +72,6 @@ trait OwnerAwareFieldTrait
 
     /**
      * @internal
-     *
-     * @param string|null $language
      *
      * @return $this
      */

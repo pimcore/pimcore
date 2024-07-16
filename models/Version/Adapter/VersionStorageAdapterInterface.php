@@ -20,21 +20,12 @@ use Pimcore\Model\Version;
 
 interface VersionStorageAdapterInterface
 {
-    /**
-     * @param int|null $metaDataSize
-     * @param int|null $binaryDataSize
-     *
-     * @return string
-     */
     public function getStorageType(int $metaDataSize = null,
         int $binaryDataSize = null): string;
 
     /**
-     * @param Version $version
-     * @param string $metaData
      * @param resource|null $binaryDataStream
      *
-     * @return void
      */
     public function save(Version $version, string $metaData, mixed $binaryDataStream): void;
 

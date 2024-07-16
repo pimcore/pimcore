@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tool\UserTimezone;
+use function is_array;
 
 class DateRange extends Data implements
     ResourcePersistenceAwareInterface,
@@ -46,7 +48,6 @@ class DateRange extends Data implements
     ];
 
     /**
-     * @param DataObject\Concrete|null $object
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -74,7 +75,6 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param null|DataObject\Concrete $object
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -99,11 +99,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -113,11 +109,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -137,17 +129,13 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return CarbonPeriod|null
      *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
-        if (\is_array($data) && isset($data['start_date'], $data['end_date'])) {
+        if (is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
             $endDate = $this->getDateFromTimestamp($data['end_date'] / 1000);
 
@@ -176,11 +164,7 @@ class DateRange extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -188,14 +172,19 @@ class DateRange extends Data implements
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
-            return $data->toString();
+            /** @var CarbonInterface $startDate */
+            $startDate = UserTimezone::applyTimezone($data->getStartDate());
+            /** @var CarbonInterface $endDate */
+            $endDate = UserTimezone::applyTimezone($data->getEndDate());
+
+            return 'From ' . $startDate->toDateString() . ' to ' . $endDate->toDateString();
         }
 
         return '';
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws Exception
      */
@@ -204,9 +193,9 @@ class DateRange extends Data implements
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data instanceof CarbonPeriod) {
-            $dates = $data->map(static fn (Carbon $date) => $date->format('Y-m-d'));
+            $dates = $data->map(static fn (Carbon $date) => UserTimezone::applyTimezone($date)->format('Y-m-d'));
 
-            return \implode(',', \iterator_to_array($dates));
+            return implode(',', iterator_to_array($dates));
         }
 
         return '';
@@ -217,9 +206,6 @@ class DateRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -236,8 +222,8 @@ class DateRange extends Data implements
 
     public function denormalize(mixed $value, array $params = []): ?CarbonPeriod
     {
-        if (\is_array($value)) {
-            return CarbonPeriod::create(\reset($value), \end($value));
+        if (is_array($value)) {
+            return CarbonPeriod::create(reset($value), end($value));
         }
 
         return null;
@@ -255,9 +241,6 @@ class DateRange extends Data implements
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -273,7 +256,7 @@ class DateRange extends Data implements
         $fieldName = $this->getName();
 
         if (true === $isEmpty && false === $omitMandatoryCheck && $this->getMandatory()) {
-            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $fieldName));
+            throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
         if (false === $isEmpty && false === $omitMandatoryCheck) {
@@ -282,13 +265,13 @@ class DateRange extends Data implements
 
             if (!$startDate instanceof CarbonInterface || !$endDate instanceof CarbonInterface) {
                 throw new ValidationException(
-                    \sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
+                    sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
                 );
             }
 
             if ($startDate->greaterThan($endDate)) {
                 throw new ValidationException(
-                    \sprintf('Start value in field [ %s ] is bigger than the end value', $fieldName)
+                    sprintf('Start value in field [ %s ] is bigger than the end value', $fieldName)
                 );
             }
         }

@@ -5,4 +5,9 @@ just open following URL via your browser or WebDAV client: https://YOUR-DOMAIN/a
 
 As user credentials use any Pimcore Backend user. Permissions for asset access are based on the users permissions.  
 
-There is no additional server configuration necessary to get WebDAV up and running.
+### Nginx configuration
+Please make sure to have the following changes in your project 
+[Nginx configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md):
+```
+location ~* ^(?!/admin|/asset/webdav)(.+?)....
+```

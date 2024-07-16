@@ -39,85 +39,80 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Renderer;
 
+use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
+use RecursiveIteratorIterator;
+use function array_key_exists;
+use function is_array;
+use function is_int;
+use function is_string;
 
 class Menu extends AbstractRenderer
 {
     /**
      * CSS class to use for the ul element
      *
-     * @var string
      */
     protected string $_ulClass = 'navigation';
 
     /**
      * Unique identifier (id) for the ul element
      *
-     * @var string|null
      */
     protected ?string $_ulId = null;
 
     /**
      * CSS class to use for the active elements
      *
-     * @var string
      */
     protected string $_activeClass = 'active';
 
     /**
      * CSS class to use for the parent li element
      *
-     * @var string
      */
     protected string $_parentClass = 'menu-parent';
 
     /**
      * Whether parent li elements should be rendered with parent class
      *
-     * @var bool
      */
     protected bool $_renderParentClass = false;
 
     /**
      * Whether only active branch should be rendered
      *
-     * @var bool
      */
     protected bool $_onlyActiveBranch = false;
 
     /**
      * Whether parents should be rendered when only rendering active branch
      *
-     * @var bool
      */
     protected bool $_renderParents = true;
 
     /**
      * Partial view script to use for rendering menu
      *
-     * @var string|array|null
      */
     protected string|array|null $_template = null;
 
     /**
      * Expand all sibling nodes of active branch nodes
      *
-     * @var bool
      */
     protected bool $_expandSiblingNodesOfActiveBranch = false;
 
     /**
      * Adds CSS class from page to li element
      *
-     * @var bool
      */
     protected bool $_addPageClassToLi = false;
 
     /**
      * Inner indentation string
      *
-     * @var string
      */
     protected string $_innerIndent = '    ';
 
@@ -132,9 +127,7 @@ class Menu extends AbstractRenderer
      */
     public function setUlClass(string $ulClass): static
     {
-        if (is_string($ulClass)) {
-            $this->_ulClass = $ulClass;
-        }
+        $this->_ulClass = $ulClass;
 
         return $this;
     }
@@ -186,9 +179,7 @@ class Menu extends AbstractRenderer
      */
     public function setActiveClass(string $activeClass): static
     {
-        if (is_string($activeClass)) {
-            $this->_activeClass = $activeClass;
-        }
+        $this->_activeClass = $activeClass;
 
         return $this;
     }
@@ -212,9 +203,7 @@ class Menu extends AbstractRenderer
      */
     public function setParentClass(string $parentClass): static
     {
-        if (is_string($parentClass)) {
-            $this->_parentClass = $parentClass;
-        }
+        $this->_parentClass = $parentClass;
 
         return $this;
     }
@@ -355,7 +344,6 @@ class Menu extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param array|string $partial
      *
      * @return $this
      */
@@ -369,7 +357,6 @@ class Menu extends AbstractRenderer
     /**
      * Alias of getTemplate()
      *
-     * @return array|string|null
      */
     public function getPartial(): array|string|null
     {
@@ -409,7 +396,6 @@ class Menu extends AbstractRenderer
      * Returns a flag indicating whether the CSS class from page to be added to
      * li element
      *
-     * @return bool
      */
     public function getAddPageClassToLi(): bool
     {
@@ -740,7 +726,7 @@ class Menu extends AbstractRenderer
         }
 
         // create iterator
-        $iterator = new \RecursiveIteratorIterator($container, \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new RecursiveIteratorIterator($container, RecursiveIteratorIterator::SELF_FIRST);
 
         if (is_int($maxDepth)) {
             $iterator->setMaxDepth($maxDepth);
@@ -753,7 +739,7 @@ class Menu extends AbstractRenderer
             $isActive = $page->isActive(true);
 
             // Set ulClass depth wise if array of classes is supplied.
-            if (\is_array($ulClasses)) {
+            if (is_array($ulClasses)) {
                 $ulClass = $ulClasses[$depth] ?? $ulClasses['default'];
             } else {
                 $ulClass = (string) $ulClasses;
@@ -851,7 +837,7 @@ class Menu extends AbstractRenderer
                 $liClasses[] = $page->getClass();
             }
             // Add CSS class for parents to LI?
-            if ($renderParentClass && $page->hasChildren()) {
+            if ($renderParentClass && $page->hasVisiblePages()) {
                 // Check max depth
                 if ((is_int($maxDepth) && ($depth + 1 < $maxDepth))
                     || !is_int($maxDepth)
@@ -892,7 +878,6 @@ class Menu extends AbstractRenderer
      *
      * Available $options:
      *
-     * @param  Container $container
      * @param  array $options    [optional] options for controlling rendering
      *
      * @return string rendered menu
@@ -951,7 +936,6 @@ class Menu extends AbstractRenderer
      * ));
      * </code>
      *
-     * @param  Container $container
      * @param string|null $ulClass    [optional] CSS class to
      *                                               use for UL element. Default
      *                                               is to use the value from
@@ -1001,7 +985,6 @@ class Menu extends AbstractRenderer
      * as-is, and will be available in the partial script as 'container', e.g.
      * <code>echo 'Number of pages: ', count($this->container);</code>.
      *
-     * @param  Container $container
      * @param array|string|null $partial     [optional] partial view
      *                                               script to use. Default is to
      *                                               use the partial registered
@@ -1014,7 +997,7 @@ class Menu extends AbstractRenderer
      *
      * @return string                                helper output
      *
-     * @throws \Exception   When no partial script is set
+     * @throws Exception   When no partial script is set
      */
     public function renderTemplate(Container $container, array|string $partial = null): string
     {
@@ -1023,7 +1006,7 @@ class Menu extends AbstractRenderer
         }
 
         if (empty($partial)) {
-            $e = new \Exception('Unable to render menu: No partial view script provided');
+            $e = new Exception('Unable to render menu: No partial view script provided');
 
             throw $e;
         }
@@ -1038,19 +1021,13 @@ class Menu extends AbstractRenderer
     /**
      * Alias of renderTemplate()
      *
-     * @param Container $container
-     * @param array|string|null $partial
      *
-     * @return string
      */
     public function renderPartial(Container $container, array|string $partial = null): string
     {
         return $this->renderTemplate($container, $partial);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render(Container $container): string
     {
         if ($partial = $this->getTemplate()) {

@@ -39,7 +39,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
-class Container extends \ArrayObject
+use ArrayObject;
+use function count;
+use function is_int;
+use function is_scalar;
+
+class Container extends ArrayObject
 {
     /**
      * Whether or not to override all contents of placeholder
@@ -65,58 +70,49 @@ class Container extends \ArrayObject
     /**
      * What text to prefix the placeholder with when rendering
      *
-     * @var string
      */
     protected string $_prefix = '';
 
     /**
      * What text to append the placeholder with when rendering
      *
-     * @var string
      */
     protected string $_postfix = '';
 
     /**
      * What string to use between individual items in the placeholder when rendering
      *
-     * @var string
      */
     protected string $_separator = '';
 
     /**
      * What string to use as the indentation of output, this will typically be spaces. Eg: '    '
      *
-     * @var string
      */
     protected string $_indent = '';
 
     /**
      * Whether or not we're already capturing for this given container
      *
-     * @var bool
      */
     protected bool $_captureLock = false;
 
     /**
      * What type of capture (overwrite (set), append, prepend) to use
      *
-     * @var string
      */
     protected string $_captureType;
 
     /**
      * Key to which to capture content
      *
-     * @var string|null
      */
     protected ?string $_captureKey = null;
 
     /**
      * Set a single value
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function set(mixed $value): void
     {
@@ -126,9 +122,7 @@ class Container extends \ArrayObject
     /**
      * Prepend a value to the top of the container
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function prepend(mixed $value): void
     {
@@ -143,7 +137,6 @@ class Container extends \ArrayObject
      * If single element registered, returns that element; otherwise,
      * serializes to array.
      *
-     * @return mixed
      */
     public function getValue(): mixed
     {
@@ -160,7 +153,6 @@ class Container extends \ArrayObject
     /**
      * Set prefix for __toString() serialization
      *
-     * @param string $prefix
      *
      * @return $this
      */
@@ -174,7 +166,6 @@ class Container extends \ArrayObject
     /**
      * Retrieve prefix
      *
-     * @return string
      */
     public function getPrefix(): string
     {
@@ -184,7 +175,6 @@ class Container extends \ArrayObject
     /**
      * Set postfix for __toString() serialization
      *
-     * @param string $postfix
      *
      * @return $this
      */
@@ -198,7 +188,6 @@ class Container extends \ArrayObject
     /**
      * Retrieve postfix
      *
-     * @return string
      */
     public function getPostfix(): string
     {
@@ -210,7 +199,6 @@ class Container extends \ArrayObject
      *
      * Used to implode elements in container
      *
-     * @param string $separator
      *
      * @return $this
      */
@@ -224,7 +212,6 @@ class Container extends \ArrayObject
     /**
      * Retrieve separator
      *
-     * @return string
      */
     public function getSeparator(): string
     {
@@ -235,7 +222,6 @@ class Container extends \ArrayObject
      * Set the indentation string for __toString() serialization,
      * optionally, if a number is passed, it will be the number of spaces
      *
-     * @param int|string $indent
      *
      * @return $this
      */
@@ -249,7 +235,6 @@ class Container extends \ArrayObject
     /**
      * Retrieve indentation
      *
-     * @return string
      */
     public function getIndent(): string
     {
@@ -259,9 +244,7 @@ class Container extends \ArrayObject
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param int|string $indent
      *
-     * @return string
      */
     public function getWhitespace(int|string $indent): string
     {
@@ -276,9 +259,6 @@ class Container extends \ArrayObject
      * Start capturing content to push into placeholder
      *
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
-     * @param mixed $key
-     *
-     * @return void
      *
      * @throws Exception
      */
@@ -299,7 +279,6 @@ class Container extends \ArrayObject
     /**
      * End content capture
      *
-     * @return void
      */
     public function captureEnd(): void
     {
@@ -348,7 +327,6 @@ class Container extends \ArrayObject
     /**
      * Get keys
      *
-     * @return array
      */
     public function getKeys(): array
     {
@@ -362,7 +340,6 @@ class Container extends \ArrayObject
      *
      * as defined by the PHP manual
      *
-     * @return int
      */
     public function nextIndex(): int
     {
@@ -377,9 +354,7 @@ class Container extends \ArrayObject
     /**
      * Render the placeholder
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {

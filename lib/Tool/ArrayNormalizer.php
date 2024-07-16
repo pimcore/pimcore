@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use function is_array;
+
 /**
  * @internal
  */
@@ -42,9 +44,7 @@ class ArrayNormalizer
 
     /**
      * @param int|string|int[]|string[] $properties
-     * @param callable $normalizer
      *
-     * @return void
      */
     public function addNormalizer(array|int|string $properties, callable $normalizer): void
     {

@@ -26,7 +26,6 @@ class VersionEvent extends Event
     /**
      * DocumentEvent constructor.
      *
-     * @param Version $version
      */
     public function __construct(Version $version)
     {

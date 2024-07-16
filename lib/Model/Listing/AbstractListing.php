@@ -16,18 +16,28 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Listing;
 
-use Doctrine\DBAL\Connection;
+use Countable;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
+use InvalidArgumentException;
+use Iterator;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_int;
+use function is_null;
+use function is_string;
 
 /**
  * @method AbstractDao getDao()
  * @method QueryBuilder getQueryBuilder()
  */
-abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
+abstract class AbstractListing extends AbstractModel implements Iterator, Countable
 {
     protected array $order = [];
 
@@ -120,6 +130,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @return $this
+     *
+     * @throws InvalidArgumentException If the order is invalid
      */
     public function setOrder(array|string $order): static
     {
@@ -127,19 +139,16 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->order = [];
 
-        if (!empty($order)) {
-            if (is_string($order)) {
-                $order = strtoupper($order);
-                if (in_array($order, $this->validOrders)) {
-                    $this->order[] = $order;
-                }
-            } elseif (is_array($order)) {
-                foreach ($order as $o) {
-                    $o = strtoupper($o);
-                    if (in_array($o, $this->validOrders)) {
-                        $this->order[] = $o;
-                    }
-                }
+        if (is_string($order)) {
+            $order = $order ? [$order] : [];
+        }
+
+        foreach ($order as $o) {
+            $o = strtoupper($o);
+            if (in_array($o, $this->validOrders)) {
+                $this->order[] = $o;
+            } else {
+                throw new InvalidArgumentException('Invalid order: ' . $o);
             }
         }
 
@@ -153,6 +162,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @return $this
+     *
+     * @throws InvalidArgumentException If the order key is invalid
      */
     public function setOrderKey(array|string $orderKey, bool $quote = true): static
     {
@@ -160,17 +171,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->orderKey = [];
 
-        if (is_string($orderKey) && !empty($orderKey)) {
-            $orderKey = [$orderKey];
+        if (is_string($orderKey)) {
+            $orderKey = $orderKey ? [$orderKey] : [];
         }
 
-        if (is_array($orderKey)) {
-            foreach ($orderKey as $o) {
-                if ($quote === false) {
-                    $this->orderKey[] = $o;
-                } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = $this->quoteIdentifier($o);
-                }
+        foreach ($orderKey as $o) {
+            if ($quote === false) {
+                $this->orderKey[] = $o;
+            } elseif ($this->isValidOrderKey($o)) {
+                $this->orderKey[] = $this->quoteIdentifier($o);
+            } else {
+                throw new InvalidArgumentException('Invalid order key: ' . $o);
             }
         }
 
@@ -257,19 +268,19 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         foreach ($params as $pkey => $param) {
             if (is_array($param)) {
                 if (isset($param[0]) && is_string($param[0])) {
-                    $conditionVariableTypes[$pkey] = Connection::PARAM_STR_ARRAY;
+                    $conditionVariableTypes[$pkey] = ArrayParameterType::STRING;
                 } else {
-                    $conditionVariableTypes[$pkey] = Connection::PARAM_INT_ARRAY;
+                    $conditionVariableTypes[$pkey] = ArrayParameterType::INTEGER;
                 }
             } else {
                 if (is_bool($param)) {
-                    $type = \PDO::PARAM_BOOL;
+                    $type = ParameterType::BOOLEAN;
                 } elseif (is_int($param)) {
-                    $type = \PDO::PARAM_INT;
+                    $type = ParameterType::INTEGER;
                 } elseif (is_null($param)) {
-                    $type = \PDO::PARAM_NULL;
+                    $type = ParameterType::NULL;
                 } else {
-                    $type = \PDO::PARAM_STR;
+                    $type = ParameterType::STRING;
                 }
 
                 $conditionVariableTypes[$pkey] = $type;
@@ -282,7 +293,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $condition
      * @param array|scalar|null $conditionVariables
      *
      * @return $this
@@ -354,12 +364,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $db->quoteIdentifier($value);
     }
 
-    /**
-     * @param mixed $value
-     * @param int|null $type
-     *
-     * @return string
-     */
     public function quote(mixed $value, int $type = null): string
     {
         $db = Db::get();

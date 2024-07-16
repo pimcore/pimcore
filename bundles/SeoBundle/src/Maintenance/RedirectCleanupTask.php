@@ -24,9 +24,6 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class RedirectCleanupTask implements TaskInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $list = new Redirect\Listing();

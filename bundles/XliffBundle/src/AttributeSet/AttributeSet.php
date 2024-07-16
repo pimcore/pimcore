@@ -37,7 +37,6 @@ class AttributeSet
     /**
      * DataExtractorResult constructor.
      *
-     * @param TranslationItem $translationItem
      */
     public function __construct(TranslationItem $translationItem)
     {
@@ -79,7 +78,6 @@ class AttributeSet
     /**
      * @param string[] $targetLanguages
      *
-     * @return AttributeSet
      */
     public function setTargetLanguages(array $targetLanguages): AttributeSet
     {
@@ -112,13 +110,8 @@ class AttributeSet
     }
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param string $content
-     * @param bool $isReadonly
      * @param string[] $targetContent
      *
-     * @return AttributeSet
      */
     public function addAttribute(string $type, string $name, string $content, bool $isReadonly = false, array $targetContent = []): AttributeSet
     {

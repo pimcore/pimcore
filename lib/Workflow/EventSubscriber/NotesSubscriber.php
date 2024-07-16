@@ -25,6 +25,7 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function strlen;
 
 /**
  * @internal
@@ -47,7 +48,6 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Event $event
      *
      * @throws ValidationException
      */
@@ -80,7 +80,6 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param GlobalActionEvent $event
      *
      * @throws ValidationException
      */

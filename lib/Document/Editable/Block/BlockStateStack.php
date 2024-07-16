@@ -17,12 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable\Block;
 
+use Countable;
+use JsonSerializable;
+use LogicException;
+use RuntimeException;
+use function array_slice;
+use function count;
+
 /**
  * @internal
  *
  * Handles block state (current block level, current block index)
  */
-final class BlockStateStack implements \Countable, \JsonSerializable
+final class BlockStateStack implements Countable, JsonSerializable
 {
     /**
      * @var BlockState[]
@@ -38,7 +45,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Adds a new state to the stack
      *
-     * @param BlockState|null $blockState
      */
     public function push(BlockState $blockState = null): void
     {
@@ -52,12 +58,11 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Removes current state from the stack
      *
-     * @return BlockState
      */
     public function pop(): BlockState
     {
         if (count($this->states) <= 1) {
-            throw new \LogicException('Can\'t pop the last state off the stack');
+            throw new LogicException('Can\'t pop the last state off the stack');
         }
 
         return array_pop($this->states);
@@ -66,13 +71,12 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Returns current state
      *
-     * @return BlockState
      */
     public function getCurrentState(): BlockState
     {
         if (empty($this->states)) {
             // this should never happen
-            throw new \RuntimeException('State stack is empty');
+            throw new RuntimeException('State stack is empty');
         }
 
         return array_slice($this->states, -1)[0];
@@ -83,9 +87,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
         return count($this->states);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return $this->states;

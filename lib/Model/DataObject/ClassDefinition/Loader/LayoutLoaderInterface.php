@@ -25,10 +25,7 @@ interface LayoutLoaderInterface extends LoaderInterface
     /**
      * Builds a classdefinition layout instance
      *
-     * @param string $name
-     * @param array $params
      *
-     * @return Layout
      */
     public function build(string $name, array $params = []): Layout;
 }

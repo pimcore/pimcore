@@ -39,36 +39,34 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation\Renderer;
 
+use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
+use function strlen;
 
 class Breadcrumbs extends AbstractRenderer
 {
     /**
      * Breadcrumbs separator string
      *
-     * @var string
      */
     protected string $_separator = ' &gt; ';
 
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int|null
      */
     protected ?int $_minDepth = 1;
 
     /**
      * Whether last page in breadcrumb should be hyperlinked
      *
-     * @var bool
      */
     protected bool $_linkLast = false;
 
     /**
      * Partial view script to use for rendering menu
      *
-     * @var string|array|null
      */
     protected string|array|null $_template = null;
 
@@ -86,13 +84,14 @@ class Breadcrumbs extends AbstractRenderer
 
     public function setSeparator(string $separator): static
     {
-        if (is_string($separator)) {
-            $this->_separator = $separator;
-        }
+        $this->_separator = $separator;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setLinkLast(bool $linkLast): static
     {
         $this->_linkLast = $linkLast;
@@ -128,7 +127,6 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of getTemplate()
      *
-     * @return string|array|null
      */
     public function getPartial(): array|string|null
     {
@@ -138,7 +136,6 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param string $partial
      *
      * @return $this
      */
@@ -154,9 +151,7 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Get all pages between the currently active page and the container's root page.
      *
-     * @param Container $container
      *
-     * @return array
      */
     public function getPages(Container $container): array
     {
@@ -191,9 +186,7 @@ class Breadcrumbs extends AbstractRenderer
      * Renders breadcrumbs by chaining 'a' elements with the separator
      * registered in the helper
      *
-     * @param Container $container
      *
-     * @return string
      */
     public function renderStraight(Container $container): string
     {
@@ -234,12 +227,9 @@ class Breadcrumbs extends AbstractRenderer
     }
 
     /**
-     * @param Container $container
-     * @param string|null $partial
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderTemplate(Container $container, ?string $partial = null): string
     {
@@ -248,7 +238,7 @@ class Breadcrumbs extends AbstractRenderer
         }
 
         if (empty($partial)) {
-            throw new \Exception('Unable to render menu: No partial view script provided');
+            throw new Exception('Unable to render menu: No partial view script provided');
         }
 
         $pages = $this->getPages($container);
@@ -259,19 +249,13 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of renderTemplate() for ZF1 backward compatibility
      *
-     * @param Container $container
-     * @param string|null $partial
      *
-     * @return string
      */
     public function renderPartial(Container $container, ?string $partial = null): string
     {
         return $this->renderTemplate($container, $partial);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render(Container $container): string
     {
         if ($partial = $this->getTemplate()) {

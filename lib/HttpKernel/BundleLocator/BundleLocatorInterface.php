@@ -23,9 +23,7 @@ interface BundleLocatorInterface
     /**
      * Loads bundle for a class name. Returns the AppBundle for AppBundle\Controller\FooController
      *
-     * @param object|string $class
      *
-     * @return BundleInterface
      *
      * @throws NotFoundException
      */
@@ -36,9 +34,7 @@ interface BundleLocatorInterface
      *
      * AppBundle\Controller\FooController returns src/AppBundle
      *
-     * @param object|string $class
      *
-     * @return string
      *
      * @throws NotFoundException
      */

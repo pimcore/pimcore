@@ -39,8 +39,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
+use Traversable;
 use Twig\Extension\RuntimeExtensionInterface;
+use function call_user_func_array;
+use function count;
 
 /**
  * @method void set(mixed $value)
@@ -59,7 +65,7 @@ use Twig\Extension\RuntimeExtensionInterface;
  * @method void captureEnd()
  *
  */
-abstract class AbstractExtension implements \IteratorAggregate, \Countable, \ArrayAccess, RuntimeExtensionInterface
+abstract class AbstractExtension implements IteratorAggregate, Countable, ArrayAccess, RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
@@ -70,7 +76,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Registry key under which container registers itself
      *
-     * @var string
      */
     protected string $_regKey;
 
@@ -78,7 +83,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * Flag whether to automatically escape output, must also be
      * enforced in the child class if __toString/toString is overwritten
      *
-     * @var bool
      */
     protected bool $_autoEscape = true;
 
@@ -114,9 +118,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Escape a string
      *
-     * @param string $string
      *
-     * @return string
      */
     protected function _escape(string $string): string
     {
@@ -126,7 +128,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Set container on which to operate
      *
-     * @param  Container $container
      *
      * @return $this
      */
@@ -140,7 +141,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Retrieve placeholder container
      *
-     * @return Container
      */
     public function getContainer(): Container
     {
@@ -159,7 +159,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: retrieve property
      *
-     * @param string $key
      *
      * @return mixed
      */
@@ -176,7 +175,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: check if property is set
      *
-     * @param string $key
      *
      * @return bool
      */
@@ -190,7 +188,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: unset property
      *
-     * @param string $key
      *
      * @return void
      */
@@ -226,7 +223,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * String representation
      *
-     * @return string
      */
     public function toString(): string
     {
@@ -244,7 +240,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Countable
      *
-     * @return int
      */
     public function count(): int
     {
@@ -258,7 +253,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param  string|int $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -270,7 +264,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param  string|int $offset
      *
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -281,9 +274,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * ArrayAccess: offsetSet
      *
      * @param  string|int $offset
-     * @param  mixed $value
      *
-     * @return void
      */
     public function offsetSet($offset, mixed $value): void
     {
@@ -295,7 +286,6 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param  string|int $offset
      *
-     * @return void
      */
     public function offsetUnset($offset): void
     {
@@ -305,9 +295,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * IteratorAggregate: get Iterator
      *
-     * @return \Traversable
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return $this->getContainer()->getIterator();
     }

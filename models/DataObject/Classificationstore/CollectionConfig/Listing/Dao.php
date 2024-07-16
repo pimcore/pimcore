@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Listing;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -28,7 +29,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of Classificationstore collection configs for the specified parameters, returns an array of config elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -56,7 +56,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS . ' '. $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

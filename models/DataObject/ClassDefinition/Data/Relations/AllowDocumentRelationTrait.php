@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use function count;
+use function in_array;
 
 /**
  * @internal
@@ -27,9 +29,7 @@ trait AllowDocumentRelationTrait
     /**
      * Checks if a document is an allowed relation
      *
-     * @param Document $document
      *
-     * @return bool
      *
      * @internal
      */

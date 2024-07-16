@@ -36,9 +36,6 @@ class DumpTranslationEntriesListener implements EventSubscriberInterface
         $this->dumper = $dumper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

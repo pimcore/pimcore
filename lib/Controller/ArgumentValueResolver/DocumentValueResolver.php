@@ -19,7 +19,7 @@ namespace Pimcore\Controller\ArgumentValueResolver;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  *
  * @internal
  */
-final class DocumentValueResolver implements ArgumentValueResolverInterface
+final class DocumentValueResolver implements ValueResolverInterface
 {
     protected DocumentResolver $documentResolver;
 
@@ -36,23 +36,20 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
         $this->documentResolver = $documentResolver;
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument): bool
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($argument->getType() !== Document::class) {
-            return false;
+            return [];
         }
 
         if ($argument->getName() !== 'document') {
-            return false;
+            return [];
         }
 
-        $document = $this->documentResolver->getDocument($request);
+        if ($document = $this->documentResolver->getDocument($request)) {
+            return [$document];
+        }
 
-        return $document && $document instanceof Document;
-    }
-
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
-    {
-        yield $this->documentResolver->getDocument($request);
+        return [];
     }
 }

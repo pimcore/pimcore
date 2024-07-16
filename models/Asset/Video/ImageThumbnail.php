@@ -16,44 +16,39 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video;
 
+use Exception;
+use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
+use function is_string;
 
 /**
  * @property Model\Asset\Video|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $timeOffset = null;
 
     /**
      * @internal
      *
-     * @var Image|null
      */
     protected ?Image $imageAsset = null;
 
-    /**
-     * @param Model\Asset\Video|null $asset
-     * @param string|array|Image\Thumbnail\Config|null $config
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     * @param bool $deferred
-     */
     public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -77,14 +72,14 @@ final class ImageThumbnail
             'pathReference' => $pathReference,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception|\League\Flysystem\FilesystemException|ThumbnailFormatNotSupportedException
      *
      * @internal
      */
@@ -94,6 +89,11 @@ final class ImageThumbnail
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
+
+            if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+                throw new ThumbnailFormatNotSupportedException();
+            }
+
             $cs = $this->asset->getCustomSetting('image_thumbnail_time');
             $im = $this->asset->getCustomSetting('image_thumbnail_asset');
 
@@ -131,7 +131,7 @@ final class ImageThumbnail
                 );
 
                 if (!$storage->fileExists($cacheFilePath)) {
-                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
+                    $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
                     $lock->acquire(true);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
@@ -160,7 +160,7 @@ final class ImageThumbnail
                             $deferred,
                             $generated
                         );
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath() . ': ' . $e);
                     }
                 }
@@ -178,7 +178,7 @@ final class ImageThumbnail
             'deferred' => $deferred,
             'generated' => $generated,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
     }
 
     /**
@@ -208,14 +208,11 @@ final class ImageThumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Image\Thumbnail|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function getMedia(string $name, int $highRes = 1): ?Image\Thumbnail
+    public function getMedia(string $name, int $highRes = 1): ?Image\ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {
@@ -235,7 +232,7 @@ final class ImageThumbnail
 
                 return $thumb ?? null;
             } else {
-                throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+                throw new Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
             }
         }
 

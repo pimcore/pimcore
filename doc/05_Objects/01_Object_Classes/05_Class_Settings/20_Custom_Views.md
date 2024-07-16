@@ -18,7 +18,7 @@ For a sample configuration file have a look at the [sample configuration](21_Cus
 
 Format and location of the custom view configuration depends on your environment.
 Per default the symfony-config is used.
-If you want to change the default behaviour, have a look at the [environment](../../../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options.
+If you want to change the default behaviour, have a look at the [environment](../../../21_Deployment/03_Configuration_Environments.md#configuration-storage-locations--fallbacks) configuration options.
 
 ## Advanced Features / Configurations
 
@@ -249,4 +249,3 @@ copy: false #the default is that all menu entries are visible
 copy: 
     hidden: true
 ```
-

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Tool;
 
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -35,7 +36,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
      */
     public static function documents(array $types = null): void
     {
@@ -52,8 +52,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
-     * @param array|null $classes
      */
     public static function objects(array $types = null, array $classes = null): void
     {
@@ -75,7 +73,6 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
      */
     public static function assets(array $types = null): void
     {
@@ -92,7 +89,6 @@ class Warming
     /**
      * Adds a Pimcore Object/Asset/Document to the cache
      *
-     * @param Element\ElementInterface $element
      */
     public static function loadElementToCache(Element\ElementInterface $element): void
     {
@@ -118,7 +114,7 @@ class Warming
                 self::loadElementToCache($element);
             }
 
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
             sleep(self::getTimoutBetweenIteration());
         }
     }

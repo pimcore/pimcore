@@ -29,9 +29,6 @@ class TranslationItem
     /**
      * TranslationItem constructor.
      *
-     * @param string $type
-     * @param string $id
-     * @param ElementInterface $element
      */
     public function __construct(string $type, string $id, ElementInterface $element)
     {

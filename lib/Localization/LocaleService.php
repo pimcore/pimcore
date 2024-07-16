@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Localization;
 
 use Pimcore\Translation\Translator;
+use ResourceBundle;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class LocaleService implements LocaleServiceInterface
@@ -27,10 +28,6 @@ class LocaleService implements LocaleServiceInterface
 
     protected ?Translator $translator = null;
 
-    /**
-     * @param RequestStack|null $requestStack
-     * @param Translator|null $translator
-     */
     public function __construct(RequestStack $requestStack = null, Translator $translator = null)
     {
         $this->requestStack = $requestStack;
@@ -74,14 +71,9 @@ class LocaleService implements LocaleServiceInterface
 
     public function getLocaleList(): array
     {
-        return \ResourceBundle::getLocales('');
+        return ResourceBundle::getLocales('');
     }
 
-    /**
-     * @param string|null $locale
-     *
-     * @return array
-     */
     public function getDisplayRegions(string $locale = null): array
     {
         if (!$locale) {
@@ -111,7 +103,7 @@ class LocaleService implements LocaleServiceInterface
     {
         $this->locale = $locale;
 
-        if ($locale && is_string($locale)) {
+        if ($locale) {
             if ($this->requestStack) {
                 $mainRequest = $this->requestStack->getMainRequest();
                 if ($mainRequest) {

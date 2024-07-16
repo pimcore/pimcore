@@ -78,17 +78,11 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContent(): ?object
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteKey(): ?string
     {
         if ($this->object) {

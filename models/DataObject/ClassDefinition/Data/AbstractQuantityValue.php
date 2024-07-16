@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
@@ -26,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 abstract class AbstractQuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -35,7 +38,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public string|int $unitWidth;
+    public string|int|null $unitWidth = null;
 
     /**
      * @internal
@@ -45,7 +48,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public ?array $validUnits = null;
+    public array $validUnits = [];
 
     /**
      * @internal
@@ -57,12 +60,12 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      */
     public bool $autoConvert = false;
 
-    public function getUnitWidth(): int|string
+    public function getUnitWidth(): int|string|null
     {
         return $this->unitWidth;
     }
 
-    public function setUnitWidth(int|string $unitWidth): void
+    public function setUnitWidth(int|string|null $unitWidth): void
     {
         if (is_numeric($unitWidth)) {
             $unitWidth = (int)$unitWidth;
@@ -85,7 +88,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return $this->defaultUnit;
     }
 
-    public function setDefaultUnit(string $defaultUnit): void
+    public function setDefaultUnit(?string $defaultUnit): void
     {
         $this->defaultUnit = $defaultUnit;
     }
@@ -161,9 +164,6 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -229,7 +229,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
                     Cache::save($table, Model\DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
                     RuntimeCache::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
             }
 
@@ -252,13 +252,10 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return $obj;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         /** @var UnitConversionService $converter */
-        $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
+        $converter = Pimcore::getContainer()->get(UnitConversionService::class);
 
         $filterValue = $value[0];
         $filterUnit = Model\DataObject\QuantityValue\Unit::getById($value[1]);
@@ -276,7 +273,19 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
 
         $conditions = [];
         foreach ($unitListing->load() as $unit) {
-            $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
+            if ($operator === 'in') {
+                $values = explode(',', $value[0]);
+                $convertedValues = [];
+                foreach ($values as $value) {
+                    $filterQuantityValue->setValue($value);
+                    $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
+                    $convertedValues[] = $convertedQuantityValue->getValue();
+                }
+                /** @var \Pimcore\Model\DataObject\Data\QuantityValue $convertedQuantityValue */
+                $convertedQuantityValue->setValue(implode(',', $convertedValues));
+            } else {
+                $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
+            }
 
             $conditions[] = '('.
                 $this->getFilterConditionExt(

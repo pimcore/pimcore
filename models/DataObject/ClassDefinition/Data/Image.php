@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
+use function array_key_exists;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
@@ -30,11 +31,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Data\Extension\RelationFilterConditionParser;
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -49,11 +46,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Asset|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -67,11 +60,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -85,11 +74,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      */
@@ -108,11 +93,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Asset\Image|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -126,9 +107,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Element\ValidationException
      */
@@ -143,11 +121,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param array|null $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return Asset\Image|null
      */
     public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): Asset\Image|null
     {
@@ -155,11 +130,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -173,9 +144,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -216,9 +184,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -227,11 +192,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param Asset\Image|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|string
      */
     public function getDiffVersionPreview(?Asset\Image $data, Concrete $object = null, array $params = []): array|string
     {
@@ -251,9 +213,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -274,9 +233,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $mainDefinition->uploadPath;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -334,11 +290,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

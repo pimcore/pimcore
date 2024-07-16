@@ -37,10 +37,7 @@ trait PimcoreContextAwareTrait
     /**
      * Check if the request matches the given pimcore context (e.g. admin)
      *
-     * @param Request $request
-     * @param array|string $context
      *
-     * @return bool
      */
     protected function matchesPimcoreContext(Request $request, array|string $context): bool
     {

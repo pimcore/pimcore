@@ -32,14 +32,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $minValue = null;
 
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $maxValue = null;
 
@@ -51,14 +49,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @internal
      *
-     * @var float|null
      */
     public ?float $increment = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     public ?int $decimalPrecision = null;
 
@@ -67,9 +63,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->minValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setMinValue(?float $minValue): static
     {
-        $this->minValue = $this->getAsFloatCast($minValue);
+        $this->minValue = $minValue;
 
         return $this;
     }
@@ -79,9 +78,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->maxValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setMaxValue(?float $maxValue): static
     {
-        $this->maxValue = $this->getAsFloatCast($maxValue);
+        $this->maxValue = $maxValue;
 
         return $this;
     }
@@ -91,6 +93,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->vertical;
     }
 
+    /**
+     * @return $this
+     */
     public function setVertical(bool $vertical): static
     {
         $this->vertical = $vertical;
@@ -103,9 +108,12 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->increment;
     }
 
+    /**
+     * @return $this
+     */
     public function setIncrement(?float $increment): static
     {
-        $this->increment = $this->getAsFloatCast($increment);
+        $this->increment = $increment;
 
         return $this;
     }
@@ -115,19 +123,18 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->decimalPrecision;
     }
 
+    /**
+     * @return $this
+     */
     public function setDecimalPrecision(?int $decimalPrecision): static
     {
-        $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
+        $this->decimalPrecision = $decimalPrecision;
 
         return $this;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -141,11 +148,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -159,11 +162,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -173,11 +172,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|null
      *
      * @see Data::getDataForEditmode
      *
@@ -188,11 +183,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return float|null
      *
      * @see Data::getDataFromEditmode
      *
@@ -203,11 +194,8 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return float|null
      */
     public function getDataFromGridEditor(mixed $data, Concrete $object = null, array $params = []): ?float
     {
@@ -215,11 +203,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -229,9 +213,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return (string)$data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
@@ -243,9 +224,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -263,9 +241,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $mainDefinition->decimalPrecision;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

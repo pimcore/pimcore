@@ -16,10 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @method bool isWriteable()
@@ -51,119 +56,101 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $medias = [];
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $group = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $format = 'SOURCE';
 
     /**
      * @internal
      *
-     * @var int
      */
     protected int $quality = 85;
 
     /**
      * @internal
      *
-     * @var float|null
      */
     protected ?float $highResolution = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveColor = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveMetaData = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $rasterizeSVG = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $downloadable = false;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $filenameSuffix = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $preserveAnimation = false;
 
     /**
-     * @param array|string|self $config
      *
-     * @return self|null
      *
      * @internal
      */
@@ -174,7 +161,7 @@ final class Config extends Model\AbstractModel
         if (is_string($config)) {
             try {
                 $thumbnail = self::getByName($config);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
 
                 return null;
@@ -194,11 +181,9 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
      *
-     * @return null|Config
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?Config
     {
@@ -211,11 +196,11 @@ final class Config extends Model\AbstractModel
         try {
             $thumbnail = RuntimeCache::get($cacheKey);
             if (!$thumbnail) {
-                throw new \Exception('Thumbnail in registry is null');
+                throw new Exception('Thumbnail in registry is null');
             }
 
             $thumbnail->setName($name);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */
@@ -258,11 +243,10 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return Config
      */
     public static function getPreviewConfig(): Config
     {
-        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $customPreviewImageThumbnail = \Pimcore\Config::getSystemConfiguration('assets')['preview_image_thumbnail'];
         $thumbnail = null;
 
         if ($customPreviewImageThumbnail) {
@@ -298,11 +282,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      */
     public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
@@ -325,12 +305,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param int $position
-     * @param string $name
-     * @param array $parameters
-     * @param string|null $media
      *
-     * @return bool
      */
     public function addItemAt(int $position, string $name, array $parameters, ?string $media = null): bool
     {
@@ -379,6 +354,9 @@ final class Config extends Model\AbstractModel
         return false;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -391,6 +369,9 @@ final class Config extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -403,6 +384,9 @@ final class Config extends Model\AbstractModel
         return $this->items;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -415,6 +399,9 @@ final class Config extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setFormat(string $format): static
     {
         $this->format = $format;
@@ -427,6 +414,9 @@ final class Config extends Model\AbstractModel
         return $this->format;
     }
 
+    /**
+     * @return $this
+     */
     public function setQuality(int $quality): static
     {
         if ($quality) {
@@ -477,9 +467,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param array $config
      *
-     * @return self
      *
      * @internal
      */
@@ -510,9 +498,7 @@ final class Config extends Model\AbstractModel
     /**
      * This is mainly here for backward compatibility
      *
-     * @param array $config
      *
-     * @return self
      *
      * @internal
      */
@@ -525,7 +511,7 @@ final class Config extends Model\AbstractModel
         }
 
         if (isset($config['quality'])) {
-            $pipe->setQuality($config['quality']);
+            $pipe->setQuality((int)$config['quality']);
         }
 
         if (isset($config['cover'])) {
@@ -594,9 +580,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param Model\Asset\Image $asset
      *
-     * @return array
      *
      * @internal
      */
@@ -611,70 +595,68 @@ final class Config extends Model\AbstractModel
         ];
 
         $transformations = $this->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            if ($originalWidth && $originalHeight) {
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        $arg = $transformation['arguments'];
+        if ($originalWidth && $originalHeight) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    $arg = $transformation['arguments'];
 
-                        $forceResize = false;
-                        if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
-                            $forceResize = true;
-                        }
+                    $forceResize = false;
+                    if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
+                        $forceResize = true;
+                    }
 
-                        if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
+                    if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
+                        $dimensions['width'] = $arg['width'];
+                        $dimensions['height'] = $arg['height'];
+                    } elseif ($transformation['method'] == '1x1_pixel') {
+                        return [
+                            'width' => 1,
+                            'height' => 1,
+                        ];
+                    } elseif ($transformation['method'] == 'scaleByWidth') {
+                        if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
+                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
                             $dimensions['width'] = $arg['width'];
-                            $dimensions['height'] = $arg['height'];
-                        } elseif ($transformation['method'] == '1x1_pixel') {
-                            return [
-                                'width' => 1,
-                                'height' => 1,
-                            ];
-                        } elseif ($transformation['method'] == 'scaleByWidth') {
-                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
-                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                                $dimensions['width'] = $arg['width'];
-                            }
-                        } elseif ($transformation['method'] == 'scaleByHeight') {
-                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
-                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                                $dimensions['height'] = $arg['height'];
-                            }
-                        } elseif ($transformation['method'] == 'contain') {
-                            $x = $dimensions['width'] / $arg['width'];
-                            $y = $dimensions['height'] / $arg['height'];
-
-                            if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
-                                continue;
-                            }
-
-                            if ($x > $y) {
-                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                                $dimensions['width'] = $arg['width'];
-                            } else {
-                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                                $dimensions['height'] = $arg['height'];
-                            }
-                        } elseif ($transformation['method'] == 'cropPercent') {
-                            $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
-                            $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
-                        } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
-                            // unable to calculate dimensions -> return empty
-                            return [];
                         }
+                    } elseif ($transformation['method'] == 'scaleByHeight') {
+                        if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
+                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                            $dimensions['height'] = $arg['height'];
+                        }
+                    } elseif ($transformation['method'] == 'contain') {
+                        $x = $dimensions['width'] / $arg['width'];
+                        $y = $dimensions['height'] / $arg['height'];
+
+                        if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
+                            continue;
+                        }
+
+                        if ($x > $y) {
+                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
+                            $dimensions['width'] = $arg['width'];
+                        } else {
+                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                            $dimensions['height'] = $arg['height'];
+                        }
+                    } elseif ($transformation['method'] == 'cropPercent') {
+                        $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
+                        $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
+                    } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
+                        // unable to calculate dimensions -> return empty
+                        return [];
                     }
                 }
-            } else {
-                // this method is only if we don't have the source dimensions
-                // this doesn't necessarily return both with & height
-                // and is only a very rough estimate, you should avoid falling back to this functionality
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                if ($key == 'width' || $key == 'height') {
-                                    $dimensions[$key] = $value;
-                                }
+            }
+        } else {
+            // this method is only if we don't have the source dimensions
+            // this doesn't necessarily return both with & height
+            // and is only a very rough estimate, you should avoid falling back to this functionality
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
+                        foreach ($transformation['arguments'] as $key => $value) {
+                            if ($key == 'width' || $key == 'height') {
+                                $dimensions[$key] = $value;
                             }
                         }
                     }
@@ -804,11 +786,10 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return array
      */
     public static function getAutoFormats(): array
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+        return \Pimcore\Config::getSystemConfiguration('assets')['image']['thumbnails']['auto_formats'];
     }
 
     /**

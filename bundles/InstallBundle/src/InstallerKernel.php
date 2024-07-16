@@ -24,6 +24,7 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use function in_array;
 
 /**
  * @internal
@@ -41,33 +42,26 @@ class InstallerKernel extends Kernel
         parent::__construct($environment, $debug);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProjectDir(): string
     {
         return $this->projectRoot;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLogDir(): string
     {
-        return $this->projectRoot . '/var/log';
+        return $this->projectRoot . '/var/installer/log';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheDir(): string
     {
         return $this->projectRoot . '/var/installer/cache';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function getBuildDir(): string
+    {
+        return $this->projectRoot . '/var/installer/build';
+    }
+
     public function registerBundles(): array
     {
         $bundles = [

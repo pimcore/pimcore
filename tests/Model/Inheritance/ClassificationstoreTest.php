@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -36,12 +37,9 @@ class ClassificationstoreTest extends ModelTestCase
     {
         parent::setUp();
         TestHelper::cleanUp();
-        \Pimcore::setAdminMode();
+        Pimcore::setAdminMode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUpTestClasses(): void
     {
         $class = ClassDefinition::getByName('inheritance');

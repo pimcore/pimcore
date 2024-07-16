@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Model\ModelInterface;
 
 /**
  * @internal
@@ -28,7 +28,6 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     /**
      * Get type
      *
-     * @return string
      */
     protected function getType(): string
     {
@@ -38,9 +37,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     /**
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
-     * @param string $filename
      *
-     * @return string|null
      */
     protected function getDefinitionName(string $filename): ?string
     {
@@ -55,11 +52,9 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     /**
      * Try to load definition by name
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
-    protected function loadDefinition(string $name): ?AbstractModel
+    protected function loadDefinition(string $name): ?ModelInterface
     {
         return Definition::getByKey($name);
     }
@@ -67,9 +62,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     /**
      * Create a new definition
      *
-     * @param string $name
      *
-     * @return Definition
      */
     protected function createDefinition(string $name): Definition
     {
@@ -82,12 +75,9 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     /**
      * Process import
      *
-     * @param AbstractModel $definition
-     * @param string $json
      *
-     * @return bool
      */
-    protected function import(AbstractModel $definition, string $json): bool
+    protected function import(ModelInterface $definition, string $json): bool
     {
         if (!$definition instanceof Definition) {
             return false;

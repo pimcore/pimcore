@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
+use Exception;
+
 interface DataDefinitionInterface
 {
     public function isEmpty(mixed $data, array $params = []): bool;
 
     /**
-     * @param mixed $data
-     * @param array $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkValidity(mixed $data, array $params = []): void;
 

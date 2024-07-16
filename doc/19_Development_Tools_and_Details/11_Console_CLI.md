@@ -34,24 +34,23 @@ With this option set, Pimcore is set into maintenance mode while that command is
 Better `var_dump` through [`VarDumper`](https://symfony.com/doc/5.2/components/var_dumper/introduction.html). 
 
 ## Example
+
 ```php
 <?php
 
 namespace App\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'awesome:command',
+    description: 'Awesome command'
+)]
 class AwesomeCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->setName('awesome:command')
-            ->setDescription('Awesome command');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // dump

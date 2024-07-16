@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
+use function in_array;
 
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -81,9 +82,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
@@ -92,9 +90,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

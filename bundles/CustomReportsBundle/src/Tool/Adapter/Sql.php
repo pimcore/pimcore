@@ -16,16 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
+use Exception;
 use Pimcore\Db;
+use stdClass;
 
 /**
  * @internal
  */
 class Sql extends AbstractAdapter
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
@@ -54,10 +53,7 @@ class Sql extends AbstractAdapter
         return ['data' => $data, 'total' => $total];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getColumns(?\stdClass $configuration): array
+    public function getColumns(?stdClass $configuration): array
     {
         $sql = '';
         if ($configuration) {
@@ -75,18 +71,10 @@ class Sql extends AbstractAdapter
             return [];
         }
 
-        throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+        throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    /**
-     * @param \stdClass $config
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return string
-     */
-    protected function buildQueryString(\stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
+    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
     {
         $config = (array)$config;
         $sql = '';
@@ -139,15 +127,6 @@ class Sql extends AbstractAdapter
         return $sql;
     }
 
-    /**
-     * @param array $filters
-     * @param array $fields
-     * @param bool $ignoreSelectAndGroupBy
-     * @param array|null $drillDownFilters
-     * @param string|null $selectField
-     *
-     * @return array|null
-     */
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
     {
         $db = Db::get();
@@ -155,55 +134,50 @@ class Sql extends AbstractAdapter
 
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
-        $data = '';
         $extractAllFields = empty($fields);
-        if ($filters) {
-            if (is_array($filters)) {
-                foreach ($filters as $filter) {
-                    $value = $filter['value'] ?? null;
-                    $type = $filter['type'];
-                    $operator = $filter['operator'];
-                    $maxValue = null;
+        foreach ($filters as $filter) {
+            $value = $filter['value'] ?? null;
+            $type = $filter['type'];
+            $operator = $filter['operator'];
+            $maxValue = null;
+            if ($type == 'date') {
+                if ($operator == 'eq') {
+                    $maxValue = strtotime($value . '+23 hours 59 minutes');
+                }
+                $value = strtotime($value);
+            }
+
+            switch ($operator) {
+                case 'like':
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+
+                    break;
+                case 'lt':
+                case 'gt':
+                case 'eq':
+                    $compMapping = [
+                        'lt' => '<',
+                        'gt' => '>',
+                        'eq' => '=',
+                    ];
+
                     if ($type == 'date') {
                         if ($operator == 'eq') {
-                            $maxValue = strtotime($value . '+23 hours 59 minutes');
+                            $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+
+                            break;
                         }
-                        $value = strtotime($value);
                     }
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
 
-                    switch ($operator) {
-                        case 'like':
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+                    break;
+                case '=':
+                    $fields[] = $filter['property'];
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
 
-                            break;
-                        case 'lt':
-                        case 'gt':
-                        case 'eq':
-                            $compMapping = [
-                                'lt' => '<',
-                                'gt' => '>',
-                                'eq' => '=',
-                            ];
-
-                            if ($type == 'date') {
-                                if ($operator == 'eq') {
-                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
-
-                                    break;
-                                }
-                            }
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
-
-                            break;
-                        case '=':
-                            $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
-
-                            break;
-                    }
-                }
+                    break;
             }
         }
 
@@ -227,9 +201,6 @@ class Sql extends AbstractAdapter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $db = Db::get();

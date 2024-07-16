@@ -28,21 +28,18 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'fieldcontainer';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $layout = 'hbox';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $fieldLabel;
 

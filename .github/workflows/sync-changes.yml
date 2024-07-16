@@ -1,0 +1,37 @@
+name: Sync changes
+on:
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        required: true
+        type: string
+        description: Base branch name for syncing
+      ref_name:
+        required: true
+        type: string
+        description: Branch name on destination repo
+
+jobs:
+  sync-changes-to-ee: 
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0-rc.4
+    if: github.repository == 'pimcore/pimcore' 
+    with:
+      base_ref: ${{ inputs.base_ref }}
+      ref_name: ${{ inputs.ref_name }}
+      target_repo: 'ee-pimcore'
+    secrets:
+      SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+      GIT_NAME: ${{ secrets.GIT_NAME }}
+      GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+
+  sync-changes-to-ce: 
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0-rc.4
+    if: github.repository == 'pimcore/ee-pimcore' 
+    with:
+      base_ref: ${{ inputs.base_ref }}
+      ref_name: ${{ inputs.ref_name }}
+      target_repo: 'pimcore'
+    secrets:
+      SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+      GIT_NAME: ${{ secrets.GIT_NAME }}
+      GIT_EMAIL: ${{ secrets.GIT_EMAIL }}

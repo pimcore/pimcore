@@ -24,6 +24,9 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DomCrawler;
+use function count;
+use function in_array;
+use function strlen;
 
 /**
  * @internal
@@ -53,10 +56,7 @@ class Processor
     /**
      * Process glossary entries in content string
      *
-     * @param string $content
-     * @param array $options
      *
-     * @return string
      */
     public function process(string $content, array $options): string
     {
@@ -195,6 +195,9 @@ class Processor
         // fix htmlentities issues
         $tmpData = [];
         foreach ($data as $d) {
+            if (!($d['text'])) {
+                continue;
+            }
             $text = htmlentities($d['text'], ENT_COMPAT, 'UTF-8');
             if ($d['text'] !== $text) {
                 $td = $d;
@@ -239,9 +242,9 @@ class Processor
 
             // add PCRE delimiter and modifiers
             if ($d['exactmatch']) {
-                $d['text'] = '/<a.*\/a>(*SKIP)(*FAIL)|(?<!\w)' . preg_quote($d['text'], '/') . '(?!\w)/';
+                $d['text'] = '/<a.*?\/a>(*SKIP)(*FAIL)|(?<!\w)' . preg_quote($d['text'], '/') . '(?!\w)/';
             } else {
-                $d['text'] = '/<a.*\/a>(*SKIP)(*FAIL)|' . preg_quote($d['text'], '/') . '/';
+                $d['text'] = '/<a.*?\/a>(*SKIP)(*FAIL)|' . preg_quote($d['text'], '/') . '/';
             }
 
             if (!$d['casesensitive']) {

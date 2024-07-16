@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()
@@ -38,11 +40,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     protected array $data = [];
 
     /**
-     * @param string|null $fieldname
-     * @param array $columns
-     * @param Model\Element\ElementInterface|null $element
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(?string $fieldname = null, array $columns = [], Model\Element\ElementInterface $element = null)
     {
@@ -59,12 +58,10 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param string $method
-     * @param array $args
      *
      * @return mixed|void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __call(string $method, array $args)
     {
@@ -78,7 +75,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
                 return isset($this->data[$correctedKey]) ? $this->data[$correctedKey] : null;
             }
 
-            throw new \Exception("Requested data $key not available");
+            throw new Exception("Requested data $key not available");
         }
 
         if (str_starts_with($method, 'set')) {
@@ -90,7 +87,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
                 $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
-                throw new \Exception("Requested data $key not available");
+                throw new Exception("Requested data $key not available");
             }
         }
     }
@@ -110,6 +107,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $return;
     }
 
+    /**
+     * @return $this
+     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -123,6 +123,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->fieldname;
     }
 
+    /**
+     * @return $this
+     */
     public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->markMeDirty();
@@ -163,6 +166,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->elementId;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         $this->columns = $columns;

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use function array_slice;
+use function count;
+
 /**
  * @internal
  *
@@ -27,31 +30,25 @@ class Dependency extends AbstractModel
     /**
      * The ID of the object to get dependencies for
      *
-     * @var int
      */
     protected int $sourceId;
 
     /**
      * The type of the object to get dependencies for
      *
-     * @var string
      */
     protected string $sourceType;
 
     /**
      * Contains the ID/type of objects which are required for the given source object (sourceId/sourceType)
      *
-     * @var array
      */
     protected array $requires = [];
 
     /**
      * Static helper to get the dependencies for the given sourceId & type
      *
-     * @param int $id
-     * @param string $type
      *
-     * @return Dependency
      */
     public static function getBySourceId(int $id, string $type): Dependency
     {
@@ -64,8 +61,6 @@ class Dependency extends AbstractModel
     /**
      * Add a requirement to the source object
      *
-     * @param int $id
-     * @param string $type
      */
     public function addRequirement(int $id, string $type): void
     {
@@ -79,7 +74,6 @@ class Dependency extends AbstractModel
      * Used when element gets deleted. Removes entries (by source = element) and
      * schedules a sanity check for the affected targets.
      *
-     * @param Element\ElementInterface $element
      */
     public function cleanAllForElement(Element\ElementInterface $element): void
     {
@@ -101,12 +95,6 @@ class Dependency extends AbstractModel
         return $this->sourceId;
     }
 
-    /**
-     * @param int|null $offset
-     * @param int|null $limit
-     *
-     * @return array
-     */
     public function getRequires(int $offset = null, int $limit = null): array
     {
         if ($offset !== null) {
@@ -116,27 +104,31 @@ class Dependency extends AbstractModel
         return $this->requires;
     }
 
-    /**
-     * @param int|null $offset
-     * @param int|null $limit
-     *
-     * @return array
-     */
+    public function getFilterRequiresByPath(int $offset = null, int $limit = null, string $value = null): array
+    {
+
+        return $this->getDao()->getFilterRequiresByPath($offset, $limit, $value);
+
+    }
+
+    public function getFilterRequiredByPath(int $offset = null, int $limit = null, string $value = null): array
+    {
+
+        return $this->getDao()->getFilterRequiredByPath($offset, $limit, $value);
+
+    }
+
     public function getRequiredBy(int $offset = null, int $limit = null): array
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
     }
 
-    /**
-     * @param string|null $orderBy
-     * @param string|null $orderDirection
-     * @param int|null $offset
-     * @param int|null $limit
-     *
-     * @return array
-     */
-    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
-    {
+    public function getRequiredByWithPath(
+        int $offset = null,
+        int $limit = null,
+        string $orderBy = null,
+        string $orderDirection = null
+    ): array {
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
@@ -179,7 +171,6 @@ class Dependency extends AbstractModel
     /**
      * Check if the source object is required by an other object (an other object depends on this object)
      *
-     * @return bool
      */
     public function isRequired(): bool
     {

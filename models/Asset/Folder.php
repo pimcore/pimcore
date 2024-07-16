@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\File;
 use Pimcore\Messenger\AssetPreviewImageMessage;
@@ -28,9 +29,6 @@ use Pimcore\Tool\Storage;
  */
 class Folder extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 
     /**
@@ -43,7 +41,6 @@ class Folder extends Model\Asset
     /**
      * set the children of the document
      *
-     * @param Listing|null $children
      *
      * @return $this
      */
@@ -81,8 +78,6 @@ class Folder extends Model\Asset
 
     /**
      * @internal
-     *
-     * @param bool $force
      *
      * @return resource|null
      *
@@ -153,7 +148,7 @@ class Folder extends Model\Asset
                         // only generate if all necessary thumbs are available
                         $skipped = true;
 
-                        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                             new AssetPreviewImageMessage($this->getId())
                         );
 

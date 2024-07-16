@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\Notification;
 
+use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
@@ -26,6 +27,7 @@ use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function count;
 
 class NotificationEmailService extends AbstractNotificationService
 {
@@ -47,14 +49,6 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * Sends an Mail
      *
-     * @param array $users
-     * @param array $roles
-     * @param Workflow $workflow
-     * @param string $subjectType
-     * @param ElementInterface $subject
-     * @param string $action
-     * @param string $mailType
-     * @param string $mailPath
      */
     public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
     {
@@ -116,20 +110,13 @@ class NotificationEmailService extends AbstractNotificationService
                         break;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Pimcore\Logger::error('Error sending Workflow change notification email.');
         }
     }
 
     /**
      * @param User[] $recipients
-     * @param string $subjectType
-     * @param ElementInterface $subject
-     * @param Workflow $workflow
-     * @param string $action
-     * @param string $language
-     * @param string $mailPath
-     * @param string $deeplink
      */
     protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {
@@ -144,13 +131,6 @@ class NotificationEmailService extends AbstractNotificationService
 
     /**
      * @param User[] $recipients
-     * @param string $subjectType
-     * @param ElementInterface $subject
-     * @param Workflow $workflow
-     * @param string $action
-     * @param string $language
-     * @param string $mailPath
-     * @param string $deeplink
      */
     protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {

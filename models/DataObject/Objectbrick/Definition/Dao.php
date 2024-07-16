@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -157,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
 
     protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+        if ($columnsToRemove) {
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $protectedColumns)) {

@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Data;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use DeepCopy\Reflection\ReflectionHelper;
 use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\AbstractModel;
@@ -31,6 +32,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use ReflectionProperty;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, CacheMarshallerInterface
 {
@@ -45,16 +47,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
      *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
      */
     public function __construct(string $name, string $type, mixed $data)
     {
@@ -141,10 +139,24 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
              * @param object $object
              * @param string $property
              *
-             * @return bool
              */
             public function matches($object, $property): bool
             {
+                $reflectionProperty = null;
+                if ($object instanceof Video) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'data');
+                }
+                if ($object instanceof Hotspotimage) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'image');
+                }
+                if ($object instanceof ExternalImage) {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, 'url');
+                }
+
+                if ($reflectionProperty instanceof ReflectionProperty) {
+                    return !($reflectionProperty->getValue($object) instanceof ElementDescriptor);
+                }
+
                 return $object instanceof AbstractElement;
             }
         });
@@ -171,7 +183,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @return bool
      */
     public function getNeedsRenewReferences(): bool
     {
@@ -181,7 +192,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @internal
      *
-     * @param bool $needsRenewReferences
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {

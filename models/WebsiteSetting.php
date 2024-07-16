@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
@@ -49,13 +52,6 @@ final class WebsiteSetting extends AbstractModel
      */
     protected static array $nameIdMappingCache = [];
 
-    /**
-     * @param string $name
-     * @param int|null $siteId
-     * @param string|null $language
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
@@ -68,9 +64,9 @@ final class WebsiteSetting extends AbstractModel
         try {
             $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$setting) {
-                throw new \Exception('Website setting in registry is null');
+                throw new Exception('Website setting in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $setting = new self();
                 $setting->getDao()->getById($id);
@@ -89,9 +85,7 @@ final class WebsiteSetting extends AbstractModel
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
      *
-     * @return WebsiteSetting|null
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $siteId = null, string $language = null, string $fallbackLanguage = null): ?WebsiteSetting
     {
@@ -192,7 +186,7 @@ final class WebsiteSetting extends AbstractModel
     {
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
-            return Element\Service::getElementById($this->getType(), $this->data);
+            return Element\Service::getElementById($this->getType(), (int) $this->data);
         }
 
         return $this->data;
@@ -231,7 +225,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @param string|null $type
      *
      * @return $this
      */
@@ -245,7 +238,6 @@ final class WebsiteSetting extends AbstractModel
     /**
      * enum('text','document','asset','object','bool')
      *
-     * @return string|null
      */
     public function getType(): ?string
     {

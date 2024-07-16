@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
+use function is_array;
 
 class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
@@ -26,7 +27,6 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $restrictTo = null;
 

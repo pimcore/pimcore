@@ -20,6 +20,7 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use function strlen;
 
 abstract class AbstractDao implements DaoInterface
 {
@@ -93,7 +94,6 @@ abstract class AbstractDao implements DaoInterface
     /**
      * Clears the column information for the given table.
      *
-     * @param string $table
      */
     public function resetValidTableColumnsCache(string $table): void
     {

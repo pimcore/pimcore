@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
+use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
+use stdClass;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +31,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
 
 /**
  * @Route("/custom-report")
@@ -42,9 +48,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function treeAction(Request $request): JsonResponse
     {
@@ -57,9 +61,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/portlet-report-list", name="pimcore_bundle_customreports_customreport_portletreportlist", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function portletReportListAction(Request $request): JsonResponse
     {
@@ -72,9 +74,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/add", name="pimcore_bundle_customreports_customreport_add", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function addAction(Request $request): JsonResponse
     {
@@ -104,9 +104,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/delete", name="pimcore_bundle_customreports_customreport_delete", methods={"DELETE"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function deleteAction(Request $request): JsonResponse
     {
@@ -128,9 +126,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/clone", name="pimcore_bundle_customreports_customreport_clone", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function cloneAction(Request $request): JsonResponse
     {
@@ -140,7 +136,7 @@ class CustomReportController extends UserAwareController
         $this->isValidConfigName($newName);
         $report = Tool\Config::getByName($newName);
         if ($report) {
-            throw new \Exception('report already exists');
+            throw new Exception('report already exists');
         }
 
         $report = Tool\Config::getByName($request->get('name'));
@@ -168,9 +164,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/get", name="pimcore_bundle_customreports_customreport_get", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function getAction(Request $request): JsonResponse
     {
@@ -189,9 +183,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/update", name="pimcore_bundle_customreports_customreport_update", methods={"PUT"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function updateAction(Request $request): JsonResponse
     {
@@ -226,9 +218,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/column-config", name="pimcore_bundle_customreports_customreport_columnconfig", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function columnConfigAction(Request $request): JsonResponse
     {
@@ -239,9 +229,6 @@ class CustomReportController extends UserAwareController
             throw $this->createNotFoundException();
         }
         $columnConfiguration = $report->getColumnConfiguration();
-        if (!is_array($columnConfiguration)) {
-            $columnConfiguration = [];
-        }
 
         $configuration = json_decode($request->get('configuration'));
         $configuration = $configuration[0] ?? null;
@@ -254,9 +241,6 @@ class CustomReportController extends UserAwareController
         try {
             $adapter = Tool\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
-            if (!is_array($columns)) {
-                $columns = [];
-            }
 
             foreach ($columnConfiguration as $item) {
                 $name = $item['name'];
@@ -270,7 +254,7 @@ class CustomReportController extends UserAwareController
             }
 
             $success = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $errorMessage = $e->getMessage();
         }
 
@@ -284,9 +268,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/get-report-config", name="pimcore_bundle_customreports_customreport_getreportconfig", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function getReportConfigAction(Request $request): JsonResponse
     {
@@ -320,41 +302,24 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-
         if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
             throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
         }
-
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 40);
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        $sort = null;
-        $dir = null;
-        if ($sortingSettings['orderKey']) {
-            $sort = $sortingSettings['orderKey'];
-            $dir = $sortingSettings['order'];
-        }
-
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
-
-        $drillDownFilters = $request->get('drillDownFilters', null);
-
         $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
         $configuration = $config->getDataSourceConfig();
-
         $adapter = Tool\Config::getAdapter($configuration, $config);
-
-        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
+        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], $offset, $limit, null, $sortFilters['drillDownFilters']);
 
         return $this->jsonResponse([
             'success' => true,
@@ -366,9 +331,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
@@ -396,28 +359,19 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function chartAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-
-        $sort = $request->get('sort');
-        $dir = $request->get('dir');
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
-        $drillDownFilters = $request->get('drillDownFilters', null);
-
         $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
-
         $configuration = $config->getDataSourceConfig();
-
         $adapter = Tool\Config::getAdapter($configuration, $config);
-        $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
+        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], null, null, null, $sortFilters['drillDownFilters']);
 
         return $this->jsonResponse([
             'success' => true,
@@ -439,9 +393,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function createCsvAction(Request $request): JsonResponse
     {
@@ -515,9 +467,7 @@ class CustomReportController extends UserAwareController
     /**
      * @Route("/download-csv", name="pimcore_bundle_customreports_customreport_downloadcsv", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return BinaryFileResponse
      */
     public function downloadCsvAction(Request $request): BinaryFileResponse
     {
@@ -536,12 +486,35 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function isValidConfigName(string $configName): void
     {
         if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
-            throw new \Exception('The customer report name is invalid');
+            throw new Exception('The customer report name is invalid');
         }
+    }
+
+    // gets the sort, direction, filters, drilldownfilters from grid or initial config
+    private function getSortAndFilters(Request $request, stdClass $configuration): array
+    {
+        $sortingSettings = null;
+        $sort = null;
+        $dir = null;
+        if(class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        }
+        if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
+            $sort = $sortingSettings['orderKey'];
+            $dir = $sortingSettings['order'];
+        }
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
+        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+            $sort = $configuration->orderby;
+            $dir = $configuration->orderbydir;
+        }
+
+        return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
     }
 }

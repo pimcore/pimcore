@@ -12,7 +12,6 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/help';
 import 'tinymce/plugins/lists';

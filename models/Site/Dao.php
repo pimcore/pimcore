@@ -17,6 +17,11 @@ namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use function count;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -26,42 +31,39 @@ use Pimcore\Model\Exception\NotFoundException;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
     public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
-        if (empty($data['id'])) {
+        if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
-     * @param int $id
      *
      * @throws NotFoundException
      */
     public function getByRootId(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
-        if (empty($data['id'])) {
+        if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
-     * @param string $domain
      *
      * @throws NotFoundException
      */
     public function getByDomain(string $domain): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
-        if (empty($data['id'])) {
+        if (!$data) {
             // check for wildcards
             // @TODO: refactor this to be more clear
             $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
@@ -71,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
                     $siteDomains = unserialize($site['domains']);
                     if (is_array($siteDomains) && count($siteDomains) > 0) {
                         foreach ($siteDomains as $siteDomain) {
-                            if (strpos($siteDomain, '*') !== false) {
+                            if (str_contains($siteDomain, '*')) {
                                 $siteDomain = str_replace('.*', '*', $siteDomain); // backward compatibility
                                 $wildcardDomains[$siteDomain] = $site['id'];
                             }
@@ -88,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            if (empty($data['id'])) {
+            if (!$data) {
                 throw new NotFoundException('there is no site for the requested domain: `' . $domain . '´');
             }
         }

@@ -17,15 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
+use function is_array;
 
 /**
  * @internal
  */
 class QuantityValue implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
@@ -38,9 +36,6 @@ class QuantityValue implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {

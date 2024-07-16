@@ -51,10 +51,10 @@ The code below shows how to use renderlet to create gallery based on it.
 ```twig
 <section id="renderlet-gallery">
     {{
-        pimcore_renderlet('myGallery', {
-            "controller" : "App\\Controller\\ContentController::myGalleryAction",
-            "title" : "Drag an asset folder here to get a gallery",
-            "height" : 400
+        pimcore_renderlet("myGallery", {
+            "controller": "App\\Controller\\ContentController::myGalleryAction",
+            "title": "Drag an asset folder here to get a gallery",
+            "height": 400
         })
     }}
 </section>
@@ -96,7 +96,7 @@ Now you have to create the template file at: `templates/content/my_gallery.html.
 		{% for asset in assets %}
 			{% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
 				<div class="gallery-row">
-                    {{ asset.getThumbnail('myThumbnailName').getHTML()|raw }}
+                    {{ asset.getThumbnail("myThumbnailName").getHTML()|raw }}
 				</div>
 			{% endif %}
 		{% endfor %}
@@ -114,9 +114,9 @@ And the final view is like, below:
 
 ```twig
 {{
-	pimcore_renderlet('myRenderlet', {
+	pimcore_renderlet("myRenderlet", {
 		....
-		"editmode" : editmode
+		"editmode": editmode
 	})
 }}
 ```

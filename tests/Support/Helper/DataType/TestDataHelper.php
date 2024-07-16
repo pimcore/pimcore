@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper\DataType;
 
+use DateTime;
+use Exception;
+use InvalidArgumentException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
@@ -31,6 +34,12 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
+use TypeError;
+use function array_slice;
+use function count;
+use function get_class;
+use function is_array;
+use function is_null;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
@@ -128,10 +137,10 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var \DateTime $value */
+        /** @var DateTime $value */
         $value = $object->$getter();
 
-        $expected = new \DateTime();
+        $expected = new DateTime();
         $expected->setDate(2000, 12, 24);
 
         //set time for datetime isEqual comparison
@@ -628,7 +637,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $paths = [];
         foreach ($elements as $element) {
             if (!($element instanceof ElementInterface)) {
-                throw new \InvalidArgumentException(sprintf('Invalid element. Must be an instance of %s', ElementInterface::class));
+                throw new InvalidArgumentException(sprintf('Invalid element. Must be an instance of %s', ElementInterface::class));
             }
 
             $paths[] = $element->getRealFullPath();
@@ -728,7 +737,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\RgbaColor::class, $value);
 
-        $seed = (int) $seed;
         $expectedBase = $seed % 200;
 
         $this->assertEquals($expectedBase, $value->getR());
@@ -850,7 +858,10 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertVideo(Concrete $object, string $field, int $seed = 1, mixed $returnParams): void
+    /**
+     * @param array<string, mixed> $returnParams
+     */
+    public function assertVideo(Concrete $object, string $field, array $returnParams, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -889,7 +900,7 @@ class TestDataHelper extends AbstractTestDataHelper
         try {
             $object->$setter(1.234);
             $this->fail('expected an instance of Geobounds');
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
         }
     }
 
@@ -900,7 +911,7 @@ class TestDataHelper extends AbstractTestDataHelper
         try {
             $object->$setter(1.234);
             $this->fail('expected an instance of Geopoint');
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
         }
     }
 
@@ -918,7 +929,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
     }
@@ -932,7 +943,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
     }
@@ -946,14 +957,14 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->$setter($invalidValue);
             $object->save();
             $this->fail('expected a ValidationException');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
 
         try {
             $object->$setter('#FF0000');
             $this->fail('expected an instance of RgbaColor');
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
         }
     }
 
@@ -1305,7 +1316,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
     public function fillRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
-        $seed = (int) $seed;
         $value = $seed % 200;
         $value = new DataObject\Data\RgbaColor($value, $value + 1, $value + 2, $value + 3);
 

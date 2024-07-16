@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\UuidBundle\Model\Tool;
 
 use Exception;
+use Pimcore;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Dao;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -31,35 +32,30 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int|string
      */
     protected int|string $itemId;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $type;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $uuid;
 
     /**
      * @internal
      *
-     * @var string
      */
     protected string $instanceIdentifier;
 
     /**
      * @internal
      *
-     * @var mixed
      */
     protected mixed $item = null;
 
@@ -87,7 +83,7 @@ final class UUID extends Model\AbstractModel
      */
     public function setSystemInstanceIdentifier(): static
     {
-        $instanceIdentifier = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
+        $instanceIdentifier = Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (empty($instanceIdentifier)) {
             throw new Exception('No instance identifier set in system config!');
         }
@@ -129,8 +125,6 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return string
-     *
      * @throws Exception
      */
     public function createUuid(): string
@@ -170,7 +164,7 @@ final class UUID extends Model\AbstractModel
 
         if ($item instanceof Model\Element\ElementInterface) {
             $this->setType(Model\Element\Service::getElementType($item));
-        } elseif ($item instanceof Model\DataObject\ClassDefinition) {
+        } elseif ($item instanceof Model\DataObject\ClassDefinitionInterface) {
             $this->setType('class');
         }
 
@@ -180,9 +174,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $item
      *
-     * @return UUID
      *
      * @throws Exception
      */
@@ -203,9 +195,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $item
      *
-     * @return static
      *
      * @throws Exception
      */

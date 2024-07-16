@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
@@ -33,6 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use function is_array;
 
 /**
  * @internal
@@ -71,13 +73,9 @@ final class RedirectHandler
     }
 
     /**
-     * @param Request $request
-     * @param bool $override
-     * @param Site|null $sourceSite
      *
-     * @return Response|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?Response
     {
@@ -108,7 +106,7 @@ final class RedirectHandler
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function matchRegexRedirect(
         Redirect $redirect,
@@ -146,13 +144,9 @@ final class RedirectHandler
     }
 
     /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param array $matches
      *
-     * @return Response|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?Response
     {
@@ -231,7 +225,7 @@ final class RedirectHandler
 
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
-        $this->redirectLogger->info(Tool::getAnonymizedClientIp() ?? 'Anonymous', ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
+        $this->redirectLogger->info(Tool::getAnonymizedClientIp() ?? 'Anonymous', ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $request->getRequestUri() . ' -> ' . $url]);
 
         return $response;
     }
@@ -265,7 +259,7 @@ final class RedirectHandler
                     $this->redirects = $list->load();
 
                     Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998, true);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error('Failed to load redirects');
                 }
             }

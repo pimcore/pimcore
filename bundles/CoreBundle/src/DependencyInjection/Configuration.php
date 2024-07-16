@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use const PASSWORD_ARGON2I;
+use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -25,6 +27,10 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use function array_key_exists;
+use function count;
+use function defined;
+use function is_string;
 
 /**
  * @internal
@@ -41,9 +47,6 @@ final class Configuration implements ConfigurationInterface
         $this->placeholders = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
@@ -131,6 +134,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
+        $this->addDependencyNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -141,13 +145,19 @@ final class Configuration implements ConfigurationInterface
             'perspectives' => PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
             'custom_views' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_views',
             'object_custom_layouts' => PIMCORE_CONFIGURATION_DIRECTORY . '/object_custom_layouts',
-            'system_settings' => PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
         ]);
 
         ConfigurationHelper::addConfigLocationTargetNode(
             $storageNode,
             'system_settings',
             PIMCORE_CONFIGURATION_DIRECTORY . '/system_settings',
+            [LocationAwareConfigRepository::READ_TARGET]
+        );
+
+        ConfigurationHelper::addConfigLocationTargetNode(
+            $storageNode,
+            'select_options',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/select_options',
             [LocationAwareConfigRepository::READ_TARGET]
         );
 
@@ -197,6 +207,12 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('domain')
                     ->defaultValue('')
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return $v && !filter_var($v, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
+                        })
+                        ->thenInvalid('Invalid domain name "%s"')
+                    ->end()
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -209,6 +225,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('language')
                     ->defaultValue('en')
+                    ->setDeprecated('pimcore/pimcore', '11.2')
                 ->end()
                 ->arrayNode('valid_languages')
                     ->info('String or array format are supported.')
@@ -217,6 +234,14 @@ final class Configuration implements ConfigurationInterface
                         ->then(fn ($v) => explode(',', $v))
                     ->end()
                     ->defaultValue(['en', 'de', 'fr'])
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('required_languages')
+                    ->info('String or array format are supported.')
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(fn ($v) => explode(',', $v))
+                    ->end()
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
@@ -349,6 +374,33 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('assets')
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->arrayNode('thumbnails')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('allowed_formats')
+                                ->defaultValue(
+                                    [
+                                        'avif',
+                                        'eps',
+                                        'gif',
+                                        'jpeg',
+                                        'jpg',
+                                        'pjpeg',
+                                        'png',
+                                        'svg',
+                                        'tiff',
+                                        'webm',
+                                        'webp',
+                                        'print',
+                                    ]
+                                )
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->floatNode('max_scaling_factor')
+                                ->defaultValue(5.0)
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -455,7 +507,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultValue([
                                             'avif' => [
                                                 'enabled' => true,
-                                                'quality' => 15,
+                                                'quality' => 50,
                                             ],
                                             'webp' => [
                                                 'enabled' => true,
@@ -532,6 +584,32 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultTrue()
                                     ->end()
                                 ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('document')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('thumbnails')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')
+                                        ->defaultTrue()
+                                        ->info('Process thumbnails for Asset documents.')
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->booleanNode('process_page_count')
+                                ->defaultTrue()
+                                ->info('Process & store page count for Asset documents. Internally required for thumbnails & text generation')
+                            ->end()
+                            ->booleanNode('process_text')
+                                ->defaultTrue()
+                                ->info('Process text for Asset documents (e.g. used by backend search).')
+                            ->end()
+                            ->booleanNode('scan_pdf')
+                                ->defaultTrue()
+                                ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
                         ->end()
                     ->end()
@@ -691,6 +769,31 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
                                             ->variableNode('layoutDefinitions')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('select_options')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('definitions')
+                                    ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('id')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('useTraits')->end()
+                                            ->scalarNode('implementsInterfaces')->end()
+                                            ->arrayNode('selectOptions')
+                                                ->prototype('array')
+                                                    ->children()
+                                                        ->scalarNode('value')->end()
+                                                        ->scalarNode('label')->end()
+                                                        ->scalarNode('name')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
                                         ->end()
                                     ->end()
                                 ->end()
@@ -863,6 +966,22 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('static_page_generator')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('use_main_domain')
+                            ->defaultFalse()
+                            ->info('Use main domain for static pages folder in tmp/pages')
+                        ->end()
+                        ->arrayNode('headers')
+                            ->normalizeKeys(false)
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->scalarNode('value')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         $this->addDocumentDefinition($documentsNode, 'type_definitions');
@@ -1005,8 +1124,8 @@ final class Configuration implements ConfigurationInterface
                                     ->values(array_filter([
                                         PASSWORD_DEFAULT,
                                         PASSWORD_BCRYPT,
-                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
-                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                        defined('PASSWORD_ARGON2I') ? PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : null,
                                     ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
@@ -1611,6 +1730,11 @@ final class Configuration implements ConfigurationInterface
                                                 ->info('An expression to block the action')
                                                 ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
+                                            ->booleanNode('saveSubject')
+                                                ->defaultTrue()
+                                                ->info('Determines if the global action should perform a save on the subject, default behavior is set to true')
+                                                ->example('false')
+                                            ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
                                                     ->ifString()
@@ -1896,11 +2020,30 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    private function addDependencyNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('dependency')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('enabled')
+                        ->defaultValue(true)
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * @deprecated
+     */
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
                 ->arrayNode('chromium')
+                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('uri')

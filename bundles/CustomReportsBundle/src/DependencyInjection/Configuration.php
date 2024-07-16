@@ -22,9 +22,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore_custom_reports');
@@ -77,7 +74,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['custom_reports' => '/var/config/custom_reports']);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['custom_reports' => PIMCORE_CONFIGURATION_DIRECTORY . '/custom_reports']);
 
         return $treeBuilder;
     }

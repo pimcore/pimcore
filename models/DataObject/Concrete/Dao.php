@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Concrete;
 
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -24,6 +23,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterf
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use function array_key_exists;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -54,7 +56,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -64,7 +65,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->getData();
@@ -102,7 +103,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
+        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -127,12 +128,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND r.type='document'
 
             ORDER BY `index` ASC", $params);
-
-        if (is_array($relations) && count($relations) > 0) {
-            return $relations;
-        } else {
-            return [];
-        }
     }
 
     /**
@@ -183,7 +178,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save changes to database, it's an good idea to use save() instead
      *
-     * @param bool|null $isUpdate
      */
     public function update(bool $isUpdate = null): void
     {
@@ -192,7 +186,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
         $untouchable = [];
-        $db = Db::get();
 
         foreach ($fieldDefinitions as $fieldName => $fd) {
             if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
@@ -209,24 +202,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
                 }
             }
-        }
-
-        // empty relation table except the untouchable fields (eg. lazy loading fields)
-        if (count($untouchable) > 0) {
-            $untouchables = "'" . implode("','", $untouchable) . "'";
-            $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
-        } else {
-            $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
-        }
-
-        if (!DataObject::isDirtyDetectionDisabled()) {
-            $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
-        }
-
-        $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
-        WHERE '.$condition .' LIMIT 1');
-        if ($dataExists) {
-            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
         }
 
         $inheritedValues = DataObject::doGetInheritedValues();

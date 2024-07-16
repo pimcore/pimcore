@@ -6,13 +6,13 @@ Pimcore provides the object orientated PHP API to work with Documents.
 
 ### Create a New Document
 To create a new document, you need to specify two mandatory attributes:
-* An unique key
+* A unique key
 * A parent ID - ID of the parent document (document, folder and every other type)
  
 You can set also every other value available in documents structure (settings, properties, children etc.).
 
 > Type of the document (page, folder, link, email, snippet etc.) The complete list can be obtained using: `\Pimcore\Model\Document::getTypes()`
-> Every type has it's own model, for example: a link document could be created by `new \Pimcore\Model\Document\Link`.
+> Every type has its own model, for example: a link document could be created by `new \Pimcore\Model\Document\Link`.
 
 The example below, shows how to create simple page document via the PHP API. 
 
@@ -120,11 +120,11 @@ If you'd like to get also all the unpublished documents, set the following flag:
 | Method                  | Arguments                           | Description                                                                                 |
 |-------------------------|-------------------------------------|---------------------------------------------------------------------------------------------|
 | `getTotalCount()`       |                                     | Returns total number of selected rows.                                                      |
-| `getPaginatorAdapter()` |                                     | List implements `\Iterator`, you could use the list as a paginator. |
+| `getPaginatorAdapter()` |                                     | List implements `\Iterator`, you could use the list as a paginator.                         |
 | `getItems()`            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
 | `loadIdList()`          |                                     | Returns complete array with id as a row.                                                    |
 
-If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_PHP_API.md#zendPaginatorListing)
+If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_PHP_API.md#working-with-knpcomponentpagerpaginator).
 
 
 ### Advanced Example
@@ -162,6 +162,3 @@ $listing = \Pimcore\Model\Document::getList([
     'limit' => 2
 ]);
 ```
-
-
-

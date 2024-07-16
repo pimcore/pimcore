@@ -17,9 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Generator;
+
 interface BlockInterface
 {
-    public function getIterator(): \Generator;
+    public function getIterator(): Generator;
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
@@ -62,21 +64,18 @@ interface BlockInterface
     /**
      * Return the amount of block elements
      *
-     * @return int
      */
     public function getCount(): int;
 
     /**
      * Return current iteration step
      *
-     * @return int
      */
     public function getCurrent(): int;
 
     /**
      * Return current index
      *
-     * @return int
      */
     public function getCurrentIndex(): int;
 

@@ -30,17 +30,11 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
      */
     protected ?string $text = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'textarea';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return (string) $this->text;
@@ -51,9 +45,6 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $config = $this->getConfig();
@@ -70,17 +61,11 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
         return $text;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): string
     {
         return htmlentities((string)$this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->text = $data;
@@ -88,9 +73,6 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities

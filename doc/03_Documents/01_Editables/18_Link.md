@@ -6,7 +6,7 @@ The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
-You can pass nearly every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
 such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
 | Name             | Type           | Description                                                                                                                                                                                                                                                                     |
@@ -19,8 +19,6 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 | `allowedTypes`   | array          | You can limit the available types for this editable by passing the allowed types explicitly. If this option is not used, all types are available. Valid types are: `asset`, `document`, `object`                                                                                |
 | `allowedTargets` | array          | You can limit the available targets for this editable by passing the allowed targets explicitly. If this option is not used, all targets are available. Valid targets are: ` ` (empty string), `_blank`, `_self`, `_top`, `_parent`                                             |
 | `disabledFields` | array          | You can limit the available fields for this editable by passing the allowed fields explicitly. If this option is not used, all fields are available. Valid Fields are: `text`, `target`, `parameters`, `anchor`, `title`, `accesskey`, `rel`, `tabindex`, `class`, `attributes` |
-
-> For security reasons we created an For security reasons we created an [allow list](https://github.com/pimcore/pimcore/blob/9bf18aca55e5303661c68835c950412a428cf616/models/Document/Editable/Link.php#L115-L141) to filter harmfull html attributes. For example all `on*` attributes will be filtered out!
 
 ## Methods
 
@@ -45,7 +43,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 ```twig
 <p>
     {{ "Visit our" | trans }}
-    {{ pimcore_link('blogLink') }}
+    {{ pimcore_link("blogLink") }}
 </p>
 ```
 
@@ -66,8 +64,8 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
-    {% for i in pimcore_block('linkblock').iterator %}
-        <li>{{ pimcore_link('myLink', {'class': "special-link-class"}) }}</li>
+    {% for i in pimcore_block("linkblock").iterator %}
+        <li>{{ pimcore_link("myLink", {"class": "special-link-class"}) }}</li>
     {% endfor %}
 </ul>
 ```
@@ -78,8 +76,3 @@ The above example renders a list of links:
 ### Link Generators
 
 Please also see the section about [Link Generators](../../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md)
-
-
-
-
-

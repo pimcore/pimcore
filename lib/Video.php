@@ -16,17 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use Exception;
+
 /**
  * @internal
  */
 class Video
 {
     /**
-     * @param string|null $adapter
      *
-     * @return Video\Adapter|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getInstance(string $adapter = null): ?Video\Adapter
     {
@@ -36,14 +36,14 @@ class Video
                 if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
-                    throw new \Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
+                    throw new Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
                 }
             } else {
                 if ($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::crit('Unable to load video adapter: ' . $e->getMessage());
 
             throw $e;
@@ -73,7 +73,7 @@ class Video
                     if ($adapter->isAvailable()) {
                         return $adapter;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::warning((string) $e);
                 }
             }

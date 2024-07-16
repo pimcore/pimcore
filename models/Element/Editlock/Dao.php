@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element\Editlock;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
@@ -26,8 +27,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $cid
-     * @param string $ctype
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -51,7 +50,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */

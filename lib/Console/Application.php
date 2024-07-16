@@ -17,13 +17,17 @@ declare(strict_types=1);
 namespace Pimcore\Console;
 
 use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
+use Pimcore;
 use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Tool\Admin;
+use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -41,7 +45,6 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
     /**
      * Constructor.
      *
-     * @param KernelInterface $kernel
      *
      * @internal param string $name The name of the application
      * @internal param string $version The version of the application
@@ -59,37 +62,50 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         setlocale(LC_ALL, ['en.utf8', 'en.UTF-8', 'en_US.utf8', 'en_US.UTF-8', 'en_GB.utf8', 'en_GB.UTF-8']);
 
         // allow to register commands here (e.g. through plugins)
-        $dispatcher = \Pimcore::getEventDispatcher();
+        $dispatcher = Pimcore::getEventDispatcher();
         $event = new ConsoleEvent($this);
         $dispatcher->dispatch($event, SystemEvents::CONSOLE_INIT);
 
         $this->setDispatcher($dispatcher);
 
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
+        $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel, $maintenanceModeHelper) {
             // skip if maintenance mode is on and the flag is not set
-            if (Admin::isInMaintenanceMode() && !$event->getInput()->getOption('ignore-maintenance-mode')) {
-                throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
+            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+                !$event->getInput()->getOption('ignore-maintenance-mode')
+            ) {
+                throw new RuntimeException(
+                    'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
+                );
             }
 
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
 
-                $event->getOutput()->writeln('Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...');
+                $event->getOutput()->writeln(
+                    'Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...'
+                );
 
-                Admin::activateMaintenanceMode($maintenanceModeId);
+                $maintenanceModeHelper->activate($maintenanceModeId);
             }
 
-            if ($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
+            if ($event->getCommand() instanceof DoctrineCommand &&
+                $prefix = $event->getInput()->getOption('prefix')
+            ) {
                 $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
                 $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
             }
         });
 
-        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($maintenanceModeHelper) {
             if ($event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
-                Admin::deactivateMaintenanceMode();
+                //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
+                if (Admin::isInMaintenanceMode()) {
+                    Admin::deactivateMaintenanceMode();
+                }
+                $maintenanceModeHelper->deactivate();
             }
         });
     }
@@ -109,6 +125,10 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
     public function add(Command $command): ?Command
     {
+        if ($command instanceof LazyCommand && str_starts_with($command->getName(), 'doctrine:')) {
+            $command = $command->getCommand();
+        }
+
         if ($command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();
 

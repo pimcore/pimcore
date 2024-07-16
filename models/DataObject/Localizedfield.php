@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
+use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -25,13 +27,18 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function is_null;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method void delete($deleteQuery = true, $isUpdate = true)
- * @method void load($object, $params = [])
- * @method void save($params = [])
- * @method void createUpdateTable($params = [])
+ * @method bool delete(bool $deleteQuery = true, bool $isUpdate = true)
+ * @method void load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+ * @method void save(array $params = [])
+ * @method void createUpdateTable(array $params = [])
  */
 final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
@@ -65,7 +72,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -123,9 +129,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return self::$getFallbackValues;
     }
 
-    /**
-     * @param array|null $items
-     */
     public function __construct(array $items = null)
     {
         if ($items) {
@@ -165,7 +168,6 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param bool $mark
      *
      * @internal
      */
@@ -179,9 +181,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @internal
      *
-     * @param bool $loadLazyFields
      *
-     * @return array
      */
     public function getInternalData(bool $loadLazyFields = false): array
     {
@@ -214,11 +214,10 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|Model\Element\ElementDescriptor|null $object
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
@@ -227,7 +226,7 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         if (!is_null($object) && !$object instanceof Concrete) {
-            throw new \Exception('must be instance of object concrete');
+            throw new Exception('must be instance of object concrete');
         }
 
         $this->markAllLanguagesAsDirty();
@@ -260,11 +259,9 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
-     * @param string|null $language
      *
-     * @return string
      */
     public function getLanguage(string $language = null): string
     {
@@ -274,13 +271,13 @@ final class Localizedfield extends Model\AbstractModel implements
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
+            $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
 
             if (isset($locale) && Tool::isValidLanguage($locale)) {
                 return $locale;
             }
 
-            if (\Pimcore::inAdmin()) {
+            if (Pimcore::inAdmin()) {
                 foreach (Tool::getValidLanguages() as $validLocale) {
                     if (str_starts_with($validLocale, $locale.'_')) {
                         return $validLocale;
@@ -288,8 +285,8 @@ final class Localizedfield extends Model\AbstractModel implements
                 }
             }
 
-            throw new \Exception('Not supported language');
-        } catch (\Exception $e) {
+            throw new Exception('Not supported language');
+        } catch (Exception $e) {
             return Tool::getDefaultLanguage();
         }
     }
@@ -328,12 +325,10 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param array $context
-     * @param array $params
      *
      * @return ClassDefinition\Data[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getFieldDefinitions(array $context = [], array $params = []): array
     {
@@ -389,13 +384,9 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param string|null $language
-     * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      * @throws Model\Exception\NotFoundException
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false): mixed
@@ -507,14 +498,10 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param string|null $language
-     * @param bool $markFieldAsDirty
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLocalizedValue(string $name, mixed $value, string $language = null, bool $markFieldAsDirty = true): static
     {
@@ -524,7 +511,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
-                throw new \Exception('Language '.$language.' not accepted in strict mode');
+                throw new Exception('Language '.$language.' not accepted in strict mode');
             }
         }
 
@@ -600,9 +587,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
         $object = $this->getObject();
@@ -647,7 +631,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function hasDirtyLanguages(): bool
     {
@@ -661,9 +644,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
      *
-     * @return bool
      */
     public function isLanguageDirty(string $language): bool
     {
@@ -694,7 +675,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getDirtyLanguages(): ?array
     {
@@ -712,7 +692,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @return bool
      */
     public function allLanguagesAreDirty(): bool
     {
@@ -726,8 +705,6 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @param string $language
-     * @param bool $dirty
      */
     public function markLanguageAsDirty(string $language, bool $dirty = true): void
     {
@@ -755,12 +732,24 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
+    public function markLanguageAsDirtyByFallback(): void
+    {
+        foreach (Tool::getValidLanguages() as $validLanguage) {
+            $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
+            foreach ($fallbackLanguages as $fallbackLanguage) {
+                if ($this->isLanguageDirty($fallbackLanguage)) {
+                    $this->markLanguageAsDirty($validLanguage);
+
+                    break;
+                }
+            }
+        }
+    }
+
     /**
      * @internal
      *
-     * @return array
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getLazyLoadedFieldNames(): array
     {

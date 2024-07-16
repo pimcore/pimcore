@@ -16,10 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Console\Traits;
 
+use Closure;
+use Exception;
 use Pimcore\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use function is_null;
 
 /**
  * @internal
@@ -38,7 +41,6 @@ trait Timeout
     /**
      * Add timeout option to command.
      *
-     * @param Command $command
      */
     protected static function configureTimeout(Command $command): void
     {
@@ -48,7 +50,6 @@ trait Timeout
     /**
      * Init the timeout. Should be called in the beginning of a command or process.
      *
-     * @param InputInterface $input
      */
     protected function initTimeout(InputInterface $input): void
     {
@@ -74,11 +75,11 @@ trait Timeout
      * Handle timeout should be called periodically in your command or process,
      * after processing an item.
      *
-     * @param \Closure|null $abortClosure use to implement a custom error handling that is executed when the timeout happens.
+     * @param Closure|null $abortClosure use to implement a custom error handling that is executed when the timeout happens.
      *
-     * @throws \Exception is thrown in the default implementation when the timeout happens
+     * @throws Exception is thrown in the default implementation when the timeout happens
      */
-    protected function handleTimeout(?\Closure $abortClosure = null): void
+    protected function handleTimeout(?Closure $abortClosure = null): void
     {
         $oldStartTime = $this->startTimeCurrentStep;
         $this->startTimeCurrentStep = time();
@@ -90,7 +91,7 @@ trait Timeout
                     $abortClosure($abortMessage);
                 } else {
                     //default implementation: throw exeption
-                    throw new \Exception($abortMessage);
+                    throw new Exception($abortMessage);
                 }
             } elseif (is_null($oldStartTime) || date('i', $oldStartTime) != date('i', $this->startTimeCurrentStep)) {
                 Logger::debug('Timeout enabled. Still needs '.($this->timeout - $timeSinceStartMinutes).' minutes in order to complete.');
@@ -101,7 +102,6 @@ trait Timeout
     /**
      * Get the timeout in minutes. If <= 0 then no timeout is given.
      *
-     * @return int
      */
     public function getTimeout(): int
     {
@@ -111,7 +111,6 @@ trait Timeout
     /**
      * Set the timeout in minutes. If not set, no timeout happens
      *
-     * @param int $timeout
      *
      * @return $this
      */
@@ -125,7 +124,6 @@ trait Timeout
     /**
      * Get the start time of the current step in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTimeCurrentStep(): ?int
     {
@@ -135,7 +133,6 @@ trait Timeout
     /**
      * Get the start time of the current (overall) process in seconds (unixtime).
      *
-     * @return int|null
      */
     public function getStartTime(): ?int
     {

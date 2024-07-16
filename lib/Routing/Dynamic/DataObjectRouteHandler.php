@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
+use Exception;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -41,9 +42,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $this->requestHelper = $requestHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteByName(string $name): ?DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
@@ -60,9 +58,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $site = $this->siteResolver->getSite($context->getRequest());
@@ -82,7 +77,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute
     {

@@ -16,10 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Exception;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use function is_resource;
+use function strlen;
 
 /**
  * Class AssetTest
@@ -94,7 +97,7 @@ class AssetTest extends ModelTestCase
      */
     public function testParentIs0(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createImageAsset('', null, false);
         $this->assertTrue($savedObject->getId() == 0);
@@ -108,7 +111,7 @@ class AssetTest extends ModelTestCase
      */
     public function testParentIdentical(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
         $savedObject = TestHelper::createImageAsset();
         $this->assertTrue($savedObject->getId() > 0);
@@ -124,7 +127,7 @@ class AssetTest extends ModelTestCase
      */
     public function testParentNotFound(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createImageAsset('', null, false);
         $this->assertTrue($savedObject->getId() == 0);
@@ -212,7 +215,7 @@ class AssetTest extends ModelTestCase
         // clean the thumbnails
         try {
             $stream = $thumbnail->getStream();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $stream = null;
         }
 
@@ -222,7 +225,7 @@ class AssetTest extends ModelTestCase
 
         try {
             $stream1 = $thumbnail->getStream();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $stream1 = null;
         }
 

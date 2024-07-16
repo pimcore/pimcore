@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use function is_array;
 
 /**
  * TODO: Refactor - this class is very similar to the parent one so probably we can try to refactor parent and have better results here also
@@ -82,9 +83,6 @@ class InputQuantityValue extends AbstractQuantityValue
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($omitMandatoryCheck) {

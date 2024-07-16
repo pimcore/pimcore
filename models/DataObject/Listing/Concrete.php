@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Listing;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use function in_array;
 
 /**
  * @method DataObject\Listing\Concrete\Dao getDao()
@@ -42,12 +44,11 @@ abstract class Concrete extends Model\DataObject\Listing
      * do not use the localized views for this list (in the case the class contains localized fields),
      * conditions on localized fields are not possible
      *
-     * @var bool
      */
     protected bool $ignoreLocalizedFields = false;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct()
     {
@@ -120,22 +121,19 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * field collection queries
      *
-     * @var array
      */
     private array $fieldCollectionConfigs = [];
 
     /**
-     * @param string $type
-     * @param string|null $fieldname
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function addFieldCollection(string $type, string $fieldname = null): void
     {
         $this->setData(null);
 
         if (empty($type)) {
-            throw new \Exception('No fieldcollectiontype given');
+            throw new Exception('No fieldcollectiontype given');
         }
 
         DataObject\Fieldcollection\Definition::getByKey($type);
@@ -143,11 +141,10 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param array $fieldCollections
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setFieldCollections(array $fieldCollections): static
     {
@@ -168,21 +165,19 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * object brick queries
      *
-     * @var array
      */
     private array $objectBrickConfigs = [];
 
     /**
-     * @param string $type
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function addObjectbrick(string $type): void
     {
         $this->setData(null);
 
         if (empty($type)) {
-            throw new \Exception('No objectbrick given');
+            throw new Exception('No objectbrick given');
         }
 
         DataObject\Objectbrick\Definition::getByKey($type);
@@ -192,11 +187,10 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param array $objectbricks
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setObjectbricks(array $objectbricks): static
     {
@@ -219,7 +213,6 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * @internal
      *
-     * @return bool
      */
     public function addDistinct(): bool
     {

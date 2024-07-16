@@ -16,26 +16,25 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable\Area;
 
+use function array_key_exists;
+
 abstract class AbstractArea
 {
     /**
      * @internal
      *
-     * @var array
      */
     protected array $config;
 
     /**
      * @internal
      *
-     * @var Info
      */
     protected Info $brick;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $params = [];
 

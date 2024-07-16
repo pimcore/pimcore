@@ -17,44 +17,44 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Helper;
 
-use Pimcore\Helper\CsvFormulaFormatter;
+use League\Csv\EscapeFormula;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class CsvFormulaTest extends TestCase
 {
     public function testUnEscapeFormula(): void
     {
-        $formatter = new CsvFormulaFormatter("'", ['=', '-', '+', '@']);
+        $formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
 
         $escapedRow = $formatter->escapeRecord(['=1+1']);
         $this->assertEquals("'=1+1", $escapedRow[0]);
-        $this->assertEquals('=1+1', $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals('=1+1', $formatter->unescapeRecord($escapedRow)[0]);
 
         $escapedRow = $formatter->escapeRecord(['-1+1']);
         $this->assertEquals("'-1+1", $escapedRow[0]);
-        $this->assertEquals('-1+1', $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals('-1+1', $formatter->unescapeRecord($escapedRow)[0]);
 
         $escapedRow = $formatter->escapeRecord(['+1+1']);
         $this->assertEquals("'+1+1", $escapedRow[0]);
-        $this->assertEquals('+1+1', $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals('+1+1', $formatter->unescapeRecord($escapedRow)[0]);
 
         $escapedRow = $formatter->escapeRecord(['@1+1']);
         $this->assertEquals("'@1+1", $escapedRow[0]);
-        $this->assertEquals('@1+1', $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals('@1+1', $formatter->unescapeRecord($escapedRow)[0]);
 
         // There should be no escape. So the string should be returned as is.
         $escapedRow = $formatter->escapeRecord(['test']);
         $this->assertEquals('test', $escapedRow[0]);
-        $this->assertEquals('test', $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals('test', $formatter->unescapeRecord($escapedRow)[0]);
 
         $testString = 'test=test';
         $escapedRow = $formatter->escapeRecord([$testString]);
         $this->assertEquals($testString, $escapedRow[0]);
-        $this->assertEquals($testString, $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals($testString, $formatter->unescapeRecord($escapedRow)[0]);
 
         $testString = 'test+test';
         $escapedRow = $formatter->escapeRecord([$testString]);
         $this->assertEquals($testString, $escapedRow[0]);
-        $this->assertEquals($testString, $formatter->unEscapeField($escapedRow[0]));
+        $this->assertEquals($testString, $formatter->unescapeRecord($escapedRow)[0]);
     }
 }

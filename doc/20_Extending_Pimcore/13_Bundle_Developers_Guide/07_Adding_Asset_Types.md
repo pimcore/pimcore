@@ -30,7 +30,7 @@ It needs to extend `pimcore.asset.asset`, be located in the namespace `pimcore.a
 `$type` property of the corresponding PHP class.
 
 For examples have a look at the Pimcore core asset types at
-[github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/public/js/pimcore/asset)
+[github](https://github.com/pimcore/admin-ui-classic-bundle/tree/1.x/public/js/pimcore/asset)
 
 ## 3) Register the asset on the asset type map
 

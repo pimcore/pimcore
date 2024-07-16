@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use function in_array;
+
 /**
  * @internal
  */
@@ -24,10 +26,7 @@ class Transliteration
     /**
      * @static
      *
-     * @param string $value
-     * @param string|null $language
      *
-     * @return string
      */
     public static function toASCII(string $value, string $language = null): string
     {

@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function in_array;
+use function is_string;
 
 class Input extends Data implements
     ResourcePersistenceAwareInterface,
@@ -68,11 +70,7 @@ class Input extends Data implements
     public bool $showCharCount = false;
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
@@ -84,11 +82,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -98,11 +92,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -112,11 +102,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -139,11 +125,8 @@ class Input extends Data implements
     }
 
     /**
-     * @param string $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?string
     {
@@ -214,26 +197,29 @@ class Input extends Data implements
         return $this->getColumnType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
-            $throwException = false;
-            if (in_array('g', $this->getRegexFlags())) {
-                $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
-                if (!preg_match_all('#' . $this->getRegex() . '#' . $flags, $data)) {
-                    $throwException = true;
+        if(is_string($data)) {
+            if (!$omitMandatoryCheck && $this->getRegex() && $data !== '') {
+                $throwException = false;
+                if (in_array('g', $this->getRegexFlags())) {
+                    $flags = str_replace('g', '', implode('', $this->getRegexFlags()));
+                    if (!preg_match_all('#' . $this->getRegex() . '#' . $flags, $data)) {
+                        $throwException = true;
+                    }
+                } else {
+                    if (!preg_match('#'.$this->getRegex().'#'.implode('', $this->getRegexFlags()), $data)) {
+                        $throwException = true;
+                    }
                 }
-            } else {
-                if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
-                    $throwException = true;
+
+                if ($throwException) {
+                    throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] doesn't match input validation '".$this->getRegex()."'");
                 }
             }
 
-            if ($throwException) {
-                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
+            if ($this->getColumnLength() && mb_strlen($data) > $this->getColumnLength()) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is longer than '.$this->getColumnLength().' characters');
             }
         }
 
@@ -248,9 +234,6 @@ class Input extends Data implements
         $this->columnLength = $mainDefinition->columnLength;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

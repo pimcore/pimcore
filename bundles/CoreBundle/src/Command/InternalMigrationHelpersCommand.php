@@ -17,15 +17,23 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Doctrine\Migrations\DependencyFactory;
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'internal:migration-helpers',
+    description: 'For internal use only',
+    hidden: true
+)]
 class InternalMigrationHelpersCommand extends AbstractCommand
 {
     public function __construct(private DependencyFactory $dependencyFactory, private FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
@@ -36,9 +44,6 @@ class InternalMigrationHelpersCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setHidden(true)
-            ->setName('internal:migration-helpers')
-            ->setDescription('For internal use only')
             ->addOption(
                 'is-installed',
                 null,
@@ -47,19 +52,16 @@ class InternalMigrationHelpersCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('is-installed')) {
             try {
-                if (\Pimcore::isInstalled()) {
+                if (Pimcore::isInstalled()) {
                     $this->metadataStorage->__invoke($this->dependencyFactory);
                     $this->metadataStorage->ensureInitialized();
                     $output->write('1');
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // nothing to do
             }
         }

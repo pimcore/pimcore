@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Document\Editable\EditableHandler;
@@ -25,6 +27,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use function array_key_exists;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -36,7 +42,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -52,7 +57,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -61,21 +65,14 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $subtype = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'renderlet';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -85,9 +82,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         if ($this->o instanceof Element\ElementInterface) {
@@ -101,18 +95,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
-
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
 
         if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
@@ -168,17 +155,33 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
     public function setDataFromResource(mixed $data): static
     {
-        $data = \Pimcore\Tool\Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = \Pimcore\Tool\Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new InvalidArgumentException('Data must be a string or an array.');
+        }
 
-        $this->id = $data['id'];
-        $this->type = (string) $data['type'];
-        $this->subtype = $data['subtype'];
+        foreach (['id', 'type', 'subtype'] as $key) {
+            if (!array_key_exists($key, $processedData)) {
+                throw new InvalidArgumentException("Key '{$key}' is missing in the data array.");
+            }
+        }
+
+        $this->id = $processedData['id'];
+        $this->type = (string) $processedData['type'];
+        $this->subtype = $processedData['subtype'];
 
         $this->setElement();
 
@@ -186,7 +189,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -217,9 +220,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $this->load();
@@ -285,9 +285,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -302,9 +299,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         if (!$this->o) {
@@ -354,9 +348,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this->subtype;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(array $idMapping): void
     {
         $type = (string) $this->type;

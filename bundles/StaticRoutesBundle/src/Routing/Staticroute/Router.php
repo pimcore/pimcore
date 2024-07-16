@@ -30,6 +30,8 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
+use function count;
+use function in_array;
 
 /**
  * @internal
@@ -55,7 +57,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * Params which are treated as _locale if no _locale attribute is set
      *
-     * @var array
      */
     protected array $localeParams = [];
 
@@ -67,17 +68,11 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContext(): RequestContext
     {
         return $this->context;
@@ -93,25 +88,16 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         $this->localeParams = $localeParams;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
         return $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (!in_array($name, $this->getSupportedNames())) {
@@ -193,17 +179,11 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(Request $request): array
     {
         return $this->doMatch($request->getPathInfo(), $request);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);

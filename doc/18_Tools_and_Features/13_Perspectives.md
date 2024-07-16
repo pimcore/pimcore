@@ -37,7 +37,7 @@ You can restrict the access to certain perspectives via the user settings.
 
 Format and location of the perspective configuration depends on your environment.
 Per default the symfony-config is used.
-If you want to change the default behaviour, have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
+If you want to change the default behaviour, have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#configuration-storage-locations--fallbacks) configuration options. 
 
 Please refer to the [example configuration](14_Perspective_Example.md) for further details on how this can be set up.
 
@@ -262,6 +262,3 @@ custom view with product objects.
 The view after switch looks like in the picture.
 
 ![Custom perspective](../img/perspectives_custom_perspective.png)
-
-
-

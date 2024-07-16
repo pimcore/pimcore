@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
 use Pimcore\Model\DataObject\Concrete;
+use function is_array;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -29,13 +30,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @internal
      *
-     * @var string|null
      */
     public ?string $restrictTo = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -58,9 +55,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this->restrictTo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;

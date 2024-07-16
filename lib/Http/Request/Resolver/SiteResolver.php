@@ -30,11 +30,6 @@ class SiteResolver extends AbstractRequestResolver
         $request->attributes->set(static::ATTRIBUTE_SITE, $site);
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return Site|null
-     */
     public function getSite(Request $request = null): ?Site
     {
         if (null === $request) {
@@ -49,11 +44,6 @@ class SiteResolver extends AbstractRequestResolver
         $request->attributes->set(static::ATTRIBUTE_SITE_PATH, $path);
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return string|null
-     */
     public function getSitePath(Request $request = null): ?string
     {
         if (null === $request) {
@@ -63,11 +53,6 @@ class SiteResolver extends AbstractRequestResolver
         return $request->attributes->get(static::ATTRIBUTE_SITE_PATH);
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
     public function isSiteRequest(Request $request = null): bool
     {
         $site = $this->getSite($request);

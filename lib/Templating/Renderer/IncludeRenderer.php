@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Renderer;
 
+use DOMElement;
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -26,6 +28,8 @@ use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function is_object;
+use function is_string;
 
 /**
  * @internal
@@ -41,19 +45,10 @@ class IncludeRenderer
     /**
      * Renders a document include
      *
-     * @param mixed $include
-     * @param array $params
-     * @param bool $editmode
-     * @param bool $cacheEnabled
      *
-     * @return string
      */
     public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
-        if (!is_array($params)) {
-            $params = [];
-        }
-
         $originalInclude = $include;
 
         // this is if $this->inc is called eg. with $this->relation() as argument
@@ -64,13 +59,13 @@ class IncludeRenderer
         if (is_numeric($include)) {
             try {
                 $include = Model\Document::getById($include);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $include = $originalInclude;
             }
         } elseif (is_string($include)) {
             try {
                 $include = Model\Document::getByPath($include);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $include = $originalInclude;
             }
         }
@@ -100,7 +95,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if (method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
+            if (is_object($include) && method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 
@@ -141,10 +136,7 @@ class IncludeRenderer
      * add a class and the pimcore id / type so that it can be opened in editmode using the context menu
      * if there's no first level HTML container => add one (wrapper)
      *
-     * @param PageSnippet $include
-     * @param string $content
      *
-     * @return string
      */
     protected function modifyEditmodeContent(PageSnippet $include, string $content): string
     {
@@ -155,7 +147,7 @@ class IncludeRenderer
         try {
             $html = new DomCrawler($content);
             $children = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
-            /** @var \DOMElement $child */
+            /** @var DOMElement $child */
             foreach ($children as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
@@ -165,7 +157,7 @@ class IncludeRenderer
 
             $html->clear();
             unset($html);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

@@ -26,7 +26,6 @@ class StoreConfigEvent extends Event
     /**
      * DocumentEvent constructor.
      *
-     * @param StoreConfig $storeConfig
      */
     public function __construct(StoreConfig $storeConfig)
     {

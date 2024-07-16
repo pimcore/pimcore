@@ -16,12 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\FielddefinitionMarshaller\Traits;
 
+use function is_array;
+
 /**
  * @internal
  */
 trait RgbaColorTrait
 {
-    /** @inheritDoc */
     public function marshal(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
@@ -37,13 +38,15 @@ trait RgbaColorTrait
         return null;
     }
 
-    /** @inheritDoc */
     public function unmarshal(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $rgb = $value['value'];
+            if (!$rgb) {
+                return null;
+            }
             $a = $value['value2'];
-            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
+            [$r, $g, $b] = sscanf($rgb, '%02x%02x%02x');
             $a = hexdec($a);
 
             return [

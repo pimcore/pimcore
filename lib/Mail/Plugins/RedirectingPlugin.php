@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Mail\Plugins;
 
+use Exception;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
 use Pimcore\SystemSettingsConfig;
@@ -29,14 +30,12 @@ final class RedirectingPlugin
     /**
      * The recipient who will receive all messages.
      *
-     * @var array
      */
     private array $recipient;
 
     /**
      * Create a new RedirectingPlugin.
      *
-     * @param array $recipient
      */
     public function __construct(array $recipient = [])
     {
@@ -51,7 +50,6 @@ final class RedirectingPlugin
     /**
      * Set the recipient of all messages.
      *
-     * @param array $recipient
      */
     public function setRecipient(array $recipient): void
     {
@@ -61,7 +59,6 @@ final class RedirectingPlugin
     /**
      * Get the recipient of all messages.
      *
-     * @return array
      */
     public function getRecipient(): array
     {
@@ -71,7 +68,6 @@ final class RedirectingPlugin
     /**
      * Invoked immediately before the Message is sent.
      *
-     * @param Mail $message
      *
      */
     public function beforeSendPerformed(Mail $message): void
@@ -79,7 +75,7 @@ final class RedirectingPlugin
         // additional checks if message is Pimcore\Mail
         if ($message->doRedirectMailsToDebugMailAddresses()) {
             if (empty($this->getRecipient())) {
-                throw new \Exception('No valid debug email address given in "Settings" -> "System Settings" -> "Debug"');
+                throw new Exception('No valid debug email address given in "Settings" -> "System Settings" -> "Debug"');
             }
 
             $this->appendDebugInformation($message);

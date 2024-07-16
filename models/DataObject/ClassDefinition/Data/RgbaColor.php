@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use function is_array;
+use function is_null;
+use function is_object;
 
 class RgbaColor extends Data implements
     ResourcePersistenceAwareInterface,
@@ -36,11 +39,7 @@ class RgbaColor extends Data implements
     use DataObject\Traits\DataWidthTrait;
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -64,11 +63,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
@@ -76,7 +71,7 @@ class RgbaColor extends Data implements
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
-            list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
+            [$r, $g, $b] = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
             $a = hexdec($data[$this->getName() . '__a']);
             $data = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
         }
@@ -95,11 +90,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -109,11 +100,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      *
@@ -130,11 +117,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -142,7 +125,7 @@ class RgbaColor extends Data implements
     {
         if ($data) {
             $data = trim($data, '# ');
-            list($r, $g, $b, $a) = sscanf($data, '%02x%02x%02x%02x');
+            [$r, $g, $b, $a] = sscanf($data, '%02x%02x%02x%02x');
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
             return $color;
@@ -152,20 +135,14 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param string|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -206,11 +183,8 @@ class RgbaColor extends Data implements
     /**
      * display the quantity value field data in the grid
      *
-     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param Model\DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string|null
      */
     public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
     {
@@ -218,11 +192,8 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -266,9 +237,6 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -279,11 +247,7 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
@@ -300,11 +264,8 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param mixed $value
-     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
@@ -330,13 +291,11 @@ class RgbaColor extends Data implements
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /** { @inheritdoc } */
     public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
     public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);

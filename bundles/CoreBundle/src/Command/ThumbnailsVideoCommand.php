@@ -16,18 +16,27 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function in_array;
+use function is_string;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:thumbnails:video',
+    description: 'Generate video thumbnails, useful to pre-generate thumbnails in the background',
+    aliases: ['thumbnails:video']
+)]
 class ThumbnailsVideoCommand extends AbstractCommand
 {
     use Parallelization;
@@ -38,15 +47,12 @@ class ThumbnailsVideoCommand extends AbstractCommand
         self::configureCommand($this);
 
         $this
-            ->setName('pimcore:thumbnails:video')
-            ->setAliases(['thumbnails:video'])
-            ->setDescription('Generate video thumbnails, useful to pre-generate thumbnails in the background')
-            ->addOption(
-                'parent',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images in this folder (ID)'
-            )
+           ->addOption(
+               'parent',
+               null,
+               InputOption::VALUE_OPTIONAL,
+               'only create thumbnails of images in this folder (ID)'
+           )
             ->addOption(
                 'thumbnails',
                 't',
@@ -105,7 +111,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         // disable versioning
         Version::disable();
 
-        list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
+        [$assetId, $thumbnailConfigName] = explode('~~~', $item, 2);
 
         $video = Asset\Video::getById((int) $assetId);
         if (!$video) {
@@ -138,25 +144,43 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         // initial delay
         $video = Asset\Video::getById($videoId);
+
+        if (!$video instanceof Asset\Video) {
+            $message = 'video ['.$videoId.'] could not be found. Skipping ...';
+            Logger::error($message);
+
+            return;
+        }
+
         $thumb = $video->getThumbnail($thumbnail);
-        if ($thumb['status'] != 'finished') {
+        if ($thumb !== null && $thumb['status'] !== 'finished') {
             sleep(20);
         }
 
         while (!$finished) {
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             $video = Asset\Video::getById($videoId);
+
             $thumb = $video->getThumbnail($thumbnail);
-            if ($thumb['status'] == 'finished') {
+
+            if ($thumb === null) {
+                $message = 'video ['.$videoId.'] with thumbnail ['.(is_string($thumbnail) ? $thumbnail : $thumbnail->getName()).'] is invalid. Skipping ...';
+                Logger::error($message);
+                $this->output->writeln($message);
+
+                break;
+            }
+
+            if ($thumb['status'] === 'finished') {
                 $finished = true;
                 Logger::debug('video [' . $video->getId() . '] FINISHED');
-            } elseif ($thumb['status'] == 'inprogress') {
+            } elseif ($thumb['status'] === 'inprogress') {
                 Logger::debug('video [' . $video->getId() . '] in progress ...');
                 sleep(5);
             } else {
                 // error
-                Logger::debug('video [' . $video->getId() . "] has status: '" . $thumb['status'] . "' -> skipping");
+                Logger::debug('video [' . $video->getId() . "] has status: ['" . $thumb['status'] . "'] -> skipping ...");
 
                 break;
             }

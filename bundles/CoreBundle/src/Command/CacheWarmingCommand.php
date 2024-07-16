@@ -16,15 +16,23 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use InvalidArgumentException;
 use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function count;
+use function in_array;
 
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:cache:warming',
+    description: 'Warm up caches'
+)]
 class CacheWarmingCommand extends AbstractCommand
 {
     protected array $validTypes = [
@@ -60,8 +68,6 @@ class CacheWarmingCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:cache:warming')
-            ->setDescription('Warm up caches')
             ->addOption(
                 'types',
                 't',
@@ -100,9 +106,6 @@ class CacheWarmingCommand extends AbstractCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('maintenance-mode')) {
@@ -117,7 +120,7 @@ class CacheWarmingCommand extends AbstractCommand
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type') ?? [];
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type') ?? [];
             $objectClasses = $this->input->getOption('classes') ?? [];
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
             return 1;
@@ -162,11 +165,7 @@ class CacheWarmingCommand extends AbstractCommand
     /**
      * A,B,C -> A, B or C (with an optional template for each item)
      *
-     * @param array $list
-     * @param string $glue
-     * @param string|null $template
      *
-     * @return string
      */
     protected function humanList(array $list, string $glue = 'or', string $template = null): string
     {
@@ -189,12 +188,7 @@ class CacheWarmingCommand extends AbstractCommand
      * Get one of types, document, asset or object types, handle "all" value
      * and list input validation.
      *
-     * @param string $option
-     * @param string $property
-     * @param string $singular
-     * @param bool $fallback
      *
-     * @return mixed
      */
     protected function getArrayOption(string $option, string $property, string $singular, bool $fallback = false): mixed
     {
@@ -214,7 +208,7 @@ class CacheWarmingCommand extends AbstractCommand
                 if (!in_array($value, $this->$property)) {
                     $message = sprintf('Invalid %s: %s', $singular, $value);
 
-                    throw new \InvalidArgumentException($message);
+                    throw new InvalidArgumentException($message);
                 }
             }
         }

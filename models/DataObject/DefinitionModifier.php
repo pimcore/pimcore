@@ -18,17 +18,17 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use function count;
+use function func_get_args;
+use function is_array;
 
 final class DefinitionModifier
 {
     /**
      * appends valid $fieldsToAdd to a $layoutDefinition element with $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
      *
-     * @return bool
      */
     public function appendFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
@@ -42,11 +42,8 @@ final class DefinitionModifier
     /**
      * prepends valid $fieldsToAdd to a $layoutDefinition element with $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
      *
-     * @return bool
      */
     public function prependFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
@@ -60,11 +57,8 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element of type Layout that is given by $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
      *
-     * @return bool
      */
     public function insertFieldsFront(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
@@ -78,11 +72,8 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element of type Layout that is given by $nameToFind
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
      *
-     * @return bool
      */
     public function insertFieldsBack(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
@@ -96,11 +87,8 @@ final class DefinitionModifier
     /**
      * replaces a $layoutDefinition element, that is specified by $nameToFind, with $field
      *
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
      * @param Data|Data[]|Layout|Layout[] $fieldReplacements
      *
-     * @return bool
      */
     public function replaceField(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldReplacements): bool
     {
@@ -125,11 +113,7 @@ final class DefinitionModifier
      * callback is executed - passing the parent, its child which was found by name and the child-index it was found at
      * to edit upon.
      *
-     * @param Layout|Data\Localizedfields $layoutDefinition
-     * @param string $nameToFind
-     * @param callable $callback
      *
-     * @return bool
      */
     public function findField(Data\Localizedfields|Layout $layoutDefinition, string $nameToFind, callable $callback): bool
     {

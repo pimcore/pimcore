@@ -17,9 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Closure;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function in_array;
 
 /**
  * @internal
@@ -28,16 +30,14 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstaller
 {
-    private ?\Closure $runCallback = null;
+    private ?Closure $runCallback = null;
 
     private ?string $composerJsonSetting = null;
 
     /**
      * Runs this assets:install command
      *
-     * @param array $options
      *
-     * @return Process
      */
     public function install(array $options = []): Process
     {
@@ -55,9 +55,7 @@ class AssetsInstaller
     /**
      * Builds the process instance
      *
-     * @param array $options
      *
-     * @return Process
      */
     protected function buildProcess(array $options = []): Process
     {
@@ -90,9 +88,7 @@ class AssetsInstaller
      * Takes a set of options as defined in configureOptions and validates and merges them
      * with values from composer.json
      *
-     * @param array $options
      *
-     * @return array
      */
     public function resolveOptions(array $options = []): array
     {
@@ -102,10 +98,7 @@ class AssetsInstaller
         return $resolver->resolve($options);
     }
 
-    /**
-     * @param \Closure|null $runCallback
-     */
-    public function setRunCallback(\Closure $runCallback = null): void
+    public function setRunCallback(Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }

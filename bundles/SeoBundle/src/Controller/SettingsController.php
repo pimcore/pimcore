@@ -23,6 +23,7 @@ use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use function is_array;
 
 class SettingsController extends UserAwareController
 {
@@ -31,7 +32,6 @@ class SettingsController extends UserAwareController
     /**
      * @Route("/robots-txt", name="pimcore_bundle_seo_settings_robotstxtget", methods={"GET"})
      *
-     * @return JsonResponse
      */
     public function robotsTxtGetAction(): JsonResponse
     {
@@ -49,9 +49,7 @@ class SettingsController extends UserAwareController
     /**
      * @Route("/robots-txt", name="pimcore_bundle_seo_settings_robotstxtput", methods={"PUT"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function robotsTxtPutAction(Request $request): JsonResponse
     {

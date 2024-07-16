@@ -15,9 +15,14 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
+use function count;
+use function in_array;
+use function is_null;
+use function strlen;
 
 /**
  * @internal
@@ -27,7 +32,6 @@ use Pimcore\Model\Element\Tag;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -43,16 +47,15 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @todo: not all save methods return a boolean, why this one?
      */
     public function save(): bool
     {
         if (strlen(trim(strip_tags($this->model->getName()))) < 1) {
-            throw new \Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
+            throw new Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
         }
 
         $this->db->beginTransaction();
@@ -87,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
@@ -97,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -111,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->executeStatement('DELETE FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
@@ -119,8 +122,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
      *
      * @return Model\Element\Tag[]
      */
@@ -166,11 +167,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
-     * @param array $tags
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setTagsForElement(string $cType, int $cId, array $tags): void
     {
@@ -184,7 +182,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
@@ -217,7 +215,6 @@ class Dao extends Model\Dao\AbstractDao
      * @param array  $classNames        For objects only: filter by classnames
      * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public function getElementsForTag(
         Tag $tag,
@@ -234,7 +231,7 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->createQueryBuilder()->select(['*'])
+        $select = $this->db->createQueryBuilder()->select('*')
                            ->from('tags_assignment')
                            ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 
@@ -268,7 +265,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
-        while ($row = $res->fetch()) {
+        while ($row = $res->fetchAssociative()) {
             $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
@@ -281,7 +278,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $tagPath separated by "/"
      *
-     * @return null|Tag
      */
     public function getByPath(string $tagPath): ?Tag
     {

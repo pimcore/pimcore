@@ -17,24 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Service;
+use function array_key_exists;
 
 class Assets extends DataProvider\Assets
 {
-    /**
-     * @param int $id
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
-     * @param int $start
-     * @param int $limit
-     * @param string|null $sort
-     *
-     * @return array
-     */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
         if (empty($id) && empty($firstname) && empty($lastname) && empty($email)) {
@@ -107,7 +98,11 @@ class Assets extends DataProvider\Assets
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 
             if ($element instanceof Asset) {
-                $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
+                $data = [];
+                // TODO: remove the class_exists on pimcore 12.0
+                if (class_exists(GridData\Asset::class)) {
+                    $data = GridData\Asset::getData($element);
+                }
                 $data['permissions'] = $element->getUserPermissions();
                 $elements[] = $data;
             }

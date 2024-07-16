@@ -24,11 +24,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TemplateResolver extends AbstractRequestResolver
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return null|string
-     */
     public function getTemplate(Request $request = null): ?string
     {
         if (null === $request) {

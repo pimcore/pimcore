@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DataObjectParamResolver implements ValueResolverInterface
 {
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws NotFoundHttpException When invalid data object ID given
      */

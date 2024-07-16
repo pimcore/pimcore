@@ -27,9 +27,6 @@ use Twig\TwigFunction;
  */
 class ImageThumbnailExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(): array
     {
         return [
@@ -38,9 +35,6 @@ class ImageThumbnailExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -49,7 +43,7 @@ class ImageThumbnailExtension extends AbstractExtension
         ];
     }
 
-    public function getImageThumbnail(Image $image, string $thumbnail, bool $deferred = true): Image\Thumbnail
+    public function getImageThumbnail(Image $image, string $thumbnail, bool $deferred = true): Image\ThumbnailInterface
     {
         return $image->getThumbnail($thumbnail, $deferred);
     }

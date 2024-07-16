@@ -42,7 +42,6 @@ class CalculatedValue implements OwnerAwareFieldInterface
     /**
      * CalculatedValue constructor.
      *
-     * @param string $fieldname
      */
     public function __construct(string $fieldname)
     {
@@ -51,13 +50,6 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $ownerType
-     * @param string|null $ownerName
-     * @param int|string|null $index
-     * @param string|null $position
-     * @param int|null $groupId
-     * @param int|null $keyId
-     * @param mixed $keyDefinition
      *
      * @internal
      *

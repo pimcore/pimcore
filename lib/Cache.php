@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use DateInterval;
+use Pimcore;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Event\CoreCacheEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -32,12 +34,11 @@ class Cache
      *
      * @internal
      *
-     * @return CoreCacheHandler
      */
     public static function getHandler(): CoreCacheHandler
     {
         if (null === static::$handler) {
-            static::$handler = \Pimcore::getContainer()->get(CoreCacheHandler::class);
+            static::$handler = Pimcore::getContainer()->get(CoreCacheHandler::class);
         }
 
         return static::$handler;
@@ -50,13 +51,13 @@ class Cache
      */
     public static function init(): void
     {
-        if (\Pimcore::hasKernel()) {
-            \Pimcore::getContainer()
+        if (Pimcore::hasKernel()) {
+            Pimcore::getContainer()
                 ->get('event_dispatcher')
                 ->dispatch(new GenericEvent(), CoreCacheEvents::INIT);
 
-            if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
-                self::getHandler()->setPool(\Pimcore::getContainer()->get('pimcore.cache.adapter.null_tag_aware'));
+            if (isset($_REQUEST['pimcore_nocache']) && Pimcore::inDebugMode()) {
+                self::getHandler()->setPool(Pimcore::getContainer()->get('pimcore.cache.adapter.null_tag_aware'));
             }
         }
     }
@@ -64,9 +65,7 @@ class Cache
     /**
      * Returns the content of the requested cache entry
      *
-     * @param string $key
      *
-     * @return mixed
      */
     public static function load(string $key): mixed
     {
@@ -76,16 +75,9 @@ class Cache
     /**
      * Save an item to the cache (deferred to shutdown if force is false and forceImmediateWrite is not set)
      *
-     * @param mixed $data
-     * @param string $key
-     * @param array $tags
-     * @param \DateInterval|int|null $lifetime
-     * @param int $priority
-     * @param bool $force
      *
-     * @return bool
      */
-    public static function save(mixed $data, string $key, array $tags = [], \DateInterval|int $lifetime = null, int $priority = 0, bool $force = false): bool
+    public static function save(mixed $data, string $key, array $tags = [], DateInterval|int $lifetime = null, int $priority = 0, bool $force = false): bool
     {
         return static::getHandler()->save($key, $data, $tags, $lifetime, $priority, $force);
     }
@@ -93,9 +85,7 @@ class Cache
     /**
      * Remove an item from the cache
      *
-     * @param string $key
      *
-     * @return bool
      */
     public static function remove(string $key): bool
     {
@@ -105,7 +95,6 @@ class Cache
     /**
      * Empty the cache
      *
-     * @return bool
      */
     public static function clearAll(): bool
     {
@@ -115,9 +104,7 @@ class Cache
     /**
      * Removes entries from the cache matching the given tag
      *
-     * @param string $tag
      *
-     * @return bool
      */
     public static function clearTag(string $tag): bool
     {
@@ -127,9 +114,7 @@ class Cache
     /**
      * Removes entries from the cache matching the given tags
      *
-     * @param array $tags
      *
-     * @return bool
      */
     public static function clearTags(array $tags = []): bool
     {
@@ -139,7 +124,6 @@ class Cache
     /**
      * Adds a tag to the shutdown queue
      *
-     * @param string $tag
      */
     public static function addClearTagOnShutdown(string $tag): void
     {
@@ -149,7 +133,6 @@ class Cache
     /**
      * Add tag to the list ignored on save. Items with this tag won't be saved to cache.
      *
-     * @param string $tag
      */
     public static function addIgnoredTagOnSave(string $tag): void
     {
@@ -159,7 +142,6 @@ class Cache
     /**
      * Remove tag from the list ignored on save
      *
-     * @param string $tag
      */
     public static function removeIgnoredTagOnSave(string $tag): void
     {
@@ -169,7 +151,6 @@ class Cache
     /**
      * Add tag to the list ignored on clear. Tags in this list won't be cleared via clearTags()
      *
-     * @param string $tag
      */
     public static function addIgnoredTagOnClear(string $tag): void
     {
@@ -179,7 +160,6 @@ class Cache
     /**
      * Remove tag from the list ignored on clear
      *
-     * @param string $tag
      */
     public static function removeIgnoredTagOnClear(string $tag): void
     {
@@ -189,7 +169,6 @@ class Cache
     /**
      * Write and clean up cache
      *
-     * @param bool $forceWrite
      *
      * @internal
      */

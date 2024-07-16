@@ -36,14 +36,6 @@ class Inc implements RuntimeExtensionInterface
         $this->editmodeResolver = $editmodeResolver;
     }
 
-    /**
-     * @param int|string|PageSnippet $include
-     * @param array $params
-     * @param bool $cacheEnabled
-     * @param bool|null $editmode
-     *
-     * @return string
-     */
     public function __invoke(int|string|PageSnippet $include, array $params = [], bool $cacheEnabled = true, bool $editmode = null): string
     {
         if (null === $editmode) {

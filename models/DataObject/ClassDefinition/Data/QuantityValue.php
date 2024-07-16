@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use function is_array;
+use function strlen;
 
 class QuantityValue extends AbstractQuantityValue
 {
@@ -209,15 +212,15 @@ class QuantityValue extends AbstractQuantityValue
         }
 
         if ($precision < 1 || $precision > 65) {
-            throw new \InvalidArgumentException('Decimal precision must be a value between 1 and 65');
+            throw new InvalidArgumentException('Decimal precision must be a value between 1 and 65');
         }
 
         if ($scale < 0 || $scale > 30 || $scale > $precision) {
-            throw new \InvalidArgumentException('Decimal scale must be a value between 0 and 30');
+            throw new InvalidArgumentException('Decimal scale must be a value between 0 and 30');
         }
 
         if ($scale > $precision) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Decimal scale can\'t be larger than precision (%d)',
                 $precision
             ));
@@ -269,9 +272,6 @@ class QuantityValue extends AbstractQuantityValue
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (
@@ -300,7 +300,7 @@ class QuantityValue extends AbstractQuantityValue
                 throw new Model\Element\ValidationException('Value exceeds PHP_INT_MAX please use an input data type instead of numeric!');
             }
 
-            if ($this->getInteger() && strpos((string) $value, '.') !== false) {
+            if ($this->getInteger() && str_contains((string)$value, '.')) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
             }
 
@@ -326,7 +326,7 @@ class QuantityValue extends AbstractQuantityValue
             return $value;
         }
 
-        if (strpos($value, '.') === false) {
+        if (!str_contains($value, '.')) {
             return (int) $value;
         }
 

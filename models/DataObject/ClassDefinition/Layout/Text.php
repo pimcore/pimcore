@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
@@ -28,35 +29,30 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @internal
      *
-     * @var string
      */
     public string $fieldtype = 'text';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $html = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $renderingClass = '';
 
     /**
      * @internal
      *
-     * @var string
      */
     public string $renderingData;
 
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $border = false;
 
@@ -102,9 +98,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         $this->border = $border;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $renderer = null;
@@ -123,7 +116,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->html = $result;
         }
 
-        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);

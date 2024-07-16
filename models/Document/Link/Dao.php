@@ -27,7 +27,6 @@ class Dao extends Model\Document\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -42,7 +41,7 @@ class Dao extends Model\Document\Dao
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$this->model->getId()]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
             $this->model->getHref();

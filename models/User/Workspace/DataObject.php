@@ -21,35 +21,30 @@ class DataObject extends AbstractWorkspace
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $save = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $unpublish = false;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $lEdit = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $lView = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $layouts = null;
 

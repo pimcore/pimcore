@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Cache;
 use Pimcore\Document\Editable\EditableHandler;
@@ -23,6 +24,8 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DeviceDetector;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -43,17 +46,11 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     protected Document\Snippet|Model\Element\ElementDescriptor|null $snippet = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'snippet';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->id;
@@ -69,28 +66,22 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return (int) $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         if ($this->snippet instanceof Document\Snippet) {
             return [
                 'id' => $this->id,
-                'path' => $this->snippet->getFullPath(),
+                'path' => $this->snippet->getPath() . $this->snippet->getKey(),
             ];
         }
 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
 
@@ -154,9 +145,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $content;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $data = (int) $data;
@@ -168,9 +156,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         if ((int)$data > 0) {
@@ -192,9 +177,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -211,9 +193,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -228,9 +207,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         if (!$this->snippet && $this->id) {
@@ -238,9 +214,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         $id = $this->getId();

@@ -18,6 +18,7 @@ declare(strict_types = 1);
 namespace Pimcore\Loader\ImplementationLoader;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use function get_class;
 
 /**
  * Core implementation loader delegating to a list of registered loaders
@@ -78,17 +79,11 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return null !== $this->getLoader($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): mixed
     {
         $loader = $this->getLoader($name);

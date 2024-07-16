@@ -19,6 +19,10 @@ namespace Pimcore\Model\User;
 use Pimcore\Model\User\Workspace\Asset;
 use Pimcore\Model\User\Workspace\DataObject;
 use Pimcore\Model\User\Workspace\Document;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
@@ -88,9 +92,6 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
      */
     protected array $websiteTranslationLanguagesEdit = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(): void
     {
         $this->getDao()->update();
@@ -125,8 +126,6 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
     }
 
     /**
-     * @param string $permissionName
-     * @param bool|null $value
      *
      * @return $this
      */

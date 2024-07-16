@@ -31,9 +31,6 @@ final class SetDumpStateFilter implements Filter
         $this->state = $state;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function apply($object, $property, $objectCopier): void
     {
         if ($object instanceof ElementDumpStateInterface) {

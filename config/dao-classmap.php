@@ -60,6 +60,8 @@ return [
     'Pimcore\\Model\\DataObject\\Objectbrick\\Definition' => 'Pimcore\\Model\\DataObject\\Objectbrick\\Definition\\Dao',
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Dao',
     'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing' => 'Pimcore\\Model\\DataObject\\QuantityValue\\Unit\\Listing\\Dao',
+    'Pimcore\\Model\\DataObject\\SelectOptions\\Config' => 'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Dao',
+    'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Listing' => 'Pimcore\\Model\\DataObject\\SelectOptions\\Config\\Listing\\Dao',
     'Pimcore\\Model\\DataObject\\Service' => 'Pimcore\\Model\\Element\\Dao',
     'Pimcore\\Model\\Dependency' => 'Pimcore\\Model\\Dependency\\Dao',
     'Pimcore\\Model\\Document' => 'Pimcore\\Model\\Document\\Dao',

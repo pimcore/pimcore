@@ -24,6 +24,7 @@ $config->setRules([
     '@PSR1'                  => true,
     '@PSR2'                  => true,
     'array_syntax'           => ['syntax' => 'short'],
+    'list_syntax'            => ['syntax' => 'short'],
 
     'header_comment'         => [
         'comment_type' => 'PHPDoc',
@@ -37,7 +38,6 @@ $config->setRules([
             ' @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)' . PHP_EOL .
             ' @license    http://www.pimcore.org/license     GPLv3 and PCL'
     ],
-
     'blank_line_before_statement'         => true,
     'encoding'                            => true,
     'function_typehint_space'             => true,
@@ -57,12 +57,12 @@ $config->setRules([
     'no_leading_namespace_whitespace'     => true,
     'no_short_bool_cast'                  => true,
     'no_spaces_around_offset'             => true,
+    'no_superfluous_phpdoc_tags'          => ['allow_mixed' => true, 'remove_inheritdoc' => true],
     'no_unneeded_control_parentheses'     => true,
     'no_unused_imports'                   => true,
     'no_whitespace_before_comma_in_array' => true,
     'no_whitespace_in_blank_line'         => true,
     'object_operator_without_whitespace'  => true,
-    'ordered_imports'                     => true,
     'phpdoc_indent'                       => true,
     'phpdoc_no_useless_inheritdoc'        => true,
     'phpdoc_scalar'                       => true,
@@ -77,6 +77,21 @@ $config->setRules([
     'ternary_operator_spaces'             => true,
     'trailing_comma_in_multiline'         => true,
     'whitespace_after_comma_in_array'     => true,
+    'native_function_invocation' => [
+        'include' => [
+            '@compiler_optimized',
+        ],
+        'scope' => 'namespaced',
+        'strict' => true,
+    ],
+    'global_namespace_import' => [
+        'import_classes' => true,
+        'import_constants' => true,
+        'import_functions' => true,
+    ],
+    'ordered_imports' => [
+        'imports_order' => ['const', 'class', 'function']
+    ],
 ]);
 
 $config->setFinder($finder);

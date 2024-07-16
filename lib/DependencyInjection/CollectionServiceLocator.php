@@ -17,20 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\DependencyInjection;
 
+use IteratorAggregate;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Traversable;
 
 /**
  * Service locator exposing all of its services as collection
  *
  * @internal
  */
-class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
+class CollectionServiceLocator extends ServiceLocator implements IteratorAggregate
 {
     private array $ids;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($factories)
     {
         $this->ids = array_keys($factories);
@@ -45,10 +44,7 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
         }, $this->ids);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         foreach ($this->ids as $id) {
             yield $this->get($id);

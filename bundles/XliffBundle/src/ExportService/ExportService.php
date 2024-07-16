@@ -29,8 +29,6 @@ class ExportService implements ExportServiceInterface
     /**
      * ExportService constructor.
      *
-     * @param ExportDataExtractorServiceInterface $exportDataExtractorService
-     * @param ExporterInterface $translationExporter
      */
     public function __construct(
         ExportDataExtractorServiceInterface $exportDataExtractorService,
@@ -40,9 +38,6 @@ class ExportService implements ExportServiceInterface
         $this->translationExporter = $translationExporter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, string $exportId = null): string
     {
         $exportId = empty($exportId) ? uniqid() : $exportId;

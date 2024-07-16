@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\WorkflowState\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -27,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of workflow states for the specified parameters, returns an array of Element\WorkflowState elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM element_workflow_state ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

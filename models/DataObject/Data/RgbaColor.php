@@ -16,8 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function is_null;
+use function strlen;
 
 class RgbaColor implements OwnerAwareFieldInterface
 {
@@ -34,10 +37,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * RgbaColor constructor.
      *
-     * @param int|null $r
-     * @param int|null $g
-     * @param int|null $b
-     * @param int|null $a
      */
     public function __construct(int $r = null, int $g = null, int $b = null, int $a = null)
     {
@@ -100,7 +99,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      *  Return R 0-255, G 0-255, B 0-255, A 0-255
      *
-     * @return array
      */
     public function getRgba(): array
     {
@@ -110,7 +108,6 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      *  Return R 0-255, G 0-255, B 0-255, A 0-1 (1 == full opacity)
      *
-     * @return array
      */
     public function getCssRgba(): array
     {
@@ -132,9 +129,8 @@ class RgbaColor implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $hexValue
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setHex(string $hexValue): void
     {
@@ -142,27 +138,21 @@ class RgbaColor implements OwnerAwareFieldInterface
         $length = strlen($hexValue);
         if ($length == 6 || $length == 8) {
             if ($length == 6) {
-                list($r, $g, $b) = sscanf($hexValue, '%02x%02x%02x');
+                [$r, $g, $b] = sscanf($hexValue, '%02x%02x%02x');
                 $a = 255;
             } else {
-                list($r, $g, $b, $a) = sscanf($hexValue, '%02x%02x%02x%02x');
+                [$r, $g, $b, $a] = sscanf($hexValue, '%02x%02x%02x%02x');
             }
             $this->setR($r);
             $this->setG($g);
             $this->setB($b);
             $this->setA($a);
         } else {
-            throw new \Exception('Format must be either hex6 or hex8 with or without leading hash');
+            throw new Exception('Format must be either hex6 or hex8 with or without leading hash');
         }
         $this->markMeDirty();
     }
 
-    /**
-     * @param int|null $r
-     * @param int|null $g
-     * @param int|null $b
-     * @param int|null $a
-     */
     public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null): void
     {
         $this->setR($r);

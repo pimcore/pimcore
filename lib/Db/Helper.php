@@ -19,6 +19,8 @@ namespace Pimcore\Db;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Types\Type;
+use Exception;
+use LogicException;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
@@ -41,7 +43,7 @@ class Helper
             $critera = [];
             foreach ($keys as $key) {
                 $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+                $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
             return $connection->update($table, $data, $critera);
@@ -84,7 +86,7 @@ class Helper
     {
         try {
             return $db->executeQuery($sql);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {
                     throw new ValidationException($e->getMessage(), 0, $e);

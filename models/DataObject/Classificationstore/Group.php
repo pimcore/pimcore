@@ -71,7 +71,6 @@ final class Group
     }
 
     /**
-     * @param KeyGroupRelation ...$keyGroupRelations
      *
      * @return Key[]
      */

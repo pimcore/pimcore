@@ -17,22 +17,28 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Cache\Core;
 
 use Codeception\Test\Unit;
+use DateTime;
+use InvalidArgumentException;
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use PHPUnit_Framework_MockObject_MockObject;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Tests\Support\Helper\Pimcore;
+use ReflectionClass;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
+use function count;
+use function in_array;
 
 abstract class AbstractCoreHandlerTest extends Unit
 {
     protected TagAwareAdapterInterface $cache;
 
-    protected CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler;
+    protected CoreCacheHandler|PHPUnit_Framework_MockObject_MockObject $handler;
 
     protected WriteLock $writeLock;
 
@@ -51,9 +57,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      */
     protected static array $logHandlers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->cache = $this->createCachePool();
@@ -68,7 +71,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Set up a logger with a buffer and a test handler (can be printed to STDOUT on demand)
      *
-     * @param string $name
      */
     protected static function setupLogger(string $name): void
     {
@@ -105,7 +107,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Initializes item pool
      *
-     * @return TagAwareAdapterInterface
      */
     abstract protected function createCachePool(): TagAwareAdapterInterface;
 
@@ -117,11 +118,11 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $writeLock;
     }
 
-    protected function createHandlerMock(): \PHPUnit_Framework_MockObject_MockObject|CoreCacheHandler
+    protected function createHandlerMock(): PHPUnit_Framework_MockObject_MockObject|CoreCacheHandler
     {
         $mockMethods = ['isCli'];
 
-        /** @var CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
+        /** @var CoreCacheHandler|PHPUnit_Framework_MockObject_MockObject $handler */
         $handler = $this->getMockBuilder(CoreCacheHandler::class)
             ->setMethods($mockMethods)
             ->setConstructorArgs([
@@ -148,35 +149,23 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $handler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function setUpBeforeClass(): void
     {
-        static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
+        static::setupLogger((new ReflectionClass(__CLASS__))->getShortName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function tearDownAfterClass(): void
     {
         static::handleLogOutput();
     }
 
-    /**
-     * @param string $property
-     * @param CoreCacheHandler|null $handler
-     *
-     * @return mixed
-     */
     protected function getHandlerPropertyValue(string $property, CoreCacheHandler $handler = null): mixed
     {
         if (null === $handler) {
             $handler = $this->handler;
         }
 
-        $reflector = new \ReflectionClass($handler);
+        $reflector = new ReflectionClass($handler);
         $property = $reflector->getProperty($property);
 
         return $property->getValue($handler);
@@ -192,8 +181,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Add sample entries to cache
      *
-     * @param bool $write
-     * @param bool $assertExisting
      */
     protected function buildSampleEntries(bool $write = true, bool $assertExisting = true): void
     {
@@ -222,11 +209,10 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @dataProvider invalidKeys
      *
-     * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave(string $key): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
     }
 
@@ -235,11 +221,10 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @dataProvider invalidKeys
      *
-     * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove(string $key): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->handler->remove($key);
     }
 
@@ -252,7 +237,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     {
         $timestamp = time();
 
-        $date = new \DateTime();
+        $date = new DateTime();
         $date->setTimestamp($timestamp);
 
         $this->handler->save('date', $date);
@@ -262,7 +247,7 @@ abstract class AbstractCoreHandlerTest extends Unit
 
         $fetchedDate = $this->handler->load('date');
 
-        $this->assertInstanceOf(\DateTime::class, $fetchedDate);
+        $this->assertInstanceOf(DateTime::class, $fetchedDate);
         $this->assertEquals($timestamp, $date->getTimestamp());
     }
 
@@ -572,8 +557,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @dataProvider tagEntriesProvider
      *
-     * @param string $tag
-     * @param array $expectedRemoveEntries
      */
     public function testClearTag(string $tag, array $expectedRemoveEntries): void
     {
@@ -588,8 +571,6 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @skipped
      *
-     * @param array $tags
-     * @param array $expectedRemoveEntries
      */
     public function testClearTags(array $tags, array $expectedRemoveEntries): void
     {
@@ -725,7 +706,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Data provider for invalid keys.
      *
-     * @return array
      */
     public static function invalidKeys(): array
     {

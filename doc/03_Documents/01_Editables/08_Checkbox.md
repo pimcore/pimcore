@@ -18,18 +18,18 @@
 ## Simple Example
 
 ```twig
-{{ pimcore_checkbox('myCheckbox') }}
+{{ pimcore_checkbox("myCheckbox") }}
 ```
 
 
 ## Advanced Example
 
 ```twig
-Setting XYZ: {{ pimcore_checkbox('myCheckbox') }}
+Setting XYZ: {{ pimcore_checkbox("myCheckbox") }}
 
-{% if pimcore_checkbox('myCheckbox').isChecked() %}
+{% if pimcore_checkbox("myCheckbox").isChecked() %}
     <div>
-        {{ dump('do something') }}
+        {{ dump("do something") }}
     </div>
 {% endif %}
 ```

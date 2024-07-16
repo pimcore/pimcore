@@ -50,17 +50,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      *
-     * Methods for AdapterInterface
-     */
-    public function count(): int
-    {
-        return $this->getTotalCount();
-    }
-
-    /**
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
      * @return Model\Asset[]
      */
     public function getItems(int $offset, int $itemCountPerPage): array
@@ -73,10 +62,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @internal
-     *
-     * @param Model\User $user
-     * @param Model\Asset $asset
-
      *
      * @return $this
      */

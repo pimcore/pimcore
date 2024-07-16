@@ -16,8 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use DateTime;
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Tool\Email;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +28,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:email:cleanup',
+    description: 'Cleanup email logs',
+    aliases: ['email:cleanup']
+)]
 class EmailLogsCleanupCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:email:cleanup')
-            ->setAliases(['email:cleanup'])
-            ->setDescription('Cleanup email logs')
             ->addOption(
                 'older-than-days',
                 'days',
@@ -41,20 +46,17 @@ class EmailLogsCleanupCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $daysAgo = $input->getOption('older-than-days');
 
         if (!isset($daysAgo)) {
-            throw new \Exception('Missing option "--older-than-days"');
+            throw new Exception('Missing option "--older-than-days"');
         } elseif (!is_numeric($daysAgo)) {
-            throw new \Exception('The "--older-than-days" option value should be numeric');
+            throw new Exception('The "--older-than-days" option value should be numeric');
         }
 
-        $date = new \DateTime("-{$daysAgo} days");
+        $date = new DateTime("-{$daysAgo} days");
         $dateTimestamp = $date->getTimestamp();
         $emailLogs = new Email\Log\Listing();
         $emailLogs->setCondition("sentDate < $dateTimestamp");

@@ -23,6 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use function is_array;
 
 /**
  * @internal
@@ -33,9 +34,6 @@ class ResponseHeaderListener implements EventSubscriberInterface
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -63,7 +61,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
     {
         $request = $event->getRequest();
-        if (!\is_array($attributes = $event->getAttributes()[ResponseHeader::class] ?? null)) {
+        if (!is_array($attributes = $event->getAttributes()[ResponseHeader::class] ?? null)) {
             return;
         }
 

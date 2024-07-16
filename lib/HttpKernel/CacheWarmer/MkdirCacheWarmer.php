@@ -33,17 +33,11 @@ class MkdirCacheWarmer implements CacheWarmerInterface
         $this->mode = $mode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptional(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warmUp(string $cacheDir): array
     {
         $directories = [

@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
+use function count;
+use function in_array;
 
 class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterface
 {
@@ -57,7 +59,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var bool
      */
     public bool $collapsible = false;
 
@@ -74,7 +75,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var string
      */
     public string $datatype = 'layout';
 
@@ -93,22 +93,22 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
      */
     public bool $locked = false;
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function getRegion(): string
+    public function getRegion(): ?string
     {
         return $this->region;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -205,7 +205,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @return array
      */
     public function &getChildrenByRef(): array
     {
@@ -221,7 +220,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
+        if (count($this->children) > 0) {
             return true;
         }
 
@@ -298,7 +297,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    public function getBodyStyle(): string
+    public function getBodyStyle(): ?string
     {
         return $this->bodyStyle;
     }

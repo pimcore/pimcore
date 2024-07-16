@@ -27,17 +27,11 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->storageAdapter = $storageAdapter;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getStorageType(int $metaDataSize = null, int $binaryDataSize = null): string
     {
         return $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function save(Version $version, string $metaData, mixed $binaryDataStream): void
     {
         $this->storageAdapter->save($version, $metaData, $binaryDataStream);

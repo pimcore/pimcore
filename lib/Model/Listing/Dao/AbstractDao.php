@@ -39,16 +39,14 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
             $lastOrder = $order[0] ?? null;
             $parts = [];
 
-            if (is_array($orderKey)) {
-                foreach ($orderKey as $key) {
-                    if (isset($order[$c])) {
-                        $lastOrder = $order[$c];
-                    }
-
-                    $parts[] = $key . ' ' . $lastOrder;
-
-                    $c++;
+            foreach ($orderKey as $key) {
+                if (isset($order[$c])) {
+                    $lastOrder = $order[$c];
                 }
+
+                $parts[] = $key . ' ' . $lastOrder;
+
+                $c++;
             }
 
             if (!empty($parts)) {

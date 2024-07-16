@@ -21,6 +21,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\User;
+use function count;
+use function in_array;
+use function is_bool;
 
 /**
  * @internal
@@ -32,7 +35,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -42,7 +44,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
@@ -53,16 +55,15 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
     public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = :path AND `key` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("object doesn't exist");
@@ -86,7 +87,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -136,7 +136,6 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes object from database
      *
-     * @return void
      */
     public function delete(): void
     {
@@ -155,9 +154,7 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
-     * @param string $oldPath
      *
-     * @return null|array
      *
      * @internal
      */
@@ -191,7 +188,6 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      *
-     * @return void
      */
     public function deleteAllProperties(): void
     {
@@ -229,9 +225,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
-     *
-     * @return array
+     * @throws \Exception
      */
     public function getProperties(bool $onlyInherited = false): array
     {
@@ -239,18 +233,27 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAllAssociative('SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? ) AND ctype='object'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative(
+            'SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE
+                     (
+                         (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1)
+                         OR cid = ? ) AND ctype='object'",
+            [$this->model->getId()]
+        );
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
-            return strcmp($left['cpath'], $right['cpath']);
+            return strcmp((string)$left['cpath'], (string)$right['cpath']);
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if ($id !== null) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('object');
                 $property->setDataFromResource($propertyRaw['data']);
@@ -268,17 +271,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to object ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to object ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -381,10 +379,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param array|null $objectTypes
      * @param Model\User|null $user
      *
-     * @return int
      */
     public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
     {
@@ -416,9 +412,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param int $id
      *
-     * @return array
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -504,10 +498,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -551,11 +542,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
     public function areAllowed(array $columns, User $user): array
     {
@@ -619,7 +608,7 @@ class Dao extends Model\Element\Dao
             $orderByType = $type ? ', `' . $type . '` DESC' : '';
             $permissions = $this->db->fetchAssociative('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
 
-            return $permissions;
+            return $permissions ?: null;
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }

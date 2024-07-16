@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Traits;
 
+use InvalidArgumentException;
+use function array_key_exists;
+
 trait ArgumentsAwareTrait
 {
     /**
      * Array of arguments.
      *
-     * @var array
      */
     protected array $arguments = [];
 
@@ -32,7 +34,7 @@ trait ArgumentsAwareTrait
      *
      * @return mixed Contents of array key
      *
-     * @throws \InvalidArgumentException If key is not found.
+     * @throws InvalidArgumentException If key is not found.
      */
     public function getArgument(string $key): mixed
     {
@@ -40,7 +42,7 @@ trait ArgumentsAwareTrait
             return $this->arguments[$key];
         }
 
-        throw new \InvalidArgumentException(sprintf('Argument "%s" not found.', $key));
+        throw new InvalidArgumentException(sprintf('Argument "%s" not found.', $key));
     }
 
     /**
@@ -61,7 +63,6 @@ trait ArgumentsAwareTrait
     /**
      * Getter for all arguments.
      *
-     * @return array
      */
     public function getArguments(): array
     {
@@ -87,7 +88,6 @@ trait ArgumentsAwareTrait
      *
      * @param string $key Key of arguments array
      *
-     * @return bool
      */
     public function hasArgument(string $key): bool
     {

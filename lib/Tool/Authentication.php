@@ -18,7 +18,12 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
+use ErrorException;
+use Exception;
+use Pimcore;
+use Pimcore\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,15 +32,10 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class Authentication
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return User|null
-     */
     public static function authenticateSession(Request $request = null): ?User
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+            $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
             if (null === $request) {
                 return null;
@@ -52,11 +52,14 @@ class Authentication
         $token = $token ? static::safelyUnserialize($token) : null;
 
         if ($token instanceof TokenInterface) {
-            $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
+            $token = static::refreshUser($token, Pimcore::getContainer()->get(UserProvider::class));
             $user = $token->getUser();
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
-                return $user->getUser();
+                $pimcoreUser = $user->getUser();
+                $pimcoreUser->setLastLoginDate(); //set user current login date
+
+                return $pimcoreUser;
             }
         }
 
@@ -69,7 +72,7 @@ class Authentication
         $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
         $prevErrorHandler = set_error_handler(static function (int $type, string $msg, string $file, int $line, array $context = []) use (&$prevErrorHandler) {
             if (__FILE__ === $file) {
-                throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
+                throw new ErrorException($msg, 0x37313BC, $type, $file, $line);
             }
 
             return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
@@ -77,7 +80,7 @@ class Authentication
 
         try {
             $token = unserialize($serializedToken);
-        } catch (\ErrorException $e) {
+        } catch (ErrorException $e) {
             if (0x37313BC !== $e->getCode()) {
                 throw $e;
             }
@@ -95,7 +98,7 @@ class Authentication
      */
     public static function handleUnserializeCallback(string $class): never
     {
-        throw new \ErrorException('Class not found: '.$class, 0x37313BC);
+        throw new ErrorException('Class not found: '.$class, 0x37313BC);
     }
 
     protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
@@ -119,18 +122,19 @@ class Authentication
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
-        $username = null;
-        $timestamp = null;
-
         try {
-            $decrypted = self::tokenDecrypt($token);
-            list($timestamp, $username) = $decrypted;
-        } catch (CryptoException $e) {
+            [$timestamp, $user] = self::tokenDecrypt($token);
+        } catch (CryptoException|NotFoundException) {
             return null;
         }
 
-        $user = User::getByName($username);
         if (self::isValidUser($user)) {
+            $user = User::getById($user->getId());
+
+            // expiring the token
+            $user->setPasswordRecoveryToken(null);
+            $user->save();
+
             if ($adminRequired && !$user->isAdmin()) {
                 return null;
             }
@@ -159,13 +163,11 @@ class Authentication
             return false;
         }
 
-        $password = self::preparePlainTextPassword($user->getName(), $password);
-
-        if (!password_verify($password, $user->getPassword())) {
+        if (!password_verify(self::preparePlainTextPassword($user->getName(), $password), $user->getPassword())) {
             return false;
         }
 
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+        $config = Config::getSystemConfiguration()['security']['password'];
 
         if (password_needs_rehash($user->getPassword(), $config['algorithm'], $config['options'])) {
             $user->setPassword(self::getPasswordHash($user->getName(), $password));
@@ -181,25 +183,31 @@ class Authentication
     }
 
     /**
-     * @param string $username
-     * @param string $plainTextPassword
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
     public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
         $password = self::preparePlainTextPassword($username, $plainTextPassword);
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+
+        try {
+            $config = Config::getSystemConfiguration()['security']['password'];
+        } catch (Exception $e) {
+            // default config in case kernel is not booted yet (e.g. in installer)
+            $config = [
+                'algorithm' => PASSWORD_DEFAULT,
+                'options' => [],
+            ];
+        }
 
         if ($hash = password_hash($password, $config['algorithm'], $config['options'])) {
             return $hash;
         }
 
-        throw new \Exception('Unable to create password hash for user: ' . $username);
+        throw new Exception('Unable to create password hash for user: ' . $username);
     }
 
     private static function preparePlainTextPassword(string $username, string $plainTextPassword): string
@@ -210,27 +218,45 @@ class Authentication
     }
 
     /**
-     * @param string $username
-     *
-     * @return string
-     *
      * @internal
      */
     public static function generateToken(string $username): string
     {
-        $secret = \Pimcore::getContainer()->getParameter('secret');
+        $user = User::getByName($username);
 
-        $data = time() - 1 . '|' . $username;
+        return self::generateTokenByUser($user);
+    }
+
+    /**
+     * @internal
+     */
+    public static function generateTokenByUser(User $user): string
+    {
+        $secret = Pimcore::getContainer()->getParameter('secret');
+
+        $data = time() - 1 . '|' . $user->getName();
         $token = Crypto::encryptWithPassword($data, $secret);
+
+        $user->setPasswordRecoveryToken($token);
+        $user->save();
 
         return $token;
     }
 
+    /**
+     * @throws NotFoundException if token does not belong to any user
+     * @throws CryptoException
+     */
     private static function tokenDecrypt(string $token): array
     {
-        $secret = \Pimcore::getContainer()->getParameter('secret');
+        $user = new User();
+        $user->getDao()->getByPasswordRecoveryToken($token);
+
+        $secret = Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);
 
-        return explode('|', $decrypted);
+        $explode = explode('|', $decrypted);
+
+        return [$explode[0], $user];
     }
 }

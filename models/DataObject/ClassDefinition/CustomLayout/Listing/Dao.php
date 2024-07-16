@@ -15,7 +15,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing;
 
+use Exception;
 use Pimcore\Model;
+use function count;
+use function is_callable;
 
 /**
  * @internal
@@ -27,7 +30,6 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of DataObject\ClassDefinition\CustomLayout elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -66,7 +68,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
             }
 
             return count($layouts);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

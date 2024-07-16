@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
+use IteratorAggregate;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SeoBundle\Sitemap\GeneratorInterface;
 use Presta\SitemapBundle\Event\SitemapPopulateEvent;
@@ -25,11 +26,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SitemapGeneratorListener implements EventSubscriberInterface
 {
     /**
-     * @var \IteratorAggregate|GeneratorInterface[]
+     * @var IteratorAggregate|GeneratorInterface[]
      */
-    private array|\IteratorAggregate $generators;
+    private array|IteratorAggregate $generators;
 
-    public function __construct(array|\IteratorAggregate $generators)
+    public function __construct(array|IteratorAggregate $generators)
     {
         $this->generators = $generators;
     }
@@ -40,7 +41,7 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            SitemapPopulateEvent::ON_SITEMAP_POPULATE => 'onPopulateSitemap',
+            SitemapPopulateEvent::class => 'onPopulateSitemap',
         ];
     }
 

@@ -20,6 +20,16 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
     element: null,
     sourceDefinitionData: null,
     columnSettingsCallback: null,
+    fieldsToCheck: [
+        {
+            name: 'sql',
+            label: 'SELECT',
+        },
+        {
+            name: 'from',
+            label: 'FROM',
+        },
+    ],
 
     initialize: function (sourceDefinitionData, key, deleteControl, columnSettingsCallback) {
         this.sourceDefinitionData = sourceDefinitionData;
@@ -45,7 +55,7 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                 {
                     xtype: "textarea",
                     name: "sql",
-                    fieldLabel: "SELECT <br /><small>(eg. a,b,c)</small>",
+                    fieldLabel: "SELECT <br /><small>(eg. a,b,c)*</small>",
                     fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.sql : ""),
                     width: 900,
@@ -53,6 +63,7 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     grow: true,
                     growMax: 400,
                     enableKeyEvents: true,
+                    allowBlank: false,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
                     }
@@ -60,7 +71,7 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                 {
                     xtype: "textarea",
                     name: "from",
-                    fieldLabel: "FROM <br /><small>(eg. d INNER JOIN e ON c.a = e.b)</small>",
+                    fieldLabel: "FROM <br /><small>(eg. d INNER JOIN e ON c.a = e.b)*</small>",
                     fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.from : ""),
                     width: 900,
@@ -68,6 +79,7 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     grow: true,
                     growMax: 400,
                     enableKeyEvents: true,
+                    allowBlank: false,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
                     }
@@ -100,6 +112,34 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     enableKeyEvents: true,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
+                    }
+                },
+                {
+                    xtype: "textarea",
+                    name: "orderby",
+                    fieldLabel: "Initial Order by Field <br /><small>(eg. b, c )</small>",
+                    fieldStyle: 'font-family: monospace',
+                    value: (sourceDefinitionData ? sourceDefinitionData.orderby : ""),
+                    width: 900,
+                    height: 150,
+                    grow: true,
+                    growMax: 200,
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: this.onSqlEditorKeyup.bind(this)
+                    }
+                },
+                {
+                    xtype: "combo",
+                    name: "orderbydir",
+                    fieldLabel: "Initial Order by Direction <br />",
+                    fieldStyle: 'font-family: monospace',
+                    queryMode: 'local',
+                    store: ['ASC' , 'DESC'],
+                    value: (sourceDefinitionData ? sourceDefinitionData.orderbydir : ""),
+                    enableKeyEvents: true,
+                    listeners: {
+                        change: this.onSqlEditorKeyup.bind(this)
                     }
                 }
             ]
@@ -165,6 +205,17 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     sqlText += "<br>GROUP BY ";
                 }
                 sqlText += values.groupby;
+            }
+
+            if(values.orderby) {
+                if(values.orderby.trim().indexOf("ORDER BY") !== 0) {
+                    sqlText += "<br>ORDER BY ";
+                }
+                sqlText += values.orderby;
+
+                if(values.orderbydir) {
+                    sqlText += " " + values.orderbydir;
+                }
             }
 
             this.sqlText.setValue(sqlText);

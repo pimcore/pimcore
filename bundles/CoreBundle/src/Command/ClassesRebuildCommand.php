@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +30,12 @@ use Symfony\Contracts\Service\Attribute\Required;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:deployment:classes-rebuild',
+    description: 'rebuilds db structure for classes, field collections and object bricks
+    based on updated var/classes/definition_*.php files',
+    aliases: ['deployment:classes-rebuild']
+)]
 class ClassesRebuildCommand extends AbstractCommand
 {
     protected ClassDefinitionManager $classDefinitionManager;
@@ -35,20 +43,23 @@ class ClassesRebuildCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:deployment:classes-rebuild')
-            ->setAliases(['deployment:classes-rebuild'])
-            ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated var/classes/definition_*.php files')
-            ->addOption(
-                'create-classes',
-                'c',
-                InputOption::VALUE_NONE,
-                'Create missing Classes (Classes that exists in var/classes but not in the database)'
-            )
+           ->addOption(
+               'create-classes',
+               'c',
+               InputOption::VALUE_NONE,
+               'Create missing Classes (Classes that exists in var/classes but not in the database)'
+           )
             ->addOption(
                 'delete-classes',
                 'd',
                 InputOption::VALUE_NONE,
                 'Delete missing Classes (Classes that don\'t exists in var/classes anymore but in the database)'
+            )
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                'Force rebuild of all classes (ignoring the last modification date of the class definition files)'
             );
     }
 
@@ -58,9 +69,6 @@ class ClassesRebuildCommand extends AbstractCommand
         $this->classDefinitionManager = $classDefinitionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('delete-classes')) {
@@ -93,8 +101,10 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln('Saving all classes');
         }
 
+        $force = (bool)$input->getOption('force');
+
         if ($input->getOption('create-classes')) {
-            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
+            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions($force) as $changes) {
                 if ($output->isVerbose()) {
                     [$class, $id, $action] = $changes;
                     $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
@@ -103,12 +113,18 @@ class ClassesRebuildCommand extends AbstractCommand
         } else {
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
-                if ($class instanceof ClassDefinition) {
+                if ($class instanceof DataObject\ClassDefinitionInterface) {
+                    $classSaved = $this->classDefinitionManager->saveClass($class, false, $force);
                     if ($output->isVerbose()) {
-                        $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
+                        $output->writeln(
+                            sprintf(
+                                '%s [%s] %s',
+                                $class->getName(),
+                                $class->getId(),
+                                $classSaved ? ClassDefinitionManager::SAVED : ClassDefinitionManager::SKIPPED
+                            )
+                        );
                     }
-
-                    $class->save(false);
                 }
             }
         }
@@ -126,7 +142,7 @@ class ClassesRebuildCommand extends AbstractCommand
 
             try {
                 $brickDefinition->save(false);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $output->write((string)$e);
             }
         }
@@ -143,6 +159,19 @@ class ClassesRebuildCommand extends AbstractCommand
             }
 
             $fc->save(false);
+        }
+
+        if ($output->isVerbose()) {
+            $output->writeln('---------------------');
+            $output->writeln('Saving all select options');
+        }
+        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+        foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
+            if ($output->isVerbose()) {
+                $output->writeln(sprintf('%s saved', $selectOptionConfiguration->getId()));
+            }
+
+            $selectOptionConfiguration->generateEnumFiles();
         }
 
         return 0;

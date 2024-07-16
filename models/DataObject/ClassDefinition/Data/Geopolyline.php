@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use function count;
+use function is_array;
 
 class Geopolyline extends AbstractGeo implements
     ResourcePersistenceAwareInterface,
@@ -31,11 +33,7 @@ class Geopolyline extends AbstractGeo implements
     NormalizerInterface
 {
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -46,11 +44,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
@@ -60,11 +54,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -73,9 +63,6 @@ class Geopolyline extends AbstractGeo implements
         return $this->getDataForResource($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
@@ -108,11 +95,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -137,9 +120,6 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
      *
@@ -160,11 +140,7 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -174,9 +150,6 @@ class Geopolyline extends AbstractGeo implements
         return $this->getDiffVersionPreview($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -200,9 +173,6 @@ class Geopolyline extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
@@ -211,11 +181,8 @@ class Geopolyline extends AbstractGeo implements
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      */
     public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {

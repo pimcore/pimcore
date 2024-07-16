@@ -22,9 +22,6 @@ use Pimcore\Model\Element;
 
 class DocumentImporter extends AbstractElementImporter
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         if ($targetLanguage != $element->getProperty('language')) {

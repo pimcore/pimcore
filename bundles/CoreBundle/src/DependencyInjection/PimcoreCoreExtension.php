@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -24,6 +26,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -41,18 +44,15 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         return 'pimcore';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
-        \Pimcore::disableShutdown();
+        Pimcore::disableShutdown();
 
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
-        if (!$container->hasParameter('container.dumper.inline_class_loader')) {
-            $container->setParameter('container.dumper.inline_class_loader', true);
+        if (!$container->hasParameter('.container.dumper.inline_class_loader')) {
+            $container->setParameter('.container.dumper.inline_class_loader', true);
         }
 
         // bundle manager/locator config
@@ -128,6 +128,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container->registerAttributeForAutoconfiguration(
+            AsAreabrick::class,
+            static function (ChildDefinition $definition, AsAreabrick $attribute): void {
+                $definition->addTag('pimcore.area.brick', ['id' => $attribute->id]);
+            },
+        );
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -251,8 +258,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Allows us to prepend/modify configurations of different extensions
-     *
-     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container): void
     {

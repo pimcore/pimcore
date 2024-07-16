@@ -16,10 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
+use function array_key_exists;
+use function is_array;
+use function is_null;
+use function is_string;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
@@ -35,14 +41,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -54,7 +58,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
@@ -72,9 +75,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
-    /**
-     * @param array|null $items
-     */
     public function __construct(array $items = null)
     {
         if ($items) {
@@ -104,7 +104,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $this->items;
         }
 
-        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
+        return $this->getAllDataFromField(
+            fn ($classificationStore, $fieldsArray) => $this->mergeArrays(
+                $fieldsArray,
+                $classificationStore->items
+            )
+        );
     }
 
     public function setObject(Concrete $object): static
@@ -140,11 +145,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    /**
-     * @param string|null $language
-     *
-     * @return string
-     */
     public function getLanguage(string $language = null): string
     {
         if ($language) {
@@ -155,23 +155,19 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $groupId
-     * @param int $keyId
-     * @param mixed $value
-     * @param string|null $language
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, string $language = null): static
     {
         if (!$groupId) {
-            throw new \Exception('groupId not valid');
+            throw new Exception('groupId not valid');
         }
 
         if (!$keyId) {
-            throw new \Exception('keyId not valid');
+            throw new Exception('keyId not valid');
         }
 
         $language = $this->getLanguage($language);
@@ -238,7 +234,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * Removes the group with the given id
      *
-     * @param int $groupId
      */
     public function removeGroupData(int $groupId): void
     {
@@ -246,7 +241,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /** Returns an array of
-     * @return array
      */
     public function getGroupIdsWithData(): array
     {
@@ -331,15 +325,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $groupId
-     * @param int $keyId
-     * @param string $language
-     * @param bool $ignoreFallbackLanguage
-     * @param bool $ignoreDefaultLanguage
      *
-     * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalizedKeyValue(int $groupId, int $keyId, string $language = 'default', bool $ignoreFallbackLanguage = false, bool $ignoreDefaultLanguage = false): mixed
     {
@@ -441,10 +429,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
-    /**
-     * @param int|null $groupId
-     * @param int|null $collectionId
-     */
     public function setGroupCollectionMapping(int $groupId = null, int $collectionId = null): void
     {
         if ($groupId && $collectionId) {
@@ -504,5 +488,22 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     private function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
     {
         return Classificationstore\GroupConfig::getById($groupId);
+    }
+
+    private function mergeArrays(array $a1, array $a2): array
+    {
+        foreach($a1 as $key => $value) {
+            if(array_key_exists($key, $a2)) {
+                if(is_array($value)) {
+                    $a2[$key] = $this->mergeArrays($a2[$key], $value);
+                } else {
+                    $a2[$key] = $value;
+                }
+            } else {
+                $a2[$key] = $value;
+            }
+        }
+
+        return $a2;
     }
 }

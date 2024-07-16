@@ -13,7 +13,6 @@ log_applicationlog: Journal applicatif
 log_search_component: Composant
 log_search_pid: PID
 log_refresh_seconds: Secondes
-keybinding_application_logger: Application logger
 log_search_from: De
 log_search_to: "\xC0"
 log_type: Type
@@ -22,4 +21,5 @@ log_message: Message
 log_reset_search: "R\xE9initialiser"
 log_search: Rechercher
 log_search_message: Message
+keybinding_applicationLogger: Application logger
 ...

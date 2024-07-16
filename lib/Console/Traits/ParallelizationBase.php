@@ -37,9 +37,6 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
 } else {
     trait ParallelizationBase
     {
-        /**
-         * {@inheritdoc}
-         */
         public function execute(InputInterface $input, OutputInterface $output): int
         {
             $this->runBeforeFirstCommand($input, $output);

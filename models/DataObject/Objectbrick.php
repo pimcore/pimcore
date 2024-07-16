@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use __PHP_Incomplete_Class;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
@@ -37,14 +40,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      *
-     * @var string
      */
     protected string $fieldname;
 
     /**
      * @internal
      *
-     * @var Concrete|Model\Element\ElementDescriptor|null
      */
     protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
@@ -83,11 +84,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return $values;
         }
 
-        if (empty($this->items)) {
-            foreach ($this->getObjectVars() as $var) {
-                if ($var instanceof Objectbrick\Data\AbstractData) {
-                    $this->items[] = $var;
-                }
+        foreach ($this->getObjectVars() as $var) {
+            if ($var instanceof Objectbrick\Data\AbstractData &&
+                !in_array($var, $this->items, true)) {
+                $this->items[] = $var;
             }
         }
 
@@ -188,10 +188,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
@@ -201,11 +197,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $this->object = $object;
 
         // update all items with the new $object
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->setObject($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->setObject($object);
             }
         }
 
@@ -214,11 +208,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function delete(Concrete $object): void
     {
-        if (is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if ($brick instanceof Objectbrick\Data\AbstractData) {
-                    $brick->delete($object);
-                }
+        foreach ($this->getItems() as $brick) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                $brick->delete($object);
             }
         }
 
@@ -228,7 +220,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __sleep(): array
     {
         $finalVars = [];
-        $blockedVars = ['object'];
+        $blockedVars = ['object', 'brickGetters'];
         $vars = parent::__sleep();
 
         foreach ($vars as $value) {
@@ -256,12 +248,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
         }
 
-        if (is_array($this->items)) {
-            foreach ($this->items as $key => $item) {
-                if ($item instanceof \__PHP_Incomplete_Class) {
-                    unset($this->items[$key]);
-                    Logger::error('brick item ' . $key . ' does not exist anymore');
-                }
+        foreach ($this->items as $key => $item) {
+            if ($item instanceof __PHP_Incomplete_Class) {
+                unset($this->items[$key]);
+                Logger::error('brick item ' . $key . ' does not exist anymore');
             }
         }
     }
@@ -277,11 +267,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param string $brick
-     * @param string $brickField
-     * @param string $field
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -316,19 +303,17 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function loadLazyData(): void
     {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
-        if (is_array($allowedBrickTypes)) {
-            foreach ($allowedBrickTypes as $allowedBrickType) {
-                $brickGetter = 'get' . ucfirst($allowedBrickType);
-                $brickData = $this->$brickGetter();
-                if ($brickData) {
-                    $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
-                    $fds = $brickDef->getFieldDefinitions();
-                    foreach ($fds as $fd) {
-                        $fieldGetter = 'get' . ucfirst($fd->getName());
-                        $fieldValue = $brickData->$fieldGetter();
-                        if ($fieldValue instanceof Localizedfield) {
-                            $fieldValue->loadLazyData();
-                        }
+        foreach ($allowedBrickTypes as $allowedBrickType) {
+            $brickGetter = 'get' . ucfirst($allowedBrickType);
+            $brickData = $this->$brickGetter();
+            if ($brickData) {
+                $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
+                $fds = $brickDef->getFieldDefinitions();
+                foreach ($fds as $fd) {
+                    $fieldGetter = 'get' . ucfirst($fd->getName());
+                    $fieldValue = $brickData->$fieldGetter();
+                    if ($fieldValue instanceof Localizedfield) {
+                        $fieldValue->loadLazyData();
                     }
                 }
             }

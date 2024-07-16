@@ -25,11 +25,7 @@ interface ProcessorInterface
     /**
      * Processes an URL. The processor is expected to return the same or a new URL instance or null
      *
-     * @param Url $url
-     * @param ElementInterface $element
-     * @param GeneratorContextInterface $context
      *
-     * @return Url|null
      */
     public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): ?Url;
 }

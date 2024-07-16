@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
+use Exception;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
@@ -47,10 +48,7 @@ class RedirectsController extends UserAwareController
     /**
      * @Route("/list", name="pimcore_bundle_seo_redirects_redirects", methods={"POST"})
      *
-     * @param Request $request
-     * @param RedirectHandler $redirectHandler
      *
-     * @return JsonResponse
      */
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler): JsonResponse
     {
@@ -191,9 +189,7 @@ class RedirectsController extends UserAwareController
     /**
      * @Route("/csv-export", name="pimcore_bundle_seo_redirects_csvexport", methods={"GET"})
      *
-     * @param Csv $csv
      *
-     * @return Response
      */
     public function csvExportAction(Csv $csv): Response
     {
@@ -222,10 +218,7 @@ class RedirectsController extends UserAwareController
     /**
      * @Route("/csv-import", name="pimcore_bundle_seo_redirects_csvimport", methods={"POST"})
      *
-     * @param Request $request
-     * @param Csv $csv
      *
-     * @return Response
      */
     public function csvImportAction(Request $request, Csv $csv): Response
     {
@@ -249,7 +242,6 @@ class RedirectsController extends UserAwareController
     /**
      * @Route("/cleanup", name="pimcore_bundle_seo_redirects_cleanup", methods={"DELETE"})
      *
-     * @return JsonResponse
      */
     public function cleanupAction(): JsonResponse
     {
@@ -266,7 +258,7 @@ class RedirectsController extends UserAwareController
             }
 
             return $this->jsonResponse(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
 
             return $this->jsonResponse(['success' => false]);
@@ -276,7 +268,6 @@ class RedirectsController extends UserAwareController
     /**
      * @Route("/get-statuscodes", name="pimcore_bundle_seo_redirects_statuscodes", methods={"GET"})
      *
-     * @return JsonResponse
      */
     public function statusCodesAction(): JsonResponse
     {

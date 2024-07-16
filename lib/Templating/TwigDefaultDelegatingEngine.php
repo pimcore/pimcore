@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating;
 
+use Exception;
 use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
@@ -39,9 +40,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         parent::__construct($engines);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
@@ -52,9 +50,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * {@inheritdoc}
      *
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public function render(string|TemplateReferenceInterface $name, array $parameters = []): string
     {
@@ -65,9 +63,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
@@ -109,13 +104,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @param string $view
-     * @param array $parameters
-     * @param Response|null $response
      *
-     * @return Response
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
     {

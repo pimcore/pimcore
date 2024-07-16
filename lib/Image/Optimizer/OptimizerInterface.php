@@ -21,10 +21,7 @@ use Pimcore\Exception\ImageOptimizationFailedException;
 interface OptimizerInterface
 {
     /**
-     * @param string $input
-     * @param string $output
      *
-     * @return string
      *
      * @throws ImageOptimizationFailedException
      */

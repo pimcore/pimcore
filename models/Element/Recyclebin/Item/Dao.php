@@ -15,8 +15,10 @@
 
 namespace Pimcore\Model\Element\Recyclebin\Item;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
@@ -26,9 +28,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getById(int $id): void
     {
@@ -44,7 +45,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */
@@ -62,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->insert('recyclebin', $data);
             $this->model->setId((int) $this->db->lastInsertId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
 

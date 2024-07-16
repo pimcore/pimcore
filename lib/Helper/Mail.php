@@ -16,11 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
+use Exception;
+use Net_URL2;
 use Pimcore\Mail as MailClient;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Symfony\Component\Mime\Address;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
+use function dirname;
+use function strlen;
 
 /**
  * @internal
@@ -28,19 +32,16 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     * @param string $type
-     * @param MailClient $mail
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getDebugInformation(string $type, MailClient $mail): string
     {
         $type = strtolower($type);
 
         if ($type != 'html' && $type != 'text') {
-            throw new \Exception('$type has to be "html" or "text"');
+            throw new Exception('$type has to be "html" or "text"');
         }
 
         //generating html debug info
@@ -92,7 +93,6 @@ class Mail
      *
      * @static
      *
-     * @return string
      */
     public static function getDebugInformationCssStyle(): string
     {
@@ -131,9 +131,7 @@ CSS;
      *
      * Helper to format the receivers for the debug email and logging
      *
-     * @param array $receivers
      *
-     * @return string
      */
     public static function formatDebugReceivers(array $receivers): string
     {
@@ -154,13 +152,6 @@ CSS;
         return implode(', ', $formatedReceiversArray);
     }
 
-    /**
-     * @param MailClient $mail
-     * @param array $recipients
-     * @param string|null $error
-     *
-     * @return Model\Tool\Email\Log
-     */
     public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
@@ -177,7 +168,7 @@ CSS;
         $emailLog->setSentDate(time());
 
         $subject = $mail->getSubjectRendered();
-        if (0 === strpos($subject, '=?')) {
+        if (str_starts_with($subject, '=?')) {
             $mbIntEnc = mb_internal_encoding();
             mb_internal_encoding($mail->getTextCharset());
             $subject = mb_decode_mimeheader($subject);
@@ -218,13 +209,9 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
-     * @param string|null $hostUrl
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
     {
@@ -246,29 +233,28 @@ CSS;
 
         //matches all links
         preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
-        if (!empty($matches[0])) {
-            foreach ($matches[0] as $key => $value) {
-                $path = $matches[2][$key];
 
-                if (strpos($path, '//') === 0) {
-                    $absolutePath = 'http:' . $path;
-                } elseif (strpos($path, '/') === 0) {
-                    $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
-                    $absolutePath = $hostUrl . $absolutePath;
-                } elseif (strpos($path, 'file://') === 0) {
-                    continue;
-                } else {
-                    $absolutePath = $hostUrl . "/$path";
-                    if ($path[0] == '?') {
-                        $absolutePath = $hostUrl . $document . $path;
-                    }
-                    $netUrl = new \Net_URL2($absolutePath);
-                    $absolutePath = $netUrl->getNormalizedURL();
+        foreach ($matches[0] as $key => $value) {
+            $path = $matches[2][$key];
+
+            if (str_starts_with($path, '//')) {
+                $absolutePath = 'http:' . $path;
+            } elseif (str_starts_with($path, '/')) {
+                $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
+                $absolutePath = $hostUrl . $absolutePath;
+            } elseif (str_starts_with($path, 'file://')) {
+                continue;
+            } else {
+                $absolutePath = $hostUrl . "/$path";
+                if ($path[0] == '?') {
+                    $absolutePath = $hostUrl . $document . $path;
                 }
-
-                $path = preg_quote($path, '!');
-                $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
+                $netUrl = new Net_URL2($absolutePath);
+                $absolutePath = $netUrl->getNormalizedURL();
             }
+
+            $path = preg_quote($path, '!');
+            $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
         }
 
         preg_match_all("@srcset\s*=[\"'](.*?)[\"']@is", $string, $matches);
@@ -277,10 +263,10 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v, 'http://') === 0 ||
-                    strpos($v, 'https://') === 0 ||
-                    strpos($v, '//') === 0 ||
-                    strpos($v, 'file://') === 0
+                if (str_starts_with($v, 'http://') ||
+                    str_starts_with($v, 'https://') ||
+                    str_starts_with($v, '//') ||
+                    str_starts_with($v, 'file://')
                 ) {
                     continue;
                 }
@@ -296,12 +282,9 @@ CSS;
     }
 
     /**
-     * @param string $string
-     * @param Model\Document|null $document
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
     {
@@ -309,7 +292,7 @@ CSS;
 
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
-        if (!empty($matches[0])) {
+        if ($matches[0]) {
             $css = '';
 
             foreach ($matches[0] as $key => $value) {
@@ -323,7 +306,7 @@ CSS;
                     if ($fileInfo['fileExtension'] === 'css' && is_readable($fileInfo['filePathNormalized'])) {
                         $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                     }
-                } elseif (strpos($path, 'http') === 0) {
+                } elseif (str_starts_with($path, 'http')) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
                         'fileUrlNormalized' => $path,
@@ -353,43 +336,35 @@ CSS;
      *
      * @static
      *
-     * @param string $content
-     * @param array $fileInfo
      *
-     * @return string
      */
     public static function normalizeCssContent(string $content, array $fileInfo): string
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
 
-        if (is_array($matches[0])) {
-            foreach ($matches[0] as $key => $value) {
-                $fullMatch = $matches[0][$key];
-                $path = $matches[1][$key];
+        foreach ($matches[0] as $key => $value) {
+            $fullMatch = $matches[0][$key];
+            $path = $matches[1][$key];
 
-                if ($path[0] == '/') {
-                    $imageUrl = $hostUrl . $path;
-                } else {
-                    $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
-                    $netUrl = new \Net_URL2($imageUrl);
-                    $imageUrl = $netUrl->getNormalizedURL();
-                }
-
-                $content = str_replace($fullMatch, ' url(' . $imageUrl . ') ', $content);
+            if ($path[0] == '/') {
+                $imageUrl = $hostUrl . $path;
+            } else {
+                $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
+                $netUrl = new Net_URL2($imageUrl);
+                $imageUrl = $netUrl->getNormalizedURL();
             }
+
+            $content = str_replace($fullMatch, ' url(' . $imageUrl . ') ', $content);
         }
 
         return $content;
     }
 
     /**
-     * @param string $path
-     * @param Model\Document|null $document
      *
-     * @return array
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
     {
@@ -402,7 +377,7 @@ CSS;
         }
 
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
-        $netUrl = new \Net_URL2($fileInfo['fileUrl']);
+        $netUrl = new Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
 
         $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-\d+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));

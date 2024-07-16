@@ -30,7 +30,6 @@ class PimcoreClassDefinitionMatcher implements Matcher
     /**
      * PimcoreClassDefinitionMatcher constructor.
      *
-     * @param string $matchType
      */
     public function __construct(string $matchType)
     {
@@ -41,7 +40,6 @@ class PimcoreClassDefinitionMatcher implements Matcher
      * @param object $object
      * @param string $property
      *
-     * @return bool
      */
     public function matches($object, $property): bool
     {

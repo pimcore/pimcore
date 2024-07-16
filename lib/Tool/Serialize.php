@@ -16,6 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Pimcore;
+use Throwable;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_object;
+
 final class Serialize
 {
     protected static array $loopFilterProcessedObjects = [];
@@ -27,7 +34,7 @@ final class Serialize
 
     public static function unserialize(?string $data = null): mixed
     {
-        if (!empty($data) && is_string($data)) {
+        if ($data) {
             $data = unserialize($data);
         }
 
@@ -39,11 +46,10 @@ final class Serialize
      *
      * Shortcut to access the admin serializer
      *
-     * @return \Symfony\Component\Serializer\Serializer
      */
     public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
-        return \Pimcore::getContainer()->get('pimcore_admin.serializer');
+        return Pimcore::getContainer()->get('pimcore_admin.serializer');
     }
 
     /**
@@ -52,9 +58,7 @@ final class Serialize
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
      *
-     * @param mixed $data
      *
-     * @return mixed
      */
     public static function removeReferenceLoops(mixed $data): mixed
     {
@@ -72,7 +76,7 @@ final class Serialize
         } elseif (is_object($element)) {
             try {
                 $clone = clone $element; // do not modify the original object
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 return sprintf('"* NON-CLONEABLE (%s): %s *"', get_class($element), $e->getMessage());
             }
 

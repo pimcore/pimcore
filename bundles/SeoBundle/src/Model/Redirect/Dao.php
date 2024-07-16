@@ -15,12 +15,15 @@
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
+use function in_array;
+use function is_bool;
 
 /**
  * @internal
@@ -30,7 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
@@ -49,9 +51,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Request $request
-     * @param Site|null $site
-     * @param bool $override
      *
      * @throws NotFoundException
      */
@@ -68,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             ) AND active = 1 AND (regex IS NULL OR regex = 0) AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
         if ($siteId) {
-            $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
+            $sql .= ' AND sourceSite = ' . $siteId;
         } else {
             $sql .= ' AND sourceSite IS NULL';
         }
@@ -97,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

@@ -27,7 +27,7 @@ The user can then decide which and how many of the available field definitions s
 
 Field definition data is stored in a separate table for each field definition and object class. 
 The naming convention for these tables is: `object_collection_COLLECTION-NAME_OBJECT-ID`. 
-Such a table contains all the field data, the concrete object's id, field name and index of of the field collection 
+Such a table contains all the field data, the concrete object's id, field name and index of the field collection 
 within the field collection data field. 
 In order to fully understand the data structure of objects and field collections, it is best to enter some example data 
 and have a look at the tables created by Pimcore.

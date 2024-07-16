@@ -15,9 +15,12 @@
 
 namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
+use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
+use function in_array;
+use function is_bool;
 
 /**
  * @internal
@@ -29,7 +32,6 @@ class Dao extends AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int|null $id
      *
      * @throws NotFoundException
      */
@@ -49,7 +51,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -69,7 +71,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

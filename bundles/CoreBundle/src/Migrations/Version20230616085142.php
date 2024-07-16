@@ -19,13 +19,16 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Model\Dao\AbstractDao;
 
 final class Version20230616085142 extends AbstractMigration
 {
     private const ID_COLUMN = 'id';
 
+    private const O_PREFIX = 'o_';
+
     private const PK_COLUMNS = '`' . self::ID_COLUMN .
-    '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
+        '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
 
     private const UNIQUE_KEY_NAME = 'metadata_un';
 
@@ -49,9 +52,17 @@ final class Version20230616085142 extends AbstractMigration
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
+            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
+            $foreignKeyNameWithOPrefix = AbstractDao::getForeignKeyName($tableName, self::O_PREFIX . self::ID_COLUMN);
 
             if (!$metaDataTable->hasColumn(self::AUTO_ID)) {
-                if ($metaDataTable->hasPrimaryKey()) {
+                if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyName . '`');
+                } elseif ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyNameWithOPrefix)) {
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyNameWithOPrefix . '`');
+                }
+
+                if ($metaDataTable->getPrimaryKey()) {
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY');
                 }
 
@@ -60,8 +71,20 @@ final class Version20230616085142 extends AbstractMigration
 
                 if (!$metaDataTable->hasIndex(self::UNIQUE_KEY_NAME)) {
                     $this->addSql(
-                        'ALTER TABLE `' . $tableName . '` ADD ' .
-                        'CONSTRAINT `' . self::UNIQUE_KEY_NAME . '` UNIQUE (' . self::PK_COLUMNS . ')'
+                        'ALTER TABLE `' . $tableName . '`
+                            ADD CONSTRAINT `' . self::UNIQUE_KEY_NAME . '`
+                            UNIQUE (' . self::PK_COLUMNS . ')'
+                    );
+                }
+
+                if ($recreateForeignKey) {
+                    $this->addSql(
+                        'ALTER TABLE `' . $tableName . '`
+                            ADD CONSTRAINT `'.$foreignKeyName.'`
+                            FOREIGN KEY (`' . self::ID_COLUMN . '`)
+                            REFERENCES `objects` (`' . self::ID_COLUMN . '`)
+                            ON UPDATE NO ACTION
+                            ON DELETE CASCADE;'
                     );
                 }
             }
@@ -83,15 +106,34 @@ final class Version20230616085142 extends AbstractMigration
         foreach ($metaDataTables as $table) {
             $tableName = current($table);
             $metaDataTable = $schema->getTable($tableName);
+            $foreignKeyName = AbstractDao::getForeignKeyName($tableName, self::ID_COLUMN);
 
             if ($metaDataTable->hasColumn(self::AUTO_ID)) {
+                if ($recreateForeignKey = $metaDataTable->hasForeignKey($foreignKeyName)) {
+                    $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyName . '`');
+                }
+
                 $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `' . self::AUTO_ID . '`');
                 $this->addSql(
                     'ALTER TABLE `' . $tableName . '` ADD PRIMARY KEY (' . self::PK_COLUMNS  . ')'
                 );
-                $this->addSql(
-                    'ALTER TABLE `' . $tableName . '` DROP INDEX IF EXISTS `' . self::UNIQUE_KEY_NAME  . '`'
-                );
+
+                if ($metaDataTable->hasIndex(self::UNIQUE_KEY_NAME)) {
+                    $this->addSql(
+                        'ALTER TABLE `' . $tableName . '` DROP INDEX `' . self::UNIQUE_KEY_NAME . '`'
+                    );
+                }
+
+                if ($recreateForeignKey) {
+                    $this->addSql(
+                        'ALTER TABLE `' . $tableName . '`
+                            ADD CONSTRAINT `'.$foreignKeyName.'`
+                            FOREIGN KEY (`' . self::ID_COLUMN . '`)
+                            REFERENCES `objects` (`' . self::ID_COLUMN . '`)
+                            ON UPDATE RESTRICT
+                            ON DELETE CASCADE;'
+                    );
+                }
             }
         }
 

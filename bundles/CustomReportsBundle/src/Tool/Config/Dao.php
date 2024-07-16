@@ -15,7 +15,10 @@
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model;
+use function in_array;
 
 /**
  * @internal
@@ -28,8 +31,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.config_location');
-        $definitions = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
+        $config = Pimcore::getContainer()->getParameter('pimcore_custom_reports.config_location');
+        $definitions = Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
 
         $storageConfig = $config[self::CONFIG_KEY];
 
@@ -42,7 +45,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @param string|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -70,7 +72,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -102,9 +104,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->deleteData($this->model->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [

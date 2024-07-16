@@ -26,7 +26,6 @@ class ClassDefinitionEvent extends Event
     /**
      * DocumentEvent constructor.
      *
-     * @param ClassDefinition $classDefinition
      */
     public function __construct(ClassDefinition $classDefinition)
     {

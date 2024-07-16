@@ -20,6 +20,8 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Country;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect;
+use function in_array;
+use function strlen;
 
 class CountryOptionsProvider implements SelectOptionsProviderInterface
 {
@@ -59,9 +61,6 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;

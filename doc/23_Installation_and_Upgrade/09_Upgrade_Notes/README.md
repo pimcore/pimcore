@@ -1,8 +1,192 @@
 # Upgrade Notes
 
-## Pimcore 11.0.6
-- Properties of `Pimcore\Model\DataObject\Data\Link` are nullable now. 
+## Pimcore 11.4.0
+### General
+#### [Logging]
+- Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
+#### [Twig Deferred Extension]
+- Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
+  If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
 
+## Pimcore 11.3.0
+### General
+#### [System Settings]
+- Unused setting `general.language` has been deprecated.
+#### [Listing]
+- The methods `setOrder()` and `setOrderKey()` throw an `InvalidArgumentException` if the parameters are invalid now.
+#### [Html to Image]
+- [Gotenberg] Bumped the lowest requirement of `gotenberg-php` from `^2.0` to `^2.4` to add support of passing screenshot size
+#### [Assets]
+- MIME type of uploaded assets get determined by `symfony/mime`, before in some cases Flysystem got used which resulted in different MIME types for some rarely used file extensions (e.g. STEP).
+#### [Grid]: 
+- Moved grid data related function to `admin-classic-ui-bundle` `v1.5`.
+- Method `Service::getHelperDefinitions()` is deprecated here and moved to `admin-classic-ui-bundle`.
+#### [Simple Backend Search]
+- Due to grid data refactoring, please note that in order to run this optional bundle correctly, it is required to install `admin-classic-ui-bundle` `v1.5`
+#### [DBAL]
+- Bumped minimum requirement of `doctrine/dbal` to `^3.8` and replaced deprecated/unused methods to get closer to support `v4`.
+#### [Composer]
+- Removed requirement of "phpoffice/phpspreadsheet" due it being not in used, more specifically moved it to the specific bundle who actually use it. Please check and adapt your project's composer requirement accordingly.
+#### [Dependency]
+- Dependencies are now resolved by messenger queue and can be turned off. By default, it is done synchronously, but it's possible to make it async by add the following config:
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
+        routing:
+            'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
+```
+and disable it by: 
+```yaml
+pimcore:
+  dependency:
+    enabled: false
+```
+
+## Pimcore 11.2.4 / 11.2.3.1 / 11.1.6.5
+### Assets Thumbnails
+- Thumbnail generation for Assets, Documents and Videos now only support the following formats out of the box: `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp'`.
+- You can extend this list by adding your formats on the bottom: 
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        allowed_formats:
+          - 'avif'
+          - 'eps'
+          - 'gif'
+          - 'jpeg'
+          - 'jpg'
+          - 'pjpeg'
+          - 'png'
+          - 'svg'
+          - 'tiff'
+          - 'webm'
+          - 'webp'
+          - 'pdf' # Add your desired format here
+```
+- High resolution scaling factor for image thumbnails has now been limited to a maximum of `5.0`. If you need to scale an image more than that, you can use the `max_scaling_factor` option in the configuration.
+```yaml
+  pimcore:
+    assets:
+      thumbnails:
+        max_scaling_factor: 6.0
+```
+
+## Pimcore 11.2.0
+### Elements
+#### [Documents]:
+- Using `outputFormat` config for `Pimcore\Model\Document\Editable\Date` editable is deprecated, use `outputIsoFormat` config instead.
+- Service `Pimcore\Document\Renderer\DocumentRenderer` is deprecated, use `Pimcore\Document\Renderer\DocumentRendererInterface` instead.
+- Page previews and version comparisons can now be rendered using Gotenberg v8.
+  To replace Headless Chrome, upgrade to Gotenberg v8 and upgrade the client library: `composer require gotenberg/gotenberg-php:^2`
+#### [Data Objects]:
+- Methods `getAsIntegerCast()` and `getAsFloatCast()` of the `Pimcore\Model\DataObject\Data` class are deprecated now.
+- All algorithms other than`password_hash` used in Password Data Type are now deprecated, please use `password_hash` instead.
+- `MultiSelectOptionsProviderInterface` is deprecated, please use `SelectOptionsProviderInterface` instead.
+
+-----------------
+### General
+#### [Localization]
+- Services `Pimcore\Localization\LocaleService` and `pimcore.locale` are deprecated, use `Pimcore\Localization\LocaleServiceInterface` instead.
+#### [Navigation]
+- Add rootCallback option to `Pimcore\Navigation\Builder::getNavigation()`
+#### [Symfony]
+- Bumped Symfony packages to "^6.4".
+#### [Value Objects]
+- Added new self validating Value Objects:
+  - `Pimcore\ValueObject\BooleanArray`
+  - `Pimcore\ValueObject\IntegerArray`
+  - `Pimcore\ValueObject\Path`
+  - `Pimcore\ValueObject\PositiveInteger`
+  - `Pimcore\ValueObject\PositiveIntegerArray`
+  - `Pimcore\ValueObject\StringArray`
+
+> [!WARNING]  
+> For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
+> Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
+> 
+> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/11.x/bin/console
+
+
+## Pimcore 11.1.0
+### Elements
+
+#### [All]:
+- Properties are now only updated in the database with dirty state (when calling `setProperties` or `setProperty`).
+- Added hint for second parameter `array $params = []` to `Element/ElementInterface::getById`
+- `Pimcore\Helper\CsvFormulaFormatter` has been deprecated. Use `League\Csv\EscapeFormula` instead.
+
+#### [Assets]:
+- Asset Documents background processing (e.g. page count, thumbnails & search text) can be disabled with config:
+    ```yaml
+    pimcore:
+        assets:
+            document:
+                thumbnails:
+                    enabled: false #disable generating thumbnail for Asset Documents
+                process_page_count: false #disable processing page count
+                process_text: false #disable processing text extraction
+                scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
+    ```
+- Video Assets spherical metadata is now calculated in the backfground instead of on load.
+
+#### [Data Objects]:
+- Property `$fieldtype` of the `Pimcore\Model\DataObject\Data` class is deprecated now. Use the `getFieldType()` method instead.
+- Method `getSiblings()` output is now sorted based on the parent sorting parameters (same as `getChildren`) instead of alphabetical.
+- Input fields `CheckValidity` checks the column length.
+
+#### [Documents]:
+- Removed `allow list` filter from `Pimcore\Model\Document\Editable\Link` to allow passing any valid attributes in the config.
+- Property `Pimcore\Navigation\Page::$_defaultPageType` is deprecated.
+
+-----------------
+### General
+
+#### [Authentication]:
+The tokens for password reset are now stored in the DB and are one time use only (gets expired whenever a new one is generated or when consumed).
+- [Static Page Generator]: Static pages can be generated based on sub-sites main domain using below config:
+    ```yaml
+    pimcore:
+        documents:
+            static_page_router:
+                use_main_domain: true #generates pages in path /public/var/tmp/pages/my-domain.com/en.html 
+    ```
+    and adapting NGINX config:
+    ```nginx
+    map $args $static_page_root {
+        default                                 /var/tmp/pages/$host;
+        "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+        "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+        "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+    }
+    map $uri $static_page_uri {
+        default                                 $uri;
+        "/"                                     /%home;
+    }
+  ```
+
+#### [Core Cache Handler]:
+- Remove redundant cache item tagging with own key.
+
+#### [Installer]: 
+- Passing `--install-bundles` as empty option now installs the required bundles.
+
+#### [Maintenance Mode]:
+- Maintenance mode check is handled via `tmp_store` in database. Using maintenance mode files is deprecated.
+- Deprecated following maintenance-mode methods in `Pimcore\Tool\Admin`:
+    - `activateMaintenanceMode`, use `MaintenanceModeHelperInterface::activate` instead.
+    - `deactivateMaintenanceMode`, use `MaintenanceModeHelperInterface::deactivate` instead.
+    - `isInMaintenanceMode`, use `MaintenanceModeHelperInterface::isActive instead.
+    - `isMaintenanceModeScheduledForLogin`, `scheduleMaintenanceModeOnLogin`, `unscheduleMaintenanceModeOnLogin` will be removed in Pimcore 12.
+
+
+------------------
+## Pimcore 11.0.7
+- Putting `null` to the `Pimcore\Model\DataObject\Data::setIndex()` method is deprecated now. Only booleans are allowed.
+
+------------------
 ## Pimcore 11.0.0
 ### API
 #### [General] :
@@ -79,12 +263,12 @@
 
 #### [Authentication] :
 
--  Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed support old authentication system
 - Removed BruteforceProtection, use Symfony defaults now
 - Removed PreAuthenticatedAdminToken
 - Admin Login Events
-  - Removed `AdminEvents::LOGIN_CREDENTIALS` event.
-  - Removed `AdminEvents::LOGIN_FAILED` event. Use `Symfony\Component\HttpFoundation\Request\LoginFailureEvent` instead.
+  - Removed `AdminEvents::LOGIN_CREDENTIALS` (`pimcore.admin.login.credentials`) event. Use `Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent` instead.
+  - Removed `AdminEvents::LOGIN_FAILED` (`pimcore.admin.login.failed`) event. Use `Symfony\Component\HttpFoundation\Request\LoginFailureEvent` instead.
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed deprecated method `Pimcore\Bundle\AdminBundle\Security\User::getUsername()`, use `getIdentifier()` instead.
 -  Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
@@ -99,7 +283,9 @@
 #### [Security] :
 
 -  Enabled Content Security Policy by default.
--  Implemented Symfony HTML sanitizer for WYSIWYG editors.
+-  Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
+Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
+The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 
 -----------------
@@ -146,6 +332,7 @@
 
     - [WordExport] has been moved into PimcoreWordExportBundle
 	- [Xliff Translation] Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+	- [WYSIWYG-Editor] The default editor changed from `CKEditor` to `TinyMCE` and has been moved into PimcoreTinymceBundle. Please adapt custom configuration and [extend](https://pimcore.com/docs/platform/Pimcore/Documents/Editables/WYSIWYG#extending-symfony-html-sanitizer-configuration) the html sanitizer for supporting the required html elements in wysiwyg editor.
 
 
 
@@ -243,7 +430,9 @@ pimcore:
 
 #### [Migrations] :
 
--  Pimcore does not run core migrations after `composer` update automatically anymore. Make sure that migrations are executed. You can run `bin/console doctrine:migrations:migrate`.
+-  Removed `executeMigrationsUp` from `Pimcore\Composer`.
+-  Pimcore does not run core migrations after `composer` update automatically anymore.
+   Make sure that migrations are executed by running the command `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`.
 
 #### [Naming] :
 
@@ -340,6 +529,19 @@ pimcore:
 
 -  WebDAV url has been changed from `https://YOUR-DOMAIN/admin/asset/webdav` to `https://YOUR-DOMAIN/asset/webdav`
 
+   As result of this change, the following changes are required in your nginx configuration:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin)(.+?)....
+    ```
+    New:
+    ```
+    # Assets
+    ....
+    location ~* ^(?!/admin|/asset/webdav)(.+?)....
+    ```
+
 -----------------
 
 ### Data Objects
@@ -410,7 +612,7 @@ pimcore:
 - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
-- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
+- Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
 -  Removed the `attributes` field from the link editable.
 -  Deprecated WkHtmlToImage has been removed.
 -  Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
@@ -505,7 +707,7 @@ pimcore_seo:
 #### [Cache] :
 
 -  Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
--  Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+-  Responses containing a header `Cache-Control: no-store` will no longer be cached by the full page cache.
 -  Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.
 
 #### [Console] :

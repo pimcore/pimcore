@@ -16,9 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
+use InvalidArgumentException;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Model\AbstractModel;
+use Pimcore\Model\ModelInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,9 +57,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
         $this->configureDryRunOption();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $this->getPath();
@@ -66,7 +64,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 
         $name = $this->getDefinitionName(basename($path));
         if (null === $name) {
-            throw new \InvalidArgumentException('File name does not match expected format');
+            throw new InvalidArgumentException('File name does not match expected format');
         }
 
         $json = $this->getJson($path);
@@ -117,13 +115,12 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Validate and return path to JSON file
      *
-     * @return string
      */
     protected function getPath(): string
     {
         $path = $this->input->getArgument('path');
         if (!file_exists($path) || !is_readable($path)) {
-            throw new \InvalidArgumentException('File does not exist');
+            throw new InvalidArgumentException('File does not exist');
         }
 
         return $path;
@@ -131,20 +128,13 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 
     /**
      * Load JSON data from file
-     *
-     * @param string $path
-     *
-     * @return string|false
      */
-    protected function getJson(string $path): bool|string
+    protected function getJson(string $path): string
     {
         $content = file_get_contents($path);
 
         // try to decode json here as we want to fail early if file is no valid JSON
-        $json = json_decode($content);
-        if (null === $json) {
-            throw new \InvalidArgumentException('JSON could not be decoded');
-        }
+        json_decode($content, flags: JSON_THROW_ON_ERROR);
 
         // return string content as service import
         // methods decode JSON by their own
@@ -154,9 +144,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Ask for confirmation before overwriting
      *
-     * @param string $name
      *
-     * @return bool
      */
     protected function askConfirmation(string $name): bool
     {
@@ -177,44 +165,34 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Get type
      *
-     * @return string
      */
     abstract protected function getType(): string;
 
     /**
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
-     * @param string $filename
      *
-     * @return string|null
      */
     abstract protected function getDefinitionName(string $filename): ?string;
 
     /**
      * Try to load definition by name
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
-    abstract protected function loadDefinition(string $name): ?AbstractModel;
+    abstract protected function loadDefinition(string $name): ?ModelInterface;
 
     /**
      * Create a new definition
      *
-     * @param string $name
      *
-     * @return AbstractModel|null
      */
-    abstract protected function createDefinition(string $name): ?AbstractModel;
+    abstract protected function createDefinition(string $name): ?ModelInterface;
 
     /**
      * Process import
      *
-     * @param AbstractModel $definition
-     * @param string $json
      *
-     * @return bool
      */
-    abstract protected function import(AbstractModel $definition, string $json): bool;
+    abstract protected function import(ModelInterface $definition, string $json): bool;
 }

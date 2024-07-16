@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,14 +31,16 @@ use Symfony\Component\Console\Question\Question;
 /**
  * @internal
  */
+#[AsCommand(
+    name:'pimcore:user:reset-password',
+    description: 'Reset a user\'s password',
+    aliases: ['reset-password']
+)]
 class ResetPasswordCommand extends AbstractCommand
 {
     protected function configure(): void
     {
         $this
-            ->setName('pimcore:user:reset-password')
-            ->setAliases(['reset-password'])
-            ->setDescription("Reset a user's password")
             ->addArgument(
                 'user',
                 InputArgument::REQUIRED,
@@ -50,17 +54,15 @@ class ResetPasswordCommand extends AbstractCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userArgument = $input->getArgument('user');
 
-        $method = is_numeric($userArgument) ? 'getById' : 'getByName';
-
-        /** @var User|null $user */
-        $user = User::$method($userArgument);
+        if (is_numeric($userArgument)) {
+            $user = User::getById((int) $userArgument);
+        } else {
+            $user = User::getByName($userArgument);
+        }
 
         if (!$user) {
             $this->writeError('User with name/ID ' . $userArgument . ' could not be found. Exiting');
@@ -90,7 +92,7 @@ class ResetPasswordCommand extends AbstractCommand
         $question = new Question('Please enter the new password: ');
         $question->setValidator(function ($value) {
             if (empty(trim($value))) {
-                throw new \Exception('The password cannot be empty');
+                throw new Exception('The password cannot be empty');
             }
 
             return $value;

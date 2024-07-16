@@ -65,6 +65,18 @@ In background, maintenance job takes care of generating static pages for documen
  also, you can filter the documents by parent path, which should processed for static generation:
  `php bin/console pimcore:documents:generate-static-pages -p /en/Magazine`
  
+### SSI
+If you want to add NGINX SSI module for generating the static pages, you can add following config:
+```yaml
+pimcore:
+    document:
+        static_page_generator:
+            headers:
+                - { name: "Surrogate-Capability", value: 'device="SSI/1.0"' }
+```
+Now the maintenance command can generate SSI includes in the static files like a normal page load.
+
+
 ## Storage
 By default, Pimcore stores the generated HTML pages on local path: `'document_root/public/var/tmp/pages'`.
 
@@ -96,6 +108,37 @@ pimcore:
 |----------------|---------------------------------------------------------------|
 | enabled        | Set it true to enable Static Page Router                      |
 | route_pattern  | Regular expression to match routes for static page rendering  |
+
+
+## Use Static Page HTML files with mainDomain instead path
+Enable the main domain option to get the static pages with starting main domain instead of the keys from Pimcore documents.
+
+```yaml
+pimcore:
+    documents:
+        static_page_generator:
+            use_main_domain: true
+```
+| config         | Description                                                   |
+|----------------|---------------------------------------------------------------|
+| use_main_domain| Use tmp path like /public/var/tmp/pages/my-domain.com/en.html |
+
+NGINX Config Changes:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages/$host;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+```
+
+
 
 ## Static Page Generation With Ajax Request
 The static pages with XMLHttpRequest fetches the data and displays it on the page, just like a standard document page. 

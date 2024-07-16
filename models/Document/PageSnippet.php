@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Exception;
+use Pimcore;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -26,10 +28,13 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\SystemSettingsConfig;
+use function array_key_exists;
+use function in_array;
+use function is_null;
 
 /**
- * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
+ * @method Model\Document\PageSnippet\Dao getDao()
+ * @method Model\Version|null getLatestVersion(?int $userId = null, bool $includingPublished = false)
  */
 abstract class PageSnippet extends Model\Document
 {
@@ -38,14 +43,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $controller = null;
 
     /**
      * @internal
      *
-     * @var string|null
      */
     protected ?string $template = null;
 
@@ -54,7 +57,6 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      *
      */
     protected ?array $editables = null;
@@ -64,14 +66,12 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @var array|null
      */
     protected ?array $versions = null;
 
     /**
      * @internal
      *
-     * @var null|int
      */
     protected ?int $contentMainDocumentId = null;
 
@@ -90,7 +90,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var null|bool
      */
     protected ?bool $missingRequiredEditable = null;
 
@@ -102,14 +101,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var null|int
      */
     protected ?int $staticGeneratorLifetime = null;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $inheritedEditables = [];
 
@@ -130,9 +127,6 @@ abstract class PageSnippet extends Model\Document
         return self::$getInheritedValues;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(array $parameters = []): static
     {
         // checking the required editables renders the document, so this needs to be
@@ -145,9 +139,6 @@ abstract class PageSnippet extends Model\Document
         return parent::save($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         // update elements
@@ -156,13 +147,11 @@ abstract class PageSnippet extends Model\Document
 
         parent::update($params);
 
-        if (is_array($editables) && count($editables)) {
-            foreach ($editables as $editable) {
-                if (!$editable->getInherited()) {
-                    $editable->setDao(null);
-                    $editable->setDocumentId($this->getId());
-                    $editable->save();
-                }
+        foreach ($editables as $editable) {
+            if (!$editable->getInherited()) {
+                $editable->setDao(null);
+                $editable->setDocumentId($this->getId());
+                $editable->save();
             }
         }
 
@@ -172,14 +161,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
-     * @param string|null $versionNote
-     * @param bool $isAutoSave
      *
-     * @return null|Model\Version
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
@@ -190,7 +174,7 @@ abstract class PageSnippet extends Model\Document
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
+                Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
 
             // set date
@@ -221,29 +205,26 @@ abstract class PageSnippet extends Model\Document
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
+                Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
 
             return $version;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $postUpdateFailureEvent = new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
                 'isAutoSave' => $isAutoSave,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
+            Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
-        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VersionDeleteMessage(Service::getElementType($this), $this->getId())
         );
 
@@ -264,10 +245,7 @@ abstract class PageSnippet extends Model\Document
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -291,7 +269,7 @@ abstract class PageSnippet extends Model\Document
     public function getController(): ?string
     {
         if (empty($this->controller)) {
-            $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
+            $this->controller = Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
         }
 
         return $this->controller;
@@ -302,6 +280,9 @@ abstract class PageSnippet extends Model\Document
         return $this->template;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(?string $controller): static
     {
         $this->controller = $controller;
@@ -309,6 +290,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(?string $template): static
     {
         $this->template = $template;
@@ -321,10 +305,6 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setRawEditable(string $name, string $type, mixed $data): static
@@ -332,7 +312,7 @@ abstract class PageSnippet extends Model\Document
         try {
             if ($type) {
                 /** @var EditableLoaderInterface $loader */
-                $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
+                $loader = Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
                 $editable = $loader->build($type);
 
                 $this->editables = $this->editables ?? [];
@@ -341,7 +321,7 @@ abstract class PageSnippet extends Model\Document
                 $this->editables[$name]->setName($name);
                 $this->editables[$name]->setDocument($this);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
         }
 
@@ -351,7 +331,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * Set an element with the given key/name
      *
-     * @param Editable $editable
      *
      * @return $this
      */
@@ -363,6 +342,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function removeEditable(string $name): static
     {
         $this->getEditables();
@@ -376,9 +358,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * Get an editable with the given key/name
      *
-     * @param string $name
      *
-     * @return Editable|null
      */
     public function getEditable(string $name): ?Editable
     {
@@ -409,12 +389,10 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param int|string|null $contentMainDocumentId
-     * @param bool $validate
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setContentMainDocumentId(int|string|null $contentMainDocumentId, bool $validate = false): static
     {
@@ -434,7 +412,7 @@ abstract class PageSnippet extends Model\Document
                 $maxDepth = 20;
                 do {
                     if ($currentContentMainDocument->getId() === $this->getId()) {
-                        throw new \Exception('This document is already part of the main document chain, please choose a different one.');
+                        throw new Exception('This document is already part of the main document chain, please choose a different one.');
                     }
                     $currentContentMainDocument = $currentContentMainDocument->getContentMainDocument();
                 } while ($currentContentMainDocument && $maxDepth-- > 0 && $validate);
@@ -463,6 +441,9 @@ abstract class PageSnippet extends Model\Document
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setContentMainDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
@@ -499,6 +480,9 @@ abstract class PageSnippet extends Model\Document
         return $this->editables;
     }
 
+    /**
+     * @return $this
+     */
     public function setEditables(?array $editables): static
     {
         $this->editables = $editables;
@@ -518,7 +502,10 @@ abstract class PageSnippet extends Model\Document
         return $this->versions;
     }
 
-    public function setVersions(array $versions): static
+    /**
+     * @return $this
+     */
+    public function setVersions(?array $versions): static
     {
         $this->versions = $versions;
 
@@ -528,7 +515,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @see Document::getFullPath
      *
-     * @return string
      */
     public function getHref(): string
     {
@@ -552,12 +538,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string|null $hostname
-     * @param string|null $scheme
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getUrl(string $hostname = null, string $scheme = null): string
     {
@@ -565,7 +548,7 @@ abstract class PageSnippet extends Model\Document
             $scheme = 'http://';
 
             /** @var RequestHelper $requestHelper */
-            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
+            $requestHelper = Pimcore::getContainer()->get(RequestHelper::class);
             if ($requestHelper->hasMainRequest()) {
                 $scheme = $requestHelper->getMainRequest()->getScheme() . '://';
             }
@@ -575,7 +558,7 @@ abstract class PageSnippet extends Model\Document
             $hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'];
             if (empty($hostname)) {
                 if (!$hostname = \Pimcore\Tool::getHostname()) {
-                    throw new \Exception('No hostname available');
+                    throw new Exception('No hostname available');
                 }
             }
         }
@@ -598,19 +581,17 @@ abstract class PageSnippet extends Model\Document
     /**
      * checks if the document is missing values for required editables
      *
-     * @return bool|null
      */
     public function getMissingRequiredEditable(): ?bool
     {
         return $this->missingRequiredEditable;
     }
 
+    /**
+     * @return $this
+     */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== null) {
-            $missingRequiredEditable = $missingRequiredEditable;
-        }
-
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -619,7 +600,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @return bool
      */
     public function supportsContentMain(): bool
     {
@@ -642,7 +622,7 @@ abstract class PageSnippet extends Model\Document
 
         if ($this->getMissingRequiredEditable() === null) {
             /** @var EditableUsageResolver $editableUsageResolver */
-            $editableUsageResolver = \Pimcore::getContainer()->get(EditableUsageResolver::class);
+            $editableUsageResolver = Pimcore::getContainer()->get(EditableUsageResolver::class);
 
             try {
                 $documentCopy = Service::cloneMe($this);
@@ -661,7 +641,7 @@ abstract class PageSnippet extends Model\Document
                         }
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // noting to do, as rendering the document failed for whatever reason
             }
         }

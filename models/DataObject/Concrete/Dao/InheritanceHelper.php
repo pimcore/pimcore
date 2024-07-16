@@ -17,7 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
+use Exception;
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
+use function count;
+use function in_array;
+use function is_array;
+use function is_null;
 
 /**
  * @internal
@@ -64,14 +70,6 @@ class InheritanceHelper
 
     protected ?string $queryIdField = null;
 
-    /**
-     * @param string $classId
-     * @param string|null $idField
-     * @param string|null $storetable
-     * @param string|null $querytable
-     * @param string|null $relationtable
-     * @param string|null $queryIdField
-     */
     public function __construct(string $classId, string $idField = null, string $storetable = null, string $querytable = null, string $relationtable = null, string $queryIdField = null)
     {
         $this->db = \Pimcore\Db::get();
@@ -111,7 +109,6 @@ class InheritanceHelper
     /**
      * Enable or disable the runtime cache. Default value is off.
      *
-     * @param bool $value
      */
     public static function setUseRuntimeCache(bool $value): void
     {
@@ -143,11 +140,6 @@ class InheritanceHelper
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
-    /**
-     * @param string $fieldname
-     * @param DataObject\ClassDefinition\Data $fieldDefinition
-     * @param array|null $queryfields
-     */
     public function addRelationToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition, array $queryfields = null): void
     {
         if ($queryfields === null) {
@@ -161,11 +153,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param bool $createMissingChildrenRows
-     * @param array $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function doUpdate(int $oo_id, bool $createMissingChildrenRows = false, array $params = []): void
     {
@@ -250,10 +239,11 @@ class InheritanceHelper
                 $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
-                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
+                $originalEntry = Helper::quoteDataIdentifiers($this->db, $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]));
+
                 foreach ($missingIds as $id) {
-                    $originalEntry[$this->idField] = $id;
-                    $this->db->insert($this->querytable, $originalEntry);
+                    $originalEntry[$this->db->quoteIdentifier($this->idField)] = $id;
+                    $this->db->insert($this->db->quoteIdentifier($this->querytable), $originalEntry);
                 }
             }
         }
@@ -263,8 +253,6 @@ class InheritanceHelper
      * Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
      * child elements.
      *
-     * @param int $objectId
-     * @param array $params
      */
     public function doDelete(int $objectId, array $params = []): void
     {
@@ -365,14 +353,6 @@ class InheritanceHelper
         return array_values($filteredResult);
     }
 
-    /**
-     * @param int $currentParentId
-     * @param string $fields
-     * @param array|null $parentIdGroups
-     * @param array $params
-     *
-     * @return array
-     */
     protected function buildTree(int $currentParentId, string $fields = '', array $parentIdGroups = null, array $params = []): array
     {
         $objects = [];
@@ -598,11 +578,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param int $oo_id
-     * @param array $ids
-     * @param string $fieldname
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function updateQueryTable(int $oo_id, array $ids, string $fieldname): void
     {

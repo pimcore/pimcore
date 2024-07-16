@@ -18,6 +18,7 @@ namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
@@ -41,7 +42,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @internal
      *
-     * @var string
      */
     protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 
@@ -57,9 +57,6 @@ class Listing extends Model\Listing\AbstractListing
         return in_array($key, ['key', 'type']) || in_array($key, $this->getLanguages());
     }
 
-    /**
-     * @return string
-     */
     public function getDomain(): string
     {
         return $this->domain;

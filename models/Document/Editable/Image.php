@@ -21,6 +21,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -46,56 +51,48 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementDescriptor|null
      */
     protected Asset\Image|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
     protected bool $cropPercent = false;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
-     * @var float
      */
     protected float $cropLeft = 0.0;
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $hotspots = [];
 
     /**
      * @internal
      *
-     * @var array
      */
     protected array $marker = [];
 
@@ -104,19 +101,13 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      */
-    protected ?string $thumbnail = null;
+    protected array|string|null $thumbnail = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'image';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -149,9 +140,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         $image = $this->getImage();
@@ -226,15 +214,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $image = $this->getImage();
 
         if ($image instanceof Asset\Image) {
@@ -243,7 +224,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 // create a thumbnail first
                 $autoName = false;
 
-                $thumbConfig = $image->getThumbnailConfig($thumbnailName);
+                $thumbConfig = $image->getThumbnail($thumbnailName)->getConfig();
                 if (!$thumbConfig && $this->cropPercent) {
                     $thumbConfig = new Asset\Image\Thumbnail\Config();
                 }
@@ -290,9 +271,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
@@ -331,9 +309,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $rewritePath = function ($data) {
@@ -382,7 +357,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $this->cropLeft = $data['cropLeft'] ?? 0;
         $this->marker = $data['marker'] ?? [];
         $this->hotspots = $data['hotspots'] ?? [];
-        $this->thumbnail = (string)($data['thumbnail'] ?? '');
+        $this->thumbnail = $data['thumbnail'] ?? null;
     }
 
     public function getText(): string
@@ -400,7 +375,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->getText();
     }
 
-    public function getThumbnailConfig(): ?string
+    public function getThumbnailConfig(): array|string|null
     {
         return $this->thumbnail;
     }
@@ -424,6 +399,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->image;
     }
 
+    /**
+     * @return $this
+     */
     public function setImage(Asset\Image|ElementDescriptor|null $image): static
     {
         $this->image = $image;
@@ -451,11 +429,11 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->id;
     }
 
-    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\ThumbnailInterface|string
     {
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {
-            $thumbConfig = $image->getThumbnailConfig($conf);
+            $thumbConfig = $image->getThumbnail($conf)->getConfig();
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);
                 $thumbConfig->generateAutoName();
@@ -536,9 +514,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -584,6 +559,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $dependencies;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropHeight(float $cropHeight): static
     {
         $this->cropHeight = $cropHeight;
@@ -596,6 +574,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropHeight;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropLeft(float $cropLeft): static
     {
         $this->cropLeft = $cropLeft;
@@ -608,6 +589,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropLeft;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropPercent(bool $cropPercent): static
     {
         $this->cropPercent = $cropPercent;
@@ -620,6 +604,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropPercent;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropTop(float $cropTop): static
     {
         $this->cropTop = $cropTop;
@@ -632,6 +619,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropTop;
     }
 
+    /**
+     * @return $this
+     */
     public function setCropWidth(float $cropWidth): static
     {
         $this->cropWidth = $cropWidth;
@@ -644,9 +634,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropWidth;
     }
 
-    public function setHotspots(array $hotspots): void
+    /**
+     * @return $this
+     */
+    public function setHotspots(array $hotspots): static
     {
         $this->hotspots = $hotspots;
+
+        return $this;
     }
 
     public function getHotspots(): array
@@ -654,9 +649,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->hotspots;
     }
 
-    public function setMarker(array $marker): void
+    /**
+     * @return $this
+     */
+    public function setMarker(array $marker): static
     {
         $this->marker = $marker;
+
+        return $this;
     }
 
     public function getMarker(): array
@@ -664,9 +664,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->marker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
@@ -694,5 +691,21 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
 
         return $finalVars;
+    }
+
+    /**
+     * @internal
+     *
+     * https://github.com/pimcore/pimcore/issues/15932
+     * used for non-nullable properties stored with null
+     *
+     * @TODO: Remove in Pimcore 12
+     *
+     */
+    public function __unserialize(array $data): void
+    {
+        foreach (get_object_vars($this) as $property => $value) {
+            $this->$property = $data["\0*\0".$property] ?? $value;
+        }
     }
 }

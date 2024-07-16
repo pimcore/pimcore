@@ -25,9 +25,6 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
 {
     use Model\Document\Hardlink\Wrapper;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHref(): string
     {
         if ($this->getLinktype() === 'internal' && $this->getInternalType() === 'document') {

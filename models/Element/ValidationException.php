@@ -16,15 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-class ValidationException extends \Exception
+use Exception;
+use function count;
+
+class ValidationException extends Exception
 {
     protected array $contextStack = [];
 
-    /** @var \Exception[] */
+    /** @var Exception[] */
     protected array $subItems = [];
 
     /**
-     * @return \Exception[]
+     * @return Exception[]
      */
     public function getSubItems(): array
     {
@@ -32,7 +35,7 @@ class ValidationException extends \Exception
     }
 
     /**
-     * @param \Exception[] $subItems
+     * @param Exception[] $subItems
      */
     public function setSubItems(array $subItems = []): void
     {
@@ -52,11 +55,9 @@ class ValidationException extends \Exception
     public function __toString(): string
     {
         $result = parent::__toString();
-        if (is_array($this->subItems)) {
-            foreach ($this->subItems as $subItem) {
-                $result .= "\n\n";
-                $result .= $subItem->__toString();
-            }
+        foreach ($this->subItems as $subItem) {
+            $result .= "\n\n";
+            $result .= $subItem->__toString();
         }
 
         return $result;

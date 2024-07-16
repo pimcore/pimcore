@@ -58,7 +58,6 @@ final class ElementDescriptor
     /**
      * get the cache tag for the element
      *
-     * @return string
      */
     public function getCacheKey(): string
     {

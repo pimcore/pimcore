@@ -16,6 +16,7 @@ doctrine:
     dbal:
         connections:
             default:
+                server_version: '10.11'
                 url: '%pimcore_test.db.dsn%'
                 host: ~
                 port: ~

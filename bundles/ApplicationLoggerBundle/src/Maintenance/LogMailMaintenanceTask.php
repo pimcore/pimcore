@@ -21,6 +21,7 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Mime\Address;
+use function count;
 
 /**
  * @internal
@@ -37,9 +38,6 @@ class LogMailMaintenanceTask implements TaskInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = $this->db;

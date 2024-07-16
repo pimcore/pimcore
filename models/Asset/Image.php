@@ -16,12 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Exception;
+use Imagick;
+use Pimcore;
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function array_key_exists;
+use function function_exists;
+use function in_array;
+use function is_array;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -30,16 +38,10 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -58,19 +60,17 @@ class Image extends Model\Asset
 
     private function isLowQualityPreviewEnabled(): bool
     {
-        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        return Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
     }
 
     /**
-     * @param string|null $generator
      *
-     * @return bool|string
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
-    public function generateLowQualityPreview(string $generator = null): bool|string
+    public function generateLowQualityPreview(): false|string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
             return false;
@@ -85,7 +85,7 @@ class Image extends Model\Asset
                 return false;
             }
 
-            $imagick = new \Imagick($path);
+            $imagick = new Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
             $width = $imagick->getImageWidth();
@@ -126,7 +126,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -134,7 +134,7 @@ EOT;
             'storagePath' => $storagePath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -158,7 +158,7 @@ EOT;
 
         try {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dataUri = null;
         }
 
@@ -170,10 +170,18 @@ EOT;
      *
      * @internal
      *
-     * @return Image\Thumbnail\Config|null
+     * @deprecated Will be removed in Pimcore 12
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.1',
+            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
+            __METHOD__,
+            'getThumbnail($config)->getConfig()'
+        );
+
         $thumbnail = $this->getThumbnail($config);
 
         return $thumbnail->getConfig();
@@ -182,7 +190,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -190,20 +198,19 @@ EOT;
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return null|\Pimcore\Image\Adapter
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
         try {
             $image = \Pimcore\Image::getInstance();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $image = null;
         }
 
         if (!$image instanceof \Pimcore\Image\Adapter) {
-            throw new \Exception("Couldn't get instance of image tranform processor.");
+            throw new Exception("Couldn't get instance of image tranform processor.");
         }
 
         return $image;
@@ -223,12 +230,7 @@ EOT;
     }
 
     /**
-     * @param string|null $path
-     * @param bool $force
-     *
-     * @return array|null
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDimensions(string $path = null, bool $force = false): ?array
     {
@@ -256,7 +258,7 @@ EOT;
 
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
-            $imageSize = getimagesize($path);
+            $imageSize = @getimagesize($path);
             if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
@@ -355,7 +357,6 @@ EOT;
     /**
      * Checks if this file represents an animated image (png or gif)
      *
-     * @return bool
      */
     public function isAnimated(): bool
     {

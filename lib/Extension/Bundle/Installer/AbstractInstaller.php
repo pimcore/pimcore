@@ -29,47 +29,29 @@ class AbstractInstaller implements InstallerInterface
         $this->output = new BufferedOutput(Output::VERBOSITY_NORMAL, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function install(): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function uninstall(): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isInstalled(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function canBeInstalled(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function canBeUninstalled(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function needsReloadAfterInstall(): bool
     {
         return false;

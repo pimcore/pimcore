@@ -17,15 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
+use function is_array;
 
 /**
  * @internal
  */
 class StructuredTable implements MarshallerInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
@@ -38,9 +36,6 @@ class StructuredTable implements MarshallerInterface
         return null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {

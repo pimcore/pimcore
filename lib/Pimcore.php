@@ -68,7 +68,6 @@ class Pimcore
     /**
      * check if the process is currently in admin mode or not
      *
-     * @return bool
      */
     public static function inAdmin(): bool
     {
@@ -89,7 +88,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher(): EventDispatcherInterface
     {
@@ -99,7 +97,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return KernelInterface|null
      */
     public static function getKernel(): ?KernelInterface
     {
@@ -109,7 +106,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return bool
      */
     public static function hasKernel(): bool
     {
@@ -123,7 +119,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @param KernelInterface $kernel
      */
     public static function setKernel(KernelInterface $kernel): void
     {
@@ -138,7 +133,6 @@ class Pimcore
      *
      * @deprecated this method just exists for legacy reasons and shouldn't be used in new code
      *
-     * @return ContainerInterface|null
      */
     public static function getContainer(): ?ContainerInterface
     {
@@ -146,7 +140,6 @@ class Pimcore
     }
 
     /**
-     * @return bool
      *
      * @internal
      */
@@ -170,7 +163,6 @@ class Pimcore
      *
      * @static
      *
-     * @param array $keepItems
      */
     public static function collectGarbage(array $keepItems = []): void
     {
@@ -232,7 +224,6 @@ class Pimcore
     /**
      * @internal
      *
-     * @return bool
      */
     public static function disableMinifyJs(): bool
     {

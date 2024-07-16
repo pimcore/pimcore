@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Generator;
+use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
+use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -35,7 +38,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var array
      */
     protected array $indices = [];
 
@@ -44,47 +46,31 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var int
      */
     protected int $current = 0;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return 'block';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return $this->indices;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function admin()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // nothing to do
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
@@ -92,9 +78,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
@@ -118,7 +101,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -163,7 +146,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return bool
      */
     public function loop(): bool
     {
@@ -201,9 +183,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementAttributes(): array
     {
         $attributes = parent::getEditmodeElementAttributes();
@@ -216,9 +195,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $attributes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start()
     {
         // set name suffix for the whole block element, this will be added to all child elements of the block
@@ -232,9 +208,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function end(bool $return = false): void
     {
         $this->current = 0;
@@ -248,9 +221,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
@@ -258,9 +228,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->getBlockState()->pushIndex((int) ($this->indices[$this->current] ?? 0));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function blockDestruct(): void
     {
         $blockState = $this->getBlockState();
@@ -352,25 +319,16 @@ EOT;
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCount(): int
     {
         return count($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrent(): int
     {
         return $this->current - 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrentIndex(): int
     {
         return (int) ($this->indices[$this->getCurrent()] ?? 0);
@@ -429,7 +387,7 @@ EOT;
 
     private function isIgnoreEditmodeIndices(): bool
     {
-        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $requestStack = Pimcore::getContainer()->get('request_stack');
         $request = $requestStack->getCurrentRequest();
         if ($request === null) {
             return false;

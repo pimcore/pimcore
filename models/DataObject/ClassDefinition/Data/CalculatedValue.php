@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -41,7 +42,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @internal
      *
-     * @var string
      */
     public string $elementType = 'input';
 
@@ -58,7 +58,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @internal
      *
-     * @var string
      */
     public string $calculatorClass;
 
@@ -67,7 +66,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @internal
      *
-     * @var int
      */
     public int $columnLength = 190;
 
@@ -136,11 +134,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string|null
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -150,11 +144,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
      * @param Concrete|null $object
-     * @param array $params
-     *
-     * @return string|null
      *
      * @see Data::getDataForEditmode
      */
@@ -168,9 +158,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
      * @return null
      *
@@ -183,11 +170,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -197,17 +180,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return $this->getDataFromObjectParam($object, $params) ?? '';
@@ -218,9 +195,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -248,9 +222,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
@@ -262,7 +233,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '{' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
-        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("pimcore.locale")->getLocale();'  . "\n";
+        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("' . LocaleServiceInterface::class . '")->getLocale();'  . "\n";
         $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage($locale)) {'  . "\n";
         $code .= "\t\t\t\t" . '$language = (string) $locale;'  . "\n";
         $code .= "\t\t\t" . '} else {'  . "\n";
@@ -303,9 +274,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
@@ -330,9 +298,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
@@ -359,53 +324,31 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsInheritance(): bool
     {
         return false;

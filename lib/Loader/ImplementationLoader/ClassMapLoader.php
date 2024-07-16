@@ -33,9 +33,6 @@ class ClassMapLoader extends AbstractClassNameLoader
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(string $name): bool
     {
         return isset($this->classMap[$this->normalizeName($name)]);

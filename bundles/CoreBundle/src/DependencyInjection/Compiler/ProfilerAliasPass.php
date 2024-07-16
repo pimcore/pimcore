@@ -25,9 +25,6 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
  */
 final class ProfilerAliasPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('profiler')) {

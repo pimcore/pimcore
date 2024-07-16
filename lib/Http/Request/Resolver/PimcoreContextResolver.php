@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
+use InvalidArgumentException;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use function is_array;
 
 /**
  * Gets/sets and guesses pimcore context (admin, default) from request. The guessing is implemented in PimcoreContextGuesser
@@ -44,9 +46,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Get pimcore context from request
      *
-     * @param Request|null $request
      *
-     * @return string|null
      */
     public function getPimcoreContext(Request $request = null): ?string
     {
@@ -67,8 +67,6 @@ class PimcoreContextResolver extends AbstractRequestResolver
     /**
      * Sets the pimcore context on the request
      *
-     * @param Request $request
-     * @param string $context
      */
     public function setPimcoreContext(Request $request, string $context): void
     {
@@ -79,10 +77,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * Tests if the request matches a given contect. $context can also be an array of contexts. If one
      * of the contexts matches, the method will return true.
      *
-     * @param Request $request
-     * @param array|string $context
      *
-     * @return bool
      */
     public function matchesPimcoreContext(Request $request, array|string $context): bool
     {
@@ -95,7 +90,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
         }
 
         if (empty($context)) {
-            throw new \InvalidArgumentException('Can\'t match against empty pimcore context');
+            throw new InvalidArgumentException('Can\'t match against empty pimcore context');
         }
 
         $resolvedContext = $this->getPimcoreContext($request);

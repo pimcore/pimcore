@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use function array_key_exists;
+use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -32,7 +34,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -41,7 +42,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -50,7 +50,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var string|null
      */
     protected ?string $subtype = null;
 
@@ -59,22 +58,15 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @internal
      *
-     * @var mixed
      */
     protected mixed $element = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         //TODO: getType != $type ... that might be dangerous
         return 'relation';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): mixed
     {
         return [
@@ -84,9 +76,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?array
     {
         $this->setElement();
@@ -103,9 +92,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $this->setElement();
@@ -122,9 +108,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
@@ -140,9 +123,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDataFromEditmode(mixed $data): static
     {
         $this->id = $data['id'] ?? null;
@@ -216,9 +196,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveDependencies(): array
     {
         $dependencies = [];
@@ -254,9 +231,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep(): array
     {
         $finalVars = [];
@@ -271,9 +245,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(): void
     {
         if (!$this->element) {
@@ -305,9 +276,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this->subtype;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {

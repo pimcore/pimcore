@@ -50,14 +50,10 @@ Sometimes it is more useful to deactivate the full page cache directly in the co
 it's not possible to define an exclude-regex, or for similar reasons.
 
 ### Disable caching via the response headers
-Adding the `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` header to your response will disable the full page cache as well as any other
+Adding the `Cache-Control: no-store` header to your response will disable the full page cache as well as any other
 middleware and browser caching:
 ```php
 <?php
-$response->headers->addCacheControlDirective('no-cache');
-// and/or
-$response->headers->addCacheControlDirective('private');
-// and/or
 $response->headers->addCacheControlDirective('no-store');
 ```
 
@@ -115,4 +111,3 @@ To use the bookmarklet, just drag the following Link into your bookmark toolbar 
 * <a href="javascript:(function() {document.cookie='pimcore_admin_sid=disablethecachebaby'+(Math.floor(Math.random() * 147483648) + 2000)+';path=/;';})()">Disable Pimcore Cache</a>
 
 * <a href='javascript:void((function(){var a,b,c,e,f;f=0;a=document.cookie.split("; ");for(e=0;e<a.length&&a[e];e++){f++;for(b="."+location.host;b;b=b.replace(/^(?:%5C.|[^%5C.]+)/,"")){for(c=location.pathname;c;c=c.replace(/.$/,"")){document.cookie=(a[e]+"; domain="+b+"; path="+c+"; expires="+new Date((new Date()).getTime()-1e11).toGMTString());}}}alert("Expired "+f+" cookies");})())'>Enable Pimcore Cache</a>
-

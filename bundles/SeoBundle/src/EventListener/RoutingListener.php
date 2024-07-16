@@ -34,9 +34,6 @@ class RoutingListener implements EventSubscriberInterface
     {
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -18,6 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
+trigger_deprecation('pimcore/pimcore', '11.2', '%s is deprecated. Use %s instead.', MultiSelectOptionsProviderInterface::class, SelectOptionsProviderInterface::class);
+
+/**
+ * @deprecated use SelectOptionsProviderInterface instead
+ */
 interface MultiSelectOptionsProviderInterface
 {
     public function getOptions(array $context, Data $fieldDefinition): array;
@@ -28,10 +33,7 @@ interface MultiSelectOptionsProviderInterface
      * there will be no batch assignment mode, and filtering can only be done through a text field instead of the
      * options list.
      *
-     * @param array $context
-     * @param Data $fieldDefinition
      *
-     * @return bool
      */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
 }

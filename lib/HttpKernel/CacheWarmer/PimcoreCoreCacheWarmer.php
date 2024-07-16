@@ -19,24 +19,20 @@ namespace Pimcore\HttpKernel\CacheWarmer;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use ReflectionClass;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use function dirname;
 
 /**
  * @internal
  */
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isOptional(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warmUp(string $cacheDir): array
     {
         $classes = [];
@@ -52,7 +48,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     {
         $excludePattern = '@/lib/(Migrations|Maintenance|Sitemap|Workflow|Console|Composer|Translation/(Import|Export)|Image/Optimizer|DataObject/(GridColumnConfig|Import)|Test|Tool/Transliteration|(Pimcore)\.php)@';
 
-        $reflection = new \ReflectionClass(Bootstrap::class);
+        $reflection = new ReflectionClass(Bootstrap::class);
         $dir = dirname($reflection->getFileName());
 
         $this->getClassesFromDirectory($dir, $excludePattern, 'Pimcore', $classes);
@@ -62,7 +58,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     {
         $excludePattern = '@/models/(GridConfig|ImportConfig|Notification|Schedule|Tool/CustomReport|User|Workflow)@';
 
-        $reflection = new \ReflectionClass(Asset::class);
+        $reflection = new ReflectionClass(Asset::class);
         $dir = dirname($reflection->getFileName());
 
         $this->getClassesFromDirectory($dir, $excludePattern, 'Pimcore\Model', $classes);
@@ -79,7 +75,9 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
                 $className = preg_replace('@\.php$@', '', $className);
                 $className = str_replace(DIRECTORY_SEPARATOR, '\\', $className);
 
-                if (class_exists($className)) {
+                // include classes, interfaces and traits
+                // exclude invalid files like helper-functions
+                if (!preg_match('/[_.-]/', $className)) {
                     $classes[] = $className;
                 }
             }
@@ -92,25 +90,27 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
         $files = glob($objectClassesFolder.'/*.php');
 
         foreach ($files as $file) {
-            $className = DataObject::class . '\\' . \preg_replace('/^definition_(.*)\.php$/', '$1', basename($file));
+            $className = DataObject::class . '\\' . preg_replace('/^definition_(.*)\.php$/', '$1', basename($file));
             $listingClass = $className . '\\Listing';
 
             $classes[] = $className;
             $classes[] = $listingClass;
         }
 
-        $objectBricksFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
-        $files = glob($objectBricksFolder . '/*.php');
-        foreach ($files as $file) {
-            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . basename($file, '.php');
+        $list = new DataObject\Objectbrick\Definition\Listing();
+        $list = $list->loadNames();
+
+        foreach ($list as $brickName) {
+            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickName);
 
             $classes[] = $className;
         }
 
-        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-        $files = glob($fieldCollectionFolder . '/*.php');
-        foreach ($files as $file) {
-            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . basename($file, '.php');
+        $list = new DataObject\Fieldcollection\Definition\Listing();
+        $list = $list->loadNames();
+
+        foreach ($list as $fcName) {
+            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fcName);
 
             $classes[] = $className;
         }

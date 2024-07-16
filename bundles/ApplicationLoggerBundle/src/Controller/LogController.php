@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Carbon\Carbon;
+use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
@@ -111,7 +112,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $totalQb->setMaxResults(null)
             ->setFirstResult(0)
             ->select('COUNT(id) as count');
-        $total = $totalQb->executeQuery()->fetch();
+        $total = $totalQb->executeQuery()->fetchAssociative();
         $total = (int) $total['count'];
 
         $stmt = $qb->executeQuery();
@@ -148,7 +149,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         ]);
     }
 
-    private function parseDateObject(?string $date, ?string $time): ?\DateTime
+    private function parseDateObject(?string $date, ?string $time): ?DateTime
     {
         if (empty($date)) {
             return null;
@@ -159,9 +160,9 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $dateTime = null;
         if (preg_match($pattern, $date, $dateMatches)) {
             if (!empty($time) && preg_match($pattern, $time, $timeMatches)) {
-                $dateTime = new \DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
+                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
             } else {
-                $dateTime = new \DateTime($date);
+                $dateTime = new DateTime($date);
             }
         }
 
@@ -171,9 +172,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     /**
      * @Route("/log/priority-json", name="pimcore_admin_bundle_applicationlogger_log_priorityjson", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function priorityJsonAction(Request $request): JsonResponse
     {
@@ -190,9 +189,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     /**
      * @Route("/log/component-json", name="pimcore_admin_bundle_applicationlogger_log_componentjson", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
     public function componentJsonAction(Request $request): JsonResponse
     {

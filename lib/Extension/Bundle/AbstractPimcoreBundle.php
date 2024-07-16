@@ -16,39 +16,31 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
+use Pimcore;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
+    /**
+     * @deprecated
+     */
     protected static ?PimcoreBundleManager $bundleManager = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNiceName(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersion(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getInstaller(): ?Installer\InstallerInterface
     {
         return null;
@@ -56,10 +48,10 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     public static function isInstalled(): bool
     {
-        static::$bundleManager ??= \Pimcore::getContainer()->get(PimcoreBundleManager::class);
+        $bundleManager = Pimcore::getContainer()->get(PimcoreBundleManager::class);
+        static::$bundleManager = $bundleManager; // @TODO: compatibility layer to be removed in Pimcore 12
+        $bundle = $bundleManager->getActiveBundle(static::class, false);
 
-        $bundle = static::$bundleManager->getActiveBundle(static::class, false);
-
-        return static::$bundleManager->isInstalled($bundle);
+        return $bundleManager->isInstalled($bundle);
     }
 }

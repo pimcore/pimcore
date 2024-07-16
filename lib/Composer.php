@@ -19,8 +19,11 @@ namespace Pimcore;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
+use RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Throwable;
+use function dirname;
 
 /**
  * @internal
@@ -67,13 +70,12 @@ class Composer
     {
         try {
             static::executeCommand($event, $consoleDir, ['pimcore:cache:clear'], 60);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
         }
     }
 
     /**
-     * @param string $rootPath
      *
      * @internal
      */
@@ -134,7 +136,7 @@ class Composer
             }
         });
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
+            throw new RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
         }
 
         return $process;
@@ -147,7 +149,7 @@ class Composer
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
-            throw new \RuntimeException('The php executable could not be found, add it to your PATH environment variable and try again');
+            throw new RuntimeException('The php executable could not be found, add it to your PATH environment variable and try again');
         }
 
         return $phpPath;
@@ -160,13 +162,8 @@ class Composer
      */
     protected static function getPhpArguments(): array
     {
-        $ini = null;
-        $arguments = [];
-
         $phpFinder = new PhpExecutableFinder();
-        if (method_exists($phpFinder, 'findArguments')) {
-            $arguments = $phpFinder->findArguments();
-        }
+        $arguments = $phpFinder->findArguments();
 
         if(!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
             $paths = explode(PATH_SEPARATOR, $_SERVER['COMPOSER_ORIGINAL_INIS']);
@@ -241,7 +238,6 @@ class Composer
      * strict user permission checks (which can be done on Windows 7 but not on Windows
      * Vista).
      *
-     * @param Event $event
      */
     public static function installAssets(Event $event): void
     {
@@ -277,7 +273,6 @@ class Composer
      *
      * Clears the Symfony cache.
      *
-     * @param Event $event
      */
     public static function clearCache(Event $event): void
     {

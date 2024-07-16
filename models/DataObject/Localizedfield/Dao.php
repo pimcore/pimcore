@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Localizedfield;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -26,6 +27,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -76,9 +81,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(array $params = []): void
     {
@@ -107,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new \Exception('need owner from container implementation');
+            throw new Exception('need owner from container implementation');
         }
 
         $this->model->_setOwner($params['owner']);
@@ -128,16 +132,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
         if (!$ignoreLocalizedQueryFallback) {
-            foreach ($validLanguages as $validLanguage) {
-                $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
-                foreach ($fallbackLanguages as $fallbackLanguage) {
-                    if ($this->model->isLanguageDirty($fallbackLanguage)) {
-                        $this->model->markLanguageAsDirty($validLanguage);
-
-                        break;
-                    }
-                }
-            }
+            $this->model->markLanguageAsDirtyByFallback();
         }
 
         $flag = DataObject\Localizedfield::getGetFallbackValues();
@@ -230,7 +225,7 @@ class Dao extends Model\Dao\AbstractDao
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 try {
                     $this->db->rollBack();
-                } catch (\Exception $er) {
+                } catch (Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info((string) $er);
                 }
@@ -271,7 +266,7 @@ class Dao extends Model\Dao\AbstractDao
                     // by the following DDL
                     try {
                         $this->db->rollBack();
-                    } catch (\Exception $er) {
+                    } catch (Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::info((string) $er);
                     }
@@ -440,8 +435,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $deleteQuery
-     * @param bool $isUpdate
      *
      * @return bool force update
      */
@@ -487,28 +480,26 @@ class Dao extends Model\Dao\AbstractDao
             $fieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
             $childDefinitions = $fieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]);
 
-            if (is_array($childDefinitions)) {
-                foreach ($childDefinitions as $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        $params = [
-                            'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate,
-                        ];
-                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
-                            $params['context']['subContainerType'] = 'localizedfield';
-                        }
-
-                        $fd->delete($object, $params);
+            foreach ($childDefinitions as $fd) {
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $params = [
+                        'context' => $this->model->getContext() ? $this->model->getContext() : [],
+                        'isUpdate' => $isUpdate,
+                    ];
+                    if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
+                        $params['context']['subContainerType'] = 'localizedfield';
                     }
+
+                    $fd->delete($object, $params);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
                 try {
                     $this->db->rollBack();
-                } catch (\Exception $er) {
+                } catch (Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info((string) $er);
                 }
@@ -521,6 +512,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
+        $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
+        if (!$ignoreLocalizedQueryFallback) {
+            $this->model->markLanguageAsDirtyByFallback();
+        }
+
         if (!DataObject::isDirtyDetectionDisabled()) {
             if (!$this->model->hasDirtyFields()) {
                 return false;
@@ -552,7 +548,7 @@ class Dao extends Model\Dao\AbstractDao
             $index = $context['index'] ?? $context['containerKey'] ?? null;
             $containerName = $context['fieldname'];
             if (!$context['containerType']) {
-                throw new \Exception('no container type set');
+                throw new Exception('no container type set');
             }
 
             $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
@@ -561,13 +557,22 @@ class Dao extends Model\Dao\AbstractDao
                     '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
                 ).$dirtyLanguageCondition;
 
-            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId() . ' WHERE ' . $sql);
+            if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
+                // Fieldcollection don't support delta updates, so we delete the relations and insert them later again
+                $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$sql);
+            }
 
             return true;
         }
 
-        $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
-        $this->db->executeStatement('DELETE FROM object_relations_'.$this->model->getObject()->getClassId() . ' WHERE ' . $sql);
+        if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
+            // Fieldcollection don't support delta updates, so we delete the relations and insert them later again
+            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
+            )->getId().$dirtyLanguageCondition;
+            $this->db->executeStatement(
+                'DELETE FROM object_relations_'.$this->model->getObject()->getClassId().' WHERE '.$sql
+            );
+        }
 
         return false;
     }
@@ -625,7 +630,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new \Exception('need owner from container implementation');
+            throw new Exception('need owner from container implementation');
         }
 
         $this->model->_setOwner($params['owner']);
@@ -774,16 +779,15 @@ QUERY;
 
                 // execute
                 $this->db->executeQuery($viewQuery);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
             }
         }
     }
 
     /**
-     * @param array $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function createUpdateTable(array $params = []): void
     {
@@ -910,25 +914,23 @@ QUERY;
                 }
 
                 // add non existing columns in the table
-                if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $value) {
-                        if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
-                            $key = $value->getName();
+                foreach ($fieldDefinitions as $value) {
+                    if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                        $key = $value->getName();
 
-                            // if a datafield requires more than one column in the query table
-                            if (is_array($value->getQueryColumnType())) {
-                                foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                    $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
-                                    $protectedColumns[] = $key.'__'.$fkey;
-                                }
-                            } elseif ($value->getQueryColumnType()) {
-                                $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                                $protectedColumns[] = $key;
+                        // if a datafield requires more than one column in the query table
+                        if (is_array($value->getQueryColumnType())) {
+                            foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                $protectedColumns[] = $key.'__'.$fkey;
                             }
-
-                            // add indices
-                            $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
+                        } elseif ($value->getQueryColumnType()) {
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                            $protectedColumns[] = $key;
                         }
+
+                        // add indices
+                        $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
                     }
                 }
 

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Recyclebin\Item\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -27,7 +28,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
      *
-     * @return array
      */
     public function load(): array
     {
@@ -44,7 +44,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return int
      *
      * @todo: $amount could not be defined, so this could cause an issue
      */
@@ -52,7 +51,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM recyclebin ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

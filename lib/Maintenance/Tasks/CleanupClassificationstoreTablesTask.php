@@ -20,6 +20,7 @@ use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Psr\Log\LoggerInterface;
+use function strlen;
 
 /**
  * @internal
@@ -33,9 +34,6 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $db = Db::get();

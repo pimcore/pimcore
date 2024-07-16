@@ -16,29 +16,25 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ImporterService\Importer\ImporterInterface;
 
 interface ImporterServiceInterface
 {
     /**
-     * @param AttributeSet $attributeSet
-     * @param bool $saveElement
      *
-     * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function import(AttributeSet $attributeSet, bool $saveElement = true): void;
 
     public function registerImporter(string $type, ImporterInterface $importer): ImporterServiceInterface;
 
     /**
-     * @param string $type
      *
-     * @return ImporterInterface
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getImporter(string $type): ImporterInterface;
 }

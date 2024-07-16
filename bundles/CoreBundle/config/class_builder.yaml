@@ -47,3 +47,9 @@ services:
         class: Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper
         public: true
 
+    Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPSelectOptionsEnumDumper'
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\SelectOptionsEnumBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\SelectOptionsEnumBuilder'

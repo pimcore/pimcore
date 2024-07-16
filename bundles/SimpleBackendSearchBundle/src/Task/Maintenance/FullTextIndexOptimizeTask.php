@@ -35,7 +35,7 @@ class FullTextIndexOptimizeTask implements TaskInterface
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @throws Exception
      */

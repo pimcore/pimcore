@@ -21,6 +21,10 @@ use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
 
 /**
  * @method User\Dao getDao()
@@ -33,6 +37,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $password = null;
 
+    protected ?string $passwordRecoveryToken = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -40,6 +46,8 @@ final class User extends User\UserRole implements UserInterface
     protected ?string $email = null;
 
     protected string $language = 'en';
+
+    protected ?string $datetimeLocale = null;
 
     protected bool $admin = false;
 
@@ -77,7 +85,7 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    protected int $lastLogin;
+    protected ?int $lastLogin = null;
 
     protected ?string $keyBindings = null;
 
@@ -109,9 +117,28 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
+     * @internal
+     */
+    public function getPasswordRecoveryToken(): ?string
+    {
+        return $this->passwordRecoveryToken;
+    }
+
+    /**
+     * @internal
+     *
+     * @return $this
+     */
+    public function setPasswordRecoveryToken(?string $passwordRecoveryToken): static
+    {
+        $this->passwordRecoveryToken = $passwordRecoveryToken;
+
+        return $this;
+    }
+
+    /**
      * Alias for getName()
      *
-     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -198,7 +225,6 @@ final class User extends User\UserRole implements UserInterface
     /**
      * @see getAdmin()
      *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -426,8 +452,6 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * @param int|null $width
-     * @param int|null $height
      *
      * @return resource
      */
@@ -575,11 +599,11 @@ final class User extends User\UserRole implements UserInterface
     public function getAllowedLanguagesForEditingWebsiteTranslations(): ?array
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if (empty($mergedWebsiteTranslationLanguagesEdit) || $this->isAdmin()) {
-            $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-            if (empty($mergedWebsiteTranslationLanguagesView)) {
-                return Tool::getValidLanguages();
-            }
+        if (
+            (!$mergedWebsiteTranslationLanguagesEdit && !$this->getMergedWebsiteTranslationLanguagesView()) ||
+            $this->isAdmin()
+        ) {
+            return Tool::getValidLanguages();
         }
 
         return $mergedWebsiteTranslationLanguagesEdit;
@@ -623,7 +647,7 @@ final class User extends User\UserRole implements UserInterface
         return $mergedWebsiteTranslationLanguagesView;
     }
 
-    public function getLastLogin(): int
+    public function getLastLogin(): ?int
     {
         return $this->lastLogin;
     }
@@ -709,5 +733,17 @@ final class User extends User\UserRole implements UserInterface
     protected function getFallbackImage(): string
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
+    }
+
+    public function getDatetimeLocale(): ?string
+    {
+        return $this->datetimeLocale;
+    }
+
+    public function setDatetimeLocale(?string $datetimeLocale): static
+    {
+        $this->datetimeLocale = $datetimeLocale;
+
+        return $this;
     }
 }

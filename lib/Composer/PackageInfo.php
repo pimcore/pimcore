@@ -17,6 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Composer;
 
+use JsonException;
+use RuntimeException;
+use function in_array;
+use function is_array;
+
 /**
  * @internal
  */
@@ -27,9 +32,7 @@ class PackageInfo
     /**
      * Gets installed packages, optionally filtered by type
      *
-     * @param array|string|null $type
      *
-     * @return array
      */
     public function getInstalledPackages(array|string $type = null): array
     {
@@ -53,7 +56,7 @@ class PackageInfo
         }
 
         $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
-        if ($json && is_array($json)) {
+        if ($json) {
             return $this->installedPackages = $json['packages'] ?? $json;
         }
 
@@ -65,8 +68,8 @@ class PackageInfo
         if (is_file($path) && is_readable($path)) {
             try {
                 return json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                throw new \RuntimeException(sprintf('Failed to parse composer file %s', $path), previous: $e);
+            } catch (JsonException $e) {
+                throw new RuntimeException(sprintf('Failed to parse composer file %s', $path), previous: $e);
             }
         }
 

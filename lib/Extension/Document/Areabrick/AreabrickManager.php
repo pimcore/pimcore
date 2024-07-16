@@ -20,6 +20,11 @@ namespace Pimcore\Extension\Document\Areabrick;
 use Pimcore\Extension\Document\Areabrick\Exception\BrickNotFoundException;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Psr\Container\ContainerInterface;
+use function array_key_exists;
+use function count;
+use function get_class;
+use function gettype;
+use function is_object;
 
 /**
  * @internal
@@ -40,9 +45,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function register(string $id, AreabrickInterface $brick): void
     {
         if (array_key_exists($id, $this->bricks)) {
@@ -68,9 +70,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->bricks[$id] = $brick;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerService(string $id, string $serviceId): void
     {
         if (array_key_exists($id, $this->bricks)) {
@@ -94,9 +93,6 @@ class AreabrickManager implements AreabrickManagerInterface
         $this->brickServiceIds[$id] = $serviceId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBrick(string $id): AreabrickInterface
     {
         $brick = null;
@@ -113,9 +109,6 @@ class AreabrickManager implements AreabrickManagerInterface
         return $brick;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBricks(): array
     {
         if (count($this->brickServiceIds) > 0) {
@@ -125,9 +118,6 @@ class AreabrickManager implements AreabrickManagerInterface
         return $this->bricks;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBrickIds(): array
     {
         $ids = array_merge(
@@ -141,9 +131,7 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * Loads brick from container
      *
-     * @param string $id
      *
-     * @return AreabrickInterface|null
      */
     protected function loadServiceBrick(string $id): ?AreabrickInterface
     {

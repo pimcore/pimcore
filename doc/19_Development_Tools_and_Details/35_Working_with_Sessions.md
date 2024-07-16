@@ -1,7 +1,7 @@
 # Working With Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
-For details see [sessions docs](https://symfony.com/doc/current/components/http_foundation/sessions.html). 
+For details see [sessions docs](https://symfony.com/doc/current/components/http_foundation.html#session). 
 
 In case  you need to add a custom session bag for your bundle or application, then implement an EventListener to register the session bag before the session started.
 
@@ -64,4 +64,4 @@ if ($request->hasSession()) {
 Symfony framework session is configured by default, so you don't need to configure the session in your `config.yaml`.
 
 
-Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`. 
+Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`.

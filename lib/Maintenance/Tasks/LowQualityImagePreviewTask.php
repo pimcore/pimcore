@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Exception;
+use Pimcore;
+use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -37,12 +40,9 @@ class LowQualityImagePreviewTask implements TaskInterface
         $this->lock = $lockFactory->createLock(self::class, 86400 * 2);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
-        $isLowQualityPreviewEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+        $isLowQualityPreviewEnabled = Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];
         if (!$isLowQualityPreviewEnabled) {
             return;
         }
@@ -69,13 +69,13 @@ class LowQualityImagePreviewTask implements TaskInterface
                         try {
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             $this->logger->error((string) $e);
                         }
                     }
                 }
-                \Pimcore::collectGarbage();
-                \Pimcore::deleteTemporaryFiles();
+                Pimcore::collectGarbage();
+                Pimcore::deleteTemporaryFiles();
             }
         } else {
             $this->logger->debug('Skip low quality image preview execution, was done within the last 24 hours');

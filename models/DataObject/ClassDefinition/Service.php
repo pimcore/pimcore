@@ -16,12 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Exception;
+use Pimcore;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
+use function count;
+use function is_array;
+use function is_null;
+use function strlen;
 
 class Service
 {
@@ -30,7 +35,6 @@ class Service
     /**
      * @internal
      *
-     * @return bool
      */
     public static function doRemoveDynamicOptions(): bool
     {
@@ -40,7 +44,6 @@ class Service
     /**
      * @internal
      *
-     * @param bool $doRemoveDynamicOptions
      */
     public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
     {
@@ -50,8 +53,9 @@ class Service
     public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
-        if ($class->layoutDefinitions instanceof Layout) {
-            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        $layoutDefinitions = $class->getLayoutDefinitions();
+        if ($layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
         }
 
         self::setDoRemoveDynamicOptions(true);
@@ -82,7 +86,7 @@ class Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     if ($child instanceof DataObject\ClassDefinition\Data\Select) {
-                        if ($child->getOptionsProviderClass()) {
+                        if (!$child->useConfiguredOptions() && $child->getOptionsProviderClass()) {
                             $child->options = null;
                         }
                     }
@@ -197,17 +201,15 @@ class Service
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
-        if (is_array($objectBrick->getClassDefinitions())) {
-            foreach ($objectBrick->getClassDefinitions() as &$cd) {
-                // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
-                // get the class by id in order to be able to correctly set the classname for the generated json
-                if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
-                    $class = DataObject\ClassDefinition::getById($cd['classname']);
-                }
+        foreach ($objectBrick->getClassDefinitions() as &$cd) {
+            // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
+            // get the class by id in order to be able to correctly set the classname for the generated json
+            if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
+                $class = DataObject\ClassDefinition::getById($cd['classname']);
+            }
 
-                if ($class) {
-                    $cd['classname'] = $class->getName();
-                }
+            if ($class) {
+                $cd['classname'] = $class->getName();
             }
         }
 
@@ -286,32 +288,28 @@ class Service
     }
 
     /**
-     * @param array $array
-     * @param bool $throwException
-     * @param bool $insideLocalizedField
      *
-     * @return EncryptedField|bool|Data|Layout
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
-        if (is_array($array) && count($array) > 0) {
+        if ($array) {
             if ($title = $array['title'] ?? false) {
                 if (preg_match('/<.+?>/', $title)) {
-                    throw new \Exception('not a valid title:' . htmlentities($title));
+                    throw new Exception('not a valid title:' . htmlentities($title));
                 }
             }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
-                    throw new \Exception('not a valid name:' . htmlentities($name));
+                    throw new Exception('not a valid name:' . htmlentities($name));
                 }
             }
 
             /** @var LoaderInterface $loader */
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
                 /** @var Data|Layout $item */
@@ -334,7 +332,7 @@ class Service
                                 $item->addChild($childO);
                             } else {
                                 if ($throwException) {
-                                    throw new \Exception('Could not add child ' . var_export($child, true));
+                                    throw new Exception('Could not add child ' . var_export($child, true));
                                 }
 
                                 Logger::err('Could not add child ' . var_export($child, true));
@@ -361,7 +359,7 @@ class Service
             }
         }
         if ($throwException) {
-            throw new \Exception('Could not add child ' . var_export($array, true));
+            throw new Exception('Could not add child ' . var_export($array, true));
         }
 
         return false;
@@ -377,17 +375,11 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param array $tableNames
      *
      * @internal
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
-        if (!is_array($tableDefinitions)) {
-            $tableDefinitions = [];
-        }
-
         $db = \Pimcore\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
@@ -408,14 +400,7 @@ class Service
     }
 
     /**
-     * @param array $tableDefinitions
-     * @param string $table
-     * @param string $colName
-     * @param string $type
-     * @param string $default
-     * @param string $null
      *
-     * @return bool
      *
      * @internal
      */
@@ -441,12 +426,9 @@ class Service
     }
 
     /**
-     * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
-     * @return string
-     *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -459,7 +441,7 @@ class Service
                 if (Tool::interfaceExists($interface)) {
                     $implementsParts[] = $interface;
                 } else {
-                    throw new \Exception("interface '" . $interface . "' does not exist");
+                    throw new Exception("interface '" . $interface . "' does not exist");
                 }
             }
         }
@@ -472,21 +454,14 @@ class Service
     }
 
     /**
-     * @param array $useParts
-     * @param string|null $newTraits
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
-        if (!is_array($useParts)) {
-            $useParts = [];
-        }
-
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
             foreach ($customParts as $trait) {
@@ -494,7 +469,7 @@ class Service
                 if (Tool::traitExists($trait)) {
                     $useParts[] = $trait;
                 } else {
-                    throw new \Exception("trait '" . $trait . "' does not exist");
+                    throw new Exception("trait '" . $trait . "' does not exist");
                 }
             }
         }
@@ -503,11 +478,9 @@ class Service
     }
 
     /**
-     * @param array $useParts
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */

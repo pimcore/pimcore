@@ -13,7 +13,6 @@ log_applicationlog: Anwendungslogger
 log_search_component: Komponente
 log_search_pid: PID
 log_refresh_seconds: Sekunden
-keybinding_application_logger: Anwendungslogger
 log_search_from: Von
 log_search_to: An
 log_type: Typ
@@ -22,4 +21,5 @@ log_message: Nachricht
 log_reset_search: "Zur\xFCcksetzen"
 log_search: Suche
 log_search_message: Nachricht
+keybinding_applicationLogger: Application logger
 ...

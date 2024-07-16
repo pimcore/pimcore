@@ -26,9 +26,6 @@ class GlossaryTest extends TestCase
 {
     protected Processor $processor;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

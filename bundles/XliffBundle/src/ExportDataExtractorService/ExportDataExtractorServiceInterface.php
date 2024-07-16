@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataExtractorInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
@@ -23,24 +24,18 @@ use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 interface ExportDataExtractorServiceInterface
 {
     /**
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
      *
-     * @return AttributeSet
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet;
 
     public function registerDataExtractor(string $type, DataExtractorInterface $dataExtractor): ExportDataExtractorServiceInterface;
 
     /**
-     * @param string $type
      *
-     * @return DataExtractorInterface
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDataExtractor(string $type): DataExtractorInterface;
 }

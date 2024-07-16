@@ -13,27 +13,27 @@ The biggest advantages of using that instead of (for example) the relation edita
 
 ## Configuration
 
-| Name                           | Type    | Description                                                                                                                                                                                                                              |
-|--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip. |
-| `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
-| `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
-| `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
-| `hidetext`                     | boolean | Hides the input for the ALT-text in editmode                                                                                                                                                                                             |
-| `reload`                       | boolean | Set true to reload the page in editmode after updating the image                                                                                                                                                                         |
-| `minWidth`                     | integer | Min. width of the image (in pixel)                                                                                                                                                                                                       |
-| `minHeight`                    | integer | Min. height of the image (in pixel)                                                                                                                                                                                                      |
-| `ratioX`                       | integer | Set width in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioY.                                                                                                                         |
-| `ratioY`                       | integer | Set height in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioX.                                                                                                                        |
-| `uploadPath`                   | string  | Target path for (inline) uploaded images. The target folder(s) will be created on the fly, if doesn't exist.                                                                                                                             |
-| `disableInlineUpload`          | boolean | Disable the inline upload. If set to true, the inline upload functionality will be disabled.                                                                                                                                             |
-| `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for *Retina* displays, print, ...)                                                                 |
-| `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
-| `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
-| `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
-| `predefinedDataTemplates`      | array   | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
-| `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
-| `required`                     | bool    | (default: false) set to true to make field value required for publish                                                                                                                                                                    |
+| Name                           | Type          | Description                                                                                                                                                                                                                              |
+|--------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `title`                        | string        | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip.                                                                                                                             |
+| `width`                        | integer       | Width of the image in pixel                                                                                                                                                                                                              |
+| `height`                       | integer       | Height of the image in pixel                                                                                                                                                                                                             |
+| `thumbnail`                    | string\|array | Name of the configured thumbnail as string or a thumbnail config as array                                                                                                                                                                |
+| `hidetext`                     | boolean       | Hides the input for the ALT-text in editmode                                                                                                                                                                                             |
+| `reload`                       | boolean       | Set true to reload the page in editmode after updating the image                                                                                                                                                                         |
+| `minWidth`                     | integer       | Min. width of the image (in pixel)                                                                                                                                                                                                       |
+| `minHeight`                    | integer       | Min. height of the image (in pixel)                                                                                                                                                                                                      |
+| `ratioX`                       | integer       | Set width in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioY.                                                                                                                         |
+| `ratioY`                       | integer       | Set height in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioX.                                                                                                                        |
+| `uploadPath`                   | string        | Target path for (inline) uploaded images. The target folder(s) will be created on the fly, if doesn't exist.                                                                                                                             |
+| `disableInlineUpload`          | boolean       | Disable the inline upload. If set to true, the inline upload functionality will be disabled.                                                                                                                                             |
+| `highResolution`               | float         | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for *Retina* displays, print, ...)                                                                  |
+| `dropClass`                    | string        | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
+| `deferred`                     | bool          | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
+| `class`                        | string        | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
+| `predefinedDataTemplates`      | array         | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
+| `cacheBuster`                  | bool          | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
+| `required`                     | bool          | (default: false) set to true to make field value required for publish                                                                                                                                                                    |
 
 Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
@@ -122,7 +122,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 
 {# Custom image tag (thumbnail objects) #}
 {% if editmode %}
-    {{ pimcore_image("myImage",{"thumbnail": "myThumbnail"}) }}
+    {{ pimcore_image("myImage", {"thumbnail": "myThumbnail"}) }}
 {% else %}
     {% set thumbnail = pimcore_image("myImage").getThumbnail("myThumbnail") %}
     <img src="{{ thumbnail }}" width="{{ thumbnail.width }}" height="{{ thumbnail.height }}" />
@@ -133,7 +133,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 
 {# Custom drop targets #}
 <div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
-{{ pimcore_image("image",{
+{{ pimcore_image("image", {
     "thumbnail": "contentfullimage",
     "dropClass": "myCustomImageDropTarget"
 }) }}
@@ -171,7 +171,7 @@ All dimensions are in percent and therefore independent from the image size, you
 ```twig
 <div>
     <p>
-        {{ pimcore_image("myImage",{
+        {{ pimcore_image("myImage", {
             "title": "Drag your image here",
             "width": 400,
             "height": 400,
@@ -257,4 +257,3 @@ array(1) {
   }
 }
 ```
-

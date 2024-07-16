@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -27,6 +28,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
+use function is_array;
 
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
@@ -45,7 +47,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @internal
      *
-     * @var string
      */
     public string $assetUploadPath;
 
@@ -74,7 +75,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @internal
      *
-     * @var array
      */
     public array $assetTypes = [];
 
@@ -88,7 +88,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @internal
      *
-     * @var array
      */
     public array $documentTypes = [];
 
@@ -152,9 +151,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         if ($data instanceof Element\ElementInterface) {
@@ -171,9 +167,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         // data from relation table
@@ -197,34 +190,31 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
-        $return = [];
+        $idIndex = $this->getName() . '__id';
+        $typeIndex = $this->getName() . '__type';
+
+        $return = [$idIndex => null, $typeIndex => null];
 
         if ($data != null) {
             $rData = $this->prepareDataForPersistence($data, $object, $params);
 
-            $return[$this->getName() . '__id'] = isset($rData[0]['dest_id']) ? $rData[0]['dest_id'] : null;
-            $return[$this->getName() . '__type'] = isset($rData[0]['type']) ? $rData[0]['type'] : null;
+            $return = [
+                $idIndex => $rData[0]['dest_id'] ?? null,
+                $typeIndex => $rData[0]['type'] ?? null,
+            ];
         }
 
         return $return;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return array|null
      *
      * @see Data::getDataForEditmode
      *
@@ -247,11 +237,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return Asset|Document|DataObject\AbstractObject|null
      *
      * @see Data::getDataFromEditmode
      */
@@ -265,11 +251,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return Asset|Document|DataObject\AbstractObject|null
      */
     public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
@@ -277,11 +260,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\ElementInterface|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array|null
      */
     public function getDataForGrid(?Element\ElementInterface $data, Concrete $object = null, array $params = []): ?array
     {
@@ -289,11 +269,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
      *
-     * @return string
      *
      * @see Data::getVersionPreview
      *
@@ -307,12 +283,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -322,7 +295,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $allow = $this->allowAssetRelation($data);
         } elseif ($data instanceof DataObject\AbstractObject) {
             $allow = $this->allowObjectRelation($data);
-        } elseif (empty($data)) {
+        } elseif ($data === null) {
             $allow = true;
         } else {
             Logger::error(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
@@ -334,9 +307,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -393,9 +363,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $data;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
@@ -440,17 +407,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $this->allowToClearRelation = $allowToClearRelation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
@@ -471,9 +432,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $this->relationType = $mainDefinition->relationType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getPhpdocType(): string
     {
         return $this->getPhpDocClassString(false);
@@ -514,9 +472,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
@@ -532,9 +487,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '?\\' . Element\AbstractElement::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
         if ($data instanceof Element\ElementInterface) {
@@ -545,7 +497,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -554,7 +506,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     public function getPhpdocInputType(): ?string
@@ -578,11 +530,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * Filter by relation feature
      *
-     * @param mixed $value
-     * @param string $operator
-     * @param array $params
      *
-     * @return string
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {

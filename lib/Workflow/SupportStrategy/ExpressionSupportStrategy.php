@@ -19,6 +19,7 @@ namespace Pimcore\Workflow\SupportStrategy;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\SupportStrategy\WorkflowSupportStrategyInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use function is_string;
 
 /**
  * @author Andreas Kleemann <akleemann@inviqa.com>
@@ -37,9 +38,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
     /**
      * ExpressionSupportStrategy constructor.
      *
-     * @param ExpressionService $expressionService
      * @param string|string[] $className a FQCN
-     * @param string $expression
      */
     public function __construct(ExpressionService $expressionService, array|string $className, string $expression)
     {

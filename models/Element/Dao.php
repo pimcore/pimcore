@@ -15,9 +15,11 @@
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\User;
+use function in_array;
 
 /**
  * @internal
@@ -29,7 +31,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     /**
      * @return int[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getParentIds(): array
     {
@@ -43,7 +45,7 @@ abstract class Dao extends Model\Dao\AbstractDao
                     break;
                 }
                 if (in_array($obj->getId(), $parentIds)) {
-                    throw new \Exception('detected infinite loop while resolving all parents from ' . $this->model->getId() . ' on ' . $obj->getId());
+                    throw new Exception('detected infinite loop while resolving all parents from ' . $this->model->getId() . ' on ' . $obj->getId());
                 }
 
                 $parentIds[] = $obj->getId();
@@ -73,11 +75,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     abstract public function getVersionCountForUpdate(): int;
 
     /**
-     * @param string $type
-     * @param array $userIds
-     * @param string $tableSuffix
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -98,9 +96,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
-     * @param string $tableSuffix
+     * @param string[] $columns
      *
      * @return array<string, int>
      *

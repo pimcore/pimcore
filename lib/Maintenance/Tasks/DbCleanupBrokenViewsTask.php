@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Pimcore\Maintenance\TaskInterface;
 use Psr\Log\LoggerInterface;
 
@@ -35,9 +36,6 @@ class DbCleanupBrokenViewsTask implements TaskInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         $tables = $this->db->fetchAllAssociative('SHOW FULL TABLES');
@@ -49,8 +47,8 @@ class DbCleanupBrokenViewsTask implements TaskInterface
             if ($type === 'VIEW') {
                 try {
                     $createStatement = $this->db->fetchAssociative('SHOW FIELDS FROM '.$name);
-                } catch (\Exception $e) {
-                    if (strpos($e->getMessage(), 'references invalid table') !== false) {
+                } catch (Exception $e) {
+                    if (str_contains($e->getMessage(), 'references invalid table')) {
                         $this->logger->error('view '.$name.' seems to be a broken one, it will be removed');
                         $this->logger->error('error message was: '.$e->getMessage());
 

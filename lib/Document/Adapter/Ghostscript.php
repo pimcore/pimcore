@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
+use Exception;
 use Pimcore\Document\Adapter;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
@@ -23,6 +24,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function ini_get;
+use function is_null;
+use function is_resource;
 
 /**
  * @internal
@@ -41,7 +45,7 @@ class Ghostscript extends Adapter
             if ($ghostscript && $phpCli) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::notice($e->getMessage());
         }
 
@@ -59,9 +63,8 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getGhostscriptCli(): string
     {
@@ -69,9 +72,8 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getPdftotextCli(): string
     {
@@ -90,7 +92,7 @@ class Ghostscript extends Adapter
             $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
             Logger::error($message);
 
-            throw new \Exception($message);
+            throw new Exception($message);
         }
 
         $this->asset = $asset;
@@ -98,9 +100,6 @@ class Ghostscript extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPdf(?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {
@@ -108,18 +107,20 @@ class Ghostscript extends Adapter
         }
 
         if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
-            return $asset->getStream();
+            $file = $asset->getStream();
+            if (!is_resource($file)) {
+                throw new Exception(sprintf('Could not get pdf from asset with id %s', $asset->getId()));
+            }
+
+            return $file;
         }
 
         $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
         Logger::error($message);
 
-        throw new \Exception($message);
+        throw new Exception($message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());
@@ -128,16 +129,15 @@ class Ghostscript extends Adapter
         $pages = trim($process->getOutput());
 
         if (! is_numeric($pages)) {
-            throw new \Exception('Unable to get page-count of ' . $this->asset->getRealFullPath());
+            throw new Exception('Unable to get page-count of ' . $this->asset->getRealFullPath());
         }
 
         return (int) $pages;
     }
 
     /**
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function buildPageCountCommand(): string
     {
@@ -159,9 +159,8 @@ class Ghostscript extends Adapter
     /**
      * Get the version of the installed Ghostscript CLI.
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getVersion(): string
     {
@@ -185,7 +184,7 @@ class Ghostscript extends Adapter
             $process->run();
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             return false;
@@ -205,12 +204,12 @@ class Ghostscript extends Adapter
                 }
 
                 if (empty($path)) {
-                    throw new \Exception('Could not get local file for asset with id ' . $asset->getId());
+                    throw new Exception('Could not get local file for asset with id ' . $asset->getId());
                 }
             }
 
             return $this->convertPdfToText($page, $path);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             return false;
@@ -218,13 +217,13 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function convertPdfToText(?int $page, string $assetPath): string
     {
         try {
             $pdftotextBin = self::getPdftotextCli();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $pdftotextBin = false;
         }
 
@@ -261,7 +260,7 @@ class Ghostscript extends Adapter
         $process->mustRun();
 
         if (!is_file($textFile)) {
-            throw new \Exception('File not found: ' . $textFile);
+            throw new Exception('File not found: ' . $textFile);
         }
 
         $text = file_get_contents($textFile);

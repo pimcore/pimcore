@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function is_array;
 
 /**
  * If no document was found on the active request (not set by router or by initiator of a sub-request), try to find and
@@ -68,9 +69,6 @@ class DocumentFallbackListener implements EventSubscriberInterface
         $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -85,7 +83,6 @@ class DocumentFallbackListener implements EventSubscriberInterface
     /**
      * Finds the nearest document for the current request if the routing/document router didn't find one (e.g. static routes)
      *
-     * @param RequestEvent $event
      */
     public function onKernelRequest(RequestEvent $event): void
     {

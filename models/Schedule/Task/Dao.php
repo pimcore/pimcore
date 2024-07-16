@@ -16,6 +16,10 @@
 namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Model;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -25,7 +29,6 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */

@@ -23,6 +23,8 @@ use LogicException;
 use Monolog\Handler\HandlerInterface;
 use Pimcore\Cache\RuntimeCache;
 use Psr\Log\LoggerAwareTrait;
+use function count;
+use function is_array;
 
 final class LongRunningHelper
 {
@@ -52,7 +54,6 @@ final class LongRunningHelper
     /**
      * LongRunningHelper constructor.
      *
-     * @param ConnectionRegistry $connectionRegistry
      */
     public function __construct(ConnectionRegistry $connectionRegistry)
     {
@@ -130,7 +131,6 @@ final class LongRunningHelper
     /**
      * @internal
      *
-     * @param HandlerInterface $handler
      */
     public function addMonologHandler(HandlerInterface $handler): void
     {

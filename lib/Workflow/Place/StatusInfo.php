@@ -19,6 +19,7 @@ namespace Pimcore\Workflow\Place;
 use Pimcore\Workflow\Manager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use function is_null;
 
 class StatusInfo
 {
@@ -48,9 +49,6 @@ class StatusInfo
         );
     }
 
-    /**
-     * @param string|null $workflowName
-     */
     public function getAllPalacesHtml(object $subject, string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);

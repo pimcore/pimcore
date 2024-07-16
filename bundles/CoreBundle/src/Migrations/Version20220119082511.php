@@ -66,22 +66,22 @@ final class Version20220119082511 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        if ($schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
-            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP INDEX IF EXISTS `grid_config_id`;');
-        }
-
         if ($schema->getTable('gridconfig_favourites')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
-            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP FOREIGN KEY IF EXISTS `fk_gridconfig_favourites_gridconfigs`;');
+            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP FOREIGN KEY `fk_gridconfig_favourites_gridconfigs`;');
         }
 
         $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NULL;');
 
-        if ($schema->getTable('gridconfig_shares')->hasIndex('grid_config_id')) {
-            $this->addSql('ALTER TABLE `gridconfig_shares` DROP INDEX IF EXISTS `grid_config_id`;');
+        if ($schema->getTable('gridconfig_shares')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
+            $this->addSql('ALTER TABLE `gridconfig_shares` DROP FOREIGN KEY `fk_gridconfig_shares_gridconfigs`;');
         }
 
-        if ($schema->getTable('gridconfig_shares')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
-            $this->addSql('ALTER TABLE `gridconfig_shares` DROP FOREIGN KEY IF EXISTS `fk_gridconfig_shares_gridconfigs`;');
+        if ($schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP INDEX `grid_config_id`;');
+        }
+
+        if ($schema->getTable('gridconfig_shares')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_shares` DROP INDEX `grid_config_id`;');
         }
     }
 }

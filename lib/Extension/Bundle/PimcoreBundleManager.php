@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
+use InvalidArgumentException;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -28,6 +29,8 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function get_class;
+use function in_array;
 
 /**
  * @internal
@@ -70,7 +73,6 @@ class PimcoreBundleManager
      * List of currently active bundles from kernel. A bundle can be in this list, without being enabled via
      * config file, if it is registered manually on the kernel.
      *
-     * @param bool $onlyInstalled
      *
      * @return PimcoreBundleInterface[]
      */
@@ -129,7 +131,7 @@ class PimcoreBundleManager
         $manuallyRegisteredBundles = $this->getManuallyRegisteredBundles();
 
         if (!isset($manuallyRegisteredBundles[$bundleClass])) {
-            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered.
+            throw new InvalidArgumentException(sprintf('Bundle "%s" is not registered.
                 Maybe you forgot to add it in the "config/bundles.php" or "Kernel::registerBundles()?', $bundleClass));
         }
 
@@ -231,9 +233,7 @@ class PimcoreBundleManager
     /**
      * Determines if a bundle exists
      *
-     * @param string|PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function exists(string|PimcoreBundleInterface $bundle): bool
     {
@@ -265,7 +265,6 @@ class PimcoreBundleManager
     /**
      * Validates bundle name against list if available and active bundles
      *
-     * @param string $identifier
      */
     protected function validateBundleIdentifier(string $identifier): void
     {
@@ -277,9 +276,7 @@ class PimcoreBundleManager
     /**
      * Determines if the bundle was programatically registered (not via extension manager)
      *
-     * @param string|PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function isManuallyRegistered(string|PimcoreBundleInterface $bundle): bool
     {
@@ -306,10 +303,7 @@ class PimcoreBundleManager
     /**
      * Returns the bundle installer if configured
      *
-     * @param PimcoreBundleInterface $bundle
-     * @param bool $throwException
      *
-     * @return null|Installer\InstallerInterface
      */
     public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false): ?Installer\InstallerInterface
     {
@@ -319,7 +313,6 @@ class PimcoreBundleManager
     /**
      * Runs install routine for a bundle
      *
-     * @param PimcoreBundleInterface $bundle
      *
      * @throws InstallationException If the bundle can not be installed or doesn't define an installer
      */
@@ -337,7 +330,6 @@ class PimcoreBundleManager
     /**
      * Runs uninstall routine for a bundle
      *
-     * @param PimcoreBundleInterface $bundle
      *
      * @throws InstallationException If the bundle can not be uninstalled or doesn't define an installer
      */
@@ -355,9 +347,7 @@ class PimcoreBundleManager
     /**
      * Determines if a bundle can be installed
      *
-     * @param PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function canBeInstalled(PimcoreBundleInterface $bundle): bool
     {
@@ -371,9 +361,7 @@ class PimcoreBundleManager
     /**
      * Determines if a bundle can be uninstalled
      *
-     * @param PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function canBeUninstalled(PimcoreBundleInterface $bundle): bool
     {
@@ -387,9 +375,7 @@ class PimcoreBundleManager
     /**
      * Determines if a bundle is installed
      *
-     * @param PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function isInstalled(PimcoreBundleInterface $bundle): bool
     {
@@ -404,9 +390,7 @@ class PimcoreBundleManager
     /**
      * Determines if a reload is needed after installation
      *
-     * @param PimcoreBundleInterface $bundle
      *
-     * @return bool
      */
     public function needsReloadAfterInstall(PimcoreBundleInterface $bundle): bool
     {
@@ -469,8 +453,6 @@ class PimcoreBundleManager
     /**
      * Iterates installed bundles and fetches asset paths
      *
-     * @param string $type
-     * @param string|null $mode
      *
      * @return string[]
      */

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Notes;
 
 /**
- * @method getLabel()
+ * @method string getLabel()
  *
  * @property array $options
  */
@@ -67,7 +67,6 @@ trait NotesAwareTrait
     /**
      * Inject service via compiler pass.
      *
-     * @param CustomHtmlServiceInterface $customHtmlService
      */
     public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService): void
     {

@@ -43,7 +43,12 @@ use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
+use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @method $this appendStyle($content, array $attributes = array())
@@ -57,21 +62,18 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Registry key for placeholder
      *
-     * @var string
      */
     protected string $_regKey = 'HeadStyle';
 
     /**
      * Allowed optional attributes
      *
-     * @var array
      */
     protected array $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
 
     /**
      * Allowed media types
      *
-     * @var array
      */
     protected array $_mediaTypes = [
         'all', 'aural', 'braille', 'handheld', 'print',
@@ -81,21 +83,18 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Capture type and/or attributes (used for hinting during capture)
      *
-     * @var array|null
      */
     protected ?array $_captureAttrs = null;
 
     /**
      * Capture lock
      *
-     * @var bool
      */
     protected bool $_captureLock = false;
 
     /**
      * Capture type (append, prepend, set)
      *
-     * @var string
      */
     protected string $_captureType;
 
@@ -104,7 +103,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * Set separator to PHP_EOL.
      *
-     * @param ContainerService $containerService
      */
     public function __construct(ContainerService $containerService)
     {
@@ -125,22 +123,12 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      */
     public function __invoke(string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
     {
-        if ((null !== $content) && is_string($content)) {
-            switch (strtoupper($placement)) {
-                case 'SET':
-                    $action = 'setStyle';
-
-                    break;
-                case 'PREPEND':
-                    $action = 'prependStyle';
-
-                    break;
-                case 'APPEND':
-                default:
-                    $action = 'appendStyle';
-
-                    break;
-            }
+        if (is_string($content)) {
+            $action = match (strtoupper($placement)) {
+                'SET' => 'setStyle',
+                'PREPEND' => 'prependStyle',
+                default => 'appendStyle',
+            };
             $this->$action($content, $attributes);
         }
 
@@ -156,10 +144,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * - prependStyle($content, $attributes = array())
      * - setStyle($content, $attributes = array())
      *
-     * @param string $method
-     * @param array $args
      *
-     * @return mixed
      *
      * @throws Exception When no $content provided or invalid method
      */
@@ -204,13 +189,11 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Determine if a value is a valid style tag
      *
-     * @param mixed $value
      *
-     * @return bool
      */
     protected function _isValid(mixed $value): bool
     {
-        if ((!$value instanceof \stdClass)
+        if ((!$value instanceof stdClass)
             || !isset($value->content)
             || !isset($value->attributes)) {
             return false;
@@ -222,9 +205,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override append to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function append(mixed $value): void
     {
@@ -239,9 +220,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * Override offsetSet to enforce style creation
      *
      * @param  string|int $offset
-     * @param mixed $value
      *
-     * @return void
      */
     public function offsetSet($offset, mixed $value): void
     {
@@ -255,9 +234,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override prepend to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function prepend(mixed $value): void
     {
@@ -271,9 +248,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override set to enforce style creation
      *
-     * @param  mixed $value
      *
-     * @return void
      */
     public function set(mixed $value): void
     {
@@ -290,7 +265,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $type
      * @param array|null $attrs
      *
-     * @return void
      */
     public function captureStart($type = Container::APPEND, $attrs = null): void
     {
@@ -307,7 +281,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
-     * @return void
      */
     public function captureEnd(): void
     {
@@ -336,12 +309,11 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Convert content and attributes into valid style tag
      *
-     * @param  \stdClass $item Item to render
+     * @param  stdClass $item Item to render
      * @param string|null $indent Indentation to use
      *
-     * @return string
      */
-    public function itemToString(\stdClass $item, ?string $indent): string
+    public function itemToString(stdClass $item, ?string $indent): string
     {
         $attrString = '';
         if (!empty($item->attributes)) {
@@ -350,7 +322,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
                     continue;
                 }
                 if ('media' == $key) {
-                    if (false === strpos($value, ',')) {
+                    if (!str_contains($value, ',')) {
                         if (!in_array($value, $this->_mediaTypes)) {
                             continue;
                         }
@@ -398,9 +370,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create string representation of placeholder
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
     public function toString(int|string $indent = null): string
     {
@@ -426,12 +396,9 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create data item for use in stack
      *
-     * @param string $content
-     * @param  array $attributes
      *
-     * @return \stdClass
      */
-    public function createData(string $content, array $attributes): \stdClass
+    public function createData(string $content, array $attributes): stdClass
     {
         if (!isset($attributes['media'])) {
             $attributes['media'] = 'screen';
@@ -439,7 +406,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             $attributes['media'] = implode(',', $attributes['media']);
         }
 
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->content = $content;
         $data->attributes = $attributes;
 

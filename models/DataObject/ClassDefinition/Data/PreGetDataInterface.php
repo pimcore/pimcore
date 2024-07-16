@@ -24,9 +24,7 @@ interface PreGetDataInterface
 {
     /**
      * @param mixed $container any container type, e.g. Concrete, Localizedfield, AbstractData, etc ...
-     * @param array $params
      *
-     * @return mixed
      */
     public function preGetData(mixed $container, array $params = []): mixed;
 }

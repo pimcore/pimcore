@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use Exception;
 use League\HTMLToMarkdown\HtmlConverter;
+use Pimcore;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
@@ -29,6 +31,8 @@ use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
 use Twig\Sandbox\SecurityError;
+use function is_array;
+use function is_string;
 
 class Mail extends Email
 {
@@ -37,14 +41,12 @@ class Mail extends Email
     /**
      * If true - emails are logged in the database and on the file-system
      *
-     * @var bool
      */
     private bool $loggingEnable = true;
 
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email|null
      */
     private Model\Document\Email|null $document = null;
 
@@ -72,14 +74,12 @@ class Mail extends Email
     /**
      * Prevent adding debug information
      *
-     * @var bool
      */
     private bool $preventDebugInformationAppending = false;
 
     /**
      * if true - the Pimcore debug mode is ignored
      *
-     * @var bool
      */
     private bool $ignoreDebugMode = false;
 
@@ -89,21 +89,18 @@ class Mail extends Email
      *
      * @see MailHelper::setAbsolutePaths()
      *
-     * @var string|null
      */
     private ?string $hostUrl = null;
 
     /**
      * if true: prevent setting the recipients from the Document - set in $this->clearRecipients()
      *
-     * @var bool
      */
     private bool $recipientsCleared = false;
 
     /**
      * place to store original data before modifying message when sending in debug mode
      *
-     * @var array|null
      */
     private ?array $originalData = null;
 
@@ -127,7 +124,6 @@ class Mail extends Email
     /**
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
-     * @param string|null $contentType
      */
     public function __construct($headers = null, $body = null, string $contentType = null)
     {
@@ -164,7 +160,6 @@ class Mail extends Email
     /**
      * Initializes the mailer with the configured pimcore.email system settings
      *
-     * @param string $type
      *
      * @internal
      */
@@ -196,7 +191,6 @@ class Mail extends Email
     /**
      * Checks if the Debug mode is ignored
      *
-     * @return bool
      */
     public function getIgnoreDebugMode(): bool
     {
@@ -208,7 +202,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
     public function doRedirectMailsToDebugMailAddresses(): bool
     {
@@ -216,13 +209,12 @@ class Mail extends Email
             return true;
         }
 
-        return \Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
+        return Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
     }
 
     /**
      * Sets options that are passed to html2text
      *
-     * @param array $options
      *
      * @return $this
      */
@@ -287,7 +279,6 @@ class Mail extends Email
     /**
      * returns the logging status
      *
-     * @return bool
      */
     public function loggingIsEnabled(): bool
     {
@@ -297,7 +288,6 @@ class Mail extends Email
     /**
      * Sets the parameters to the request object
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
@@ -313,18 +303,12 @@ class Mail extends Email
     /**
      * Sets a single parameter to the request object
      *
-     * @param int|string $key
-     * @param mixed $value
      *
      * @return $this Provides fluent interface
      */
     public function setParam(int|string $key, mixed $value): static
     {
-        if (is_string($key) || is_int($key)) {
-            $this->params[$key] = $value;
-        } else {
-            Logger::warn('$key has to be a string or integer - Param ignored!');
-        }
+        $this->params[$key] = $value;
 
         return $this;
     }
@@ -342,9 +326,7 @@ class Mail extends Email
     /**
      * Returns a parameter which was set with "setParams" or "setParam"
      *
-     * @param int|string $key
      *
-     * @return mixed
      */
     public function getParam(int|string $key): mixed
     {
@@ -354,7 +336,6 @@ class Mail extends Email
     /**
      * Forces the debug mode - useful for cli-script which should not send emails to recipients
      *
-     * @param bool $value
      */
     public static function setForceDebugMode(bool $value): void
     {
@@ -364,7 +345,6 @@ class Mail extends Email
     /**
      * Deletes parameters which were set with "setParams" or "setParam"
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
@@ -380,17 +360,12 @@ class Mail extends Email
     /**
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
-     * @param int|string $key
      *
      * @return $this Provides fluent interface
      */
     public function unsetParam(int|string $key): static
     {
-        if (is_string($key) || is_int($key)) {
-            unset($this->params[$key]);
-        } else {
-            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
-        }
+        unset($this->params[$key]);
 
         return $this;
     }
@@ -449,7 +424,6 @@ class Mail extends Email
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  MailerInterface|null $mailer
      *
      * @return $this Provides fluent interface
      */
@@ -483,11 +457,10 @@ class Mail extends Email
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param MailerInterface|null $mailer
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function sendWithoutRendering(MailerInterface $mailer = null): static
     {
@@ -521,8 +494,8 @@ class Mail extends Email
         if ($mailer === null) {
             try {
                 //if no mailer given, get default mailer from container
-                $mailer = \Pimcore::getContainer()->get(Mailer::class);
-            } catch (\Exception $e) {
+                $mailer = Pimcore::getContainer()->get(Mailer::class);
+            } catch (Exception $e) {
                 $sendingFailedException = $e;
             }
         }
@@ -536,31 +509,33 @@ class Mail extends Email
             'mailer' => $mailer,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
+        Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
         if ($event->hasArgument('mailer') && !$sendingFailedException) {
             $mailer = $event->getArgument('mailer');
 
             try {
                 $mailer->send($this);
-            } catch (\Exception $e) {
-                $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
+            } catch (Exception $e) {
+                $sendingFailedException = new Exception($e->getMessage(), 0, $e);
             }
         }
 
         if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
+            if (Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 
+            Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
+
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::emerg("Couldn't log Email");
             }
         }
 
-        if ($sendingFailedException instanceof \Exception) {
+        if ($sendingFailedException instanceof Exception) {
             throw $sendingFailedException;
         }
 
@@ -622,7 +597,7 @@ class Mail extends Email
 
     private function renderParams(string $string, string $context): string
     {
-        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
@@ -632,7 +607,7 @@ class Mail extends Email
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
-            throw new \Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
+            throw new Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
                 $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
         } finally {
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
@@ -644,7 +619,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
     public function getSubjectRendered(): string
     {
@@ -666,7 +640,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string|null
      */
     public function getBodyHtmlRendered(): ?string
     {
@@ -701,7 +674,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
     public function getBodyTextRendered(): string
     {
@@ -729,7 +701,7 @@ class Mail extends Email
                 unset($html);
 
                 $content = $this->html2Text($htmlContent);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::err((string) $e);
                 $content = '';
             }
@@ -739,11 +711,10 @@ class Mail extends Email
     }
 
     /**
-     * @param Model\Document|int|string|null $document
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setDocument(int|Model\Document|string|null $document): static
     {
@@ -760,7 +731,7 @@ class Mail extends Email
             $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
         } else {
-            throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
+            throw new Exception("$document is not an instance of " . Model\Document\Email::class);
         }
 
         return $this;
@@ -769,7 +740,6 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email|null
      */
     public function getDocument(): Model\Document\Email|null
     {
@@ -805,7 +775,6 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
     public function isPreventingDebugInformationAppending(): bool
     {
@@ -821,7 +790,7 @@ class Mail extends Email
                 $converter = new HtmlConverter();
                 $converter->getConfig()->merge($this->getHtml2TextOptions());
                 $content = $converter->convert($htmlContent);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::warning('Converting HTML to plain text failed, no plain text part will be attached to the sent email');
             }
         }
@@ -832,7 +801,6 @@ class Mail extends Email
     /**
      * @internal
      *
-     * @return array|null
      */
     public function getOriginalData(): ?array
     {
@@ -840,7 +808,6 @@ class Mail extends Email
     }
 
     /**
-     * @param array|null $originalData
      *
      * @internal
      */
@@ -857,7 +824,6 @@ class Mail extends Email
     /**
      * Set the Content-type of this entity.
      *
-     * @param string $type
      *
      * @return $this
      */
@@ -884,7 +850,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -896,7 +862,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -908,7 +874,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -920,7 +886,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
@@ -932,7 +898,7 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */

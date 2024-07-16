@@ -26,9 +26,6 @@ abstract class AbstractClassNameLoader implements LoaderInterface, ClassNameLoad
 {
     abstract protected function getClassName(string $name): string;
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): mixed
     {
         if (!$this->supports($name)) {

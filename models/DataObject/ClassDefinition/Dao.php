@@ -15,9 +15,12 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -44,16 +47,14 @@ class Dao extends Model\Dao\AbstractDao
                     return $name;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return null;
     }
 
     /**
-     * @param string $name
      *
-     * @return string
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -65,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             if (!empty($name)) {
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         if (empty($id)) {
@@ -78,9 +79,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param bool $isUpdate
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(bool $isUpdate = true): void
     {
@@ -92,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {
@@ -104,6 +104,8 @@ class Dao extends Model\Dao\AbstractDao
                 $data[$key] = $value;
             }
         }
+
+        $data['definitionModificationDate'] = $this->model->getModificationDate();
 
         $this->db->update('classes', $data, ['id' => $this->model->getId()]);
 
@@ -161,41 +163,39 @@ class Dao extends Model\Dao\AbstractDao
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$objectTable, $objectDatastoreTable]);
 
         // add non existing columns in the table
-        if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
-            foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                    && $value instanceof DataObject\ClassDefinition\Data) {
-                    // if a datafield requires more than one column in the datastore table => only for non-relation types
-                    if (!$value->isRelationType()) {
-                        if (is_array($value->getColumnType())) {
-                            foreach ($value->getColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                                $protectedDatastoreColumns[] = $key . '__' . $fkey;
-                            }
-                        } elseif ($value->getColumnType()) {
-                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
-                            $protectedDatastoreColumns[] = $key;
+        foreach ($this->model->getFieldDefinitions() as $key => $value) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
+                // if a datafield requires more than one column in the datastore table => only for non-relation types
+                if (!$value->isRelationType()) {
+                    if (is_array($value->getColumnType())) {
+                        foreach ($value->getColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedDatastoreColumns[] = $key . '__' . $fkey;
                         }
+                    } elseif ($value->getColumnType()) {
+                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                        $protectedDatastoreColumns[] = $key;
                     }
-
-                    $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                    && $value instanceof DataObject\ClassDefinition\Data) {
-                    // if a datafield requires more than one column in the query table
-                    if (is_array($value->getQueryColumnType())) {
-                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                            $protectedColumns[] = $key . '__' . $fkey;
-                        }
-                    } elseif ($value->getQueryColumnType()) {
-                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                        $protectedColumns[] = $key;
-                    }
+                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
+            }
 
-                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
+                // if a datafield requires more than one column in the query table
+                if (is_array($value->getQueryColumnType())) {
+                    foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $protectedColumns[] = $key . '__' . $fkey;
+                    }
+                } elseif ($value->getQueryColumnType()) {
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                    $protectedColumns[] = $key;
                 }
+
+                $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
             }
         }
 
@@ -204,13 +204,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns);
 
         // remove / cleanup unused relations
-        if (is_array($datastoreColumnsToRemove)) {
-            foreach ($datastoreColumnsToRemove as $value) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
-                    $tableRelation = 'object_relations_' . $this->model->getId();
-                    $this->db->delete($tableRelation, ['fieldname' => $value, 'ownertype' => 'object']);
-                    // @TODO: remove localized fields and fieldcollections
-                }
+        foreach ($columnsToRemove as $value) {
+            if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                $this->db->delete($objectDatastoreTableRelation, ['fieldname' => $value, 'ownertype' => 'object']);
+                // @TODO: remove localized fields and fieldcollections
             }
         }
 
@@ -218,7 +215,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
             $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug((string) $e);
         }
 
@@ -231,11 +228,17 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return void
      */
     public function create(): void
     {
-        $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
+        $this->db->insert(
+            'classes',
+            [
+                'name' => $this->model->getName(),
+                'id' => $this->model->getId(),
+                'definitionModificationDate' => $this->model->getModificationDate(),
+            ]
+        );
     }
 
     /**
@@ -250,12 +253,12 @@ class Dao extends Model\Dao\AbstractDao
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
         $objectMetadataTable = 'object_metadata_' . $this->model->getId();
 
-        $this->db->executeQuery('DROP TABLE `' . $objectTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTableRelation . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTableRelation . '`');
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
-        $this->db->executeQuery('DROP VIEW `object_' . $this->model->getId() . '`');
+        $this->db->executeQuery('DROP VIEW IF EXISTS `object_' . $this->model->getId() . '`');
 
         // delete data
         $this->db->delete('objects', ['classId' => $this->model->getId()]);
@@ -286,7 +289,7 @@ class Dao extends Model\Dao\AbstractDao
         $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->db->executeQuery('DROP TABLE `'.$brickTable.'`');
+            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$brickTable.'`');
         }
 
         $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());
@@ -299,7 +302,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @param string $newName
      */
     public function updateClassNameInObjects(string $newName): void
     {

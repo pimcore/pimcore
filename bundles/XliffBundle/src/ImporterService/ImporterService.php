@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ImporterService\Importer\ImporterInterface;
 
@@ -26,9 +27,6 @@ class ImporterService implements ImporterServiceInterface
      */
     private array $importers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $this->getImporter($attributeSet->getTranslationItem()->getType())->import($attributeSet, $saveElement);
@@ -41,15 +39,12 @@ class ImporterService implements ImporterServiceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getImporter(string $type): ImporterInterface
     {
         if (isset($this->importers[$type])) {
             return $this->importers[$type];
         }
 
-        throw new \Exception(sprintf('no importer for type "%s" registered', $type));
+        throw new Exception(sprintf('no importer for type "%s" registered', $type));
     }
 }

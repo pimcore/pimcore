@@ -31,9 +31,6 @@ class LogErrorCleanupTask implements TaskInterface
         $this->db = $db;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): void
     {
         // keep the history for max. 7 days (=> exactly 144h), according to the privacy policy (EU/German Law)
