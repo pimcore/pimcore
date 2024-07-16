@@ -167,7 +167,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     $translationTerm = Tool\Text::removeLineBreaks($translation['text']);
 
                     //if the translation is empty for the current language, check for its fallback language
-                    if (!isset($data[$translation['key']]) && $fallbackLocale && empty($translationTerm)){
+                    if (!isset($data[$translation['key']]) && $fallbackLocale && empty($translationTerm)) {
                         $fallbackTranslationTerm = Translation::getByKey(
                             $translation['key'],
                             $domain,
@@ -206,7 +206,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 $catalogue = new MessageCatalogue($locale, $data);
 
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
-           }
+            }
 
             if ($catalogue) {
                 $this->getCatalogue($locale)->addCatalogue($catalogue);

@@ -57,7 +57,7 @@ class TranslatorTest extends TestCase
             'fallback_to_DE' => 'wrong: EN DB',
             'fallback_to_YML_EN' => '',
             'fallback_to_YML_DE' => 'wrong: EN DB',
-            'fallback_to_YML_AT' => ''
+            'fallback_to_YML_AT' => '',
         ],
         'de' => [
             'simple_key' => 'DE Text',
