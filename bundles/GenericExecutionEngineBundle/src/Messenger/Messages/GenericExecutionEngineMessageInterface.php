@@ -31,8 +31,4 @@ interface GenericExecutionEngineMessageInterface
     public function getElement(): ?ElementDescriptor;
 
     public function getElements(): array;
-
-    public function setElements(array $elements): void;
-
-    public function getExecutionMode();
 }

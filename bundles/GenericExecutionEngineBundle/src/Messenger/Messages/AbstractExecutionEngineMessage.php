@@ -28,7 +28,6 @@ abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineM
     public function __construct(
         protected int $jobRunId,
         protected int $currentJobStep,
-        /** @deprecated Parameter $element will be removed with Pimcore 12. Use $elements instead. */
         protected ?ElementDescriptor $element = null,
         protected array $elements = []
     ) {
@@ -44,28 +43,13 @@ abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineM
         return $this->currentJobStep;
     }
 
-    /**
-     * @deprecated will be removed with Pimcore 12. Use getElements() instead.
-     */
     public function getElement(): ?ElementDescriptor
     {
         return $this->element;
     }
 
-    public function getElements(): array
-    {
-        return $this->elements;
-    }
-
-    /**
-     * @deprecated will be removed with Pimcore 12. Use constructor instead.
-     */
     public function setElements(array $elements): void
     {
         $this->elements = $elements;
-    }
-
-    public function getExecutionMode(): StepExecutionMode {
-        return StepExecutionMode::FOR_EACH;
     }
 }

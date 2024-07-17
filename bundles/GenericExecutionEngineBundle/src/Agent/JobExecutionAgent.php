@@ -24,6 +24,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\AbstractExecu
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStep;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
@@ -149,13 +150,25 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         return $jobRun->getState() === JobRunStates::RUNNING;
     }
 
+    private function getSelectionModeFromJobRun(JobRun $jobRun): StepExecutionMode {
+        $steps = $jobRun->getJob()?->getSteps();
+        if($steps !== null) {
+            $step = $steps[$jobRun->getCurrentStep()] ?? null;
+            if($step) {
+                return $step->getExecutionMode();
+            }
+        }
+        return StepExecutionMode::FOR_EACH;
+    }
+
     /**
      * @throws Exception
      */
     private function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
     {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-        if ($message->getExecutionMode() === StepExecutionMode::ONCE ||
+
+        if ($this->getSelectionModeFromJobRun($jobRun) === StepExecutionMode::ONCE ||
             $jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
             $this->continueJobStepExecution($message);
         }
@@ -233,7 +246,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->getErrorHandlingMode
             (
                 $jobRun,
-                $message->getExecutionMode()
+                $this->getSelectionModeFromJobRun($jobRun)
             )
         ) {
             ErrorHandlingMode::STOP_ON_FIRST_ERROR =>
@@ -381,7 +394,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $job->getSelectedElements(),
             $jobRun->getId(),
             $jobRun->getCurrentStep(),
-            $messageString
+            $messageString,
+            $this->getSelectionModeFromJobRun($jobRun)
         );
     }
 
@@ -433,7 +447,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         array $selectedElements,
         int $jobRunId,
         int $currentStepId,
-        string $messageString
+        string $messageString,
+        StepExecutionMode $executionMode
     ): void
     {
         if (empty($selectedElements)) {
@@ -449,7 +464,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         /** @var AbstractExecutionEngineMessage $message */
         $message = new $messageString($jobRunId, $currentStepId);
 
-        if($message->getExecutionMode() === StepExecutionMode::ONCE) {
+        if($executionMode === StepExecutionMode::ONCE) {
             $message->setElements($selectedElements);
             $this->executionEngineBus->dispatch(
                 $message
