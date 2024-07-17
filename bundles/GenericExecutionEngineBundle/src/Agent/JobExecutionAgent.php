@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 use Doctrine\DBAL\Exception;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
-use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
@@ -258,8 +257,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
                 $jobRun,
                 $message,
                 $errorMessage
-            ),
-            default => throw new InvalidErrorHandlingModeException(),
+            )
         };
     }
 
