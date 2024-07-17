@@ -209,6 +209,8 @@ abstract class AbstractAutomationActionHandler
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
     ): array {
-        return $this->jobRunExtractor->getElementsFromMessage($message, $types);
+        /** @var AbstractElement[] $subjects */
+        $subjects = $this->jobRunExtractor->getElementsFromMessage($message, $types);
+        return $subjects;
     }
 }
