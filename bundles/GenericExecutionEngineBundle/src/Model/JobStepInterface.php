@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
-use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepExecutionMode;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepSelectionMode;
 
 interface JobStepInterface
 {
@@ -28,5 +28,5 @@ interface JobStepInterface
 
     public function getCondition(): string;
 
-    public function getExecutionMode(): StepExecutionMode;
+    public function getSelectionMode(): StepSelectionMode;
 }
