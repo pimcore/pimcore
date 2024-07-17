@@ -256,19 +256,19 @@ class JobRun
     {
         if ($this->serializer === null) {
             $encoder = [
-                new JsonEncoder()
+                new JsonEncoder(),
             ];
             $extractor = new PropertyInfoExtractor(
                 [],
                 [
                     new PhpDocExtractor(),
-                    new ReflectionExtractor()
+                    new ReflectionExtractor(),
                 ]
             );
             $normalizer = [
                 new ArrayDenormalizer(),
                 new BackedEnumNormalizer(),
-                new ObjectNormalizer(null, null, null, $extractor)
+                new ObjectNormalizer(null, null, null, $extractor),
             ];
             $this->serializer = new Serializer(
                 $normalizer,
