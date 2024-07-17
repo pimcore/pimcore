@@ -211,6 +211,7 @@ abstract class AbstractAutomationActionHandler
     ): array {
         /** @var AbstractElement[] $subjects */
         $subjects = $this->jobRunExtractor->getElementsFromMessage($message, $types);
+
         return $subjects;
     }
 }
