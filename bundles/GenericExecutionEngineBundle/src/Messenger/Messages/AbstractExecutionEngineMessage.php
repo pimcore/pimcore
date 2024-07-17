@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages;
 
-use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepSelectionMode;
 use Pimcore\Model\Element\ElementDescriptor;
 
 abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineMessageInterface

@@ -137,8 +137,7 @@ final class JobRunExtractor implements JobRunExtractorInterface
     public function getElementsFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
-    ): array
-    {
+    ): array {
         /** @var ElementDescriptor[] $elementDescriptors */
         $elementDescriptors = [];
         $elementsToProcess = [];
@@ -148,14 +147,14 @@ final class JobRunExtractor implements JobRunExtractorInterface
         $elementDescriptors[] = [ ... $jobRun->getJob()?->getSelectedElements() ?? []];
 
         foreach ($elementDescriptors as $elementDescriptor) {
-                $element = $this->getElementByType(
-                    $elementDescriptor->getType(),
-                    $elementDescriptor->getId(),
-                    $types
-                );
-                if($element !== null) {
-                    $elementsToProcess[] = $element;
-                }
+            $element = $this->getElementByType(
+                $elementDescriptor->getType(),
+                $elementDescriptor->getId(),
+                $types
+            );
+            if($element !== null) {
+                $elementsToProcess[] = $element;
+            }
         }
 
         return $elementsToProcess;
@@ -175,7 +174,8 @@ final class JobRunExtractor implements JobRunExtractorInterface
     private function getElementByType(
         string $elementType,
         int $elementId,
-        array $typesToLookFor = [JobRunExtractorInterface::ASSET_TYPE]): ?ElementInterface {
+        array $typesToLookFor = [JobRunExtractorInterface::ASSET_TYPE]): ?ElementInterface
+    {
 
         if (!in_array($elementType, $typesToLookFor, true)) {
             return null;

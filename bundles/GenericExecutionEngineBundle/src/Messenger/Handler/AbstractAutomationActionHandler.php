@@ -26,8 +26,6 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecut
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Model\Element\ElementDescriptor;
-use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -191,6 +189,7 @@ abstract class AbstractAutomationActionHandler
 
     /**
      * @deprecated will be removed with Pimcore 12. Use getSubjectsFromMessages() instead.
+     *
      * @throws UnexpectedValueException
      */
     protected function getSubjectFromMessage(
@@ -198,8 +197,9 @@ abstract class AbstractAutomationActionHandler
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
     ): ?AbstractElement {
         /** @var AbstractElement $subject */
-       $subject = $this->jobRunExtractor->getElementFromMessage($message, $types);
-       return $subject;
+        $subject = $this->jobRunExtractor->getElementFromMessage($message, $types);
+
+        return $subject;
     }
 
     /**

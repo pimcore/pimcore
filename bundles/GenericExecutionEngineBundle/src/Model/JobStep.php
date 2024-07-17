@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
-
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepSelectionMode;
 
 final class JobStep implements JobStepInterface
