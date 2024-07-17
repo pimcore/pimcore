@@ -255,10 +255,25 @@ class JobRun
     private function getSerializer(): SerializerInterface
     {
         if ($this->serializer === null) {
-            $encoder = [new JsonEncoder()];
-            $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
-            $normalizer = [new ArrayDenormalizer(), new BackedEnumNormalizer(), new ObjectNormalizer(null, null, null, $extractor)];
-            $this->serializer = new Serializer($normalizer, $encoder);
+            $encoder = [
+                new JsonEncoder()
+            ];
+            $extractor = new PropertyInfoExtractor(
+                [],
+                [
+                    new PhpDocExtractor(),
+                    new ReflectionExtractor()
+                ]
+            );
+            $normalizer = [
+                new ArrayDenormalizer(),
+                new BackedEnumNormalizer(),
+                new ObjectNormalizer(null, null, null, $extractor)
+            ];
+            $this->serializer = new Serializer(
+                $normalizer,
+                $encoder
+            );
         }
 
         return $this->serializer;
