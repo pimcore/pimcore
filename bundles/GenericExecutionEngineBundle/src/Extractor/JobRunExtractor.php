@@ -138,13 +138,11 @@ final class JobRunExtractor implements JobRunExtractorInterface
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): array {
-        /** @var ElementDescriptor[] $elementDescriptors */
-        $elementDescriptors = [];
         $elementsToProcess = [];
         $jobRun = $this->getJobRun($message);
 
-        $elementDescriptors[] = $message->getElement();
-        $elementDescriptors[] = [ ... $jobRun->getJob()?->getSelectedElements() ?? []];
+        /** @var ElementDescriptor[] $elementDescriptors */
+        $elementDescriptors = $jobRun->getJob()?->getSelectedElements();
 
         foreach ($elementDescriptors as $elementDescriptor) {
             $element = $this->getElementByType(
