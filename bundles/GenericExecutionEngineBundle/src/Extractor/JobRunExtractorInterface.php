@@ -46,10 +46,17 @@ interface JobRunExtractorInterface
     ): void;
 
     /**
-     * @deprecated will be removed with Pimcore 12. Use getSubjectFromMessages() in AbstractAutomationActionHandler.
+     * @deprecated will be removed with Pimcore 12. Use getElementsToProcess() instead.
      */
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): ?ElementInterface;
+
+
+    /** @return ElementInterface[]  */
+    public function getElementsFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        array $types = [JobRunExtractorInterface::ASSET_TYPE]
+    ): array;
 }

@@ -26,6 +26,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecut
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Psr\Log\LoggerInterface;
@@ -189,85 +190,25 @@ abstract class AbstractAutomationActionHandler
     }
 
     /**
-     * @deprecated will be removed with Pimcore 12. Use getSubjectFromMessages() instead.
+     * @deprecated will be removed with Pimcore 12. Use getSubjectsFromMessages() instead.
+     * @throws UnexpectedValueException
      */
     protected function getSubjectFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
-    ): AbstractElement {
-        $elementDescriptor = $message->getElement();
-        if(!$elementDescriptor) {
-            $elementDescriptor = $message->getElements()[0] ?? null;
-        }
-        if(!$elementDescriptor) {
-            throw new UnexpectedValueException('No subject found');
-        }
-        return $this->getElementByType(
-            $elementDescriptor->getType(),
-            $elementDescriptor->getId(),
-            $types
-        );
+    ): ?AbstractElement {
+        /** @var AbstractElement $subject */
+       $subject = $this->jobRunExtractor->getElementFromMessage($message, $types);
+       return $subject;
     }
 
     /**
      * @return AbstractElement[]
-     * TODO: Move elements array into job and remove it from the message itself?
      */
     protected function getSubjectsFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
     ): array {
-        $selectedElements = $message->getElements();
-        $elements = [];
-
-        foreach($selectedElements as $element) {
-            $elements[] = $this->getElementByType(
-                $element->getType(),
-                $element->getId(),
-                $types
-            );
-        }
-
-        return $elements;
-    }
-
-    private function getElement(string $type, int $id): ?AbstractElement
-    {
-        $element = Service::getElementById($type, $id);
-
-        if (!$element || $element->getType() === JobRunExtractorInterface::FOLDER_TYPE) {
-            return null;
-        }
-
-        return $element;
-    }
-
-    private function getElementByType(
-        string $type,
-        int $id,
-        array $types
-    ): ?AbstractElement
-    {
-        $element = null;
-
-        if (in_array($type, $types, true)) {
-            $element = $this->getElement(
-                $type,
-                $id
-            );
-        }
-
-        if(!$element) {
-            throw new UnexpectedValueException(
-                sprintf(
-                    'No subject type found. Expected types: %s, found %s, %s',
-                    implode(', ', $types),
-                    $id,
-                    $type
-                )
-            );
-        }
-
-        return $element;
+        return $this->jobRunExtractor->getElementsFromMessage($message, $types);
     }
 }

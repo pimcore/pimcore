@@ -391,11 +391,11 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         }
 
         $this->dispatchSelectedElements(
-            $job->getSelectedElements(),
             $jobRun->getId(),
             $jobRun->getCurrentStep(),
             $messageString,
-            $this->getSelectionModeFromJobRun($jobRun)
+            $this->getSelectionModeFromJobRun($jobRun),
+            $job->getSelectedElements()
         );
     }
 
@@ -444,30 +444,18 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
      * @param ElementDescriptor[] $selectedElements
      */
     private function dispatchSelectedElements(
-        array $selectedElements,
         int $jobRunId,
         int $currentStepId,
         string $messageString,
-        StepSelectionMode $selectionMode
+        StepSelectionMode $selectionMode,
+        array $selectedElements = []
     ): void
     {
-        if (empty($selectedElements)) {
+        if (empty($selectedElements) || $selectionMode === StepSelectionMode::ONCE) {
             $this->executionEngineBus->dispatch(new $messageString (
                     $jobRunId,
                     $currentStepId
                 )
-            );
-
-            return;
-        }
-
-        /** @var AbstractExecutionEngineMessage $message */
-        $message = new $messageString($jobRunId, $currentStepId);
-
-        if($selcetionMode === StepSelectionMode::ONCE) {
-            $message->setElements($selectedElements);
-            $this->executionEngineBus->dispatch(
-                $message
             );
 
             return;

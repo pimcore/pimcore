@@ -29,6 +29,4 @@ interface GenericExecutionEngineMessageInterface
     public function getCurrentJobStep(): int;
 
     public function getElement(): ?ElementDescriptor;
-
-    public function getElements(): array;
 }

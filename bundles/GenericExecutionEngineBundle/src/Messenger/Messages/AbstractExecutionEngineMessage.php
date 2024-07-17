@@ -47,9 +47,4 @@ abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineM
     {
         return $this->element;
     }
-
-    public function setElements(array $elements): void
-    {
-        $this->elements = $elements;
-    }
 }
