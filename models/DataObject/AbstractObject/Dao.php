@@ -21,6 +21,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\User;
+use function count;
+use function in_array;
+use function is_bool;
 
 /**
  * @internal
@@ -41,7 +44,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
@@ -60,7 +63,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("object doesn't exist");

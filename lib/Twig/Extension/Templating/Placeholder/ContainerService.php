@@ -39,6 +39,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
+use OutOfBoundsException;
+use RuntimeException;
+use function array_key_exists;
+
 /**
  * Registry for placeholder containers
  *
@@ -63,7 +67,7 @@ class ContainerService
         ++$this->currentIndex;
 
         if (isset($this->_items[$this->currentIndex])) {
-            throw new \RuntimeException(sprintf('Items at index %d already exist', $this->currentIndex));
+            throw new RuntimeException(sprintf('Items at index %d already exist', $this->currentIndex));
         }
 
         $this->_items[$this->currentIndex] = [];
@@ -72,7 +76,7 @@ class ContainerService
     public function popIndex(): void
     {
         if (0 === $this->currentIndex) {
-            throw new \OutOfBoundsException('Current index is already at 0');
+            throw new OutOfBoundsException('Current index is already at 0');
         }
 
         if (isset($this->_items[$this->currentIndex])) {

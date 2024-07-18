@@ -20,6 +20,10 @@ use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -48,7 +52,7 @@ class Dao extends AbstractDao
             [$this->model->getKeyId(), $this->model->getGroupId()]
         );
 
-        if (!empty($data['keyId'])) {
+        if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $data['mandatory'] = (bool)$data['mandatory'];
             $this->assignVariablesToModel($data);

@@ -43,7 +43,12 @@ use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
+use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @method $this appendStyle($content, array $attributes = array())
@@ -188,7 +193,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      */
     protected function _isValid(mixed $value): bool
     {
-        if ((!$value instanceof \stdClass)
+        if ((!$value instanceof stdClass)
             || !isset($value->content)
             || !isset($value->attributes)) {
             return false;
@@ -304,11 +309,11 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Convert content and attributes into valid style tag
      *
-     * @param  \stdClass $item Item to render
+     * @param  stdClass $item Item to render
      * @param string|null $indent Indentation to use
      *
      */
-    public function itemToString(\stdClass $item, ?string $indent): string
+    public function itemToString(stdClass $item, ?string $indent): string
     {
         $attrString = '';
         if (!empty($item->attributes)) {
@@ -393,7 +398,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function createData(string $content, array $attributes): \stdClass
+    public function createData(string $content, array $attributes): stdClass
     {
         if (!isset($attributes['media'])) {
             $attributes['media'] = 'screen';
@@ -401,7 +406,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             $attributes['media'] = implode(',', $attributes['media']);
         }
 
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->content = $content;
         $data->attributes = $attributes;
 

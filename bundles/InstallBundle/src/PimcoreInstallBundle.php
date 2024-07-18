@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use function dirname;
 
 /**
  * @internal
@@ -26,6 +27,6 @@ class PimcoreInstallBundle extends Bundle
 {
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 }

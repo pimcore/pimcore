@@ -17,9 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Config;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function get_class;
 
 /**
  * Provides bundle/controller/action/template selection options which can be
@@ -74,7 +78,7 @@ class ControllerDataProvider
 
     /**
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getControllerReferences(): array
     {
@@ -86,8 +90,8 @@ class ControllerDataProvider
                 continue;
             }
 
-            $reflector = new \ReflectionClass($className);
-            foreach ($reflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC) as $method) {
+            $reflector = new ReflectionClass($className);
+            foreach ($reflector->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_STATIC) as $method) {
                 if (preg_match('/^(.*)Action$/', $method->getName())) {
                     $controllerReferences[] = sprintf('%s::%s', $id, $method->getName());
                 }
@@ -101,7 +105,7 @@ class ControllerDataProvider
                 continue;
             }
 
-            $bundleReflector = new \ReflectionClass(get_class($bundle));
+            $bundleReflector = new ReflectionClass(get_class($bundle));
 
             $finder = new Finder();
             $finder
@@ -114,9 +118,9 @@ class ControllerDataProvider
                 $fullClassName = $bundleReflector->getNamespaceName() . '\\Controller\\' . $relativeClassName;
 
                 if (class_exists($fullClassName)) {
-                    $controllerReflector = new \ReflectionClass($fullClassName);
+                    $controllerReflector = new ReflectionClass($fullClassName);
                     if ($controllerReflector->isInstantiable()) {
-                        foreach ($controllerReflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC) as $method) {
+                        foreach ($controllerReflector->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_STATIC) as $method) {
                             if (preg_match('/^(.*)Action$/', $method->getName())) {
                                 $controllerReferences[] = sprintf('%s::%s', $fullClassName, $method->getName());
                             }

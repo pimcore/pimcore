@@ -41,7 +41,14 @@ namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
+use RecursiveIteratorIterator;
 use Symfony\Component\Templating\EngineInterface;
+use function get_class;
+use function is_array;
+use function is_int;
+use function is_scalar;
+use function is_string;
+use function strlen;
 
 abstract class AbstractRenderer implements RendererInterface
 {
@@ -211,9 +218,9 @@ abstract class AbstractRenderer implements RendererInterface
 
         $found = null;
         $foundDepth = -1;
-        $iterator = new \RecursiveIteratorIterator(
+        $iterator = new RecursiveIteratorIterator(
             $container,
-            \RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($iterator as $page) {

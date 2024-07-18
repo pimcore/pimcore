@@ -43,6 +43,7 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
 
 define('PIMCORE_PROJECT_ROOT', $projectRoot);
 
+Bootstrap::$isInstaller = true;
 Bootstrap::bootstrap();
 
 Debug::enable();

@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Doctrine\DBAL\Connection;
+use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
@@ -25,6 +27,7 @@ use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use function count;
 
 class GeneralTest extends ModelTestCase
 {
@@ -32,7 +35,7 @@ class GeneralTest extends ModelTestCase
     {
         parent::setUp();
         TestHelper::cleanUp();
-        \Pimcore::setAdminMode();
+        Pimcore::setAdminMode();
     }
 
     /**
@@ -144,7 +147,7 @@ class GeneralTest extends ModelTestCase
      * Tests https://github.com/pimcore/pimcore/pull/6269
      * [Data objects] Override inherited value with same value (break inheritance)
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function testEqual(): void
     {
@@ -240,7 +243,7 @@ class GeneralTest extends ModelTestCase
         $one->setRelationobjects([$one]);
         $one->save();
 
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
 
         $two = Inheritance::getById($two->getId());
 
@@ -303,7 +306,7 @@ class GeneralTest extends ModelTestCase
         $one->setRelationobjects([$one]);
         $one->save();
 
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
 
         $two = Inheritance::getById($two->getId());
 

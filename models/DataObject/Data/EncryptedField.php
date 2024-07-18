@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
@@ -64,13 +66,13 @@ class EncryptedField implements OwnerAwareFieldInterface
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __sleep(): array
     {
         if ($this->plain) {
             try {
-                $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+                $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 $key = Key::loadFromAsciiSafeString($key);
                 $data = $this->plain;
                 //clear owner to avoid recursion
@@ -82,10 +84,10 @@ class EncryptedField implements OwnerAwareFieldInterface
 
                 $data = Crypto::encrypt($data, $key, true);
                 $this->encrypted = $data;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
 
-                throw new \Exception('could not load key');
+                throw new Exception('could not load key');
             }
 
             return ['encrypted', '_owner'];
@@ -95,13 +97,13 @@ class EncryptedField implements OwnerAwareFieldInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __wakeup(): void
     {
         if ($this->encrypted) {
             try {
-                $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+                $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 $key = Key::loadFromAsciiSafeString($key);
 
                 $data = Crypto::decrypt($this->encrypted, $key, true);
@@ -114,10 +116,10 @@ class EncryptedField implements OwnerAwareFieldInterface
                 }
 
                 $this->plain = $data;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
 
-                throw new \Exception('could not load key');
+                throw new Exception('could not load key');
             }
         }
         unset($this->encrypted);

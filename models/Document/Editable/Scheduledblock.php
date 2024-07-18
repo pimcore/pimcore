@@ -16,10 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Generator;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
 use Pimcore\Tool\HtmlUtils;
+use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -73,7 +76,7 @@ class Scheduledblock extends Block implements BlockInterface
                 return [$this->cachedCurrentElement];
             }
 
-            $outputTimestampResolver = \Pimcore::getContainer()->get(OutputTimestampResolver::class);
+            $outputTimestampResolver = Pimcore::getContainer()->get(OutputTimestampResolver::class);
             $outputTimestamp = $outputTimestampResolver->getOutputTimestamp();
 
             $currentElement = null;
@@ -106,7 +109,7 @@ class Scheduledblock extends Block implements BlockInterface
      */
     private function updateOutputCacheLifetime(int $outputTimestamp, array $nextElement): void
     {
-        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
+        $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);
 
         if ($cacheService->isEnabled()) {
             $calculatedLifetime = $nextElement['date'] - $outputTimestamp;
@@ -200,7 +203,7 @@ class Scheduledblock extends Block implements BlockInterface
         return (int) $this->indices[$this->getCurrent()]['key'];
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();

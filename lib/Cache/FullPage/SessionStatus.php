@@ -21,6 +21,7 @@ use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function in_array;
 
 /**
  * Determines if the full page cache should be disabled due to

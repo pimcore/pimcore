@@ -21,6 +21,8 @@ use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
+use LogicException;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
@@ -44,6 +46,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
+use function in_array;
+use function ini_get;
 
 abstract class Kernel extends SymfonyKernel
 {
@@ -165,13 +169,13 @@ abstract class Kernel extends SymfonyKernel
             // be cleared (e.g. when running tests which boot multiple containers)
             try {
                 $container = $this->getContainer();
-            } catch (\LogicException) {
+            } catch (LogicException) {
                 // Container is cleared. Allow tests to finish.
             }
             if (isset($container) && $container instanceof ContainerInterface) {
                 $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
-            \Pimcore::shutdown();
+            Pimcore::shutdown();
         });
     }
 

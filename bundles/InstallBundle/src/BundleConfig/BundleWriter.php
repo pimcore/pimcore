@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 
 use Pimcore\File;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use function in_array;
+use function is_array;
 
 class BundleWriter
 {

@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
 use Pimcore\Model\Translation;
+use function in_array;
 
 class Service
 {
@@ -47,7 +49,7 @@ class Service
             foreach ($units as $unit) {
                 $unit->save();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -73,7 +75,7 @@ class Service
                         true));
                 }
                 $result[] = $unit->getObjectVars();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return false;
             }
         }

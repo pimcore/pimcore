@@ -133,5 +133,3 @@ The result will be:
 
 In the same way, you can use the rest of the available methods. 
 The type properties list is standard. You can use one of `document`, `asset` or `object`.
- 
- 

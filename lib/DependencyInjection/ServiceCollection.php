@@ -17,12 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\DependencyInjection;
 
+use IteratorAggregate;
 use Psr\Container\ContainerInterface;
+use Traversable;
 
 /**
  * @internal
  */
-class ServiceCollection implements \IteratorAggregate
+class ServiceCollection implements IteratorAggregate
 {
     private ContainerInterface $container;
 
@@ -34,7 +36,7 @@ class ServiceCollection implements \IteratorAggregate
         $this->ids = $ids;
     }
 
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         foreach ($this->ids as $id) {
             yield $this->container->get($id);

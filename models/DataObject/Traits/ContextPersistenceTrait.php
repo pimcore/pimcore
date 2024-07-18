@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -25,6 +26,65 @@ use Pimcore\Model\DataObject\Localizedfield;
  */
 trait ContextPersistenceTrait
 {
+    protected function prepareMyCurrentRelations(
+        Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params
+    ): array {
+        if ($object instanceof Concrete) {
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
+        } elseif ($object instanceof AbstractData) {
+            $relations = $object->getObject()->retrieveRelationData(
+                [
+                    'fieldname' => $this->getName(),
+                    'ownertype' => 'fieldcollection',
+                    'ownername' => $object->getFieldname(),
+                    'position' => (string)$object->getIndex(), //Gets cast to string for checking a delta of the relations on removal or addition
+                ]
+            );
+        } elseif ($object instanceof Localizedfield) {
+            $context = $params['context'] ?? null;
+            if (isset($context['containerType']) &&
+                ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
+                $fieldname = $context['fieldname'] ?? null;
+                if ($context['containerType'] === 'fieldcollection') {
+                    $index = $context['index'] ?? null;
+                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/'.$index.'/%';
+                } else {
+                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/%';
+                }
+                $relations = $object->getObject()->retrieveRelationData(
+                    [
+                        'fieldname' => $this->getName(),
+                        'ownertype' => 'localizedfield',
+                        'ownername' => $filter,
+                        'position' => $params['language'],
+                    ]
+                );
+            } else {
+                $relations = $object->getObject()->retrieveRelationData(
+                    [
+                        'fieldname' => $this->getName(),
+                        'ownertype' => 'localizedfield',
+                        'position' => $params['language'],
+                    ]
+                );
+            }
+        } elseif ($object instanceof \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData) {
+            $relations = $object->getObject()->retrieveRelationData(
+                [
+                    'fieldname' => $this->getName(),
+                    'ownertype' => 'objectbrick',
+                    'ownername' => $object->getFieldname(),
+                    'position' => $object->getType(),
+                ]
+            );
+        } else {
+            throw new Exception('Invalid object type');
+        }
+
+        return $relations;
+    }
+
     /**
      * Enrich relation / slug with type-specific data.
      *
@@ -44,7 +104,7 @@ trait ContextPersistenceTrait
             $row[$srcCol] = $object->getObject()->getId(); // use the id from the object, not from the field collection
             $row['ownertype'] = 'fieldcollection';
             $row['ownername'] = $object->getFieldname();
-            $row['position'] = $object->getIndex();
+            $row['position'] = (string)$object->getIndex();
 
             $classId = $object->getObject()->getClassId();
         } elseif ($object instanceof Localizedfield) {

@@ -7,14 +7,15 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 
 ## Configuration
 
-| Name               | Type    | Configuration                                                                         |
-|--------------------|---------|---------------------------------------------------------------------------------------|
-| `width`            | integer | Width of the input in editmode (in pixels)                                            |
-| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
-| `nowrap`           | boolean | set to false to disable the automatic line break                                      |
-| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode    |
-| `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
-| `required`         | boolean | set to true to make field value required for publish                                  |
+| Name               | Type    | Configuration                                                                                  |
+|--------------------|---------|------------------------------------------------------------------------------------------------|
+| `width`            | integer | Width of the input in editmode (in pixels)                                                     |
+| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true)          |
+| `nowrap`           | boolean | set to false to disable the automatic line break                                               |
+| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode             |
+| `placeholder`      | string  | A text shown in the field when it is empty to guide the user about the expected type of input. |
+| `defaultValue`     | string  | A default value for the available options.                                                     |
+| `required`         | boolean | set to true to make field value required for publish                                           |
 
 ## Methods
 
@@ -42,6 +43,6 @@ You could also specify other parameters, like the size:
 
 ```twig
 <h2>
-    {{ pimcore_input("headerLine", {'width': 540}) }}
+    {{ pimcore_input("headerLine", {"width": 540}) }}
 </h2>
 ```

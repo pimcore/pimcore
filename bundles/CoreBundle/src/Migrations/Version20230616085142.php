@@ -62,7 +62,7 @@ final class Version20230616085142 extends AbstractMigration
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyNameWithOPrefix . '`');
                 }
 
-                if ($metaDataTable->hasPrimaryKey()) {
+                if ($metaDataTable->getPrimaryKey()) {
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY');
                 }
 

@@ -17,10 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Notification\Service;
 
+use Pimcore;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use UnexpectedValueException;
 
 class NotificationServiceTest extends TestCase
 {
@@ -30,7 +32,7 @@ class NotificationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->notificationService = \Pimcore::getContainer()->get(NotificationService::class);
+        $this->notificationService = Pimcore::getContainer()->get(NotificationService::class);
     }
 
     public function _after(): void
@@ -52,7 +54,7 @@ class NotificationServiceTest extends TestCase
     {
         $user = 100;
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(sprintf('No user found with the ID %d', $user));
 
         $this->notificationService->sendToUser(
@@ -67,7 +69,7 @@ class NotificationServiceTest extends TestCase
     {
         $group = 100;
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(sprintf('No group found with the ID %d', $group));
 
         $this->notificationService->sendToGroup(

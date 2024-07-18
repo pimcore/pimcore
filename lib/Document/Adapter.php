@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document;
 
+use Exception;
 use Pimcore\Model\Asset;
 
 /**
@@ -51,14 +52,14 @@ abstract class Adapter
     /**
      * @return resource
      *
-     * @throws \Exception
+     * @throws Exception
      */
     abstract public function getPdf(?Asset\Document $asset = null);
 
     abstract public function isFileTypeSupported(string $fileType): bool;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     abstract public function getPageCount(): int;
 

@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing;
 
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Model;
+use function count;
+use function in_array;
 
 /**
  * @internal
