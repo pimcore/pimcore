@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
-use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\StepSelectionMode;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\SelectionProcessingMode;
 
 final class JobStep implements JobStepInterface
 {
@@ -25,7 +25,7 @@ final class JobStep implements JobStepInterface
         private readonly string $messageFQCN,
         private readonly string $condition,
         private readonly array $config,
-        private readonly StepSelectionMode $selectionMode = StepSelectionMode::FOR_EACH
+        private readonly SelectionProcessingMode $selectionProcessingMode = SelectionProcessingMode::FOR_EACH
     ) {
     }
 
@@ -49,8 +49,8 @@ final class JobStep implements JobStepInterface
         return $this->condition;
     }
 
-    public function getSelectionMode(): StepSelectionMode
+    public function getSelectionProcessingMode(): SelectionProcessingMode
     {
-        return $this->selectionMode;
+        return $this->selectionProcessingMode;
     }
 }

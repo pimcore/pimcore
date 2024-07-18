@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums;
 
-enum StepSelectionMode: string
+enum SelectionProcessingMode: string
 {
     case ONCE = 'once';
     case FOR_EACH = 'for_each';
