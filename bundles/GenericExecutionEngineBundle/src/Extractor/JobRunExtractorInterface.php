@@ -45,9 +45,6 @@ interface JobRunExtractorInterface
         array $params = []
     ): void;
 
-    /**
-     * @deprecated will be removed with Pimcore 12. Use getElementsToProcess() instead.
-     */
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]

@@ -187,11 +187,6 @@ abstract class AbstractAutomationActionHandler
         return $this->jobExecutionAgent->isRunning($jobRun->getId());
     }
 
-    /**
-     * @deprecated will be removed with Pimcore 12. Use getSubjectsFromMessages() instead.
-     *
-     * @throws UnexpectedValueException
-     */
     protected function getSubjectFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]

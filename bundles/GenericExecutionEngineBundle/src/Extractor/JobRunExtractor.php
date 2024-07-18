@@ -110,21 +110,19 @@ final class JobRunExtractor implements JobRunExtractorInterface
         return $variables;
     }
 
-    /**
-     * @deprecated will be removed with Pimcore 12. Use getSubjectFromMessage() in AbstractAutomationActionHandler.
-     */
     public function getElementFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): ?ElementInterface {
         $elementDescriptor = $message->getElement();
-        if (!$elementDescriptor || !in_array($elementDescriptor->getType(), $types, true)) {
+        if (!$elementDescriptor) {
             return null;
         }
 
-        $element = $this->getElement(
+        $element = $this->getElementByType(
             $elementDescriptor->getType(),
-            $elementDescriptor->getId()
+            $elementDescriptor->getId(),
+            $types
         );
 
         if (!$element) {
@@ -138,6 +136,7 @@ final class JobRunExtractor implements JobRunExtractorInterface
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): array {
+
         $elementsToProcess = [];
         $jobRun = $this->getJobRun($message);
 

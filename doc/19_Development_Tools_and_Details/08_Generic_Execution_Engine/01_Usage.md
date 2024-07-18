@@ -74,3 +74,17 @@ $this->jobRunRepository->updateLogLocalized(
 ## Job Run Error Logs
 Job Run Error Logs are the entity for storing log information about Job Run. There is the
 [`Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface`] for all kind of CRUD operations on these logs.
+
+## Accessing JobStep in Handler
+The `JobStep` object can be accessed in the handler via the `getJobStep` method. This can be useful if you need to access the step configuration in the handler.
+
+```php
+$jobRun = $this->getJobRun($message);
+$steps = $jobRun->getJob()?->getSteps();
+if($steps !== null) {
+    $step = $steps[$jobRun->getCurrentStep()] ?? null;
+    if($step) {
+        return $step->getSelectionMode();
+    }
+}
+```
