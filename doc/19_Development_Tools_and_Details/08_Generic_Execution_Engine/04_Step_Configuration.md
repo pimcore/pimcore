@@ -17,14 +17,14 @@ The message class is the class of the message that should be dispatched when the
 ## Configuration
 The configuration of a step is an array that can contain any kind of data that is necessary for the step handler to execute the step.
 
-## Selection mode
-The selection mode of a step is an enum that defines how the step should be executed.
+## Selection Processing mode
+The selection processing mode of a step is an enum that defines how the step should process the selected elements.
 
-- `StepSelectionMode::FOR_EACH`: The step is executed for each selected element.
+- `SelectionProcessingMode::FOR_EACH`: The step is executed for each selected element.
 For example if you pass 10 selected elements to the job, the message gets dispatched 10 times and the step handler therefore is executed 10 times.
 Use `getSubjectFromMessage()` in `AbstractAutomationActionHandler` method to access the current element in the handler.
 
-- `StepSelectionMode::FOR_ALL`: The step is executed once for all selected elements.
+- `SelectionProcessingMode::FOR_ALL`: The step is executed once for all selected elements.
 If you pass 10 selected elements to the job, the message gets dispatched once and the step handler therefore is executed once.
 Use `getSubjectsFromMessage()` in `AbstractAutomationActionHandler` method to access all elements in the handler.
 
