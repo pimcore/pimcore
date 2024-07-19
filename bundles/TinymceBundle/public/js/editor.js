@@ -89,7 +89,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             menubar: false,
             plugins: [
                 'autolink', 'lists', 'link', 'image', 'code',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                'advlist', 'charmap', 'searchreplace', 'visualblocks', 'hr'
             ],
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
