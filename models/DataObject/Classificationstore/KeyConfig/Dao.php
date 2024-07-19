@@ -15,7 +15,12 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 
+use Exception;
 use Pimcore\Model;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -40,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', [$this->model->getId()]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $this->assignVariablesToModel($data);
         } else {
@@ -50,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getByName(string $name = null): void
     {
@@ -65,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAssociative($stmt);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $this->assignVariablesToModel($data);
         } else {
@@ -74,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -94,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

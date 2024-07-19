@@ -60,4 +60,3 @@ When you're ready to place your meta tags in the layout, simply echo the helper:
 ```twig
 {{ pimcore_head_meta() }}
 ```
-

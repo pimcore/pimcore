@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use function is_array;
 
 /**
  * @internal

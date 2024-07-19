@@ -16,7 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
+use Exception;
 use Pimcore\File;
+use function is_resource;
+use function is_string;
 
 /**
  * @internal
@@ -30,7 +33,7 @@ trait TemporaryFileHelperTrait
      *
      * @return string path to local file
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function getLocalFileFromStream(mixed $stream): string
     {
@@ -50,7 +53,7 @@ trait TemporaryFileHelperTrait
      * @param resource|string $stream
      * @param bool $keep whether to delete this file on shutdown or not
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function getTemporaryFileFromStream(mixed $stream, bool $keep = false): string
     {
@@ -67,7 +70,7 @@ trait TemporaryFileHelperTrait
 
         $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
         if (!$dest) {
-            throw new \Exception(sprintf('Unable to create temporary file in %s', $tmpFilePath));
+            throw new Exception(sprintf('Unable to create temporary file in %s', $tmpFilePath));
         }
 
         stream_copy_to_stream($src, $dest);

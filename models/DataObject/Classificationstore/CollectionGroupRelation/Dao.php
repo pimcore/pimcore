@@ -15,11 +15,16 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_object;
 
 /**
  * @internal
@@ -48,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             [$this->model->getColId(), $this->model->getGroupId()]
         );
 
-        if (!empty($data['colId'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException(sprintf(
@@ -60,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -79,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

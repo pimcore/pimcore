@@ -23,6 +23,8 @@ use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
+use function is_object;
+use function is_string;
 
 /**
  * Make sure you add this processor when using the ApplicationLoggerDb handler as is

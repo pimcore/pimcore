@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -24,6 +25,7 @@ use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Version;
+use function count;
 
 class LocalizedFieldTest extends ModelTestCase
 {
@@ -73,7 +75,7 @@ class LocalizedFieldTest extends ModelTestCase
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Language  not accepted in strict mode');
         $object->setLinput('Test');
     }
@@ -84,7 +86,7 @@ class LocalizedFieldTest extends ModelTestCase
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Language ko not accepted in strict mode');
 
         $object->setLinput('Test', 'ko');

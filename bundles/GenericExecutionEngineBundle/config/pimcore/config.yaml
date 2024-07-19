@@ -1,0 +1,21 @@
+imports:
+    - { resource: default.yaml }
+    - { resource: doctrine.yaml }
+    - { resource: doctrine_migrations.yaml }
+
+monolog:
+    channels: ['generic_execution_engine']
+
+framework:
+    messenger:
+        buses:
+          generic.execution.engine.bus:
+            middleware:
+              - 'Pimcore\Messenger\Middleware\CollectGarbageMiddleware'
+              - 'Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware'
+        enabled: true
+        transports:
+            pimcore_generic_execution_engine:
+                dsn: 'doctrine://default?queue_name=pimcore_generic_execution_engine'
+                retry_strategy:
+                    max_retries: 0 # no retries to prevent data corruption

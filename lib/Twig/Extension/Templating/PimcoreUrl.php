@@ -20,6 +20,8 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use function array_key_exists;
+use function is_array;
 
 class PimcoreUrl implements RuntimeExtensionInterface
 {

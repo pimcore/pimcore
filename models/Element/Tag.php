@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use function is_array;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
@@ -173,7 +175,7 @@ final class Tag extends Model\AbstractModel
     {
         try {
             return (new self)->getDao()->getByPath($path);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
@@ -292,7 +294,7 @@ final class Tag extends Model\AbstractModel
      */
     public function getChildren(): array
     {
-        if ($this->children == null) {
+        if ($this->children === null) {
             if ($this->getId()) {
                 $listing = new Tag\Listing();
                 $listing->setCondition('parentId = ?', $this->getId());
@@ -308,7 +310,19 @@ final class Tag extends Model\AbstractModel
 
     public function hasChildren(): bool
     {
-        return count($this->getChildren()) > 0;
+        if ($this->children) {
+            return true;
+        }
+
+        //skip getTotalCount if array is empty
+        if (is_array($this->children)) {
+            return false;
+        }
+
+        $listing = new Tag\Listing();
+        $listing->setCondition('parentId = ?', $this->getId());
+
+        return $listing->getTotalCount() > 0;
     }
 
     public function correctPath(): void
@@ -332,7 +346,7 @@ final class Tag extends Model\AbstractModel
     /**
      * Deletes a tag
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {

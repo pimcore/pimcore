@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Exception;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
@@ -30,8 +32,14 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
+use ReflectionClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function func_get_args;
+use function get_class;
+use function in_array;
+use function is_string;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
@@ -89,7 +97,7 @@ class Document extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -202,7 +210,7 @@ class Document extends Element\AbstractElement
         }
 
         if ($params['force'] || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $reflectionClass = new \ReflectionClass(static::class);
+            $reflectionClass = new ReflectionClass(static::class);
             if ($reflectionClass->isAbstract()) {
                 $document = new Document();
             } else {
@@ -216,7 +224,7 @@ class Document extends Element\AbstractElement
             }
 
             // Getting classname from document resolver
-            $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
+            $className = Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
 
             /** @var Document $newDocument */
             $newDocument = self::getModelFactory()->build($className);
@@ -242,7 +250,7 @@ class Document extends Element\AbstractElement
             return null;
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(
+        Pimcore::getEventDispatcher()->dispatch(
             new DocumentEvent($document, ['params' => $params]),
             DocumentEvents::POST_LOAD
         );
@@ -267,7 +275,7 @@ class Document extends Element\AbstractElement
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getList(array $config = []): Listing
     {
@@ -336,10 +344,10 @@ class Document extends Element\AbstractElement
                     $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     try {
                         $this->rollBack();
-                    } catch (\Exception $er) {
+                    } catch (Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::error((string) $er);
                     }
@@ -371,6 +379,13 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -382,7 +397,7 @@ class Document extends Element\AbstractElement
             }
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $failureEvent = new DocumentEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
@@ -396,7 +411,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @throws \Exception|DuplicateFullPathException
+     * @throws Exception|DuplicateFullPathException
      */
     private function correctPath(): void
     {
@@ -404,20 +419,20 @@ class Document extends Element\AbstractElement
         if ($this->getId() != 1) { // not for the root node
             // check for a valid key, home has no key, so omit the check
             if (!Element\Service::isValidKey($this->getKey(), 'document')) {
-                throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
+                throw new Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
             }
 
             if (!$this->getParentId()) {
-                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+                throw new Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
             }
 
             if ($this->getParentId() == $this->getId()) {
-                throw new \Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+                throw new Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             $parent = Document::getById($this->getParentId());
             if (!$parent) {
-                throw new \Exception('ParentID not found.');
+                throw new Exception('ParentID not found.');
             }
 
             // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
@@ -425,7 +440,7 @@ class Document extends Element\AbstractElement
             $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
 
             if (strlen($this->getKey()) < 1) {
-                throw new \Exception('Document requires key, generated key automatically');
+                throw new Exception('Document requires key, generated key automatically');
             }
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
@@ -452,7 +467,7 @@ class Document extends Element\AbstractElement
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -460,7 +475,7 @@ class Document extends Element\AbstractElement
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
-            throw new \Exception('Key: ' . $this->getKey() . ' is not allowed in first level (root-level)');
+            throw new Exception('Key: ' . $this->getKey() . ' is not allowed in first level (root-level)');
         }
 
         // set index if null
@@ -482,21 +497,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('document');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                // don't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement((int)$requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 
@@ -521,7 +521,7 @@ class Document extends Element\AbstractElement
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::crit((string) $e);
         }
     }
@@ -617,7 +617,7 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function doDelete(): void
     {
@@ -654,7 +654,7 @@ class Document extends Element\AbstractElement
 
         try {
             if ($this->getId() == 1) {
-                throw new \Exception('root-node cannot be deleted');
+                throw new Exception('root-node cannot be deleted');
             }
 
             $this->doDelete();
@@ -671,7 +671,7 @@ class Document extends Element\AbstractElement
                     $parent->setChildren(null);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
@@ -705,11 +705,11 @@ class Document extends Element\AbstractElement
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
 
-        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $requestStack = Pimcore::getContainer()->get('request_stack');
         $mainRequest = $requestStack->getMainRequest();
         $request = $requestStack->getCurrentRequest();
 
@@ -827,7 +827,7 @@ class Document extends Element\AbstractElement
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
 
@@ -920,6 +920,7 @@ class Document extends Element\AbstractElement
 
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;

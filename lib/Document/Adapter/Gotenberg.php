@@ -16,21 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
-use Gotenberg\Exceptions\GotenbergApiErroed;
+use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
 use Pimcore\Config;
+use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
+use function ini_get;
 
 /**
  * @internal
  */
 class Gotenberg extends Ghostscript
 {
-    protected static bool $validPing = false;
-
     public function isAvailable(): bool
     {
         try {
@@ -38,7 +38,7 @@ class Gotenberg extends Ghostscript
             if ($lo && parent::isAvailable()) { // GhostScript is necessary for pdf count, pdf to text conversion
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::notice($e->getMessage());
         }
 
@@ -57,28 +57,11 @@ class Gotenberg extends Ghostscript
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function checkGotenberg(): bool
     {
-        if (self::$validPing) {
-            return true;
-        }
-
-        if (!class_exists(GotenbergAPI::class, true)) {
-            return false;
-        }
-        $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url'])
-            ->html(Stream::string('dummy.html', '<body></body>'));
-
-        try {
-            GotenbergAPI::send($request);
-            self::$validPing = true;
-
-            return true;
-        } catch (GotenbergApiErroed $e) {
-            return false;
-        }
+        return GotenbergHelper::isAvailable();
     }
 
     public function load(Asset\Document $asset): static
@@ -93,7 +76,7 @@ class Gotenberg extends Ghostscript
             $message = "Couldn't load document " . $asset->getRealFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
 
-            throw new \Exception($message);
+            throw new Exception($message);
         }
 
         $this->asset = $asset;
@@ -120,7 +103,7 @@ class Gotenberg extends Ghostscript
             if (parent::isFileTypeSupported($asset->getFilename())) {
                 return parent::getPdf($asset);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // nothing to do, delegate to gotenberg
         }
 
@@ -151,7 +134,7 @@ class Gotenberg extends Ghostscript
                 rewind($stream);
 
                 return $stream;
-            } catch (GotenbergApiErroed $e) {
+            } catch (Exception $e) {
                 $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . ' with Gotenberg: ';
                 Logger::error($message. $e->getMessage());
 

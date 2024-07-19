@@ -16,6 +16,7 @@
 namespace Pimcore\Image;
 
 use Pimcore\Logger;
+use function is_array;
 
 abstract class Adapter
 {
@@ -41,6 +42,9 @@ abstract class Adapter
 
     protected mixed $resource = null;
 
+    /**
+     * @return $this
+     */
     public function setHeight(int $height): static
     {
         $this->height = $height;
@@ -53,6 +57,9 @@ abstract class Adapter
         return $this->height;
     }
 
+    /**
+     * @return $this
+     */
     public function setWidth(int $width): static
     {
         $this->width = $width;
@@ -89,11 +96,17 @@ abstract class Adapter
         return [$r, $g, $b, 'type' => 'RGB'];
     }
 
+    /**
+     * @return $this
+     */
     public function resize(int $width, int $height): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function scaleByWidth(int $width, bool $forceResize = false): static
     {
         if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
@@ -104,6 +117,9 @@ abstract class Adapter
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function scaleByHeight(int $height, bool $forceResize = false): static
     {
         if ($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
@@ -114,6 +130,9 @@ abstract class Adapter
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function contain(int $width, int $height, bool $forceResize = false): static
     {
         $x = $this->getWidth() / $width;
@@ -129,9 +148,12 @@ abstract class Adapter
         return $this;
     }
 
-    public function cover(int $width, int $height, array|string $orientation = 'center', bool $forceResize = false): static
+    /**
+     * @return $this
+     */
+    public function cover(int $width, int $height, array|string|null $orientation = 'center', bool $forceResize = false): static
     {
-        if (empty($orientation)) {
+        if (!$orientation) {
             $orientation = 'center'; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
         }
         $ratio = $this->getWidth() / $this->getHeight();
@@ -195,36 +217,57 @@ abstract class Adapter
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function frame(int $width, int $height, bool $forceResize = false): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function trim(int $tolerance): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function rotate(int $angle): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function crop(int $x, int $y, int $width, int $height): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setBackgroundColor(string $color): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setBackgroundImage(string $image): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function roundCorners(int $width, int $height): static
     {
         return $this;
@@ -240,16 +283,25 @@ abstract class Adapter
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function applyMask(string $image): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function cropPercent(int $width, int $height, int $x, int $y): static
     {
         if ($this->isVectorGraphic()) {
@@ -269,39 +321,55 @@ abstract class Adapter
         return $this->crop($xPixel, $yPixel, $widthPixel, $heightPixel);
     }
 
+    /**
+     * @return $this
+     */
     public function grayscale(): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function sepia(): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function sharpen(): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function mirror(string $mode): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
         return $this;
     }
 
     /**
-     *
-     *
      * @return $this|false
      */
     abstract public function load(string $imagePath, array $options = []): static|false;
@@ -374,6 +442,9 @@ abstract class Adapter
         ];
     }
 
+    /**
+     * @return $this
+     */
     public function setColorspace(string $type = 'RGB'): static
     {
         return $this;

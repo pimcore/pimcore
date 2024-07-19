@@ -44,7 +44,11 @@ use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait;
+use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
+use function count;
+use function in_array;
+use function is_string;
 
 /**
  * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])
@@ -216,7 +220,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Append
      *
-     * @param  \stdClass $value
+     * @param  stdClass $value
      *
      * @throws Exception
      */
@@ -305,7 +309,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function itemToString(\stdClass $item): string
+    public function itemToString(stdClass $item): string
     {
         if (!in_array($item->type, $this->_typeKeys)) {
             throw new Exception(sprintf('Invalid type "%s" provided for meta', $item->type));
@@ -379,9 +383,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      *
      */
-    public function createData(string $type, string $typeValue, string $content, array $modifiers): \stdClass
+    public function createData(string $type, string $typeValue, string $content, array $modifiers): stdClass
     {
-        $data = new \stdClass;
+        $data = new stdClass;
         $data->type = $type;
         $data->$type = $typeValue;
         $data->content = $content;

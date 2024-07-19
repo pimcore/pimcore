@@ -21,6 +21,7 @@ use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Storage;
+use function is_string;
 
 /**
  * @internal
@@ -206,12 +207,16 @@ class Log extends Model\AbstractModel
             return null;
         }
 
-        $emailLog = new Model\Tool\Email\Log();
-        $emailLog->getDao()->getById($id);
-        $emailLog->setEmailLogExistsHtml();
-        $emailLog->setEmailLogExistsText();
+        try {
+            $emailLog = new Model\Tool\Email\Log();
+            $emailLog->getDao()->getById($id);
+            $emailLog->setEmailLogExistsHtml();
+            $emailLog->setEmailLogExistsText();
 
-        return $emailLog;
+            return $emailLog;
+        } catch (Model\Exception\NotFoundException) {
+            return null;
+        }
     }
 
     /**

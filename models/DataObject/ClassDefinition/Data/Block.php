@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Error;
+use Exception;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -29,6 +32,11 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use function array_key_exists;
+use function count;
+use function is_array;
+use function is_null;
+use function strlen;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
@@ -128,7 +136,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $encodedData = $normalizedData;
 
                         /** @var MarshallerService $marshallerService */
-                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
@@ -190,7 +198,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     if ($fd instanceof NormalizerInterface) {
                         /** @var MarshallerService $marshallerService */
-                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
                             $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
@@ -306,14 +314,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
-                if ($invisible && !is_null($oIndex)) {
+                if ((!array_key_exists($elementName, $blockElement) || $invisible) && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
                     if (empty($context['containerType']) && method_exists($object, $blockGetter)) {
                         $language = $params['language'] ?? null;
                         $items = $object->$blockGetter($language);
-                        if (isset($items[$oIndex])) {
+                        if (isset($items[$oIndex][$elementName])) {
                             $item = $items[$oIndex][$elementName];
-                            $blockData = $blockElement[$elementName] ?: $item->getData();
+                            $blockData = $blockElement[$elementName] ?? $item->getData();
                             $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
@@ -353,7 +361,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param DataObject\Concrete $object
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getBlockDataFromContainer(Concrete $object, array $params = []): mixed
     {
@@ -948,18 +956,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, array $params = []): void
     {
         if (!isset($params['owner'])) {
-            throw new \Error('owner missing');
+            throw new Error('owner missing');
         } else {
             // addition check. if owner is passed but no fieldname then there is something wrong with the params.
             if (!array_key_exists('fieldname', $params)) {
                 // do not throw an exception because it is silently swallowed by the caller
-                throw new \Error('params contains owner but no fieldname');
+                throw new Error('params contains owner but no fieldname');
             }
 
             if ($params['owner'] instanceof DataObject\Localizedfield) {
                 //make sure that for a localized field parent the language param is set and not empty
                 if (($params['language'] ?? null) === null) {
-                    throw new \Error('language param missing');
+                    throw new Error('language param missing');
                 }
             }
             $blockElement->_setOwner($params['owner']);
@@ -1000,7 +1008,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         ]);
                         $resultItem[$key] = $normalizedData;
                     } else {
-                        throw new \Exception('data type ' . $fd->getFieldtype() . ' does not implement normalizer interface');
+                        throw new Exception('data type ' . $fd->getFieldtype() . ' does not implement normalizer interface');
                     }
                 }
                 $result[] = $resultItem;
@@ -1032,7 +1040,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         ]);
                         $resultItem[$key] = $denormalizedData;
                     } else {
-                        throw new \Exception('data type does not implement normalizer interface');
+                        throw new Exception('data type does not implement normalizer interface');
                     }
                 }
                 $result[] = $resultItem;

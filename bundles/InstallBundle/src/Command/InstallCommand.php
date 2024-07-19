@@ -23,6 +23,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,6 +33,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use function count;
+use function explode;
+use function implode;
 
 /**
  * @method Application getApplication()
@@ -171,6 +175,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.'
+            )->addOption(
+                'only-steps',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Specify a comma separated limited list of steps that should run. Available steps: ' . implode(', ', $this->installer->getRunInstallSteps())
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -185,6 +194,11 @@ class InstallCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
+        if ($onlySteps = $input->getOption('only-steps')) {
+            $onlySteps = array_map('trim', explode(',', $onlySteps));
+            $this->installer->setRunInstallSteps($onlySteps);
+        }
+
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
         }
@@ -278,7 +292,7 @@ class InstallCommand extends Command
             } else {
                 $validator = function ($answer) use ($name) {
                     if (empty($answer)) {
-                        throw new \RuntimeException(sprintf('%s cannot be empty', $name));
+                        throw new RuntimeException(sprintf('%s cannot be empty', $name));
                     }
 
                     return $answer;
@@ -361,7 +375,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/installer/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

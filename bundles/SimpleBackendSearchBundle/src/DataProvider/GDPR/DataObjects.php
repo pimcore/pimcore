@@ -18,10 +18,12 @@ namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use function array_key_exists;
 
 class DataObjects extends DataProvider\DataObjects
 {
@@ -102,7 +104,11 @@ class DataObjects extends DataProvider\DataObjects
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element instanceof Concrete) {
-                $data = DataObject\Service::gridObjectData($element);
+                if (class_exists(GridData\DataObject::class)) {
+                    $data = GridData\DataObject::getData($element);
+                } else {
+                    $data = DataObject\Service::gridObjectData($element);
+                }
                 $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
                 $elements[] = $data;
             }

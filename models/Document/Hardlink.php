@@ -16,8 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use function array_key_exists;
+use function count;
+use function func_get_args;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -55,7 +59,7 @@ class Hardlink extends Document
         return null;
     }
 
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
         $sourceDocument = $this->getSourceDocument();
@@ -158,7 +162,7 @@ class Hardlink extends Document
             $children = parent::getChildren($includingUnpublished);
 
             $wrappedSourceChildren = [];
-            if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
+            if ($this->getChildrenFromSource() && $this->getSourceDocument() && !Pimcore::inAdmin()) {
                 $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished)->getDocuments();
                 foreach ($sourceChildren as $key => $c) {
                     $wrappedChild = Document\Hardlink\Service::wrap($c);

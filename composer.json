@@ -48,10 +48,11 @@
     "defuse/php-encryption": "^2.2.0",
     "doctrine/annotations": "^1.13.1 || ^2.0",
     "doctrine/collections": "^1.6.8",
-    "doctrine/dbal": "^3.6",
+    "doctrine/dbal": "^3.8",
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
+    "doctrine/orm": "^2.15",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
@@ -61,7 +62,7 @@
     "knplabs/knp-paginator-bundle": "^6.0.0",
     "league/csv": "^9.11",
     "league/flysystem": "^3.12.0",
-    "league/flysystem-bundle": "^3.1",
+    "league/flysystem-bundle": "^3.3.0",
     "league/html-to-markdown": "^5.1",
     "matthiasmullie/minify": "^1.3",
     "monolog/monolog": "^3.2.0",
@@ -71,9 +72,7 @@
     "nesbot/carbon": "^2.65",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
-    "phpoffice/phpspreadsheet": "^1.24",
     "presta/sitemap-bundle": "^3.3",
-    "rybakit/twig-deferred-extension": "^3.0",
     "sabre/dav": "^4.1.2",
     "scheb/2fa-bundle": "^6.0",
     "scheb/2fa-google-authenticator": "^6.0",
@@ -112,6 +111,7 @@
     "symfony/security-core": "^6.4",
     "symfony/security-http": "^6.4",
     "symfony/serializer": "^6.4",
+    "symfony/string": "^6.4",
     "symfony/templating": "^6.4",
     "symfony/translation": "^6.4",
     "symfony/twig-bridge": "^6.4",
@@ -130,33 +130,36 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "symfony/symfony": "*",
+    "pimcore/admin-ui-classic-bundle": "<1.5",
     "sabre/dav": "4.2.2",
-    "thecodingmachine/safe": "<2.0"
+    "symfony/symfony": "*",
+    "thecodingmachine/safe": "<2.0",
+    "twig/twig": ">=3.9.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
     "ergebnis/phpstan-rules": "^2.0",
-    "phpstan/phpstan": "1.10.56",
+    "phpstan/phpstan": "1.11.5",
     "phpstan/phpstan-symfony": "^1.3.5",
     "phpunit/phpunit": "^9.3",
-    "gotenberg/gotenberg-php": "^1.1",
+    "gotenberg/gotenberg-php": "^1.1 || ^2.4",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.1",
-    "symfony/dotenv": "^6.4"
+    "symfony/dotenv": "^6.4",
+    "symfony/runtime": "^6.4"
   },
   "suggest": {
     "ext-sockets": "*",
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
-    "gotenberg/gotenberg-php": "^1.1 - Required for generating pdf via Gotenberg in assets preview (LibreOffice), page preview, version diff and web2print",
+    "gotenberg/gotenberg-php": "^2.0 - Required for generating pdf via Gotenberg in assets preview (LibreOffice), page preview, version diff and web2print",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
-    "chrome-php/chrome": "Required for Documents Page Previews",
+    "chrome-php/chrome": "Optional for Documents Page Previews when requiring gotenberg-php v2, but required if you opt for gotenberg-php v1",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
     "symfony/dotenv": "Required for loading environment vars from .env files",
-    "pimcore/admin-ui-classic-bundle": "^1.4.0"
+    "pimcore/admin-ui-classic-bundle": "^1.5.0"
   },
   "autoload": {
     "files": [
@@ -177,7 +180,8 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/"
+      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
+      "Pimcore\\Bundle\\GenericExecutionEngineBundle\\": "bundles/GenericExecutionEngineBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
@@ -218,7 +222,8 @@
     },
     "allow-plugins": {
       "eloquent/composer-npm-bridge": false,
-      "php-http/discovery": false
+      "php-http/discovery": false,
+      "symfony/runtime": true
     }
   }
 }

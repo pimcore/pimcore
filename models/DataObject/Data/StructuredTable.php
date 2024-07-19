@@ -16,8 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function array_key_exists;
+use function count;
+use function strlen;
 
 class StructuredTable implements OwnerAwareFieldInterface
 {
@@ -50,7 +54,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      *
      * @return mixed|void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __call(string $name, array $arguments)
     {
@@ -72,7 +76,7 @@ class StructuredTable implements OwnerAwareFieldInterface
                 return $this->data[$key];
             }
 
-            throw new \Exception("Requested data $key not available");
+            throw new Exception("Requested data $key not available");
         }
 
         if (str_starts_with($name, 'set')) {
@@ -93,10 +97,10 @@ class StructuredTable implements OwnerAwareFieldInterface
                     }
                 }
             } elseif (array_key_exists($key, $this->data)) {
-                throw new \Exception('Setting a whole row is not allowed.');
+                throw new Exception('Setting a whole row is not allowed.');
             }
 
-            throw new \Exception("Requested data $key not available");
+            throw new Exception("Requested data $key not available");
         }
     }
 

@@ -32,6 +32,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -80,6 +81,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $user = null;
             if ($adminRequest) {
                 $user = $this->userLoader->getUser();
+            }
+
+            if ($document && !$document->isPublished() && !$user) {
+                $this->logger->warning(
+                    "Denying access to document {$document->getFullPath()} as it is unpublished and there is no user in the session."
+                );
+
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
             }
 
             // editmode, pimcore_preview & pimcore_version

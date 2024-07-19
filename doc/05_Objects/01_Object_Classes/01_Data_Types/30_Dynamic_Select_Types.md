@@ -24,14 +24,11 @@ services:
     public: true
 ```
 
-Depending on your datatype you have to implement the appropriate interface.
- 
- * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options,
- * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface` for the Multiselect options 
+You have to implement the `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface`
  
  Implement the following methods:
  * `getOptions` should return a list of valid options in the format indicated below
- * `getDefaultValue` (Select data type only) returning the default value
+ * `getDefaultValue` returning the default value
  * `hasStaticOptions` should return whether your options are depending on the object context (i.e. different options for different objects) or not.
  This is especially important for the object grid. For object-context depending option there will be no batch assignment mode.
  Also, filtering can only be done through a text field instead of the options list.
@@ -146,4 +143,3 @@ The `purpose` parameter can take the following values:
 | groupId   | group id |
 | keyId     | key id |
 | keyDefinition | the fielddefinition of the classificationstore attribute |
-

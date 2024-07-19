@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use function in_array;
+use function is_string;
 
 class Input extends Data implements
     ResourcePersistenceAwareInterface,
@@ -198,7 +200,7 @@ class Input extends Data implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if(is_string($data)) {
-            if ($this->getRegex() && $data !== '') {
+            if (!$omitMandatoryCheck && $this->getRegex() && $data !== '') {
                 $throwException = false;
                 if (in_array('g', $this->getRegexFlags())) {
                     $flags = str_replace('g', '', implode('', $this->getRegexFlags()));

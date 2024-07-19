@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\Element\Service;
+use function is_string;
 
 class Asset extends Data
 {

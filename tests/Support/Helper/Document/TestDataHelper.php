@@ -43,6 +43,8 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
+use function array_slice;
+use function count;
 
 class TestDataHelper extends AbstractTestDataHelper
 {

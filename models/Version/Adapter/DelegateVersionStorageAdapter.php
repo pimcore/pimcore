@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Version\Adapter;
 
+use Exception;
 use Pimcore\Model\Version;
 
 /**
@@ -44,7 +45,7 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
             $adapter = $this->adapters[$storageType] ?? null;
         }
         if (isset($adapter) === false) {
-            throw new \Exception('no adapter for storage type ' . $storageType . ' found.');
+            throw new Exception('no adapter for storage type ' . $storageType . ' found.');
         }
 
         return $adapter;

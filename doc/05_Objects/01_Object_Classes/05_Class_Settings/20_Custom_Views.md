@@ -249,4 +249,3 @@ copy: false #the default is that all menu entries are visible
 copy: 
     hidden: true
 ```
-
