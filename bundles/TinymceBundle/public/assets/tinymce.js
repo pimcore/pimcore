@@ -21,3 +21,4 @@ import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/visualblocks';
+import 'tinymce/plugins/hr';
