@@ -669,6 +669,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
@@ -912,6 +915,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->allowMultipleAssignments;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowMultipleAssignments(bool|int|null $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;

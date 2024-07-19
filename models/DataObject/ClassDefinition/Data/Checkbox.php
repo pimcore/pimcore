@@ -38,6 +38,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (!is_numeric($defaultValue)) {

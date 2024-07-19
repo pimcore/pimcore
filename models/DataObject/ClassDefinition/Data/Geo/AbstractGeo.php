@@ -59,6 +59,9 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this->lat;
     }
 
+    /**
+     * @return $this
+     */
     public function setLat(float $lat): static
     {
         $this->lat = $lat;
@@ -71,6 +74,9 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this->lng;
     }
 
+    /**
+     * @return $this
+     */
     public function setLng(float $lng): static
     {
         $this->lng = $lng;
@@ -83,6 +89,9 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this->zoom;
     }
 
+    /**
+     * @return $this
+     */
     public function setZoom(int $zoom): static
     {
         $this->zoom = $zoom;

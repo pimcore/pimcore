@@ -569,6 +569,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedClassId(?string $allowedClassId): static
     {
         $this->allowedClassId = $allowedClassId;
@@ -893,6 +896,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->allowMultipleAssignments;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowMultipleAssignments(bool $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;

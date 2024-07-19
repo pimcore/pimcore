@@ -648,8 +648,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return $this
-     *
      * @throws \Exception
      */
     public function save(array $parameters = []): static
