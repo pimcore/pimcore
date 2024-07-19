@@ -552,12 +552,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?array';
+        return 'array';
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]|null';
     }
 
     public function getPhpdocReturnType(): ?string
