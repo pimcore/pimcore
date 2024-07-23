@@ -189,7 +189,7 @@ class SystemSettingsConfig
             ],
             'password' => [
                 'standard' => $values['password.standard'],
-            ],            
+            ],
             'documents' => [
                 'versions' => [
                     'days' => $values['documents.versions.days'] ?? null,
