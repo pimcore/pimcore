@@ -188,7 +188,7 @@ class SystemSettingsConfig
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
             ],
             'password' => [
-                'bsi_standards' => $values['password.bsi_standards'],
+                'standard' => $values['password.standard'],
             ],            
             'documents' => [
                 'versions' => [
