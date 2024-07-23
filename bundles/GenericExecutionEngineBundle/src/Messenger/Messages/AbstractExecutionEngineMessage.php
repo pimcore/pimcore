@@ -21,10 +21,14 @@ use Pimcore\Model\Element\ElementDescriptor;
 
 abstract class AbstractExecutionEngineMessage implements GenericExecutionEngineMessageInterface
 {
+    /**
+     * @param ElementDescriptor[] $elements
+     */
     public function __construct(
         protected int $jobRunId,
         protected int $currentJobStep,
-        protected ?ElementDescriptor $element = null
+        protected ?ElementDescriptor $element = null,
+        protected array $elements = []
     ) {
     }
 

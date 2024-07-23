@@ -14,13 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GenericExecutionEngineBundle\Exception;
+namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums;
 
-use RuntimeException;
-
-/**
- * @internal
- */
-final class InvalidErrorHandlingModeException extends RuntimeException
+enum SelectionProcessingMode: string
 {
+    case ONCE = 'once';
+    case FOR_EACH = 'for_each';
 }

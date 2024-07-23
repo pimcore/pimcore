@@ -33,7 +33,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
-use UnexpectedValueException;
 use function array_key_exists;
 
 abstract class AbstractAutomationActionHandler
@@ -190,24 +189,23 @@ abstract class AbstractAutomationActionHandler
     protected function getSubjectFromMessage(
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
-    ): AbstractElement {
-        /** @var AbstractElement|null $subject */
-        $subject = $this->jobRunExtractor->getElementFromMessage(
-            $message,
-            $types
-        );
-
-        if (!$subject) {
-            throw new UnexpectedValueException(
-                sprintf(
-                    'No subject type found. Expected types: %s, found %s, %s',
-                    implode(', ', $types),
-                    $message->getElement()?->getId(),
-                    $message->getElement()?->getType()
-                )
-            );
-        }
+    ): ?AbstractElement {
+        /** @var AbstractElement $subject */
+        $subject = $this->jobRunExtractor->getElementFromMessage($message, $types);
 
         return $subject;
+    }
+
+    /**
+     * @return AbstractElement[]
+     */
+    protected function getSubjectsFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        array $types = [JobRunExtractorInterface::OBJECT_TYPE, JobRunExtractorInterface::ASSET_TYPE]
+    ): array {
+        /** @var AbstractElement[] $subjects */
+        $subjects = $this->jobRunExtractor->getElementsFromMessage($message, $types);
+
+        return $subjects;
     }
 }

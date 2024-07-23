@@ -49,4 +49,10 @@ interface JobRunExtractorInterface
         GenericExecutionEngineMessageInterface $message,
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): ?ElementInterface;
+
+    /** @return ElementInterface[]  */
+    public function getElementsFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        array $types = [JobRunExtractorInterface::ASSET_TYPE]
+    ): array;
 }
