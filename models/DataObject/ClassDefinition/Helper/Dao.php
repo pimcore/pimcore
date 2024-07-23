@@ -121,6 +121,7 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                $this->removeIndices($table, [$value], []);
             }
         }
         if ($dropColumns) {
