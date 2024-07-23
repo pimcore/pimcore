@@ -288,14 +288,8 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('password')
             ->addDefaultsIfNotSet()
             ->children()
-                ->booleanNode('bsi_standards')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                        ->end()
-                    ->defaultFalse()
+                ->scalarNode('standard')
+                ->defaultValue('pimcore')
                 ->end()
             ->end();
     }
