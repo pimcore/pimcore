@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
@@ -113,6 +114,11 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->rollBack();
 
             throw $e;
+        }
+
+        $cacheKey = 'tags_' . $this->model->getId();
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
     }
 
