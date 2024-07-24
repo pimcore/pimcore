@@ -73,6 +73,7 @@ final class Tag extends Model\AbstractModel
     public static function getById(int $id): ?Tag
     {
         $cacheKey = 'tags_' . $id;
+
         try {
             $tag = RuntimeCache::get($cacheKey);
         } catch (\Exception $ex) {
@@ -84,6 +85,7 @@ final class Tag extends Model\AbstractModel
                 return null;
             }
         }
+
         return $tag;
     }
 
