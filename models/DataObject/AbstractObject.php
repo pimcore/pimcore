@@ -115,6 +115,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected ?string $childrenSortOrder = null;
 
+    /**
+     * @internal
+     *
+     */
+    protected ?array $__rawRelationData = null;
+
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
@@ -619,6 +625,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             // add to queue that saves dependencies
             $this->addToDependenciesQueue();
+
+            //Reset Relational data to force a reload
+            $this->__rawRelationData = null;
 
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
