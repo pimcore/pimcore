@@ -43,12 +43,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     */
-    protected ?array $__rawRelationData = null;
-
-    /**
-     * @internal
-     *
      * Necessary for assigning object reference to corresponding fields while wakeup
      *
      */
@@ -665,8 +659,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
-            //Reset Relational data to force a reload
-            $this->__rawRelationData = null;
 
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
