@@ -199,6 +199,11 @@
       "src/Kernel.php"
     ]
   },
+  "extra": {
+    "branch-alias": {
+      "11.x-dev": "11.4.x-dev"
+    }
+  },
   "scripts": {
     "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
     "post-install-cmd": [
