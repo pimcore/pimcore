@@ -34,8 +34,31 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
 
     public function hash(string $plainPassword, string $salt = null): string
     {
-        if ($this->isPasswordTooLong($plainPassword)) {
-            throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
+        $settings = Config::getSystemConfiguration();
+        $passwordStandard = $settings['password.standard'];
+        
+        if (
+            $passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($plainPassword)
+        ) {
+            throw new BadCredentialsException(
+                sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH)
+            );
+        } elseif (
+            $passwordStandard == 'bsi_standard_less' &&
+            !$this->isLongLessComplexPassword($raw)
+        ) {
+            throw new BadCredentialsException(
+                'Passwords must be at least 8 to 12 characters long
+                and must consist of 4 different character types'
+            );
+        } elseif (
+            $passwordStandard == 'bsi_standard_complex' &&
+            !$this->isComplexPassword($raw)
+        ) {
+            throw new BadCredentialsException(
+                'Passwords must be at least 25 characters long and consist of 2 character types'
+            );
         }
 
         return Authentication::getPasswordHash($this->getUser()->getUserIdentifier(), $plainPassword);
@@ -43,10 +66,53 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
 
     public function verify(string $hashedPassword, string $plainPassword, string $salt = null): bool
     {
-        if ($this->isPasswordTooLong($hashedPassword)) {
+        if (
+            $passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($hashedPassword)
+        ) {
+            return false;
+        } elseif (
+            $passwordStandard == 'bsi_standard_less' &&
+            !$this->isLongLessComplexPassword($raw)
+        ) {
+            return false;
+        } elseif (
+            $passwordStandard == 'bsi_standard_complex' &&
+            !$this->isComplexPassword($raw)
+        ) {
             return false;
         }
 
         return Authentication::verifyPassword($this->getUser()->getUser(), $plainPassword);
+    }
+
+    private function isComplexPassword(string $password): bool
+    {
+        if (strlen($password) < 8 || strlen($password) > 12) {
+            return false;
+        }
+
+        $uppercase = preg_match('/[A-Z]/', $password);
+        $lowercase = preg_match('/[a-z]/', $password);
+        $numbers = preg_match('/d/', $password);
+        $specialCharacters = preg_match('/[^\w]/', $password);
+
+        return $uppercase && $lowercase && $numbers && $specialCharacters;
+    }
+
+    private function isLongLessComplexPassword(string $password): bool
+    {
+        if (strlen($password) < 25) {
+            return false;
+        }
+
+        $uppercase = preg_match('/[A-Z]/', $password);
+        $lowercase = preg_match('/[a-z]/', $password);
+        $numbers = preg_match('/d/', $password);
+        $specialCharacters = preg_match('/[^\w]/', $password);
+
+        $typesCount = count(array_filter([$uppercase, $lowercase, $numbers, $specialCharacters]));
+
+        return $typesCount >= 2;
     }
 }
