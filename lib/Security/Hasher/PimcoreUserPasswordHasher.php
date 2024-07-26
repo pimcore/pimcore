@@ -15,6 +15,7 @@
 
 namespace Pimcore\Security\Hasher;
 
+use Pimcore\Config;
 use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
@@ -70,18 +71,12 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
     public function verify(string $hashedPassword, string $plainPassword, string $salt = null): bool
     {
         if (
-            $passwordStandard == 'pimcore' &&
-            $this->isPasswordTooLong($hashedPassword)
-        ) {
-            return false;
-        } elseif (
-            $passwordStandard == 'bsi_standard_less' &&
-            !$this->isLongLessComplexPassword($raw)
-        ) {
-            return false;
-        } elseif (
-            $passwordStandard == 'bsi_standard_complex' &&
-            !$this->isComplexPassword($raw)
+            ($passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($hashedPassword)) ||
+            ($passwordStandard == 'bsi_standard_less' &&
+            !$this->isLongLessComplexPassword($plainPassword)) ||
+            ($passwordStandard == 'bsi_standard_complex' &&
+            !$this->isComplexPassword($plainPassword))
         ) {
             return false;
         }
