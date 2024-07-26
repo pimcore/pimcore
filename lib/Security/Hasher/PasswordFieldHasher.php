@@ -96,18 +96,12 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
         $passwordStandard = $settings['password.standard'];
 
         if (
-            $passwordStandard == 'pimcore' &&
-            $this->isPasswordTooLong($raw)
-        ) {
-            return false;
-        } elseif (
-            $passwordStandard == 'bsi_standard_less' &&
-            !$this->isLongLessComplexPassword($raw)
-        ) {
-            return false;
-        } elseif (
-            $passwordStandard == 'bsi_standard_complex' &&
-            !$this->isComplexPassword($raw)
+            ($passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($raw)) ||
+            ($passwordStandard == 'bsi_standard_less' &&
+            !$this->isLongLessComplexPassword($raw)) ||
+            ($passwordStandard == 'bsi_standard_complex' &&
+            !$this->isComplexPassword($raw))
         ) {
             return false;
         }
