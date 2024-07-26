@@ -57,8 +57,28 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function hashPassword(string $raw, ?string $salt): string
     {
+        $settings = SystemSettingsConfig::get();
+        $passwordStandard = $settings['password.standard'];
+        
         if ($this->isPasswordTooLong($raw)) {
-            throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
+            throw new BadCredentialsException(
+                sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH)
+            );
+        } elseif (
+            $passwordStandard == 'bsi_standard_less' &&
+            $this->isLongLessComplexPassword($raw)
+        ) {
+            throw new BadCredentialsException(
+                'Passwords must be at least 8 to 12 characters long
+                and must consist of 4 different character types'
+            );
+        } elseif (
+            $passwordStandard == 'bsi_standard_complex' &&
+            $this->isComplexPassword($raw)
+        ) {
+            throw new BadCredentialsException(
+                'Passwords must be at least 25 characters long and consist of 2 character types'
+            );
         }
 
         return $this->getFieldDefinition()->calculateHash($raw);
@@ -66,7 +86,23 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function isPasswordValid(string $encoded, string $raw): bool
     {
-        if ($this->isPasswordTooLong($raw)) {
+        $settings = SystemSettingsConfig::get();
+        $passwordStandard = $settings['password.standard'];
+        
+        if (
+            $passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($raw)
+        ) {
+            return false;
+        } elseif (
+            $passwordStandard == 'bsi_standard_less' &&
+            !$this->isLongLessComplexPassword($raw)
+        ) {
+            return false;
+        } elseif (
+            $passwordStandard == 'bsi_standard_complex' &&
+            !$this->isComplexPassword($raw)
+        ) {
             return false;
         }
 
@@ -97,5 +133,35 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     public function verify(string $hashedPassword, string $plainPassword, ?string $salt = null): bool
     {
         return $this->getFieldDefinition()->verifyPassword($plainPassword, $this->getUser(), $this->updateHash);
+    }
+
+    private function isComplexPassword(string $password): bool
+    {
+        if (strlen($password) < 8 || strlen($password) > 12) {
+            return false;
+        }
+
+        $uppercase = preg_match('/[A-Z]/', $password);
+        $lowercase = preg_match('/[a-z]/', $password);
+        $numbers = preg_match('/d/', $password);
+        $specialCharacters = preg_match('/[^\w]/', $password);
+
+        return $uppercase && $lowercase && $numbers && $specialCharacters;
+    }
+
+    private function isLongLessComplexPassword(string $password): bool
+    {
+        if (strlen($password) < 25) {
+            return false;
+        }
+
+        $uppercase = preg_match('/[A-Z]/', $password);
+        $lowercase = preg_match('/[a-z]/', $password);
+        $numbers = preg_match('/d/', $password);
+        $specialCharacters = preg_match('/[^\w]/', $password);
+
+        $typesCount = count(array_filter([$uppercase, $lowercase, $numbers, $specialCharacters]));
+
+        return $typesCount >= 2;
     }
 }
