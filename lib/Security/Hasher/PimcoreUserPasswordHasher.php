@@ -70,6 +70,9 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
 
     public function verify(string $hashedPassword, string $plainPassword, string $salt = null): bool
     {
+        $settings = Config::getSystemConfiguration();
+        $passwordStandard = $settings['password.standard'];
+        
         if (
             ($passwordStandard == 'pimcore' &&
             $this->isPasswordTooLong($hashedPassword)) ||
