@@ -21,7 +21,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
+use function count;
 use function get_class;
+use function strlen;
 
 /**
  * @internal
@@ -59,7 +61,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     {
         $settings = SystemSettingsConfig::get();
         $passwordStandard = $settings['password.standard'];
-        
+
         if ($this->isPasswordTooLong($raw)) {
             throw new BadCredentialsException(
                 sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH)
@@ -88,7 +90,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
     {
         $settings = SystemSettingsConfig::get();
         $passwordStandard = $settings['password.standard'];
-        
+
         if (
             $passwordStandard == 'pimcore' &&
             $this->isPasswordTooLong($raw)
