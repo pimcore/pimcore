@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Security\Hasher;
 
+use Pimcore\Config;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
-use Pimcore\Config;
 use function count;
 use function get_class;
 use function strlen;

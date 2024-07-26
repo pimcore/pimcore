@@ -19,6 +19,8 @@ use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use function count;
+use function strlen;
 
 /**
  * As pimcore needs the user information when hashing the password, every user gets his own hasher instance with a
@@ -36,7 +38,7 @@ class PimcoreUserPasswordHasher extends AbstractUserAwarePasswordHasher
     {
         $settings = Config::getSystemConfiguration();
         $passwordStandard = $settings['password.standard'];
-        
+
         if (
             $passwordStandard == 'pimcore' &&
             $this->isPasswordTooLong($plainPassword)
