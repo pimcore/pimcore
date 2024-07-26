@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
+use Pimcore\Config;
 use function count;
 use function get_class;
 use function strlen;
@@ -59,16 +60,19 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function hashPassword(string $raw, ?string $salt): string
     {
-        $settings = SystemSettingsConfig::get();
+        $settings = Config::getSystemConfiguration();
         $passwordStandard = $settings['password.standard'];
 
-        if ($this->isPasswordTooLong($raw)) {
+        if (
+            $passwordStandard == 'pimcore' &&
+            $this->isPasswordTooLong($raw)
+        ) {
             throw new BadCredentialsException(
                 sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH)
             );
         } elseif (
             $passwordStandard == 'bsi_standard_less' &&
-            $this->isLongLessComplexPassword($raw)
+            !$this->isLongLessComplexPassword($raw)
         ) {
             throw new BadCredentialsException(
                 'Passwords must be at least 8 to 12 characters long
@@ -76,7 +80,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
             );
         } elseif (
             $passwordStandard == 'bsi_standard_complex' &&
-            $this->isComplexPassword($raw)
+            !$this->isComplexPassword($raw)
         ) {
             throw new BadCredentialsException(
                 'Passwords must be at least 25 characters long and consist of 2 character types'
@@ -88,7 +92,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 
     public function isPasswordValid(string $encoded, string $raw): bool
     {
-        $settings = SystemSettingsConfig::get();
+        $settings = Config::getSystemConfiguration();
         $passwordStandard = $settings['password.standard'];
 
         if (
