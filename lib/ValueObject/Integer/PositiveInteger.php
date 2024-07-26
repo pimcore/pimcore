@@ -18,6 +18,7 @@ declare(strict_types = 1);
 namespace Pimcore\ValueObject\Integer;
 
 use ValueError;
+use function sprintf;
 
 final class PositiveInteger
 {

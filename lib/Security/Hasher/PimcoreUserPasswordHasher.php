@@ -20,6 +20,7 @@ use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use function count;
+use function sprintf;
 use function strlen;
 
 /**

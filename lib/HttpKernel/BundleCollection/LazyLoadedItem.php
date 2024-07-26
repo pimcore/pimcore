@@ -22,6 +22,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use function in_array;
+use function sprintf;
 
 class LazyLoadedItem extends AbstractItem
 {

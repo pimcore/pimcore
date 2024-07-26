@@ -28,6 +28,7 @@ use Presta\SitemapBundle\Service\UrlContainerInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function sprintf;
 
 class DocumentTreeGenerator extends AbstractElementGenerator
 {

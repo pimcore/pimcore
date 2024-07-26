@@ -24,6 +24,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 use function count;
 use function get_class;
+use function sprintf;
 use function strlen;
 
 /**

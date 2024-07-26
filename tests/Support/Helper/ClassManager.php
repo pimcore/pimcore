@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefini
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 use function dirname;
+use function sprintf;
 
 class ClassManager extends Module
 {

@@ -31,6 +31,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function get_class;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal

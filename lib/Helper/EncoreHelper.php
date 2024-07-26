@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Helper;
 
 use InvalidArgumentException;
+use function sprintf;
 
 final class EncoreHelper
 {

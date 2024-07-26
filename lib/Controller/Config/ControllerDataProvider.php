@@ -24,6 +24,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use function get_class;
+use function sprintf;
 
 /**
  * Provides bundle/controller/action/template selection options which can be

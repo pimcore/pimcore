@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal
