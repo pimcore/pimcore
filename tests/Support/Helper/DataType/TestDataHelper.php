@@ -40,6 +40,7 @@ use function count;
 use function get_class;
 use function is_array;
 use function is_null;
+use function sprintf;
 
 class TestDataHelper extends AbstractTestDataHelper
 {

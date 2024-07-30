@@ -25,6 +25,7 @@ use Pimcore\Tool\Serialize;
 use function is_array;
 use function is_null;
 use function is_object;
+use function sprintf;
 
 class RgbaColor extends Data implements
     ResourcePersistenceAwareInterface,

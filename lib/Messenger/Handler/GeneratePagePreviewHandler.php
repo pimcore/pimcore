@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document\Service;
 use Psr\Log\LoggerInterface;
+use function sprintf;
 
 /**
  * @internal

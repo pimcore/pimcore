@@ -23,6 +23,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use function sprintf;
 
 /**
  * @internal
