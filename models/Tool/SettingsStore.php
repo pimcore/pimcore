@@ -20,6 +20,7 @@ use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
 use function in_array;
+use function sprintf;
 
 /**
  * @method Dao getDao()

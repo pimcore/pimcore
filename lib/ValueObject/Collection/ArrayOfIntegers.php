@@ -20,6 +20,7 @@ namespace Pimcore\ValueObject\Collection;
 use ValueError;
 use function gettype;
 use function is_int;
+use function sprintf;
 
 final class ArrayOfIntegers
 {

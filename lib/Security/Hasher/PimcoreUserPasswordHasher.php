@@ -19,6 +19,7 @@ use Pimcore\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use function sprintf;
 
 /**
  * As pimcore needs the user information when hashing the password, every user gets his own hasher instance with a

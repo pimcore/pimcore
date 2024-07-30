@@ -21,6 +21,7 @@ use JsonException;
 use RuntimeException;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 /**
  * @internal

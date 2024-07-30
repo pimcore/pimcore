@@ -19,6 +19,7 @@ namespace Pimcore\DataObject\ClassBuilder;
 use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Filesystem\Filesystem;
+use function sprintf;
 
 class PHPClassDumper implements PHPClassDumperInterface
 {

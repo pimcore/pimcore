@@ -18,6 +18,7 @@ namespace Pimcore\Model\Notification\Listing;
 use Doctrine\DBAL\Exception;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 use Pimcore\Model\Notification;
+use function sprintf;
 
 /**
  * @internal

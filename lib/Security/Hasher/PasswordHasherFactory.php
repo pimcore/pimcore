@@ -24,6 +24,7 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use function array_key_exists;
 use function is_object;
+use function sprintf;
 
 /**
  * @internal

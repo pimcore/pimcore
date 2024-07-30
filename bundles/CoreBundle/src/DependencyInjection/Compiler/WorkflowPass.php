@@ -31,6 +31,7 @@ use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 use function is_null;
+use function sprintf;
 
 /**
  * @internal

@@ -22,6 +22,7 @@ use Pimcore\Navigation\Renderer\RendererInterface;
 use function get_class;
 use function gettype;
 use function is_object;
+use function sprintf;
 
 class InvalidRendererException extends LogicException
 {
