@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProviderInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\JobNotFoundException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface;
@@ -219,7 +220,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
     public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void {
         $job = $jobRun->getJob();
         if (!$job) {
-            throw new RuntimeException('Job not found for JobRun with id: ' . $jobRun->getId());
+            throw new JobNotFoundException('Job not found for JobRun with id: ' . $jobRun->getId());
         }
         $currentlySelectedElements = $job->getSelectedElements();
         $job->setSelectedElements($selectedElements);

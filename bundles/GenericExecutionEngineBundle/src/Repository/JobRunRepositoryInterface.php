@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Repository;
 
 use Doctrine\DBAL\Exception;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\JobNotFoundException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 
 interface JobRunRepositoryInterface
@@ -75,5 +76,8 @@ interface JobRunRepositoryInterface
 
     public function getLastJobRunByName(string $name): ?JobRun;
 
+    /**
+     * @throws JobNotFoundException
+     */
     public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void;
 }
