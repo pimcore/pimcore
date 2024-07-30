@@ -21,6 +21,7 @@ use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
 use function in_array;
 use function is_bool;
+use function sprintf;
 
 /**
  * @internal

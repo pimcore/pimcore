@@ -23,6 +23,7 @@ use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
+use function sprintf;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

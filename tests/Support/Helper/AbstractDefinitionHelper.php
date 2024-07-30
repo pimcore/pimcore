@@ -20,6 +20,7 @@ use Codeception\Module;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionClass;
+use function sprintf;
 
 abstract class AbstractDefinitionHelper extends Module
 {

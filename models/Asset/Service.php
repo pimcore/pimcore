@@ -33,6 +33,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use function preg_quote;
 use function preg_replace;
+use function sprintf;
 use function strlen;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;

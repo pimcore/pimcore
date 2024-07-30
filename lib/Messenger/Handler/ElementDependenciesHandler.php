@@ -24,6 +24,7 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use function sprintf;
 
 /**
  * @internal

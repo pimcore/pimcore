@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use function is_array;
+use function sprintf;
 use function strlen;
 
 class QuantityValue extends AbstractQuantityValue
