@@ -32,6 +32,7 @@ use function count;
 use function in_array;
 use function is_array;
 use function is_null;
+use function sprintf;
 
 /**
  * @method Localizedfield\Dao getDao()*

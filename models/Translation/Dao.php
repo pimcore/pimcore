@@ -25,6 +25,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use function count;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 /**
  * @internal

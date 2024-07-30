@@ -31,6 +31,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use function count;
 
 final class JobRunRepository implements JobRunRepositoryInterface
 {
@@ -216,7 +217,8 @@ final class JobRunRepository implements JobRunRepositoryInterface
     /**
      * @throws Exception
      */
-    public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void {
+    public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void
+    {
         $job = $jobRun->getJob();
         if (!$job) {
             throw new RuntimeException('Job not found for JobRun with id: ' . $jobRun->getId());
@@ -229,7 +231,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
             'gee_updated_selected_elements',
             [
                 '%fromCount%' => count($currentlySelectedElements),
-                '%toCount%' => count($selectedElements)
+                '%toCount%' => count($selectedElements),
             ]
         );
     }

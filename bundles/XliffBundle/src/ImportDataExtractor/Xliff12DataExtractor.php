@@ -25,6 +25,7 @@ use Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\Trans
 use Pimcore\Tool;
 use SimpleXMLElement;
 use function count;
+use function sprintf;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {

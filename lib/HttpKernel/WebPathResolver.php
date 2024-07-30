@@ -18,6 +18,7 @@ namespace Pimcore\HttpKernel;
 
 use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use function sprintf;
 
 /**
  * Builds public web path for a resource saved in Resources/public of a bundle

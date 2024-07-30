@@ -20,6 +20,7 @@ namespace Pimcore\ValueObject\Collection;
 use ValueError;
 use function gettype;
 use function is_string;
+use function sprintf;
 
 final class ArrayOfStrings
 {

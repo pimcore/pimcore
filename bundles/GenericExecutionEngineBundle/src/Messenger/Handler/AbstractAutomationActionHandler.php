@@ -209,7 +209,8 @@ abstract class AbstractAutomationActionHandler
         return $subjects;
     }
 
-    protected function setSelectedElementsForNextJobStep(JobRun $jobRun, array $selectedElements): void {
+    protected function setSelectedElementsForNextJobStep(JobRun $jobRun, array $selectedElements): void
+    {
         $this->jobRunRepository->updateSelectedElements($jobRun, $selectedElements);
     }
 }

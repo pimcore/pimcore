@@ -36,6 +36,7 @@ use function func_get_args;
 use function in_array;
 use function is_array;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 /**

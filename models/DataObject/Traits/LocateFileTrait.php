@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use function sprintf;
+
 /**
  * @internal
  */

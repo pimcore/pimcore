@@ -23,6 +23,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Uid\Uuid as Uid;
 use function count;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal

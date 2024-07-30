@@ -59,7 +59,8 @@ final class Job
         return $this->environmentData;
     }
 
-    public function setSelectedElements(array $selectedElements): void {
+    public function setSelectedElements(array $selectedElements): void
+    {
         $this->selectedElements = $selectedElements;
     }
 }
