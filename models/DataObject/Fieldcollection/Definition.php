@@ -30,6 +30,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use function in_array;
+use function sprintf;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()

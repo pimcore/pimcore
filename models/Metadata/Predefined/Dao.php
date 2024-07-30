@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 use function count;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal

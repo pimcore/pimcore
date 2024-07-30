@@ -49,6 +49,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 use function count;
 use function in_array;
 use function is_string;
+use function sprintf;
 
 /**
  * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])

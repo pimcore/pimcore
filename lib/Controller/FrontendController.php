@@ -26,6 +26,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use function in_array;
+use function sprintf;
 
 /**
  * @property Document\PageSnippet $document

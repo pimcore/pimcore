@@ -45,6 +45,7 @@ use function get_class;
 use function is_array;
 use function is_int;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 abstract class Page extends Container
