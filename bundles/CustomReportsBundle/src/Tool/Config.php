@@ -22,6 +22,7 @@ use Pimcore;
 use Pimcore\Model;
 use RuntimeException;
 use stdClass;
+use function sprintf;
 
 /**
  * @internal

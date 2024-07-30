@@ -18,6 +18,7 @@ declare(strict_types = 1);
 namespace Pimcore\Loader\ImplementationLoader;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use function sprintf;
 
 /**
  * @internal

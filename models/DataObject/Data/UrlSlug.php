@@ -30,6 +30,7 @@ use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function sprintf;
 
 class UrlSlug implements OwnerAwareFieldInterface
 {

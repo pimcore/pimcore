@@ -29,6 +29,7 @@ use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
 use function in_array;
 use function is_string;
+use function sprintf;
 
 /**
  * @method \Pimcore\Bundle\SeoBundle\Model\Redirect\Dao getDao()

@@ -41,6 +41,7 @@ use function get_class;
 use function in_array;
 use function preg_quote;
 use function preg_replace;
+use function sprintf;
 use function strlen;
 use function time;
 use function urldecode;

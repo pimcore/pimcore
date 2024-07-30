@@ -25,6 +25,7 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\Process;
 use function ini_get;
+use function sprintf;
 
 /**
  * @internal

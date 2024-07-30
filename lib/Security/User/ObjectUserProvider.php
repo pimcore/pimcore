@@ -24,6 +24,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use function call_user_func_array;
+use function sprintf;
 
 /**
  * @internal
