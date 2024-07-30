@@ -30,6 +30,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 final class JobRunRepository implements JobRunRepositoryInterface
 {
@@ -210,5 +211,26 @@ final class JobRunRepository implements JobRunRepositoryInterface
         }
 
         return $result[0];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void {
+        $job = $jobRun->getJob();
+        if (!$job) {
+            throw new RuntimeException('Job not found for JobRun with id: ' . $jobRun->getId());
+        }
+        $currentlySelectedElements = $job->getSelectedElements();
+        $job->setSelectedElements($selectedElements);
+        $this->update($jobRun);
+        $this->updateLogLocalizedWithDomain(
+            $jobRun,
+            'gee_updated_selected_elements',
+            [
+                '%fromCount%' => count($currentlySelectedElements),
+                '%toCount%' => count($selectedElements)
+            ]
+        );
     }
 }

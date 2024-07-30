@@ -28,7 +28,7 @@ final class Job
     public function __construct(
         private readonly string $name,
         private readonly array $steps,
-        private readonly array $selectedElements = [],
+        private array $selectedElements = [],
         private readonly array $environmentData = []
     ) {
         if (empty($this->steps)) {
@@ -57,5 +57,9 @@ final class Job
     public function getEnvironmentData(): array
     {
         return $this->environmentData;
+    }
+
+    public function setSelectedElements(array $selectedElements): void {
+        $this->selectedElements = $selectedElements;
     }
 }

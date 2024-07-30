@@ -74,4 +74,6 @@ interface JobRunRepositoryInterface
     ): array;
 
     public function getLastJobRunByName(string $name): ?JobRun;
+
+    public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void;
 }
