@@ -72,4 +72,4 @@ The following list of resources should show you where to get information about P
 As Pimcore is an open-source project, any contributions are highly appreciated. For details, see our [Contributing guide](https://github.com/pimcore/pimcore/blob/11.x/CONTRIBUTING.md).
 
 -----
-Wanna see more - [Let's get started](../01_Getting_Started/README.md)
+Want to see more - [Let's get started](../01_Getting_Started/README.md)
