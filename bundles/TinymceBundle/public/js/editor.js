@@ -129,6 +129,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                     if (!changedContent) {
                         return;
                     }
+                    changedContent = false;
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
