@@ -86,6 +86,7 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         const maxChars = this.maxChars;
+        let changedContent = false;
 
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
@@ -121,7 +122,13 @@ pimcore.bundle.tinymce.editor = Class.create({
                         }
                     }));
                 }.bind(this));
+                editor.on('change', function (eChange) {
+                    changedContent = true;
+                }.bind(this));
                 editor.on('blur', function (eChange) {
+                    if (!changedContent) {
+                        return;
+                    }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
