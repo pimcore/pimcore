@@ -50,7 +50,7 @@ class TheFormatter implements PathFormatterInterface
         $context = $params['context'];
 
         foreach ($targets as $key => $item) {
-            $newPath = $item['path'] . ' - ' . time();
+            $newPath = ($item['path'] ?? $item['fullpath']) . ' - ' . time();
             if (isset($context['language'])) {
                 $newPath .= ' ' . $context['language'];
             }
