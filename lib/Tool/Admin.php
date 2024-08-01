@@ -31,9 +31,6 @@ class Admin
 {
     /**
      * finds installed languages
-     *
-     * @static
-     *
      */
     public static function getLanguages(): array
     {
@@ -81,11 +78,6 @@ class Admin
         return array_unique($languages);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getMinimizedScriptPath(string $scriptContent): array
     {
         $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';
@@ -130,9 +122,6 @@ class Admin
 
     /**
      * @deprecated and will be removed in Pimcore 12
-     *
-     * @static
-     *
      */
     public static function getMaintenanceModeFile(): string
     {
@@ -173,8 +162,6 @@ class Admin
 
     /**
      * @deprecated Use MaintenanceModeHelperInterface::deactivate instead.
-     *
-     * @static
      */
     public static function deactivateMaintenanceMode(): void
     {
@@ -185,9 +172,6 @@ class Admin
 
     /**
      * @deprecated use MaintenanceModeHelperInterface::isActive instead.
-     *
-     * @static
-     *
      */
     public static function isInMaintenanceMode(): bool
     {
@@ -262,10 +246,6 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getCurrentUser(): ?User
     {
         return \Pimcore::getContainer()
