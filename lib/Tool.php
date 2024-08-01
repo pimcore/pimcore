@@ -64,6 +64,7 @@ final class Tool
      *
      * @static
      *
+     * @param ?string $language
      *
      */
     public static function isValidLanguage(?string $language): bool
