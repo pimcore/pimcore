@@ -758,7 +758,13 @@ class Imagick extends Adapter
             }
 
             $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
-            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+            if ($this->checkPreserveAnimation()) {
+                foreach ($this->resource as $i => $frame) {
+                    $frame->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+                }
+            } else {
+                $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+            }
         }
 
         $this->postModify();
