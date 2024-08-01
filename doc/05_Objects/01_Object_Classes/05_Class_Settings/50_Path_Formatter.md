@@ -68,7 +68,7 @@ class TheFormatter implements PathFormatterInterface
                     $title = $asset->getMetadata('title');
 
                     if (!$title) {
-                        $title = 'this guy does not have a title, use ' . $newPath . ' instead';
+                        $title = 'this asset does not have a title, use ' . $newPath . ' instead';
                     }
                     if ($fd instanceof Data\ManyToManyRelation) {
                         $newPath = '<img src="' . $asset . '" style="width: 25px; height: 18px;" />' . $title;
