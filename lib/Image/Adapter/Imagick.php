@@ -774,17 +774,21 @@ class Imagick extends Adapter
         switch ($origin) {
             case 'top-right':
                 $x = $imageWidth - $newImageWidth - $x;
+
                 break;
             case 'bottom-left':
                 $y = $imageHeight - $newImageHeight - $y;
+
                 break;
             case 'bottom-right':
                 $x = $imageWidth - $newImageWidth - $x;
                 $y = $imageHeight - $newImageHeight - $y;
+
                 break;
             case 'center':
                 $x = round($imageWidth / 2 - $newImageWidth / 2) + $x;
                 $y = round($imageHeight / 2 - $newImageHeight / 2) + $y;
+
                 break;
         }
 
