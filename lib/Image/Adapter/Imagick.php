@@ -744,32 +744,51 @@ class Imagick extends Adapter
             $newImage = $image;
         }
 
-        if ($newImage) {
-            if ($origin === 'top-right') {
-                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-            } elseif ($origin === 'bottom-left') {
-                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin === 'bottom-right') {
-                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin === 'center') {
-                $x = round($this->resource->getImageWidth() / 2) - round($newImage->getImageWidth() / 2) + $x;
-                $y = round($this->resource->getImageHeight() / 2) - round($newImage->getImageHeight() / 2) + $y;
-            }
+        if ($newImage instanceof \Imagick) {
+            [$x, $y] = $this->calculateOverlayPosition($newImage, $x, $y, $origin);
 
             $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
+
+            $compositeValue = constant('Imagick::' . $composite);
             if ($this->checkPreserveAnimation()) {
-                foreach ($this->resource as $i => $frame) {
-                    $frame->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+                foreach ($this->resource as $frame) {
+                    $frame->compositeImage($newImage, $compositeValue, (int)$x, (int)$y);
                 }
             } else {
-                $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+                $this->resource->compositeImage($newImage, $compositeValue, (int)$x, (int)$y);
             }
         }
 
         $this->postModify();
 
         return $this;
+    }
+
+    public function calculateOverlayPosition(\Imagick $newImage, int $x, int $y, string $origin): array
+    {
+        $imageWidth = $this->resource->getImageWidth();
+        $imageHeight = $this->resource->getImageHeight();
+        $newImageWidth = $newImage->getImageWidth();
+        $newImageHeight = $newImage->getImageHeight();
+
+        switch ($origin) {
+            case 'top-right':
+                $x = $imageWidth - $newImageWidth - $x;
+                break;
+            case 'bottom-left':
+                $y = $imageHeight - $newImageHeight - $y;
+                break;
+            case 'bottom-right':
+                $x = $imageWidth - $newImageWidth - $x;
+                $y = $imageHeight - $newImageHeight - $y;
+                break;
+            case 'center':
+                $x = round($imageWidth / 2 - $newImageWidth / 2) + $x;
+                $y = round($imageHeight / 2 - $newImageHeight / 2) + $y;
+                break;
+        }
+
+        return [$x, $y];
     }
 
     public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
