@@ -752,47 +752,16 @@ class Imagick extends Adapter
             $compositeValue = constant('Imagick::' . $composite);
             if ($this->checkPreserveAnimation()) {
                 foreach ($this->resource as $frame) {
-                    $frame->compositeImage($newImage, $compositeValue, (int)$x, (int)$y);
+                    $frame->compositeImage($newImage, $compositeValue, $x, $y);
                 }
             } else {
-                $this->resource->compositeImage($newImage, $compositeValue, (int)$x, (int)$y);
+                $this->resource->compositeImage($newImage, $compositeValue, $x, $y);
             }
         }
 
         $this->postModify();
 
         return $this;
-    }
-
-    public function calculateOverlayPosition(\Imagick $newImage, int $x, int $y, string $origin): array
-    {
-        $imageWidth = $this->resource->getImageWidth();
-        $imageHeight = $this->resource->getImageHeight();
-        $newImageWidth = $newImage->getImageWidth();
-        $newImageHeight = $newImage->getImageHeight();
-
-        switch ($origin) {
-            case 'top-right':
-                $x = $imageWidth - $newImageWidth - $x;
-
-                break;
-            case 'bottom-left':
-                $y = $imageHeight - $newImageHeight - $y;
-
-                break;
-            case 'bottom-right':
-                $x = $imageWidth - $newImageWidth - $x;
-                $y = $imageHeight - $newImageHeight - $y;
-
-                break;
-            case 'center':
-                $x = round($imageWidth / 2 - $newImageWidth / 2) + $x;
-                $y = round($imageHeight / 2 - $newImageHeight / 2) + $y;
-
-                break;
-        }
-
-        return [$x, $y];
     }
 
     public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
@@ -1012,6 +981,40 @@ class Imagick extends Adapter
         }
 
         return self::$supportedFormatsCache[$format];
+    }
+
+    /**
+     * @return array{int, int}
+     */
+    private function calculateOverlayPosition(\Imagick $newImage, int $x, int $y, string $origin): array
+    {
+        $imageWidth = $this->resource->getImageWidth();
+        $imageHeight = $this->resource->getImageHeight();
+        $newImageWidth = $newImage->getImageWidth();
+        $newImageHeight = $newImage->getImageHeight();
+
+        return match ($origin) {
+            'top-right' => [
+                $imageWidth - $newImageWidth - $x,
+                $y,
+            ],
+            'bottom-left' => [
+                $x,
+                $imageHeight - $newImageHeight - $y,
+            ],
+            'bottom-right' => [
+                $imageWidth - $newImageWidth - $x,
+                $imageHeight - $newImageHeight - $y,
+            ],
+            'center' => [
+                (int) round($imageWidth / 2 - $newImageWidth / 2) + $x,
+                (int) round($imageHeight / 2 - $newImageHeight / 2) + $y,
+            ],
+            default => [
+                $x,
+                $y,
+            ],
+        };
     }
 
     private function checkFormatSupport(string $format): bool
