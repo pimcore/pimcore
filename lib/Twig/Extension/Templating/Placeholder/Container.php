@@ -261,6 +261,8 @@ class Container extends ArrayObject
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
      *
      * @throws Exception
+     *
+     * @deprecated use twig set tag instead
      */
     public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
@@ -279,6 +281,7 @@ class Container extends ArrayObject
     /**
      * End content capture
      *
+     * @deprecated use twig set tag instead
      */
     public function captureEnd(): void
     {
