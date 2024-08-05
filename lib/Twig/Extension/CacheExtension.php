@@ -23,6 +23,7 @@ use Twig\TwigFunction;
 
 /**
  * @internal
+ *
  * @deprecated
  */
 class CacheExtension extends AbstractExtension
