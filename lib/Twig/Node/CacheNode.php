@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
+use Twig\Compiler;
 use Twig\Node\Node;
 
 /**
