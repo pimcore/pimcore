@@ -26,6 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use function get_class;
 use function gettype;
 use function is_object;
+use function sprintf;
 
 /**
  * @internal

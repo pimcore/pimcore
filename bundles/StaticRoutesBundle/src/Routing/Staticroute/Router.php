@@ -32,6 +32,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use function count;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal

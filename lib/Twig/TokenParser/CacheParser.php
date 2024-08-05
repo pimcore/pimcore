@@ -26,6 +26,10 @@ use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 use ValueError;
+use function count;
+use function is_int;
+use function is_null;
+use function sprintf;
 
 /**
  * @internal
@@ -40,7 +44,7 @@ class CacheParser extends AbstractTokenParser
         $lineno = $token->getLine();
 
         $stream = $this->parser->getStream();
-        $key = $stream->expect(Token::STRING_TYPE,  null, 'Please specify a cache key')->getValue();
+        $key = $stream->expect(Token::STRING_TYPE, null, 'Please specify a cache key')->getValue();
 
         $expressionParser = $this->parser->getExpressionParser();
 
@@ -54,24 +58,25 @@ class CacheParser extends AbstractTokenParser
 
             switch ($k) {
                 case 'ttl':
-                    if (1 !== \count($args)) {
-                        throw new SyntaxError(\sprintf('The "ttl" modifier takes exactly one argument (%d given).', \count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    if (1 !== count($args)) {
+                        throw new SyntaxError(sprintf('The "ttl" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
                     }
                     $ttl = $args->getNode('0')->getAttribute('value');
-                    if (!\is_int($ttl) && ! is_null($ttl)) {
+                    if (!is_int($ttl) && ! is_null($ttl)) {
                         throw new SyntaxError('The "ttl" modifier requires an integer or null.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
                     }
+
                     break;
                 case 'tags':
-                    if (1 !== \count($args)) {
-                        throw new SyntaxError(\sprintf('The "tags" modifier takes exactly one argument (%d given).', \count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    if (1 !== count($args)) {
+                        throw new SyntaxError(sprintf('The "tags" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
                     }
 
                     try {
                         $node = $args->getNode('0');
                         if ($node instanceof ArrayExpression) {
                             $tags = $node->getKeyValuePairs();
-                            $tags = \array_map(static fn($pair) => $pair['value']->getAttribute('value'), $tags);
+                            $tags = array_map(static fn ($pair) => $pair['value']->getAttribute('value'), $tags);
                         } else {
                             $tags = [$node->getAttribute('value')];
                         }
@@ -81,16 +86,18 @@ class CacheParser extends AbstractTokenParser
                     } catch (ValueError|LogicException $e) {
                         throw new SyntaxError('The "tags" modifier requires a string or an array of strings.', $stream->getCurrent()->getLine(), $stream->getSourceContext(), $e);
                     }
+
                     break;
                 case 'force':
-                    if (1 !== \count($args)) {
-                        throw new SyntaxError(\sprintf('The "force" modifier takes exactly one argument (%d given).', \count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    if (1 !== count($args)) {
+                        throw new SyntaxError(sprintf('The "force" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
                     }
                     $force = $args->getNode('0')->getAttribute('value');
                     $force = (bool) $force;
+
                     break;
                 default:
-                    throw new SyntaxError(\sprintf('Unknown "%s" configuration.', $k), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    throw new SyntaxError(sprintf('Unknown "%s" configuration.', $k), $stream->getCurrent()->getLine(), $stream->getSourceContext());
             }
         }
 

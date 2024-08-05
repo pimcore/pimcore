@@ -19,6 +19,7 @@ namespace Pimcore\Config;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function sprintf;
 
 /**
  * @internal

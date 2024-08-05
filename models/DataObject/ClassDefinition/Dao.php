@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 /**
  * @internal

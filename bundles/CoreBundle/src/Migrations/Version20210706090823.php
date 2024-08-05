@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject;
+use function sprintf;
 
 /**
  * @internal

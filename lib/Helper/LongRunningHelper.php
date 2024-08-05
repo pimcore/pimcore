@@ -25,6 +25,7 @@ use Pimcore\Cache\RuntimeCache;
 use Psr\Log\LoggerAwareTrait;
 use function count;
 use function is_array;
+use function sprintf;
 
 final class LongRunningHelper
 {
