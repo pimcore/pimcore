@@ -32,8 +32,7 @@ final class CacheNode extends Node
         Node $body,
         int $lineno,
         ?string $tag = 'pimcorecache'
-    )
-    {
+    ) {
         parent::__construct(['body' => $body], [], $lineno, $tag);
     }
 
