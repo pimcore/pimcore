@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\TokenParser;
 
+use Countable;
 use LogicException;
 use Pimcore\Twig\Node\CacheNode;
 use Pimcore\ValueObject\Collection\ArrayOfStrings;
@@ -56,12 +57,8 @@ class CacheParser extends AbstractTokenParser
 
             switch ($k) {
                 case 'ttl':
-                    if (1 !== count($args)) {
-                        $this->throwSyntaxError(
-                            sprintf('The "ttl" modifier takes exactly one argument (%d given).', count($args)),
-                            $stream
-                        );
-                    }
+                    $this->validateModifierHasSingleArgument($args, 'ttl', $stream);
+
                     $ttl = $args->getNode('0')->getAttribute('value');
                     if (!is_int($ttl) && ! is_null($ttl)) {
                         $this->throwSyntaxError(
@@ -72,12 +69,7 @@ class CacheParser extends AbstractTokenParser
 
                     break;
                 case 'tags':
-                    if (1 !== count($args)) {
-                        $this->throwSyntaxError(
-                            sprintf('The "tags" modifier takes exactly one argument (%d given).', count($args)),
-                            $stream
-                        );
-                    }
+                    $this->validateModifierHasSingleArgument($args, 'tags', $stream);
 
                     try {
                         $node = $args->getNode('0');
@@ -93,18 +85,13 @@ class CacheParser extends AbstractTokenParser
                     } catch (ValueError|LogicException $e) {
                         $this->throwSyntaxError(
                             'The "tags" modifier requires a string or an array of strings.',
-                            $stream)
-                        ;
+                            $stream
+                        );
                     }
 
                     break;
                 case 'force':
-                    if (1 !== count($args)) {
-                        $this->throwSyntaxError(
-                            sprintf('The "force" modifier takes exactly one argument (%d given).', count($args)),
-                            $stream
-                        );
-                    }
+                    $this->validateModifierHasSingleArgument($args, 'force', $stream);
                     $force = $args->getNode('0')->getAttribute('value');
                     $force = (bool) $force;
 
@@ -129,6 +116,19 @@ class CacheParser extends AbstractTokenParser
     public function getTag(): string
     {
         return 'pimcorecache';
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    private function validateModifierHasSingleArgument(Countable $args, string $modifierName, TokenStream $stream): void
+    {
+        if (count($args) !== 1) {
+            $this->throwSyntaxError(
+                sprintf('The "%s" modifier takes exactly one argument (%d given).', $modifierName, count($args)),
+                $stream
+            );
+        }
     }
 
     /**
