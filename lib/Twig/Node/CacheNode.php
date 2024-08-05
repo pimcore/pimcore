@@ -24,7 +24,15 @@ use Twig\Node\Node;
  */
 final class CacheNode extends Node
 {
-    public function __construct(private string $key, private ?int $ttl, private array $tags, private bool $force, Node $body, int $lineno, ?string $tag = 'pimcore_cache')
+    public function __construct(
+        private string $key,
+        private ?int $ttl,
+        private array $tags,
+        private bool $force,
+        Node $body,
+        int $lineno,
+        ?string $tag = 'pimcorecache'
+    )
     {
         parent::__construct(['body' => $body], [], $lineno, $tag);
     }

@@ -25,6 +25,7 @@ use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
+use Twig\TokenStream;
 use ValueError;
 use function count;
 use function is_int;
@@ -56,17 +57,26 @@ class CacheParser extends AbstractTokenParser
             switch ($k) {
                 case 'ttl':
                     if (1 !== count($args)) {
-                        throw new SyntaxError(sprintf('The "ttl" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                        $this->throwSyntaxError(
+                            sprintf('The "ttl" modifier takes exactly one argument (%d given).', count($args)),
+                            $stream
+                        );
                     }
                     $ttl = $args->getNode('0')->getAttribute('value');
                     if (!is_int($ttl) && ! is_null($ttl)) {
-                        throw new SyntaxError('The "ttl" modifier requires an integer or null.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                        $this->throwSyntaxError(
+                            'The "ttl" modifier requires an integer or null.',
+                            $stream
+                        );
                     }
 
                     break;
                 case 'tags':
                     if (1 !== count($args)) {
-                        throw new SyntaxError(sprintf('The "tags" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                        $this->throwSyntaxError(
+                            sprintf('The "tags" modifier takes exactly one argument (%d given).', count($args)),
+                            $stream
+                        );
                     }
 
                     try {
@@ -81,20 +91,26 @@ class CacheParser extends AbstractTokenParser
                         $tags = new ArrayOfStrings($tags);
                         $tags = $tags->getValue();
                     } catch (ValueError|LogicException $e) {
-                        throw new SyntaxError('The "tags" modifier requires a string or an array of strings.', $stream->getCurrent()->getLine(), $stream->getSourceContext(), $e);
+                        $this->throwSyntaxError(
+                            'The "tags" modifier requires a string or an array of strings.',
+                            $stream)
+                        ;
                     }
 
                     break;
                 case 'force':
                     if (1 !== count($args)) {
-                        throw new SyntaxError(sprintf('The "force" modifier takes exactly one argument (%d given).', count($args)), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                        $this->throwSyntaxError(
+                            sprintf('The "force" modifier takes exactly one argument (%d given).', count($args)),
+                            $stream
+                        );
                     }
                     $force = $args->getNode('0')->getAttribute('value');
                     $force = (bool) $force;
 
                     break;
                 default:
-                    throw new SyntaxError(sprintf('Unknown "%s" configuration.', $k), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    $this->throwSyntaxError(sprintf('Unknown "%s" configuration.', $k), $stream);
             }
         }
 
@@ -113,5 +129,13 @@ class CacheParser extends AbstractTokenParser
     public function getTag(): string
     {
         return 'pimcorecache';
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    private function throwSyntaxError(string $message, TokenStream $stream): void
+    {
+        throw new SyntaxError($message, $stream->getCurrent()->getLine(), $stream->getSourceContext());
     }
 }
