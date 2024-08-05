@@ -119,6 +119,7 @@ See [Template Extensions](./02_Template_Extensions/README.md) for details.
 The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions/README.md) for a 
 detailed description of every helper:
 
+**Functions:**
 * `pimcore_head_link`
 * `pimcore_head_meta`
 * `pimcore_head_script`
@@ -126,9 +127,11 @@ detailed description of every helper:
 * `pimcore_head_title`
 * `pimcore_inline_script`
 * `pimcore_placeholder`
-* `pimcore_cache`
+* `pimcore_cache` (deprecated)
 * `pimcore_url`
 
+**Tags:**
+* `pimcorecache`
 
 #### Block elements
 

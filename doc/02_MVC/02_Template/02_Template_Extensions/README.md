@@ -102,11 +102,42 @@ The following tests are only available if the [PimcoreNewsletterBundle](https://
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
 Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
 your own Twig Extension.
-    
-### `pimcore_cache`
-This is an implementation of an in-template cache. You can use this to cache some parts directly in the template, 
-independent of the other global definable caching functionality. This can be useful for templates which need a lot 
+
+### `pimcorecache`
+
+This is an implementation of an in-template cache. You can use this to cache some parts directly in the template,
+independent of the other global definable caching functionality. This can be useful for templates which need a lot
 of calculation or require a huge amount of objects (like navigations, ...).
+
+`{% pimcorecache "cache_key" tags([...]) ttl(int) force(bool) %}`
+
+
+| Name        | Type             | Description                                                                                                                                                                                                                              |
+|-------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cache_key` | string           | Key/name of cache item                                                                                                                                                                                                                   |
+| `tags`      | string, string[] | One or multiple additional cache tags. The `in_template` cache tag is automatically added to all items. When no ttl is defined the `output` cache tag is additionally added.                                                             |
+| `ttl`       | int              | Time to life - lifetime in seconds. If you define no ttl the behavior is like the output cache, so if you make any change in Pimcore, the cache will be flushed. When specifying a lifetime this is independent from changes in the CMS. |
+| `force`     | bool             | Force caching, even when request is done within Pimcore admin interface                                                                                                                                                                  |
+
+##### Examples
+
+```twig
+{% pimcorecache "test_cache_key" ttl(60) %}
+    <h1>This is some cached microtime</h1>
+    {{ 'now'|date('U') }}
+{% endpimcorecache %}
+```
+
+```twig
+{# example with all options #}
+{% pimcorecache "test_cache_key" ttl(60) tags(['custom_tag']) force(true %}
+    <h1>This is some cached microtime</h1>
+    {{ 'now'|date('U') }}
+{% endpimcorecache %}
+```
+    
+### `pimcore_cache` (deprecated)
+This is a deprecated alternative approach to the `pimcorecache` extension. Use `pimcorecache` instead.
 
 `pimcore_cache( name, lifetime, force)`
 
