@@ -130,7 +130,7 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 ```twig
 {# example with all options #}
-{% pimcorecache "test_cache_key" ttl(60) tags(['custom_tag']) force(true %}
+{% pimcorecache "test_cache_key" ttl(60) tags(['custom_tag']) force(true) %}
     <h1>This is some cached microtime</h1>
     {{ 'now'|date('U') }}
 {% endpimcorecache %}
