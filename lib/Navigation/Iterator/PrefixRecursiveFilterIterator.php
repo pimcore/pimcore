@@ -30,7 +30,7 @@ final class PrefixRecursiveFilterIterator extends \RecursiveFilterIterator
     private string $value;
 
     /**
-     * @param Container $iterator navigation container to iterate
+     * @param \RecursiveIterator $iterator navigation container to iterate
      * @param string $property name of property that acts as needle
      * @param string $value value which acts as haystack
      */
