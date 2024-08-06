@@ -186,6 +186,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param string $captureType
      * @param string $type
+     *
      * @deprecated
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
@@ -203,6 +204,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
     /**
      * End capture action and store
+     *
      * @deprecated
      */
     public function captureEnd(): void
