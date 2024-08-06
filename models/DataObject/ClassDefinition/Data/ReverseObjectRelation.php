@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
@@ -184,7 +185,20 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function preGetData(mixed $container, array $params = []): array
     {
-        return $this->load($container);
+        $data = $this->load($container);
+
+        if (DataObject::doHideUnpublished() && is_array($data)) {
+            $publishedList = [];
+            foreach ($data as $listElement) {
+                if (Element\Service::isPublished($listElement)) {
+                    $publishedList[] = $listElement;
+                }
+            }
+
+            return $publishedList;
+        }
+
+        return is_array($data) ? $data : [];
     }
 
     /**
