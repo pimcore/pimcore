@@ -186,7 +186,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param string $captureType
      * @param string $type
-     *
+     * @deprecated
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
@@ -203,7 +203,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
     /**
      * End capture action and store
-     *
+     * @deprecated
      */
     public function captureEnd(): void
     {
@@ -278,7 +278,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
             switch ($mode) {
                 case 'script':
-                    $item = $this->createData($type, $attrs, $content);
+                    $item = $this->createData($type, $attrs, (string) $content);
                     if ('offsetSet' == $action) {
                         $this->offsetSet($index, $item);
                     } else {
