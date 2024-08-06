@@ -167,7 +167,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
                 throw new Exception(sprintf('Method "%s" requires minimally content for the stylesheet', $method));
             }
 
-            $content = $args[0];
+            $content = (string)$args[0];
             $attrs = [];
             if (isset($args[1])) {
                 $attrs = (array) $args[1];
@@ -266,6 +266,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $type
      * @param array|null $attrs
      *
+     * @deprecated
      */
     public function captureStart($type = Container::APPEND, $attrs = null): void
     {
@@ -282,6 +283,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated
      */
     public function captureEnd(): void
     {
