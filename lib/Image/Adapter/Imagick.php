@@ -160,7 +160,8 @@ class Imagick extends Adapter
 
         // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
         // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-        if (preg_match('/8BIM\x0b\xb7/', $chunk)) {
+        // and the first path information which is 8BIM 2000 (decimal) or 0x07D0 in hex
+        if (preg_match('/8BIM\x0b\xb7/', $chunk) || preg_match('/8BIM\x07\xd0/', $chunk)) {
             return true;
         }
 
@@ -527,8 +528,15 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->cropImage($width, $height, $x, $y);
-        $this->resource->setImagePage($width, $height, 0, 0);
+        if ($this->checkPreserveAnimation()) {
+            foreach ($this->resource as $i => $frame) {
+                $frame->cropImage($width, $height, $x, $y);
+                $frame->setImagePage($width, $height, 0, 0);
+            }
+        } else {
+            $this->resource->cropImage($width, $height, $x, $y);
+            $this->resource->setImagePage($width, $height, 0, 0);
+        }
 
         $this->setWidth($width);
         $this->setHeight($height);

@@ -59,5 +59,4 @@ For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimco
 
 Just like third party bundles, Pimcore bundles can be registered on the kernel by enabling them in the `config/bundles.php`
 or manually by adding them via code as shown above. You can use `pimcore:bundle:*` commands
-to list or interact with the bundle installer (install/uninstall/update). 
-
+to list or interact with the bundle installer (install/uninstall/update).

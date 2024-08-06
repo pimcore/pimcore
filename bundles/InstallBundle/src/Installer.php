@@ -25,6 +25,7 @@ use function in_array;
 use PDO;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
+use Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
@@ -74,6 +75,7 @@ class Installer
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
+        'PimcoreGenericExecutionEngineBundle' => PimcoreGenericExecutionEngineBundle::class,
     ];
 
     private LoggerInterface $logger;
@@ -728,9 +730,7 @@ class Installer
 
     protected function getDataFiles(): array
     {
-        $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
-
-        return $files;
+        return glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql*');
     }
 
     protected function createOrUpdateUser(Connection $db, array $config = []): void
@@ -761,6 +761,10 @@ class Installer
      */
     protected function insertDatabaseDump(Connection $db, string $file): void
     {
+        if (str_ends_with($file, '.gz')) {
+            $file = 'compress.zlib://' . $file;
+        }
+
         $dumpFile = file_get_contents($file);
 
         // remove comments in SQL script
@@ -776,11 +780,11 @@ class Installer
             $batchQueries = [];
             foreach ($singleQueries as $m) {
                 $sql = trim($m);
-                if (strlen($sql) > 0) {
+                if ($sql !== '') {
                     $batchQueries[] = $sql . ';';
                 }
 
-                if (count($batchQueries) > 500) {
+                if (\count($batchQueries) > 500) {
                     $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }

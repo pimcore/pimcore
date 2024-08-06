@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
@@ -120,6 +121,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @return $this
+     *
+     * @throws \InvalidArgumentException If the order is invalid
      */
     public function setOrder(array|string $order): static
     {
@@ -127,19 +130,16 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->order = [];
 
-        if (!empty($order)) {
-            if (is_string($order)) {
-                $order = strtoupper($order);
-                if (in_array($order, $this->validOrders)) {
-                    $this->order[] = $order;
-                }
-            } elseif (is_array($order)) {
-                foreach ($order as $o) {
-                    $o = strtoupper($o);
-                    if (in_array($o, $this->validOrders)) {
-                        $this->order[] = $o;
-                    }
-                }
+        if (is_string($order)) {
+            $order = $order ? [$order] : [];
+        }
+
+        foreach ($order as $o) {
+            $o = strtoupper($o);
+            if (in_array($o, $this->validOrders)) {
+                $this->order[] = $o;
+            } else {
+                throw new \InvalidArgumentException('Invalid order: ' . $o);
             }
         }
 
@@ -153,6 +153,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @return $this
+     *
+     * @throws \InvalidArgumentException If the order key is invalid
      */
     public function setOrderKey(array|string $orderKey, bool $quote = true): static
     {
@@ -160,17 +162,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->orderKey = [];
 
-        if (is_string($orderKey) && !empty($orderKey)) {
-            $orderKey = [$orderKey];
+        if (is_string($orderKey)) {
+            $orderKey = $orderKey ? [$orderKey] : [];
         }
 
-        if (is_array($orderKey)) {
-            foreach ($orderKey as $o) {
-                if ($quote === false) {
-                    $this->orderKey[] = $o;
-                } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = $this->quoteIdentifier($o);
-                }
+        foreach ($orderKey as $o) {
+            if ($quote === false) {
+                $this->orderKey[] = $o;
+            } elseif ($this->isValidOrderKey($o)) {
+                $this->orderKey[] = $this->quoteIdentifier($o);
+            } else {
+                throw new \InvalidArgumentException('Invalid order key: ' . $o);
             }
         }
 
@@ -187,7 +189,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $condition = '('.$condition.')';
         $ignoreParameter = true;
 
-        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        $conditionWithoutQuotedStrings = preg_replace('/((?<![\\\\])[\'\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1/', '', $condition);
         if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
             $ignoreParameter = false;
         }
@@ -263,13 +265,13 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 }
             } else {
                 if (is_bool($param)) {
-                    $type = \PDO::PARAM_BOOL;
+                    $type = ParameterType::BOOLEAN;
                 } elseif (is_int($param)) {
-                    $type = \PDO::PARAM_INT;
+                    $type = ParameterType::INTEGER;
                 } elseif (is_null($param)) {
-                    $type = \PDO::PARAM_NULL;
+                    $type = ParameterType::NULL;
                 } else {
-                    $type = \PDO::PARAM_STR;
+                    $type = ParameterType::STRING;
                 }
 
                 $conditionVariableTypes[$pkey] = $type;

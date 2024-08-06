@@ -1,0 +1,89 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    _instanceof:
+        # all services implementing the GenericExecutionEngineMessageInterface
+        # will be registered on the bus
+        Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface:
+            tags:
+                - { name: messenger.message_handler, bus: generic.execution.engine.bus }
+
+    # ---------------------
+    # INSTALLER
+    # ---------------------
+    Pimcore\Bundle\GenericExecutionEngineBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreGenericExecutionEngineBundle')"
+
+
+    # ---------------------
+    # Job Execution Engine
+    # ---------------------
+    Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgentInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Agent\JobExecutionAgent
+        arguments:
+            $environment: '%kernel.environment%'
+            $executionEngineBus: '@generic.execution.engine.bus'
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepository
+        arguments:
+            $pimcoreEntityManager: "@doctrine.orm.pimcore_entity_manager"
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepository
+        arguments:
+            $pimcoreEntityManager: "@doctrine.orm.pimcore_entity_manager"
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Grid\JobRunGridInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Grid\JobRunGrid
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProviderInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProvider
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobExecutionSubscriber: ~
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\EventSubscriber\JobRunStatusChangeSubscriber:
+        tags:
+            -
+                name: 'doctrine.event_listener'
+                event: 'preUpdate'
+                priority: 500
+                connection: 'default'
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractorInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractor
+
+    # ---------------------
+    # Security Services
+    # ---------------------
+    Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionService
+
+    # ---------------------
+    # Configuration
+    # ---------------------
+    Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContext
+
+
+    # ---------------------
+    # Middleware
+    # ---------------------
+
+    Pimcore\Messenger\Middleware\CollectGarbageMiddleware:
+        tags:
+            - { name: "messenger.middleware" }
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware:
+        tags:
+            - { name: "messenger.middleware" }

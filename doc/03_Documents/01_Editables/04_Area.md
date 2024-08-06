@@ -14,15 +14,15 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ## Methods
 
-| Name                | Return        | Description                                                 |
-|---------------------|---------------|-------------------------------------------------------------|
+| Name                | Return             | Description                                                 |
+|---------------------|--------------------|-------------------------------------------------------------|
 | `getElement($name)` | Document\Editable  | Retrieves an editable from within the actual area           |
 
 ## Example
 
 ```twig
 <div>
-{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
+{{ pimcore_area("myArea", {"type": "gallery-single-images"}) }}
 </div>
 ```
 
@@ -30,11 +30,11 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```twig
 <div>
-    {{ pimcore_area('myArea', {
-        type: 'gallery-single-images',
+    {{ pimcore_area("myArea", {
+        type: "gallery-single-images",
         params: {
-            'gallery-single-images': {
-                'param1': 123,
+            "gallery-single-images": {
+                "param1": 123,
             }
         }
     }) }}
@@ -49,7 +49,7 @@ Get the params in your brick:
 </div>
 ```
 
-### Accessing Data Within an Area Element
+### Accessing Data within an Area Element
 
 Assuming your area uses a brick `gallery-single-images` which contains a `gallery` block (see CMS demo):
 

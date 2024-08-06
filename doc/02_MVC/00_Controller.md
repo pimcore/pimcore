@@ -14,10 +14,10 @@ The naming of the file and the class is just the same as in Symfony.
 
 ## Pimcore Specialities and Examples
 
-| Controller Name | File Name                   | Class Name        | Default View Directory               |
-|-----------------|-----------------------------|-------------------|--------------------------------------|
-| Content         | `src/Controller/ContentController.php` | `App\Controller\ContentController` | `/templates/content` |
-| News            | `src/Controller/NewsController.php`    | `App\Controller\NewsController`    | `/templates/news`    |
+| Controller Name | File Name                              | Class Name                         | Default View Directory |
+|-----------------|----------------------------------------|------------------------------------|------------------------|
+| Content         | `src/Controller/ContentController.php` | `App\Controller\ContentController` | `/templates/content`   |
+| News            | `src/Controller/NewsController.php`    | `App\Controller\NewsController`    | `/templates/news`      |
 
 In controllers, for every action there exists a separate method ending with the `Action` suffix. 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
@@ -89,4 +89,3 @@ class DefaultController extends FrontendController
 |-------------------|-------------|----------------------------------------------------------|
 | `$this->document` | Document    | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
-   

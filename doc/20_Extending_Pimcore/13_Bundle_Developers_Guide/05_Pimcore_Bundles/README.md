@@ -84,5 +84,3 @@ class FooBundle extends AbstractPimcoreBundle
     }
 }
 ```
-
-

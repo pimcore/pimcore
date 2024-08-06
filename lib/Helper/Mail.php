@@ -229,29 +229,28 @@ CSS;
 
         //matches all links
         preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
-        if (!empty($matches[0])) {
-            foreach ($matches[0] as $key => $value) {
-                $path = $matches[2][$key];
 
-                if (str_starts_with($path, '//')) {
-                    $absolutePath = 'http:' . $path;
-                } elseif (str_starts_with($path, '/')) {
-                    $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
-                    $absolutePath = $hostUrl . $absolutePath;
-                } elseif (str_starts_with($path, 'file://')) {
-                    continue;
-                } else {
-                    $absolutePath = $hostUrl . "/$path";
-                    if ($path[0] == '?') {
-                        $absolutePath = $hostUrl . $document . $path;
-                    }
-                    $netUrl = new \Net_URL2($absolutePath);
-                    $absolutePath = $netUrl->getNormalizedURL();
+        foreach ($matches[0] as $key => $value) {
+            $path = $matches[2][$key];
+
+            if (str_starts_with($path, '//')) {
+                $absolutePath = 'http:' . $path;
+            } elseif (str_starts_with($path, '/')) {
+                $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
+                $absolutePath = $hostUrl . $absolutePath;
+            } elseif (str_starts_with($path, 'file://')) {
+                continue;
+            } else {
+                $absolutePath = $hostUrl . "/$path";
+                if ($path[0] == '?') {
+                    $absolutePath = $hostUrl . $document . $path;
                 }
-
-                $path = preg_quote($path, '!');
-                $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
+                $netUrl = new \Net_URL2($absolutePath);
+                $absolutePath = $netUrl->getNormalizedURL();
             }
+
+            $path = preg_quote($path, '!');
+            $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
         }
 
         preg_match_all("@srcset\s*=[\"'](.*?)[\"']@is", $string, $matches);
@@ -289,7 +288,7 @@ CSS;
 
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
-        if (!empty($matches[0])) {
+        if ($matches[0]) {
             $css = '';
 
             foreach ($matches[0] as $key => $value) {
@@ -340,21 +339,19 @@ CSS;
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
 
-        if (is_array($matches[0])) {
-            foreach ($matches[0] as $key => $value) {
-                $fullMatch = $matches[0][$key];
-                $path = $matches[1][$key];
+        foreach ($matches[0] as $key => $value) {
+            $fullMatch = $matches[0][$key];
+            $path = $matches[1][$key];
 
-                if ($path[0] == '/') {
-                    $imageUrl = $hostUrl . $path;
-                } else {
-                    $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
-                    $netUrl = new \Net_URL2($imageUrl);
-                    $imageUrl = $netUrl->getNormalizedURL();
-                }
-
-                $content = str_replace($fullMatch, ' url(' . $imageUrl . ') ', $content);
+            if ($path[0] == '/') {
+                $imageUrl = $hostUrl . $path;
+            } else {
+                $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
+                $netUrl = new \Net_URL2($imageUrl);
+                $imageUrl = $netUrl->getNormalizedURL();
             }
+
+            $content = str_replace($fullMatch, ' url(' . $imageUrl . ') ', $content);
         }
 
         return $content;
