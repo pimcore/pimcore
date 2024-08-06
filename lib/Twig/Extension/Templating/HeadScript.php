@@ -267,7 +267,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
             }
 
-            $content = $args[0];
+            $content = is_null($args[0]) ? null : (string) $args[0];
 
             if (isset($args[1])) {
                 $type = (string) $args[1];
@@ -278,7 +278,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
             switch ($mode) {
                 case 'script':
-                    $item = $this->createData($type, $attrs, (string) $content);
+                    $item = $this->createData($type, $attrs, $content);
                     if ('offsetSet' == $action) {
                         $this->offsetSet($index, $item);
                     } else {
