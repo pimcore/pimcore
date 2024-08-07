@@ -219,7 +219,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         trigger_deprecation(
             'pimcore/pimcore',
             '11.4',
-            'Using captureEnd() is deprecated. Use twig set tag for output capturing instead.'
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
         );
 
         $content = ob_get_clean();
