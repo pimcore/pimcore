@@ -24,26 +24,26 @@ In addition to the standard Twig extensions, Pimcore adds some additional powerf
 
 All Twig extension functions are described below in detail, the following tables give just a short overview of all available extensions.
 
-| Extension                                                               | Description                                                       |
-|-------------------------------------------------------------------------|-------------------------------------------------------------------|
-| `pimcorecache`                                                          | Simple in-template caching functionality                                         |
-| `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality                                         |
-| `pimcore_device()`                                                      | Helps implementing adaptive designs                                              |
-| `pimcore_glossary`                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine               |
-| `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
-| `pimcore_head_link()`                                                   | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
-| `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                            |
-| `pimcore_head_script()`                                                 | Managing your \<scripts\> elements                                               |
-| `pimcore_head_style()`                                                  | Managing inline styles (pendant to `headLink()` for inline styles)               |
-| `pimcore_head_title()`                                                  | Create and store the HTML document's `<title>` for later retrieval and output    |
-| `pimcore_inc()`                                                         | Use this function to directly include a Pimcore document                         |
-| `pimcore_inline_script`                                                 | Managing inline scripts (pendant to `headScript()` for inline scripts)           |
-| `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()` | Embed and build navigations based on the document structure                             |
-| `pimcore_url()`                                                         | An alternative to `url()` and `path()`                                           |
+| Extension                                                               | Description                                                                       |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `pimcorecache`                                                          | Simple in-template caching functionality                                          |
+| `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality (deprecated legacy version)              |
+| `pimcore_device()`                                                      | Helps implementing adaptive designs                                               |
+| `pimcore_glossary`                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine                |
+| `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.      |
+| `pimcore_head_link()`                                                   | Embeding / managing referenced stylesheets (alternative to `assets()`)            |
+| `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                             |
+| `pimcore_head_script()`                                                 | Managing your \<scripts\> elements                                                |
+| `pimcore_head_style()`                                                  | Managing inline styles (pendant to `headLink()` for inline styles)                |
+| `pimcore_head_title()`                                                  | Create and store the HTML document's `<title>` for later retrieval and output     |
+| `pimcore_inc()`                                                         | Use this function to directly include a Pimcore document                          |
+| `pimcore_inline_script`                                                 | Managing inline scripts (pendant to `headScript()` for inline scripts)            |
+| `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()` | Embed and build navigations based on the document structure                       |
+| `pimcore_url()`                                                         | An alternative to `url()` and `path()`                                            |
 | `pimcore_website_config()`                                              | Fetch website settings or specific setting (first param: key) for the current site |
-| `pimcore_image_thumbnail()`                                             | Returns a path to a given thumbnail on image                                   |
-| `pimcore_image_thumbnail_html()`                                        | Returns html for displaying the thumbnail image                           |
-| `pimcore_supported_locales()`                                           | Use this function to get a list of supported locales                         |
+| `pimcore_image_thumbnail()`                                             | Returns a path to a given thumbnail on image                                      |
+| `pimcore_image_thumbnail_html()`                                        | Returns html for displaying the thumbnail image                                   |
+| `pimcore_supported_locales()`                                           | Use this function to get a list of supported locales                              |
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
