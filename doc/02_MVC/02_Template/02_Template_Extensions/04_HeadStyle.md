@@ -101,6 +101,6 @@ If you wish to specify any additional attributes for the `<style>` tag, pass the
 {% endset %}
 {% do pimcore_head_style().appendStyle(inlineStyle) %}
 
-{# Example if you wish to specify additional attributes for the <script> tag #}
-{% do pimcore_head_style().appendStyle(inlineStyle, "text/javascript", {"async": "async"}) %}
+{# Example if you wish to specify additional attributes for the <style> tag #}
+{% do pimcore_head_style().appendStyle(inlineStyle, {"media": "screen"}) %}
 ```
