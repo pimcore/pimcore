@@ -61,7 +61,7 @@ trait ManyToManyRelationTrait
         parent::save($object, $params);
     }
 
-    protected function filterUnpublishedElements(?array $data): array
+    protected function filterUnpublishedElements(mixed $data): array
     {
         if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
