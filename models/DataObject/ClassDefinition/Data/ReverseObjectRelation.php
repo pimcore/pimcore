@@ -185,6 +185,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function preGetData(mixed $container, array $params = []): array
     {
         $data = $this->load($container);
+
         return $this->filterUnpublishedElements($data);
     }
 
