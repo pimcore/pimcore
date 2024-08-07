@@ -104,17 +104,15 @@ list of current content in the placeholder. If `SET`, captured content is used a
     {% endfor %}
 {% endset %}
 
-{% do pimcore_placeholder('foo').set('data', placeholderData) %}
+{% do pimcore_placeholder('foo').set(placeholderData) %}
 {{ pimcore_placeholder('foo').data | raw }}
 ```
 
 ```twig
 {% set placeholderData %}
-    {{ pimcore_placeholder('foo') }}
-    
     Test to append some additional content
 {% endset %}
 
-{% do pimcore_placeholder('foo').set('data', placeholderData) %}
+{% do pimcore_placeholder('foo').append(placeholderData) %}
 {{ pimcore_placeholder('foo').data | raw }}
 ```
