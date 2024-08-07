@@ -151,17 +151,38 @@ abstract class AbstractAutomationActionHandler
         return $config;
     }
 
-    protected function extractConfigFieldFromJobStepConfig(
+    protected function extractEnvVariableFromJobRun(
         GenericExecutionEngineMessageInterface $message,
         string $key
     ): mixed {
-        $config = $this->getCurrentJobStepConfig($message);
+        $jobRun = $this->getJobRun($message);
+        $envData = $jobRun->getJob()?->getEnvironmentData();
 
-        if (!array_key_exists($key, $config)) {
-            throw new NotFoundException("Missing configuration $key");
+        return $envData[$key] ?? null;
+    }
+
+    protected function extractConfigFieldFromJobStepConfig(
+        GenericExecutionEngineMessageInterface $message,
+        string $key,
+        bool $ignoreEnvData = false
+    ): mixed {
+        $value = null;
+
+        if(!$ignoreEnvData) {
+            $value = $this->extractEnvVariableFromJobRun($message, $key);
         }
 
-        return $config[$key];
+        if(
+            !$value
+        ) {
+            $config = $this->getCurrentJobStepConfig($message);
+            if (!array_key_exists($key, $config)) {
+                throw new NotFoundException("Missing configuration $key");
+            }
+            return $config[$key];
+        }
+
+        return $value;
     }
 
     protected function updateJobRunContext(
