@@ -262,10 +262,16 @@ class Container extends ArrayObject
      *
      * @throws Exception
      *
-     * @deprecated use twig set tag instead
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest placeholder captures for the same placeholder');
         }
@@ -281,10 +287,16 @@ class Container extends ArrayObject
     /**
      * End content capture
      *
-     * @deprecated use twig set tag instead
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $data = ob_get_clean();
         $key = null;
         $this->_captureLock = false;

@@ -127,8 +127,8 @@ detailed description of every helper:
 * `pimcore_head_title`
 * `pimcore_inline_script`
 * `pimcore_placeholder`
-* `pimcore_cache` (deprecated)
 * `pimcore_url`
+* `pimcore_cache` (deprecated)
 
 **Tags:**
 * `pimcorecache`

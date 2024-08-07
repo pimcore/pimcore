@@ -266,10 +266,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $type
      * @param array|null $attrs
      *
-     * @deprecated
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($type = Container::APPEND, $attrs = null): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headStyle captures');
         }
@@ -283,10 +289,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
-     * @deprecated
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using captureEnd() is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $attrs = $this->_captureAttrs;
         $this->_captureAttrs = null;
