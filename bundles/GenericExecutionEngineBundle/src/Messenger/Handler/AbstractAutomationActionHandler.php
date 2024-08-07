@@ -179,6 +179,7 @@ abstract class AbstractAutomationActionHandler
             if (!array_key_exists($key, $config)) {
                 throw new NotFoundException("Missing configuration $key");
             }
+
             return $config[$key];
         }
 
