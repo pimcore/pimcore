@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Cache;
+use Pimcore\Tool;
 use Pimcore\Twig\TokenParser\CacheParser;
 use Twig\Extension\AbstractExtension;
 use function is_null;
@@ -70,6 +71,6 @@ class CacheTagExtension extends AbstractExtension
 
     private function isCacheEnabled(bool $force): bool
     {
-        return !\Pimcore\Tool::isFrontendRequestByAdmin() || $force;
+        return !Tool::isFrontendRequestByAdmin() || $force;
     }
 }
