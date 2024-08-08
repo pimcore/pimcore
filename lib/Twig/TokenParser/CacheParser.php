@@ -29,6 +29,7 @@ use Twig\TokenParser\AbstractTokenParser;
 use Twig\TokenStream;
 use ValueError;
 use function count;
+use function in_array;
 use function is_int;
 use function is_null;
 use function sprintf;
@@ -67,6 +68,7 @@ class CacheParser extends AbstractTokenParser
                             $stream
                         );
                     }
+
                     break;
 
                 case 'tags':
@@ -80,10 +82,12 @@ class CacheParser extends AbstractTokenParser
                             $stream
                         );
                     }
+
                     break;
 
                 case 'force':
                     $force = (bool) $node->getAttribute('value');
+
                     break;
             }
         }
@@ -109,8 +113,10 @@ class CacheParser extends AbstractTokenParser
     {
         if ($node instanceof ArrayExpression) {
             $tags = $node->getKeyValuePairs();
+
             return array_map(static fn ($pair) => $pair['value']->getAttribute('value'), $tags);
         }
+
         return [$node->getAttribute('value')];
     }
 
