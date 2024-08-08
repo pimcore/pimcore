@@ -53,33 +53,25 @@ class CacheParser extends AbstractTokenParser
         while ($stream->test(Token::NAME_TYPE)) {
             $k = $stream->getCurrent()->getValue();
             $stream->next();
+
             $args = $expressionParser->parseArguments();
+            $this->validateModifier($args, $k, $stream);
+            $node = $args->getNode('0');
 
             switch ($k) {
                 case 'ttl':
-                    $this->validateModifierHasSingleArgument($args, 'ttl', $stream);
-
-                    $ttl = $args->getNode('0')->getAttribute('value');
+                    $ttl = $node->getAttribute('value');
                     if (!is_int($ttl) && ! is_null($ttl)) {
                         $this->throwSyntaxError(
                             'The "ttl" modifier requires an integer or null.',
                             $stream
                         );
                     }
-
                     break;
+
                 case 'tags':
-                    $this->validateModifierHasSingleArgument($args, 'tags', $stream);
-
                     try {
-                        $node = $args->getNode('0');
-                        if ($node instanceof ArrayExpression) {
-                            $tags = $node->getKeyValuePairs();
-                            $tags = array_map(static fn ($pair) => $pair['value']->getAttribute('value'), $tags);
-                        } else {
-                            $tags = [$node->getAttribute('value')];
-                        }
-
+                        $tags = $this->getArrayValue($node);
                         $tags = new ArrayOfStrings($tags);
                         $tags = $tags->getValue();
                     } catch (ValueError|LogicException $e) {
@@ -88,16 +80,11 @@ class CacheParser extends AbstractTokenParser
                             $stream
                         );
                     }
-
                     break;
+
                 case 'force':
-                    $this->validateModifierHasSingleArgument($args, 'force', $stream);
-                    $force = $args->getNode('0')->getAttribute('value');
-                    $force = (bool) $force;
-
+                    $force = (bool) $node->getAttribute('value');
                     break;
-                default:
-                    $this->throwSyntaxError(sprintf('Unknown "%s" configuration.', $k), $stream);
             }
         }
 
@@ -118,11 +105,24 @@ class CacheParser extends AbstractTokenParser
         return 'pimcorecache';
     }
 
+    private function getArrayValue(Node $node): array
+    {
+        if ($node instanceof ArrayExpression) {
+            $tags = $node->getKeyValuePairs();
+            return array_map(static fn ($pair) => $pair['value']->getAttribute('value'), $tags);
+        }
+        return [$node->getAttribute('value')];
+    }
+
     /**
      * @throws SyntaxError
      */
-    private function validateModifierHasSingleArgument(Countable $args, string $modifierName, TokenStream $stream): void
+    private function validateModifier(Countable $args, string $modifierName, TokenStream $stream): void
     {
+        if (!in_array($modifierName, ['ttl', 'tags', 'force'], true)) {
+            $this->throwSyntaxError(sprintf('Unknown "%s" configuration.', $modifierName), $stream);
+        }
+
         if (count($args) !== 1) {
             $this->throwSyntaxError(
                 sprintf('The "%s" modifier takes exactly one argument (%d given).', $modifierName, count($args)),
