@@ -63,7 +63,11 @@ trait ManyToManyRelationTrait
 
     protected function filterUnpublishedElements(mixed $data): array
     {
-        if (DataObject::doHideUnpublished() && is_array($data)) {
+        if (!is_array($data)) {
+            return [];
+        }
+
+        if (DataObject::doHideUnpublished()) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -74,6 +78,6 @@ trait ManyToManyRelationTrait
             return $publishedList;
         }
 
-        return is_array($data) ? $data : [];
+        return $data;
     }
 }
