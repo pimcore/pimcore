@@ -86,7 +86,7 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         const maxChars = this.maxChars;
-        let finalConfig = Object.assign({
+        const finalConfig = Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
             menubar: false,
