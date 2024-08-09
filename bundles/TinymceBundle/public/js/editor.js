@@ -91,8 +91,7 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         const maxChars = this.maxChars;
-
-        tinymce.init(Object.assign({
+        const finalConfig = Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
             menubar: false,
@@ -136,8 +135,16 @@ pimcore.bundle.tinymce.editor = Class.create({
                     }));
                 }.bind(this));
             }.bind(this)
+        }, language, toolbar, defaultConfig, this.config);
 
-        }, language, toolbar, defaultConfig, this.config));
+        document.dispatchEvent(new CustomEvent(pimcore.events.createWysiwygConfig, {
+            detail: {
+                data: finalConfig,
+                context: e.detail.context
+            }
+        }));
+
+        tinymce.init(finalConfig);
 
     },
 
