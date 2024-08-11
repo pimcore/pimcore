@@ -822,6 +822,7 @@ class Document extends Element\AbstractElement
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
                         $rootPath = preg_quote($rootPath, '@');
+                        // $this->path can be null since return type is `?string`
                         $link = preg_replace('@^' . $rootPath . '@', '', $this->path ?? '');
 
                         return $link;
