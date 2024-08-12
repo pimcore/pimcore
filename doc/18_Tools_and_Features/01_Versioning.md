@@ -135,7 +135,7 @@ user is shown in version history.
 When you set `userModification` to `0` Pimcore shows `system` as user in the version history. 
 
 
-```
+```php
 $object->setUserModification(0);
 $object->save();
 ```
