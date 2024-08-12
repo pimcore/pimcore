@@ -151,39 +151,54 @@ abstract class AbstractAutomationActionHandler
         return $config;
     }
 
+    protected function getEnvironmentVariables(
+        GenericExecutionEngineMessageInterface $message
+    ): array {
+        $jobRun = $this->getJobRun($message);
+        $job = $jobRun->getJob();
+        return $job === null ? [] :  $job->getEnvironmentData();
+    }
+
     protected function extractEnvVariableFromJobRun(
         GenericExecutionEngineMessageInterface $message,
         string $key
     ): mixed {
-        $jobRun = $this->getJobRun($message);
-        $envData = $jobRun->getJob()?->getEnvironmentData();
+        $envData = $this->getEnvironmentVariables($message);
 
         return $envData[$key] ?? null;
     }
 
+    protected function replaceConfigValueWithEnvVariable(
+        string $value,
+        array $variables
+    ): mixed {
+        /** @var $matches array */
+        if(!preg_match_all("/pimcore_copilot_get_env\('([^']*)'\)/", $value, $matches)) {
+            return $value;
+        }
+        if(empty($matches[1])) {
+            return $value;
+        }
+        $envVariableKey = $matches[1][0];
+        if (!array_key_exists($envVariableKey, $variables)) {
+            throw new NotFoundException("Missing environment variable $envVariableKey");
+        }
+        return $variables[$envVariableKey];
+    }
+
     protected function extractConfigFieldFromJobStepConfig(
         GenericExecutionEngineMessageInterface $message,
-        string $key,
-        bool $ignoreEnvData = false
+        string $key
     ): mixed {
-        $value = null;
-
-        if(!$ignoreEnvData) {
-            $value = $this->extractEnvVariableFromJobRun($message, $key);
+        $config = $this->getCurrentJobStepConfig($message);
+        if (!array_key_exists($key, $config)) {
+            throw new NotFoundException("Missing configuration $key");
         }
 
-        if(
-            !$value
-        ) {
-            $config = $this->getCurrentJobStepConfig($message);
-            if (!array_key_exists($key, $config)) {
-                throw new NotFoundException("Missing configuration $key");
-            }
-
-            return $config[$key];
-        }
-
-        return $value;
+        return $this->replaceConfigValueWithEnvVariable(
+            $config[$key],
+            $this->getEnvironmentVariables($message)
+        ) ?? $config;
     }
 
     protected function updateJobRunContext(
