@@ -165,7 +165,7 @@ abstract class AbstractAutomationActionHandler
         array $variables
     ): mixed {
         /** @var $matches array */
-        if(!preg_match_all("/pimcore_copilot_get_env\('([^']*)'\)/", $value, $matches)) {
+        if(!preg_match_all("/pimcore_gee_get_env\('([^']*)'\)/", $value, $matches)) {
             return $value;
         }
         if(empty($matches[1])) {
