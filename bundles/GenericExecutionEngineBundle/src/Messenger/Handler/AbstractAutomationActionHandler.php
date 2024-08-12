@@ -156,7 +156,8 @@ abstract class AbstractAutomationActionHandler
     ): array {
         $jobRun = $this->getJobRun($message);
         $job = $jobRun->getJob();
-        return $job === null ? [] :  $job->getEnvironmentData();
+
+        return $job === null ? [] : $job->getEnvironmentData();
     }
 
     protected function extractEnvVariableFromJobRun(
@@ -183,6 +184,7 @@ abstract class AbstractAutomationActionHandler
         if (!array_key_exists($envVariableKey, $variables)) {
             throw new NotFoundException("Missing environment variable $envVariableKey");
         }
+
         return $variables[$envVariableKey];
     }
 
