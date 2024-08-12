@@ -159,15 +159,6 @@ abstract class AbstractAutomationActionHandler
         return $job === null ? [] :  $job->getEnvironmentData();
     }
 
-    protected function extractEnvVariableFromJobRun(
-        GenericExecutionEngineMessageInterface $message,
-        string $key
-    ): mixed {
-        $envData = $this->getEnvironmentVariables($message);
-
-        return $envData[$key] ?? null;
-    }
-
     protected function replaceConfigValueWithEnvVariable(
         string $value,
         array $variables
