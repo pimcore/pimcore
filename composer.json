@@ -133,8 +133,7 @@
     "pimcore/admin-ui-classic-bundle": "<1.5",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
-    "thecodingmachine/safe": "<2.0",
-    "twig/twig": ">=3.9.0"
+    "thecodingmachine/safe": "<2.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
