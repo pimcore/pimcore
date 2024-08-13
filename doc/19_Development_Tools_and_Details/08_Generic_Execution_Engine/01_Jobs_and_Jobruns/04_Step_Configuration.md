@@ -17,6 +17,8 @@ The message class is the class of the message that should be dispatched when the
 ## Configuration
 The configuration of a step is an array that can contain any kind of data that is necessary for the step handler to execute the step.
 
+Additionally, you can refer environment variables in the configuration by using the following syntax: `job_env('<env_variable_name>')`.
+
 ## Selection Processing mode
 The selection processing mode of a step is an enum that defines how the step should process the selected elements.
 
