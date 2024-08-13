@@ -201,7 +201,6 @@ class NotificationService
         $condition = implode(' AND ', $conditions);
         $listing->setCondition($condition, array_merge(...$conditionVariables));
 
-
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
         $offset = $options['offset'] ?? 0;
