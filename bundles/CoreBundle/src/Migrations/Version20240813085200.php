@@ -35,7 +35,7 @@ final class Version20240813085200 extends AbstractMigration
             if (!$notificationTable->hasColumn('payload')) {
                 $this->addSql('ALTER TABLE `' . $tableName . '` ADD `payload` LONGTEXT DEFAULT NULL');
             }
-
+            // TODO: New migration will be needed with removal of Classic-UI
             if (!$notificationTable->hasColumn('isStudio')) {
                 $this->addSql('ALTER TABLE `' . $tableName . '` ADD `isStudio` TINYINT(1) DEFAULT 0');
             }

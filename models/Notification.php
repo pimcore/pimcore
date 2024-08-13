@@ -96,6 +96,7 @@ class Notification extends AbstractModel
 
     /**
      * @internal
+     * TODO: Remove with end of Classic-UI
      */
     protected bool $isStudio = false;
 
@@ -290,12 +291,18 @@ class Notification extends AbstractModel
         return $this;
     }
 
+    /**
+     * TODO: Remove with end of Classic-UI
+     */
     public function isStudio(): bool
     {
         return $this->isStudio;
     }
 
-    public function setIsStudio(bool $isStudio): Notification
+    /**
+     * TODO: Remove with end of Classic-UI
+     */
+    public function setIsStudio(bool $isStudio): static
     {
         $this->isStudio = $isStudio;
 

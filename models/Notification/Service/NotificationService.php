@@ -31,6 +31,8 @@ use function sprintf;
 
 /**
  * @internal
+ * With the end of Classic-UI this service will be deprecated.
+ * Functionality will then be moved from studio to the core again
  */
 class NotificationService
 {
@@ -184,7 +186,6 @@ class NotificationService
     {
         $listing = new Listing();
 
-        // TODO: Deprecate with end of Classic-UI
         $filter  = [...$filter, ...['isStudio' => 0]];
 
         $conditions = [];
