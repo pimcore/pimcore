@@ -33,7 +33,7 @@ use function sprintf;
  */
 class Dao extends AbstractDao
 {
-    private const DB_TABLE_NAME = 'notifications';
+    public const DB_TABLE_NAME = 'notifications';
 
     /**
      *
@@ -42,7 +42,7 @@ class Dao extends AbstractDao
      */
     public function getById(int $id): void
     {
-        $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', static::DB_TABLE_NAME);
+        $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', self::DB_TABLE_NAME);
         $data = $this->db->fetchAssociative($sql, [$id]);
 
         if ($data === false) {
@@ -68,7 +68,7 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        Helper::upsert($this->db, static::DB_TABLE_NAME, $this->getData($model), $this->getPrimaryKey(static::DB_TABLE_NAME));
+        Helper::upsert($this->db, self::DB_TABLE_NAME, $this->getData($model), $this->getPrimaryKey(self::DB_TABLE_NAME));
 
         if ($model->getId() === null) {
             $model->setId((int) $this->db->lastInsertId());
@@ -82,7 +82,7 @@ class Dao extends AbstractDao
      */
     public function delete(): void
     {
-        $this->db->delete(static::DB_TABLE_NAME, [
+        $this->db->delete(self::DB_TABLE_NAME, [
             'id' => $this->getModel()->getId(),
         ]);
     }
