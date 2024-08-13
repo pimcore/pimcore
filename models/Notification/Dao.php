@@ -150,7 +150,7 @@ class Dao extends AbstractDao
         return [
             'id' => $model->getId(),
             'creationDate' => $model->getCreationDate(),
-            'type' => $model->getType(),
+            'type' => $model->getType() ?? 'info',
             'modificationDate' => $model->getModificationDate(),
             'sender' => $model->getSender()?->getId(),
             'recipient' => $model->getRecipient()?->getId(),
