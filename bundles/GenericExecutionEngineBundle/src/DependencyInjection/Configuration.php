@@ -42,13 +42,17 @@ class Configuration implements ConfigurationInterface
                             ->info('Translation domain which should be used by the job run. Default value is "admin".')
                             ->defaultValue('admin')
                         ->end()
-                        ->scalarNode('error_handling')
+                        ->enumNode('error_handling')
+                            ->values(
+                                [
+                                    ErrorHandlingMode::CONTINUE_ON_ERROR->value,
+                                    ErrorHandlingMode::STOP_ON_FIRST_ERROR->value,
+                                ]
+                            )
                             ->info(
                                 'Error handling behavior which should be used by the job run.' .
-                                ' Overrides the global value. Default is "' .
-                                ErrorHandlingMode::CONTINUE_ON_ERROR->value . '".'
+                                ' Overrides the global value.'
                             )
-                            ->defaultValue('admin')
                         ->end()
                     ->end()
                 ->end()

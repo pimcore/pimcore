@@ -421,7 +421,7 @@ class Service extends Model\Element\Service
             $document = Document::getByPath($urlParts['path']);
 
             // search for a page in a site
-            if (!$document) {
+            if (!$document && isset($urlParts['host'])) {
                 $sitesList = new Model\Site\Listing();
                 $sitesObjects = $sitesList->load();
 

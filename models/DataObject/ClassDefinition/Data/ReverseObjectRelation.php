@@ -56,6 +56,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
@@ -199,7 +202,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getClasses(): array
     {
-        if($this->ownerClassId) {
+        if($this->getOwnerClassId()) {
             return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
         }
 

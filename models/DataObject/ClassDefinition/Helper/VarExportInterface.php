@@ -29,6 +29,8 @@ interface VarExportInterface
 
     /**
      * @param string[] $vars
+     *
+     * @return $this
      */
     public function setBlockedVarsForExport(array $vars): static;
 
