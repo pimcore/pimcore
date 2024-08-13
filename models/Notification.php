@@ -61,7 +61,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      */
-    protected string $title;
+    protected string $title = '';
 
     /**
      * @internal
@@ -72,6 +72,11 @@ class Notification extends AbstractModel
      * @internal
      */
     protected ?string $message = null;
+
+    /**
+     * @internal
+     */
+    protected ?string $payload = null;
 
     /**
      * @internal
@@ -87,6 +92,12 @@ class Notification extends AbstractModel
      * @internal
      */
     protected bool $read = false;
+
+
+    /**
+     * @internal
+     */
+    protected bool $isStudio = false;
 
     public static function getById(int $id): ?Notification
     {
@@ -264,6 +275,29 @@ class Notification extends AbstractModel
     {
         $this->read = $read;
 
+        return $this;
+    }
+
+    public function getPayload(): ?string
+    {
+        return $this->payload;
+    }
+
+    public function setPayload(?string $payload): static
+    {
+        $this->payload = $payload;
+
+        return $this;
+    }
+
+    public function isStudio(): bool
+    {
+        return $this->isStudio;
+    }
+
+    public function setIsStudio(bool $isStudio): Notification
+    {
+        $this->isStudio = $isStudio;
         return $this;
     }
 

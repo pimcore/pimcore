@@ -15,11 +15,11 @@
 
 namespace Pimcore\Model\Notification;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Element;
 use Pimcore\Model\Exception\NotFoundException;
-
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 use UnexpectedValueException;
@@ -28,15 +28,16 @@ use function sprintf;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Notification $model
+ * @property Notification $model
  */
 class Dao extends AbstractDao
 {
-    const DB_TABLE_NAME = 'notifications';
+    private const DB_TABLE_NAME = 'notifications';
 
     /**
      *
      * @throws NotFoundException
+     * @throws Exception
      */
     public function getById(int $id): void
     {
@@ -54,6 +55,7 @@ class Dao extends AbstractDao
 
     /**
      * Save notification
+     * @throws Exception
      */
     public function save(): void
     {
@@ -73,6 +75,7 @@ class Dao extends AbstractDao
 
     /**
      * Delete notification
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -106,11 +109,11 @@ class Dao extends AbstractDao
             throw new UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
         }
 
-        if (empty($data['title'])) {
+        if (!isset($data['title']) || !is_string($data['title']) || $data['title'] === '') {
             throw new UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
-        if (empty($data['message'])) {
+        if (!isset($data['message']) || !is_string($data['message']) || $data['message'] === '') {
             throw new UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
@@ -129,7 +132,9 @@ class Dao extends AbstractDao
         $model->setType($data['type']);
         $model->setMessage($data['message']);
         $model->setLinkedElement($linkedElement);
-        $model->setRead($data['read'] == 1 ? true : false);
+        $model->setRead($data['read'] === 1);
+        $model->setPayload($data['payload']);
+        $model->setIsStudio($data['isStudio'] === 1);
     }
 
     protected function getData(Notification $model): array
@@ -137,14 +142,17 @@ class Dao extends AbstractDao
         return [
             'id' => $model->getId(),
             'creationDate' => $model->getCreationDate(),
+            'type' => $model->getType(),
             'modificationDate' => $model->getModificationDate(),
-            'sender' => $model->getSender() ? $model->getSender()->getId() : null,
-            'recipient' => $model->getRecipient()->getId(),
+            'sender' => $model->getSender()?->getId(),
+            'recipient' => $model->getRecipient()?->getId(),
             'title' => $model->getTitle(),
             'message' => $model->getMessage(),
-            'linkedElement' => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,
+            'linkedElement' => $model->getLinkedElement()?->getId(),
             'linkedElementType' => $model->getLinkedElementType(),
             'read' => (int) $model->isRead(),
+            'payload' => $model->getPayload(),
+            'isStudio' => (int) $model->isStudio(),
         ];
     }
 
