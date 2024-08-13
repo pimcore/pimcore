@@ -165,7 +165,7 @@ abstract class AbstractAutomationActionHandler
         array $variables
     ): mixed {
         /** @var $matches array */
-        if(!preg_match_all("/pimcore_gee_get_env\('([^']*)'\)/", $value, $matches)) {
+        if(!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
             return $value;
         }
         if(empty($matches[1])) {
@@ -188,10 +188,15 @@ abstract class AbstractAutomationActionHandler
             throw new NotFoundException("Missing configuration $key");
         }
 
-        return $this->replaceConfigValueWithEnvVariable(
-            $config[$key],
-            $this->getEnvironmentVariables($message)
-        ) ?? $config;
+        $value = $config[$key];
+        if(is_string($value)) {
+            $value = $this->replaceConfigValueWithEnvVariable(
+                $value,
+                $this->getEnvironmentVariables($message)
+            );
+        }
+
+        return $value;
     }
 
     protected function updateJobRunContext(
