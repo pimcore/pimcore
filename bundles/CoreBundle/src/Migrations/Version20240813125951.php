@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Model\Dao\AbstractDao;
 
 /**
  * Modifies foreign key constraints for specified tables, changing their names from ending in '_o_id' to '_id' and adding ON DELETE CASCADE.
