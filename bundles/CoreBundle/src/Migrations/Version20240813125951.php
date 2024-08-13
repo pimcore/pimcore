@@ -21,8 +21,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Modifies foreign key constraints for specified tables, changing their names from ending in '_o_id' to '_id' and adding ON DELETE CASCADE.
- * The down method reverses the naming back to '_o_id' while keeping ON DELETE CASCADE.
+ * Sets sourceSite=0 (Main domain) for all redirects with sourceSite = NULL because before NULL and 0 were both treated as main domain and in fact sourceSite was not optional (although UI told so)
  */
 final class Version20240813125951 extends AbstractMigration
 {
