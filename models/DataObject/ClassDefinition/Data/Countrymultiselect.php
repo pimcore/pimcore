@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,27 +22,14 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptio
 class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'countrymultiselect';
-
-    /**
      * Restrict selection to comma-separated list of countries.
      *
      * @internal
      *
-     * @var string|null
      */
-    public $restrictTo = null;
+    public ?string $restrictTo = null;
 
-    /**
-     * @param array|string|null $restrictTo
-     */
-    public function setRestrictTo($restrictTo)
+    public function setRestrictTo(array|string|null $restrictTo): void
     {
         /**
          * @extjs6
@@ -53,19 +41,18 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
         $this->restrictTo = $restrictTo;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRestrictTo()
+    public function getRestrictTo(): ?string
     {
         return $this->restrictTo;
     }
 
-    /**
-     * @return string
-     */
-    public function getOptionsProviderClass()
+    public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'countrymultiselect';
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,26 +21,19 @@ use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
+    use ObjectVarTrait;
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var string|null
-     */
-    protected $unitId;
+    protected string|null $unitId = null;
 
-    /**
-     * @var Unit|null
-     */
-    protected $unit;
+    protected ?Unit $unit = null;
 
-    /**
-     * @param Unit|string|null $unit
-     */
-    public function __construct($unit = null)
+    public function __construct(Unit|string $unit = null)
     {
         if ($unit instanceof Unit) {
             $this->unit = $unit;
@@ -50,30 +44,21 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @param string $unitId
-     */
-    public function setUnitId($unitId)
+    public function setUnitId(string $unitId): void
     {
         $this->unitId = $unitId;
         $this->unit = null;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUnitId()
+    public function getUnitId(): string|null
     {
         return $this->unitId;
     }
 
-    /**
-     * @return Unit|null
-     */
-    public function getUnit()
+    public function getUnit(): ?Unit
     {
-        if (empty($this->unit)) {
+        if (empty($this->unit) && !empty($this->unitId)) {
             $this->unit = Unit::getById($this->unitId);
         }
 
@@ -81,13 +66,11 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Unit|string $unit target unit. if string provided, unit is tried to be found by abbreviation
-     *
-     * @return self
+     * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
      *
      * @throws \Exception
      */
-    public function convertTo($unit)
+    public function convertTo(Unit|string $unit): AbstractQuantityValue
     {
         if (is_string($unit)) {
             $unitObject = Unit::getByAbbreviation($unit);
@@ -107,7 +90,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         return $converter->convert($this, $unit);
     }
 
-    abstract public function getValue();
+    abstract public function getValue(): mixed;
 
-    abstract public function __toString();
+    abstract public function __toString(): string;
 }

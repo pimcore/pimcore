@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
@@ -24,7 +26,6 @@ use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -38,80 +39,75 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
      * @internal
-     *
-     * @var array|null
      */
-    protected $config;
+    protected array $config = [];
+
+    /**
+     * The label rendered for the editmode dialog.
+     *
+     * @internal
+     */
+    protected ?string $label = null;
+
+    /**
+     * The description rendered for the editmode dialog.
+     *
+     * @internal
+     */
+    protected ?string $dialogDescription = null;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $name;
+    protected string $name = '';
 
     /**
      * Contains the real name of the editable without the prefixes and suffixes
      * which are generated automatically by blocks and areablocks
      *
      * @internal
-     *
-     * @var string
      */
-    protected $realName;
+    protected ?string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
      *
-     * @var array
      */
-    private $parentBlockNames = [];
+    private array $parentBlockNames = [];
 
     /**
      * Element belongs to the ID of the document
      *
      * @internal
-     *
-     * @var int
      */
-    protected $documentId;
+    protected ?int $documentId = null;
 
     /**
      * Element belongs to the document
      *
      * @internal
-     *
-     * @var Document\PageSnippet|null
      */
-    protected $document;
+    protected ?Document\PageSnippet $document = null;
 
     /**
      * In Editmode or not
      *
      * @internal
-     *
-     * @var bool
      */
-    protected $editmode;
+    protected bool $editmode = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    protected $inherited = false;
+    protected bool $inherited = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $inDialogBox = null;
+    protected ?string $inDialogBox = null;
 
-    /**
-     * @var EditmodeEditableDefinitionCollector|null
-     */
-    private $editableDefinitionCollector;
+    private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector = null;
 
     /**
      * @return string|void
@@ -141,12 +137,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     abstract public function frontend();
 
-    /**
-     * @param string $id
-     * @param string $code
-     *
-     * @return string
-     */
     private function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
@@ -156,8 +146,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds config passed to editmode frontend as JSON config
-     *
-     * @return array
      *
      * @internal
      */
@@ -182,20 +170,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds data used for editmode
      *
-     * @return mixed
-     *
      * @internal
      */
-    protected function getEditmodeData()
+    protected function getEditmodeData(): mixed
     {
         // get configuration data for admin
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof Document\Editable\EditmodeDataInterface || method_exists($this, 'getDataEditmode')) {
-            if (!$this instanceof Document\Editable\EditmodeDataInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.3',
-                    sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                        'Implement the %s interface instead.', Document\Editable\EditmodeDataInterface::class));
-            }
+        if ($this instanceof Document\Editable\EditmodeDataInterface) {
             $data = $this->getDataEditmode();
         } else {
             $data = $this->getData();
@@ -206,8 +186,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds attributes used on the editmode HTML element
-     *
-     * @return array
      *
      * @internal
      */
@@ -228,8 +206,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @return array
-     *
      * @internal
      */
     protected function getEditmodeBlockStateAttributes(): array
@@ -252,8 +228,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds classes used on the editmode HTML element
-     *
-     * @return array
      *
      * @internal
      */
@@ -278,38 +252,28 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Sends data to the output stream
-     *
-     * @param string $value
      */
-    protected function outputEditmode($value)
+    protected function outputEditmode(string $value): void
     {
         if ($this->getEditmode()) {
             echo $value . "\n";
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getData();
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -317,13 +281,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param int $id
-     *
      * @return $this
      */
-    public function setDocumentId($id)
+    public function setDocumentId(int $id): static
     {
-        $this->documentId = (int) $id;
+        $this->documentId = $id;
 
         if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
             $this->document = null;
@@ -332,20 +294,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDocumentId()
+    public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
 
     /**
-     * @param Document\PageSnippet $document
-     *
      * @return $this
      */
-    public function setDocument(Document\PageSnippet $document)
+    public function setDocument(Document\PageSnippet $document): static
     {
         $this->document = $document;
         $this->documentId = (int) $document->getId();
@@ -353,10 +310,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return Document\PageSnippet
-     */
-    public function getDocument()
+    public function getDocument(): ?PageSnippet
     {
         if (!$this->document) {
             $this->document = Document\PageSnippet::getById($this->documentId);
@@ -365,20 +319,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->document;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
-        return is_array($this->config) ? $this->config : [];
+        return $this->config;
     }
 
     /**
-     * @param array $config
-     *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
@@ -386,46 +335,58 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     *
      * @return $this
      */
-    public function addConfig(string $name, $value): self
+    public function addConfig(string $name, mixed $value): static
     {
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         $this->config[$name] = $value;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRealName()
+    public function getLabel(): ?string
     {
-        return $this->realName;
+        return $this->label;
     }
 
     /**
-     * @param string $realName
+     * @return $this
      */
-    public function setRealName($realName)
+    public function setLabel(?string $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getDialogDescription(): ?string
+    {
+        return $this->dialogDescription;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setDialogDescription(?string $dialogDescription): static
+    {
+        $this->dialogDescription = $dialogDescription;
+
+        return $this;
+    }
+
+    public function getRealName(): string
+    {
+        return $this->realName ?? '';
+    }
+
+    public function setRealName(string $realName): void
     {
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames($parentNames)
+    final public function setParentBlockNames(array $parentNames): void
     {
-        if (is_array($parentNames)) {
-            // unfortunately we cannot make a type hint here, because of compatibility reasons
-            // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
-            // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
-            $this->parentBlockNames = $parentNames;
-        }
+        $this->parentBlockNames = $parentNames;
     }
 
     final public function getParentBlockNames(): array
@@ -436,9 +397,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Returns only the properties which should be serialized
      *
-     * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -453,16 +413,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $finalVars;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->document = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    final public function render()
+    final public function render(): mixed
     {
         if ($this->editmode) {
             if ($collector = $this->getEditableDefinitionCollector()) {
@@ -477,10 +434,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * direct output to the frontend
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $result = '';
 
@@ -491,7 +446,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().' File: ' . $e->getFile().' Line: '. $e->getLine().'</b><br/>'.$e->getTraceAsString();
 
-                return $result;
+                return '<pre class="pimcore_editable_error">' . $result . '</pre>';
             }
 
             Logger::error('toString() returned an exception: {exception}', [
@@ -509,42 +464,25 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return '';
     }
 
-    /**
-     * @return bool
-     */
-    public function getEditmode()
+    public function getEditmode(): bool
     {
         return $this->editmode;
     }
 
-    /**
-     * @param bool $editmode
-     *
-     * @return $this
-     */
-    public function setEditmode($editmode)
+    public function setEditmode(bool $editmode): static
     {
-        $this->editmode = (bool) $editmode;
+        $this->editmode = $editmode;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         $this->checkValidity();
 
         return $this->getData();
     }
 
-    /**
-     * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return $tags;
@@ -553,43 +491,30 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * This is a dummy and is mostly implemented by relation types
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         return [];
     }
 
-    /**
-     * @return bool
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         return true;
     }
 
-    /**
-     * @param bool $inherited
-     *
-     * @return $this
-     */
-    public function setInherited($inherited)
+    public function setInherited(bool $inherited): static
     {
         $this->inherited = $inherited;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInherited()
+    public function getInherited(): bool
     {
         return $this->inherited;
     }
 
     /**
      * @internal
-     *
-     * @return BlockState
      */
     protected function getBlockState(): BlockState
     {
@@ -598,8 +523,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
-     *
-     * @return BlockStateStack
      */
     protected function getBlockStateStack(): BlockStateStack
     {
@@ -612,15 +535,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      *
-     * @param string $type
-     * @param string $name
-     * @param Document|null $document
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    public static function buildEditableName(string $type, string $name, Document $document = null)
+    public static function buildEditableName(string $type, string $name, Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!
@@ -640,7 +557,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
         $targetGroupEditableName = null;
-        if ($document && $document instanceof TargetingDocumentInterface) {
+        if ($document && interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface) {
             $targetGroupEditableName = $document->getTargetGroupEditableName($name);
 
             if (!$blockState->hasBlocks()) {
@@ -666,15 +583,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $editableName;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param BlockState $blockState
-     * @param string|null $targetGroupElementName
-     *
-     * @return string
-     */
-    private static function doBuildName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
+    private static function doBuildName(string $name, string $type, BlockState $blockState, ?string $targetGroupElementName = null): string
     {
         if (!$blockState->hasBlocks()) {
             return $name;
@@ -692,10 +601,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             array_pop($tmpBlocks);
             array_pop($tmpIndexes);
 
-            $tmpName = $name;
-            if (is_array($tmpBlocks)) {
-                $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
-            }
+            $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
 
             $previousBlockName = $blocks[count($blocks) - 1]->getName();
             if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {
@@ -708,11 +614,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
      * @param BlockName[] $blocks
      * @param int[] $indexes
-     *
-     * @return string
      */
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {
@@ -739,13 +642,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @internal
      *
-     * @param string $name
-     * @param string $type
-     * @param array $parentBlockNames
-     * @param int $index
-     *
-     * @return string
-     *
      * @throws \Exception
      */
     public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
@@ -766,11 +662,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
-     *
-     * @param string $name
-     * @param Document $document
-     *
-     * @return string
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
@@ -779,55 +670,42 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        if ($document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+        if (interface_exists(TargetingDocumentInterface::class) && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
             $name = $document->getTargetGroupEditableName($name);
         }
 
         return $name;
     }
 
-    /**
-     * @return bool
-     */
     public function isInDialogBox(): bool
     {
         return (bool) $this->inDialogBox;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInDialogBox(): ?string
     {
         return $this->inDialogBox;
     }
 
     /**
-     * @param string|null $inDialogBox
-     *
      * @return $this
      */
-    public function setInDialogBox(?string $inDialogBox): self
+    public function setInDialogBox(?string $inDialogBox): static
     {
         $this->inDialogBox = $inDialogBox;
 
         return $this;
     }
 
-    /**
-     * @return EditmodeEditableDefinitionCollector|null
-     */
     public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
     {
         return $this->editableDefinitionCollector;
     }
 
     /**
-     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
-     *
      * @return $this
      */
-    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): static
     {
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 

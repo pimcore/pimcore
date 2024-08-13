@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,204 +16,150 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use CheckPasswordLengthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     *
      */
-    public $fieldtype = 'password';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar(255)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar(255)';
+    public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
      *
-     * @var string
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
+     *
      */
-    public $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
+    public string $salt = '';
 
     /**
      * @internal
      *
-     * @var string
-     */
-    public $salt = '';
-
-    /**
-     * @internal
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
-     * @var string
      */
-    public $saltlocation = '';
+    public string $saltlocation = '';
 
-    /**
-     * @var int|null
-     */
-    public $minimumLength;
+    public ?int $minimumLength = null;
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getMinimumLength(): ?int
     {
         return $this->minimumLength;
     }
 
-    /**
-     * @param int|null $minimumLength
-     */
     public function setMinimumLength(?int $minimumLength): void
     {
         $this->minimumLength = $minimumLength;
     }
 
     /**
-     * @param string $algorithm
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function setAlgorithm($algorithm)
+    public function setAlgorithm(string $algorithm): void
     {
+        if($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+        }
+
         $this->algorithm = $algorithm;
     }
 
     /**
-     * @return string
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function getAlgorithm()
+    public function getAlgorithm(): string
     {
         return $this->algorithm;
     }
 
     /**
-     * @param string $salt
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function setSalt($salt)
+    public function setSalt(string $salt): void
     {
         $this->salt = $salt;
     }
 
     /**
-     * @return string
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function getSalt()
+    public function getSalt(): string
     {
         return $this->salt;
     }
 
     /**
-     * @param string $saltlocation
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function setSaltlocation($saltlocation)
+    public function setSaltlocation(string $saltlocation): void
     {
         $this->saltlocation = $saltlocation;
     }
 
     /**
-     * @return string
+     * @deprecated since pimcore 11.2, will be removed in pimcore 12
      */
-    public function getSaltlocation()
+    public function getSaltlocation(): string
     {
         return $this->saltlocation;
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             return null;
         }
 
         // is already a hashed string? Then do not re-hash
-        $info = password_get_info($data);
-        if ($info['algo'] !== null && $info['algo'] !== 0) {
-            return $data;
-        }
+        if($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
+            $info = password_get_info($data);
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
+                return $data;
+            }
+        } else {
+            // password_get_info() will not detect older, less secure, hashing algos.
+            // It might not detect some less common ones as well.
+            $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
+            $hashLenghts = [
+                32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
+                40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
+                48,  // Tiger/192, HAVAL192
+                56,  // SHA-224, HAVAL224
+                64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
+                96,  // SHA-384
+                128, // SHA-512, BLAKE-512, SWIFFT
+            ];
 
-        // password_get_info() will not detect older, less secure, hashing algos.
-        // It might not detect some less common ones as well.
-        $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
-        $hashLenghts = [
-            32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
-            40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
-            48,  // Tiger/192, HAVAL192
-            56,  // SHA-224, HAVAL224
-            64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
-            96,  // SHA-384
-            128, // SHA-512, BLAKE-512, SWIFFT
-        ];
-
-        if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
-            // Probably already a hashed string
-            return $data;
+            if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
+                // Probably already a hashed string
+                return $data;
+            }
         }
 
         $hashed = $this->calculateHash($data);
@@ -237,24 +184,30 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
+     *
+     *
      * @internal
-     *
-     * @param string $data
-     *
-     * @return bool|null|string
      */
-    public function calculateHash($data)
+    public function calculateHash(string $data): string
     {
-        $hash = null;
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $hash = password_hash($data, PASSWORD_DEFAULT);
+            $config = Config::getSystemConfiguration()['security']['password'];
+
+            $hash = password_hash($data, $config['algorithm'], $config['options']);
         } else {
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+
             if (!empty($this->salt)) {
-                if ($this->saltlocation == 'back') {
-                    $data = $data . $this->salt;
-                } elseif ($this->saltlocation == 'front') {
-                    $data = $this->salt . $data;
-                }
+                $data = match ($this->saltlocation) {
+                    'back' => $data . $this->salt,
+                    'front' => $this->salt . $data,
+                    default => $data,
+                };
             }
 
             $hash = hash($this->algorithm, $data);
@@ -270,30 +223,27 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @internal
-     *
-     * @param string $password
-     * @param DataObject\Concrete $object
      * @param bool|true $updateHash
      *
-     * @return bool
+     * @internal
      */
-    public function verifyPassword($password, DataObject\Concrete $object, $updateHash = true)
+    public function verifyPassword(string $password, DataObject\Concrete $object, bool $updateHash = true): bool
     {
         $getter = 'get' . ucfirst($this->getName());
         $setter = 'set' . ucfirst($this->getName());
 
         $objectHash = $object->$getter();
-        if (null === $objectHash || empty($objectHash)) {
+        if (empty($objectHash)) {
             return false;
         }
 
         if ($this->getAlgorithm() === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $result = (true === password_verify($password, $objectHash));
+            $result = password_verify($password, $objectHash);
 
             if ($result && $updateHash) {
-                // password needs rehash (e.g PASSWORD_DEFAULT changed to a stronger algorithm)
-                if (true === password_needs_rehash($objectHash, PASSWORD_DEFAULT)) {
+                $config = Config::getSystemConfiguration()['security']['password'];
+
+                if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
                     $newHash = $this->calculateHash($password);
 
                     $object->$setter($newHash);
@@ -301,6 +251,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
                 }
             }
         } else {
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.2',
+                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
+            );
+
             $hash = $this->calculateHash($password);
             $result = hash_equals($objectHash, $hash);
         }
@@ -309,43 +266,26 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
+     *
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
-    /**
-     * @see Data::getDataForEditmode
-     *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -353,86 +293,58 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $data;
     }
 
     /**
+     *
+     *
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return '******';
     }
 
-    /**
-     * @param string $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getDataForGrid($data, $object, $params = [])
+    public function getDataForGrid(?string $data, Concrete $object, array $params = []): string
     {
         return '******';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @param array $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data[0]['data'];
     }
 
     /** See parent class.
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
      *
-     * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $diffdata = [];
         $diffdata['data'] = $data;
         $diffdata['disabled'] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata['field'] = $this->getName();
         $diffdata['key'] = $this->getName();
-        $diffdata['type'] = $this->fieldtype;
+        $diffdata['type'] = $this->getFieldType();
 
         if ($data) {
             $diffdata['value'] = $this->getVersionPreview($data, $object, $params);
@@ -448,60 +360,64 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->algorithm = $masterDefinition->algorithm;
-        $this->salt = $masterDefinition->salt;
-        $this->saltlocation = $masterDefinition->saltlocation;
+        $this->algorithm = $mainDefinition->algorithm;
+        $this->salt = $mainDefinition->salt;
+        $this->saltlocation = $mainDefinition->saltlocation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Model\Element\ValidationException|\Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {
+        if (is_string($data) && $this->isPasswordTooLong($data)) {
+            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is too long');
+        }
+
+        if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }
 
         parent::checkValidity($data, $omitMandatoryCheck, $params);
+    }
+
+    public function getColumnType(): string
+    {
+        return 'varchar(255)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'password';
     }
 }

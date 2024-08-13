@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,15 +24,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 trait SelectionProviderTrait
 {
-    /**
-     * @param DataObject\Concrete|null $object
-     * @param string $fieldname
-     * @param string $purpose
-     * @param int $mode
-     * @param array $context
-     */
-    protected function doEnrichDefinitionDefinition(/*?Concrete */ $object, string $fieldname, string $purpose, int $mode, /**  array */ $context = [])
+    protected function doEnrichDefinitionDefinition(?DataObject\Concrete $object, string $fieldname, string $purpose, int $mode, array $context = []): void
     {
+        if ($this->getOptionsProviderType() === Data\OptionsProviderInterface::TYPE_CONFIGURE) {
+            return;
+        }
+
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             $mode
@@ -47,18 +45,17 @@ trait SelectionProviderTrait
                 $context['purpose'] = $purpose;
             }
 
-            $inheritanceEnabled = DataObject::getGetInheritedValues();
-            DataObject::setGetInheritedValues(true);
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            DataObject::setGetInheritedValues($inheritanceEnabled);
+            $options = DataObject\Service::useInheritedValues(
+                true,
+                fn () => $optionsProvider->getOptions($context, $this)
+            );
+
             $this->setOptions($options);
 
-            if ($this instanceof Data\Select) {
-                $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
-                $this->setDefaultValue($defaultValue);
-            }
+            $defaultValue = $optionsProvider->getDefaultValue($context, $this);
+            $this->setDefaultValue($defaultValue);
 
-            $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
+            $hasStaticOptions = $optionsProvider->hasStaticOptions($context, $this);
             $this->dynamicOptions = !$hasStaticOptions;
         }
     }

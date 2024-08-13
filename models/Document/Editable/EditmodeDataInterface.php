@@ -21,8 +21,6 @@ interface EditmodeDataInterface
 {
     /**
      * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
      */
-    public function getDataEditmode() /** : mixed */;
+    public function getDataEditmode(): mixed;
 }

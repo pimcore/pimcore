@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
 interface LayoutDefinitionEnrichmentInterface
@@ -25,12 +25,11 @@ interface LayoutDefinitionEnrichmentInterface
      * An example would the select datatype with a dynamic options provider.
      *
      *
-     * @param Concrete|null $object
-     * @param array $context additional contextual data like fieldname etc.
+     * @param array<string, mixed> $context additional contextual data like fieldname etc.
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) /* : static */;
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static;
 }

@@ -29,18 +29,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName(): string
     {
         return 'objects';
     }
 
     /**
      * @param string|string[]|null $columns
-     *
-     * @return DoctrineQueryBuilder
      *
      * @throws \Exception
      */
@@ -60,16 +55,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of objects for the specicifies parameters, returns an array of DataObject\AbstractObject elements
      *
-     * @return array
      */
-    public function load()
+    public function load(): array
     {
         // load id's
         $list = $this->loadIdList();
 
         $objects = [];
-        foreach ($list as $o_id) {
-            if ($object = DataObject::getById($o_id)) {
+        foreach ($list as $id) {
+            if ($object = DataObject::getById($id)) {
                 $objects[] = $object;
             }
         }
@@ -79,23 +73,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $objects;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.o_id');
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
-        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return (int) $totalCount;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getObjects());
@@ -111,20 +99,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder([sprintf('%s as o_id', $this->getTableName() . '.o_id'), sprintf('%s as o_type', $this->getTableName() . '.o_type')]);
-        $objectIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder([sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as `type`', $this->getTableName() . '.type')]);
+        $objectIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return array_map('intval', $objectIds);
     }
 
-    /**
-     * @param DoctrineQueryBuilder $queryBuilder
-     *
-     * @return $this
-     */
-    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder): static
     {
         return $this;
     }

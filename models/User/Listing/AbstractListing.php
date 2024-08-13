@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,33 +28,22 @@ use Pimcore\Model;
  */
 abstract class AbstractListing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @return array
-     */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->getData();
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         return $this->setData($items);
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

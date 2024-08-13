@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,28 +21,19 @@ namespace Pimcore\Twig\Extension\Templating\Placeholder;
  */
 abstract class CacheBusterAware extends AbstractExtension
 {
-    /**
-     * @var bool
-     */
-    protected $cacheBuster = true;
+    protected bool $cacheBuster = true;
 
     /**
      * prepares entries with cache buster prefix
      */
-    abstract protected function prepareEntries();
+    abstract protected function prepareEntries(): void;
 
-    /**
-     * @return bool
-     */
-    public function isCacheBuster()
+    public function isCacheBuster(): bool
     {
         return $this->cacheBuster;
     }
 
-    /**
-     * @param bool $cacheBuster
-     */
-    public function setCacheBuster($cacheBuster)
+    public function setCacheBuster(bool $cacheBuster): void
     {
         $this->cacheBuster = $cacheBuster;
     }

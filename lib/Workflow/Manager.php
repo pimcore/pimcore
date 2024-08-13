@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,45 +32,33 @@ use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Manager
 {
-    /**
-     * @var Registry
-     */
-    private $workflowRegistry;
+    private Registry $workflowRegistry;
 
-    /**
-     * @var NotesSubscriber
-     */
-    private $notesSubscriber;
+    private NotesSubscriber $notesSubscriber;
 
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var PlaceConfig[][]
      */
-    private $placeConfigs = [];
+    private array $placeConfigs = [];
 
     /**
      * @var GlobalAction[][]
      */
-    private $globalActions = [];
+    private array $globalActions = [];
 
     /**
      * @var WorkflowConfig[]
      */
-    private $workflows = [];
+    private array $workflows = [];
 
     public function __construct(Registry $workflowRegistry, NotesSubscriber $notesSubscriber, ExpressionService $expressionService, EventDispatcherInterface $eventDispatcher)
     {
@@ -80,12 +69,10 @@ class Manager
     }
 
     /**
-     * @param string $place
-     * @param array $placeConfig
      *
      * @return $this
      */
-    public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
+    public function addPlaceConfig(string $workflowName, string $place, array $placeConfig): static
     {
         $this->placeConfigs[$workflowName] = $this->placeConfigs[$workflowName] ?? [];
         $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService, $workflowName);
@@ -94,14 +81,10 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $action
-     * @param array $actionConfig
-     * @param CustomHtmlServiceInterface|null $customHtmlService
      *
      * @return $this
      */
-    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null)
+    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null): static
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
         $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName, $customHtmlService);
@@ -130,12 +113,10 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     * @param Workflow $workflow
-     * @param Marking|null $marking
      *
      * @return PlaceConfig[];
      */
-    public function getOrderedPlaceConfigs(Workflow $workflow, Marking $marking = null): array
+    public function getOrderedPlaceConfigs(WorkflowInterface $workflow, Marking $marking = null): array
     {
         if (is_null($marking)) {
             return $this->placeConfigs[$workflow->getName()] ?? [];
@@ -156,12 +137,12 @@ class Manager
     /**
      * @return array|PlaceConfig[]
      */
-    public function getPlaceConfigsByWorkflowName(string $workflowName)
+    public function getPlaceConfigsByWorkflowName(string $workflowName): array
     {
         return $this->placeConfigs[$workflowName] ?? [];
     }
 
-    public function registerWorkflow(string $workflowName, array $options = [])
+    public function registerWorkflow(string $workflowName, array $options = []): void
     {
         $this->workflows[$workflowName] = new WorkflowConfig($workflowName, $options);
 
@@ -188,11 +169,10 @@ class Manager
     }
 
     /**
-     * @param object $subject
      *
-     * @return Workflow[]
+     * @return WorkflowInterface[]
      */
-    public function getAllWorkflowsForSubject($subject): array
+    public function getAllWorkflowsForSubject(object $subject): array
     {
         $workflows = [];
 
@@ -209,12 +189,7 @@ class Manager
         return $workflows;
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return Workflow|null
-     */
-    public function getWorkflowIfExists($subject, string $workflowName): ?Workflow
+    public function getWorkflowIfExists(object $subject, string $workflowName): ?WorkflowInterface
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
@@ -226,14 +201,7 @@ class Manager
         return $workflow;
     }
 
-    /**
-     * @param string $workflowName
-     *
-     * @return Workflow
-     *
-     * @throws \Exception
-     */
-    public function getWorkflowByName(string $workflowName): Workflow
+    public function getWorkflowByName(string $workflowName): ?object
     {
         $config = $this->getWorkflowConfig($workflowName);
 
@@ -241,22 +209,21 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param Asset|Concrete|PageSnippet $subject
-     * @param string $transition
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false)
-    {
+    public function applyWithAdditionalData(
+        WorkflowInterface $workflow,
+        Asset|PageSnippet|Concrete $subject,
+        string $transition,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        $marking = $workflow->apply($subject, $transition);
+        $marking = $workflow->apply($subject, $transition, $additionalData);
 
         $this->notesSubscriber->setAdditionalData([]);
 
@@ -275,19 +242,17 @@ class Manager
     }
 
     /**
-     * @param Workflow $workflow
-     * @param object $subject
-     * @param string $globalAction
-     * @param array $additionalData
-     * @param bool $saveSubject
      *
-     * @return Marking
      *
-     * @throws ValidationException
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData, $saveSubject = false)
-    {
+    public function applyGlobalAction(
+        WorkflowInterface $workflow,
+        object $subject,
+        string $globalAction,
+        array $additionalData,
+        bool $saveSubject = false
+    ): Marking {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if (!$globalActionObj) {
             throw new LogicException(sprintf('global action %s not found', $globalAction));
@@ -323,10 +288,7 @@ class Manager
     }
 
     /**
-     * @param string $workflowName
-     * @param string $transitionName
      *
-     * @return null|\Symfony\Component\Workflow\Transition
      *
      * @throws \Exception
      */
@@ -350,14 +312,12 @@ class Manager
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
      * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
-     * @param string $workflowName
-     * @param object $subject
      *
      * @return bool true if initial state was applied
      *
      * @throws \Exception
      */
-    public function ensureInitialPlace(string $workflowName, $subject): bool
+    public function ensureInitialPlace(string $workflowName, object $subject): bool
     {
         if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
             return false;
@@ -395,7 +355,7 @@ class Manager
         return false;
     }
 
-    public function getInitialPlacesForWorkflow(Workflow $workflow): array
+    public function getInitialPlacesForWorkflow(WorkflowInterface $workflow): array
     {
         $definition = $workflow->getDefinition();
 

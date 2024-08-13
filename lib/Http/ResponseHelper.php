@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @internal
@@ -26,10 +28,8 @@ class ResponseHelper
     /**
      * Disable cache
      *
-     * @param Response $response
-     * @param bool $force
      */
-    public function disableCache(Response $response, $force = false)
+    public function disableCache(Response $response, bool $force = false): void
     {
         if (!$response->headers->has('Cache-Control') || $force) {
             // set this headers to avoid problems with proxies, ...
@@ -54,18 +54,13 @@ class ResponseHelper
         }
     }
 
-    /**
-     * @param Response $response
-     *
-     * @return bool
-     */
     public function isHtmlResponse(Response $response): bool
     {
-        if ($response instanceof BinaryFileResponse) {
+        if ($response instanceof BinaryFileResponse || $response instanceof StreamedResponse) {
             return false;
         }
 
-        if (false !== strpos($response->getContent(), '<html')) {
+        if (str_contains((string)$response->getContent(), '<html')) {
             return true;
         }
 

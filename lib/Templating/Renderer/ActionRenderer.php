@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,14 +27,8 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
  */
 class ActionRenderer
 {
-    /**
-     * @var HttpKernelRuntime
-     */
-    protected $httpKernelRuntime;
+    protected HttpKernelRuntime $httpKernelRuntime;
 
-    /**
-     * @param HttpKernelRuntime $httpKernelRuntime
-     */
     public function __construct(HttpKernelRuntime $httpKernelRuntime)
     {
         $this->httpKernelRuntime = $httpKernelRuntime;
@@ -45,11 +40,9 @@ class ActionRenderer
      * @param mixed $uri     A URI
      * @param array  $options An array of options
      *
-     * @return string
-     *
      * @see HttpKernelRuntime::renderFragment()
      */
-    public function render($uri, array $options = [])
+    public function render(mixed $uri, array $options = []): string
     {
         if ($uri instanceof Document\PageSnippet) {
             $uri = $this->createDocumentReference($uri, $options);
@@ -61,13 +54,9 @@ class ActionRenderer
     /**
      * Create a document controller reference
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param array $query
      *
-     * @return ControllerReference
      */
-    public function createDocumentReference(Document\PageSnippet $document, array $attributes = [], array $query = [])
+    public function createDocumentReference(Document\PageSnippet $document, array $attributes = [], array $query = []): ControllerReference
     {
         $attributes = $this->addDocumentAttributes($document, $attributes);
 
@@ -77,13 +66,9 @@ class ActionRenderer
     /**
      * Add document params to params array
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param string $context
      *
-     * @return array
      */
-    public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [], string $context = PimcoreContextResolver::CONTEXT_DEFAULT)
+    public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [], string $context = PimcoreContextResolver::CONTEXT_DEFAULT): array
     {
         if (null !== $context) {
             // document needs to be rendered with default context as the context guesser can't resolve the

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -67,27 +68,25 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Types of attributes
      *
-     * @var array
      */
-    protected $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
+    protected array $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
 
-    protected $_requiredKeys = ['content'];
+    protected array $_requiredKeys = ['content'];
 
-    protected $_modifierKeys = ['lang', 'scheme'];
+    protected array $_modifierKeys = ['lang', 'scheme'];
 
-    protected $rawItems = [];
+    protected array $rawItems = [];
 
     /**
      * @var string registry key
      */
-    protected $_regKey = 'HeadMeta';
+    protected string $_regKey = 'HeadMeta';
 
     /**
      * HeadMeta constructor.
      *
      * Set separator to PHP_EOL.
      *
-     * @param ContainerService $containerService
      */
     public function __construct(ContainerService $containerService)
     {
@@ -98,15 +97,10 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param  null|string $content
-     * @param  null|string $keyValue
-     * @param  string $keyType
-     * @param  array $modifiers
-     * @param  string $placement
      *
-     * @return HeadMeta
+     * @return $this
      */
-    public function __invoke($content = null, $keyValue = null, $keyType = 'name', $modifiers = [], $placement = Container::APPEND)
+    public function __invoke(string $content = null, string $keyValue = null, string $keyType = 'name', array $modifiers = [], string $placement = Container::APPEND): static
     {
         if ((null !== $content) && (null !== $keyValue)) {
             $item = $this->createData($keyType, $keyValue, $content, $modifiers);
@@ -128,12 +122,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
         return $this;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected function _normalizeType($type)
+    protected function _normalizeType(string $type): string
     {
         switch ($type) {
             case 'Name':
@@ -147,19 +136,15 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
         }
     }
 
-    /**
-     * @param string $type
-     * @param string $keyValue
-     *
-     * @return mixed
-     */
-    public function getItem($type, $keyValue)
+    public function getItem(string $type, string $keyValue): mixed
     {
         foreach ($this->getContainer() as $item) {
             if (isset($item->$type) && $item->$type == $keyValue) {
                 return $item->content;
             }
         }
+
+        return null;
     }
 
     /**
@@ -176,12 +161,10 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * - prependProperty($keyValue, $content, $modifiers = array())
      * - setProperty($keyValue, $content, $modifiers = array())
      *
-     * @param  string $method
-     * @param  array $args
      *
      * @return HeadMeta
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(pre|ap)pend|offsetSet)(?P<type>Name|HttpEquiv|Property)$/', $method, $matches)) {
             $action = $matches['action'];
@@ -223,11 +206,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Determine if item is valid
      *
-     * @param  mixed $item
      *
-     * @return bool
      */
-    protected function _isValid($item)
+    protected function _isValid(mixed $item): bool
     {
         return true;
     }
@@ -237,11 +218,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @param  \stdClass $value
      *
-     * @return void
-     *
      * @throws Exception
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to append; please use appendMeta()');
@@ -253,21 +232,17 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * OffsetSet
      *
-     * @param  string|int $index
-     * @param  \stdClass $value
-     *
-     * @return void
+     * @param  string|int $offset
      *
      * @throws Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)// : void
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetName() or offsetSetHttpEquiv()');
         }
 
-        $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
@@ -275,12 +250,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @param  string|int $index
      *
-     * @return void
-     *
      * @throws Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($index)// : void
+    public function offsetUnset($index): void
     {
         if (!in_array($index, $this->getContainer()->getKeys())) {
             throw new Exception('Invalid index passed to offsetUnset()');
@@ -294,11 +266,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @param  string $value
      *
-     * @return void
-     *
      * @throws Exception
      */
-    public function prepend($value)
+    public function prepend($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to prepend; please use prependMeta()');
@@ -310,13 +280,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Set
      *
-     * @param mixed $value
      *
-     * @return void
      *
      * @throws Exception
      */
-    public function set($value)
+    public function set(mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to set; please use setMeta()');
@@ -335,11 +303,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Build meta HTML string
      *
-     * @param \stdClass $item
      *
-     * @return string
      */
-    public function itemToString(\stdClass $item)
+    public function itemToString(\stdClass $item): string
     {
         if (!in_array($item->type, $this->_typeKeys)) {
             throw new Exception(sprintf('Invalid type "%s" provided for meta', $item->type));
@@ -379,11 +345,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Render placeholder as string
      *
-     * @param  null|string|int $indent
      *
-     * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
@@ -413,14 +377,9 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create data item for inserting into stack
      *
-     * @param  string $type
-     * @param  string $typeValue
-     * @param  string $content
-     * @param  array $modifiers
      *
-     * @return \stdClass
      */
-    public function createData($type, $typeValue, $content, array $modifiers)
+    public function createData(string $type, string $typeValue, string $content, array $modifiers): \stdClass
     {
         $data = new \stdClass;
         $data->type = $type;
@@ -431,34 +390,23 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
         return $data;
     }
 
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
-    public function addRaw($html)
+    public function addRaw(string $html): static
     {
         $this->rawItems[] = $html;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getRaw()
+    public function getRaw(): array
     {
         return $this->rawItems;
     }
 
     /**
-     * @param string $string
-     * @param null|int $length
-     * @param string $suffix
      *
      * @return $this
      */
-    public function setDescription($string, $length = null, $suffix = '')
+    public function setDescription(string $string, int $length = null, string $suffix = ''): static
     {
         $string = $this->normalizeString($string, $length, $suffix);
 

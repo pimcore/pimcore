@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,32 +20,20 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ResultEvent extends Event
 {
-    /**
-     * @var bool
-     */
-    protected $result;
+    protected bool $result;
 
-    /**
-     * @param bool $result
-     */
-    public function __construct($result = true)
+    public function __construct(bool $result = true)
     {
         $this->setResult($result);
     }
 
-    /**
-     * @return bool
-     */
-    public function getResult()
+    public function getResult(): bool
     {
         return $this->result;
     }
 
-    /**
-     * @param bool $result
-     */
-    public function setResult($result)
+    public function setResult(bool $result): void
     {
-        $this->result = (bool)$result;
+        $this->result = $result;
     }
 }

@@ -18,18 +18,17 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Model\LazyLoading\AbstractLazyLoadingTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 {
     private function reloadObject(int $id): array
     {
         //reload object from database
-        $databaseObject = AbstractObject::getById($id, true);
+        $databaseObject = AbstractObject::getById($id, ['force' => true]);
 
         //load latest version of object
         $latestVersion = $databaseObject->getLatestVersion();
@@ -55,11 +54,11 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $this->assertEquals($latestObjectVersion->getLocalizedfields()->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in localized field is not right.');
     }
@@ -81,12 +80,12 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getFieldcollection();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $fieldCollectionItems = $latestObjectVersion->getFieldcollection()->getItems();
         foreach ($fieldCollectionItems as $item) {
@@ -97,9 +96,6 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 
     public function testLocalizedFieldInObjectBrick(): void
     {
-        /**
-         * @var LazyLoading $object
-         */
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
         $brick->setLInput(uniqid());
@@ -109,12 +105,12 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getBricks();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
-        list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
+        [$databaseObject, $latestObjectVersion] = $this->reloadObject($object->getId());
 
         $brickItems = $latestObjectVersion->getBricks()->getItems();
         foreach ($brickItems as $item) {

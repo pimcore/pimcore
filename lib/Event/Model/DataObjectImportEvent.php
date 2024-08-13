@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,140 +26,84 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class DataObjectImportEvent extends Event
 {
-    /**
-     * @var mixed
-     */
-    protected $config;
+    protected mixed $config = null;
 
-    /**
-     * @var string
-     */
-    protected $originalFile;
+    protected string $originalFile;
 
-    /**
-     * @var Concrete
-     */
-    protected $object;
+    protected Concrete $object;
 
-    /**
-     * @var mixed
-     */
-    protected $rowData;
+    protected mixed $rowData = null;
 
-    /**
-     * @var mixed
-     */
-    protected $additionalData;
+    protected mixed $additionalData = null;
 
-    /**
-     * @var mixed
-     */
-    protected $context;
+    protected mixed $context = null;
 
     /**
      * DataObjectImportEvent constructor.
      *
-     * @param mixed $config
-     * @param string $originalFile
      */
-    public function __construct($config, $originalFile)
+    public function __construct(mixed $config, string $originalFile)
     {
         $this->config = $config;
         $this->originalFile = $originalFile;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getConfig()
+    public function getConfig(): mixed
     {
         return $this->config;
     }
 
-    /**
-     * @param mixed $config
-     */
-    public function setConfig($config)
+    public function setConfig(mixed $config): void
     {
         $this->config = $config;
     }
 
-    /**
-     * @return string
-     */
-    public function getOriginalFile()
+    public function getOriginalFile(): string
     {
         return $this->originalFile;
     }
 
-    /**
-     * @param string $originalFile
-     */
-    public function setOriginalFile($originalFile)
+    public function setOriginalFile(string $originalFile): void
     {
         $this->originalFile = $originalFile;
     }
 
-    /**
-     * @return Concrete
-     */
     public function getObject(): Concrete
     {
         return $this->object;
     }
 
-    /**
-     * @param Concrete $object
-     */
-    public function setObject(Concrete $object)
+    public function setObject(Concrete $object): void
     {
         $this->object = $object;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRowData()
+    public function getRowData(): mixed
     {
         return $this->rowData;
     }
 
-    /**
-     * @param mixed $rowData
-     */
-    public function setRowData($rowData)
+    public function setRowData(mixed $rowData): void
     {
         $this->rowData = $rowData;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): mixed
     {
         return $this->additionalData;
     }
 
-    /**
-     * @param mixed $additionalData
-     */
-    public function setAdditionalData($additionalData)
+    public function setAdditionalData(mixed $additionalData): void
     {
         $this->additionalData = $additionalData;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContext()
+    public function getContext(): mixed
     {
         return $this->context;
     }
 
-    /**
-     * @param mixed $context
-     */
-    public function setContext($context)
+    public function setContext(mixed $context): void
     {
         $this->context = $context;
     }

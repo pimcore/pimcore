@@ -33,26 +33,18 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  *  - Resources/config/pimcore/config_dev.php
  *  - Resources/config/pimcore/config_dev.yaml
- *  - Resources/config/pimcore/config_dev.yml
  *  - Resources/config/pimcore/config_dev.xml
  *
  * If the previous lookup didn't return any results, it will fall back to:
  *
  *  - Resources/config/pimcore/config.php
  *  - Resources/config/pimcore/config.yaml
- *  - Resources/config/pimcore/config.yml
  *  - Resources/config/pimcore/config.xml
  */
 class BundleConfigLocator
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private KernelInterface $kernel;
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
@@ -61,11 +53,9 @@ class BundleConfigLocator
     /**
      * Find config files for the given name (e.g. config)
      *
-     * @param string $name
      *
-     * @return array
      */
-    public function locate(string $name)
+    public function locate(string $name): array
     {
         $result = [];
         foreach ($this->kernel->getBundles() as $bundle) {
@@ -88,13 +78,6 @@ class BundleConfigLocator
         return $result;
     }
 
-    /**
-     * @param string $name
-     * @param string $directory
-     * @param bool $includeEnvironment
-     *
-     * @return Finder
-     */
     private function buildContainerConfigFinder(string $name, string $directory, bool $includeEnvironment = false): Finder
     {
         if ($includeEnvironment) {

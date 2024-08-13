@@ -1,0 +1,132 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # REQUEST + ROUTING
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\RoutingListener:
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: redirect }
+
+    Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:
+        calls:
+            - [setLogger, ['@logger']]
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\PimcoreHeaderListener: ~
+
+    #
+    # TRANSLATIONS/LOCALE
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\DumpTranslationEntriesListener: ~
+
+    #
+    # PIMCORE OBJECTS/PARAMS LOGIC
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener:
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: init }
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GlobalTemplateVariablesListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
+    # STATE HANDLING/INITIALIZING
+    #
+
+    # handles block state (current block, current index) for sub-requests
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\BlockStateListener:
+        calls:
+            - [setLogger, ['@logger']]
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
+
+    #
+    # CONTROLLER HANDLING
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener: ~
+
+    #
+    # VARIOUS MODEL SPECIFIC LISTENERS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener:
+        public: true # can be disabled
+
+    Pimcore\Bundle\CoreBundle\EventListener\ElementTagsListener: ~
+
+    #
+    # EXCEPTION HANDLING
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener:
+        calls:
+            - [setLogger, ['@logger']]
+
+
+    #
+    # RESPONSE TRANSFORMING
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener:
+        calls:
+            - [setLogger, ['@logger']]
+
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseStackListener:
+        arguments:
+            $responseStack: '@Pimcore\Http\ResponseStack'
+
+
+    #
+    # FRONTEND LISTENERS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\InternalWysiwygHtmlAttributeFilterListener: ~
+
+    Pimcore\Cache\FullPage\SessionStatus:
+        arguments:
+            $symfonyMetadataStorageKey: '%session.metadata.storage_key%'
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 120 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
+            - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
+
+    Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
+        calls:
+            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/public/misc/maintenance.html']]
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\WebDebugToolbarListener:
+        arguments:
+            $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
+            $debugToolbarListener: '@?web_profiler.debug_toolbar'
+
+    Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~

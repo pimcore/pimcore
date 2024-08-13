@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,30 +47,26 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Breadcrumbs separator string
      *
-     * @var string
      */
-    protected $_separator = ' &gt; ';
+    protected string $_separator = ' &gt; ';
 
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int
      */
-    protected $_minDepth = 1;
+    protected ?int $_minDepth = 1;
 
     /**
      * Whether last page in breadcrumb should be hyperlinked
      *
-     * @var bool
      */
-    protected $_linkLast = false;
+    protected bool $_linkLast = false;
 
     /**
      * Partial view script to use for rendering menu
      *
-     * @var string|array
      */
-    protected $_template;
+    protected string|array|null $_template = null;
 
     // Accessors:
 
@@ -78,33 +75,24 @@ class Breadcrumbs extends AbstractRenderer
      *
      * @return string  breadcrumb separator
      */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->_separator;
     }
 
-    /**
-     * @param string $separator
-     *
-     * @return $this
-     */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): static
     {
-        if (is_string($separator)) {
-            $this->_separator = $separator;
-        }
+        $this->_separator = $separator;
 
         return $this;
     }
 
     /**
-     * @param bool $linkLast
-     *
      * @return $this
      */
-    public function setLinkLast($linkLast)
+    public function setLinkLast(bool $linkLast): static
     {
-        $this->_linkLast = (bool) $linkLast;
+        $this->_linkLast = $linkLast;
 
         return $this;
     }
@@ -114,25 +102,20 @@ class Breadcrumbs extends AbstractRenderer
      *
      * @return bool  whether last page in breadcrumbs should be hyperlinked
      */
-    public function getLinkLast()
+    public function getLinkLast(): bool
     {
         return $this->_linkLast;
     }
 
-    /**
-     * @return array|string
-     */
-    public function getTemplate()
+    public function getTemplate(): array|string|null
     {
         return $this->_template;
     }
 
     /**
-     * @param array|string $template
-     *
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate(array|string|null $template): static
     {
         $this->_template = $template;
 
@@ -142,9 +125,8 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of getTemplate()
      *
-     * @return string|array|null
      */
-    public function getPartial()
+    public function getPartial(): array|string|null
     {
         return $this->getTemplate();
     }
@@ -152,13 +134,14 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param  string $partial
      *
      * @return $this
      */
-    public function setPartial($partial)
+    public function setPartial(string $partial): static
     {
-        return $this->setTemplate($partial);
+        $this->setTemplate($partial);
+
+        return $this;
     }
 
     // Render methods:
@@ -166,11 +149,9 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Get all pages between the currently active page and the container's root page.
      *
-     * @param Container $container
      *
-     * @return array
      */
-    public function getPages(Container $container)
+    public function getPages(Container $container): array
     {
         $pages = [];
         if (! $active = $this->findActive($container)) {
@@ -203,11 +184,9 @@ class Breadcrumbs extends AbstractRenderer
      * Renders breadcrumbs by chaining 'a' elements with the separator
      * registered in the helper
      *
-     * @param Container $container
      *
-     * @return string
      */
-    public function renderStraight(Container $container)
+    public function renderStraight(Container $container): string
     {
         // find deepest active
         if (!$active = $this->findActive($container)) {
@@ -246,14 +225,11 @@ class Breadcrumbs extends AbstractRenderer
     }
 
     /**
-     * @param Container $container
-     * @param string|null $partial
      *
-     * @return string
      *
      * @throws \Exception
      */
-    public function renderTemplate(Container $container, ?string $partial = null)
+    public function renderTemplate(Container $container, ?string $partial = null): string
     {
         if (null === $partial) {
             $partial = $this->getTemplate();
@@ -271,20 +247,14 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of renderTemplate() for ZF1 backward compatibility
      *
-     * @param Container $container
-     * @param string|null $partial
      *
-     * @return string
      */
-    public function renderPartial(Container $container, ?string $partial = null)
+    public function renderPartial(Container $container, ?string $partial = null): string
     {
         return $this->renderTemplate($container, $partial);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function render(Container $container)
+    public function render(Container $container): string
     {
         if ($partial = $this->getTemplate()) {
             return $this->renderPartial($container, $partial);

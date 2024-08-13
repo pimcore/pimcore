@@ -1,0 +1,341 @@
+parameters:
+    locale: en
+
+framework:
+    translator:
+      fallbacks: ["%locale%"]
+    secret: "%secret%"
+    serializer:
+        enabled: true
+    router:
+        strict_requirements: ~
+        utf8: true
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    default_locale:  "%locale%"
+    session:
+        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        # use the native PHP session mechanism
+        handler_id:  null
+        cookie_samesite: 'strict'
+        storage_factory_id: session.storage.factory.native
+        cookie_secure: auto
+    php_errors:
+        log: true
+    assets: ~
+    http_method_override: false
+    mailer:
+        enabled: true
+        transports:
+            main: native://default
+    messenger:
+        transports:
+            pimcore_core: "doctrine://default?queue_name=pimcore_core"
+            pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
+            pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
+            pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
+        routing:
+            'Pimcore\Messenger\VideoConvertMessage': pimcore_core
+            'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
+            'Pimcore\Messenger\SanityCheckMessage': pimcore_core
+            'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
+            'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
+            'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
+            'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
+            'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
+            'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+            'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
+        default_bus: messenger.bus.pimcore-core
+        buses:
+            messenger.bus.pimcore-core:
+    rate_limiter:
+        reset_password:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '5 minutes'
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_relative_medias: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    div: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel', 'style' ]
+                    table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
+                    colgroup: 'class'
+                    col: [ 'class', 'style', 'id' ]
+                    thead: [ 'class', 'id' ]
+                    tbody: [ 'class', 'id' ]
+                    tr: [ 'class', 'id' ]
+                    td: [ 'class', 'id' ]
+                    th: [ 'class', 'id', 'scope' ]
+                    ul: [ 'class', 'style', 'id' ]
+                    li: [ 'class', 'style', 'id' ]
+                    ol: [ 'class', 'style', 'id' ]
+                    u: [ 'class', 'id' ]
+                    i: [ 'class', 'id' ]
+                    b: [ 'class', 'id' ]
+                    caption: [ 'class', 'id' ]
+                    sub: [ 'class', 'id' ]
+                    sup: [ 'class', 'id' ]
+                    blockquote: [ 'class', 'id' ]
+                    s: [ 'class', 'id' ]
+                    iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
+                    br: ''
+                    img: [ 'alt', 'style', 'src' ]
+            pimcore.translation_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
+                    br: ''
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    globals:
+        # avoid fetching and using services from templates if possible
+        # this is only here for compatibility/dev reasons and may be removed later
+        container: '@service_container'
+        document: ~
+        editmode: false
+    paths:
+        '%kernel.project_dir%/templates': App
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver: pdo_mysql
+                charset: UTF8MB4
+                logging: false
+                profiling: false
+                options:
+                  !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
+                default_table_options:
+                    charset: UTF8MB4
+                    engine: InnoDB
+                    collate: utf8mb4_general_ci
+
+# Monolog Configuration
+monolog:
+    channels: ['pimcore', 'pimcore_api', 'session']
+    handlers:
+        redirect:
+            type: stream
+            path:  "%kernel.logs_dir%/redirect.log"
+            level: debug
+            channels: ['redirect']
+
+# CMF routing
+cmf_routing:
+    chain:
+        routers_by_id:
+            router.default:             300
+            cmf_routing.dynamic_router: 200
+    dynamic:
+        route_provider_service_id: Pimcore\Routing\DynamicRouteProvider
+
+# Pimcore
+pimcore:
+    bundles:
+        search_paths:
+            - src
+            - vendor/pimcore/pimcore/bundles
+
+    assets:
+        metadata:
+            class_definitions:
+                data:
+                    map:
+                        asset: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Asset
+                        checkbox: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Checkbox
+                        date: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Date
+                        document: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Document
+                        input: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Input
+                        object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
+                        select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
+                        textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                image:
+                    class: \Pimcore\Model\Asset\Image
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                archive:
+                    class: \Pimcore\Model\Asset\Archive
+                    matching: ['/zip/', '/tar/']
+                audio:
+                    class: \Pimcore\Model\Asset\Audio
+                    matching: ['/audio/']
+                document:
+                    class: \Pimcore\Model\Asset\Document
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                folder:
+                    class: \Pimcore\Model\Asset\Folder
+                text:
+                   class: \Pimcore\Model\Asset\Text
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                video:
+                   class: \Pimcore\Model\Asset\Video
+                   matching: [ "/video/" ]
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.stp$/" ]
+
+    objects:
+        class_definitions:
+            data:
+                map:
+                    block: \Pimcore\Model\DataObject\ClassDefinition\Data\Block
+                    calculatedValue: \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue
+                    checkbox: \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox
+                    classificationstore: \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore
+                    consent: \Pimcore\Model\DataObject\ClassDefinition\Data\Consent
+                    country: \Pimcore\Model\DataObject\ClassDefinition\Data\Country
+                    countrymultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect
+                    date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
+                    datetime: \Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
+                    email: \Pimcore\Model\DataObject\ClassDefinition\Data\Email
+                    encryptedField: \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField
+                    externalImage: \Pimcore\Model\DataObject\ClassDefinition\Data\ExternalImage
+                    fieldcollections: \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
+                    firstname: \Pimcore\Model\DataObject\ClassDefinition\Data\Firstname
+                    gender: \Pimcore\Model\DataObject\ClassDefinition\Data\Gender
+                    geobounds: \Pimcore\Model\DataObject\ClassDefinition\Data\Geobounds
+                    geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
+                    geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
+                    geopolyline: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolyline
+                    hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
+                    manyToOneRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation
+                    image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
+                    imageGallery: \Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery
+                    input: \Pimcore\Model\DataObject\ClassDefinition\Data\Input
+                    language: \Pimcore\Model\DataObject\ClassDefinition\Data\Language
+                    languagemultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Languagemultiselect
+                    lastname: \Pimcore\Model\DataObject\ClassDefinition\Data\Lastname
+                    link: \Pimcore\Model\DataObject\ClassDefinition\Data\Link
+                    localizedfields: \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields
+                    manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
+                    advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
+                    multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
+                    reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
+                    urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
+                    numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+                    numericRange: \Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange
+                    objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
+                    manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
+                    advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+                    password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
+                    rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
+                    quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
+                    quantityValueRange: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange
+                    inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
+                    select: \Pimcore\Model\DataObject\ClassDefinition\Data\Select
+                    slider: \Pimcore\Model\DataObject\ClassDefinition\Data\Slider
+                    structuredTable: \Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable
+                    table: \Pimcore\Model\DataObject\ClassDefinition\Data\Table
+                    textarea: \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea
+                    time: \Pimcore\Model\DataObject\ClassDefinition\Data\Time
+                    user: \Pimcore\Model\DataObject\ClassDefinition\Data\User
+                    video: \Pimcore\Model\DataObject\ClassDefinition\Data\Video
+                    wysiwyg: \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg
+
+                prefixes:
+                    - \Pimcore\Model\DataObject\ClassDefinition\Data\
+                    - \Object_Class_Data_
+
+            layout:
+                prefixes:
+                    - \Pimcore\Model\DataObject\ClassDefinition\Layout\
+                    - \Object_Class_Layout_
+
+    documents:
+        type_definitions:
+            map:
+                folder:
+                    class: \Pimcore\Model\Document\Folder
+                    translatable: false
+                    translatable_inheritance: true
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    valid_table: 'page'
+                    direct_route: true
+                    predefined_document_types: true
+                snippet:
+                    class: \Pimcore\Model\Document\Snippet
+                    valid_table: 'snippet'
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+                link:
+                    class: \Pimcore\Model\Document\Link
+                    translatable: false
+                    valid_table: 'link'
+                hardlink:
+                    class: \Pimcore\Model\Document\Hardlink
+                    translatable: false
+                    valid_table: 'hardlink'
+                email:
+                    class: \Pimcore\Model\Document\Email
+                    valid_table: 'email'
+                    translatable_inheritance: false
+                    children_supported: false
+                    direct_route: true
+                    predefined_document_types: true
+        editables:
+            prefixes:
+                - \Pimcore\Model\Document\Editable\
+
+    # the routes below are used to determine the request context in PimcoreContextGuesser
+    context:
+        profiler:
+            routes:
+                - { path: ^/_(profiler|wdt)(/.*)?$ }
+    translations:
+        domains:
+            - messages
+            - admin
+
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                tags: ['set']
+                filters: ['escape', 'trans', 'default']
+                functions: ['path', 'asset']
+
+    gotenberg:
+        base_url: 'http://gotenberg:3000'
+
+    config_location:
+        select_options:
+            read_target:
+                type: 'symfony-config'

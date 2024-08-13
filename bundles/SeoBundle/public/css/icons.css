@@ -1,0 +1,19 @@
+.pimcore_icon_seo {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/google.svg) center center no-repeat !important;
+}
+
+.pimcore_nav_icon_document_seo {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/document.svg) center center no-repeat !important;
+}
+
+.pimcore_nav_icon_robots {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/robot.svg) center center no-repeat !important;
+}
+
+.pimcore_nav_icon_httperrorlog {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/medium_priority.svg) center center no-repeat !important;
+}
+
+.pimcore_nav_icon_seo {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/google.svg) center center no-repeat !important;
+}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -30,6 +35,7 @@ abstract class AbstractRelations extends Data implements
     Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
+    use Data\Extension\Relation;
 
     const RELATION_ID_SEPARATOR = '$$';
 
@@ -38,53 +44,60 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @var array
      */
-    public $classes = [];
+    public array $classes = [];
+
+    /**
+     * Optional display mode
+     *
+     * @internal
+     */
+    public ?string $displayMode = null;
 
     /**
      * Optional path formatter class
      *
      * @internal
      *
-     * @var null|string
      */
-    public $pathFormatterClass;
+    public ?string $pathFormatterClass = null;
 
     /**
-     * @return array[
-     *  'classes' => string,
-     * ]
+     * @return array<array{classes: string}>
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes ?: [];
     }
 
-    /**
-     * @param array $classes
-     *
-     * @return $this
-     */
-    public function setClasses($classes)
+    public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
 
         return $this;
     }
 
+    public function getDisplayMode(): ?string
+    {
+        return $this->displayMode;
+    }
+
     /**
-     * {@inheritdoc}
+     * @return $this
      */
-    public function getLazyLoading()
+    public function setDisplayMode(?string $displayMode): static
+    {
+        $this->displayMode = $displayMode;
+
+        return $this;
+    }
+
+    public function getLazyLoading(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;
@@ -108,35 +121,34 @@ abstract class AbstractRelations extends Data implements
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
-        $relations = $this->prepareDataForPersistence($data, $object, $params);
+        if ($data !== null) {
+            $relations = $this->prepareDataForPersistence($data, $object, $params);
 
-        if (is_array($relations) && !empty($relations)) {
-            $db = Db::get();
+            if (is_array($relations) && !empty($relations)) {
+                $db = Db::get();
 
-            foreach ($relations as $relation) {
-                $this->enrichDataRow($object, $params, $classId, $relation);
+                foreach ($relations as $relation) {
+                    $this->enrichDataRow($object, $params, $classId, $relation);
 
-                // relation needs to be an array with src_id, dest_id, type, fieldname
-                try {
-                    $db->insert('object_relations_' . $classId, $relation);
-                } catch (\Exception $e) {
-                    Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
-                        . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
-                    Logger::error((string) $e);
+                    // relation needs to be an array with src_id, dest_id, type, fieldname
+                    try {
+                        $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $relation));
+                    } catch (\Exception $e) {
+                        Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
+                            . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
+                        Logger::error((string)$e);
 
-                    // try it again with an update if the insert fails, shouldn't be the case, but it seems that
-                    // sometimes the insert throws an exception
+                        // try it again with an update if the insert fails, shouldn't be the case, but it seems that
+                        // sometimes the insert throws an exception
 
-                    throw $e;
+                        throw $e;
+                    }
                 }
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($object, $params = [])
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
     {
         $data = null;
         $relations = [];
@@ -165,13 +177,9 @@ abstract class AbstractRelations extends Data implements
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, function ($a, $b) {
-            if ($a['index'] == $b['index']) {
-                return 0;
-            }
-
-            return ($a['index'] < $b['index']) ? -1 : 1;
-        });
+        // @noinspection PhpMissingReturnTypeInspection PhpMissingParamTypeInspection Due to this being performance
+        // sensitive and Types add a slight overhead.
+        usort($relations, static fn ($a, $b) => $a['index'] <=> $b['index']);
 
         $data = $this->loadData($relations, $object, $params);
         if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
@@ -182,31 +190,21 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
      */
-    abstract protected function loadData(array $data, $object = null, $params = []);
+    abstract protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
     /**
+     * @param array|ElementInterface $data
+     * @param Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
+     *
      * @internal
-     *
-     * @param array|Element\ElementInterface $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
      */
-    abstract protected function prepareDataForPersistence($data, $object = null, $params = []);
+    abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
     }
 
@@ -221,14 +219,11 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
+     *
+     *
      * @internal
-     *
-     * @param mixed $data
-     * @param array $idMapping
-     *
-     * @return array
      */
-    protected function rewriteIdsService($data, $idMapping)
+    protected function rewriteIdsService(mixed $data, array $idMapping): array
     {
         if (is_array($data)) {
             foreach ($data as &$element) {
@@ -244,34 +239,22 @@ abstract class AbstractRelations extends Data implements
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPathFormatterClass(): ?string
     {
         return $this->pathFormatterClass;
     }
 
-    /**
-     * @param null|string $pathFormatterClass
-     */
-    public function setPathFormatterClass($pathFormatterClass)
+    public function setPathFormatterClass(?string $pathFormatterClass): void
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function appendData($existingData, $additionalData)
+    public function appendData(?array $existingData, array $additionalData): ?array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -280,29 +263,23 @@ abstract class AbstractRelations extends Data implements
 
         $map = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $map[$key] = 1;
             $newData[] = $item;
         }
 
-        if (is_array($additionalData)) {
-            foreach ($additionalData as $item) {
-                $key = $this->buildUniqueKeyForAppending($item);
-                if (!isset($map[$key])) {
-                    $newData[] = $item;
-                }
+        foreach ($additionalData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            if (!isset($map[$key])) {
+                $newData[] = $item;
             }
         }
 
         return $newData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeData($existingData, $removeData)
+    public function removeData(?array $existingData, array $removeData): array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -311,14 +288,11 @@ abstract class AbstractRelations extends Data implements
 
         $removeMap = [];
 
-        /** @var Element\ElementInterface $item */
         foreach ($removeData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $removeMap[$key] = 1;
         }
 
-        $newData = [];
-        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
 
@@ -333,22 +307,24 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @param Element\ElementInterface $item
-     *
-     * @return string
+     * @throws \LogicException
      */
-    protected function buildUniqueKeyForAppending($item)
+    protected function buildUniqueKeyForAppending(object $item): string
     {
-        $elementType = Element\Service::getElementType($item);
-        $id = $item->getId();
+        if ($item instanceof DataObject\Data\ElementMetadata || $item instanceof DataObject\Data\ObjectMetadata) {
+            $item = $item->getElement();
+        }
+        if ($item instanceof Element\ElementInterface) {
+            $elementType = Element\Service::getElementType($item);
+            $id = $item->getId();
 
-        return $elementType . $id;
+            return $elementType . $id;
+        }
+
+        throw new \LogicException('Unexpected item type: ' . get_debug_type($item));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEqual($array1, $array2): bool
+    public function isEqual(mixed $array1, mixed $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
@@ -375,10 +351,7 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsDirtyDetection()
+    public function supportsDirtyDetection(): bool
     {
         return true;
     }
@@ -386,11 +359,9 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @param DataObject\Fieldcollection\Data\AbstractData $item
-     *
      * @throws \Exception
      */
-    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item): void
     {
         if ($item->getObject()) {
             /** @var DataObject\Fieldcollection|null $container */
@@ -407,19 +378,20 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @param DataObject\Objectbrick\Data\AbstractData $item
-     *
      * @throws \Exception
      */
-    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
+    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item): void
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick|null $container */
-            $container = $item->getObject()->getObjectVar($item->getFieldname());
-            if ($container) {
-                $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
-            } else {
-                $item->markLazyKeyAsLoaded($this->getName());
+            $fieldName = $item->getFieldName();
+            if (isset($fieldName)) {
+                /** @var DataObject\Objectbrick|null $container */
+                $container = $item->getObject()->getObjectVar($fieldName);
+                if ($container) {
+                    $container->loadLazyField($item->getType(), $fieldName, $this->getName());
+                } else {
+                    $item->markLazyKeyAsLoaded($this->getName());
+                }
             }
         }
     }
@@ -427,13 +399,12 @@ abstract class AbstractRelations extends Data implements
     /**
      * checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @internal
-     *
-     * @param array|null $data
      *
      * @throws Element\ValidationException
+     *
+     * @internal
      */
-    public function performMultipleAssignmentCheck($data)
+    public function performMultipleAssignmentCheck(?array $data): void
     {
         if (is_array($data)) {
             if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
@@ -469,25 +440,16 @@ abstract class AbstractRelations extends Data implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
-    /**
-     * @return string|null
-     */
     public function getPhpdocInputType(): ?string
     {
         if ($this->getPhpdocType()) {
@@ -497,9 +459,6 @@ abstract class AbstractRelations extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         if ($phpdocType = $this->getPhpdocType()) {
@@ -512,7 +471,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @internal
      *
-     * @return string
      */
-    abstract protected function getPhpdocType();
+    abstract protected function getPhpdocType(): string;
 }

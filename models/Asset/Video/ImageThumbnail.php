@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,49 +29,40 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Video|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
      * @internal
      *
-     * @var int|null
      */
-    protected $timeOffset;
+    protected ?int $timeOffset = null;
 
     /**
      * @internal
      *
-     * @var Image|null
      */
-    protected $imageAsset;
+    protected ?Image $imageAsset = null;
 
-    /**
-     * @param Model\Asset\Video|null $asset
-     * @param string|array|Image\Thumbnail\Config|null $config
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     * @param bool $deferred
-     */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
+    public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
         $this->imageAsset = $imageAsset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true)
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -83,13 +75,11 @@ final class ImageThumbnail
     }
 
     /**
-     * @internal
-     *
-     * @param bool $deferredAllowed
-     *
      * @throws \Exception
+     *
+     * @internal
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
@@ -140,7 +130,7 @@ final class ImageThumbnail
                         $tempFile = File::getLocalTempFilePath('png');
                         $converter = \Pimcore\Video::getInstance();
                         $converter->load($this->asset->getLocalFile());
-                        $converter->saveImage($tempFile, $timeOffset);
+                        $converter->saveImage($tempFile, (int) $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
                     }
@@ -162,8 +152,7 @@ final class ImageThumbnail
                             $generated
                         );
                     } catch (\Exception $e) {
-                        Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                        Logger::error($e->getMessage());
+                        Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath() . ': ' . $e);
                     }
                 }
             }
@@ -190,19 +179,15 @@ final class ImageThumbnail
      *
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath();
     }
 
     /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Image\Thumbnail\Config $selector): ?Image\Thumbnail\Config
     {
         $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
 
@@ -214,14 +199,11 @@ final class ImageThumbnail
     }
 
     /**
-     * @param string $name
-     * @param int $highRes
      *
-     * @return Image\Thumbnail|null
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): ?Image\ThumbnailInterface
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {

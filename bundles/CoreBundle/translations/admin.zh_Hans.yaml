@@ -1,0 +1,5 @@
+---
+workflow_change_email_notification_text: "\u5BF9\u4E8EID\u4E3A\uFF05s\u7684\uFF05s\uFF0C\u5728\u5DE5\u4F5C\u6D41'\uFF05s'\u4E2D\u89E6\u53D1\u4E86\u64CD\u4F5C\u201C\uFF05s\u201D\u3002"
+workflow_change_email_notification_deeplink: "\u6DF1\u5C42\u94FE\u63A5\u5230\u5143\u7D20\u3002"
+workflow_change_email_notification_note: "\u6CE8\u610F\u5DF2\u6DFB\u52A0\uFF1A"
+...

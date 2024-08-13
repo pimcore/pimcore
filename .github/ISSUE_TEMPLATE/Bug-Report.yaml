@@ -1,0 +1,42 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: [Bug]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              ## Important notice
+              As an open source project we love to work together with our community to improve and develop our products.
+              It's also important for us to make clear that **we're not working for you or your company**,
+              but we enjoy to work together to solve existing bugs.
+              So we would love to see PRs with bugfixes, discuss them and we are happy to merge them when they are ready.
+              For details see also our [contributing guidelines](https://github.com/pimcore/pimcore/blob/11.x/CONTRIBUTING.md).
+
+              Bug reports that do not meet the conditions listed below will be closed/deleted without comment.
+
+              - Bug was verified on the latest supported version.
+                You can use our public demo as well to verify bugs: https://demo.pimcore.fun/admin/ (`admin` / `demo`)
+              - This is not a security issue -> see [our security policy](https://github.com/pimcore/pimcore/security/policy) instead.
+              - You are not able to provide a pull request that fixes the issue.
+              - There's no existing ticket for the same issue.
+    - type: input
+      attributes:
+          label: Pimcore version
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Steps to reproduce
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Actual Behavior
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Expected Behavior
+      validations:
+          required: true

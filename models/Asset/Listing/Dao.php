@@ -31,14 +31,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Get the assets from database
      *
-     * @return array
      */
-    public function load()
+    public function load(): array
     {
         $assets = [];
 
-        $queryBuilder = $this->getQueryBuilder(['assets.id', 'assets.type']);
-        $assetsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder('assets.id', 'assets.type');
+        $assetsData = $this->db->fetchAllAssociative($queryBuilder->getSQL(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {
@@ -56,7 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
@@ -73,18 +71,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['assets.id']);
-        $assetIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder('assets.id');
+        $assetIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return array_map('intval', $assetIds);
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getAssets());
@@ -95,15 +90,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, 'assets.id');
 
-        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $amount;
     }

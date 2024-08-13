@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,13 +16,15 @@
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PHPFieldCollectionClassDumper implements PHPFieldCollectionClassDumperInterface
 {
-    public function __construct(protected FieldCollectionClassBuilderInterface $classBuilder)
-    {
+    public function __construct(
+        protected FieldCollectionClassBuilderInterface $classBuilder,
+        protected Filesystem $filesystem
+    ) {
     }
 
     public function dumpPHPClass(Definition $definition): void
@@ -29,6 +32,6 @@ class PHPFieldCollectionClassDumper implements PHPFieldCollectionClassDumperInte
         $classFilePath = $definition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($definition);
 
-        File::put($classFilePath, $phpClass);
+        $this->filesystem->dumpFile($classFilePath, $phpClass);
     }
 }

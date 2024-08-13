@@ -35,19 +35,16 @@ class Dao extends Model\Element\Dao
 
     /**
      * @internal
-     *
-     * @var array
      */
     public static array $thumbnailStatusCache = [];
 
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
@@ -87,14 +84,13 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the asset from database for the given path
      *
-     * @param string $path
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath($path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE `path` = BINARY :path AND `filename` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -103,7 +99,7 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('assets', [
             'filename' => $this->model->getFilename(),
@@ -114,7 +110,7 @@ class Dao extends Model\Element\Dao
         $this->model->setId((int) $this->db->lastInsertId());
     }
 
-    public function update()
+    public function update(): void
     {
         $asset = $this->model->getObjectVars();
 
@@ -165,7 +161,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'assets', $data);
+        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -183,12 +179,12 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('assets', ['id' => $this->model->getId()]);
     }
 
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_asset', [
             'cpath' => $this->model->getRealFullPath(),
@@ -198,16 +194,14 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param string $oldPath
-     *
-     * @return array
      */
-    public function updateChildPaths($oldPath)
+    public function updateChildPaths(string $oldPath): array
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
+        $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE `path` like ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -216,7 +210,7 @@ class Dao extends Model\Element\Dao
 
         //update assets child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->executeQuery('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update assets set `path` = replace(`path`,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update assets child permission paths
         $this->db->executeQuery('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -230,17 +224,21 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @param bool $onlyInherited
-     *
-     * @return array
+     * @throws \Exception
      */
-    public function getProperties($onlyInherited = false)
+    public function getProperties(bool $onlyInherited = false): array
     {
         $properties = [];
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative(
+            'SELECT * FROM properties WHERE
+                             (
+                                 (cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )
+                                 AND ctype='asset'",
+            [$this->model->getId()]
+        );
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -249,9 +247,12 @@ class Dao extends Model\Element\Dao
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if ($id !== null) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('asset');
                 $property->setDataFromResource($propertyRaw['data']);
@@ -269,17 +270,12 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath());
+            } catch (\Exception) {
+                Logger::error(
+                    "can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath()
+                );
             }
         }
-
-        // if only inherited then only return it and dont call the setter in the model
-        if ($onlyInherited) {
-            return $properties;
-        }
-
-        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -287,7 +283,7 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      */
-    public function deleteAllProperties()
+    public function deleteAllProperties(): void
     {
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
     }
@@ -295,12 +291,12 @@ class Dao extends Model\Element\Dao
     /**
      * @return string|null retrieves the current full set path from DB
      */
-    public function getCurrentFullPath()
+    public function getCurrentFullPath(): ?string
     {
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,filename) as `path` FROM assets WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not get  current asset path from DB');
         }
@@ -308,9 +304,6 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {
@@ -330,11 +323,10 @@ class Dao extends Model\Element\Dao
     /**
      * quick test if there are children
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
-     * @return bool
      */
-    public function hasChildren($user = null)
+    public function hasChildren(User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -349,7 +341,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -365,9 +357,8 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings(): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -391,11 +382,10 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
-     * @return int
      */
-    public function getChildAmount($user = null)
+    public function getChildAmount(User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -410,7 +400,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -420,10 +410,7 @@ class Dao extends Model\Element\Dao
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
-    /**
-     * @return bool
-     */
-    public function isLocked()
+    public function isLocked(): bool
     {
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", [Helper::escapeLike($this->model->getRealFullPath()) . '/%']);
@@ -433,7 +420,7 @@ class Dao extends Model\Element\Dao
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='asset' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND `type`='asset' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;
@@ -442,22 +429,16 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    /**
-     * @return array
-     */
-    public function unlockPropagate()
+    public function unlockPropagate(): array
     {
-        $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->executeQuery("DELETE FROM tree_locks WHERE type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE `path` like ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->executeQuery("DELETE FROM tree_locks WHERE `type` = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }
 
     /**
-     * @param string $type
-     * @param array $userIds
      *
-     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -466,13 +447,7 @@ class Dao extends Model\Element\Dao
         return $this->InheritingPermission($type, $userIds, 'asset');
     }
 
-    /**
-     * @param string $type
-     * @param Model\User $user
-     *
-     * @return bool
-     */
-    public function isAllowed($type, $user)
+    public function isAllowed(string $type, User $user): bool
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -519,27 +494,27 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
-     * @param User $user
+     * @param string[] $columns
      *
      * @return array<string, int>
-     *
      */
-    public function areAllowed(array $columns, User $user)
+    public function areAllowed(array $columns, User $user): array
     {
         return $this->permissionByTypes($columns, $user, 'asset');
     }
 
-    public function updateCustomSettings()
+    public function updateCustomSettings(): void
     {
         $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @return bool
-     */
-    public function __isBasedOnLatestData()
+    public function getCustomSettings(): ?string
+    {
+        return $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = :id', ['id' => $this->model->getId()]);
+    }
+
+    public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
@@ -561,7 +536,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', $thumb);
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;

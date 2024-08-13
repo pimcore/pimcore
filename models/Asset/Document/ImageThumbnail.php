@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @property Model\Asset\Document|null $asset
  */
-final class ImageThumbnail
+final class ImageThumbnail implements ImageThumbnailInterface
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
     use TemporaryFileHelperTrait;
@@ -38,33 +39,26 @@ final class ImageThumbnail
     /**
      * @internal
      *
-     * @var int
      */
-    protected $page = 1;
+    protected int $page = 1;
 
-    /**
-     * @param Model\Asset\Document|null $asset
-     * @param string|array|Image\Thumbnail\Config $config
-     * @param int $page
-     * @param bool $deferred
-     */
-    public function __construct($asset, $config = null, $page = 1, $deferred = true)
+    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->page = $page;
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true)
+    public function getPath(array $args = []): string
     {
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -76,10 +70,7 @@ final class ImageThumbnail
         return $path;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
@@ -102,8 +93,7 @@ final class ImageThumbnail
                     }
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                Logger::error($e->getMessage());
+                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath() . ': ' . $e);
             }
         }
 
@@ -165,17 +155,12 @@ final class ImageThumbnail
      *
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath();
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config
-     */
-    protected function createConfig($selector)
+    protected function createConfig(array|string|Image\Thumbnail\Config $selector): Image\Thumbnail\Config
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
 

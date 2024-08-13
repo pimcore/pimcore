@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,13 +22,11 @@ namespace Pimcore;
 class Video
 {
     /**
-     * @param string|null $adapter
      *
-     * @return Video\Adapter|null
      *
      * @throws \Exception
      */
-    public static function getInstance($adapter = null)
+    public static function getInstance(string $adapter = null): ?Video\Adapter
     {
         try {
             if ($adapter) {
@@ -51,10 +50,7 @@ class Video
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         if (self::getDefaultAdapter()) {
             return true;
@@ -63,10 +59,7 @@ class Video
         return false;
     }
 
-    /**
-     * @return Video\Adapter|null
-     */
-    private static function getDefaultAdapter()
+    private static function getDefaultAdapter(): ?Video\Adapter
     {
         $adapters = ['Ffmpeg'];
 

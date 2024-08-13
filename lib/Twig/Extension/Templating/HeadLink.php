@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -69,9 +70,8 @@ class HeadLink extends CacheBusterAware
     /**
      * $_validAttributes
      *
-     * @var array
      */
-    protected $_itemKeys = [
+    protected array $_itemKeys = [
         'charset',
         'href',
         'hreflang',
@@ -88,7 +88,7 @@ class HeadLink extends CacheBusterAware
     /**
      * @var string registry key
      */
-    protected $_regKey = 'HeadLink';
+    protected string $_regKey = 'HeadLink';
 
     /**
      * Default attributes for generated WebLinks (HTTP/2 push).
@@ -102,8 +102,6 @@ class HeadLink extends CacheBusterAware
      *
      * Use PHP_EOL as separator
      *
-     * @param ContainerService $containerService
-     * @param WebLinkExtension $webLinkExtension
      */
     public function __construct(
         ContainerService $containerService,
@@ -121,12 +119,10 @@ class HeadLink extends CacheBusterAware
      * Returns current object instance. Optionally, allows passing array of
      * values to build link.
      *
-     * @param array|null $attributes
-     * @param string $placement
      *
-     * @return HeadLink
+     * @return $this
      */
-    public function __invoke(?array $attributes = null, $placement = Container::APPEND)
+    public function __invoke(?array $attributes = null, string $placement = Container::APPEND): static
     {
         if (null !== $attributes) {
             $item = $this->createData($attributes);
@@ -162,13 +158,8 @@ class HeadLink extends CacheBusterAware
      * - offsetSetAlternate($index, $href, $type, $title, $extras)
      * - prependAlternate($href, $type, $title, $extras)
      * - setAlternate($href, $type, $title, $extras)
-     *
-     * @param mixed $method
-     * @param mixed $args
-     *
-     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<type>Stylesheet|Alternate)$/', $method, $matches)) {
             $argc = count($args);
@@ -211,11 +202,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Check if value is valid
      *
-     * @param  mixed $value
      *
-     * @return bool
      */
-    protected function _isValid($value)
+    protected function _isValid(mixed $value): bool
     {
         if (!$value instanceof \stdClass) {
             return false;
@@ -236,9 +225,8 @@ class HeadLink extends CacheBusterAware
      *
      * @param  \stdClass $value
      *
-     * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('append() expects a data token; please use one of the custom append*() methods');
@@ -250,19 +238,16 @@ class HeadLink extends CacheBusterAware
     /**
      * offsetSet()
      *
-     * @param  string|int $index
-     * @param  array $value
+     * @param  string|int $offset
      *
-     * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
         }
 
-        $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
@@ -270,7 +255,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param \stdClass $value
      */
-    public function prepend($value)
+    public function prepend($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('prepend() expects a data token; please use one of the custom prepend*() methods');
@@ -284,7 +269,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param \stdClass $value
      */
-    public function set($value)
+    public function set($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('set() expects a data token; please use one of the custom set*() methods');
@@ -296,11 +281,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create HTML link element from data item
      *
-     * @param  \stdClass $item
      *
-     * @return string
      */
-    public function itemToString(\stdClass $item)
+    public function itemToString(\stdClass $item): string
     {
         $attributes = (array) $item;
         $link = '<link ';
@@ -338,11 +321,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Render link elements as string
      *
-     * @param  null|string|int $indent
      *
-     * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         $this->prepareEntries();
 
@@ -362,7 +343,7 @@ class HeadLink extends CacheBusterAware
     /**
      * prepares entries with cache buster prefix
      */
-    protected function prepareEntries()
+    protected function prepareEntries(): void
     {
         foreach ($this as &$item) {
             if ($this->isCacheBuster()) {
@@ -380,7 +361,7 @@ class HeadLink extends CacheBusterAware
             ]);
             \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
 
-            $source = (string)($item->href ?? '');
+            $source = $item->href ?? '';
             $itemAttributes = isset($item->extras) ? $item->extras : [];
 
             if (isset($item->extras) && is_array($item->extras) && isset($item->extras['webLink'])) {
@@ -396,11 +377,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create data item for stack
      *
-     * @param  array $attributes
      *
-     * @return \stdClass
      */
-    public function createData(array $attributes)
+    public function createData(array $attributes): \stdClass
     {
         $data = (object) $attributes;
 
@@ -410,11 +389,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for stylesheet link item
      *
-     * @param  array $args
-     *
-     * @return \stdClass|false Returns fals if stylesheet is a duplicate
+     * @return \stdClass|false Returns false if stylesheet is a duplicate
      */
-    public function createDataStylesheet(array $args)
+    public function createDataStylesheet(array $args): bool|\stdClass
     {
         $rel = 'stylesheet';
         $type = 'text/css';
@@ -437,9 +414,7 @@ class HeadLink extends CacheBusterAware
         }
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
-            if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
-                $conditionalStylesheet = (string) $conditionalStylesheet;
-            } else {
+            if (empty($conditionalStylesheet) || !is_string($conditionalStylesheet)) {
                 $conditionalStylesheet = null;
             }
         }
@@ -457,11 +432,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Is the linked stylesheet a duplicate?
      *
-     * @param  string $uri
      *
-     * @return bool
      */
-    protected function _isDuplicateStylesheet($uri)
+    protected function _isDuplicateStylesheet(string $uri): bool
     {
         foreach ($this->getContainer() as $item) {
             if (($item->rel == 'stylesheet') && ($item->href == $uri)) {
@@ -475,11 +448,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for alternate link item
      *
-     * @param  array $args
      *
-     * @return \stdClass
      */
-    public function createDataAlternate(array $args)
+    public function createDataAlternate(array $args): \stdClass
     {
         if (3 > count($args)) {
             throw new Exception(sprintf('Alternate tags require 3 arguments; %s provided', count($args)));
@@ -512,11 +483,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Apply any overrides specified in the 'extras' array
      *
-     * @param array $attributes
      *
-     * @return array
      */
-    protected function _applyExtras($attributes)
+    protected function _applyExtras(array $attributes): array
     {
         if (isset($attributes['extras'])) {
             foreach ($attributes['extras'] as $eKey => $eVal) {

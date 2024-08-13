@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,9 +19,7 @@ namespace Pimcore\Model\DataObject;
 interface ObjectAwareFieldInterface
 {
     /**
-     * @param Concrete|null $object
-     *
      * @return $this
      */
-    public function setObject(?Concrete $object);
+    public function setObject(?Concrete $object): static;
 }

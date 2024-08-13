@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setWorkflowStates($workflowStates)
+    public function setWorkflowStates(?array $workflowStates): static
     {
         return $this->setData($workflowStates);
     }
@@ -37,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Element\WorkflowState[]
      */
-    public function getWorkflowStates()
+    public function getWorkflowStates(): array
     {
         return $this->getData();
     }

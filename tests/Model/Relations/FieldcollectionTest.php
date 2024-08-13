@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,14 @@
 
 namespace Pimcore\Tests\Model\Relations;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class FieldcollectionTest
@@ -43,13 +46,13 @@ class FieldcollectionTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_Unittestfieldcollection();
     }
 
-    public function testRelationFieldInsideFieldCollection()
+    public function testRelationFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));
@@ -118,7 +121,57 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals([], $rel);
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testAdvancedRelationFieldInsideFieldCollection(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $items = new Fieldcollection();
+
+        $target1 = new Asset();
+        $target1->setParent(Asset::getByPath('/'));
+        $target1->setKey('mytarget1');
+        $target1->save();
+
+        $target2 = new Asset();
+        $target2->setParent(Asset::getByPath('/'));
+        $target2->setKey('mytarget2');
+        $target2->save();
+
+        $target3 = new Asset();
+        $target3->setParent(Asset::getByPath('/'));
+        $target3->setKey('mytarget3');
+        $target3->save();
+
+        $item1 = new FieldCollection\Data\Unittestfieldcollection();
+        $item1->setAdvancedFieldRelation([new ElementMetadata('metadataUpper', [], $target1)]);
+
+        $item2 = new FieldCollection\Data\Unittestfieldcollection();
+        $item2->setAdvancedFieldRelation([new ElementMetadata('metadataUpper', [], $target2)]);
+
+        $items->add($item1);
+        $items->add($item2);
+
+        $object->setFieldcollection($items);
+        $object->save();
+
+        // Test by deleting the target2 element
+        $target2->delete();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        //check if target1 is still there
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
+        $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
+        $this->assertEquals($target1->getId(), isset($rel[0]) ? $rel[0]->getElementId() : false);
+
+        //check if target2 is removed
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
+        $rel = $loadedFieldcollectionItem->getAdvancedFieldRelation();
+        $this->assertEquals(false, isset($rel[0]));
+    }
+
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));

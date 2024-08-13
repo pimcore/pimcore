@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,8 +16,8 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -29,15 +30,9 @@ class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'video';
+    protected string $type = 'video';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
@@ -52,10 +47,7 @@ class Video extends Model\Asset
         parent::update($params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearThumbnails($force = false)
+    public function clearThumbnails(bool $force = false): void
     {
         if ($this->getDataChanged() || $force) {
             // clear the thumbnail custom settings
@@ -67,13 +59,9 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|Video\Thumbnail\Config $config
-     *
-     * @return Video\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig($config)
+    public function getThumbnailConfig(null|string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 
@@ -93,12 +81,9 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param string|Video\Thumbnail\Config $thumbnailName
-     * @param array $onlyFormats
      *
-     * @return array|null
      */
-    public function getThumbnail($thumbnailName, $onlyFormats = [])
+    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
     {
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 
@@ -124,26 +109,20 @@ class Video extends Model\Asset
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
-                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
-                Logger::error((string) $e);
+                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath() . ': ' . $e);
             }
         }
 
         return null;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function enrichThumbnailPath($path)
+    private function enrichThumbnailPath(string $path): string
     {
         $fullPath = rtrim($this->getRealPath(), '/') . '/' . ltrim($path, '/');
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -156,14 +135,7 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $thumbnailName
-     * @param int|null $timeOffset
-     * @param Image|null $imageAsset
-     *
-     * @return Video\ImageThumbnail
-     */
-    public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null)
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');
@@ -184,11 +156,9 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @param string|null $filePath
      *
-     * @return float|null
      */
-    public function getDurationFromBackend(?string $filePath = null)
+    public function getDurationFromBackend(?string $filePath = null): ?float
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
@@ -207,9 +177,8 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array|null
      */
-    public function getDimensionsFromBackend()
+    public function getDimensionsFromBackend(): ?array
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
@@ -222,9 +191,10 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return int|null
+     *
+     * @throws \Exception
      */
-    public function getDuration()
+    public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
         if (!$duration) {
@@ -241,19 +211,15 @@ class Video extends Model\Asset
         return $duration;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getDimensions()
+    public function getDimensions(): ?array
     {
-        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
         if (!$width || !$height) {
             $dimensions = $this->getDimensionsFromBackend();
             if ($dimensions) {
-                $this->setCustomSetting('videoWidth', $dimensions['width']);
-                $this->setCustomSetting('videoHeight', $dimensions['height']);
+                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
+                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
 
                 Model\Version::disable();
                 $this->save(); // auto save
@@ -269,27 +235,21 @@ class Video extends Model\Asset
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
-            return $dimensions['width'];
+            return (int) $dimensions['width'];
         }
 
         return null;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
-            return $dimensions['height'];
+            return (int) $dimensions['height'];
         }
 
         return null;
@@ -298,13 +258,21 @@ class Video extends Model\Asset
     /**
      * @internal
      *
-     * @return array
      */
-    public function getSphericalMetaData()
+    public function getSphericalMetaData(): array
+    {
+        return $this->getCustomSetting('SphericalMetaData') ?? [];
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function getSphericalMetaDataFromBackend(): array
     {
         $data = [];
 
-        if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
+        if (in_array(pathinfo($this->getFilename(), PATHINFO_EXTENSION), ['mp4', 'webm'])) {
             $chunkSize = 1024;
             $file_pointer = $this->getStream();
 
@@ -335,17 +303,16 @@ class Video extends Model\Asset
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
                     $chunkSize)) !== false && !empty($chunk)) {
-                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $offset = strlen($buffer) - $tagLength; //subtract the tag size for case it's split between chunks
                     $buffer .= $chunk;
                 }
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
                     throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
-                } else {
-                    $buffer = substr($buffer, 0, $position + $tagLength);
                 }
 
+                $buffer = substr($buffer, 0, $position + $tagLength);
                 $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
                 $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
 

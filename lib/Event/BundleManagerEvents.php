@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,7 @@
 
 namespace Pimcore\Event;
 
-final class BundleManagerEvents
+class BundleManagerEvents
 {
     /**
      * The CSS_PATHS event is triggered for paths to CSS files which are about to be loaded for the admin interface.

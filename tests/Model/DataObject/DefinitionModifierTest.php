@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\DefinitionModifier;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class DefinitionModifierTest extends ModelTestCase
 {
@@ -33,12 +34,7 @@ class DefinitionModifierTest extends ModelTestCase
 
     const DATA_NAME_PREFIX = 'input';
 
-    /**
-     * @param string $dataName
-     *
-     * @return ClassDefinition\Data\Input
-     */
-    private function getDataToAdd($dataName = (self::DATA_NAME_PREFIX . '1')): ClassDefinition\Data\Input
+    private function getDataToAdd(string $dataName = (self::DATA_NAME_PREFIX . '1')): ClassDefinition\Data\Input
     {
         $input = new ClassDefinition\Data\Input();
         $input->setName($dataName);
@@ -46,9 +42,6 @@ class DefinitionModifierTest extends ModelTestCase
         return $input;
     }
 
-    /**
-     * @return array
-     */
     private function getDatasToAdd(): array
     {
         $datas = [];
@@ -59,12 +52,7 @@ class DefinitionModifierTest extends ModelTestCase
         return $datas;
     }
 
-    /**
-     * @param string $panelName
-     *
-     * @return ClassDefinition\Layout\Panel
-     */
-    private function getPanelToAdd($panelName = (self::PANEL_NAME_PREFIX . '1')): ClassDefinition\Layout\Panel
+    private function getPanelToAdd(string $panelName = (self::PANEL_NAME_PREFIX . '1')): ClassDefinition\Layout\Panel
     {
         $panel = new ClassDefinition\Layout\Panel();
         $panel->setName($panelName);
@@ -72,9 +60,6 @@ class DefinitionModifierTest extends ModelTestCase
         return $panel;
     }
 
-    /**
-     * @return array
-     */
     private function getPanelsToAdd(): array
     {
         $panels = [];
@@ -85,11 +70,6 @@ class DefinitionModifierTest extends ModelTestCase
         return $panels;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
     private function getNameOfExistingPanel(string $type): string
     {
         if ($type === self::_CLASS) {
@@ -101,11 +81,6 @@ class DefinitionModifierTest extends ModelTestCase
         }
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
     private function getNameOfExistingData(string $type): string
     {
         if ($type === self::_CLASS) {
@@ -149,12 +124,6 @@ class DefinitionModifierTest extends ModelTestCase
         return $panel;
     }
 
-    /**
-     * @param string $type
-     * @param bool $collectGarbage
-     *
-     * @return ClassDefinition\Layout
-     */
     private function getDefinitionByType(string $type, bool $collectGarbage = true): ClassDefinition\Layout
     {
         if ($collectGarbage) {
@@ -170,13 +139,7 @@ class DefinitionModifierTest extends ModelTestCase
         }
     }
 
-    /**
-     * @param string $function
-     * @param callable $assert
-     * @param bool $isInsert
-     * @param array $types
-     */
-    private function doForEachType(string $function, callable $assert, bool $isInsert = false, array $types = [self::_CLASS, self::_FIELDCOLLECTION, self::_OBJECTBRICK])
+    private function doForEachType(string $function, callable $assert, bool $isInsert = false, array $types = [self::_CLASS, self::_FIELDCOLLECTION, self::_OBJECTBRICK]): void
     {
         $definitionAppender = new DefinitionModifier();
 
@@ -229,14 +192,7 @@ class DefinitionModifierTest extends ModelTestCase
         }
     }
 
-    /**
-     * @param ClassDefinition\Layout $layoutDefinition
-     * @param string $name
-     * @param bool $returnObject
-     *
-     * @return bool|ClassDefinition\Layout
-     */
-    private function findElement(ClassDefinition\Layout $layoutDefinition, string $name, bool $returnObject = false)
+    private function findElement(ClassDefinition\Layout $layoutDefinition, string $name, bool $returnObject = false): mixed
     {
         $children = $layoutDefinition->getChildren();
         $found = false;
@@ -271,7 +227,7 @@ class DefinitionModifierTest extends ModelTestCase
         }
     }
 
-    public function testAppendingFields()
+    public function testAppendingFields(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -295,7 +251,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('appendFields', $callable);
     }
 
-    public function testPrependingFields()
+    public function testPrependingFields(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -323,7 +279,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('prependFields', $callable);
     }
 
-    public function testReplacingField()
+    public function testReplacingField(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -345,7 +301,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('replaceField', $callable);
     }
 
-    public function testRemovingField()
+    public function testRemovingField(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -358,7 +314,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('removeField', $callable);
     }
 
-    public function testInsertingFieldsFront()
+    public function testInsertingFieldsFront(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -385,7 +341,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('insertFieldsFront', $callable, true);
     }
 
-    public function testInsertingFieldsBack()
+    public function testInsertingFieldsBack(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -413,7 +369,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('insertFieldsBack', $callable, true);
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField()
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField(): void
     {
         $classDef = new ClassDefinition();
 
@@ -433,7 +389,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertEmpty($layoutDef->getChildren()[0]->getChildren());
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields()
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields(): void
     {
         $classDef = new ClassDefinition();
 
@@ -468,16 +424,14 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertTrue($layoutDef->getChildren()[0]->getChildren()[2] === $keepElements[2]);
     }
 
-    private static function getMethod($class, $name)
+    private static function getMethod(object|string $class, string $name): \ReflectionMethod
     {
         $class = new \ReflectionClass($class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
 
-        return $method;
+        return $class->getMethod($name);
     }
 
-    public function testGetByIdIgnoreCaseWithoutValidId()
+    public function testGetByIdIgnoreCaseWithoutValidId(): void
     {
         $id = '-9999';
         $checkVal = ClassDefinition::getByIdIgnoreCase($id);
@@ -485,7 +439,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertNull($checkVal);
     }
 
-    public function testGetByIdIgnoreCaseWithValidId()
+    public function testGetByIdIgnoreCaseWithValidId(): void
     {
         $id = 'Inheritance';
         $checkVal = ClassDefinition::getByIdIgnoreCase($id);

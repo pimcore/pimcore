@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,8 +22,8 @@ use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class VersionTest
@@ -55,7 +56,7 @@ class VersionTest extends TestCase
             ->getMock();
     }
 
-    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter)
+    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter): void
     {
         $proxy = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
         $proxy->setStorageAdapter($adapter);
@@ -77,7 +78,7 @@ class VersionTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testDisable()
+    public function testDisable(): void
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $savedObject = TestHelper::createEmptyObject();
@@ -109,13 +110,13 @@ class VersionTest extends TestCase
     /**
      * Test for https://github.com/pimcore/pimcore/issues/4667
      */
-    public function testCondense()
+    public function testCondense(): void
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         /** @var Unittest $savedObject */
 
         // create target object
-        $randomText = TestHelper::generateRandomString(10000);
+        $randomText = TestHelper::generateRandomString(190);
 
         /** @var Unittest $targetObject */
         $targetObject = TestHelper::createEmptyObject();
@@ -132,21 +133,21 @@ class VersionTest extends TestCase
         $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), ['force' => true]);
 
         $targetObjects = $sourceObject->getMultihref();
-        $this->assertEquals(1, count($targetObjects), 'expected one target');
+        $this->assertCount(1, $targetObjects, 'expected one target');
 
         $targetObject = $targetObjects[0];
         $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
         $content = stream_get_contents($latestVersion1->getFileStream());
-        $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
+        $this->assertStringNotContainsString($randomText, $content, "random text shouldn't be there");
 
         $multihref = $sourceObjectFromDb->getMultihref();
-        $this->assertEquals(1, count($multihref), 'expected 1 target element');
+        $this->assertCount(1, $multihref, 'expected 1 target element');
     }
 
     // Save a new object and check if the storagetype is set to fs
-    public function testStorageAdapterTypeFS()
+    public function testStorageAdapterTypeFS(): void
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $object = TestHelper::createEmptyObject();
@@ -160,7 +161,7 @@ class VersionTest extends TestCase
     }
 
     // Save a new object and check if the storagetype is set to db
-    public function testStorageAdapterDB()
+    public function testStorageAdapterDB(): void
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $object = TestHelper::createEmptyObject();
@@ -174,7 +175,7 @@ class VersionTest extends TestCase
     }
 
     // Size of metadata exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-    public function testStorageAdapterDelegate()
+    public function testStorageAdapterDelegate(): void
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
         $randomText = TestHelper::generateRandomString(100);
@@ -190,7 +191,7 @@ class VersionTest extends TestCase
         $this->assertEmpty($result['metaData'], 'metaData must be empty.');
     }
 
-    public function testStorageAdapterFSWithBinaryFile()
+    public function testStorageAdapterFSWithBinaryFile(): void
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
@@ -221,7 +222,7 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id2, 'id must not be empty');
     }
 
-    public function testStorageAdapterDBWithBinaryFile()
+    public function testStorageAdapterDBWithBinaryFile(): void
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
@@ -261,7 +262,7 @@ class VersionTest extends TestCase
     }
 
     // Size of binary file exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-    public function testStorageAdapterDelegateWithBinaryFile()
+    public function testStorageAdapterDelegateWithBinaryFile(): void
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
         $randomText = TestHelper::generateRandomString(100);
@@ -278,9 +279,6 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id, 'id must not be empty');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -298,10 +296,7 @@ class VersionTest extends TestCase
         $db->executeStatement('DROP TABLE versionsData');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
@@ -309,7 +304,7 @@ class VersionTest extends TestCase
     /**
      * Set up test classes before running tests
      */
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         //Create versionsData table. Needed for tests with DatabaseVersionStorageAdapter
         $db = Db::get();
@@ -323,12 +318,7 @@ class VersionTest extends TestCase
                                 )");
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Version
-     */
-    protected function getNewestVersion($id)
+    protected function getNewestVersion(int $id): Version
     {
         $list = new Version\Listing();
         $list->setCondition("ctype = 'object' and cid = " . $id);

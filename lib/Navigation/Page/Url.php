@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,8 +45,6 @@ class Url extends Page
 {
     /**
      * Page URI
-     *
-     * @var string|null
      */
     protected ?string $_uri = null;
 
@@ -54,9 +53,9 @@ class Url extends Page
      *
      * @param string|null $uri page URI, must a string or null
      *
-     * @return Url fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
-    public function setUri(?string $uri)
+    public function setUri(?string $uri): static
     {
         $this->_uri = $uri;
 
@@ -66,37 +65,30 @@ class Url extends Page
     /**
      * Returns URI
      *
-     * @return string|null
      */
     public function getUri(): ?string
     {
         return $this->_uri;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHref()
+    public function getHref(): string
     {
         $uri = $this->getUri();
 
         $fragment = $this->getFragment();
         if (null !== $fragment) {
-            if ('#' === substr($uri, -1)) {
+            if (str_ends_with($uri, '#')) {
                 return $uri . $fragment;
             }
 
             return $uri . '#' . $fragment;
         }
 
-        return $uri;
+        return $uri ?? '';
     }
 
     // Public methods:
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return array_merge(

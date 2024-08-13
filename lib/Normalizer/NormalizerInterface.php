@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,19 +21,7 @@ namespace Pimcore\Normalizer;
  */
 interface NormalizerInterface
 {
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function normalize($value, $params = []);
+    public function normalize(mixed $value, array $params = []): mixed;
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function denormalize($value, $params = []);
+    public function denormalize(mixed $value, array $params = []): mixed;
 }

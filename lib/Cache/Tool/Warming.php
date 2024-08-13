@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,29 +28,22 @@ use Pimcore\Model\Element;
  */
 class Warming
 {
-    /**
-     * @var int
-     */
-    protected static $perIteration = 20;
+    protected static int $perIteration = 20;
 
-    /**
-     * @var int
-     */
-    protected static $timoutBetweenIteration = 2;
+    protected static int $timoutBetweenIteration = 2;
 
     /**
      * @static
      *
-     * @param array $types
      */
-    public static function documents($types = null)
+    public static function documents(array $types = null): void
     {
         if (empty($types)) {
             $types = ['page', 'snippet', 'folder', 'link'];
         }
 
         $list = new Document\Listing();
-        $list->setCondition("type IN ('" . implode("','", $types) . "')");
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
     }
@@ -57,10 +51,8 @@ class Warming
     /**
      * @static
      *
-     * @param array|null $types
-     * @param array|null $classes
      */
-    public static function objects($types = null, $classes = null)
+    public static function objects(array $types = null, array $classes = null): void
     {
         if (empty($types)) {
             $types = DataObject::$types;
@@ -68,11 +60,11 @@ class Warming
 
         $classesCondition = '';
         if (!empty($classes)) {
-            $classesCondition .= " AND o_className IN ('" . implode("','", $classes) . "')";
+            $classesCondition .= " AND className IN ('" . implode("','", $classes) . "')";
         }
 
         $list = new DataObject\Listing();
-        $list->setCondition("o_type IN ('" . implode("','", $types) . "')" . $classesCondition);
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);
     }
@@ -80,16 +72,15 @@ class Warming
     /**
      * @static
      *
-     * @param array $types
      */
-    public static function assets($types = null)
+    public static function assets(array $types = null): void
     {
         if (empty($types)) {
             $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
         }
 
         $list = new Asset\Listing();
-        $list->setCondition("type IN ('" . implode("','", $types) . "')");
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
     }
@@ -97,18 +88,14 @@ class Warming
     /**
      * Adds a Pimcore Object/Asset/Document to the cache
      *
-     * @param Element\ElementInterface $element
      */
-    public static function loadElementToCache($element)
+    public static function loadElementToCache(Element\ElementInterface $element): void
     {
         $cacheKey = Element\Service::getElementType($element) . '_' . $element->getId();
         Cache::save($element, $cacheKey, [], null, 0, true);
     }
 
-    /**
-     * @param Document\Listing|Asset\Listing|DataObject\Listing $list
-     */
-    protected static function loadToCache(Document\Listing|Asset\Listing|DataObject\Listing $list)
+    protected static function loadToCache(Document\Listing|Asset\Listing|DataObject\Listing $list): void
     {
         $totalCount = $list->getTotalCount();
         $iterations = ceil($totalCount / self::getPerIteration());
@@ -131,34 +118,22 @@ class Warming
         }
     }
 
-    /**
-     * @param int $timoutBetweenIteration
-     */
-    public static function setTimoutBetweenIteration($timoutBetweenIteration)
+    public static function setTimoutBetweenIteration(int $timoutBetweenIteration): void
     {
         self::$timoutBetweenIteration = $timoutBetweenIteration;
     }
 
-    /**
-     * @return int
-     */
-    public static function getTimoutBetweenIteration()
+    public static function getTimoutBetweenIteration(): int
     {
         return self::$timoutBetweenIteration;
     }
 
-    /**
-     * @param int $perIteration
-     */
-    public static function setPerIteration($perIteration)
+    public static function setPerIteration(int $perIteration): void
     {
         self::$perIteration = $perIteration;
     }
 
-    /**
-     * @return int
-     */
-    public static function getPerIteration()
+    public static function getPerIteration(): int
     {
         return self::$perIteration;
     }

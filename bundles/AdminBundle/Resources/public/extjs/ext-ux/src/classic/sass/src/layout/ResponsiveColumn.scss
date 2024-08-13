@@ -1,8 +1,0 @@
-.#{$prefix}responsivecolumn {
-    padding: $responsivecolumn-item-spacing 0 0 $responsivecolumn-item-spacing;
-
-    > * {
-        margin: 0 $responsivecolumn-item-spacing $responsivecolumn-item-spacing 0;
-        float: left;
-    }
-}

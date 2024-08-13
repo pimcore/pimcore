@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,18 +21,12 @@ namespace Pimcore\Event\Traits;
  */
 trait RecursionBlockingEventDispatchHelperTrait
 {
-    /**
-     * @var array
-     */
     private array $activeDispatchingEvents = [];
 
     /**
      * Dispatches an event, avoids recursion by checking if the active dispatch event is the same
      *
-     * @param object $event
-     * @param string|null $eventName
      *
-     * @return void
      */
     protected function dispatchEvent(object $event, string $eventName = null): void
     {

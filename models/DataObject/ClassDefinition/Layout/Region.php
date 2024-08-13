@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,6 @@ class Region extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
-    public $fieldtype = 'region';
+    public string $fieldtype = 'region';
 }

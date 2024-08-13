@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
-use Pimcore\File;
 use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
+use Symfony\Component\Mime\MimeTypes;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -31,29 +31,20 @@ use Twig\TwigTest;
  */
 class HelpersExtension extends AbstractExtension
 {
-    /**
-     * @var PimcoreUrl
-     */
-    private $pimcoreUrlHelper;
+    private PimcoreUrl $pimcoreUrlHelper;
 
     public function __construct(PimcoreUrl $pimcoreUrlHelper)
     {
         $this->pimcoreUrlHelper = $pimcoreUrlHelper;
     }
 
-    /**
-     * @return array
-     */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('basename', [$this, 'basenameFilter']),
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -62,8 +53,9 @@ class HelpersExtension extends AbstractExtension
             new TwigFunction('pimcore_file_exists', function ($file) {
                 return is_file($file);
             }),
-            new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
+            new TwigFunction('pimcore_file_extension', [$this, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
+            new TwigFunction('pimcore_asset_version_preview', [$this, 'getAssetVersionPreview']),
             new TwigFunction('pimcore_breach_attack_random_content', [$this, 'breachAttackRandomContent'], [
                 'is_safe' => ['html'],
             ]),
@@ -74,10 +66,7 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getTests()
+    public function getTests(): array
     {
         return [
             new TwigTest('instanceof', function ($object, $class) {
@@ -86,25 +75,17 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param string $value
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function basenameFilter($value, $suffix = '')
+    public function basenameFilter(string $value, string $suffix = ''): string
     {
         return basename($value, $suffix);
     }
 
     /**
-     * @param string $file
      *
-     * @return string
      *
      * @throws \Exception
      */
-    public function getImageVersionPreview($file)
+    public function getImageVersionPreview(string $file): string
     {
         $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
         $convert = \Pimcore\Image::getInstance();
@@ -120,11 +101,21 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @return string
+     * @throws \Exception
+     */
+    public function getAssetVersionPreview(string $file): string
+    {
+        $dataUri = 'data:'.MimeTypes::getDefault()->guessMimeType($file).';base64,'.base64_encode(file_get_contents($file));
+        unlink($file);
+
+        return $dataUri;
+    }
+
+    /**
      *
      * @throws \Exception
      */
-    public function breachAttackRandomContent()
+    public function breachAttackRandomContent(): string
     {
         $length = 50;
         $randomData = random_bytes($length);
@@ -136,5 +127,10 @@ class HelpersExtension extends AbstractExtension
                 ord($randomData[$length - 1]) % 32
             )
             . '-->';
+    }
+
+    public function getFileExtension(string $fileName): string
+    {
+        return pathinfo($fileName, PATHINFO_EXTENSION);
     }
 }

@@ -1,0 +1,22 @@
+---
+xliff_export_documents: "Ha le akarod ford\xEDtani pl. az eg\xE9sz /en f\xE1t egy
+  m\xE1sik nyelvre, el\u0151sz\xF6r m\xE1sold le az /en f\xE1t. Ezut\xE1n haszn\xE1ld
+  a m\xE1solatot az export\xE1l\xE1s sor\xE1n, \xE9s v\xE1laszd ki az \u201Een\u201D
+  forr\xE1snyelvet \xE9s a \u201Ede\u201D c\xE9lnyelvet. A leford\xEDtott XLIFF f\xE1jl
+  import\xE1l\xE1sakor az export\xE1lt dokumentumok (jelen esetben a m\xE1solt fa
+  dokumentumok) tartalm\xE1t fel\xFCl\xEDrj\xE1k a n\xE9met ford\xEDt\xE1sok az XLIFF
+  f\xE1jlban."
+xliff_export_objects: "Csak a Lokaliz\xE1lt mez\u0151k t\xE1rol\xF3ban l\xE9v\u0151
+  mez\u0151ket ismeri fel. A leford\xEDtott XLIFF import\xE1l\xE1sakor a forr\xE1snyelv
+  \xE9rintetlen, csak a c\xE9lnyelvi mez\u0151k \xEDr\xF3dnak fel\xFCl. Haszn\xE1ld
+  a Kapcsolatok checkboxot a f\xFCgg\u0151s\xE9gekb\u0151l sz\xE1rmaz\xF3 objektumok
+  \xE9s dokumentumok felv\xE9tel\xE9hez, pl. Kapcsolati mez\u0151k, Tulajdons\xE1gok
+  stb."
+xliff_export_notice: "Itt kiv\xE1laszhatod a dokumentumokat \xE9s objekteket, amiket
+  export\xE1lni szeretn\xE9l k\xFCls\u0151 ford\xEDt\xE1sra"
+xliff_import_notice: "V\xE1lassz egy leford\xEDtott XLIFF f\xE1jlt, amelyet kor\xE1bban
+  a pimcore export\xE1lt, majd egy lokaliz\xE1ci\xF3s szolg\xE1ltat\xF3 (LSP) vagy
+  egy CAT alkalmaz\xE1s ford\xEDtott le. Felh\xEDvjuk figyelmed, hogy az import fel\xFCl\xEDrja
+  az import\xE1l\xE1s \xE1ltal kiv\xE1lasztott elemeket (ld. az export\xE1l\xE1s is)."
+xliff_import_export: Xliff Import/Export
+...

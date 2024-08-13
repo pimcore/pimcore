@@ -1,0 +1,7 @@
+services:
+    Pimcore\Image\Optimizer:
+        public: true
+
+    Pimcore\Image\Optimizer\SpatieImageOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }

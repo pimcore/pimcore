@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,6 @@
 namespace Pimcore;
 
 use League\HTMLToMarkdown\HtmlConverter;
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
@@ -32,61 +32,52 @@ use Twig\Sandbox\SecurityError;
 
 class Mail extends Email
 {
-    /**
-     * @var bool
-     */
-    private static $forceDebugMode = false;
+    private static bool $forceDebugMode = false;
 
     /**
      * If true - emails are logged in the database and on the file-system
      *
-     * @var bool
      */
-    private $loggingEnable = true;
+    private bool $loggingEnable = true;
 
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email|Model\Document\Newsletter|null
      */
-    private $document;
+    private Model\Document\Email|null $document = null;
 
     /**
      * Contains the email document Id
-     *
-     * @var int|null
      */
     private ?int $documentId = null;
 
     /**
      * Contains the dynamic Params for the Twig engine
      *
-     * @var array
+     * @var mixed[]
      */
-    private $params = [];
+    private array $params = [];
 
     /**
      * Options passed to html2text
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    private $html2textOptions = [
+    private array $html2textOptions = [
         'ignore_errors' => true,
     ];
 
     /**
      * Prevent adding debug information
      *
-     * @var bool
      */
-    private $preventDebugInformationAppending = false;
+    private bool $preventDebugInformationAppending = false;
 
     /**
      * if true - the Pimcore debug mode is ignored
      *
-     * @var bool
      */
-    private $ignoreDebugMode = false;
+    private bool $ignoreDebugMode = false;
 
     /**
      * if $hostUrl is set - this url well be used to create absolute urls
@@ -94,45 +85,34 @@ class Mail extends Email
      *
      * @see MailHelper::setAbsolutePaths()
      *
-     * @var string|null
      */
-    private $hostUrl = null;
+    private ?string $hostUrl = null;
 
     /**
      * if true: prevent setting the recipients from the Document - set in $this->clearRecipients()
      *
-     * @var bool
      */
-    private $recipientsCleared = false;
+    private bool $recipientsCleared = false;
 
     /**
      * place to store original data before modifying message when sending in debug mode
      *
-     * @var array|null
      */
-    private $originalData;
+    private ?array $originalData = null;
+
+    private Model\Tool\Email\Log $lastLogEntry;
 
     /**
-     * @var Model\Tool\Email\Log
-     */
-    private $lastLogEntry;
-
-    /**
-     * @param string $url
-     *
      * @return $this
      */
-    public function setHostUrl($url)
+    public function setHostUrl(string $url): static
     {
         $this->hostUrl = $url;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getHostUrl()
+    public function getHostUrl(): ?string
     {
         return $this->hostUrl;
     }
@@ -140,9 +120,8 @@ class Mail extends Email
     /**
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
-     * @param string|null $contentType
      */
-    public function __construct($headers = null, $body = null, $contentType = null)
+    public function __construct($headers = null, $body = null, string $contentType = null)
     {
         if (is_array($headers)) {
             $options = $headers;
@@ -177,35 +156,30 @@ class Mail extends Email
     /**
      * Initializes the mailer with the configured pimcore.email system settings
      *
-     * @param string $type
      *
      * @internal
      */
-    public function init($type = 'email')
+    public function init(string $type = 'email', ?array $config = null): void
     {
-        $config = Config::getSystemConfiguration($type);
-
-        if (!empty($config['sender']['email'])) {
-            if (empty($this->getFrom())) {
-                $this->from(new Address($config['sender']['email'], $config['sender']['name']));
-            }
+        if(empty($config)) {
+            $config = Config::getSystemConfiguration($type);
         }
 
-        if (!empty($config['return']['email'])) {
-            if (empty($this->getReplyTo())) {
-                $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
-            }
+        if (!empty($config['sender']['email']) && empty($this->getFrom())) {
+            $this->from(new Address($config['sender']['email'], $config['sender']['name']));
+        }
+
+        if (!empty($config['return']['email']) && empty($this->getReplyTo())) {
+            $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
         }
     }
 
     /**
-     * @param bool $value
-     *
      * @return $this
      */
-    public function setIgnoreDebugMode($value)
+    public function setIgnoreDebugMode(bool $value): static
     {
-        $this->ignoreDebugMode = (bool)$value;
+        $this->ignoreDebugMode = $value;
 
         return $this;
     }
@@ -213,9 +187,8 @@ class Mail extends Email
     /**
      * Checks if the Debug mode is ignored
      *
-     * @return bool
      */
-    public function getIgnoreDebugMode()
+    public function getIgnoreDebugMode(): bool
     {
         return $this->ignoreDebugMode;
     }
@@ -225,9 +198,8 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
-    public function doRedirectMailsToDebugMailAddresses()
+    public function doRedirectMailsToDebugMailAddresses(): bool
     {
         if (self::$forceDebugMode) {
             return true;
@@ -239,11 +211,10 @@ class Mail extends Email
     /**
      * Sets options that are passed to html2text
      *
-     * @param array $options
      *
      * @return $this
      */
-    public function setHtml2TextOptions(array $options = [])
+    public function setHtml2TextOptions(array $options = []): static
     {
         $this->html2textOptions = $options;
 
@@ -253,9 +224,9 @@ class Mail extends Email
     /**
      * Returns options for html2text
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getHtml2TextOptions()
+    public function getHtml2TextOptions(): array
     {
         return $this->html2textOptions;
     }
@@ -265,7 +236,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function clearRecipients()
+    public function clearRecipients(): static
     {
         $this->recipientsCleared = true;
 
@@ -282,7 +253,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function disableLogging()
+    public function disableLogging(): static
     {
         $this->loggingEnable = false;
 
@@ -294,7 +265,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function enableLogging()
+    public function enableLogging(): static
     {
         $this->loggingEnable = true;
 
@@ -304,9 +275,8 @@ class Mail extends Email
     /**
      * returns the logging status
      *
-     * @return bool
      */
-    public function loggingIsEnabled()
+    public function loggingIsEnabled(): bool
     {
         return $this->loggingEnable;
     }
@@ -314,11 +284,10 @@ class Mail extends Email
     /**
      * Sets the parameters to the request object
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
-    public function setParams(array $params)
+    public function setParams(array $params): static
     {
         foreach ($params as $key => $value) {
             $this->setParam($key, $value);
@@ -330,18 +299,12 @@ class Mail extends Email
     /**
      * Sets a single parameter to the request object
      *
-     * @param string|int $key
-     * @param mixed $value
      *
      * @return $this Provides fluent interface
      */
-    public function setParam($key, $value)
+    public function setParam(int|string $key, mixed $value): static
     {
-        if (is_string($key) || is_int($key)) {
-            $this->params[$key] = $value;
-        } else {
-            Logger::warn('$key has to be a string or integer - Param ignored!');
-        }
+        $this->params[$key] = $value;
 
         return $this;
     }
@@ -349,9 +312,9 @@ class Mail extends Email
     /**
      * Returns the parameters which were set with "setParams" or "setParam"
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -359,11 +322,9 @@ class Mail extends Email
     /**
      * Returns a parameter which was set with "setParams" or "setParam"
      *
-     * @param string|int $key
      *
-     * @return mixed
      */
-    public function getParam($key)
+    public function getParam(int|string $key): mixed
     {
         return $this->params[$key];
     }
@@ -371,9 +332,8 @@ class Mail extends Email
     /**
      * Forces the debug mode - useful for cli-script which should not send emails to recipients
      *
-     * @param bool $value
      */
-    public static function setForceDebugMode($value)
+    public static function setForceDebugMode(bool $value): void
     {
         self::$forceDebugMode = $value;
     }
@@ -381,11 +341,10 @@ class Mail extends Email
     /**
      * Deletes parameters which were set with "setParams" or "setParam"
      *
-     * @param array $params
      *
      * @return $this Provides fluent interface
      */
-    public function unsetParams(array $params)
+    public function unsetParams(array $params): static
     {
         foreach ($params as $param) {
             $this->unsetParam($param);
@@ -397,17 +356,12 @@ class Mail extends Email
     /**
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
-     * @param string|int $key
      *
      * @return $this Provides fluent interface
      */
-    public function unsetParam($key)
+    public function unsetParam(int|string $key): static
     {
-        if (is_string($key) || is_int($key)) {
-            unset($this->params[$key]);
-        } else {
-            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
-        }
+        unset($this->params[$key]);
 
         return $this;
     }
@@ -417,50 +371,40 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    private function setDocumentSettings()
+    private function setDocumentSettings(): static
     {
         $document = $this->getDocument();
 
         if ($document instanceof Model\Document\Email) {
             if (!$this->recipientsCleared) {
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
-                if (!empty($to)) {
-                    foreach ($to as $toEntry) {
-                        $this->addTo(new Address($toEntry['email'], $toEntry['name'] ?? ''));
-                    }
+                foreach ($to as $toEntry) {
+                    $this->addTo(new Address($toEntry['email'], $toEntry['name']));
                 }
 
                 $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
-                if (!empty($cc)) {
-                    foreach ($cc as $ccEntry) {
-                        $this->addCc(new Address($ccEntry['email'], $ccEntry['name'] ?? ''));
-                    }
+                foreach ($cc as $ccEntry) {
+                    $this->addCc(new Address($ccEntry['email'], $ccEntry['name']));
                 }
 
                 $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
-                if (!empty($bcc)) {
-                    foreach ($bcc as $bccEntry) {
-                        $this->addBcc(new Address($bccEntry['email'], $bccEntry['name'] ?? ''));
-                    }
+                foreach ($bcc as $bccEntry) {
+                    $this->addBcc(new Address($bccEntry['email'], $bccEntry['name']));
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
-                if (!empty($replyTo)) {
-                    foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name'] ?? ''));
-                    }
+                foreach ($replyTo as $replyToEntry) {
+                    $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                 }
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
+        if ($document instanceof Model\Document\Email) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    $this->from(new Address($from['email'], $from['name']));
-                }
+            if ($fromArray) {
+                [$from] = $fromArray;
+                $this->from(new Address($from['email'], $from['name']));
             }
         }
 
@@ -476,11 +420,10 @@ class Mail extends Email
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  MailerInterface|null $mailer
      *
      * @return $this Provides fluent interface
      */
-    public function send(MailerInterface $mailer = null)
+    public function send(MailerInterface $mailer = null): static
     {
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
@@ -510,13 +453,12 @@ class Mail extends Email
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param MailerInterface|null $mailer
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function sendWithoutRendering(MailerInterface $mailer = null)
+    public function sendWithoutRendering(MailerInterface $mailer = null): static
     {
         // filter email addresses
 
@@ -580,6 +522,8 @@ class Mail extends Email
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 
+            \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
+
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
             } catch (\Exception $e) {
@@ -595,21 +539,21 @@ class Mail extends Email
     }
 
     /**
-     * @param array $addresses
+     * @param array<Address|string> $addresses
      *
-     * @return array
+     * @return array<Address|string>
      */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
             if ($address instanceof Address) {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($address->getAddress())) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($address->getAddress())) {
                     unset($addrKey);
                 }
             } else {
-                // remove address if blacklisted
-                if (Model\Tool\Email\Blacklist::getByAddress($addrKey)) {
+                // remove address if blocklisted
+                if (Model\Tool\Email\Blocklist::getByAddress($addrKey)) {
                     unset($addresses[$addrKey]);
                 }
             }
@@ -619,9 +563,9 @@ class Mail extends Email
     }
 
     /**
-     * @param array $recipients
+     * @param array<Address|string> $recipients
      *
-     * @return array
+     * @return array<Address|string>
      */
     private function getDebugMailRecipients(array $recipients): array
     {
@@ -647,11 +591,6 @@ class Mail extends Email
         return $recipients;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     private function renderParams(string $string, string $context): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
@@ -676,9 +615,8 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
-    public function getSubjectRendered()
+    public function getSubjectRendered(): string
     {
         $subject = $this->getSubject();
 
@@ -698,9 +636,8 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string|null
      */
-    public function getBodyHtmlRendered()
+    public function getBodyHtmlRendered(): ?string
     {
         $html = $this->getHtmlBody();
 
@@ -710,7 +647,6 @@ class Mail extends Email
             // render document
             if ($this->getDocument() instanceof Model\Document) {
                 $attributes = $this->getParams();
-                $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
                 $html = Model\Document\Service::render($this->getDocument(), $attributes);
             }
@@ -734,9 +670,8 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return string
      */
-    public function getBodyTextRendered()
+    public function getBodyTextRendered(): string
     {
         $text = $this->getTextBody();
 
@@ -772,13 +707,12 @@ class Mail extends Email
     }
 
     /**
-     * @param Model\Document|int|string|null $document
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setDocument($document)
+    public function setDocument(int|Model\Document|string|null $document): static
     {
         if (!empty($document)) {
             if (is_numeric($document)) { //id of document passed
@@ -788,7 +722,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
+        if ($document instanceof Model\Document\Email || $document === null) {
             $this->document = $document;
             $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
@@ -802,24 +736,17 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email|Model\Document\Newsletter|null
      */
-    public function getDocument()
+    public function getDocument(): Model\Document\Email|null
     {
         return $this->document;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
 
-    /**
-     * @param int|null $documentId
-     */
     public function setDocumentId(?int $documentId): void
     {
         $this->documentId = $documentId;
@@ -832,7 +759,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function preventDebugInformationAppending()
+    public function preventDebugInformationAppending(): static
     {
         $this->preventDebugInformationAppending = true;
 
@@ -844,19 +771,13 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return bool
      */
-    public function isPreventingDebugInformationAppending()
+    public function isPreventingDebugInformationAppending(): bool
     {
         return $this->preventDebugInformationAppending;
     }
 
-    /**
-     * @param string $htmlContent
-     *
-     * @return string
-     */
-    private function html2Text($htmlContent)
+    private function html2Text(string $htmlContent): string
     {
         $content = '';
 
@@ -874,87 +795,24 @@ class Mail extends Email
     }
 
     /**
-     * @deprecated use text() instead. Will be removed in Pimcore 11
-     *
-     * @param string $bodyText
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyText($bodyText, string $charset = 'utf-8')
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use text() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->text($bodyText, $charset);
-    }
-
-    /**
-     * @deprecated use html() instead. Will be removed in Pimcore 11
-     *
-     * @param string $body
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyHtml($body, string $charset = 'utf-8')
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use html() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->html($body, $charset);
-    }
-
-    /**
      * @internal
      *
-     * @return array|null
      */
-    public function getOriginalData()
+    public function getOriginalData(): ?array
     {
         return $this->originalData;
     }
 
     /**
-     * @internal
      *
-     * @param array|null $originalData
+     * @internal
      */
-    public function setOriginalData($originalData)
+    public function setOriginalData(?array $originalData): void
     {
         $this->originalData = $originalData;
     }
 
-    /**
-     * @deprecated use attach() instead. Will be removed in Pimcore 11
-     *
-     * @param string $data
-     * @param string|null $mimeType
-     * @param string|null $filename
-     *
-     * @return $this
-     */
-    public function createAttachment($data, $mimeType = null, $filename = null)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use attach() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->attach($data, $filename, $mimeType);
-    }
-
-    /**
-     * @return Model\Tool\Email\Log
-     */
-    public function getLastLogEntry()
+    public function getLastLogEntry(): Model\Tool\Email\Log
     {
         return $this->lastLogEntry;
     }
@@ -962,11 +820,10 @@ class Mail extends Email
     /**
      * Set the Content-type of this entity.
      *
-     * @param string $type
      *
      * @return $this
      */
-    public function setContentType($type)
+    public function setContentType(string $type): static
     {
         $this->getHeaders()->addTextHeader('Content-Type', $type);
 
@@ -974,31 +831,11 @@ class Mail extends Email
     }
 
     /**
-     * @deprecated use subject() instead. Will be removed in Pimcore 11
+     * @param Address|string|string[] ...$addresses
      *
-     * @param string $subject
-     *
-     * @return $this
+     * @return array<Address|string>
      */
-    public function setSubject($subject)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.4',
-            sprintf('%s is deprecated, please use subject() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->subject($subject);
-    }
-
-    /**
-     * format Address from old params(string $address, string $name)
-     *
-     * @param string|array $addresses
-     *
-     * @return array
-     */
-    private function formatAddress(...$addresses)
+    private function formatAddress(Address|string|array ...$addresses): array
     {
         //old param style with string name as second param
         if (isset($addresses[1]) && is_string($addresses[1])) {
@@ -1009,12 +846,11 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addTo(...$addresses)//: static
+    public function addTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1022,12 +858,11 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addCc(...$addresses)//: static
+    public function addCc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1035,12 +870,11 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addBcc(...$addresses)//: static
+    public function addBcc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1048,12 +882,11 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addFrom(...$addresses)//: static
+    public function addFrom(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1061,12 +894,11 @@ class Mail extends Email
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addReplyTo(...$addresses)//: static
+    public function addReplyTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 

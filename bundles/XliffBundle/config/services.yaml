@@ -1,0 +1,50 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\XliffBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreXliffBundle')"
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\XliffBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorServiceInterface:
+        class:  Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorService
+
+    Pimcore\Bundle\XliffBundle\ExportService\ExportServiceInterface:
+        class:  Pimcore\Bundle\XliffBundle\ExportService\ExportService
+
+    Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor:
+        tags: [{name: pimcore.translation.data-extractor, type: object}]
+
+    Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DocumentDataExtractor:
+        tags: [{name: pimcore.translation.data-extractor, type: document}]
+
+    Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface:
+        class: Pimcore\Bundle\XliffBundle\ExportService\Exporter\Xliff12Exporter
+
+    Pimcore\Bundle\XliffBundle\ImporterService\ImporterServiceInterface:
+        class: Pimcore\Bundle\XliffBundle\ImporterService\ImporterService
+
+    Pimcore\Bundle\XliffBundle\ImporterService\Importer\DataObjectImporter:
+        tags: [{name: pimcore.translation.importer, type: object}]
+
+    Pimcore\Bundle\XliffBundle\ImporterService\Importer\DocumentImporter:
+        tags: [{name: pimcore.translation.importer, type: document}]
+
+    Pimcore\Bundle\XliffBundle\ImportDataExtractor\ImportDataExtractorInterface:
+        class: Pimcore\Bundle\XliffBundle\ImportDataExtractor\Xliff12DataExtractor
+
+    Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface:
+        class: Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
+
+    Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper: ~

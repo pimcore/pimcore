@@ -1,7 +1,15 @@
-![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
+[![Pimcore Inspire 2024 - A Must-Attend Conference for Pimcore Developers!](/.github/inspire-2024.png)](https://pimcore.com/en/resources/events/inspire-2024)
+    
+    
+        
+    
+        
+    
+
+![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
   
-Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
+Pimcore Core Framework - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
@@ -24,22 +32,8 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
-## Supported Versions
-
-| Version  | Supported | LTS** | CE End of life*** |
-|----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
-| `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
-| `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
-| `10.5`   |     ✅     |   ☑   |                   |
-| `10.x`   |     ✅     |   ☑   |                   |
-
-** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
-*** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
-
-
 ## Overview
-![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
+![Technology and Architecture](./doc/img/pimcore-technology-architecture.svg)
 
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
@@ -65,13 +59,13 @@ experience for editors.
 
 ## Preview and Demo
 ### Data Objects
-![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
+![Pimcore Admin Interface Screenshot PIM/MDM](./doc/img/pimcore-screenshot-3.png)
 Manage any structured data based on a predefined data model, either manually or automatically via the APIs. Define the structure and attributes of your objects by using the class editor. Manage any data – products (PIM/MDM), categories, customers (CDP), orders (digital commerce), blog articles (DXP/CMS). Data Objects provide the possibility to manage structured data for multiple output channels from a single source. By centralizing data in one place, Pimcore's data objects enable you to achieve better data completeness and data quality, allowing you to create and maintain a consistent, up-to-date customer experience across multiple touchpoints in less time.
 ### Digital Assets
-![Pimcore Admin Interface Screenshot DAM](./doc/Development_Documentation/img/pimcore-screenshot-2.png)
-Assets are the DAM part of Pimcore. Store, manage and organize digital files such as images, videos, PDFs, Word/Excel documents in a folder structure. Preview 200+ file types directly in Pimcore, edit pictures, and enrich files with additional meta-data. Facial recognition for focal points in images and support for VR/360° previews is available. Editors only need to maintain one high-resolution version of a file in the system. Pimcore can automatically generate all required output formats for various channels such as commerce, apps, websites. Of course, including comprehensive user management and version control.
+![Pimcore Admin Interface Screenshot DAM](./doc/img/pimcore-screenshot-2.png)
+Assets are the DAM part of Pimcore. Store, manage and organize digital files such as images, videos, PDFs, Word/Excel documents in a folder structure. Preview 200+ file types directly in Pimcore, edit pictures, and enrich files with additional meta-data. Facial recognition for focal points in images is available. Editors only need to maintain one high-resolution version of a file in the system. Pimcore can automatically generate all required output formats for various channels such as commerce, apps, websites. Of course, including comprehensive user management and version control.
 ### Documents
-![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+![Pimcore Admin Interface Screenshot CMS](./doc/img/pimcore-screenshot-1.png)
 The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multilingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
 
 #### Demo (Community Edition)
@@ -90,7 +84,18 @@ cd ./my-project
 
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Development_Documentation/Getting_Started/Installation.html)
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/platform/Pimcore/Getting_Started/)
+
+
+## Supported Versions and LTS
+
+Community support of a minor version of Pimcore packages ends with the release of the next minor version. After end of
+community support, long term supported is provided in combination with enterprise edition.
+
+LTS versions are based on our [Platform Version Releases](https://pimcore.com/docs/platform/Platform_Version/) which cover
+the Core Framework as well as extensions provided by Pimcore. For details on versions and their support state see our
+[documentation](https://pimcore.com/docs/platform/Platform_Version/Platform_Version_Releases/).
+
 
 ## Copyright and License 
 Copyright: [Pimcore](https://www.pimcore.org) GmbH

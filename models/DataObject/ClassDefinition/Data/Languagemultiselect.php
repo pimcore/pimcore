@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,29 +23,18 @@ use Pimcore\Tool;
 class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
-     * Static type of this element
-     *
      * @internal
-     *
-     * @var string
      */
-    public $fieldtype = 'languagemultiselect';
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $onlySystemLanguages = false;
+    public bool $onlySystemLanguages = false;
 
     /**
      * @internal
      *
      * @throws \Exception
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
-        $validLanguages = (array) Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
         $options = [];
 
@@ -64,32 +54,19 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
-    public function getOnlySystemLanguages()
+    public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param int|bool|null $value
-     *
-     * @return $this
-     */
-    public function setOnlySystemLanguages($value)
+    public function setOnlySystemLanguages(bool|int|null $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
 
         return $this;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
@@ -97,27 +74,25 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolveBlockedVars(): array
     {
         $blockedVars = parent::resolveBlockedVars();
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'languagemultiselect';
     }
 }

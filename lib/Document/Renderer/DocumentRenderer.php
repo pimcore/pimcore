@@ -20,85 +20,49 @@ namespace Pimcore\Document\Renderer;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Localization\LocaleService;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Pimcore\Tool;
+use Pimcore\Tool\Frontend;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var ActionRenderer
-     */
-    private $actionRenderer;
+    private ActionRenderer $actionRenderer;
 
-    /**
-     * @var FragmentRendererInterface
-     */
-    private $fragmentRenderer;
+    private FragmentRendererInterface $fragmentRenderer;
 
-    /**
-     * @var DocumentRouteHandler
-     */
-    private $documentRouteHandler;
+    private DocumentRouteHandler $documentRouteHandler;
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private LocaleServiceInterface $localeService;
 
-    /**
-     * @var LocaleService
-     */
-    private $localeService;
-
-    /**
-     * @param RequestHelper $requestHelper
-     * @param ActionRenderer $actionRenderer
-     * @param FragmentRendererInterface $fragmentRenderer
-     * @param DocumentRouteHandler $documentRouteHandler
-     * @param DocumentTargetingConfigurator $targetingConfigurator
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param LocaleService $localeService
-     */
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
-        DocumentTargetingConfigurator $targetingConfigurator,
         EventDispatcherInterface $eventDispatcher,
-        LocaleService $localeService
+        LocaleServiceInterface $localeService
     ) {
         $this->requestHelper = $requestHelper;
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
-        $this->targetingConfigurator = $targetingConfigurator;
         $this->eventDispatcher = $eventDispatcher;
         $this->localeService = $localeService;
     }
 
-    /**
-     * @required
-     *
-     * @param ContainerService $containerService
-     */
-    public function setContainerService(ContainerService $containerService)
+    #[Required]
+    public function setContainerService(ContainerService $containerService): void
     {
         // we have to ensure that the ContainerService was initialized at the time this service is created
         // this is necessary, since the ContainerService registers a listener for DocumentEvents::RENDERER_PRE_RENDER
@@ -106,18 +70,12 @@ class DocumentRenderer implements DocumentRendererInterface
         // placeholder service/templating helper is used during the rendering process
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
             new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
         );
-
-        // apply best matching target group (if any)
-        $this->targetingConfigurator->configureTargetGroup($document);
 
         // add document route to request if no route is set
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
@@ -131,7 +89,22 @@ class DocumentRenderer implements DocumentRendererInterface
         try {
             $request = $this->requestHelper->getCurrentRequest();
         } catch (\Exception $e) {
-            $request = $this->requestHelper->createRequestWithContext();
+
+            $host = null;
+            if($site = Frontend::getSiteForDocument($document)) {
+                $host = $site->getMainDomain();
+            } elseif($systemMainDomain = Tool::getHostname()) {
+                $host = $systemMainDomain;
+            }
+
+            $request = $this->requestHelper->createRequestWithContext(host: $host);
+        }
+
+        if ($attributes['pimcore_static_page_generator'] ?? false) {
+            $headers = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['headers'];
+            foreach($headers as $header) {
+                $request->headers->set($header['name'], $header['value']);
+            }
         }
 
         $documentLocale = $document->getProperty('language');

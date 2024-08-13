@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,21 +25,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    /**
-     *
-     * @return array
-     */
-    abstract public function load();
+    abstract public function load(): array;
 
-    /**
-     * @return int
-     */
-    abstract public function getTotalCount();
+    abstract public function getTotalCount(): int;
 
-    /**
-     * @return string
-     */
-    protected function getOrder()
+    protected function getOrder(): string
     {
         $orderKey = $this->model->getOrderKey();
         $order = $this->model->getOrder();
@@ -48,16 +39,14 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
             $lastOrder = $order[0] ?? null;
             $parts = [];
 
-            if (is_array($orderKey)) {
-                foreach ($orderKey as $key) {
-                    if (isset($order[$c])) {
-                        $lastOrder = $order[$c];
-                    }
-
-                    $parts[] = $key . ' ' . $lastOrder;
-
-                    $c++;
+            foreach ($orderKey as $key) {
+                if (isset($order[$c])) {
+                    $lastOrder = $order[$c];
                 }
+
+                $parts[] = $key . ' ' . $lastOrder;
+
+                $c++;
             }
 
             if (!empty($parts)) {
@@ -68,10 +57,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         return '';
     }
 
-    /**
-     * @return string
-     */
-    protected function getGroupBy()
+    protected function getGroupBy(): string
     {
         if ($this->model->getGroupBy()) {
             return ' GROUP BY ' . $this->model->getGroupBy();
@@ -80,10 +66,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         return '';
     }
 
-    /**
-     * @return string
-     */
-    protected function getOffsetLimit()
+    protected function getOffsetLimit(): string
     {
         if (($limit = $this->model->getLimit()) && ($offset = $this->model->getOffset())) {
             return ' LIMIT ' . $offset . ',' . $limit;
@@ -96,10 +79,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         return '';
     }
 
-    /**
-     * @return string
-     */
-    protected function getCondition()
+    protected function getCondition(): string
     {
         if ($cond = $this->model->getCondition()) {
             return ' WHERE ' . $cond . ' ';

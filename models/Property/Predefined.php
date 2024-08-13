@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,67 +29,29 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var string
-     */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @var string|null
-     */
-    protected $key;
+    protected ?string $key = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected ?string $type = null;
 
-    /**
-     * @var string
-     */
-    protected $data;
+    protected ?string $data = null;
 
-    /**
-     * @var string
-     */
-    protected $config;
+    protected ?string $config = null;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected ?string $ctype = null;
 
-    /**
-     * @var bool
-     */
-    protected $inheritable = false;
+    protected bool $inheritable = false;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @param string $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(string $id): ?Predefined
     {
         try {
             $property = new self();
@@ -100,12 +63,7 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return self|null
-     */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Predefined
     {
         $cacheKey = 'property_predefined_' . $key;
 
@@ -127,10 +85,7 @@ final class Predefined extends Model\AbstractModel
         return $property;
     }
 
-    /**
-     * @return self
-     */
-    public static function create()
+    public static function create(): Predefined
     {
         $type = new self();
         $type->save();
@@ -138,44 +93,30 @@ final class Predefined extends Model\AbstractModel
         return $type;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): ?string
     {
         return $this->data;
     }
 
     /**
-     * @param string $key
-     *
      * @return $this
      */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = $key;
 
@@ -183,11 +124,9 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -195,11 +134,9 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -207,158 +144,121 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $data
-     *
      * @return $this
      */
-    public function setData($data)
+    public function setData(?string $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
     /**
-     * @param string $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getConfig()
+    public function getConfig(): ?string
     {
         return $this->config;
     }
 
     /**
-     * @param string $config
-     *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(string $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
     /**
-     * @param string $ctype
-     *
      * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInheritable()
+    public function getInheritable(): bool
     {
         return $this->inheritable;
     }
 
     /**
-     * @param bool $inheritable
-     *
      * @return $this
      */
-    public function setInheritable($inheritable)
+    public function setInheritable(bool $inheritable): static
     {
-        $this->inheritable = (bool) $inheritable;
+        $this->inheritable = $inheritable;
 
         return $this;
     }
 
     /**
-     * @param string $description
-     *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param int $creationDate
-     *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
     /**
-     * @param int $modificationDate
-     *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

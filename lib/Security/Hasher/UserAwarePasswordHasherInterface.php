@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,20 +28,18 @@ interface UserAwarePasswordHasherInterface extends PasswordHasherInterface
     /**
      * Set the user
      *
-     * @param UserInterface $user
      *
      * @throws RuntimeException
      *      if the user is already set to prevent overwriting the scoped user object
      */
-    public function setUser(UserInterface $user);
+    public function setUser(UserInterface $user): void;
 
     /**
      * Get the user object
      *
-     * @return UserInterface
      *
      * @throws RuntimeException
      *      if no user was set
      */
-    public function getUser();
+    public function getUser(): UserInterface;
 }

@@ -25,9 +25,6 @@ use Pimcore\Model\Document\Editable;
  */
 class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(string $name, array $params = []): Editable
     {
         return parent::build($name, $params);

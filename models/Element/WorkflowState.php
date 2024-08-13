@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,34 +25,15 @@ use Pimcore\Model;
  */
 class WorkflowState extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected int $cid;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected string $ctype;
 
-    /**
-     * @var string
-     */
-    protected $workflow;
+    protected string $workflow;
 
-    /**
-     * @var string
-     */
-    protected $place;
+    protected string $place;
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     * @param string $workflow
-     *
-     * @return null|WorkflowState
-     */
-    public static function getByPrimary(int $cid, string $ctype, string $workflow)
+    public static function getByPrimary(int $cid, string $ctype, string $workflow): ?WorkflowState
     {
         try {
             $workflowState = new self();
@@ -63,80 +45,60 @@ class WorkflowState extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
     /**
-     * @param int $cid
-     *
-     * @return WorkflowState
+     * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = $cid;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
     /**
-     * @param string $ctype
-     *
-     * @return WorkflowState
+     * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPlace(): string
     {
         return $this->place;
     }
 
     /**
-     * @param string $place
-     *
-     * @return WorkflowState
+     * @return $this
      */
-    public function setPlace(string $place)
+    public function setPlace(string $place): static
     {
         $this->place = $place;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getWorkflow()
+    public function getWorkflow(): string
     {
         return $this->workflow;
     }
 
     /**
-     * @param string $workflow
-     *
-     * @return WorkflowState
+     * @return $this
      */
-    public function setWorkflow(string $workflow)
+    public function setWorkflow(string $workflow): static
     {
         $this->workflow = $workflow;
 

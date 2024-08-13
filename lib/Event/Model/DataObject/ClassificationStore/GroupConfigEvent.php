@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,33 +21,23 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class GroupConfigEvent extends Event
 {
-    /**
-     * @var GroupConfig
-     */
-    protected $groupConfig;
+    protected GroupConfig $groupConfig;
 
     /**
      * DocumentEvent constructor.
      *
-     * @param GroupConfig $groupConfig
      */
     public function __construct(GroupConfig $groupConfig)
     {
         $this->groupConfig = $groupConfig;
     }
 
-    /**
-     * @return GroupConfig
-     */
-    public function getGroupConfig()
+    public function getGroupConfig(): GroupConfig
     {
         return $this->groupConfig;
     }
 
-    /**
-     * @param GroupConfig $groupConfig
-     */
-    public function setGroupConfig($groupConfig)
+    public function setGroupConfig(GroupConfig $groupConfig): void
     {
         $this->groupConfig = $groupConfig;
     }

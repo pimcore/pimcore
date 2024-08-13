@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,52 +18,23 @@ namespace Pimcore\Tool;
 
 class DeviceDetector
 {
-    /**
-     * @var array
-     */
-    protected $validDeviceTypes = ['phone', 'tablet', 'desktop'];
+    protected array $validDeviceTypes = ['phone', 'tablet', 'desktop'];
 
-    /**
-     * @var null|string
-     */
-    protected $default = 'desktop';
+    protected ?string $default = 'desktop';
 
-    /**
-     * @var bool
-     */
-    protected $isPhone = false;
+    protected bool $isPhone = false;
 
-    /**
-     * @var bool
-     */
-    protected $isDesktop = false;
+    protected bool $isDesktop = false;
 
-    /**
-     * @var bool
-     */
-    protected $isTablet = false;
+    protected bool $isTablet = false;
 
-    /**
-     * @var null|DeviceDetector
-     */
-    protected static $instance = null;
+    protected static ?DeviceDetector $instance = null;
 
-    /**
-     * @var bool
-     */
-    protected $determinedDeviceType = false;
+    protected bool $determinedDeviceType = false;
 
-    /**
-     * @var bool
-     */
-    protected $wasUsed = false;
+    protected bool $wasUsed = false;
 
-    /**
-     * @param string|null $default
-     *
-     * @return DeviceDetector
-     */
-    public static function getInstance($default = null)
+    public static function getInstance(string $default = null): DeviceDetector
     {
         if (!self::$instance) {
             self::$instance = new self($default);
@@ -71,58 +43,40 @@ class DeviceDetector
         return self::$instance;
     }
 
-    /**
-     * @param string|null $default
-     */
-    public function __construct($default = null)
+    public function __construct(string $default = null)
     {
         if ($default && in_array($default, ['desktop', 'mobile', 'tablet'])) {
             $this->default = $default;
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isDesktop()
+    public function isDesktop(): bool
     {
         $this->determineDeviceType();
 
         return $this->isDesktop;
     }
 
-    /**
-     * @return bool
-     */
-    public function isTablet()
+    public function isTablet(): bool
     {
         $this->determineDeviceType();
 
         return $this->isTablet;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPhone()
+    public function isPhone(): bool
     {
         $this->determineDeviceType();
 
         return $this->isPhone;
     }
 
-    /**
-     * @return bool
-     */
-    public function wasUsed()
+    public function wasUsed(): bool
     {
         return $this->wasUsed;
     }
 
-    /**
-     * @param bool $wasUsed
-     */
-    public function setWasUsed($wasUsed)
+    public function setWasUsed(bool $wasUsed): void
     {
         $this->wasUsed = $wasUsed;
     }
@@ -130,11 +84,10 @@ class DeviceDetector
     /**
      * Set the device type manually. Possible values for type: 'desktop', 'tablet', or 'phone'
      *
-     * @param string $type
      *
      * @throws \Exception
      */
-    public function setDeviceType(string $type)
+    public function setDeviceType(string $type): void
     {
         $instance = self::$instance;
         if ($type == 'desktop') {
@@ -154,10 +107,7 @@ class DeviceDetector
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getDevice()
+    public function getDevice(): ?string
     {
         foreach ($this->validDeviceTypes as $deviceType) {
             if ($this->{'is'.ucfirst($deviceType)}()) {
@@ -168,15 +118,12 @@ class DeviceDetector
         return $this->default;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getDevice();
     }
 
-    private function determineDeviceType()
+    private function determineDeviceType(): void
     {
         $this->setWasUsed(true);
 
@@ -246,6 +193,9 @@ class DeviceDetector
 
         if ($typeForced) {
             if (in_array($typeForced, $this->validDeviceTypes)) {
+                /**
+                 * @psalm-taint-escape cookie
+                 */
                 $type = $typeForced;
 
                 // we don't set a cookie if we're in preview mode, or if a cookie is set already

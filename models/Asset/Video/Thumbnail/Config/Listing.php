@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,16 +17,16 @@
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
-use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @method \Pimcore\Model\Asset\Video\Thumbnail\Config\Listing\Dao getDao()
  */
-class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;
@@ -35,12 +36,12 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
      *
      * @var \Pimcore\Model\Asset\Video\Thumbnail\Config[]|null
      */
-    protected $thumbnails = null;
+    protected ?array $thumbnails = null;
 
     /**
      * @return \Pimcore\Model\Asset\Video\Thumbnail\Config[]
      */
-    public function getThumbnails()
+    public function getThumbnails(): array
     {
         if ($this->thumbnails === null) {
             $this->getDao()->loadList();
@@ -54,7 +55,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
      *
      * @return $this
      */
-    public function setThumbnails($thumbnails)
+    public function setThumbnails(?array $thumbnails): static
     {
         $this->thumbnails = $thumbnails;
 
@@ -64,9 +65,9 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     /**
      * Alias of getThumbnails()
      *
-     * @return Model\Asset\Video\Thumbnail\Config[]|null
+     * @return Model\Asset\Video\Thumbnail\Config[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getThumbnails();
     }

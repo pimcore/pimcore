@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         $data = $this->model->getData();
 
@@ -44,6 +44,14 @@ class Dao extends Model\Dao\AbstractDao
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
+        $cpath = $this->model->getCpath();
+        if(empty($cpath)) {
+            $element = Model\Element\Service::getElementById($this->model->getCtype(), $this->model->getCid());
+            if($element instanceof Model\Element\ElementInterface) {
+                $cpath = $element->getRealFullPath();
+            }
+        }
+
         $saveData = [
             'cid' => $this->model->getCid(),
             'ctype' => $this->model->getCtype(),
@@ -54,6 +62,6 @@ class Dao extends Model\Dao\AbstractDao
             'data' => $data,
         ];
 
-        Helper::insertOrUpdate($this->db, 'properties', $saveData);
+        Helper::upsert($this->db, 'properties', $saveData, $this->getPrimaryKey('properties'));
     }
 }

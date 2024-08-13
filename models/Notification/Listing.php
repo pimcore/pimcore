@@ -23,23 +23,15 @@ use Pimcore\Model\Listing\AbstractListing;
 /**
  * @method Listing\Dao getDao()
  * @method Model\Notification[] load()
- * @method int count()
  */
 class Listing extends AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return true;
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      *
      * @return Model\Notification[]
      */
@@ -60,11 +52,11 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @param array $notifications
+     * @param Model\Notification[]|null $notifications
      *
-     * @return Listing
+     * @return $this
      */
-    public function setNotifications(array $notifications): self
+    public function setNotifications(?array $notifications): static
     {
         return $this->setData($notifications);
     }

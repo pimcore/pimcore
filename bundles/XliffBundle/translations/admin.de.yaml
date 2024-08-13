@@ -1,0 +1,17 @@
+---
+xliff_export_documents: "Wenn Sie etwas \xFCbersetzen wollen, z.B. den ganzen /en
+  Baum in eine andere Sprache, erstellen Sie bitte zuerst eine Kopie von /en (z.B.
+  /de), dann exportieren Sie /de f\xFCr die \xDCbersetzung. Wenn Sie bei der \xFCbersetzen
+  XLIFF den englischen Inhalt in /de importieren, wird die deutsche \xDCbersetzung
+  in der XLIFF \xFCberschrieben."
+xliff_export_objects: "Nur Felder innerhalb eines Localized Field Container werden
+  erkannt. Beim Importieren der \xFCbersetzen XLIFF wird die Ursprungssprache nicht
+  ver\xE4ndert. Nur die Felder, die \xFCbersetzt werden sollen, werden \xFCberschrieben."
+xliff_export_notice: "Hier kannst du deine ausgew\xE4hlten Dokumente und Objekte,
+  f\xFCr externe \xDCbersetzungen, exportieren."
+xliff_import_notice: "W\xE4hle eine \xFCbersetzte XLIFF Datei, welche vorher von Pimcore
+  exportiert und dann von einem Lokalisierungsdienstleister (LSP) oder einer CAT Anwendung
+  \xFCbersetzt wurde, aus. Bitte beachte, dass der Import die Elemente, die f\xFCr
+  den Import ausgew\xE4hlt wurden, \xFCberschreibt (siehe auch Export)."
+xliff_import_export: Xliff Import/Export
+...

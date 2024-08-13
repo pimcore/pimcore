@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,222 +16,117 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
+    use DataObject\ClassDefinition\Data\Extension\Text;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Model\DataObject\ClassDefinition\Data\Extension\Text;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
 
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'wysiwyg';
+    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
 
     /**
      * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $height = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     public string $toolbarConfig = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $excludeFromSearchIndex = false;
+    public bool $excludeFromSearchIndex = false;
 
     /**
      * @internal
      *
-     * @var string|int
      */
-    public $maxCharacters = 0;
+    public string|int $maxCharacters = 0;
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    private static function getWysiwygSanitizer(): HtmlSanitizer
     {
-        return $this->width;
+        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * @param string $toolbarConfig
-     */
-    public function setToolbarConfig(string $toolbarConfig)
+    public function setToolbarConfig(string $toolbarConfig): void
     {
         $this->toolbarConfig = $toolbarConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getToolbarConfig(): string
     {
         return $this->toolbarConfig;
     }
 
-    /**
-     * @return bool
-     */
     public function isExcludeFromSearchIndex(): bool
     {
         return $this->excludeFromSearchIndex;
     }
 
-    /**
-     * @param bool $excludeFromSearchIndex
-     *
-     * @return $this
-     */
-    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getMaxCharacters()
+    public function getMaxCharacters(): int|string
     {
         return $this->maxCharacters;
     }
 
-    /**
-     * @param string|int $maxCharacters
-     */
-    public function setMaxCharacters($maxCharacters)
+    public function setMaxCharacters(int|string $maxCharacters): void
     {
         $this->maxCharacters = $maxCharacters;
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data);
+        if (is_string($data) && ($params['sanitize'] ?? true)) {
+            $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
+        }
+
+        return Text::wysiwygText($data, [
+            'object' => $params['owner'] ?? null,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ]);
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data);
+        return Text::wysiwygText($data, [
+            'object' => $params['owner'] ?? null,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ]);
     }
 
     /**
+     *
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        $data = $this->getDataForResource($data, $object, $params);
+        $data = $this->getDataForResource($data, $object, array_merge($params, ['sanitize' => false]));
 
         if (null !== $data) {
             $data = strip_tags($data, '<a><img>');
@@ -244,10 +140,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         if ($this->isExcludeFromSearchIndex()) {
             return '';
@@ -257,77 +150,54 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
+     *
+     *
      * @see Data::getDataForEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $this->getDataForResource($data, $object, $params);
+        return $this->getDataForResource($data, $object, array_merge($params, ['sanitize' => false]));
     }
 
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $data;
     }
 
-    /**
-     * @param string|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         return Text::getDependenciesOfWysiwygText($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
-        if (is_array($dependencies)) {
-            foreach ($dependencies as $key => $value) {
-                $el = Element\Service::getElementById($value['type'], $value['id']);
-                if (!$el) {
-                    throw new Element\ValidationException('Invalid dependency in wysiwyg text');
-                }
+        foreach ($dependencies as $key => $value) {
+            $el = Element\Service::getElementById($value['type'], $value['id']);
+            if (!$el) {
+                throw new Element\ValidationException('Invalid dependency in wysiwyg text');
             }
         }
     }
 
-    /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Classificationstore|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @return string
-     */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []): ?string
     {
         $data = '';
         if ($container instanceof DataObject\Concrete) {
@@ -343,19 +213,16 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::wysiwygText($data, [
                 'object' => $container,
                 'context' => $this,
+                'language' => $params['language'] ?? null,
             ]);
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param string|null $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
      *
-     * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?string $data, DataObject\Concrete $object = null, array $params = []): array|string
     {
         if ($data) {
             $value = [];
@@ -368,10 +235,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -400,43 +264,43 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'wysiwyg';
     }
 }

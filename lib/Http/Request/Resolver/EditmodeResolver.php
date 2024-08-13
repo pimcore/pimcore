@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,8 +16,8 @@
 
 namespace Pimcore\Http\Request\Resolver;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,26 +29,12 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
 
     const ATTRIBUTE_EDITMODE = '_editmode';
 
-    /**
-     * @var UserLoader
-     */
-    protected $userLoader;
+    protected UserLoader $userLoader;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @var bool
-     */
-    private $forceEditmode = false;
+    private bool $forceEditmode = false;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param UserLoader $userLoader
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(RequestStack $requestStack, UserLoader $userLoader, RequestHelper $requestHelper)
     {
         $this->userLoader = $userLoader;
@@ -56,24 +43,14 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         parent::__construct($requestStack);
     }
 
-    /**
-     * @param bool $forceEditmode
-     *
-     * @return $this
-     */
-    public function setForceEditmode(bool $forceEditmode)
+    public function setForceEditmode(bool $forceEditmode): static
     {
         $this->forceEditmode = $forceEditmode;
 
         return $this;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
-    public function isEditmode(Request $request = null)
+    public function isEditmode(Request $request = null): bool
     {
         if ($this->forceEditmode) {
             $this->logger->debug('Resolved editmode to true as force editmode is set');

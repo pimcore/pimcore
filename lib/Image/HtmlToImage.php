@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,100 +16,190 @@
 
 namespace Pimcore\Image;
 
+use function class_exists;
+use function func_get_args;
+use Gotenberg\Gotenberg as GotenbergAPI;
+use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Communication\Connection;
+use HeadlessChromium\Communication\Message;
+use function method_exists;
+use Pimcore\Config;
+use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Tool\Session;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Process\Process;
+use function rename;
 
 /**
  * @internal
- *
- * @deprecated
  */
 class HtmlToImage
 {
-    /**
-     * @return bool
-     */
-    public static function isSupported()
+    private static ?string $supportedAdapter = null;
+
+    public static function isSupported(): bool
     {
-        return (bool) self::getWkhtmltoimageBinary();
+        return (bool) self::getSupportedAdapter();
     }
 
-    /**
-     * @return bool
-     */
-    public static function getWkhtmltoimageBinary()
+    private static function getSupportedAdapter(): string
     {
-        foreach (['wkhtmltoimage', 'wkhtmltoimage-amd64'] as $app) {
-            $wk2img = \Pimcore\Tool\Console::getExecutable($app);
-            if ($wk2img) {
-                return $wk2img;
+        if(self::$supportedAdapter !== null) {
+            return self::$supportedAdapter;
+        }
+
+        self::$supportedAdapter = '';
+
+        if (GotenbergHelper::isAvailable()) {
+            /** @var GotenbergAPI|object $chrome */
+            $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
+            if(method_exists($chrome, 'screenshot')) {
+                // only v2 of Gotenberg lib is supported
+                self::$supportedAdapter = 'gotenberg';
             }
         }
 
+        if (!self::$supportedAdapter && class_exists(BrowserFactory::class)) {
+            $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+            if (!empty($chromiumUri)) {
+                try {
+                    if((new Connection($chromiumUri))->connect()) {
+                        self::$supportedAdapter = 'chromium';
+                    }
+                } catch (\Exception $e) {
+                    Logger::debug((string) $e);
+                    // nothing to do
+                }
+            }
+
+            if(self::getChromiumBinary()) {
+                self::$supportedAdapter = 'chromium';
+            }
+        }
+
+        return self::$supportedAdapter;
+    }
+
+    public static function getChromiumBinary(): ?string
+    {
+        foreach (['chromium', 'chrome'] as $app) {
+            $chromium = Console::getExecutable($app);
+            if ($chromium) {
+                return $chromium;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
+    {
+        $adapter = self::getSupportedAdapter();
+        if($adapter === 'gotenberg') {
+            return self::convertGotenberg(...func_get_args());
+        } elseif ($adapter === 'chromium') {
+            return self::convertChromium(...func_get_args());
+        }
+
         return false;
     }
 
     /**
-     * @param string $url
-     * @param string $outputFile
-     * @param int $screenWidth
-     * @param string $format
-     *
-     * @return bool
+     * @throws \Exception
      */
-    public static function convert($url, $outputFile, $screenWidth = 1200, $format = 'png')
+    public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s has been deprecated and will be removed in Pimcore 11. Use %s with chrome-php/chrome instead.', __CLASS__, Chromium::class)
-        );
+        try {
 
-        // add parameter pimcore_preview to prevent inclusion of google analytics code, cache, etc.
-        $url .= (strpos($url, '?') ? '&' : '?') . 'pimcore_preview=true';
+            $extraHeaders = [
+                'X-Foo' => 'Bar', // required, as extraHttpHeaders() requires at least one entry
+            ];
 
-        $options = [
-            '--width', $screenWidth,
-            '--format', $format,
-        ];
+            if (null !== $sessionId && null !== $sessionName) {
+                $extraHeaders['Cookie'] = $sessionName . '=' . $sessionId;
+            }
 
-        if (php_sapi_name() !== 'cli') {
-            $sessionData = Session::useSession(function (AttributeBagInterface $session) {
-                return ['name' => Session::getSessionName(), 'id' => Session::getSessionId()];
-            });
+            /** @var GotenbergAPI|object $request */
+            $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
+            if(method_exists($request, 'screenshot')) {
+                $urlResponse = $request->screenshot()
+                    ->png()
+                    ->extraHttpHeaders($extraHeaders)
+                    ->url($url);
 
-            array_push($options, '--cookie', $sessionData['name'], (string)$sessionData['id']);
+                $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+
+                return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
+            }
+
+        } catch (\Exception $e) {
+            // nothing to do
         }
-
-        array_push($options, $url, $outputFile);
-
-        // use xvfb if possible
-        if ($xvfb = Console::getExecutable('xvfb-run')) {
-            $command = [$xvfb, '--auto-servernum', '--server-args=-screen 0, 1280x1024x24',
-                self::getWkhtmltoimageBinary(), '--use-xserver', ];
-        } else {
-            $command = [self::getWkhtmltoimageBinary()];
-        }
-        $command = array_merge($command, $options);
-        Console::addLowProcessPriority($command);
-        $process = new Process($command);
-        $process->start();
-
-        $logHandle = fopen(PIMCORE_LOG_DIRECTORY . '/wkhtmltoimage.log', 'a');
-        $process->wait(function ($type, $buffer) use ($logHandle) {
-            fwrite($logHandle, $buffer);
-        });
-        fclose($logHandle);
-
-        if (file_exists($outputFile) && filesize($outputFile) > 1000) {
-            return true;
-        }
-
-        Logger::debug('Could not create image from url: ' . $url);
 
         return false;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function convertChromium(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
+    {
+        trigger_deprecation('pimcore/pimcore', '11.2.0', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.');
+
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)) {
+            try {
+                $browser = BrowserFactory::connectToBrowser($chromiumUri);
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+
+                return false;
+            }
+        } else {
+            $binary = self::getChromiumBinary();
+            if (!$binary) {
+                return false;
+            }
+            $browserFactory = new BrowserFactory($binary);
+            $browser = $browserFactory->createBrowser([
+                'noSandbox' => file_exists('/.dockerenv'),
+                'startupTimeout' => 120,
+                'windowSize' => explode(',', $windowSize),
+            ]);
+        }
+
+        $headers = [];
+        if (null !== $sessionId && null !== $sessionName) {
+            $headers['Cookie'] = $sessionName . '=' . $sessionId;
+        }
+
+        $page = $browser->createPage();
+
+        try {
+
+            if (!empty($headers)) {
+                $page->getSession()->sendMessageSync(new Message(
+                    'Network.setExtraHTTPHeaders',
+                    ['headers' => $headers]
+                ));
+            }
+
+            $page->navigate($url)->waitForNavigation();
+
+            $page->screenshot([
+                'captureBeyondViewport' => true,
+                'clip' => $page->getFullPageClip(),
+            ])->saveToFile($outputFile);
+        } catch (\Throwable $e) {
+            Logger::debug('Could not create image from url ' . $url . ': ' . $e);
+
+            return false;
+        } finally {
+            $page->close();
+        }
+
+        return true;
     }
 }

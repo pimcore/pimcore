@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,53 +40,27 @@ use Pimcore\Tool\Storage;
  */
 class Item extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $path;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var string
-     */
-    protected $subtype;
+    protected string $subtype;
 
-    /**
-     * @var int
-     */
-    protected $amount = 0;
+    protected int $amount = 0;
 
-    /**
-     * @var Element\ElementInterface
-     */
-    protected $element;
+    protected Element\ElementInterface $element;
 
-    /**
-     * @var int
-     */
-    protected $date;
+    protected int $date;
 
-    /**
-     * @var string
-     */
-    protected $deletedby;
+    protected string $deletedby;
 
     /**
      * @static
      *
-     * @param Element\ElementInterface $element
-     * @param Model\User|null $user
      */
-    public static function create(Element\ElementInterface $element, Model\User $user = null)
+    public static function create(Element\ElementInterface $element, Model\User $user = null): void
     {
         $item = new self();
         $item->setElement($element);
@@ -95,11 +70,9 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Item
     {
         try {
             $item = new self();
@@ -112,11 +85,10 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Model\User|null $user
      *
      * @throws \Exception
      */
-    public function restore($user = null)
+    public function restore(Model\User $user = null): void
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
@@ -181,10 +153,7 @@ class Item extends Model\AbstractModel
         $this->delete();
     }
 
-    /**
-     * @param Model\User $user
-     */
-    public function save($user = null)
+    public function save(Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());
@@ -215,11 +184,9 @@ class Item extends Model\AbstractModel
                     $storage->writeStream($scope->getStorageFileBinary($element), $element->getStream());
                 }
 
-                if (method_exists($element, 'getChildren')) {
-                    $children = $element->getChildren();
-                    foreach ($children as $child) {
-                        $rec($child, $rec, $scope);
-                    }
+                $children = $element->getChildren();
+                foreach ($children as $child) {
+                    $rec($child, $rec, $scope);
                 }
             }
         };
@@ -227,7 +194,7 @@ class Item extends Model\AbstractModel
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $storage = Storage::get('recycle_bin');
         $storage->delete($this->getStoreageFile());
@@ -244,10 +211,7 @@ class Item extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     */
-    public function loadChildren(Element\ElementInterface $element)
+    public function loadChildren(Element\ElementInterface $element): void
     {
         $this->amount++;
 
@@ -282,11 +246,10 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
      *
      * @throws \Exception
      */
-    protected function doRecursiveRestore(Element\ElementInterface $element)
+    protected function doRecursiveRestore(Element\ElementInterface $element): void
     {
         $storage = Storage::get('recycle_bin');
         $restoreBinaryData = function (Element\ElementInterface $element, self $scope) use ($storage) {
@@ -316,21 +279,14 @@ class Item extends Model\AbstractModel
             } else {
                 $children = $element->getChildren();
             }
-            if (is_array($children)) {
-                foreach ($children as $child) {
-                    $child->setParentId($element->getId());
-                    $this->doRecursiveRestore($child);
-                }
+            foreach ($children as $child) {
+                $child->setParentId($element->getId());
+                $this->doRecursiveRestore($child);
             }
         }
     }
 
-    /**
-     * @param Element\ElementInterface $data
-     *
-     * @return mixed
-     */
-    public function marshalData($data)
+    public function marshalData(Element\ElementInterface $data): mixed
     {
         //for full dump of relation fields in container types
         $context = [
@@ -348,13 +304,8 @@ class Item extends Model\AbstractModel
                     return $descriptor;
                 }
             ),
-            new class($this->element) extends TypeMatcher {
-                /**
-                 * @param mixed $element
-                 *
-                 * @return bool
-                 */
-                public function matches($element)
+            new class((string)$this->element) extends TypeMatcher {
+                public function matches(mixed $element): bool
                 {
                     //compress only elements with full_dump_state = false
                     return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
@@ -381,12 +332,7 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    /**
-     * @param Element\ElementInterface $data
-     *
-     * @return Element\ElementInterface
-     */
-    public function unmarshalData($data)
+    public function unmarshalData(Element\ElementInterface $data): Element\ElementInterface
     {
         $context = [
             'source' => __METHOD__,
@@ -412,180 +358,108 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    /**
-     * @return string
-     */
-    public function getStoreageFile()
+    public function getStoreageFile(): string
     {
         return sprintf('%s/%s.psf', $this->getType(), $this->getId());
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return string
-     */
-    protected function getStorageFileBinary($element)
+    protected function getStorageFileBinary(Element\ElementInterface $element): string
     {
         return sprintf('%s/%s_%s-%s.bin', $this->getType(), $this->getId(), Element\Service::getElementType($element), $element->getId());
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setPath($path)
+    public function setPath(string $path): static
     {
         $this->path = $path;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubtype()
+    public function getSubtype(): string
     {
         return $this->subtype;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return $this
-     */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param int $amount
-     *
-     * @return $this
-     */
-    public function setAmount($amount)
+    public function setAmount(int $amount): static
     {
-        $this->amount = (int) $amount;
+        $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * @return Element\ElementInterface
-     */
-    public function getElement()
+    public function getElement(): Element\ElementInterface
     {
         return $this->element;
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return $this
-     */
-    public function setElement($element)
+    public function setElement(Element\ElementInterface $element): static
     {
         $this->element = $element;
 
         return $this;
     }
 
-    /**
-     * @param string $username
-     *
-     * @return $this
-     */
-    public function setDeletedby($username)
+    public function setDeletedby(string $username): static
     {
         $this->deletedby = $username;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDeletedby()
+    public function getDeletedby(): string
     {
         return $this->deletedby;
     }

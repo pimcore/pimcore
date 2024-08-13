@@ -25,7 +25,7 @@ class ArrayNormalizer
     /**
      * @var callable[]
      */
-    private $normalizers = [];
+    private array $normalizers = [];
 
     public function normalize(array $array): array
     {
@@ -41,12 +41,10 @@ class ArrayNormalizer
     }
 
     /**
-     * @param string|string[]|int|int[] $properties
-     * @param callable $normalizer
+     * @param int|string|int[]|string[] $properties
      *
-     * @return void
      */
-    public function addNormalizer($properties, callable $normalizer)
+    public function addNormalizer(array|int|string $properties, callable $normalizer): void
     {
         if (!is_array($properties)) {
             $properties = [$properties];

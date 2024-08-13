@@ -1,0 +1,8 @@
+---
+custom_reports: "\u81EA\u5B9A\u4E49\u62A5\u8868"
+reports: "\u62A5\u544A"
+custom_report_permissions: "\u5141\u8BB8"
+keybinding_customReports: "\u81EA\u5B9A\u4E49\u62A5\u544A"
+keybinding_reports: "\u62A5\u544A"
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

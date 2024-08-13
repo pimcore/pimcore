@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,24 +43,17 @@ use Pimcore\Navigation\Container;
 
 interface RendererInterface
 {
-    /**
-     * @return bool
-     */
-    public function getRenderInvisible();
+    public function getRenderInvisible(): bool;
 
     /**
-     * @param bool $renderInvisible
-     *
-     * @return AbstractRenderer
+     * @return $this
      */
-    public function setRenderInvisible(bool $renderInvisible = true);
+    public function setRenderInvisible(bool $renderInvisible = true): static;
 
     /**
-     * @param Container $container
      *
-     * @return string
      *
      * @throws \Exception
      */
-    public function render(Container $container);
+    public function render(Container $container): string;
 }

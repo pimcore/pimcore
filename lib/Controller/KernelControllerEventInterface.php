@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,8 +20,5 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
 interface KernelControllerEventInterface
 {
-    /**
-     * @param ControllerEvent $event
-     */
-    public function onKernelControllerEvent(ControllerEvent $event);
+    public function onKernelControllerEvent(ControllerEvent $event): void;
 }

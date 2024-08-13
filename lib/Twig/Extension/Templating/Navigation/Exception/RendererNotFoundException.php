@@ -19,7 +19,7 @@ namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
 class RendererNotFoundException extends \InvalidArgumentException
 {
-    public static function create(string $name): self
+    public static function create(string $name): static
     {
         return new static(sprintf('The navigation renderer "%s" was not found', $name));
     }

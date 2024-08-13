@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: "F\xFCr %s mit der ID %s wurde die Aktion
+  \"%s\" im Ablauf '%s' ausgel\xF6st."
+workflow_change_email_notification_deeplink: Deep Link zum Element.
+workflow_change_email_notification_note: "Notiz hinzugef\xFCgt:"
+...

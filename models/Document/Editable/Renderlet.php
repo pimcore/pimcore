@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -22,7 +25,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -34,49 +36,38 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Contains the object
      *
      * @internal
-     *
-     * @var Document|Asset|DataObject|null
      */
-    protected $o;
+    protected Document|Asset|null|DataObject|Element\ElementDescriptor $o = null;
 
     /**
      * Contains the type
      *
      * @internal
      *
-     * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * Contains the subtype
      *
      * @internal
      *
-     * @var string|null
      */
-    protected $subtype;
+    protected ?string $subtype = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'renderlet';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -85,10 +76,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [
@@ -101,18 +89,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
-
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
 
         if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
@@ -133,8 +114,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 }
             }
 
+            //Personalization & Targeting Specific
             // apply best matching target group (if any)
-            if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
+            // @phpstan-ignore-next-line
+            if ($container->has(DocumentTargetingConfigurator::class)
+                && $this->o instanceof TargetingDocumentInterface) {
                 $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
@@ -165,15 +149,33 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
+     *
+     * @return $this
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
-        $data = \Pimcore\Tool\Serialize::unserialize($data);
+        if (is_array($data)) {
+            $processedData = $data;
+        } elseif (is_string($data)) {
+            $unserializedData = \Pimcore\Tool\Serialize::unserialize($data);
+            if (!is_array($unserializedData)) {
+                throw new \InvalidArgumentException('Unserialized data must be an array.');
+            }
+            $processedData = $unserializedData;
+        } else {
+            throw new \InvalidArgumentException('Data must be a string or an array.');
+        }
 
-        $this->id = $data['id'];
-        $this->type = $data['type'];
-        $this->subtype = $data['subtype'];
+        foreach (['id', 'type', 'subtype'] as $key) {
+            if (!array_key_exists($key, $processedData)) {
+                throw new \InvalidArgumentException("Key '{$key}' is missing in the data array.");
+            }
+        }
+
+        $this->id = $processedData['id'];
+        $this->type = (string) $processedData['type'];
+        $this->subtype = $processedData['subtype'];
 
         $this->setElement();
 
@@ -181,9 +183,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     *
+     *
+     * @return $this
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data) && isset($data['id'])) {
             $this->id = $data['id'];
@@ -201,17 +205,16 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @return $this
      */
-    public function setElement()
+    public function setElement(): static
     {
-        $this->o = Element\Service::getElementById($this->type, $this->id);
+        if ($this->type && $this->id) {
+            $this->o = Element\Service::getElementById($this->type, $this->id);
+        }
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $this->load();
 
@@ -232,14 +235,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * get correct type of object as string
-     *
-     * @param Element\ElementInterface|null $object
-     *
-     * @return string|null
-     *
-     * @internal param mixed $data
      */
-    private function getObjectType($object = null)
+    private function getObjectType(Element\ElementInterface $object = null): ?string
     {
         $this->load();
 
@@ -253,10 +250,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->load();
 
@@ -267,10 +261,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if ($this->id) {
@@ -288,10 +279,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -305,80 +293,56 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load() /** : void */
+    public function load(): void
     {
         if (!$this->o) {
             $this->setElement();
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Document\Editable\Renderlet
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
 
     /**
-     * @param Asset|Document|DataObject|null $o
-     *
-     * @return Document\Editable\Renderlet
+     * @return $this
      */
-    public function setO($o)
+    public function setO(DataObject|Asset|Document|null $o): static
     {
         $this->o = $o;
 
         return $this;
     }
 
-    /**
-     * @return Asset|Document|DataObject|null
-     */
-    public function getO()
+    public function getO(): DataObject|Asset|Document|null
     {
         return $this->o;
     }
 
     /**
-     * @param string $subtype
-     *
-     * @return Document\Editable\Renderlet
+     * @return $this
      */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubtype()
+    public function getSubtype(): ?string
     {
         return $this->subtype;
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         $type = (string) $this->type;
         if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {

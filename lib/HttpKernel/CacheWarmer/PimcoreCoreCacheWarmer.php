@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,18 +26,12 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  */
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isOptional(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         $classes = [];
 
@@ -78,7 +73,9 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
                 $className = preg_replace('@\.php$@', '', $className);
                 $className = str_replace(DIRECTORY_SEPARATOR, '\\', $className);
 
-                if (class_exists($className)) {
+                // include classes, interfaces and traits
+                // exclude invalid files like helper-functions
+                if (!preg_match('/[_.-]/', $className)) {
                     $classes[] = $className;
                 }
             }
@@ -98,18 +95,20 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
             $classes[] = $listingClass;
         }
 
-        $objectBricksFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
-        $files = glob($objectBricksFolder . '/*.php');
-        foreach ($files as $file) {
-            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . basename($file, '.php');
+        $list = new DataObject\Objectbrick\Definition\Listing();
+        $list = $list->loadNames();
+
+        foreach ($list as $brickName) {
+            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickName);
 
             $classes[] = $className;
         }
 
-        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-        $files = glob($fieldCollectionFolder . '/*.php');
-        foreach ($files as $file) {
-            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . basename($file, '.php');
+        $list = new DataObject\Fieldcollection\Definition\Listing();
+        $list = $list->loadNames();
+
+        foreach ($list as $fcName) {
+            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fcName);
 
             $classes[] = $className;
         }

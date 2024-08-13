@@ -1,0 +1,25 @@
+---
+log_relatedobject: "Zugeh\xF6riges Objekt"
+log_component: Komponente
+log_search_form: Suchparameter
+log_search_type: Art des Log-Eintrags
+log_search_relatedobject: Zugeordnetes Element (ID)
+log_timestamp: Zeitstempel
+log_fileobject: Dateiobjekt
+log_detailinformation: Detailinformation
+log_pid: PID
+log_refresh_label: Alle aktualisieren
+log_applicationlog: Anwendungslogger
+log_search_component: Komponente
+log_search_pid: PID
+log_refresh_seconds: Sekunden
+log_search_from: Von
+log_search_to: An
+log_type: Typ
+log_source: Quelle
+log_message: Nachricht
+log_reset_search: "Zur\xFCcksetzen"
+log_search: Suche
+log_search_message: Nachricht
+keybinding_applicationLogger: Application logger
+...

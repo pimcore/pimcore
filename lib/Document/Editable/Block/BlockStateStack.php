@@ -27,7 +27,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * @var BlockState[]
      */
-    private $states = [];
+    private array $states = [];
 
     public function __construct()
     {
@@ -38,9 +38,8 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Adds a new state to the stack
      *
-     * @param BlockState|null $blockState
      */
-    public function push(BlockState $blockState = null)
+    public function push(BlockState $blockState = null): void
     {
         if (null === $blockState) {
             $blockState = new BlockState();
@@ -52,7 +51,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Removes current state from the stack
      *
-     * @return BlockState
      */
     public function pop(): BlockState
     {
@@ -66,7 +64,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * Returns current state
      *
-     * @return BlockState
      */
     public function getCurrentState(): BlockState
     {
@@ -83,15 +80,12 @@ final class BlockStateStack implements \Countable, \JsonSerializable
         return count($this->states);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return $this->states;
     }
 
-    public function loadArray(array $array)
+    public function loadArray(array $array): void
     {
         $this->states = [];
 

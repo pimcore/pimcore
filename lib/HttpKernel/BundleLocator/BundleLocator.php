@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,48 +21,29 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class BundleLocator implements BundleLocatorInterface
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private KernelInterface $kernel;
 
-    /**
-     * @var array
-     */
-    private $bundleCache = [];
+    private array $bundleCache = [];
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBundle($class): BundleInterface
+    public function getBundle(object|string $class): BundleInterface
     {
         return $this->getBundleForClass($class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBundlePath($class): string
+    public function getBundlePath(object|string $class): string
     {
         return $this->getBundleForClass($class)->getPath();
     }
 
     /**
-     * @param object|string $class
-     *
-     * @return BundleInterface
-     *
      * @throws \ReflectionException
      */
-    private function getBundleForClass($class): BundleInterface
+    private function getBundleForClass(object|string $class): BundleInterface
     {
         if (is_object($class)) {
             $class = get_class($class);
@@ -75,10 +57,6 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @param string $class
-     *
-     * @return BundleInterface
-     *
      * @throws \ReflectionException
      */
     private function findBundleForClass(string $class): BundleInterface
@@ -91,7 +69,7 @@ class BundleLocator implements BundleLocatorInterface
             $namespace = $reflectionClass->getNamespaceName();
 
             foreach ($bundles as $bundle) {
-                if (0 === strpos($namespace, $bundle->getNamespace())) {
+                if (str_starts_with($namespace, $bundle->getNamespace())) {
                     return $bundle;
                 }
             }

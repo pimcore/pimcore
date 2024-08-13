@@ -19,97 +19,54 @@ use Pimcore\Logger;
 
 abstract class Adapter
 {
-    /**
-     * @var int
-     */
-    protected $width;
+    protected int $width;
+
+    protected int $height;
+
+    protected bool $reinitializing = false;
+
+    protected array $tmpFiles = [];
+
+    protected bool $modified = false;
+
+    protected bool $isAlphaPossible = false;
+
+    protected bool $preserveColor = false;
+
+    protected bool $preserveAnimation = false;
+
+    protected bool $preserveMetaData = false;
+
+    protected ?string $sourceImageFormat = null;
+
+    protected mixed $resource = null;
 
     /**
-     * @var int
-     */
-    protected $height;
-
-    /**
-     * @var bool
-     */
-    protected $reinitializing = false;
-
-    /**
-     * @var array
-     */
-    protected $tmpFiles = [];
-
-    /**
-     * @var bool
-     */
-    protected $modified = false;
-
-    /**
-     * @var bool
-     */
-    protected $isAlphaPossible = false;
-
-    /**
-     * @var bool
-     */
-    protected $preserveColor = false;
-
-    /**
-     * @var bool
-     */
-    protected $preserveAnimation = false;
-
-    /**
-     * @var bool
-     */
-    protected $preserveMetaData = false;
-
-    /**
-     * @var string
-     */
-    protected $sourceImageFormat;
-
-    /**
-     * @var mixed
-     */
-    protected $resource;
-
-    /**
-     * @param int $height
-     *
      * @return $this
      */
-    public function setHeight($height)
+    public function setHeight(int $height): static
     {
         $this->height = $height;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getHeight()
+    public function getHeight(): int
     {
         return $this->height;
     }
 
     /**
-     * @param int $width
-     *
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth(int $width): static
     {
         $this->width = $width;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getWidth()
+    public function getWidth(): int
     {
         return $this->width;
     }
@@ -117,7 +74,7 @@ abstract class Adapter
     /**
      * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
      */
-    protected function removeTmpFiles()
+    protected function removeTmpFiles(): void
     {
         // remove tmp files
         if (!empty($this->tmpFiles)) {
@@ -129,12 +86,7 @@ abstract class Adapter
         }
     }
 
-    /**
-     * @param string $colorhex
-     *
-     * @return array
-     */
-    public function colorhex2colorarray($colorhex)
+    public function colorhex2colorarray(string $colorhex): array
     {
         $r = hexdec(substr($colorhex, 1, 2));
         $g = hexdec(substr($colorhex, 3, 2));
@@ -144,39 +96,30 @@ abstract class Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     *
      * @return $this
      */
-    public function resize($width, $height)
+    public function resize(int $width, int $height): static
     {
         return $this;
     }
 
     /**
-     * @param int $width
-     * @param bool $forceResize
-     *
      * @return $this
      */
-    public function scaleByWidth($width, $forceResize = false)
+    public function scaleByWidth(int $width, bool $forceResize = false): static
     {
         if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = floor(($width / $this->getWidth()) * $this->getHeight());
-            $this->resize(max(1, $width), max(1, $height));
+            $this->resize((int)max(1, $width), (int)max(1, $height));
         }
 
         return $this;
     }
 
     /**
-     * @param int $height
-     * @param bool $forceResize
-     *
      * @return $this
      */
-    public function scaleByHeight($height, $forceResize = false)
+    public function scaleByHeight(int $height, bool $forceResize = false): static
     {
         if ($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
             $width = floor(($height / $this->getHeight()) * $this->getWidth());
@@ -187,13 +130,9 @@ abstract class Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param bool $forceResize
-     *
      * @return $this
      */
-    public function contain($width, $height, $forceResize = false)
+    public function contain(int $width, int $height, bool $forceResize = false): static
     {
         $x = $this->getWidth() / $width;
         $y = $this->getHeight() / $height;
@@ -209,16 +148,11 @@ abstract class Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param string|array $orientation
-     * @param bool $forceResize
-     *
      * @return $this
      */
-    public function cover($width, $height, $orientation = 'center', $forceResize = false)
+    public function cover(int $width, int $height, array|string|null $orientation = 'center', bool $forceResize = false): static
     {
-        if (empty($orientation)) {
+        if (!$orientation) {
             $orientation = 'center'; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
         }
         $ratio = $this->getWidth() / $this->getHeight();
@@ -283,126 +217,91 @@ abstract class Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param bool $forceResize
-     *
      * @return $this
      */
-    public function frame($width, $height, $forceResize = false)
+    public function frame(int $width, int $height, bool $forceResize = false): static
     {
         return $this;
     }
 
     /**
-     * @param int $tolerance
-     *
      * @return $this
      */
-    public function trim($tolerance)
+    public function trim(int $tolerance): static
     {
         return $this;
     }
 
     /**
-     * @param int $angle
-     *
      * @return $this
      */
-    public function rotate($angle)
+    public function rotate(int $angle): static
     {
         return $this;
     }
 
     /**
-     * @param int $x
-     * @param int $y
-     * @param int $width
-     * @param int $height
-     *
      * @return $this
      */
-    public function crop($x, $y, $width, $height)
+    public function crop(int $x, int $y, int $width, int $height): static
     {
         return $this;
     }
 
     /**
-     * @param string $color
-     *
      * @return $this
      */
-    public function setBackgroundColor($color)
+    public function setBackgroundColor(string $color): static
     {
         return $this;
     }
 
     /**
-     * @param string $image
-     *
      * @return $this
      */
-    public function setBackgroundImage($image)
+    public function setBackgroundImage(string $image): static
     {
         return $this;
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     *
      * @return $this
      */
-    public function roundCorners($width, $height)
+    public function roundCorners(int $width, int $height): static
     {
         return $this;
     }
 
     /**
-     * @param mixed $image
-     * @param int $x
-     * @param int $y
-     * @param int $alpha
-     * @param string $composite
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      *
      * @return $this
      */
-    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         return $this;
     }
 
     /**
-     * @param string $image
-     * @param string $composite
-     *
      * @return $this
      */
-    public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
+    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
     {
         return $this;
     }
 
     /**
-     * @param string $image
-     *
      * @return $this
      */
-    public function applyMask($image)
+    public function applyMask(string $image): static
     {
         return $this;
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param int $x
-     * @param int $y
-     *
      * @return $this
      */
-    public function cropPercent($width, $height, $x, $y)
+    public function cropPercent(int $width, int $height, int $x, int $y): static
     {
         if ($this->isVectorGraphic()) {
             // rasterize before cropping
@@ -424,7 +323,7 @@ abstract class Adapter
     /**
      * @return $this
      */
-    public function grayscale()
+    public function grayscale(): static
     {
         return $this;
     }
@@ -432,7 +331,7 @@ abstract class Adapter
     /**
      * @return $this
      */
-    public function sepia()
+    public function sepia(): static
     {
         return $this;
     }
@@ -440,96 +339,68 @@ abstract class Adapter
     /**
      * @return $this
      */
-    public function sharpen()
+    public function sharpen(): static
     {
         return $this;
     }
 
     /**
-     * @param string $mode
-     *
      * @return $this
      */
-    public function mirror($mode)
+    public function mirror(string $mode): static
     {
         return $this;
     }
 
     /**
-     * @param int $radius
-     * @param float $sigma
-     *
      * @return $this
      */
-    public function gaussianBlur($radius = 0, $sigma = 1.0)
+    public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
         return $this;
     }
 
     /**
-     * @param int $brightness
-     * @param int $saturation
-     * @param int $hue
-     *
      * @return $this
      */
-    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
+    public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
         return $this;
     }
 
     /**
-     * @abstract
-     *
-     * @param string $imagePath
-     * @param array $options
-     *
      * @return $this|false
      */
-    abstract public function load($imagePath, $options = []);
+    abstract public function load(string $imagePath, array $options = []): static|false;
 
     /**
-     * @param string $path
-     * @param string|null $format
-     * @param int|null $quality
      *
      * @return $this
      */
-    abstract public function save($path, $format = null, $quality = null);
+    abstract public function save(string $path, string $format = null, int $quality = null): static;
 
-    /**
-     * @abstract
-     */
-    abstract protected function destroy();
+    abstract protected function destroy(): void;
 
-    /**
-     * @return string
-     */
-    abstract public function getContentOptimizedFormat();
+    abstract public function getContentOptimizedFormat(): string;
 
     /**
      * @internal
-     *
-     * @param string $format
-     * @param bool $force
-     *
-     * @return mixed
      */
-    abstract public function supportsFormat(string $format, bool $force = false);
+    abstract public function supportsFormat(string $format, bool $force = false): bool;
 
-    public function preModify()
+    public function preModify(): void
     {
         if ($this->getModified()) {
             $this->reinitializeImage();
         }
     }
 
-    public function postModify()
+    public function postModify(): void
     {
         $this->setModified(true);
     }
 
-    protected function reinitializeImage()
+    protected function reinitializeImage(): void
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
         $this->tmpFiles[] = $tmpFile;
@@ -554,18 +425,12 @@ abstract class Adapter
         $this->removeTmpFiles();
     }
 
-    /**
-     * @return bool
-     */
-    public function isVectorGraphic()
+    public function isVectorGraphic(): bool
     {
         return false;
     }
 
-    /**
-     * @return array
-     */
-    protected function getVectorRasterDimensions()
+    protected function getVectorRasterDimensions(): array
     {
         $targetWidth = 5000;
         $factor = $targetWidth / $this->getWidth();
@@ -577,91 +442,59 @@ abstract class Adapter
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function setColorspace($type = 'RGB')
+    public function setColorspace(string $type = 'RGB'): static
     {
         return $this;
     }
 
-    /**
-     * @param bool $modified
-     */
-    public function setModified($modified)
+    public function setModified(bool $modified): void
     {
         $this->modified = $modified;
     }
 
-    /**
-     * @return bool
-     */
-    public function getModified()
+    public function getModified(): bool
     {
         return $this->modified;
     }
 
-    /**
-     * @param bool $value
-     */
-    public function setIsAlphaPossible($value)
+    public function setIsAlphaPossible(bool $value): void
     {
         $this->isAlphaPossible = $value;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPreserveColor()
+    public function isPreserveColor(): bool
     {
         return $this->preserveColor;
     }
 
-    /**
-     * @param bool $preserveColor
-     */
-    public function setPreserveColor($preserveColor)
+    public function setPreserveColor(bool $preserveColor): void
     {
         $this->preserveColor = $preserveColor;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPreserveMetaData()
+    public function isPreserveMetaData(): bool
     {
         return $this->preserveMetaData;
     }
 
-    /**
-     * @param bool $preserveMetaData
-     */
-    public function setPreserveMetaData($preserveMetaData)
+    public function setPreserveMetaData(bool $preserveMetaData): void
     {
         $this->preserveMetaData = $preserveMetaData;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPreserveAnimation()
+    public function isPreserveAnimation(): bool
     {
         return $this->preserveAnimation;
     }
 
-    /**
-     * @param bool $preserveAnimation
-     */
     public function setPreserveAnimation(bool $preserveAnimation): void
     {
         $this->preserveAnimation = $preserveAnimation;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResource()
+    public function getResource(): mixed
     {
         return $this->resource;
     }

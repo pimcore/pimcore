@@ -35,72 +35,52 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      *
-     * @var array
      */
-    protected $indices = [];
+    protected array $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @internal
      *
-     * @var int
      */
-    protected $current = 0;
+    protected int $current = 0;
 
     /**
      * @internal
      *
-     * @var array
      */
-    protected $currentIndex;
+    protected ?array $currentIndex = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $blockStarted;
+    protected ?bool $blockStarted = false;
 
     /**
      * @internal
      *
-     * @var array
      */
-    protected $brickTypeUsageCounter = [];
+    protected array $brickTypeUsageCounter = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'areablock';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->indices;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function admin()
+    public function admin(): void
     {
         $this->frontend();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function frontend()
+    public function frontend(): void
     {
-        if (!is_array($this->indices)) {
-            $this->indices = [];
-        }
         reset($this->indices);
         while ($this->loop());
     }
@@ -108,10 +88,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @param int $index
-     * @param bool $return
+     * @return ($return is true ? string : void)
      */
-    public function renderIndex($index, $return = false)
+    public function renderIndex(int $index, bool $return = false)
     {
         $this->start($return);
 
@@ -135,10 +114,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -148,9 +124,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return bool
      */
-    public function loop()
+    public function loop(): bool
     {
         $disabled = false;
         $config = $this->getConfig();
@@ -182,10 +157,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $disabled = true;
             }
 
-            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && ($config['dontCheckEnabled'] ?? false) !== true) {
-                $disabled = true;
-            }
-
             $this->blockStarted = false;
             $info = $this->buildInfoObject();
 
@@ -211,7 +182,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return Area\Info
      */
     public function buildInfoObject(): Area\Info
     {
@@ -238,12 +208,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @param null|Document\Editable\Area\Info $info
-     * @param array $templateParams
-     * @param bool $return
      *
      * @return string|void
      */
-    public function content($info = null, $templateParams = [], $return = false)
+    public function content(Area\Info $info = null, array $templateParams = [], bool $return = false)
     {
         if (!$info) {
             $info = $this->buildInfoObject();
@@ -271,59 +239,46 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      *
-     * @return EditableHandler
      */
-    protected function getEditableHandler()
+    protected function getEditableHandler(): EditableHandler
     {
         // TODO inject area handler via DI when editables are built through container
         return \Pimcore::getContainer()->get(EditableHandler::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
-        $this->indices = Tool\Serialize::unserialize($data);
-        if (!is_array($this->indices)) {
+        $unserializedData = Tool\Serialize::unserialize($data);
+
+        if (is_array($unserializedData)) {
+            $this->indices = $unserializedData;
+        } else {
             $this->indices = [];
         }
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
         $this->getBlockState()->pushIndex($this->indices[$this->current]['key']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function blockDestruct()
+    public function blockDestruct(): void
     {
         $this->getBlockState()->popIndex();
     }
 
-    /**
-     * @return array
-     */
-    private function getToolBarDefaultConfig()
+    private function getToolBarDefaultConfig(): array
     {
         return [
             'areablock_toolbar' => [
@@ -334,9 +289,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEditmodeDefinition(): array
     {
         $config = array_merge($this->getToolBarDefaultConfig(), $this->getConfig());
@@ -349,9 +301,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getEditmodeElementAttributes(): array
     {
         $attributes = parent::getEditmodeElementAttributes();
@@ -364,10 +313,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $attributes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function start($return = false)
+    public function start(bool $return = false)
     {
         if (($this->config['manual'] ?? false) === true) {
             // in manual mode $this->render() is not called for the areablock, so we need to add
@@ -389,17 +335,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         if ($return) {
             return $html;
-        } else {
-            $this->outputEditmode($html);
         }
+
+        $this->outputEditmode($html);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function end($return = false)
+    public function end(bool $return = false)
     {
         $this->current = 0;
 
@@ -410,15 +353,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         if ($return) {
             return $html;
-        } else {
-            $this->outputEditmode($html);
         }
+
+        $this->outputEditmode($html);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function blockStart($info = null)
+    public function blockStart(Area\Info $info = null): array
     {
         $this->blockStarted = true;
         $attributes = [
@@ -463,7 +403,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $dialogHtml = '';
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
+            $items = $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
+            $dialogConfig->setItems($items);
         }
 
         return [
@@ -478,21 +419,32 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * This method needs to be `protected` as it is used in other bundles such as pimcore/headless-documents
      *
-     * @param array $config
-     * @param EditableRenderer $editableRenderer
-     * @param string $dialogId
-     * @param string $html
      *
      * @throws \Exception
      *
      * @internal
      */
-    protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
+    protected function renderDialogBoxEditables(array|Document\Editable $config, EditableRenderer $editableRenderer, string $dialogId, string &$html): array
     {
+        if ($config instanceof BlockInterface || $config instanceof Area) {
+            // Unsupported element was passed (e.g., Block, Areablock, ...)
+            // or an Areas was passed, which is not supported to avoid too long editable names
+            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
+        } elseif ($config instanceof Document\Editable) {
+            // Map editable to array config
+            $config = [
+                'type' => $config->getType(),
+                'name' => $config->getName(),
+                'label' => $config->getLabel(),
+                'config' => $config->getConfig(),
+                'description' => $config->getDialogDescription(),
+            ];
+        }
+
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
-            foreach ($config['items'] as $child) {
-                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
+            foreach ($config['items'] as $index => $child) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
@@ -503,25 +455,21 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
             $html .= $editable->render();
-        } elseif (is_array($config) && isset($config[0])) {
-            foreach ($config as $item) {
-                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
+        } else {
+            foreach ($config as $index => $item) {
+                $config['items'][$index] = $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
             }
         }
+
+        return $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function blockEnd()
+    public function blockEnd(): void
     {
         $this->blockStarted = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         // we need to set this here otherwise custom areaDir's won't work
         $this->config = $config;
@@ -580,13 +528,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * Sorts areas by index (sorting option) first, then by name
-     *
-     * @param array $areas
-     * @param array $config
-     *
-     * @return array
      */
-    private function sortAvailableAreas(array $areas, array $config)
+    private function sortAvailableAreas(array $areas, array $config): array
     {
         if (isset($config['sorting']) && is_array($config['sorting']) && count($config['sorting'])) {
             $sorting = $config['sorting'];
@@ -641,34 +584,22 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCount()
+    public function getCount(): int
     {
         return count($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrent()
+    public function getCurrent(): int
     {
         return $this->current - 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()]['key'] ?? null;
+        return $this->indices[$this->getCurrent()]['key'] ?? 0;
     }
 
-    /**
-     * @return array
-     */
-    public function getIndices()
+    public function getIndices(): array
     {
         return $this->indices;
     }
@@ -676,26 +607,22 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * If object was serialized, set the counter back to 0
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->current = 0;
         reset($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !(bool) count($this->indices);
     }
 
     /**
-     * @param string $name
      *
      * @return Areablock\Item[]
      */
-    public function getElement(string $name)
+    public function getElement(string $name): array
     {
         $document = $this->getDocument();
 

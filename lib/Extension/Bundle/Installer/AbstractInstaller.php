@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,71 +17,47 @@
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\Output;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractInstaller implements InstallerInterface
 {
-    /**
-     * @var BufferedOutput
-     */
-    protected $output;
+    protected BufferedOutput $output;
 
     public function __construct()
     {
         $this->output = new BufferedOutput(Output::VERBOSITY_NORMAL, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function install()
+    public function install(): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function uninstall()
+    public function uninstall(): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return false;
     }
 
-    /**
-     * @return OutputInterface
-     */
-    public function getOutput(): OutputInterface
+    public function getOutput(): BufferedOutput | NullOutput
     {
         return $this->output;
     }

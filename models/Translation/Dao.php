@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -33,22 +34,17 @@ class Dao extends Model\Dao\AbstractDao
      */
     const TABLE_PREFIX = 'translations_';
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return self::TABLE_PREFIX . $this->model->getDomain();
     }
 
     /**
-     * @param string $key
-     * @param array|null $languages
      *
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey($key, $languages = null)
+    public function getByKey(string $key, array $languages = null): void
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
@@ -59,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAllAssociative($sql,
             ['key' => $key, 'languages' => $languages],
-            ['languages' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+            ['languages' => ArrayParameterType::STRING]
         );
 
         if (!empty($data)) {
@@ -80,12 +76,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         //Create Domain table if doesn't exist
         $this->createOrUpdateTable();
 
         $this->updateModificationInfos();
+        $sanitizer = $this->model->getTranslationSanitizer();
 
         $editableLanguages = [];
         if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
@@ -95,26 +92,29 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($this->model->getKey() !== '') {
-            if (is_array($this->model->getTranslations())) {
-                foreach ($this->model->getTranslations() as $language => $text) {
-                    if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
-                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
+            foreach ($this->model->getTranslations() as $language => $text) {
+                if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
+                    Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
 
-                        continue;
-                    }
-
-                    $data = [
-                        'key' => $this->model->getKey(),
-                        'type' => $this->model->getType(),
-                        'language' => $language,
-                        'text' => $text,
-                        'modificationDate' => $this->model->getModificationDate(),
-                        'creationDate' => $this->model->getCreationDate(),
-                        'userOwner' => $this->model->getUserOwner(),
-                        'userModification' => $this->model->getUserModification(),
-                    ];
-                    Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
+                    continue;
                 }
+
+                if ($text != strip_tags($text)) {
+                    $text = $sanitizer->sanitizeFor('body', $text);
+                    $this->model->addTranslation($language, $text);
+                }
+
+                $data = [
+                'key' => $this->model->getKey(),
+                'type' => $this->model->getType(),
+                'language' => $language,
+                'text' => $text,
+                'modificationDate' => $this->model->getModificationDate(),
+                'creationDate' => $this->model->getCreationDate(),
+                'userOwner' => $this->model->getUserOwner(),
+                'userModification' => $this->model->getUserModification(),
+                ];
+                Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }
         }
     }
@@ -122,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
@@ -130,9 +130,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Returns a array containing all available languages
      *
-     * @return array
      */
-    public function getAvailableLanguages()
+    public function getAvailableLanguages(): array
     {
         $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
@@ -145,32 +144,37 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Returns a array containing all available domains
+     * Returns a array containing all available (registered) domains
      *
-     * @return array
      */
-    public function getAvailableDomains()
+    public function getAvailableDomains(): array
     {
         $domainTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'translations_%'");
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
-            $domains[] = str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            $domain =  str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+            if ($this->isAValidDomain($domain)) {
+                $domains[] = $domain;
+            }
         }
 
         return $domains;
     }
 
     /**
-     * Returns boolean, if the domain table exists
+     * Returns boolean, if the domain table exists & domain registered in config
      *
-     * @param string $domain
      *
-     * @return bool
      */
     public function isAValidDomain(string $domain): bool
     {
         try {
+            $translationDomains = $this->model->getRegisteredDomains();
+            if (!in_array($domain, $translationDomains)) {
+                return false;
+            }
+
             $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
 
             return true;
@@ -179,7 +183,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createOrUpdateTable()
+    public function createOrUpdateTable(): void
     {
         $table = $this->getDatabaseTableName();
 

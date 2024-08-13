@@ -27,11 +27,10 @@ use Pimcore\Model\Element\Tag;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM tags WHERE id = ?', [$id]);
         if (!$data) {
@@ -43,13 +42,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @throws \Exception
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         if (strlen(trim(strip_tags($this->model->getName()))) < 1) {
             throw new \Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
@@ -72,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::insertOrUpdate($this->db, 'tags', $data);
+            Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
@@ -99,7 +97,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->beginTransaction();
 
@@ -119,12 +117,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
      *
      * @return Model\Element\Tag[]
      */
-    public function getTagsForElement($cType, $cId)
+    public function getTagsForElement(string $cType, int $cId): array
     {
         $tags = [];
         $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
@@ -141,35 +137,22 @@ class Dao extends Model\Dao\AbstractDao
         return $tags;
     }
 
-    /**
-     * @param string $cType
-     * @param int $cId
-     */
-    public function addTagToElement($cType, $cId)
+    public function addTagToElement(string $cType, int $cId): void
     {
         $this->doAddTagToElement($this->model->getId(), $cType, $cId);
     }
 
-    /**
-     * @param int $tagId
-     * @param string $cType
-     * @param int $cId
-     */
-    protected function doAddTagToElement($tagId, $cType, $cId)
+    protected function doAddTagToElement(int $tagId, string $cType, int $cId): void
     {
         $data = [
             'tagid' => $tagId,
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
+        Helper::upsert($this->db, 'tags_assignment', $data, $this->getPrimaryKey('tags_assignment'));
     }
 
-    /**
-     * @param string $cType
-     * @param int $cId
-     */
-    public function removeTagFromElement($cType, $cId)
+    public function removeTagFromElement(string $cType, int $cId): void
     {
         $this->db->delete('tags_assignment', [
             'tagid' => $this->model->getId(),
@@ -179,13 +162,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $cType
-     * @param int $cId
-     * @param array $tags
      *
      * @throws \Exception
      */
-    public function setTagsForElement($cType, $cId, array $tags)
+    public function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $this->db->beginTransaction();
 
@@ -204,13 +184,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $cType
-     * @param array $cIds
-     * @param array $tagIds
-     * @param bool $replace
-     */
-    public function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace)
+    public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace): void
     {
         if ($replace) {
             $quotedCIds = [];
@@ -234,28 +208,27 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
      * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
      * @param array  $classNames        For objects only: filter by classnames
-     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public function getElementsForTag(
         Tag $tag,
-        $type,
+        string $type,
         array $subtypes = [],
         array $classNames = [],
-        $considerChildTags = false
-    ) {
+        bool $considerChildTags = false
+    ): array {
         $elements = [];
 
         $map = [
-            'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
-            'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'document' => ['documents', '\Pimcore\Model\Document'],
+            'asset' => ['assets', '\Pimcore\Model\Asset'],
+            'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->createQueryBuilder()->select(['*'])
+        $select = $this->db->createQueryBuilder()->select('*')
                            ->from('tags_assignment')
-                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter(':ctype', $type);
+                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 
         if (true === $considerChildTags) {
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
@@ -266,29 +239,29 @@ class Dao extends Model\Dao\AbstractDao
                 . ')'
             );
         } else {
-            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId', $tag->getId());
+            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter('tagId', $tag->getId());
         }
 
-        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
+        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.id');
 
         if (! empty($subtypes)) {
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->andWhere($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere('`type` IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere('className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
-        while ($row = $res->fetch()) {
-            $el = $map[$type][3]::getById($row['cid']);
+        while ($row = $res->fetchAssociative()) {
+            $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
             }
@@ -300,9 +273,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $tagPath separated by "/"
      *
-     * @return null|Tag
      */
-    public function getByPath($tagPath)
+    public function getByPath(string $tagPath): ?Tag
     {
         $parentTagId = 0;
 
@@ -333,10 +305,7 @@ class Dao extends Model\Dao\AbstractDao
         return $tag;
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         if (is_null($this->model->getId())) {
             return false;

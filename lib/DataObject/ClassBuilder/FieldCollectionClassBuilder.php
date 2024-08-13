@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -60,30 +61,28 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
         $cd .= 'class ' . ucfirst($definition->getKey()) . ' extends ' . $extendClass . $implements . "\n";
         $cd .= '{' . "\n";
 
-        $cd .= 'protected $type = "' . $definition->getKey() . "\";\n";
+        $cd .= ClassDefinition\Service::buildFieldConstantsCode(...$definition->getFieldDefinitions());
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $key => $def) {
-                $cd .= 'protected $' . $key . ";\n";
-            }
+        $cd .= 'protected string $type = "' . $definition->getKey() . "\";\n";
+
+        foreach ($definition->getFieldDefinitions() as $key => $def) {
+            $cd .= 'protected $' . $key . ";\n";
         }
 
         $cd .= "\n\n";
 
         $fdDefs = $definition->getFieldDefinitions();
-        if (is_array($fdDefs) && count($fdDefs)) {
-            foreach ($fdDefs as $key => $def) {
-                $cd .= $def->getGetterCodeFieldcollection($definition);
+        foreach ($fdDefs as $def) {
+            $cd .= $def->getGetterCodeFieldcollection($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getGetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getGetterCode($definition);
+            }
 
-                $cd .= $def->getSetterCodeFieldcollection($definition);
+            $cd .= $def->getSetterCodeFieldcollection($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getSetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getSetterCode($definition);
             }
         }
 

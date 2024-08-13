@@ -1,0 +1,6 @@
+---
+workflow_change_email_notification_text: "Dla %s z identyfikatorem %s akcja \u201E%s\u201D
+  zosta\u0142a wywo\u0142ana w przep\u0142ywie pracy \u201E%s\u201D."
+workflow_change_email_notification_deeplink: Deeplink do elementu.
+workflow_change_email_notification_note: "Dodano notatk\u0119:"
+...

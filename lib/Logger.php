@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,13 +19,10 @@ namespace Pimcore;
 class Logger
 {
     /**
-     * @param string $message
-     * @param string $level
-     * @param array $context
      *
      * @internal
      */
-    public static function log($message, $level = 'info', $context = [])
+    public static function log(string $message, string $level = 'info', array $context = []): void
     {
         if (\Pimcore::hasContainer()) {
             $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore');
@@ -32,110 +30,62 @@ class Logger
         }
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function emergency($m, $context = [])
+    public static function emergency(string $m, array $context = []): void
     {
         self::log($m, 'emergency', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function emerg($m, $context = [])
+    public static function emerg(string $m, array $context = []): void
     {
         self::log($m, 'emergency', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function alert($m, $context = [])
+    public static function alert(string $m, array $context = []): void
     {
         self::log($m, 'alert', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function critical($m, $context = [])
+    public static function critical(string $m, array $context = []): void
     {
         self::log($m, 'critical', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function crit($m, $context = [])
+    public static function crit(string $m, array $context = []): void
     {
         self::log($m, 'critical', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function error($m, $context = [])
+    public static function error(string $m, array $context = []): void
     {
         self::log($m, 'error', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function err($m, $context = [])
+    public static function err(string $m, array $context = []): void
     {
         self::log($m, 'error', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function warning($m, $context = [])
+    public static function warning(string $m, array $context = []): void
     {
         self::log($m, 'warning', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function warn($m, $context = [])
+    public static function warn(string $m, array $context = []): void
     {
         self::log($m, 'warning', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function notice($m, $context = [])
+    public static function notice(string $m, array $context = []): void
     {
         self::log($m, 'notice', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function info($m, $context = [])
+    public static function info(string $m, array $context = []): void
     {
         self::log($m, 'info', $context);
     }
 
-    /**
-     * @param string $m
-     * @param array $context
-     */
-    public static function debug($m, $context = [])
+    public static function debug(string $m, array $context = []): void
     {
         self::log($m, 'debug', $context);
     }

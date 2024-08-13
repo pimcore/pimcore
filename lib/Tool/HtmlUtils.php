@@ -25,10 +25,7 @@ class HtmlUtils
     /**
      * Builds an attribute string from an array of attributes
      *
-     * @param array $attributes
-     * @param bool $omitNullValues
      *
-     * @return string
      */
     public static function assembleAttributeString(array $attributes, bool $omitNullValues = false): string
     {

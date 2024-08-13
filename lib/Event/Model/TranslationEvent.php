@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,15 +24,11 @@ class TranslationEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Translation
-     */
-    protected $translation;
+    protected Translation $translation;
 
     /**
      * AssetEvent constructor.
      *
-     * @param Translation $translation
      * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
     public function __construct(Translation $translation, array $arguments = [])
@@ -40,18 +37,12 @@ class TranslationEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Translation
-     */
-    public function getTranslation()
+    public function getTranslation(): Translation
     {
         return $this->translation;
     }
 
-    /**
-     * @param Translation $translation
-     */
-    public function setTranslation(Translation $translation)
+    public function setTranslation(Translation $translation): void
     {
         $this->translation = $translation;
     }

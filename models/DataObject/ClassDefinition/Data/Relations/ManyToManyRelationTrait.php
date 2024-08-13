@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,35 +17,45 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
     /**
-     * {@inheritdoc}
+     * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
      */
-    public function save($container, $params = [])
+    protected function skipSaveCheck(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []): bool
     {
-        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
-                if ($container instanceof DataObject\Localizedfield) {
-                    if ($container->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$container->hasDirtyFields()) {
-                            return;
-                        }
-                    }
-                } else {
-                    if ($this->supportsDirtyDetection()) {
-                        if (!$container->isFieldDirty($this->getName())) {
-                            return;
-                        }
-                    }
+        $forceSave = $params['forceSave'] ?? false;
+
+        if (
+            $forceSave === false &&
+            !DataObject::isDirtyDetectionDisabled() &&
+            $object instanceof DirtyIndicatorInterface
+        ) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    return true;
                 }
+            } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                return true;
             }
         }
 
-        $data = $this->getDataFromObjectParam($container, $params);
+        return false;
+    }
 
-        parent::save($container, $params);
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    {
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
+        }
+
+        parent::save($object, $params);
     }
 }

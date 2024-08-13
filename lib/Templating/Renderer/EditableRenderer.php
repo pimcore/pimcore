@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,49 +32,19 @@ class EditableRenderer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var EditableLoaderInterface
-     */
-    protected $editableLoader;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    protected ?EditmodeEditableDefinitionCollector $configCollector;
-
-    /**
-     * @param EditableLoaderInterface $editableLoader
-     * @param EditmodeResolver $editmodeResolver
-     * @param EditmodeEditableDefinitionCollector $configCollector
-     */
-    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver, EditmodeEditableDefinitionCollector $configCollector)
+    public function __construct(
+        protected EditableLoaderInterface $editableLoader,
+        protected EditmodeResolver $editmodeResolver,
+        protected EditmodeEditableDefinitionCollector $configCollector)
     {
-        $this->editableLoader = $editableLoader;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->configCollector = $configCollector;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function editableExists($type)
+    public function editableExists(string $type): bool
     {
         return $this->editableLoader->supports($type);
     }
 
     /**
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $name
-     * @param array $config
-     * @param bool|null $editmode
-     *
-     * @return Editable\EditableInterface
-     *
      * @throws \Exception
      */
     public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], bool $editmode = null): Editable\EditableInterface
@@ -91,13 +62,7 @@ class EditableRenderer implements LoggerAwareInterface
         $editable = $document->getEditable($name);
         if ($editable instanceof Editable\EditableInterface && $editable->getType() === $type) {
             // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-            //TODO Pimcore 11: remove method_exists BC layer
-            if ($editable instanceof LazyLoadingInterface || method_exists($editable, 'load')) {
-                if (!$editable instanceof LazyLoadingInterface) {
-                    trigger_deprecation('pimcore/pimcore', '10.3',
-                        sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', LazyLoadingInterface::class));
-                }
+            if ($editable instanceof LazyLoadingInterface) {
                 $editable->load();
             }
         } else {
@@ -127,17 +92,9 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * Renders an editable
      *
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $name
-     * @param array $options
-     * @param bool|null $editmode
-     *
-     * @return Editable\EditableInterface
-     *
      * @throws \Exception
      */
-    public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null)
+    public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null): Editable\EditableInterface
     {
         return $this->getEditable($document, $type, $name, $options, $editmode);
     }

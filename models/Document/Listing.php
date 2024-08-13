@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,40 +28,33 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQueryBuilder(?callable $callback)
- * @method array loadIdPathList()
+ * @method list<array<string,mixed>> loadIdPathList()
  */
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
-     * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
+     * Return all documents as Type Document, e.g. for trees and so on there isn't the whole data required
      *
      * @internal
      *
-     * @var bool
      */
-    protected $objectTypeDocument = false;
+    protected bool $objectTypeDocument = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $unpublished = false;
+    protected bool $unpublished = false;
 
     /**
      * @return Document[]
      */
-    public function getDocuments()
+    public function getDocuments(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $documents
-     *
-     * @return Listing
-     */
-    public function setDocuments($documents)
+    public function setDocuments(array $documents): Listing
     {
         return $this->setData($documents);
     }
@@ -68,9 +62,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Checks if the document is unpublished.
      *
-     * @return bool
      */
-    public function getUnpublished()
+    public function getUnpublished(): bool
     {
         return $this->unpublished;
     }
@@ -78,21 +71,17 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Set the unpublished flag for the document.
      *
-     * @param bool $unpublished
      *
      * @return $this
      */
-    public function setUnpublished($unpublished)
+    public function setUnpublished(bool $unpublished): static
     {
-        $this->unpublished = (bool) $unpublished;
+        $this->unpublished = $unpublished;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCondition()
+    public function getCondition(): string
     {
         $condition = parent::getCondition();
 
@@ -107,24 +96,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $condition;
     }
 
-    /**
-     *
-     * Methods for AdapterInterface
-     */
-
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
-    {
-        return $this->getTotalCount();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

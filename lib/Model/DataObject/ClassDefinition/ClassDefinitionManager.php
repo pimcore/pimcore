@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,8 +16,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinitionInterface;
 
 class ClassDefinitionManager
 {
@@ -28,6 +29,8 @@ class ClassDefinitionManager
 
     /**
      * Delete all classes from db
+     *
+     * @return list<array{string, string, string}>
      */
     public function cleanUpDeletedClassDefinitions(): array
     {
@@ -57,23 +60,23 @@ class ClassDefinitionManager
 
     /**
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
+     *
+     * @return list<array{string, string, string}>
      */
     public function createOrUpdateClassDefinitions(): array
     {
         $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
+        $changes = [];
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
             $files = glob($objectClassesFolder.'/*.php');
-
-            $changes = [];
-
             foreach ($files as $file) {
                 $class = include $file;
 
-                if ($class instanceof ClassDefinition) {
+                if ($class instanceof ClassDefinitionInterface) {
                     $existingClass = ClassDefinition::getByName($class->getName());
 
-                    if ($existingClass instanceof ClassDefinition) {
+                    if ($existingClass instanceof ClassDefinitionInterface) {
                         $changes[] = [$class->getName(), $class->getId(), self::SAVED];
                         $existingClass->save(false);
                     } else {

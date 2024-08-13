@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,35 +24,20 @@ class MailEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Mail
-     */
-    protected $mail;
+    protected Mail $mail;
 
-    /**
-     * @param Mail $mail
-     * @param array $arguments
-     */
     public function __construct(Mail $mail, array $arguments = [])
     {
         $this->mail = $mail;
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Mail
-     */
-    public function getMail()
+    public function getMail(): Mail
     {
         return $this->mail;
     }
 
-    /**
-     * @param Mail $mail
-     *
-     * @return $this
-     */
-    public function setMail($mail)
+    public function setMail(Mail $mail): static
     {
         $this->mail = $mail;
 

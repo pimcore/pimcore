@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,23 +24,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 abstract class AbstractRequestResolver
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return Request
-     */
-    protected function getCurrentRequest()
+    protected function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
             throw new \LogicException('A request must be available.');
@@ -48,19 +40,6 @@ abstract class AbstractRequestResolver
         return $this->requestStack->getCurrentRequest();
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @return Request
-     */
-    protected function getMasterRequest()
-    {
-        return $this->getMainRequest();
-    }
-
-    /**
-     * @return Request
-     */
     protected function getMainRequest(): Request
     {
         if (!$this->requestStack->getMainRequest()) {

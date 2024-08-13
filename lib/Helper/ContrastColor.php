@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,11 +24,9 @@ class ContrastColor
     /**
      * returns either hex code of black or white depending on the contrast to the given color
      *
-     * @param string $hexColor
      *
-     * @return string
      */
-    public static function getContrastColor($hexColor)
+    public static function getContrastColor(string $hexColor): string
     {
         //////////// hexColor RGB
         $R1 = hexdec(substr($hexColor, 1, 2));

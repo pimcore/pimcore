@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,38 +19,23 @@ namespace Pimcore\Workflow;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class GlobalAction implements NotesAwareInterface
 {
     use NotesAwareTrait;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
     /**
      * @var array
      */
     private $options;
 
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
-    /** @var string */
-    private $workflowName;
+    private string $workflowName;
 
-    /**
-     * @param string $name
-     * @param array $options
-     * @param ExpressionService $expressionService
-     * @param string $workflowName
-     * @param CustomHtmlServiceInterface|null $customHtmlService
-     *
-     */
     public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;
@@ -61,17 +47,11 @@ class GlobalAction implements NotesAwareInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->options['label'] ?: $this->getName();
@@ -85,34 +65,22 @@ class GlobalAction implements NotesAwareInterface
     /**
      * @return string|int|false
      */
-    public function getObjectLayout()
+    public function getObjectLayout(): bool|int|string
     {
         return $this->options['objectLayout'] ?: false;
     }
 
-    /**
-     * @return array
-     */
     public function getTos(): array
     {
         return $this->options['to'] ?? [];
     }
 
-    /**
-     * @return null|string
-     */
     public function getGuard(): ?string
     {
         return $this->options['guard'] ?? null;
     }
 
-    /**
-     * @param Workflow $workflow
-     * @param object $subject
-     *
-     * @return bool
-     */
-    public function isGuardValid(Workflow $workflow, $subject): bool
+    public function isGuardValid(WorkflowInterface $workflow, object $subject): bool
     {
         if (empty($this->getGuard())) {
             return true;
@@ -124,5 +92,10 @@ class GlobalAction implements NotesAwareInterface
     public function getWorkflowName(): string
     {
         return $this->workflowName;
+    }
+
+    public function getSaveSubject(): bool
+    {
+        return $this->options['saveSubject'] ?? true;
     }
 }

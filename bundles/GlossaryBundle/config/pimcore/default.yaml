@@ -1,0 +1,6 @@
+# Pimcore
+pimcore_glossary:
+    blocked_tags: [
+        'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
+        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+    ]

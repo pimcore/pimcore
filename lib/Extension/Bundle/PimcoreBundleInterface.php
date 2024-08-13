@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,6 @@
 namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
-use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface PimcoreBundleInterface extends BundleInterface
@@ -24,77 +24,24 @@ interface PimcoreBundleInterface extends BundleInterface
     /**
      * Bundle name as shown in extension manager
      *
-     * @return string
      */
-    public function getNiceName();
+    public function getNiceName(): string;
 
     /**
      * Bundle description as shown in extension manager
      *
-     * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Bundle version as shown in extension manager
      *
-     * @return string
      */
-    public function getVersion();
+    public function getVersion(): string;
 
     /**
      * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
      *
-     * @return InstallerInterface|null
      */
-    public function getInstaller();
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * Get path to include in admin iframe
-     *
-     * @return string|RouteReferenceInterface|null
-     */
-    public function getAdminIframePath();
-
-    /**
-     * Get javascripts to include in admin interface
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getJsPaths();
-
-    /**
-     * Get stylesheets to include in admin interface
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getCssPaths();
-
-    /**
-     * Get javascripts to include in editmode
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeJsPaths();
-
-    /**
-     * Get stylesheets to include in editmode
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeCssPaths();
+    public function getInstaller(): ?InstallerInterface;
 }

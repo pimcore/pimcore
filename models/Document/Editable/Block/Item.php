@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,13 +25,7 @@ class Item extends AbstractBlockItem
         return 'block';
     }
 
-    /**
-     * @param string $func
-     * @param array $args
-     *
-     * @return Document\Editable|null
-     */
-    public function __call($func, $args)
+    public function __call(string $func, array $args): ?Document\Editable
     {
         $element = $this->getEditable($args[0]);
         $class = 'Pimcore\\Model\\Document\\Editable\\' . str_replace('get', '', $func);

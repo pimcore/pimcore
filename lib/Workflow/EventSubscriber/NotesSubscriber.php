@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,11 @@ class NotesSubscriber implements EventSubscriberInterface
 
     const ADDITIONAL_DATA_NOTES_ADDITIONAL_FIELDS = 'additional';
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var bool
-     */
-    private $enabled = true;
+    private bool $enabled = true;
 
-    /**
-     * @var array
-     */
-    private $additionalData = [];
+    private array $additionalData = [];
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -55,11 +47,10 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Event $event
      *
      * @throws ValidationException
      */
-    public function onWorkflowEnter(Event $event)
+    public function onWorkflowEnter(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -73,12 +64,7 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($transition, $subject);
     }
 
-    /**
-     * @param Event $event
-     *
-     * @throws ValidationException
-     */
-    public function onWorkflowCompleted(Event $event)
+    public function onWorkflowCompleted(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -93,11 +79,10 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param GlobalActionEvent $event
      *
      * @throws ValidationException
      */
-    public function onPreGlobalAction(GlobalActionEvent $event)
+    public function onPreGlobalAction(GlobalActionEvent $event): void
     {
         if (!$this->checkGlobalActionEvent($event)) {
             return;
@@ -109,12 +94,7 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($globalAction, $subject);
     }
 
-    /**
-     * @param GlobalActionEvent $event
-     *
-     * @throws ValidationException
-     */
-    public function onPostGlobalAction(GlobalActionEvent $event)
+    public function onPostGlobalAction(GlobalActionEvent $event): void
     {
         if (!$this->checkGlobalActionEvent($event)) {
             return;
@@ -127,12 +107,9 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param ElementInterface $subject
-     *
      * @throws ValidationException
      */
-    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
+    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject): void
     {
         if (($setterFn = $notesAware->getNotesCommentSetterFn()) && ($notes = $this->getNotesComment())) {
             $subject->$setterFn($notes);
@@ -160,13 +137,7 @@ class NotesSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param ElementInterface $subject
-     *
-     * @throws ValidationException
-     */
-    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
+    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject): void
     {
         $additionalFieldsData = [];
         foreach ($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
@@ -198,10 +169,6 @@ class NotesSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {
@@ -216,39 +183,30 @@ class NotesSubscriber implements EventSubscriberInterface
                && $event->getSubject() instanceof ElementInterface;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
 
-    /**
-     * @return array
-     */
     public function getAdditionalData(): array
     {
         return $this->additionalData;
     }
 
-    /**
-     * @param array $additionalData
-     */
     public function setAdditionalData(array $additionalData = []): void
     {
         $this->additionalData = $additionalData;
     }
 
-    private function getAdditionalDataForField(array $fieldConfig)
+    /**
+     * @param array<string, mixed> $fieldConfig
+     */
+    private function getAdditionalDataForField(array $fieldConfig): mixed
     {
         $additional = $this->getAdditionalFields();
 

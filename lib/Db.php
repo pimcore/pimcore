@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,54 +16,31 @@
 
 namespace Pimcore;
 
-use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
-use Psr\Log\LoggerInterface;
+use Doctrine\DBAL\Connection;
 
 class Db
 {
-    /**
-     * @return ConnectionInterface|Connection
-     */
-    public static function getConnection()
+    public static function getConnection(): Connection
     {
         return self::get();
     }
 
-    /**
-     * @return ConnectionInterface|Connection
-     */
-    public static function reset()
+    public static function reset(): Connection
     {
         self::close();
 
         return self::get();
     }
 
-    /**
-     * @return ConnectionInterface|Connection
-     */
-    public static function get()
+    public static function get(): Connection
     {
-        /** @var ConnectionInterface|Connection $db */
+        /** @var Connection $db */
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
 
         return $db;
     }
 
-    /**
-     * @internal
-     *
-     * @return LoggerInterface
-     *
-     * @internal
-     */
-    public static function getLogger()
-    {
-        return \Pimcore::getContainer()->get('monolog.logger.doctrine');
-    }
-
-    public static function close()
+    public static function close(): void
     {
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
         $db->close();

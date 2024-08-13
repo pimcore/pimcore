@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,50 +18,32 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 class QuantityValue extends AbstractQuantityValue
 {
-    use ObjectVarTrait;
+    protected float|int|string|null $value = null;
 
-    /**
-     * @var float|int|null
-     */
-    protected $value;
-
-    /**
-     * @param float|int|null $value
-     * @param Unit|string|null $unit
-     */
-    public function __construct($value = null, $unit = null)
+    public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    /**
-     * @param float|int|null $value
-     */
-    public function setValue($value)
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    /**
-     * @return float|int|null
-     */
-    public function getValue()
+    public function getValue(): float|int|string|null
     {
         return $this->value;
     }
 
     /**
-     * @return string
-     *
      * @throws \Exception
      */
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
@@ -68,7 +51,7 @@ class QuantityValue extends AbstractQuantityValue
 
             if ($locale) {
                 $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
-                $value = $formatter->format($value);
+                $value = $formatter->format((float) $value);
             }
         }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,48 +28,29 @@ use Pimcore\Tool\Storage;
  */
 class Folder extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'folder';
+    protected string $type = 'folder';
 
     /**
      * @internal
      *
-     * @var Asset[]|null
+     * @var Asset\Listing|null
      */
-    protected $children;
-
-    /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected $hasChildren;
+    protected ?Listing $children = null;
 
     /**
      * set the children of the document
      *
-     * @param Asset[]|null $children
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren(?Listing $children): static
     {
         $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChildren = true;
-        } else {
-            $this->hasChildren = false;
-        }
 
         return $this;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren()
+    public function getChildren(): Listing
     {
         if ($this->children === null) {
             if ($this->getId()) {
@@ -77,35 +59,24 @@ class Folder extends Model\Asset
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
 
-                $this->children = $list->getAssets();
+                $this->children = $list;
             } else {
-                $this->children = [];
+                $list = new Listing();
+                $list->setAssets([]);
+                $this->children = $list;
             }
         }
 
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
-        if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {
-                return $this->getDao()->hasChildren();
-            }
-
-            return $this->hasChildren;
-        }
-
         return $this->getDao()->hasChildren();
     }
 
     /**
      * @internal
-     *
-     * @param bool $force
      *
      * @return resource|null
      *
@@ -127,7 +98,7 @@ class Folder extends Model\Asset
 
         $limit = 42;
         $db = \Pimcore\Db::get();
-        $condition = "path LIKE :path AND type IN ('image', 'video', 'document')";
+        $condition = "`path` LIKE :path AND `type` IN ('image', 'video', 'document')";
         $conditionParams = [
             'path' => Helper::escapeLike($this->getRealFullPath()) . '/%',
         ];
@@ -189,8 +160,14 @@ class Folder extends Model\Asset
                         break;
                     }
 
+                    $width = $tileThumb->getWidth();
+                    $height = $tileThumb->getHeight();
+                    if (!$width || !$height) {
+                        break;
+                    }
+
                     $tile = imagecreatefromstring(stream_get_contents($stream));
-                    imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
+                    imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $width, $height);
 
                     $count++;
                     if ($count % $colums === 0) {

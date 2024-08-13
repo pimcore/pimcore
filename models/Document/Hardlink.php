@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -26,35 +26,26 @@ class Hardlink extends Document
 {
     use Model\Element\Traits\ScheduledTasksTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'hardlink';
 
     /**
      * @internal
      *
-     * @var int
      */
-    protected $sourceId;
+    protected ?int $sourceId = null;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $propertiesFromSource;
+    protected bool $propertiesFromSource = false;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    protected $childrenFromSource;
+    protected bool $childrenFromSource = false;
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {
@@ -64,9 +55,6 @@ class Hardlink extends Document
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
@@ -84,9 +72,6 @@ class Hardlink extends Document
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -100,70 +85,43 @@ class Hardlink extends Document
         return $tags;
     }
 
-    /**
-     * @param bool $childrenFromSource
-     *
-     * @return Hardlink
-     */
-    public function setChildrenFromSource($childrenFromSource)
+    public function setChildrenFromSource(bool $childrenFromSource): static
     {
-        $this->childrenFromSource = (bool) $childrenFromSource;
+        $this->childrenFromSource = $childrenFromSource;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getChildrenFromSource()
+    public function getChildrenFromSource(): bool
     {
         return $this->childrenFromSource;
     }
 
-    /**
-     * @param int $sourceId
-     *
-     * @return $this
-     */
-    public function setSourceId($sourceId)
+    public function setSourceId(?int $sourceId): static
     {
-        $this->sourceId = (int) $sourceId;
+        $this->sourceId = $sourceId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSourceId()
+    public function getSourceId(): ?int
     {
         return $this->sourceId;
     }
 
-    /**
-     * @param bool $propertiesFromSource
-     *
-     * @return $this
-     */
-    public function setPropertiesFromSource($propertiesFromSource)
+    public function setPropertiesFromSource(bool $propertiesFromSource): static
     {
-        $this->propertiesFromSource = (bool) $propertiesFromSource;
+        $this->propertiesFromSource = $propertiesFromSource;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPropertiesFromSource()
+    public function getPropertiesFromSource(): bool
     {
         return $this->propertiesFromSource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         if ($this->properties === null) {
             $properties = parent::getProperties();
@@ -193,61 +151,37 @@ class Hardlink extends Document
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
             $children = parent::getChildren($includingUnpublished);
 
-            $sourceChildren = [];
+            $wrappedSourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished);
-                foreach ($sourceChildren as &$c) {
-                    $c = Document\Hardlink\Service::wrap($c);
-                    $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished)->getDocuments();
+                foreach ($sourceChildren as $key => $c) {
+                    $wrappedChild = Document\Hardlink\Service::wrap($c);
+                    $wrappedChild->setHardLinkSource($this);
+                    $wrappedChild->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                    $wrappedSourceChildren[$key] = $wrappedChild;
                 }
             }
 
-            $children = array_merge($sourceChildren, $children);
+            $children->setData(array_merge($wrappedSourceChildren, $children->load()));
+
             $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children[$cacheKey] ?? [];
+        return $this->children[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren($unpublished = false)
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        return count($this->getChildren($unpublished)) > 0;
+        return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete()
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
         $this->saveScheduledTasks();

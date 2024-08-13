@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,11 +18,11 @@ namespace Pimcore\Tests\Model\Tool;
 
 use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class SettingsStoreTest extends ModelTestCase
 {
-    protected function doTest($data, $scope, $type)
+    protected function doTest(float|bool|int|string $data, ?string $scope, string $type): void
     {
         $db = Db::get();
 
@@ -50,7 +51,7 @@ class SettingsStoreTest extends ModelTestCase
 
         //test updating
         $data = 'updated_data';
-        SettingsStore::set($id, $data, 'string', $scope);
+        SettingsStore::set($id, $data, SettingsStore::TYPE_STRING, $scope);
         $setting = SettingsStore::get($id, $scope);
         $this->assertEquals($data, $setting->getData());
 
@@ -63,38 +64,38 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertFalse($queryResult);
     }
 
-    public function testCreateStringEntry()
+    public function testCreateStringEntry(): void
     {
-        $this->doTest('this is a string', null, 'string');
-        $this->doTest('this is another string with scope', 'my-scope', 'string');
+        $this->doTest('this is a string', null, SettingsStore::TYPE_STRING);
+        $this->doTest('this is another string with scope', 'my-scope', SettingsStore::TYPE_STRING);
     }
 
-    public function testCreateIntegerEntry()
+    public function testCreateIntegerEntry(): void
     {
-        $this->doTest(123, null, 'int');
-        $this->doTest(321, 'my-scope', 'int');
+        $this->doTest(123, null, SettingsStore::TYPE_INTEGER);
+        $this->doTest(321, 'my-scope', SettingsStore::TYPE_INTEGER);
     }
 
-    public function testCreateBoolEntry()
+    public function testCreateBoolEntry(): void
     {
-        $this->doTest(true, null, 'bool');
-        $this->doTest(false, 'my-scope', 'bool');
+        $this->doTest(true, null, SettingsStore::TYPE_BOOLEAN);
+        $this->doTest(false, 'my-scope', SettingsStore::TYPE_BOOLEAN);
     }
 
-    public function testCreateFloatEntry()
+    public function testCreateFloatEntry(): void
     {
-        $this->doTest(2154.12, null, 'float');
-        $this->doTest(2541.1247, 'my-scope', 'float');
+        $this->doTest(2154.12, null, SettingsStore::TYPE_FLOAT);
+        $this->doTest(2541.1247, 'my-scope', SettingsStore::TYPE_FLOAT);
     }
 
-    public function testScoping()
+    public function testScoping(): void
     {
-        SettingsStore::set('my-id1', 'some-data-1-scopeless', 'string');
-        SettingsStore::set('my-id1', 'some-data-1', 'string', 'scope1');
-        SettingsStore::set('my-id1', 'some-data-1-scope-2', 'string', 'scope2');
-        SettingsStore::set('my-id2', 'some-data-2', 'string', 'scope1');
-        SettingsStore::set('my-id3', 'some-data-3', 'string', 'scope2');
-        SettingsStore::set('my-id4', 'some-data-4', 'string', 'scope1');
+        SettingsStore::set('my-id1', 'some-data-1-scopeless', SettingsStore::TYPE_STRING);
+        SettingsStore::set('my-id1', 'some-data-1', SettingsStore::TYPE_STRING, 'scope1');
+        SettingsStore::set('my-id1', 'some-data-1-scope-2', SettingsStore::TYPE_STRING, 'scope2');
+        SettingsStore::set('my-id2', 'some-data-2', SettingsStore::TYPE_STRING, 'scope1');
+        SettingsStore::set('my-id3', 'some-data-3', SettingsStore::TYPE_STRING, 'scope2');
+        SettingsStore::set('my-id4', 'some-data-4', SettingsStore::TYPE_STRING, 'scope1');
 
         $ids = SettingsStore::getIdsByScope('scope1');
         $this->assertTrue(in_array('my-id1', $ids), 'Get settings store by scope');
@@ -113,14 +114,14 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertNull(SettingsStore::get('my-id1'));
     }
 
-    public function testNotExistingSettings()
+    public function testNotExistingSettings(): void
     {
-        SettingsStore::set('my-id1x', true, 'bool');
+        SettingsStore::set('my-id1x', true, SettingsStore::TYPE_BOOLEAN);
 
         $setting = SettingsStore::get('my-id1x');
         $this->assertTrue($setting->getData());
 
-        SettingsStore::set('my-id1x', false, 'bool');
+        SettingsStore::set('my-id1x', false, SettingsStore::TYPE_BOOLEAN);
 
         $setting = SettingsStore::get('my-id1x');
         $this->assertFalse($setting->getData());

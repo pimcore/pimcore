@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,30 +26,18 @@ use Twig\TwigFunction;
  */
 class CacheExtension extends AbstractExtension
 {
-    /**
-     * @var string
-     */
-    protected $key;
+    protected string $key;
 
     /**
      * @var bool[]
      */
-    protected $captureEnabled = [];
+    protected array $captureEnabled = [];
 
-    /**
-     * @var bool
-     */
-    protected $force = false;
+    protected bool $force = false;
 
-    /**
-     * @var int
-     */
-    protected $lifetime;
+    protected ?int $lifetime;
 
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
+    protected EditmodeResolver $editmodeResolver;
 
     public function __construct(EditmodeResolver $editmodeResolver)
     {
@@ -63,13 +52,10 @@ class CacheExtension extends AbstractExtension
     }
 
     /**
-     * @param string $name
-     * @param int|null $lifetime
-     * @param bool $force
      *
      * @return $this
      */
-    public function init($name, $lifetime = null, $force = false)
+    public function init(string $name, int $lifetime = null, bool $force = false): static
     {
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
@@ -83,10 +69,7 @@ class CacheExtension extends AbstractExtension
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function start()
+    public function start(): bool
     {
         if (\Pimcore\Tool::isFrontendRequestByAdmin() && !$this->force) {
             return false;
@@ -104,10 +87,7 @@ class CacheExtension extends AbstractExtension
         return false;
     }
 
-    /**
-     *  @return void
-     */
-    public function end()
+    public function end(): void
     {
         if ($this->captureEnabled[$this->key] ?? false) {
             $this->captureEnabled[$this->key] = false;
@@ -123,10 +103,7 @@ class CacheExtension extends AbstractExtension
         }
     }
 
-    /**
-     *  @return void
-     */
-    public function stop()
+    public function stop(): void
     {
         $this->end();
     }
@@ -138,7 +115,7 @@ class CacheExtension extends AbstractExtension
      * @param string $key the cache key
      * @param bool $isLoadedFromCache true if the content origins from the cache and hasn't been created "live".
      */
-    protected function outputContent($content, string $key, bool $isLoadedFromCache)
+    protected function outputContent(string $content, string $key, bool $isLoadedFromCache): void
     {
         echo $content;
     }
@@ -146,11 +123,8 @@ class CacheExtension extends AbstractExtension
     /**
      * Save the (rendered) content to to cache. May be overriden to add custom markup / code, or specific tags, etc.
      *
-     * @param string $content
-     * @param string $key
-     * @param array $tags
      */
-    protected function saveContentToCache($content, string $key, array $tags)
+    protected function saveContentToCache(string $content, string $key, array $tags): void
     {
         CacheManager::save($content, $key, $tags, $this->lifetime, 996, true);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,51 +17,48 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Config;
-use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\File;
-use Pimcore\Image\Chromium;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
 use Pimcore\Model\Document\Editable\LazyLoadingInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
  * @method int[] getTranslations(Document $document, string $task = 'open')
- * @method addTranslation(Document $document, Document $translation, $language = null)
- * @method removeTranslation(Document $document)
+ * @method void addTranslation(Document $document, Document $translation, string $language = null)
+ * @method void removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
- * @method removeTranslationLink(Document $document, Document $targetDocument)
+ * @method void removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
     /**
-     * @var Model\User|null
+     * @internal
      */
-    protected $_user;
+    protected ?Model\User $_user;
 
     /**
-     * @var array
+     * @internal
      */
-    protected $_copyRecursiveIds;
+    protected array $_copyRecursiveIds = [];
 
     /**
      * @var Document[]
      */
-    protected $nearestPathCache;
+    protected array $nearestPathCache;
 
-    /**
-     * @param Model\User $user
-     */
-    public function __construct($user = null)
+    public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -72,20 +70,13 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param Document\PageSnippet $document
-     * @param array $attributes
-     * @param bool $useLayout
-     * @param array $query
-     * @param array $options
      *
-     * @return string
      */
-    public static function render(Document\PageSnippet $document, array $attributes = [], $useLayout = false, array $query = [], array $options = []): string
+    public static function render(Document\PageSnippet $document, array $attributes = [], bool $useLayout = false, array $query = [], array $options = []): string
     {
         $container = \Pimcore::getContainer();
 
-        /** @var DocumentRendererInterface $renderer */
-        $renderer = $container->get(DocumentRenderer::class);
+        $renderer = $container->get(DocumentRendererInterface::class);
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
@@ -95,50 +86,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Save document and all child documents
      *
-     * @param Document $document
-     * @param int $collectGarbageAfterIteration
-     * @param int $saved
+     * @return Page|Document|null copied document
      *
      * @throws \Exception
      */
-    private static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
-    {
-        if ($document instanceof Document) {
-            $document->save();
-            $saved++;
-            if ($saved % $collectGarbageAfterIteration === 0) {
-                \Pimcore::collectGarbage();
-            }
-        }
-
-        foreach ($document->getChildren() as $child) {
-            if (!$child->hasChildren()) {
-                $child->save();
-                $saved++;
-                if ($saved % $collectGarbageAfterIteration === 0) {
-                    \Pimcore::collectGarbage();
-                }
-            }
-            if ($child->hasChildren()) {
-                self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
-            }
-        }
-    }
-
-    /**
-     * @param  Document $target
-     * @param  Document $source
-     *
-     * @return Document|null copied document
-     *
-     * @throws \Exception
-     */
-    public function copyRecursive($target, $source)
+    public function copyRecursive(Document $target, Document $source, bool $initial = true): Page|Document|null
     {
         // avoid recursion
-        if (!$this->_copyRecursiveIds) {
+        if ($initial) {
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
@@ -179,7 +135,7 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         foreach ($source->getChildren(true) as $child) {
-            $this->copyRecursive($new, $child);
+            $this->copyRecursive($new, $child, false);
         }
 
         $this->updateChildren($target, $new);
@@ -194,16 +150,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $target
-     * @param Document $source
-     * @param bool $enableInheritance
-     * @param bool $resetIndex
-     *
-     * @return Document
-     *
-     * @throws \Exception
+     * @throws ValidationException
      */
-    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
+    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, ?string $language = null): Page|Document|PageSnippet
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
@@ -241,9 +190,10 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMain()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId(), true);
+            $new->setMissingRequiredEditable(false);
+            $new->setContentMainDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -269,19 +219,23 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $target
-     * @param Document $source
      *
-     * @return Document
      *
-     * @throws \Exception
+     * @throws ValidationException
      */
-    public function copyContents($target, $source)
+    public function copyContents(Document $target, Document $source): Link|Page|Document|PageSnippet
     {
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
         }
+
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */
@@ -311,13 +265,11 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Document $document
      *
-     * @return array
      *
      * @internal
      */
-    public static function gridDocumentData($document)
+    public static function gridDocumentData(Document $document): array
     {
         $data = Element\Service::gridElementData($document);
 
@@ -334,25 +286,17 @@ class Service extends Model\Element\Service
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param Document $doc
-     *
-     * @return Document
      */
-    public static function loadAllDocumentFields($doc)
+    public static function loadAllDocumentFields(Document $doc): Document
     {
         $doc->getProperties();
 
         if ($doc instanceof Document\PageSnippet) {
             foreach ($doc->getEditables() as $name => $data) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($data instanceof LazyLoadingInterface || method_exists($data, 'load')) {
-                    if (!$data instanceof LazyLoadingInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.3',
-                            sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', LazyLoadingInterface::class));
-                    }
+                if ($data instanceof LazyLoadingInterface) {
                     $data->load();
                 }
             }
@@ -364,12 +308,9 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param string $path
-     * @param string|null $type
      *
-     * @return bool
      */
-    public static function pathExists($path, $type = null)
+    public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
             return false;
@@ -391,12 +332,7 @@ class Service extends Model\Element\Service
         return false;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public static function isValidType($type)
+    public static function isValidType(string $type): bool
     {
         return in_array($type, Document::getTypes());
     }
@@ -412,36 +348,26 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
+     *
+     *
      * @internal
-     *
-     * @param Document $document
-     * @param array $rewriteConfig
-     * @param array $params
-     *
-     * @return Document
      */
-    public static function rewriteIds($document, $rewriteConfig, $params = [])
+    public static function rewriteIds(Document $document, array $rewriteConfig, array $params = []): Document|PageSnippet
     {
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
                 $editables = $document->getEditables();
                 $changedEditables = [];
-                $contentMaster = $document->getContentMasterDocument();
-                if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterEditables = $contentMaster->getEditables();
-                    foreach ($contentMasterEditables as $contentMasterEditable) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($contentMasterEditable instanceof IdRewriterInterface || method_exists($contentMasterEditable, 'rewriteIds')) {
-                            if (!$contentMasterEditable instanceof IdRewriterInterface) {
-                                trigger_deprecation('pimcore/pimcore', '10.3',
-                                    sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                        'Implement the %s interface instead.', IdRewriterInterface::class));
-                            }
-                            $editable = clone $contentMasterEditable;
+                $contentMain = $document->getContentMainDocument();
+                if ($contentMain instanceof Document\PageSnippet) {
+                    $contentMainEditables = $contentMain->getEditables();
+                    foreach ($contentMainEditables as $contentMainEditable) {
+                        if ($contentMainEditable instanceof IdRewriterInterface) {
+                            $editable = clone $contentMainEditable;
                             $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMainEditable)) {
                                 $changedEditables[] = $editable;
                             }
                         }
@@ -454,13 +380,7 @@ class Service extends Model\Element\Service
             } else {
                 $editables = $document->getEditables();
                 foreach ($editables as &$editable) {
-                    //TODO Pimcore 11: remove method_exists BC layer
-                    if ($editable instanceof IdRewriterInterface || method_exists($editable, 'rewriteIds')) {
-                        if (!$editable instanceof IdRewriterInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.3',
-                                sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                    'Implement the %s interface instead.', IdRewriterInterface::class));
-                        }
+                    if ($editable instanceof IdRewriterInterface) {
                         $editable->rewriteIds($rewriteConfig);
                     }
                 }
@@ -488,13 +408,11 @@ class Service extends Model\Element\Service
     }
 
     /**
+     *
+     *
      * @internal
-     *
-     * @param string $url
-     *
-     * @return Document|null
      */
-    public static function getByUrl($url)
+    public static function getByUrl(string $url): ?Document
     {
         $urlParts = parse_url($url);
         $document = null;
@@ -520,19 +438,11 @@ class Service extends Model\Element\Service
         return $document;
     }
 
-    /**
-     * @param Document $item
-     * @param int $nr
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public static function getUniqueKey($item, $nr = 0)
+    public static function getUniqueKey(ElementInterface $element, int $nr = 0): string
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = Element\Service::getValidKey($item->getKey(), 'document');
+        $key = Element\Service::getValidKey($element->getKey(), 'document');
         if (!$key) {
             throw new \Exception('No item key set.');
         }
@@ -540,20 +450,20 @@ class Service extends Model\Element\Service
             $key = $key . '_' . $nr;
         }
 
-        $parent = $item->getParent();
+        $parent = $element->getParent();
         if (!$parent) {
             throw new \Exception('You have to set a parent document to determine a unique Key');
         }
 
-        if (!$item->getId()) {
+        if (!$element->getId()) {
             $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $item->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
             $nr++;
-            $key = self::getUniqueKey($item, $nr);
+            $key = self::getUniqueKey($element, $nr);
         }
 
         return $key;
@@ -562,15 +472,11 @@ class Service extends Model\Element\Service
     /**
      * Get the nearest document by path. Used to match nearest document for a static route.
      *
+     *
+     *
      * @internal
-     *
-     * @param string|Request $path
-     * @param bool $ignoreHardlinks
-     * @param array $types
-     *
-     * @return Document|null
      */
-    public function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
+    public function getNearestDocumentByPath(string|Request $path, bool $ignoreHardlinks = false, array $types = []): ?Document
     {
         if ($path instanceof Request) {
             $path = urldecode($path->getPathInfo());
@@ -638,18 +544,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param string $hostUrl
      *
-     * @return bool
      *
      * @throws \Exception
      *
      * @internal
      */
-    public static function generatePagePreview($id, $request = null, $hostUrl = null)
+    public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
     {
+        $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
         if (!$doc) {
             return false;
@@ -665,27 +568,17 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        File::mkdir(dirname($file));
+        $filesystem->mkdir(dirname($file), 0775);
 
-        $tool = false;
-        if (Chromium::isSupported()) {
-            $tool = Chromium::class;
-        } elseif (HtmlToImage::isSupported()) {
-            $tool = HtmlToImage::class;
-        }
+        if (HtmlToImage::convert($url, $tmpFile)) {
+            $im = \Pimcore\Image::getInstance();
+            $im->load($tmpFile);
+            $im->scaleByWidth(800);
+            $im->save($file, 'jpeg', 85);
 
-        if ($tool) {
-            /** @var Chromium|HtmlToImage $tool */
-            if ($tool::convert($url, $tmpFile)) {
-                $im = \Pimcore\Image::getInstance();
-                $im->load($tmpFile);
-                $im->scaleByWidth(800);
-                $im->save($file, 'jpeg', 85);
+            unlink($tmpFile);
 
-                unlink($tmpFile);
-
-                return true;
-            }
+            return true;
         }
 
         return false;

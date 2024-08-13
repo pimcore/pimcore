@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,24 +23,20 @@ interface BundleLocatorInterface
     /**
      * Loads bundle for a class name. Returns the AppBundle for AppBundle\Controller\FooController
      *
-     * @param string|object $class
      *
-     * @return BundleInterface
      *
      * @throws NotFoundException
      */
-    public function getBundle($class): BundleInterface;
+    public function getBundle(object|string $class): BundleInterface;
 
     /**
      * Resolves bundle directory from a class name.
      *
      * AppBundle\Controller\FooController returns src/AppBundle
      *
-     * @param string|object $class
      *
-     * @return string
      *
      * @throws NotFoundException
      */
-    public function getBundlePath($class): string;
+    public function getBundlePath(object|string $class): string;
 }

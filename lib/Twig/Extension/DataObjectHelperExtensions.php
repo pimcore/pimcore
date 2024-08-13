@@ -27,9 +27,6 @@ use Twig\TwigTest;
  */
 class DataObjectHelperExtensions extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getTests(): array
     {
         return [
@@ -54,9 +51,6 @@ class DataObjectHelperExtensions extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [

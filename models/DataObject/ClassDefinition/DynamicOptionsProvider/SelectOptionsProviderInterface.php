@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,11 +20,20 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
+    public function getOptions(array $context, Data $fieldDefinition): array;
+
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
+     * Whether options are depending on the object context (i.e. different options for different objects) or not.
+     * This is especially important for exposing options in the object grid. For options depending on object-context
+     * there will be no batch assignment mode, and filtering can only be done through a text field instead of the
+     * options list.
      *
-     * @return string|null
+     *
      */
-    public function getDefaultValue($context, $fieldDefinition);
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
+
+    /**
+     * @return string|array<string|array{value: string}>|null
+     */
+    public function getDefaultValue(array $context, Data $fieldDefinition): string|array|null;
 }

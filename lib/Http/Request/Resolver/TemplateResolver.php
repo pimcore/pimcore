@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,12 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TemplateResolver extends AbstractRequestResolver
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return null|string
-     */
-    public function getTemplate(Request $request = null)
+    public function getTemplate(Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -37,11 +33,7 @@ class TemplateResolver extends AbstractRequestResolver
         return $request->get(DynamicRouter::CONTENT_TEMPLATE);
     }
 
-    /**
-     * @param Request $request
-     * @param string $template
-     */
-    public function setTemplate(Request $request, $template)
+    public function setTemplate(Request $request, string $template): void
     {
         $request->attributes->set(DynamicRouter::CONTENT_TEMPLATE, $template);
     }

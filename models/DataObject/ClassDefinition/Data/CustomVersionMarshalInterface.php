@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface CustomVersionMarshalInterface
 {
-    /**
-     * @param Concrete $object
-     * @param mixed $data
-     */
-    public function marshalVersion($object, $data);
+    public function marshalVersion(Concrete $object, mixed $data): mixed;
 
-    /**
-     * @param Concrete $object
-     * @param mixed $data
-     */
-    public function unmarshalVersion($object, $data);
+    public function unmarshalVersion(Concrete $object, mixed $data): mixed;
 }

@@ -32,7 +32,6 @@ interface DependentBundleInterface
      * it will finally be included due to environment restrictions. If you need to load your dependencies conditionally,
      * specify the environments to use on the collection item.
      *
-     * @param BundleCollection $collection
      */
-    public static function registerDependentBundles(BundleCollection $collection);
+    public static function registerDependentBundles(BundleCollection $collection): void;
 }

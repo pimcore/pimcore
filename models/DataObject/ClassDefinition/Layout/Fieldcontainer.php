@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,60 +28,41 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      *
-     * @var string
      */
-    public $fieldtype = 'fieldcontainer';
+    public string $fieldtype = 'fieldcontainer';
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $layout = 'hbox';
+    public string $layout = 'hbox';
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $fieldLabel;
+    public string $fieldLabel;
 
-    /**
-     * @param string $layout
-     *
-     * @return $this
-     */
-    public function setLayout($layout)
+    public function setLayout(string $layout): static
     {
         $this->layout = $layout;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLayout()
+    public function getLayout(): string
     {
         return $this->layout;
     }
 
-    /**
-     * @param string $fieldLabel
-     *
-     * @return $this
-     */
-    public function setFieldLabel($fieldLabel)
+    public function setFieldLabel(string $fieldLabel): static
     {
         $this->fieldLabel = $fieldLabel;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldLabel()
+    public function getFieldLabel(): string
     {
         return $this->fieldLabel;
     }

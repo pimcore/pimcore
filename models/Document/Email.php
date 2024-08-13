@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,17 +23,12 @@ use Pimcore\Model;
  */
 class Email extends Model\Document\PageSnippet
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'email';
 
     /**
      * Contains the email subject
      *
      * @internal
-     *
-     * @var string
      */
     protected string $subject = '';
 
@@ -40,8 +36,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the from email address
      *
      * @internal
-     *
-     * @var string
      */
     protected string $from = '';
 
@@ -49,8 +43,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the reply to email addresses
      *
      * @internal
-     *
-     * @var string
      */
     protected string $replyTo = '';
 
@@ -58,8 +50,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the email addresses of the recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $to = '';
 
@@ -67,8 +57,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the carbon copy recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $cc = '';
 
@@ -76,24 +64,18 @@ class Email extends Model\Document\PageSnippet
      * Contains the blind carbon copy recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $bcc = '';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected bool $supportsContentMaster = false;
+    protected bool $supportsContentMain = false;
 
     /**
      * Contains the email subject
      *
-     * @param string $subject
      *
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
 
@@ -103,9 +85,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the email subject
      *
-     * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -113,11 +94,10 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "to" receiver
      *
-     * @param string $to
      *
      * @return $this
      */
-    public function setTo($to)
+    public function setTo(string $to): static
     {
         $this->to = $to;
 
@@ -127,9 +107,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "to" receivers
      *
-     * @return string
      */
-    public function getTo()
+    public function getTo(): string
     {
         return $this->to;
     }
@@ -137,11 +116,10 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "from" email address
      *
-     * @param string $from
      *
      * @return $this
      */
-    public function setFrom($from)
+    public function setFrom(string $from): static
     {
         $this->from = $from;
 
@@ -151,9 +129,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "from" email address
      *
-     * @return string
      */
-    public function getFrom()
+    public function getFrom(): string
     {
         return $this->from;
     }
@@ -161,11 +138,10 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the "replyTo" email address
      *
-     * @param string $replyTo
      *
      * @return $this
      */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
 
@@ -175,9 +151,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "replyTo" email address
      *
-     * @return string
      */
-    public function getReplyTo()
+    public function getReplyTo(): string
     {
         return $this->replyTo;
     }
@@ -185,11 +160,10 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the carbon copy receivers (multiple receivers should be separated with a ",")
      *
-     * @param string $cc
      *
      * @return $this
      */
-    public function setCc($cc)
+    public function setCc(string $cc): static
     {
         $this->cc = $cc;
 
@@ -199,9 +173,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the carbon copy receivers
      *
-     * @return string
      */
-    public function getCc()
+    public function getCc(): string
     {
         return $this->cc;
     }
@@ -209,11 +182,10 @@ class Email extends Model\Document\PageSnippet
     /**
      * Sets the blind carbon copy receivers (multiple receivers should be separated with a ",")
      *
-     * @param string $bcc
      *
      * @return $this
      */
-    public function setBcc($bcc)
+    public function setBcc(string $bcc): static
     {
         $this->bcc = $bcc;
 
@@ -223,9 +195,8 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the blind carbon copy receivers
      *
-     * @return string
      */
-    public function getBcc()
+    public function getBcc(): string
     {
         return $this->bcc;
     }

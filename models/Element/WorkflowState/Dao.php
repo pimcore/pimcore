@@ -26,13 +26,10 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $cid
-     * @param string $ctype
-     * @param string $workflow
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPrimary(int $cid, string $ctype, string $workflow)
+    public function getByPrimary(int $cid, string $ctype, string $workflow): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
@@ -45,11 +42,10 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $dataAttributes = $this->model->getObjectVars();
 
@@ -60,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'element_workflow_state', $data);
+        Helper::upsert($this->db, 'element_workflow_state', $data, $this->getPrimaryKey('element_workflow_state'));
 
         return true;
     }
@@ -68,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('element_workflow_state', [
             'cid' => $this->model->getCid(),

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,18 +36,14 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     protected $className;
 
-    /**
-     * @var string|null
-     */
-    protected $locale;
+    protected ?string $locale = null;
 
     /**
      * do not use the localized views for this list (in the case the class contains localized fields),
      * conditions on localized fields are not possible
      *
-     * @var bool
      */
-    protected $ignoreLocalizedFields = false;
+    protected bool $ignoreLocalizedFields = false;
 
     /**
      * @throws \Exception
@@ -56,28 +53,17 @@ abstract class Concrete extends Model\DataObject\Listing
         $this->initDao(__CLASS__);
     }
 
-    /**
-     * @return string
-     */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
 
-    /**
-     * @param string $classId
-     *
-     * @return $this
-     */
-    public function setClassId($classId)
+    public function setClassId(string $classId): static
     {
         $this->setData(null);
 
@@ -86,12 +72,7 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @param string $className
-     *
-     * @return $this
-     */
-    public function setClassName($className)
+    public function setClassName(string $className): static
     {
         $this->setData(null);
 
@@ -100,22 +81,14 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return DataObject\ClassDefinition
-     */
-    public function getClass()
+    public function getClass(): DataObject\ClassDefinition
     {
         $class = DataObject\ClassDefinition::getById($this->getClassId());
 
         return $class;
     }
 
-    /**
-     * @param string|null $locale
-     *
-     * @return $this
-     */
-    public function setLocale($locale)
+    public function setLocale(?string $locale): static
     {
         $this->setData(null);
 
@@ -124,20 +97,12 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
 
-    /**
-     * @param bool $ignoreLocalizedFields
-     *
-     * @return $this
-     */
-    public function setIgnoreLocalizedFields($ignoreLocalizedFields)
+    public function setIgnoreLocalizedFields(bool $ignoreLocalizedFields): static
     {
         $this->setData(null);
 
@@ -146,10 +111,7 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIgnoreLocalizedFields()
+    public function getIgnoreLocalizedFields(): bool
     {
         return $this->ignoreLocalizedFields;
     }
@@ -157,17 +119,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * field collection queries
      *
-     * @var array
      */
-    private $fieldCollectionConfigs = [];
+    private array $fieldCollectionConfigs = [];
 
     /**
-     * @param string $type
-     * @param string|null $fieldname
      *
      * @throws \Exception
      */
-    public function addFieldCollection($type, $fieldname = null)
+    public function addFieldCollection(string $type, string $fieldname = null): void
     {
         $this->setData(null);
 
@@ -180,13 +139,12 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param array $fieldCollections
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setFieldCollections($fieldCollections)
+    public function setFieldCollections(array $fieldCollections): static
     {
         $this->setData(null);
 
@@ -197,10 +155,7 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldCollections()
+    public function getFieldCollections(): array
     {
         return $this->fieldCollectionConfigs;
     }
@@ -208,16 +163,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * object brick queries
      *
-     * @var array
      */
-    private $objectBrickConfigs = [];
+    private array $objectBrickConfigs = [];
 
     /**
-     * @param string $type
      *
      * @throws \Exception
      */
-    public function addObjectbrick($type)
+    public function addObjectbrick(string $type): void
     {
         $this->setData(null);
 
@@ -232,13 +185,12 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param array $objectbricks
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObjectbricks($objectbricks)
+    public function setObjectbricks(array $objectbricks): static
     {
         $this->setData(null);
 
@@ -251,10 +203,7 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getObjectbricks()
+    public function getObjectbricks(): array
     {
         return $this->objectBrickConfigs;
     }
@@ -262,9 +211,8 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * @internal
      *
-     * @return bool
      */
-    public function addDistinct()
+    public function addDistinct(): bool
     {
         $fieldCollections = $this->getFieldCollections();
         if (!empty($fieldCollections)) {
@@ -277,14 +225,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by path (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterByPath($data, $operator = '=')
+    public function filterByPath(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_path', $operator, $data);
+        $this->addFilterByField('path', $operator, $data);
 
         return $this;
     }
@@ -292,14 +240,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by key (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterByKey($data, $operator = '=')
+    public function filterByKey(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_key', $operator, $data);
+        $this->addFilterByField('key', $operator, $data);
 
         return $this;
     }
@@ -307,14 +255,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by id (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterById($data, $operator = '=')
+    public function filterById(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_id', $operator, $data);
+        $this->addFilterByField('id', $operator, $data);
 
         return $this;
     }
@@ -322,14 +270,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by published (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterByPublished($data, $operator = '=')
+    public function filterByPublished(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_published', $operator, $data);
+        $this->addFilterByField('published', $operator, $data);
 
         return $this;
     }
@@ -337,14 +285,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by creationDate (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterByCreationDate($data, $operator = '=')
+    public function filterByCreationDate(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_creationDate', $operator, $data);
+        $this->addFilterByField('creationDate', $operator, $data);
 
         return $this;
     }
@@ -352,14 +300,14 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by modificationDate (system field)
      *
-     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param float|array|int|string $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return $this
      */
-    public function filterByModificationDate($data, $operator = '=')
+    public function filterByModificationDate(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_modificationDate', $operator, $data);
+        $this->addFilterByField('modificationDate', $operator, $data);
 
         return $this;
     }

@@ -1,0 +1,8 @@
+---
+custom_reports: "\u0E23\u0E32\u0E22\u0E07\u0E32\u0E19\u0E17\u0E35\u0E48\u0E01\u0E33\u0E2B\u0E19\u0E14\u0E40\u0E2D\u0E07"
+reports: "\u0E23\u0E32\u0E22\u0E07\u0E32\u0E19"
+custom_report_permissions: "\u0E01\u0E32\u0E23\u0E2D\u0E19\u0E38\u0E0D\u0E32\u0E15"
+keybinding_customReports: Custom Reports
+keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

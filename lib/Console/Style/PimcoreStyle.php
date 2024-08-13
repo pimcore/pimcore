@@ -27,20 +27,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class PimcoreStyle extends SymfonyStyle
 {
-    /**
-     * @var InputInterface
-     */
-    private $input;
+    private InputInterface $input;
 
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private OutputInterface $output;
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -49,17 +39,11 @@ final class PimcoreStyle extends SymfonyStyle
         parent::__construct($input, $output);
     }
 
-    /**
-     * @return InputInterface
-     */
     public function getInput(): InputInterface
     {
         return $this->input;
     }
 
-    /**
-     * @return OutputInterface
-     */
     public function getOutput(): OutputInterface
     {
         return $this->output;
@@ -68,11 +52,8 @@ final class PimcoreStyle extends SymfonyStyle
     /**
      * Prints an underlined title without prepending block and/or formatting output
      *
-     * @param string $message
-     * @param string $underlineChar
-     * @param string|null $style
      */
-    public function simpleSection(string $message, string $underlineChar = '-', string $style = null)
+    public function simpleSection(string $message, string $underlineChar = '-', string $style = null): void
     {
         $underline = str_repeat($underlineChar, Helper::width(Helper::removeDecoration($this->getFormatter(), $message)));
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,166 +20,82 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Traits\DataHeightTrait;
+use Pimcore\Model\DataObject\Traits\DataWidthTrait;
 use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {
-    /**
-     * @internal
-     *
-     * @var float
-     */
-    public $lat = 0.0;
+    use DataHeightTrait;
+    use DataWidthTrait;
 
     /**
      * @internal
      *
-     * @var float
      */
-    public $lng = 0.0;
+    public float $lat = 0.0;
 
     /**
      * @internal
      *
-     * @var int
      */
-    public $zoom = 1;
+    public float $lng = 0.0;
 
     /**
      * @internal
      *
-     * @var string|int
      */
-    public $width = 0;
+    public int $zoom = 1;
 
     /**
      * @internal
      *
-     * @var string|int
      */
-    public $height = 0;
+    public string $mapType = 'roadmap';
 
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    public $mapType = 'roadmap';
-
-    /**
-     * @return float
-     */
-    public function getLat()
+    public function getLat(): float
     {
         return $this->lat;
     }
 
-    /**
-     * @param float $lat
-     *
-     * @return $this
-     */
-    public function setLat($lat)
+    public function setLat(float $lat): static
     {
-        $this->lat = (float) $lat;
+        $this->lat = $lat;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getLng()
+    public function getLng(): float
     {
         return $this->lng;
     }
 
-    /**
-     * @param float $lng
-     *
-     * @return $this
-     */
-    public function setLng($lng)
+    public function setLng(float $lng): static
     {
-        $this->lng = (float) $lng;
+        $this->lng = $lng;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getZoom()
+    public function getZoom(): int
     {
         return $this->zoom;
     }
 
-    /**
-     * @param int $zoom
-     *
-     * @return $this
-     */
-    public function setZoom($zoom)
+    public function setZoom(int $zoom): static
     {
-        $this->zoom = (int) $zoom;
+        $this->zoom = $zoom;
 
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /** { @inheritdoc } */
-    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
-    /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);
     }

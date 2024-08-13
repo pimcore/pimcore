@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
-use Pimcore\Event\Admin\Report\SettingsEvent;
-use Pimcore\Event\Admin\ReportEvents;
+use Pimcore\Event\Report\SettingsEvent;
+use Pimcore\Event\ReportEvents;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -33,10 +33,7 @@ final class ReportConfigWriter
 
     const REPORT_SETTING_SCOPE = 'pimcore';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
@@ -46,7 +43,7 @@ final class ReportConfigWriter
     /**
      * @throws \Exception
      */
-    public function write(array $settings)
+    public function write(array $settings): void
     {
         $settingsEvent = new SettingsEvent($settings);
         $this->eventDispatcher->dispatch(
@@ -59,27 +56,18 @@ final class ReportConfigWriter
         SettingsStore::set(
             self::REPORT_SETTING_ID,
             json_encode($settings),
-            'string',
+            SettingsStore::TYPE_STRING,
             self::REPORT_SETTING_SCOPE
         );
     }
 
-    public function mergeConfig(Config $values)
+    public function mergeConfig(array $values): void
     {
         // the config returned from getReportConfig is readonly
         // so we create a new writable one here
-        $config = new Config(
-            \Pimcore\Config::getReportConfig()->toArray(),
-            true
-        );
+        $config = \Pimcore\Config::getReportConfig();
+        $config = array_merge($config, $values);
 
-        $config->merge($values);
-
-        $this->write($config->toArray());
-    }
-
-    public function mergeArray(array $values)
-    {
-        $this->mergeConfig(new Config($values));
+        $this->write($config);
     }
 }

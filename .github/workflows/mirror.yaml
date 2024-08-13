@@ -1,0 +1,21 @@
+
+name: "Git Mirror"
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 2 * * *'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+    to_github:
+        runs-on: ubuntu-latest
+        if: ${{ github.repository == 'pimcore/pimcore' }}
+        steps:
+            - uses: actions/checkout@v1
+            - uses: pixta-dev/repository-mirroring-action@v1
+              with:
+                  target_repo_url: git@github.com:pimcore/pimcore-mirror.git
+                  ssh_private_key: ${{ secrets.SSH_MIRROR_DEPLOY_PRIVATE_KEY }}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,16 +27,14 @@ trait ResponseAwareTrait
     /**
      * The response object.
      *
-     * @var Response
      */
-    protected $response;
+    protected Response $response;
 
     /**
      * Returns the response object.
      *
-     * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }
@@ -43,9 +42,8 @@ trait ResponseAwareTrait
     /**
      * Sets a response and stops event propagation.
      *
-     * @param Response $response
      */
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): void
     {
         $this->response = $response;
 
@@ -58,8 +56,8 @@ trait ResponseAwareTrait
      *
      * @return bool Whether a response was set
      */
-    public function hasResponse()
+    public function hasResponse(): bool
     {
-        return null !== $this->response;
+        return isset($this->response);
     }
 }

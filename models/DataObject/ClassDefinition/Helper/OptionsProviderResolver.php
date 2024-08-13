@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,19 +28,25 @@ class OptionsProviderResolver extends ClassResolver
 
     const MODE_MULTISELECT = 2;
 
-    public static $providerCache = [];
+    public static array $providerCache = [];
 
-    /**
-     * @param string|null $providerClass
-     * @param int $mode
-     *
-     * @return SelectOptionsProviderInterface|MultiSelectOptionsProviderInterface|null
-     */
-    public static function resolveProvider($providerClass, $mode)
+    public static function resolveProvider(?string $providerClass, int $mode): ?object
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {
+
+            if ($provider instanceof MultiSelectOptionsProviderInterface) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '11.2',
+                    'Implementing %s is deprecated, use %s instead',
+                    MultiSelectOptionsProviderInterface::class,
+                    SelectOptionsProviderInterface::class,
+                );
+            }
+
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
-                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface));
+                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface))
+                || ($mode == self::MODE_MULTISELECT && ($provider instanceof SelectOptionsProviderInterface));
         });
     }
 }

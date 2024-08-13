@@ -1,0 +1,42 @@
+name: 'Close stale issues'
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '37 7 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  stale:
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-issue-stale: 20
+          days-before-issue-close: -1
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          exempt-all-milestones: true
+          exempt-issue-labels: 'Pimcore:Priority,Pimcore:Backlog,Pimcore:ToDo'
+          remove-stale-when-updated: false
+          stale-issue-label: 'PR Welcome'
+          operations-per-run: 200
+          stale-issue-message: >
+              Thanks a lot for reporting the issue.
+              We did not consider the issue as "Pimcore:Priority", "Pimcore:ToDo" or "Pimcore:Backlog",
+              so we're not going to work on that anytime soon.
+              Please create a pull request to fix the issue if this is a bug report.
+              We'll then review it as quickly as possible.
+              If you're interested in contributing a feature, please contact us
+              first here before creating a pull request. We'll then decide whether
+              we'd accept it or not.
+              Thanks for your understanding.
+          close-issue-message: >
+              Closed due to inactivity (365 days).
+              Please feel free to continue the discussion or provide the missing information on this issue,
+              we'll then reopen it if necessary.
+              Thanks a lot!
+                

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,44 +20,29 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 class InputQuantityValue extends AbstractQuantityValue
 {
-    /**
-     * @var string|null
-     */
-    protected $value;
+    protected string|null $value = null;
 
-    /**
-     * @param string|null $value
-     * @param Unit|string|null $unit
-     */
-    public function __construct($value = null, $unit = null)
+    public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): string|null
     {
-        return (string)$this->value;
+        return $this->value;
     }
 
     /**
-     * @return string
-     *
      * @throws \Exception
      */
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {

@@ -29,20 +29,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $queryBuilder->resetQueryPart('orderBy');
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
@@ -53,16 +47,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if (count($this->model->load()) > 0) {
             return count($this->model->load());
         }
 
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
@@ -70,17 +61,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllTranslations()
+    public function getAllTranslations(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['*']);
+        $queryBuilder = $this->getQueryBuilder('*');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -110,33 +98,36 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return array
+     * @return list<array<string,mixed>>
      */
-    public function loadRaw()
+    public function loadRaw(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['*']);
-        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+        $queryBuilder = $this->getQueryBuilder('*');
+        $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return $translationsData;
     }
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
-        //$allTranslations = $this->getAllTranslations();
-        $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
-        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
+        $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
 
-        foreach ($translationsData as $t) {
-            $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+            $translations = [];
+            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+            foreach ($translationsData as $t) {
+                $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
 
-            if ($transObj) {
-                $translations[] = $transObj;
+                if ($transObj) {
+                    $translations[] = $transObj;
+                }
+            }
+
+            if (empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
 
@@ -145,10 +136,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCacheable()
+    public function isCacheable(): bool
     {
         $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
         $cacheLimit = Model\Translation\Listing::getCacheLimit();
@@ -159,13 +147,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return true;
     }
 
-    public function cleanup()
+    public function cleanup(): void
     {
         $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
-        if (is_array($keysToDelete) && !empty($keysToDelete)) {
+        if ($keysToDelete) {
             $preparedKeys = [];
             foreach ($keysToDelete as $value) {
                 $preparedKeys[] = $this->db->quote($value);
@@ -178,7 +166,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,27 +23,16 @@ interface ResourcePersistenceAwareInterface
     /**
      * Returns the the data that should be stored in the resource
      *
-     * @param mixed $data
-     * @param null|Concrete $object
-     * @param mixed $params
      *
-     * @return mixed
      */
-    public function getDataForResource($data, $object = null, $params = []);
+    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
     /**
      * Convert the saved data in the resource to the internal eg. Image-Id to Asset\Image object, this is the inverted getDataForResource()
      *
-     * @param mixed $data
-     * @param null|Concrete $object
-     * @param mixed $params
      *
-     * @return mixed
      */
-    public function getDataFromResource($data, $object = null, $params = []);
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * @return string|array|null
-     */
-    public function getColumnType();
+    public function getColumnType(): array|string;
 }

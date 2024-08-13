@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,56 +45,44 @@ use Symfony\Component\Templating\EngineInterface;
 
 abstract class AbstractRenderer implements RendererInterface
 {
-    /**
-     * @var EngineInterface
-     */
-    protected $templatingEngine;
+    protected EngineInterface $templatingEngine;
 
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int|null
      */
-    protected $_minDepth;
+    protected ?int $_minDepth = null;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
-     * @var int|null
      */
-    protected $_maxDepth;
+    protected ?int $_maxDepth = null;
 
     /**
      * Indentation string
      *
-     * @var string
      */
-    protected $_indent = '';
+    protected string $_indent = '';
 
     /**
      * Prefix for IDs when they are normalized
      *
-     * @var string|null
      */
-    protected $_prefixForId = null;
+    protected ?string $_prefixForId = null;
 
     /**
      * Skip current prefix for IDs when they are normalized (flag)
      *
-     * @var bool
      */
-    protected $_skipPrefixForId = false;
+    protected bool $_skipPrefixForId = false;
 
     /**
      * Whether invisible items should be rendered by this helper
      *
-     * @var bool
      */
-    protected $_renderInvisible = false;
+    protected bool $_renderInvisible = false;
 
-    /**
-     * @param EngineInterface $templatingEngine
-     */
     public function __construct(EngineInterface $templatingEngine)
     {
         $this->templatingEngine = $templatingEngine;
@@ -104,25 +93,17 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Sets the minimum depth a page must have to be included when rendering
      *
-     * @param int|null $minDepth
      *
      * @return $this
      */
-    public function setMinDepth($minDepth = null)
+    public function setMinDepth(int $minDepth = null): static
     {
-        if (null !== $minDepth) {
-            $this->_minDepth = (int) $minDepth;
-        } else {
-            $this->_minDepth = null;
-        }
+        $this->_minDepth = $minDepth;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMinDepth()
+    public function getMinDepth(): ?int
     {
         if (!is_int($this->_minDepth) || $this->_minDepth < 0) {
             return 0;
@@ -132,80 +113,57 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param int|null $maxDepth
      *
      * @return $this
      */
-    public function setMaxDepth($maxDepth = null)
+    public function setMaxDepth(int $maxDepth = null): static
     {
-        if (null !== $maxDepth) {
-            $this->_maxDepth = (int) $maxDepth;
-        } else {
-            $this->_maxDepth = null;
-        }
+        $this->_maxDepth = $maxDepth;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMaxDepth()
+    public function getMaxDepth(): ?int
     {
         return $this->_maxDepth;
     }
 
     /**
-     * @param string $indent
-     *
      * @return $this
      */
-    public function setIndent($indent)
+    public function setIndent(string $indent): static
     {
         $this->_indent = $this->_getWhitespace($indent);
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIndent()
+    public function getIndent(): string
     {
         return $this->_indent;
     }
 
-    /**
-     * @return string
-     */
-    public function getEOL()
+    public function getEOL(): string
     {
         return "\n";
     }
 
     /**
-     * @param string $prefix
-     *
      * @return $this
      */
-    public function setPrefixForId($prefix)
+    public function setPrefixForId(string $prefix): static
     {
-        if (is_string($prefix)) {
-            $this->_prefixForId = trim($prefix);
-        }
+        $this->_prefixForId = trim($prefix);
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getPrefixForId()
+    public function getPrefixForId(): ?string
     {
         if (null === $this->_prefixForId) {
             $prefix = get_class($this);
             $this->_prefixForId = str_replace('\\', '-', strtolower(
-                trim(substr($prefix, strrpos($prefix, '_')), '_')
+                trim(substr($prefix, (int) strrpos($prefix, '_')), '_')
             )) . '-';
         }
 
@@ -213,31 +171,26 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param bool $flag
-     *
      * @return $this
      */
-    public function skipPrefixForId($flag = true)
+    public function skipPrefixForId(bool $flag = true): static
     {
-        $this->_skipPrefixForId = (bool) $flag;
+        $this->_skipPrefixForId = $flag;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRenderInvisible()
+    public function getRenderInvisible(): bool
     {
         return $this->_renderInvisible;
     }
 
     /**
-     * {@inheritdoc}
+     * @return $this
      */
-    public function setRenderInvisible(bool $renderInvisible = true)
+    public function setRenderInvisible(bool $renderInvisible = true): static
     {
-        $this->_renderInvisible = (bool) $renderInvisible;
+        $this->_renderInvisible = $renderInvisible;
 
         return $this;
     }
@@ -245,18 +198,14 @@ abstract class AbstractRenderer implements RendererInterface
     // Public methods:
 
     /**
-     * @param Container $container
-     * @param int|null $minDepth
-     * @param int $maxDepth
-     *
-     * @return array
+     * @return array{page?: Page, depth?: int}
      */
-    public function findActive(Container $container, $minDepth = null, $maxDepth = -1)
+    public function findActive(Container $container, int $minDepth = null, int $maxDepth = null): array
     {
         if (!is_int($minDepth)) {
             $minDepth = $this->getMinDepth();
         }
-        if ((!is_int($maxDepth) || $maxDepth < 0) && null !== $maxDepth) {
+        if (!is_int($maxDepth) || $maxDepth < 0) {
             $maxDepth = $this->getMaxDepth();
         }
 
@@ -312,7 +261,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return string  HTML string for the given page
      */
-    public function htmlify(Page $page)
+    public function htmlify(Page $page): string
     {
         $label = $page->getLabel();
         $title = $page->getTitle();
@@ -345,12 +294,9 @@ abstract class AbstractRenderer implements RendererInterface
      * - If page is accepted by the rules above and $recursive is true, the page
      *   will not be accepted if it is the descendant of a non-accepted page.
      *
-     * @param  Page $page
-     * @param  bool $recursive
      *
-     * @return bool
      */
-    public function accept(Page $page, $recursive = true)
+    public function accept(Page $page, bool $recursive = true): bool
     {
         // accept by default
         $accept = true;
@@ -375,11 +321,9 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param  int|string $indent
      *
-     * @return string
      */
-    protected function _getWhitespace($indent)
+    protected function _getWhitespace(int|string $indent): string
     {
         if (is_int($indent)) {
             $indent = str_repeat(' ', $indent);
@@ -391,11 +335,9 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Converts an associative array to a string of tag attributes.
      *
-     * @param  array $attribs
      *
-     * @return string
      */
-    protected function _htmlAttribs($attribs)
+    protected function _htmlAttribs(array $attribs): string
     {
         // filter out null values and empty string values
         foreach ($attribs as $key => $value) {
@@ -405,10 +347,10 @@ abstract class AbstractRenderer implements RendererInterface
         }
 
         $xhtml = '';
-        foreach ((array) $attribs as $key => $val) {
+        foreach ($attribs as $key => $val) {
             $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
-            if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {
+            if ('constraints' === $key || str_starts_with($key, 'on')) {
                 // Don't escape event attributes; _do_ substitute double quotes with singles
                 if (!is_scalar($val)) {
                     // non-scalar data should be cast to JSON first
@@ -430,7 +372,7 @@ abstract class AbstractRenderer implements RendererInterface
                 $val = $this->_normalizeId($val);
             }
 
-            if (strpos($val, '"') !== false) {
+            if (str_contains($val, '"')) {
                 $xhtml .= " $key='$val'";
             } else {
                 $xhtml .= " $key=\"$val\"";
@@ -443,11 +385,11 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Normalize an ID
      *
-     * @param  string $value    ID
+     * @param string $value    ID
      *
      * @return string           Normalized ID
      */
-    protected function _normalizeId($value)
+    protected function _normalizeId(string $value): string
     {
         if (false === $this->_skipPrefixForId) {
             $prefix = $this->getPrefixForId();
@@ -457,8 +399,8 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if (strstr($value, '[')) {
-            if ('[]' == substr($value, -2)) {
+        if (str_contains($value, '[')) {
+            if (str_ends_with($value, '[]')) {
                 $value = substr($value, 0, strlen($value) - 2);
             }
             $value = trim($value, ']');

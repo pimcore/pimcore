@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,32 +25,17 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 {
-    /**
-     * @var string
-     */
-    private $property;
+    private string $property;
 
-    /**
-     * @var \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface
-     */
-    private $propertyAccessor;
+    private \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @param string $property
-     * @param PropertyAccessorInterface|null $propertyAccessor
-     */
-    public function __construct($property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(string $property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->property = $property;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws LogicException
-     */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -63,13 +49,7 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
         return new Marking($_marking);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws LogicException
-     * @throws \Exception
-     */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
@@ -78,11 +58,9 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param object $subject
-     *
-     * @return Concrete
+     * @throws LogicException
      */
-    private function checkIfSubjectIsValid($subject): Concrete
+    private function checkIfSubjectIsValid(object $subject): Concrete
     {
         if (!$subject instanceof Concrete) {
             throw new LogicException('data_object_multiple_state marking store works for pimcore data objects only.');

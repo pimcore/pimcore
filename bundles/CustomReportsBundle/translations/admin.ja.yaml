@@ -1,0 +1,8 @@
+---
+custom_reports: "\u30AB\u30B9\u30BF\u30E0\u30EC\u30DD\u30FC\u30C8"
+reports: "\u30EC\u30DD\u30FC\u30C8"
+custom_report_permissions: custom_report_permissions
+keybinding_customReports: Custom Reports
+keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

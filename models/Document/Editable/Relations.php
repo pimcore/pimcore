@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,27 +32,20 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      *
      * @var Element\ElementInterface[]
      */
-    protected $elements = [];
+    protected array $elements = [];
 
     /**
      * @internal
      *
-     * @var array
      */
-    protected $elementIds = [];
+    protected array $elementIds = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'relations';
     }
 
-    /**
-     * @return $this
-     */
-    public function setElements()
+    public function setElements(): static
     {
         if (empty($this->elements)) {
             $this->elements = [];
@@ -66,60 +60,43 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getElementIds()
+    public function getElementIds(): array
     {
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         $this->setElements();
 
         return $this->elements;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         return $this->elementIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         $this->setElements();
         $return = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
-                } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
-                } elseif ($element instanceof Asset) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
-                } elseif ($element instanceof Document) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
-                }
+        foreach ($this->elements as $element) {
+            if ($element instanceof DataObject\Concrete) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
+            } elseif ($element instanceof Asset) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
+            } elseif ($element instanceof Document) {
+                $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
             }
         }
 
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         $this->setElements();
@@ -134,10 +111,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
@@ -146,10 +120,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
             $this->elementIds = $data;
@@ -162,7 +133,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return Element\ElementInterface[]
      */
-    public function getElements()
+    public function getElements(): array
     {
         $this->setElements();
 
@@ -181,45 +152,34 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $elements;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->setElements();
 
         return count($this->elements) > 0 ? false : true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $this->setElements();
         $dependencies = [];
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                if ($element instanceof Element\ElementInterface) {
-                    $elementType = Element\Service::getElementType($element);
-                    $key = $elementType . '_' . $element->getId();
+        foreach ($this->elements as $element) {
+            if ($element instanceof Element\ElementInterface) {
+                $elementType = Element\Service::getElementType($element);
+                $key = $elementType . '_' . $element->getId();
 
-                    $dependencies[$key] = [
-                        'id' => $element->getId(),
-                        'type' => $elementType,
-                    ];
-                }
+                $dependencies[$key] = [
+                    'id' => $element->getId(),
+                    'type' => $elementType,
+                ];
             }
         }
 
         return $dependencies;
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store
         $this->elements = [];
@@ -236,10 +196,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         $this->setElements();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -253,10 +210,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $finalVars;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load() /** : void */
+    public function load(): void
     {
         $this->setElements();
     }
@@ -264,62 +218,43 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * Methods for Iterator
      */
-
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         $this->setElements();
         reset($this->elements);
     }
 
-    /**
-     * @return Element\ElementInterface|false
-     */
-    #[\ReturnTypeWillChange]
-    public function current()// : Element\ElementInterface|false
+    public function current(): false|Element\ElementInterface
     {
         $this->setElements();
 
         return current($this->elements);
     }
 
-    /**
-     * @return int|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int
     {
         $this->setElements();
 
         return key($this->elements);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->setElements();
         next($this->elements);
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         $this->setElements();
 
         $el = $this->current();
-        if (Element\Service::doHideUnpublished($el)) {
-            if (!Element\Service::isPublished($el)) {
-                $this->next();
-            }
+        if (
+            $el instanceof Element\ElementInterface &&
+            Element\Service::doHideUnpublished($el) &&
+            !Element\Service::isPublished($el)
+        ) {
+            $this->next();
         }
 
         return $this->current() !== false;

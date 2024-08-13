@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,13 +18,7 @@ namespace Pimcore\Model\Listing;
 
 interface CallableFilterListingInterface
 {
-    /**
-     * @param callable|null $filter
-     */
-    public function setFilter($filter);
+    public function setFilter(?callable $filter): void;
 
-    /**
-     * @return callable|null
-     */
-    public function getFilter();
+    public function getFilter(): ?callable;
 }

@@ -31,12 +31,12 @@ trait ScheduledTasksTrait
      *
      * @var Task[]|null
      */
-    protected $scheduledTasks;
+    protected ?array $scheduledTasks = null;
 
     /**
      * @return Task[] the $scheduledTasks
      */
-    public function getScheduledTasks()
+    public function getScheduledTasks(): array
     {
         if ($this->scheduledTasks === null) {
             $taskList = new Listing();
@@ -54,14 +54,14 @@ trait ScheduledTasksTrait
      *
      * @return $this
      */
-    public function setScheduledTasks($scheduledTasks)
+    public function setScheduledTasks(array $scheduledTasks): static
     {
         $this->scheduledTasks = $scheduledTasks;
 
         return $this;
     }
 
-    public function saveScheduledTasks()
+    public function saveScheduledTasks(): void
     {
         $scheduledTasks = $this->getScheduledTasks();
         $ignoreIds = [];

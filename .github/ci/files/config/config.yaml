@@ -1,4 +1,46 @@
 imports:
     - { resource: services.yaml }
-    - { resource: system.yml }
+    - { resource: system.yaml }
     - { resource: 'local/' }
+
+pimcore:
+    email:
+        sender:
+            name: pimcore
+            email: pimcore@example.com
+        return:
+            name: pimcore
+            email: pimcore@example.com
+    config_location:
+        image_thumbnails:
+            write_target:
+                type: 'settings-store'
+        video_thumbnails:
+            write_target:
+                type: 'settings-store'
+        document_types:
+            write_target:
+                type: 'settings-store'
+        predefined_properties:
+            write_target:
+                type: 'settings-store'
+        predefined_asset_metadata:
+            write_target:
+                type: 'settings-store'
+        perspectives:
+            write_target:
+                type: 'settings-store'
+        custom_views:
+            write_target:
+                type: 'settings-store'
+        object_custom_layouts:
+            write_target:
+                type: 'settings-store'
+        system_settings:
+            write_target:
+                type: 'settings-store'
+            read_target:
+                type: 'settings-store'
+        select_options:
+            write_target:
+                type: 'settings-store'

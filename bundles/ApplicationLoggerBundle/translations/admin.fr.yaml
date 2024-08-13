@@ -1,0 +1,25 @@
+---
+log_relatedobject: Objet en relation
+log_component: Composant
+log_search_form: "Rechercher param\xE8tre"
+log_search_type: Type de journal
+log_search_relatedobject: Objet en relation (id)
+log_timestamp: Horodatage
+log_fileobject: Fichier Objet
+log_detailinformation: "D\xE9tail des informations"
+log_pid: PID
+log_refresh_label: Actualiser chaque
+log_applicationlog: Journal applicatif
+log_search_component: Composant
+log_search_pid: PID
+log_refresh_seconds: Secondes
+log_search_from: De
+log_search_to: "\xC0"
+log_type: Type
+log_source: Source
+log_message: Message
+log_reset_search: "R\xE9initialiser"
+log_search: Rechercher
+log_search_message: Message
+keybinding_applicationLogger: Application logger
+...

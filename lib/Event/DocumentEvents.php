@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -115,69 +116,6 @@ final class DocumentEvents
     const POST_LOAD = 'pimcore.document.postLoad';
 
     /**
-     * Processor contains the processor object used to generate the PDF
-     *
-     * Arguments:
-     *  - processor | instance of the PDF processor Pimcore\Web2Print\Processor\{ProcessorName}
-     *
-     * @Event("Pimcore\Event\Model\DocumentEvent")
-     *
-     * @var string
-     */
-    const PRINT_PRE_PDF_GENERATION = 'pimcore.document.print.prePdfGeneration';
-
-    /**
-     * Filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string
-     *
-     * Arguments:
-     *  - filename | contains the path of the generated pdf on filesystem
-     *  - pdf | contains generated pdf as string
-     *
-     * @Event("Pimcore\Event\Model\DocumentEvent")
-     *
-     * @var string
-     */
-    const PRINT_POST_PDF_GENERATION = 'pimcore.document.print.postPdfGeneration';
-
-    /**
-     * Modify the processing options (displayed in the Pimcore admin interface)
-     *
-     * Arguments:
-     *  - options | array for configuration settings
-     *
-     * @Event("Pimcore\Event\Model\PrintConfigEvent")
-     *
-     * @var string
-     */
-    const PRINT_MODIFY_PROCESSING_OPTIONS = 'pimcore.document.print.processor.modifyProcessingOptions';
-
-    /**
-     * Modify the configuration for the processor (when the pdf gets created)
-     *
-     * Arguments:
-     * WkHtmlToPdfAdapter:
-     *  - wkhtmltopdfBin | path to wkhtmltopdf binary
-     *  - options | configuration options
-     *  - srcUrl | path tho source html file
-     *  - dstFile | path to the output pdf file
-     *  - config | configuration which is passed from the pimcore admin interface
-     *
-     * PDFReactor:
-     *  - config | configuration which is passed from the pimcore admin interface
-     *  - reactorConfig | configuration which is passed to PDFReactor
-     *  - document | Pimcore document that is converted
-     *
-     * HeadlessChrome:
-     *  - params | puppeteer PDF options (see also https://pptr.dev/api/puppeteer.pdfoptions/)
-     *  - html | HTML passed to puppeteer
-     *
-     * @Event("Pimcore\Event\Model\PrintConfigEvent")
-     *
-     * @var string
-     */
-    const PRINT_MODIFY_PROCESSING_CONFIG = 'pimcore.document.print.processor.modifyConfig';
-
-    /**
      * Arguments:
      *  - target_element | Pimcore\Model\Document | contains the target document used in copying process
      *
@@ -224,28 +162,38 @@ final class DocumentEvents
     const RENDERER_POST_RENDER = 'pimcore.document.renderer.post_render';
 
     /**
-     * Arguments:
-     *  - mail | \Pimcore\Mail | the pimcore mail instance
-     *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
-     *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific mailer if enabled in system settings
+     * The INCLUDERENDERER_PRE_RENDER event is triggered before the IncludeRenderer renders an include
      *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string
      */
-    const NEWSLETTER_PRE_SEND = 'pimcore.document.newsletter.pre_send';
+    const INCLUDERENDERER_PRE_RENDER = 'pimcore.document.IncludeRenderer.pre_render';
 
     /**
      * Arguments:
-     *  - mail | \Pimcore\Mail | the pimcore mail instance
-     *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
-     *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific swift mailer if enabled in system settings
+     *  - element | \Pimcore\Mail | the pimcore mail instance
+     *  - requestParams | contains the request parameters
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
-    const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
+    const EDITABLE_RENDERLET_PRE_RENDER = 'pimcore.document.editable.renderlet.pre_render';
+
+    /**
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const PAGE_POST_SAVE_ACTION = 'pimcore.document.page.post_save_action';
+
+    /**
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_MOVE_ACTION = 'pimcore.document.post_move_action';
 }

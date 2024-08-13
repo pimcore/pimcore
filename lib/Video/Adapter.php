@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,208 +21,113 @@ namespace Pimcore\Video;
  */
 abstract class Adapter
 {
-    /**
-     * @var int
-     */
-    public $videoBitrate;
+    public int $videoBitrate;
 
-    /**
-     * @var int
-     */
-    public $audioBitrate;
+    public int $audioBitrate;
 
-    /**
-     * @var string
-     */
-    public $format;
+    public string $format;
 
-    /**
-     * @var array
-     */
-    public $medias;
+    public array $medias;
 
-    /**
-     * @var string
-     */
-    public $destinationFile;
+    public string $destinationFile;
 
-    /**
-     * @var string
-     */
-    public $storageFile;
+    public string $storageFile;
 
     /**
      * length in seconds
      *
-     * @var int
      */
-    public $length;
+    public int $length;
 
-    /**
-     * @param int $audioBitrate
-     *
-     * @return $this
-     */
-    public function setAudioBitrate($audioBitrate)
+    public function setAudioBitrate(int $audioBitrate): static
     {
         $this->audioBitrate = $audioBitrate;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAudioBitrate()
+    public function getAudioBitrate(): int
     {
         return $this->audioBitrate;
     }
 
-    /**
-     * @param int $videoBitrate
-     *
-     * @return $this
-     */
-    public function setVideoBitrate($videoBitrate)
+    public function setVideoBitrate(int $videoBitrate): static
     {
         $this->videoBitrate = $videoBitrate;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getVideoBitrate()
+    public function getVideoBitrate(): int
     {
         return $this->videoBitrate;
     }
 
-    /**
-     * @param string $file
-     * @param array $options
-     *
-     * @return $this
-     */
-    abstract public function load($file, $options = []);
+    abstract public function load(string $file, array $options = []): static;
 
-    /**
-     * @return bool
-     */
-    abstract public function save();
+    abstract public function save(): bool;
 
-    /**
-     * @abstract
-     *
-     * @param string $file
-     * @param int|null $timeOffset
-     */
-    abstract public function saveImage($file, $timeOffset = null);
+    abstract public function saveImage(string $file, int $timeOffset = null): void;
 
-    /**
-     * @abstract
-     */
-    abstract public function destroy();
+    abstract public function destroy(): void;
 
-    /**
-     * @return array|null
-     */
-    public function getMedias()
+    public function getMedias(): ?array
     {
         return $this->medias;
     }
 
-    /**
-     * @param array|null $medias
-     */
-    public function setMedias($medias)
+    public function setMedias(?array $medias): void
     {
         $this->medias = $medias;
     }
 
-    /**
-     * @param string $format
-     *
-     * @return $this
-     */
-    public function setFormat($format)
+    public function setFormat(string $format): static
     {
         $this->format = $format;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->format;
     }
 
-    /**
-     * @param string $destinationFile
-     *
-     * @return $this
-     */
-    public function setDestinationFile($destinationFile)
+    public function setDestinationFile(string $destinationFile): static
     {
         $this->destinationFile = $destinationFile;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDestinationFile()
+    public function getDestinationFile(): string
     {
         return $this->destinationFile;
     }
 
-    /**
-     * @param int $length
-     *
-     * @return $this
-     */
-    public function setLength($length)
+    public function setLength(int $length): static
     {
         $this->length = $length;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    /**
-     * @return string
-     */
-    public function getStorageFile()
+    public function getStorageFile(): string
     {
         return $this->storageFile;
     }
 
-    /**
-     * @param string $storageFile
-     */
-    public function setStorageFile($storageFile)
+    public function setStorageFile(string $storageFile): void
     {
         $this->storageFile = $storageFile;
     }
 
-    /**
-     * @return float|null
-     */
-    abstract public function getDuration();
+    abstract public function getDuration(): ?float;
 
-    /**
-     * @return array|null
-     */
-    abstract public function getDimensions();
+    abstract public function getDimensions(): ?array;
 }

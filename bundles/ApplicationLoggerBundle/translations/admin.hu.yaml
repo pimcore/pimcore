@@ -1,0 +1,25 @@
+---
+log_relatedobject: "Kapcsol\xF3d\xF3 objektumok"
+log_component: Komponens
+log_search_form: "Keres\xE9si param\xE9terek"
+log_search_type: "Log t\xEDpusa"
+log_search_relatedobject: "Kapcsol\xF3d\xF3 objektum (id)"
+log_timestamp: "Id\u0151b\xE9lyeg"
+log_fileobject: File objektum
+log_detailinformation: "R\xE9szletek"
+log_pid: PID
+log_refresh_label: "Friss\xEDt\xE9s minden"
+log_applicationlog: "Alkalmaz\xE1snapl\xF3"
+log_search_component: Component
+log_search_pid: PID
+log_refresh_seconds: Seconds
+log_search_from: From
+log_search_to: To
+log_type: Type
+log_source: Source
+log_message: Message
+log_reset_search: Reset
+log_search: Search
+log_search_message: Message
+keybinding_applicationLogger: Application logger
+...

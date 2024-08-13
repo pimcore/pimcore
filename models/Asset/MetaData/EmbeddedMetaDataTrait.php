@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,14 +22,11 @@ use Symfony\Component\Process\Process;
 trait EmbeddedMetaDataTrait
 {
     /**
-     * @param bool $force
-     * @param bool $useExifTool
      *
-     * @return array
      *
      * @throws \Exception
      */
-    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true)
+    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
     {
         if ($force) {
             $this->handleEmbeddedMetaData($useExifTool);
@@ -40,12 +38,9 @@ trait EmbeddedMetaDataTrait
     /**
      * @internal
      *
-     * @param bool $useExifTool
-     * @param string|null $filePath
-     *
      * @throws \Exception
      */
-    public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null)
+    public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
     {
         if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()) {
             $this->readEmbeddedMetaData($useExifTool, $filePath);
@@ -53,10 +48,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param bool $useExifTool
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -99,12 +91,7 @@ trait EmbeddedMetaDataTrait
         return $embeddedMetaData;
     }
 
-    /**
-     * @param array $tempArray
-     *
-     * @return array
-     */
-    private function flattenArray(array $tempArray)
+    private function flattenArray(array $tempArray): array
     {
         array_walk($tempArray, function (&$value) {
             if (is_array($value)) {
@@ -115,12 +102,7 @@ trait EmbeddedMetaDataTrait
         return $tempArray;
     }
 
-    /**
-     * @param string|null $filePath
-     *
-     * @return array
-     */
-    public function getEXIFData(?string $filePath = null)
+    public function getEXIFData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -143,13 +125,11 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     * @param string|null $filePath
      *
-     * @return array
      *
      * @throws \Exception
      */
-    public function getXMPData(?string $filePath = null)
+    public function getXMPData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -240,10 +220,7 @@ trait EmbeddedMetaDataTrait
         return $resultData;
     }
 
-    /**
-     * @return array
-     */
-    public function getIPTCData(?string $filePath = null)
+    public function getIPTCData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -325,7 +302,7 @@ trait EmbeddedMetaDataTrait
                     '2#153' => 'AudioDuration',
                     '2#154' => 'AudioOutcue',
                     '2#184' => 'JobID',
-                    '2#185' => 'MasterDocumentID',
+                    '2#185' => 'MainDocumentID',
                     '2#186' => 'ShortDocumentID',
                     '2#187' => 'UniqueDocumentID',
                     '2#188' => 'OwnerID',
@@ -377,7 +354,7 @@ trait EmbeddedMetaDataTrait
                     $iptcRaw = iptcparse($info['APP13']);
                     if (is_array($iptcRaw)) {
                         foreach ($iptcRaw as $key => $value) {
-                            if (is_array($value) && count($value) === 1) {
+                            if (count($value) === 1) {
                                 $value = $value[0];
                             }
 

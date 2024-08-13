@@ -1,0 +1,94 @@
+
+name: "PHPStan Static Analysis"
+
+on:
+    workflow_dispatch:
+    schedule:
+        -   cron: '0 3 * * *'
+    pull_request:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
+    push:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+            - "*_actions"
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
+
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    APP_ENV: test
+    PIMCORE_TEST: 1
+    PIMCORE_STORAGE: 'local'
+
+permissions:
+  contents: read
+
+jobs:
+    static-analysis-phpstan:
+        name: "Static Analysis with PHPStan"
+        runs-on: "ubuntu-20.04"
+        continue-on-error: ${{ matrix.experimental }}
+        strategy:
+            matrix:
+                include:
+                    - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.2", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.2", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.2", dependencies: "highest", experimental: true, symfony: "6.4.x-dev", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Setup Pimcore environment"
+              run: |
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: "Set Symfony version constraint in composer.json"
+              env:
+                  SYMFONY_VERSION: "${{ matrix.symfony }}"
+              run: |
+                  if [ ! -z "$SYMFONY_VERSION" ]; then
+                    .github/ci/scripts/symfony-require-dev.sh
+                  fi
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v2"
+              with:
+                  dependency-versions: "${{ matrix.dependencies }}"
+                  composer-options: "${{ matrix.composer-options }}"
+
+            - name: "Run a static analysis with phpstan/phpstan (highest)"
+              if: ${{ matrix.dependencies == 'highest' }}
+              run: "vendor/bin/phpstan analyse --memory-limit=-1"
+
+            - name: "Run a static analysis with phpstan/phpstan (lowest)"
+              if: ${{ matrix.dependencies == 'lowest' }}
+              run: "vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan-lowest.neon"
+
+            - name: "Generate baseline file"
+              if: ${{ failure() }}
+              run: "vendor/bin/phpstan analyse --memory-limit=-1 --generate-baseline"
+
+            - name: "Upload baseline file"
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v2
+              with:
+                  name: phpstan-baseline.neon
+                  path: phpstan-baseline.neon

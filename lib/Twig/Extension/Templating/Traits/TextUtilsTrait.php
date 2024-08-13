@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,14 +23,7 @@ use Pimcore\Tool\Text;
  */
 trait TextUtilsTrait
 {
-    /**
-     * @param string $string
-     * @param int|null $length
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function normalizeString($string, $length = null, $suffix = '')
+    public function normalizeString(string $string, int $length = null, string $suffix = ''): string
     {
         $string = strip_tags($string);
         $string = $this->getStringAsOneLine($string);
@@ -47,23 +41,12 @@ trait TextUtilsTrait
         return $string;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    public function getStringAsOneLine($string)
+    public function getStringAsOneLine(string $string): string
     {
         return Text::getStringAsOneLine($string);
     }
 
-    /**
-     * @param string $string
-     * @param int $length
-     *
-     * @return string
-     */
-    public function truncateString($string, $length)
+    public function truncateString(string $string, int $length): string
     {
         if ($length < mb_strlen($string)) {
             $text = mb_substr($string, 0, $length);

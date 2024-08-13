@@ -19,17 +19,13 @@ namespace Pimcore\Tests\Unit\Notification\Service;
 
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class NotificationServiceTest extends TestCase
 {
-    /** @var NotificationService $notificationService */
-    protected $notificationService;
+    protected NotificationService $notificationService;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,10 +33,7 @@ class NotificationServiceTest extends TestCase
         $this->notificationService = \Pimcore::getContainer()->get(NotificationService::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function _after()
+    public function _after(): void
     {
         $user = User::getByName('notification-user');
         $group = User\Role::getByName('notification-group');
@@ -55,7 +48,7 @@ class NotificationServiceTest extends TestCase
         }
     }
 
-    public function testSendToNoExistUser()
+    public function testSendToNoExistUser(): void
     {
         $user = 100;
 
@@ -70,7 +63,7 @@ class NotificationServiceTest extends TestCase
         );
     }
 
-    public function testSendToNoExistGroup()
+    public function testSendToNoExistGroup(): void
     {
         $group = 100;
 
@@ -85,7 +78,7 @@ class NotificationServiceTest extends TestCase
         );
     }
 
-    public function testSendToUser()
+    public function testSendToUser(): void
     {
         $count = 2;
         $user = new User();
@@ -108,7 +101,7 @@ class NotificationServiceTest extends TestCase
         $this->equalTo($count, $notifications['total']);
     }
 
-    public function testSendToUserWithElement()
+    public function testSendToUserWithElement(): void
     {
         $count = 2;
         $user = new User();
@@ -134,7 +127,7 @@ class NotificationServiceTest extends TestCase
         $this->equalTo($count, $notifications['total']);
     }
 
-    public function testSendToGroup()
+    public function testSendToGroup(): void
     {
         $count = 3;
         $group = new User\Role();

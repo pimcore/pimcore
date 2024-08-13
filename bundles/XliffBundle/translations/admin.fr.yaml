@@ -1,0 +1,17 @@
+---
+xliff_export_documents: "Si vous voulez traduire par exemple l'ensemble de l'arborescence
+  /en vers une autre langue, veuillez d'abord cr\xE9er une copie de /en, par exemple
+  /de, puis l'exporter pour le traduire. Lors de l'importation XLIFF le contenu anglais
+  dans /de sera remplac\xE9 par la traduction allemande dans le fichier XLIFF."
+xliff_export_objects: "Seuls les champs \xE0 l'int\xE9rieur d'un conteneur Champs
+  Localis\xE9s sont reconnus. Lors de l'importation des traductions XLIFF la langue
+  source restera intacte, seuls les champs de la langue cible seront \xE9cras\xE9es."
+xliff_export_notice: "Vous pouvez s\xE9lectionner ici les documents et objets que
+  vous souhaitez exporter pour traduction."
+xliff_import_notice: "S\xE9lectionnez un fichier XLIFF traduit qui a \xE9t\xE9 pr\xE9c\xE9demment
+  export\xE9 par Pimcore puis traduit par un fournisseur de services de traduction
+  (LSP) ou par une application de type CAT. Soyez conscient que l'importation va \xE9craser
+  les \xE9l\xE9ments qui ont \xE9t\xE9 s\xE9lectionn\xE9s par l'importation (idem
+  pour l'exportation)."
+xliff_import_export: Xliff Import/Export
+...

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,70 +16,34 @@
 
 namespace Pimcore\Console\Traits;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
+use Webmozarts\Console\Parallelization\ErrorHandler\ErrorHandler;
+use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
 
 trait Parallelization
 {
-    /** @var LockInterface|null */
-    private $lock;
+    private ?LockInterface $lock = null;
 
-    use WebmozartParallelization
-    {
-        WebmozartParallelization::configureParallelization as parentConfigureParallelization;
+    use ParallelizationBase;
+
+    protected function getParallelExecutableFactory(
+        callable $fetchItems,
+        callable $runSingleCommand,
+        callable $getItemName,
+        string $commandName,
+        InputDefinition $commandDefinition,
+        ErrorHandler $errorHandler
+    ): ParallelExecutorFactory {
+        return ParallelExecutorFactory::create(...func_get_args())
+            ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
+            ->withRunAfterLastCommand($this->runAfterLastCommand(...))
+            ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
-    protected static function configureParallelization(Command $command): void
-    {
-        // we need to override WebmozartParallelization::configureParallelization here
-        // because some existing commands are already using the `p` option, and would therefore
-        // causes collisions
-        $command
-            ->addArgument(
-                'item',
-                InputArgument::OPTIONAL,
-                'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
-            )
-            ->addOption(
-                'processes',
-                null,
-                //'p', avoid collisions with already existing Pimcore command options
-                InputOption::VALUE_OPTIONAL,
-                'The number of parallel processes to run',
-                '1'
-            )
-            ->addOption(
-                'child',
-                null,
-                InputOption::VALUE_NONE,
-                'Set on child processes. For internal use only.'
-            )->addOption(
-                'batch-size',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Sets the number of items to process per child process or in a batch',
-                '50'
-            )
-        ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSegmentSize(): int
-    {
-        return (int)$this->input->getOption('batch-size');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->lock()) {
@@ -87,12 +52,9 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-        if ((int)$this->input->getOption('processes') <= 1) {
+        if ($this->input->hasOption('processes') && (int)$this->input->getOption('processes') <= 1) {
             if ($output->isVeryVerbose()) {
                 $output->writeln('Collect garbage.');
             }
@@ -100,43 +62,24 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->release(); //release the lock
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count <= 1 ? 'item' : 'items';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
-    {
-        return \Pimcore::getKernel()->getContainer();
+        return $count === 1 ? 'item' : 'items';
     }
 
     /**
      * Locks a command.
-     *
-     * @param string|null $name
-     * @param bool|null $blocking
-     *
-     * @return bool
      */
-    private function lock($name = null, $blocking = false)
+    private function lock(): bool
     {
-        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName(), 86400);
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getName(), 86400);
 
-        if (!$this->lock->acquire($blocking)) {
+        if (!$this->lock->acquire()) {
             $this->lock = null;
 
             return false;
@@ -148,19 +91,11 @@ trait Parallelization
     /**
      * Releases the command lock if there is one.
      */
-    private function release()
+    private function release(): void
     {
         if ($this->lock) {
             $this->lock->release();
             $this->lock = null;
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

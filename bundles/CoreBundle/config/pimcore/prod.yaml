@@ -1,0 +1,13 @@
+monolog:
+    handlers:
+        main:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: error
+        error:
+            type: stream
+            path: "%kernel.logs_dir%/php.log"
+            level: error
+        console:
+            type: console
+            process_psr_3_messages: false

@@ -14,11 +14,9 @@
  */
 
 /**
- * @param string $file
- *
- * @return array
+ * @return array<string, mixed>
  */
-function xmlToArray($file)
+function xmlToArray(string $file): array
 {
     $xml = simplexml_load_file($file, null, LIBXML_NOCDATA);
     $json = json_encode((array) $xml);
@@ -27,14 +25,7 @@ function xmlToArray($file)
     return $array;
 }
 
-/**
- * @param string $source
- * @param int|null $level
- * @param string|null $target
- *
- * @return bool|string
- */
-function gzcompressfile($source, $level = null, $target = null)
+function gzcompressfile(string $source, int $level = null, string $target = null): false|string
 {
     // this is a very memory efficient way of gzipping files
     if ($target) {
@@ -65,12 +56,7 @@ function gzcompressfile($source, $level = null, $target = null)
     }
 }
 
-/**
- * @param mixed $string
- *
- * @return bool
- */
-function is_json($string)
+function is_json(mixed $string): bool
 {
     if (is_string($string)) {
         json_decode($string);
@@ -81,12 +67,7 @@ function is_json($string)
     return false;
 }
 
-/**
- * @param string $path
- *
- * @return int
- */
-function foldersize($path)
+function foldersize(string $path): int
 {
     $total_size = 0;
     $files = scandir($path);
@@ -109,12 +90,10 @@ function foldersize($path)
 }
 
 /**
- * @param string $string
  * @param string[] $values
  *
- * @return string
  */
-function replace_pcre_backreferences($string, $values)
+function replace_pcre_backreferences(string $string, array $values): string
 {
     array_unshift($values, '');
     $string = str_replace('\$', '###PCRE_PLACEHOLDER###', $string);
@@ -129,11 +108,11 @@ function replace_pcre_backreferences($string, $values)
 }
 
 /**
- * @param array $array
+ * @param mixed[] $array
  *
- * @return array
+ * @return mixed[]
  */
-function array_htmlspecialchars($array)
+function array_htmlspecialchars(array $array): array
 {
     foreach ($array as $key => $value) {
         if (is_string($value) || is_numeric($value)) {
@@ -148,34 +127,24 @@ function array_htmlspecialchars($array)
     return $array;
 }
 
-/**
- * @param string $needle
- * @param array $haystack
- *
- * @return bool
- */
-function in_arrayi(string $needle, array $haystack)
+function in_arrayi(string $needle, array $haystack): bool
 {
     return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 /**
- * @param string $needle
- * @param array $haystack
  *
  * @return false|int|string the key for needle if it is found in the array, false otherwise.
  */
-function array_searchi(string $needle, array $haystack)
+function array_searchi(string $needle, array $haystack): false|int|string
 {
     return array_search(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 /**
- * @param object $node
- *
- * @return array
+ * @return array<string, mixed>
  */
-function object2array($node)
+function object2array(object $node): array
 {
     // dirty hack, should be replaced
     $paj = json_encode($node);
@@ -187,42 +156,24 @@ function object2array($node)
     return @json_decode($paj, true);
 }
 
-/**
- * @param array $args
- *
- * @return false|string
- */
-function array_urlencode($args)
+function array_urlencode(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return http_build_query($args);
 }
 
 /**
- * same as  array_urlencode but no urlencode()
- *
- * @param array $args
- *
- * @return false|string
+ * same as array_urlencode but no urlencode()
  */
-function array_toquerystring($args)
+function array_toquerystring(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return urldecode(http_build_query($args));
 }
 
 /**
  * @param array $array with attribute names as keys, and values as values
  *
- * @return string
  */
-function array_to_html_attribute_string($array)
+function array_to_html_attribute_string(array $array): string
 {
     $data = [];
 
@@ -237,12 +188,7 @@ function array_to_html_attribute_string($array)
     return implode(' ', $data);
 }
 
-/**
- * @param string $var
- *
- * @return string
- */
-function urlencode_ignore_slash($var)
+function urlencode_ignore_slash(string $var): string
 {
     $scheme = parse_url($var, PHP_URL_SCHEME);
 
@@ -265,12 +211,7 @@ function urlencode_ignore_slash($var)
     return $var;
 }
 
-/**
- * @param string $val
- *
- * @return int
- */
-function return_bytes($val)
+function return_bytes(string $val): int
 {
     $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);
@@ -289,13 +230,7 @@ function return_bytes($val)
     return $bytes;
 }
 
-/**
- * @param int $bytes
- * @param int $precision
- *
- * @return string
- */
-function formatBytes($bytes, $precision = 2)
+function formatBytes(int $bytes, int $precision = 2): string
 {
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
@@ -308,12 +243,7 @@ function formatBytes($bytes, $precision = 2)
     return round($bytes, $precision) . ' ' . $units[$pow];
 }
 
-/**
- * @param string $str
- *
- * @return int
- */
-function filesize2bytes($str)
+function filesize2bytes(string $str): int
 {
     $bytes_array = [
         'K' => 1024,
@@ -335,12 +265,11 @@ function filesize2bytes($str)
 }
 
 /**
- * @param string $base
  * @param string[] $data
  *
  * @return string[]
  */
-function rscandir($base = '', &$data = [])
+function rscandir(string $base = '', array &$data = []): array
 {
     if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
         $base .= DIRECTORY_SEPARATOR;
@@ -362,16 +291,12 @@ function rscandir($base = '', &$data = [])
 /**
  * Wrapper for explode() to get a trimmed array
  *
- * @param string $delimiter
- * @param string $string
- * @param int $limit
- * @param bool $useArrayFilter
  *
- * @return array
+ * @return string[]
  *
  * @phpstan-param non-empty-string $delimiter
  */
-function explode_and_trim($delimiter, $string, $limit = PHP_INT_MAX, $useArrayFilter = true)
+function explode_and_trim(string $delimiter, string $string, int $limit = PHP_INT_MAX, bool $useArrayFilter = true): array
 {
     $exploded = explode($delimiter, $string, $limit);
     foreach ($exploded as $key => $value) {
@@ -384,13 +309,7 @@ function explode_and_trim($delimiter, $string, $limit = PHP_INT_MAX, $useArrayFi
     return $exploded;
 }
 
-/**
- * @param string $directory
- * @param bool $empty
- *
- * @return bool
- */
-function recursiveDelete($directory, $empty = true)
+function recursiveDelete(string $directory, bool $empty = true): bool
 {
     if (is_dir($directory)) {
         $directory = rtrim($directory, '/');
@@ -433,41 +352,7 @@ function recursiveDelete($directory, $empty = true)
     return false;
 }
 
-/**
- * @param string $source
- * @param string $destination
- *
- * @return bool
- */
-function recursiveCopy($source, $destination)
-{
-    if (is_dir($source)) {
-        if (!is_dir($destination)) {
-            \Pimcore\File::mkdir($destination);
-        }
-
-        foreach (
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST
-            ) as $item) {
-            if ($item->isDir()) {
-                \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            } else {
-                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            }
-        }
-    } elseif (is_file($source)) {
-        if (is_dir(dirname($destination))) {
-            \Pimcore\File::mkdir(dirname($destination));
-        }
-        copy($source, $destination);
-    }
-
-    return true;
-}
-
-function p_r()
+function p_r(): void
 {
     $cloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();
     $dumper = 'cli' === PHP_SAPI ? new \Symfony\Component\VarDumper\Dumper\CliDumper() : new \Symfony\Component\VarDumper\Dumper\HtmlDumper();
@@ -478,13 +363,11 @@ function p_r()
 }
 
 /**
- * @param array $array
- * @param string $prefix
- * @param string $suffix
+ * @param string[] $array
  *
- * @return array
+ * @return string[]
  */
-function wrapArrayElements($array, $prefix = "'", $suffix = "'")
+function wrapArrayElements(array $array, string $prefix = "'", string $suffix = "'"): array
 {
     foreach ($array as $key => $value) {
         $array[$key] = $prefix . trim($value). $suffix;
@@ -496,11 +379,9 @@ function wrapArrayElements($array, $prefix = "'", $suffix = "'")
 /**
  * Checks if an array is associative
  *
- * @param array $arr
  *
- * @return bool
  */
-function isAssocArray(array $arr)
+function isAssocArray(array $arr): bool
 {
     return array_keys($arr) !== range(0, count($arr) - 1);
 }
@@ -508,11 +389,9 @@ function isAssocArray(array $arr)
 /**
  * this is an alternative for realpath() which isn't able to handle symlinks correctly
  *
- * @param string $filename
  *
- * @return string
  */
-function resolvePath($filename)
+function resolvePath(string $filename): string
 {
     $protocol = '';
     if (!stream_is_local($filename)) {
@@ -540,12 +419,7 @@ function resolvePath($filename)
     return $finalPath;
 }
 
-/**
- * @param Closure $closure
- *
- * @return string
- */
-function closureHash(Closure $closure)
+function closureHash(Closure $closure): string
 {
     $ref = new ReflectionFunction($closure);
     $file = new SplFileObject($ref->getFileName());
@@ -567,11 +441,9 @@ function closureHash(Closure $closure)
 /**
  * Checks if the given directory is empty
  *
- * @param string $dir
  *
- * @return bool|null
  */
-function is_dir_empty($dir)
+function is_dir_empty(string $dir): ?bool
 {
     if (!is_readable($dir)) {
         return null;
@@ -586,13 +458,7 @@ function is_dir_empty($dir)
     return true;
 }
 
-/**
- * @param mixed $var
- * @param string $indent
- *
- * @return string
- */
-function var_export_pretty($var, $indent = '')
+function var_export_pretty(mixed $var, string $indent = ''): string
 {
     switch (gettype($var)) {
         case 'string':
@@ -614,12 +480,7 @@ function var_export_pretty($var, $indent = '')
     }
 }
 
-/**
- * @param mixed $contents
- *
- * @return string
- */
-function to_php_data_file_format($contents, $comments = null)
+function to_php_data_file_format(mixed $contents, ?string $comments = null): string
 {
     $contents = var_export_pretty($contents);
 
@@ -636,21 +497,12 @@ function to_php_data_file_format($contents, $comments = null)
     return $export;
 }
 
-/**
- * @return string
- */
-function generateRandomSymfonySecret()
+function generateRandomSymfonySecret(): string
 {
     return base64_encode(random_bytes(24));
 }
 
-/**
- * @param array $array
- * @param string $glue
- *
- * @return string
- */
-function implode_recursive($array, $glue)
+function implode_recursive(array $array, string $glue): string
 {
     $ret = '';
 

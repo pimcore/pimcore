@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,12 +20,8 @@ use Pimcore\Model;
 
 class Lastname extends Model\DataObject\ClassDefinition\Data\Input
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'lastname';
+    public function getFieldType(): string
+    {
+        return 'lastname';
+    }
 }

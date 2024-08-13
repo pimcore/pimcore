@@ -1,12 +1,10 @@
 
 * -text
 
-bundles/AdminBundle/Resources/public/js/lib/* linguist-vendored
 
 # Exclude build/test files from archive to reduce ZIP size for composer dist download
 /.github export-ignore
 /doc export-ignore
-/tests export-ignore
 /.editorconfig export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
@@ -14,5 +12,4 @@ bundles/AdminBundle/Resources/public/js/lib/* linguist-vendored
 /.php-cs-fixer.dist.php export-ignore
 /CLA.md export-ignore
 /CONTRIBUTING.md export-ignore
-/codeception.dist.yml export-ignore
 /phpstan* export-ignore

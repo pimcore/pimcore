@@ -1,0 +1,34 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+
+    Pimcore\Bundle\StaticRoutesBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreStaticRoutesBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\StaticRoutesBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+    # dedicated router for static routes
+    Pimcore\Bundle\StaticRoutesBundle\Routing\Staticroute\Router:
+        arguments:
+            $context: '@router.request_context'
+        calls:
+            - [ setLocaleParams, [ '%pimcore.routing.static.locale_params%' ] ]
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: router, priority: 100 }
+            - { name: monolog.logger, channel: routing }

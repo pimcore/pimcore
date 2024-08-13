@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -30,9 +28,6 @@ class Dao extends AbstractDao
 {
     const DB_TABLE_NAME = 'notifications';
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         $sql = sprintf('SELECT COUNT(*) AS num FROM `%s`%s', static::DB_TABLE_NAME, $this->getCondition());
@@ -46,13 +41,12 @@ class Dao extends AbstractDao
         return $count;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return $this->count();
     }
 
     /**
-     * @return array
      *
      * @throws Exception
      */
@@ -82,9 +76,6 @@ class Dao extends AbstractDao
         return $notifications;
     }
 
-    /**
-     * @return Notification\Listing
-     */
     protected function getModel(): Notification\Listing
     {
         return $this->model;

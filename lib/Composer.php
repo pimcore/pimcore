@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,19 +27,17 @@ use Symfony\Component\Process\Process;
  */
 class Composer
 {
-    protected static $options = [
+    /**
+     * @var array<string, mixed>
+     */
+    protected static array $options = [
         'bin-dir' => 'bin',
         'public-dir' => 'public',
-        'symfony-assets-install' => 'relative',
+        'symfony-assets-install' => 'copy',
         'symfony-cache-warmup' => false,
     ];
 
-    /**
-     * @param Event $event
-     *
-     * @return string
-     */
-    protected static function getRootPath($event)
+    protected static function getRootPath(Event $event): string
     {
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
@@ -46,72 +45,25 @@ class Composer
         return $rootPath;
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postCreateProject(Event $event)
+    public static function postCreateProject(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postInstall(Event $event)
+    public static function postInstall(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postUpdate(Event $event)
+    public static function postUpdate(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function executeMigrationsUp(Event $event)
-    {
-        $consoleDir = static::getConsoleDir($event, 'pimcore migrations');
-
-        if (null === $consoleDir) {
-            return;
-        }
-
-        // execute migrations
-        $isInstalled = null;
-
-        try {
-            $process = static::executeCommand($event, $consoleDir,
-                ['internal:migration-helpers', '--is-installed'], 30, false);
-
-            if ($process->getExitCode() === 0 && trim($process->getOutput()) === '1') {
-                $isInstalled = true;
-            }
-        } catch (\Throwable $e) {
-            // noting to do
-        }
-
-        if ($isInstalled) {
-            self::clearDataCache($event, $consoleDir);
-            static::executeCommand($event, $consoleDir, ['doctrine:migrations:migrate', '-n', '--prefix', 'Pimcore\\Bundle\\CoreBundle']);
-            self::clearDataCache($event, $consoleDir);
-        } else {
-            $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
-        }
-    }
-
-    /**
-     * @param Event $event
-     * @param string $consoleDir
-     */
-    public static function clearDataCache($event, $consoleDir)
+    public static function clearDataCache(Event $event, string $consoleDir): void
     {
         try {
             static::executeCommand($event, $consoleDir, ['pimcore:cache:clear'], 60);
@@ -121,11 +73,10 @@ class Composer
     }
 
     /**
-     * @param string $rootPath
      *
      * @internal
      */
-    public static function parametersYmlCheck($rootPath)
+    public static function parametersYmlCheck(string $rootPath): void
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
         $parameters = '';
@@ -144,7 +95,7 @@ class Composer
         }
     }
 
-    public static function prePackageUpdate(PackageEvent $event)
+    public static function prePackageUpdate(PackageEvent $event): void
     {
         /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
@@ -161,7 +112,7 @@ class Composer
      *
      * @internal
      */
-    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
+    protected static function executeCommand(Event $event, string $consoleDir, array $cmd, int $timeout = 900, bool $writeBuffer = true): Process
     {
         $command = [static::getPhp(false)];
         $command = array_merge($command, static::getPhpArguments());
@@ -191,7 +142,7 @@ class Composer
     /**
      * @internal
      */
-    protected static function getPhp($includeArgs = true)
+    protected static function getPhp(bool $includeArgs = true): string
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
@@ -202,21 +153,16 @@ class Composer
     }
 
     /**
-     * @return array
+     * @return string[]
      *
      * @internal
      */
-    protected static function getPhpArguments()
+    protected static function getPhpArguments(): array
     {
-        $ini = null;
-        $arguments = [];
-
         $phpFinder = new PhpExecutableFinder();
-        if (method_exists($phpFinder, 'findArguments')) {
-            $arguments = $phpFinder->findArguments();
-        }
+        $arguments = $phpFinder->findArguments();
 
-        if (!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
+        if(!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
             $paths = explode(PATH_SEPARATOR, $_SERVER['COMPOSER_ORIGINAL_INIS']);
             $ini = array_shift($paths);
         } else {
@@ -230,35 +176,37 @@ class Composer
         return $arguments;
     }
 
-    protected static function getOptions(Event $event)
+    /**
+     * @return array<string, mixed>
+     */
+    protected static function getOptions(Event $event): array
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
-        if (!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
+        if(!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
             $options['symfony-assets-install'] = $_SERVER['SYMFONY_ASSETS_INSTALL'];
         }
 
-        if (!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
+        if(!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
             $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'];
         }
 
-        $options['process-timeout'] = $event->getComposer()->getConfig()->get('process-timeout');
         $options['vendor-dir'] = $event->getComposer()->getConfig()->get('vendor-dir');
 
         return $options;
     }
 
-    protected static function getConsoleDir(Event $event, $actionName)
+    protected static function getConsoleDir(Event $event, string $actionName): ?string
     {
         $options = static::getOptions($event);
         if (!static::hasDirectory($event, 'bin-dir', $options['bin-dir'], $actionName)) {
-            return;
+            return null;
         }
 
         return $options['bin-dir'];
     }
 
-    protected static function hasDirectory(Event $event, $configName, $path, $actionName)
+    protected static function hasDirectory(Event $event, string $configName, string $path, string $actionName): bool
     {
         if (!is_dir($path)) {
             $event->getIO()->write(sprintf('The %s (%s) specified in composer.json was not found in %s, can not %s.', $configName, $path, getcwd(), $actionName));
@@ -269,7 +217,7 @@ class Composer
         return true;
     }
 
-    private static function removeDecoration($string)
+    private static function removeDecoration(string $string): string
     {
         return preg_replace("/\033\[[^m]*m/", '', $string);
     }
@@ -287,9 +235,8 @@ class Composer
      * strict user permission checks (which can be done on Windows 7 but not on Windows
      * Vista).
      *
-     * @param Event $event
      */
-    public static function installAssets(Event $event)
+    public static function installAssets(Event $event): void
     {
         $options = static::getOptions($event);
         $consoleDir = static::getConsoleDir($event, 'install assets');
@@ -315,7 +262,7 @@ class Composer
 
         $command[] = $webDir;
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 
     /**
@@ -323,9 +270,8 @@ class Composer
      *
      * Clears the Symfony cache.
      *
-     * @param Event $event
      */
-    public static function clearCache(Event $event)
+    public static function clearCache(Event $event): void
     {
         $options = static::getOptions($event);
         $consoleDir = static::getConsoleDir($event, 'clear the cache');
@@ -340,6 +286,6 @@ class Composer
             $command[] = '--ignore-maintenance-mode';
         }
 
-        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command);
     }
 }

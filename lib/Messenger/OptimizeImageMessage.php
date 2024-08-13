@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,9 +25,6 @@ class OptimizeImageMessage
     {
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;

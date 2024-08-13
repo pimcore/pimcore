@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,21 +16,47 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Version;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function tearDown(): void
+    protected array $originalConfig;
+
+    protected SystemSettingsConfig $config;
+
+    public function setUp(): void
     {
-        Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
+        parent::setUp();
+
+        if (Version::getMajorVersion() >= 11) {
+            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+            $this->config = $pimcoreModule->grabService(SystemSettingsConfig::class);
+            $this->originalConfig = $this->config->get();
+        } else {
+            $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
+        }
+
     }
 
-    public function testStrictMode()
+    public function tearDown(): void
+    {
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($this->originalConfig);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        }
+
+        Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
+    }
+
+    public function testStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -40,7 +67,7 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    public function testExceptionInStrictMode()
+    public function testExceptionInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -51,7 +78,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test');
     }
 
-    public function testExceptionWithLocaleInStrictMode()
+    public function testExceptionWithLocaleInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -63,7 +90,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test', 'ko');
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -94,11 +121,16 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('textDE', $loadedItem->getLinput('de'), 'New localized value inside fieldcollection not saved or loaded properly');
     }
 
-    public function testLocalizedFieldFallback()
+    public function testLocalizedFieldFallback(): void
     {
-        $configuration = Config::getSystemConfiguration();
+        $configuration = $this->originalConfig;
         $configuration['general']['fallback_languages']['de'] = 'en';
-        Config::setSystemConfiguration($configuration);
+
+        if (Version::getMajorVersion() >= 11) {
+            $this->config->testSave($configuration);
+        } else {
+            \Pimcore\Config::setSystemConfiguration($configuration);
+        }
 
         $object = TestHelper::createEmptyObject();
 

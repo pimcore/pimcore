@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,55 +23,38 @@ class CalculatedValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string */
-    protected $fieldname;
+    protected string $fieldname;
 
-    /** @var string */
-    protected $ownerType = 'object';
+    protected string $ownerType = 'object';
 
-    /** @var string|null */
-    protected $ownerName;
+    protected ?string $ownerName = null;
 
-    /** @var int|string|null */
-    protected $index;
+    protected string|int|null $index;
 
-    /** @var string|null */
-    protected $position;
+    protected ?string $position = null;
 
-    /** @var int|null */
-    protected $groupId;
+    protected ?int $groupId = null;
 
-    /** @var int|null */
-    protected $keyId;
+    protected ?int $keyId = null;
 
-    /**
-     * @var mixed
-     */
-    protected $keyDefinition;
+    protected mixed $keyDefinition = null;
 
     /**
      * CalculatedValue constructor.
      *
-     * @param string $fieldname
      */
-    public function __construct($fieldname)
+    public function __construct(string $fieldname)
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
     }
 
     /**
+     *
      * @internal
      *
-     * @param string $ownerType
-     * @param string|null $ownerName
-     * @param int|string|null $index
-     * @param string|null $position
-     * @param int|null $groupId
-     * @param int|null $keyId
-     * @param mixed $keyDefinition
      */
-    public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null)
+    public function setContextualData(string $ownerType, ?string $ownerName, int|string|null $index, ?string $position, int $groupId = null, int $keyId = null, mixed $keyDefinition = null): void
     {
         $this->ownerType = $ownerType;
         $this->ownerName = $ownerName;
@@ -82,66 +66,42 @@ class CalculatedValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function getIndex()
+    public function getIndex(): int|string|null
     {
         return $this->index;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getOwnerName()
+    public function getOwnerName(): ?string
     {
         return $this->ownerName;
     }
 
-    /**
-     * @return string
-     */
-    public function getOwnerType()
+    public function getOwnerType(): string
     {
         return $this->ownerType;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getPosition()
+    public function getPosition(): ?string
     {
         return $this->position;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getGroupId()
+    public function getGroupId(): ?int
     {
         return $this->groupId;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getKeyDefinition()
+    public function getKeyDefinition(): mixed
     {
         return $this->keyDefinition;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getKeyId()
+    public function getKeyId(): ?int
     {
         return $this->keyId;
     }

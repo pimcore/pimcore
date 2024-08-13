@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,5 @@ use Pimcore\Model;
  */
 class Text extends Model\Asset
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'text';
+    protected string $type = 'text';
 }

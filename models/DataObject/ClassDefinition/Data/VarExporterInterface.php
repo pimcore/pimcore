@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface VarExporterInterface
 {
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array;
 
     /**
      * Resolves blocked vars to cleanup on export
      *
-     * @return array
      */
     public function resolveBlockedVars(): array;
+
+    /**
+     * @return $this
+     */
+    public function setBlockedVarsForExport(array $vars): static;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,30 +28,20 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
 {
     use ContainerAwareTrait;
 
-    /**
-     * @var EditableRenderer
-     */
-    protected $editableRenderer;
+    protected EditableRenderer $editableRenderer;
 
     /**
      * Called in AreabrickPass
      *
-     * @param EditableRenderer $editableRenderer
      */
-    public function setEditableRenderer(EditableRenderer $editableRenderer)
+    public function setEditableRenderer(EditableRenderer $editableRenderer): void
     {
         $this->editableRenderer = $editableRenderer;
     }
 
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
+    public function setId(string $id): void
     {
         // make sure ID is only set once
         if (null !== $this->id) {
@@ -64,107 +55,64 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->id ? ucfirst($this->id) : '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasTemplate()
+    public function hasTemplate(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function action(Info $info)
+    public function action(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function postRenderAction(Info $info)
+    public function postRenderAction(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHtmlTagOpen(Info $info)
+    public function getHtmlTagOpen(Info $info): string
     {
         return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content '. $this->getOpenTagCssClass($info) .'">';
     }
 
-    /**
-     * @param Info $info
-     *
-     * @return string|null
-     */
-    protected function getOpenTagCssClass(Info $info)
+    protected function getOpenTagCssClass(Info $info): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHtmlTagClose(Info $info)
+    public function getHtmlTagClose(Info $info): string
     {
         return '</div>';
     }
 
-    /**
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     *
-     * @return Editable\EditableInterface
-     */
-    protected function getDocumentEditable(PageSnippet $document, $type, $inputName, array $options = [])
+    protected function getDocumentEditable(PageSnippet $document, string $type, string $inputName, array $options = []): Editable\EditableInterface
     {
         return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
     }

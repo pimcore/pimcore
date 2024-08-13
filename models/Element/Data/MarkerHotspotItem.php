@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,25 +23,13 @@ use Pimcore\Model;
  */
 class MarkerHotspotItem implements \ArrayAccess
 {
-    /**
-     * @var string
-     */
-    public $name = '';
+    public string $name = '';
 
-    /**
-     * @var string
-     */
-    public $type = '';
+    public string $type = '';
 
-    /**
-     * @var mixed
-     */
-    public $value;
+    public mixed $value = null;
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $setter = 'set' . $key;
@@ -50,50 +39,32 @@ class MarkerHotspotItem implements \ArrayAccess
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
+    public function setValue(mixed $value): void
     {
         $this->value = $value;
     }
@@ -101,7 +72,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -111,7 +81,6 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -128,9 +97,8 @@ class MarkerHotspotItem implements \ArrayAccess
 
     /**
      * @param string $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, mixed $value): void
     {
         if ($this->offsetExists($offset)) {
             if ($value instanceof Model\Element\ElementInterface) {

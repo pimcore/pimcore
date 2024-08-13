@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,10 +16,11 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Db\ConnectionInterface;
-use Pimcore\File;
+use Doctrine\DBAL\Connection;
+use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
@@ -29,8 +31,9 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkFilesystem()
+    public static function checkFilesystem(): array
     {
+        $filesystem = new Filesystem();
         $checks = [];
 
         // filesystem checks
@@ -39,7 +42,7 @@ final class Requirements
 
             try {
                 if (!is_dir($varDir)) {
-                    File::mkdir($varDir);
+                    $filesystem->mkdir($varDir, 0775);
                 }
 
                 $files = self::rscandir($varDir);
@@ -67,11 +70,10 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
      *
      * @return Check[]
      */
-    public static function checkMysql(ConnectionInterface|\Doctrine\DBAL\Connection $db)
+    public static function checkMysql(Connection $db): array
     {
         $checks = [];
 
@@ -348,7 +350,7 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkExternalApplications()
+    public static function checkExternalApplications(): array
     {
         $checks = [];
 
@@ -382,16 +384,16 @@ final class Requirements
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        // Chromium BIN
+        // Chromium or Gotenberg
         try {
-            $chromiumBin = (bool) \Pimcore\Image\Chromium::getChromiumBinary();
+            $htmlToImage = \Pimcore\Image\HtmlToImage::isSupported();
         } catch (\Exception $e) {
-            $chromiumBin = false;
+            $htmlToImage = false;
         }
 
         $checks[] = new Check([
-            'name' => 'Chromium',
-            'state' => $chromiumBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'name' => 'Gotenberg/Chromium',
+            'state' => $htmlToImage ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         // ghostscript BIN
@@ -407,15 +409,18 @@ final class Requirements
         ]);
 
         // LibreOffice BIN
-        try {
-            $libreofficeBin = (bool) \Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
-        } catch (\Exception $e) {
-            $libreofficeBin = false;
+        $libreofficeGotenberg = GotenbergHelper::isAvailable();
+        if(!$libreofficeGotenberg) {
+            try {
+                $libreofficeGotenberg = (bool)\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
+            } catch (\Exception $e) {
+                $libreofficeGotenberg = false;
+            }
         }
 
         $checks[] = new Check([
-            'name' => 'LibreOffice',
-            'state' => $libreofficeBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'name' => 'Gotenberg / LibreOffice',
+            'state' => $libreofficeGotenberg ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         // image optimizer
@@ -457,17 +462,6 @@ final class Requirements
         ]);
 
         try {
-            $facedetectAvailable = \Pimcore\Tool\Console::getExecutable('facedetect');
-        } catch (\Exception $e) {
-            $facedetectAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'facedetect',
-            'state' => $facedetectAvailable ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
             $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
         } catch (\Exception $e) {
             $graphvizAvailable = false;
@@ -484,7 +478,7 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkPhp()
+    public static function checkPhp(): array
     {
         $checks = [];
 
@@ -518,14 +512,6 @@ final class Requirements
             'name' => 'PDO MySQL',
             'link' => 'http://www.php.net/pdo_mysql',
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
-        ]);
-
-        // Mysqli
-        $checks[] = new Check([
-            'name' => 'Mysqli',
-            'link' => 'http://www.php.net/mysqli',
-            'state' => class_exists('mysqli') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "Mysqli can be used instead of PDO MySQL, though it isn't a requirement.",
         ]);
 
         // iconv
@@ -608,6 +594,17 @@ final class Requirements
                 'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all).",
             ]);
         }
+
+        $checks[] = new Check([
+            'name' => 'locales-utf8',
+            'link' => 'https://packages.debian.org/en/stable/locales-all',
+            'state' => setlocale(LC_ALL, [
+                           'en.utf8', 'en.UTF-8', 'en_US.utf8', 'en_US.UTF-8', 'en_GB.utf8', 'en_GB.UTF-8',
+                       ]) === false
+                       ? Check::STATE_ERROR
+                       : Check::STATE_OK,
+            'message' => 'It is recommended to install UTF-8 locale, otherwise all CLI calls which use escapeshellarg() will strip multibyte characters',
+        ]);
 
         // Imagick
         $checks[] = new Check([
@@ -696,14 +693,11 @@ final class Requirements
     }
 
     /**
-     * @param string $base
-     * @param array $data
      *
-     * @return array
      *
      * @throws \Exception
      */
-    protected static function rscandir($base = '', &$data = [])
+    protected static function rscandir(string $base = '', array &$data = []): array
     {
         if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
             $base .= DIRECTORY_SEPARATOR;
@@ -726,12 +720,7 @@ final class Requirements
         return $data;
     }
 
-    /**
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
-     *
-     * @return array
-     */
-    public static function checkAll(ConnectionInterface|\Doctrine\DBAL\Connection $db): array
+    public static function checkAll(Connection $db): array
     {
         return [
             'checksPHP' => static::checkPhp(),

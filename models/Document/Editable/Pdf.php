@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,46 +28,33 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * @internal
      *
-     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'pdf';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): array
     {
         return [
             'id' => $this->id,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         $pages = 0;
 
-        if ($asset = Asset\Document::getById($this->id)) {
+        if ($this->id && $asset = Asset\Document::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 
@@ -76,12 +64,9 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
         if ($asset instanceof Asset) {
             if (!array_key_exists($asset->getCacheTag(), $tags)) {
                 $tags = $asset->getCacheTags($tags);
@@ -91,14 +76,11 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $tags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
 
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
         if ($asset instanceof Asset) {
             $key = 'asset_' . $asset->getId();
             $dependencies[$key] = [
@@ -110,10 +92,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if (!empty($this->id)) {
@@ -128,10 +107,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $sane;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -142,12 +118,9 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
-        $pdf = Asset::getById($data['id']);
+        $pdf = $data['id'] ? Asset::getById($data['id']) : null;
         if ($pdf instanceof Asset\Document) {
             $this->id = $pdf->getId();
         }
@@ -155,12 +128,9 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
 
         $config = $this->getConfig();
         $thumbnailConfig = ['width' => 1000];
@@ -185,12 +155,7 @@ HTML;
         }
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         // only display error message in debug mode
         if (!\Pimcore::inDebugMode()) {
@@ -207,10 +172,7 @@ HTML;
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->id) {
             return false;
@@ -219,28 +181,19 @@ HTML;
         return true;
     }
 
-    /**
-     * @return Asset|null
-     */
-    public function getElement()
+    public function getElement(): ?Asset
     {
         $data = $this->getData();
 
         return Asset::getById($data['id']);
     }
 
-    /**
-     * @param int|null $id
-     */
-    public function setId($id)
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

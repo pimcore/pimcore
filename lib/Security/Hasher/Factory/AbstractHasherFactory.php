@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,27 +27,19 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
     /**
      * Hasher class name to build
      *
-     * @var string
      */
-    protected $className;
+    protected string $className;
 
     /**
      * Arguments passed to hasher constructor
      *
      * @var array
      */
-    protected $arguments = [];
+    protected mixed $arguments = [];
 
-    /**
-     * @var \ReflectionClass
-     */
-    protected $reflector;
+    protected ?\ReflectionClass $reflector = null;
 
-    /**
-     * @param string $className
-     * @param mixed $arguments
-     */
-    public function __construct($className, $arguments = null)
+    public function __construct(string $className, mixed $arguments = null)
     {
         $this->className = $className;
 
@@ -61,12 +54,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @param \ReflectionClass $reflectionClass
-     *
-     * @return PasswordHasherInterface
-     */
-    protected function buildPasswordHasher(\ReflectionClass $reflectionClass)
+    protected function buildPasswordHasher(\ReflectionClass $reflectionClass): PasswordHasherInterface
     {
         /** @var PasswordHasherInterface $hasher */
         $hasher = $reflectionClass->newInstanceArgs($this->arguments);
@@ -74,10 +62,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
         return $hasher;
     }
 
-    /**
-     * @return \ReflectionClass
-     */
-    protected function getReflector()
+    protected function getReflector(): \ReflectionClass
     {
         if (null === $this->reflector) {
             $this->reflector = new \ReflectionClass($this->className);

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
-use Pimcore\Controller\Configuration\ResponseHeader;
+use Pimcore\Controller\Attribute\ResponseHeader;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,7 +31,6 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      * Get response headers which were added to the request either by annotation
      * or manually.
      *
-     * @param Request|null $request
      *
      * @return ResponseHeader[]
      */
@@ -48,22 +47,14 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
-     * @param Request $request
-     * @param string $key
-     * @param array|string $values
-     * @param bool $replace
      */
-    public function addResponseHeader(Request $request, string $key, $values, bool $replace = false)
+    public function addResponseHeader(Request $request, string $key, array|string $values, bool $replace = false): void
     {
-        // the array of headers set by the ResponseHeader annotation
+        // the array of headers set by the ResponseHeader attribute
         $responseHeaders = $this->getResponseHeaders($request);
 
-        // manually add a @ResponseHeader config annotation to the list of headers
-        $responseHeaders[] = new ResponseHeader([
-            'key' => $key,
-            'values' => $values,
-            'replace' => $replace,
-        ]);
+        // manually add a #[ResponseHeader] attribute to the list of headers
+        $responseHeaders[] = new ResponseHeader($key, $values, $replace);
 
         $request->attributes->set(static::ATTRIBUTE_RESPONSE_HEADER, $responseHeaders);
     }

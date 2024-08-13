@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,33 +21,23 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ClassDefinitionEvent extends Event
 {
-    /**
-     * @var ClassDefinition
-     */
-    protected $classDefinition;
+    protected ClassDefinition $classDefinition;
 
     /**
      * DocumentEvent constructor.
      *
-     * @param ClassDefinition $classDefinition
      */
     public function __construct(ClassDefinition $classDefinition)
     {
         $this->classDefinition = $classDefinition;
     }
 
-    /**
-     * @return ClassDefinition
-     */
-    public function getClassDefinition()
+    public function getClassDefinition(): ClassDefinition
     {
         return $this->classDefinition;
     }
 
-    /**
-     * @param ClassDefinition $classDefinition
-     */
-    public function setClassDefinition($classDefinition)
+    public function setClassDefinition(ClassDefinition $classDefinition): void
     {
         $this->classDefinition = $classDefinition;
     }

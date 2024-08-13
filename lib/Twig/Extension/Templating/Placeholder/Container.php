@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -64,60 +65,51 @@ class Container extends \ArrayObject
     /**
      * What text to prefix the placeholder with when rendering
      *
-     * @var string
      */
-    protected $_prefix = '';
+    protected string $_prefix = '';
 
     /**
      * What text to append the placeholder with when rendering
      *
-     * @var string
      */
-    protected $_postfix = '';
+    protected string $_postfix = '';
 
     /**
      * What string to use between individual items in the placeholder when rendering
      *
-     * @var string
      */
-    protected $_separator = '';
+    protected string $_separator = '';
 
     /**
      * What string to use as the indentation of output, this will typically be spaces. Eg: '    '
      *
-     * @var string
      */
-    protected $_indent = '';
+    protected string $_indent = '';
 
     /**
      * Whether or not we're already capturing for this given container
      *
-     * @var bool
      */
-    protected $_captureLock = false;
+    protected bool $_captureLock = false;
 
     /**
      * What type of capture (overwrite (set), append, prepend) to use
      *
-     * @var string
      */
-    protected $_captureType;
+    protected string $_captureType;
 
     /**
      * Key to which to capture content
      *
-     * @var string
      */
-    protected $_captureKey;
+    protected ?string $_captureKey = null;
 
     /**
      * Set a single value
      *
-     * @param  mixed $value
      *
-     * @return void
      */
-    public function set($value)
+    public function set(mixed $value): void
     {
         $this->exchangeArray([$value]);
     }
@@ -125,11 +117,9 @@ class Container extends \ArrayObject
     /**
      * Prepend a value to the top of the container
      *
-     * @param  mixed $value
      *
-     * @return void
      */
-    public function prepend($value)
+    public function prepend(mixed $value): void
     {
         $values = $this->getArrayCopy();
         array_unshift($values, $value);
@@ -142,9 +132,8 @@ class Container extends \ArrayObject
      * If single element registered, returns that element; otherwise,
      * serializes to array.
      *
-     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         if (1 == count($this)) {
             $keys = $this->getKeys();
@@ -159,13 +148,12 @@ class Container extends \ArrayObject
     /**
      * Set prefix for __toString() serialization
      *
-     * @param  string $prefix
      *
-     * @return Container
+     * @return $this
      */
-    public function setPrefix($prefix)
+    public function setPrefix(string $prefix): static
     {
-        $this->_prefix = (string) $prefix;
+        $this->_prefix = $prefix;
 
         return $this;
     }
@@ -173,9 +161,8 @@ class Container extends \ArrayObject
     /**
      * Retrieve prefix
      *
-     * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return $this->_prefix;
     }
@@ -183,13 +170,12 @@ class Container extends \ArrayObject
     /**
      * Set postfix for __toString() serialization
      *
-     * @param  string $postfix
      *
-     * @return Container
+     * @return $this
      */
-    public function setPostfix($postfix)
+    public function setPostfix(string $postfix): static
     {
-        $this->_postfix = (string) $postfix;
+        $this->_postfix = $postfix;
 
         return $this;
     }
@@ -197,9 +183,8 @@ class Container extends \ArrayObject
     /**
      * Retrieve postfix
      *
-     * @return string
      */
-    public function getPostfix()
+    public function getPostfix(): string
     {
         return $this->_postfix;
     }
@@ -209,13 +194,12 @@ class Container extends \ArrayObject
      *
      * Used to implode elements in container
      *
-     * @param  string $separator
      *
-     * @return Container
+     * @return $this
      */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): static
     {
-        $this->_separator = (string) $separator;
+        $this->_separator = $separator;
 
         return $this;
     }
@@ -223,9 +207,8 @@ class Container extends \ArrayObject
     /**
      * Retrieve separator
      *
-     * @return string
      */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->_separator;
     }
@@ -234,11 +217,10 @@ class Container extends \ArrayObject
      * Set the indentation string for __toString() serialization,
      * optionally, if a number is passed, it will be the number of spaces
      *
-     * @param  string|int $indent
      *
-     * @return Container
+     * @return $this
      */
-    public function setIndent($indent)
+    public function setIndent(int|string $indent): static
     {
         $this->_indent = $this->getWhitespace($indent);
 
@@ -248,9 +230,8 @@ class Container extends \ArrayObject
     /**
      * Retrieve indentation
      *
-     * @return string
      */
-    public function getIndent()
+    public function getIndent(): string
     {
         return $this->_indent;
     }
@@ -258,11 +239,9 @@ class Container extends \ArrayObject
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param  int|string $indent
      *
-     * @return string
      */
-    public function getWhitespace($indent)
+    public function getWhitespace(int|string $indent): string
     {
         if (is_int($indent)) {
             $indent = str_repeat(' ', $indent);
@@ -275,13 +254,10 @@ class Container extends \ArrayObject
      * Start capturing content to push into placeholder
      *
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
-     * @param mixed $key
      *
      * @throws Exception
-     *
-     * @return void
      */
-    public function captureStart($type = self::APPEND, $key = null)
+    public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest placeholder captures for the same placeholder');
@@ -298,9 +274,8 @@ class Container extends \ArrayObject
     /**
      * End content capture
      *
-     * @return void
      */
-    public function captureEnd()
+    public function captureEnd(): void
     {
         $data = ob_get_clean();
         $key = null;
@@ -347,9 +322,8 @@ class Container extends \ArrayObject
     /**
      * Get keys
      *
-     * @return array
      */
-    public function getKeys()
+    public function getKeys(): array
     {
         $array = $this->getArrayCopy();
 
@@ -361,9 +335,8 @@ class Container extends \ArrayObject
      *
      * as defined by the PHP manual
      *
-     * @return int
      */
-    public function nextIndex()
+    public function nextIndex(): int
     {
         $keys = $this->getKeys();
         if (0 == count($keys)) {
@@ -376,11 +349,9 @@ class Container extends \ArrayObject
     /**
      * Render the placeholder
      *
-     * @param int|string|null $indent
      *
-     * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         // Check items
         if (0 === $this->count()) {
@@ -403,10 +374,8 @@ class Container extends \ArrayObject
 
     /**
      * Serialize object to string
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }

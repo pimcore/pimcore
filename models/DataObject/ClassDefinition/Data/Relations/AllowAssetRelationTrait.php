@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,45 +27,25 @@ trait AllowAssetRelationTrait
     /**
      * Checks if an asset is an allowed relation
      *
+     *
+     *
      * @internal
-     *
-     * @param Asset $asset
-     *
-     * @return bool
      */
-    protected function allowAssetRelation($asset)
+    protected function allowAssetRelation(Asset $asset): bool
     {
-        if (!$asset instanceof Asset || $asset->getId() <= 0) {
+        if ($asset->getId() <= 0) {
             return false;
         }
 
         $allowedAssetTypes = $this->getAssetTypes();
-        $allowedTypes = [];
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
-        } elseif ($this->getAssetsAllowed() && is_array($allowedAssetTypes) && count($allowedAssetTypes) > 0) {
+        } elseif (count($allowedAssetTypes) > 0) {
             //check for allowed asset types
-            foreach ($allowedAssetTypes as $t) {
-                if (is_array($t) && array_key_exists('assetTypes', $t)) {
-                    $t = $t['assetTypes'];
-                }
+            $allowedTypes = array_column($allowedAssetTypes, 'assetTypes');
 
-                if ($t) {
-                    if (is_string($t)) {
-                        $allowedTypes[] = $t;
-                    } elseif (is_array($t)) {
-                        if (isset($t['assetTypes'])) {
-                            $allowedTypes[] = $t['assetTypes'];
-                        } else {
-                            $allowedTypes[] = $t;
-                        }
-                    }
-                }
-            }
-            if (!in_array($asset->getType(), $allowedTypes)) {
-                $allowed = false;
-            }
+            $allowed = in_array($asset->getType(), $allowedTypes, true);
         } else {
             //don't check if no allowed asset types set
         }

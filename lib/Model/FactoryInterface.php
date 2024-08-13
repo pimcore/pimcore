@@ -24,7 +24,6 @@ interface FactoryInterface extends LoaderInterface
     /**
      * Get class map from all classmap loaders
      *
-     * @return array
      */
     public function getClassMap(): array;
 }

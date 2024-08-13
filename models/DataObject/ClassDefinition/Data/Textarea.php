@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,171 +17,60 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
-     * @var string
      */
-    public $fieldtype = 'textarea';
+    public ?int $maxLength = null;
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public $width = 0;
+    public bool $showCharCount = false;
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public $height = 0;
+    public bool $excludeFromSearchIndex = false;
 
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    public $maxLength;
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $showCharCount;
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $excludeFromSearchIndex = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getMaxLength()
+    public function getMaxLength(): ?int
     {
         return $this->maxLength;
     }
 
-    /**
-     * @param int|null $maxLength
-     */
-    public function setMaxLength($maxLength)
+    public function setMaxLength(?int $maxLength): void
     {
         $this->maxLength = $maxLength;
     }
 
-    /**
-     * @return bool
-     */
-    public function isShowCharCount()
+    public function isShowCharCount(): bool
     {
         return $this->showCharCount;
     }
 
-    /**
-     * @param bool $showCharCount
-     */
-    public function setShowCharCount($showCharCount)
+    public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = (bool) $showCharCount;
+        $this->showCharCount = $showCharCount;
     }
 
-    /**
-     * @return bool
-     */
     public function isExcludeFromSearchIndex(): bool
     {
         return $this->excludeFromSearchIndex;
     }
 
-    /**
-     * @param bool $excludeFromSearchIndex
-     *
-     * @return $this
-     */
-    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
@@ -188,57 +78,42 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @param null|Model\DataObject\Concrete $object
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|null $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
+     * @param null|Model\DataObject\Concrete $object
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
+     *
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|null $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
+     * @param null|Model\DataObject\Concrete $object
+     *
      * @see Data::getDataForEditmode
      *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -246,14 +121,13 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $data;
     }
 
@@ -261,13 +135,9 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param string|null $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param mixed $params
      *
-     * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?string $data, Model\DataObject\Concrete $object = null, array $params = []): array|string
     {
         if ($data) {
             $value = [];
@@ -284,10 +154,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         if ($this->isExcludeFromSearchIndex()) {
             return '';
@@ -296,13 +163,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
-            if (mb_strlen($data) > $this->getMaxLength()) {
+            if ($data !== null && mb_strlen($data) > $this->getMaxLength()) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'");
             }
         }
@@ -310,43 +174,43 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFilterable(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'textarea';
     }
 }

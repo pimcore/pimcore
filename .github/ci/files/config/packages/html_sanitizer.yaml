@@ -1,0 +1,61 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            pimcore.wysiwyg_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_relative_medias: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    div: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
+                    colgroup: 'class'
+                    col: [ 'class', 'style', 'id' ]
+                    thead: [ 'class', 'id' ]
+                    tbody: [ 'class', 'id' ]
+                    tr: [ 'class', 'id' ]
+                    td: [ 'class', 'id' ]
+                    th: [ 'class', 'id', 'scope' ]
+                    ul: [ 'class', 'style', 'id' ]
+                    li: [ 'class', 'style', 'id' ]
+                    ol: [ 'class', 'style', 'id' ]
+                    u: [ 'class', 'id' ]
+                    i: [ 'class', 'id' ]
+                    b: [ 'class', 'id' ]
+                    caption: [ 'class', 'id' ]
+                    sub: [ 'class', 'id' ]
+                    sup: [ 'class', 'id' ]
+                    blockquote: [ 'class', 'id' ]
+                    s: [ 'class', 'id' ]
+                    iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
+                    br: ''
+                    img: [ 'alt', 'style', 'src' ]
+            pimcore.translation_sanitizer:
+                allow_attributes:
+                    pimcore_type: '*'
+                    pimcore_id: '*'
+                allow_relative_links: true
+                allow_elements:
+                    span: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id' ]
+                    strong: 'class'
+                    em: 'class'
+                    h1: [ 'class', 'id' ]
+                    h2: [ 'class', 'id' ]
+                    h3: [ 'class', 'id' ]
+                    h4: [ 'class', 'id' ]
+                    h5: [ 'class', 'id' ]
+                    h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel' ]
+                    br: ''

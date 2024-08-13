@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,14 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
 use Pimcore\Model\Element\ValidationException;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class LinkTest
@@ -29,6 +32,12 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class LinkTest extends ModelTestCase
 {
+    protected Asset $testAsset;
+
+    protected Link $link;
+
+    protected Data $linkDefinition;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -41,17 +50,35 @@ class LinkTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Link();
     }
 
     /**
-     * @return unittestLink
+     * Prepares objects for internal link tests
      *
      * @throws \Exception
      */
-    protected function createLinkObject()
+    protected function setupInternalLinkObjects(): void
+    {
+        $this->testAsset = TestHelper::createImageAsset();
+
+        $link = new Link();
+        $link->setInternal($this->testAsset->getId());
+        $link->setInternalType('asset');
+        $this->link = $link;
+
+        $linkObject = $this->createLinkObject();
+        $linkObject->setTestlink($link);
+        $this->linkDefinition = $linkObject->getClass()->getFieldDefinition('testlink');
+    }
+
+    /**
+     *
+     * @throws \Exception
+     */
+    protected function createLinkObject(): unittestLink
     {
         $object = new unittestLink();
         $object->setParent(Service::createFolderByPath('/links'));
@@ -66,7 +93,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testSave()
+    public function testSave(): void
     {
         $linkObject = $this->createLinkObject();
         $link = new Link();
@@ -82,19 +109,49 @@ class LinkTest extends ModelTestCase
     }
 
     /**
+     * Verifies that checkValidity method throws correct exception if invalid data is provided
+     *
+     */
+    public function testInternalCheckValidity(): void
+    {
+        $this->setupInternalLinkObjects();
+        $this->testAsset->delete();
+
+        //Should return validation exception as asset was deleted
+        $this->expectException(ValidationException::class);
+        $this->linkDefinition->checkValidity($this->link);
+    }
+
+    /**
+     * Verifies that checkValidity method sanitize the link data if invalid data is provided
+     *
+     */
+    public function testInternalCheckValidityParam(): void
+    {
+        $this->setupInternalLinkObjects();
+        $this->testAsset->delete();
+        //Should not return validation exception as parameter is set
+        $this->linkDefinition->checkValidity($this->link, true, ['resetInvalidFields' => true]);
+
+        //Should return sanitized link data
+        $this->assertTrue($this->link->getInternal() === null);
+        $this->assertTrue($this->link->getInternalType() === null);
+    }
+
+    /**
      * Verifies that Link data throws correct exceptions if invalid data is given
      *
      * @throws \Exception
      */
-    public function testCheckValidity()
+    public function testCheckValidity(): void
     {
-        $linkObject = $this->createLinkObject();
-        $linkObject->setTestlink('https://pimcore.com/');
-        $linkObject->setLtestlink('https://pimcore.com/');
-
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('Expected DataObject\\Data\\Link or null');
-
-        $linkObject->save();
+        try {
+            $linkObject = $this->createLinkObject();
+            $linkObject->setTestlink('https://pimcore.com/');
+            $linkObject->setLtestlink('https://pimcore.com/');
+            $this->fail('Expected a TypeError');
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(\TypeError::class, $e);
+        }
     }
 }

@@ -1,0 +1,6 @@
+_pimcore_bundle_search_backend:
+    resource: "../../src/Controller/"
+    type:     annotation
+    prefix:   /admin/bundle/search
+    options:
+        expose: true

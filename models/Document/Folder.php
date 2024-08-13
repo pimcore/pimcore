@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,5 @@ use Pimcore\Model;
  */
 class Folder extends Model\Document
 {
-    /**
-     * {@inheritdoc}
-     */
     protected string $type = 'folder';
 }

@@ -41,9 +41,6 @@ class DocumentHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_document_hardlink', static function ($object) {
                 return $object instanceof Document\Hardlink;
             }),
-            new TwigTest('pimcore_document_newsletter', static function ($object) {
-                return $object instanceof Document\Newsletter;
-            }),
             new TwigTest('pimcore_document_page', static function ($object) {
                 return $object instanceof Document\Page;
             }),
@@ -52,15 +49,6 @@ class DocumentHelperExtensions extends AbstractExtension
             }),
             new TwigTest('pimcore_document_page_snippet', static function ($object) {
                 return $object instanceof Document\PageSnippet;
-            }),
-            new TwigTest('pimcore_document_print', static function ($object) {
-                return $object instanceof Document\PrintAbstract;
-            }),
-            new TwigTest('pimcore_document_print_container', static function ($object) {
-                return $object instanceof Document\Printcontainer;
-            }),
-            new TwigTest('pimcore_document_print_page', static function ($object) {
-                return $object instanceof Document\Printpage;
             }),
             new TwigTest('pimcore_document_snippet', static function ($object) {
                 return $object instanceof Document\Snippet;

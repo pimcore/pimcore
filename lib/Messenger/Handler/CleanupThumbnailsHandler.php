@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,11 +30,12 @@ class CleanupThumbnailsHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(CleanupThumbnailsMessage $message, Acknowledger $ack = null)
+    public function __invoke(CleanupThumbnailsMessage $message, Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }
 
+    // @phpstan-ignore-next-line
     private function process(array $jobs): void
     {
         $jobs = $this->filterUnique($jobs, static function (CleanupThumbnailsMessage $message) {

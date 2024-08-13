@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,24 +45,20 @@ namespace Pimcore\Twig\Extension\Templating\Placeholder;
  */
 class ContainerService
 {
-    /**
-     * @var int
-     */
-    private $currentIndex = 0;
+    private int $currentIndex = 0;
 
     /**
      * Placeholder containers
      *
-     * @var array
      */
-    protected $_items = [];
+    protected array $_items = [];
 
     public function __construct()
     {
         $this->_items[$this->currentIndex] = [];
     }
 
-    public function pushIndex()
+    public function pushIndex(): void
     {
         ++$this->currentIndex;
 
@@ -72,7 +69,7 @@ class ContainerService
         $this->_items[$this->currentIndex] = [];
     }
 
-    public function popIndex()
+    public function popIndex(): void
     {
         if (0 === $this->currentIndex) {
             throw new \OutOfBoundsException('Current index is already at 0');
@@ -88,65 +85,41 @@ class ContainerService
     /**
      * createContainer
      *
-     * @param  string $key
-     * @param  array $value
      *
-     * @return Container
      */
-    public function createContainer($key, array $value = [])
+    public function createContainer(string $key, array $value = []): Container
     {
-        $key = (string) $key;
-
-        $this->_items[$this->currentIndex][$key] = new Container($value);
-
-        return $this->_items[$this->currentIndex][$key];
+        return $this->_items[$this->currentIndex][$key] = new Container($value);
     }
 
     /**
      * Retrieve a placeholder container
      *
-     * @param  string $key
      *
-     * @return Container
      */
-    public function getContainer($key)
+    public function getContainer(string $key): Container
     {
-        $key = (string) $key;
-        if (isset($this->_items[$this->currentIndex][$key])) {
-            return $this->_items[$this->currentIndex][$key];
-        }
-
-        $container = $this->createContainer($key);
-
-        return $container;
+        return $this->_items[$this->currentIndex][$key] ?? $this->createContainer($key);
     }
 
     /**
      * Does a particular container exist?
      *
-     * @param  string $key
      *
-     * @return bool
      */
-    public function containerExists($key)
+    public function containerExists(string $key): bool
     {
-        $key = (string) $key;
-        $return = array_key_exists($key, $this->_items[$this->currentIndex]);
-
-        return $return;
+        return array_key_exists($key, $this->_items[$this->currentIndex]);
     }
 
     /**
      * Set the container for an item in the registry
      *
-     * @param  string $key
-     * @param  Container $container
      *
-     * @return ContainerService
+     * @return $this
      */
-    public function setContainer($key, Container $container)
+    public function setContainer(string $key, Container $container): static
     {
-        $key = (string) $key;
         $this->_items[$this->currentIndex][$key] = $container;
 
         return $this;
@@ -155,13 +128,10 @@ class ContainerService
     /**
      * Delete a container
      *
-     * @param  string $key
      *
-     * @return bool
      */
-    public function deleteContainer($key)
+    public function deleteContainer(string $key): bool
     {
-        $key = (string) $key;
         if (isset($this->_items[$this->currentIndex][$key])) {
             unset($this->_items[$this->currentIndex][$key]);
 

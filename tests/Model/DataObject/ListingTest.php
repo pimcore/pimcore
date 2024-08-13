@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,9 +19,9 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Unittest;
-use Pimcore\Tests\Helper\DataType\TestDataHelper;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest
@@ -31,15 +32,9 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class ListingTest extends ModelTestCase
 {
-    /**
-     * @var TestDataHelper
-     */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
-    public function _inject(TestDataHelper $testData)
+    public function _inject(TestDataHelper $testData): void
     {
         $this->testDataHelper = $testData;
     }
@@ -58,7 +53,7 @@ class ListingTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function prepareData()
+    public function prepareData(): void
     {
         $seeds = [10, 11, 42, 53, 65, 78, 85];
 
@@ -74,7 +69,7 @@ class ListingTest extends ModelTestCase
         }
     }
 
-    public function testSimpleCondition()
+    public function testSimpleCondition(): void
     {
         $listing = new Unittest\Listing();
         $listing->setCondition('input = "content10"');
@@ -87,7 +82,7 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(1, $listing->getTotalCount(), 'Simple Condition Result Published Objects');
     }
 
-    public function testSimpleParamCondition()
+    public function testSimpleParamCondition(): void
     {
         $listing = new Unittest\Listing();
         $listing->setCondition('input = ?', ['content10']);
@@ -110,7 +105,7 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(1, $listing->getTotalCount(), 'Simple ParamCondition Result Published Objects');
     }
 
-    public function testAddConditionParam()
+    public function testAddConditionParam(): void
     {
         $listing = new Unittest\Listing();
         $listing->addConditionParam('input = ?', 'content10');
@@ -161,7 +156,7 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(1, $listing->getTotalCount(), 'AddConditionParam Result Published Objects');
     }
 
-    public function testArrayCondition()
+    public function testArrayCondition(): void
     {
         $listing = new Unittest\Listing();
         $listing->setCondition('input IN (?)', [['content10', 'contentXX']]);
@@ -183,7 +178,7 @@ class ListingTest extends ModelTestCase
      * Verifies that cached list is flushed on changing the condition and filters
      *
      */
-    public function testCacheObjects()
+    public function testCacheObjects(): void
     {
         $listing = new Unittest\Listing();
         $listing->setCondition('input IN (?)', [['content10', 'content11', 'content42']]);
@@ -198,7 +193,7 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(1, $listing->getCount(), 'Expected 1 object in the list');
     }
 
-    public function testListCount()
+    public function testListCount(): void
     {
         $db = Db::get();
 

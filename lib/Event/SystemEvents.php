@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -120,4 +121,22 @@ final class SystemEvents
      * @var string
      */
     const SERVICE_PRE_GET_DEEP_COPY = 'pimcore.system.service.preGetDeepCopy';
+
+    /**
+     * The SAVE_SYSTEM_SETTINGS event is triggered when the system settings are saved.
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const SAVE_ACTION_SYSTEM_SETTINGS = 'pimcore.system.settings.saveAction';
+
+    /**
+     * The GET_SYSTEM_CONFIGURATION event is triggered when the system configuration is requested.
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const GET_SYSTEM_CONFIGURATION = 'pimcore.system.configuration.get';
 }

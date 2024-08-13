@@ -32,51 +32,20 @@ use Twig\TwigFunction;
  */
 class HeaderExtension extends AbstractExtension
 {
-    /**
-     * @var HeadLink
-     */
-    private $headLink;
+    private HeadLink $headLink;
 
-    /**
-     * @var HeadMeta
-     */
-    private $headMeta;
+    private HeadMeta $headMeta;
 
-    /**
-     * @var HeadScript
-     */
-    private $headScript;
+    private HeadScript $headScript;
 
-    /**
-     * @var HeadStyle
-     */
-    private $headStyle;
+    private HeadStyle $headStyle;
 
-    /**
-     * @var HeadTitle
-     */
-    private $headTitle;
+    private HeadTitle $headTitle;
 
-    /**
-     * @var InlineScript
-     */
-    private $inlineScript;
+    private InlineScript $inlineScript;
 
-    /**
-     * @var Placeholder
-     */
-    private $placeholder;
+    private Placeholder $placeholder;
 
-    /**
-     * @param HeadLink $headLink
-     * @param HeadMeta $headMeta
-     * @param HeadScript $headScript
-     * @param HeadStyle $headStyle
-     * @param HeadTitle $headTitle
-     * @param InlineScript $inlineScript
-     * @param Placeholder $placeholder
-     *
-     */
     public function __construct(HeadLink $headLink, HeadMeta $headMeta, HeadScript $headScript, HeadStyle $headStyle, HeadTitle $headTitle, InlineScript $inlineScript, Placeholder $placeholder)
     {
         $this->headLink = $headLink;

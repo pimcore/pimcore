@@ -1,0 +1,62 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # RUNTIME CACHE
+    #
+
+    pimcore.cache.adapter.null:
+        class: Symfony\Component\Cache\Adapter\NullAdapter
+
+    pimcore.cache.adapter.null_tag_aware:
+        public: true
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: ['@pimcore.cache.adapter.null', null]
+
+    pimcore.cache.adapter.doctrine_dbal:
+        class: Symfony\Component\Cache\Adapter\DoctrineDbalAdapter
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - ''
+            - 31536000  # 1 year
+
+    pimcore.cache.adapter.doctrine_dbal_tag_aware:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: [ '@pimcore.cache.adapter.doctrine_dbal', null ]
+
+    pimcore.cache.adapter.redis_tag_aware: '@cache.adapter.redis_tag_aware'
+
+    pimcore.cache.pool.app:
+        class: Symfony\Component\Cache\Adapter\ProxyAdapter
+        arguments:
+            - '@pimcore.cache.pool'
+            - 'app'
+
+    #
+    # PIMCORE CACHE
+    #
+
+    # the actual core handler which is used from Pimcore\Cache
+    # the pimcore.cache.core.pool service is defined by config
+    # and set in PimcoreExtension
+
+    Pimcore\Cache\Core\CoreCacheHandler:
+        public: true
+        arguments:
+            - '@pimcore.cache.pool'
+            - '@Pimcore\Cache\Core\WriteLock'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # write lock handles locking between processes
+    Pimcore\Cache\Core\WriteLock:
+        arguments: ['@pimcore.cache.pool']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }

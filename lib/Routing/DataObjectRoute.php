@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,92 +27,62 @@ use Symfony\Component\Routing\Route;
  */
 final class DataObjectRoute extends Route implements RouteObjectInterface
 {
-    /**
-     * @var Concrete|null
-     */
-    protected ?Concrete $object;
+    protected ?Concrete $object = null;
 
-    /**
-     * @var UrlSlug|null
-     */
-    protected ?UrlSlug $slug;
+    protected ?UrlSlug $slug = null;
 
-    /**
-     * @var Site|null
-     */
-    protected ?Site $site;
+    protected ?Site $site = null;
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         return $this->object;
     }
 
     /**
-     * @param Concrete $object
-     *
      * @return $this
      */
-    public function setObject(Concrete $object): self
+    public function setObject(Concrete $object): static
     {
         $this->object = $object;
 
         return $this;
     }
 
-    /**
-     * @return UrlSlug|null
-     */
     public function getSlug(): ?UrlSlug
     {
         return $this->slug;
     }
 
     /**
-     * @param UrlSlug $slug
-     *
      * @return $this
      */
-    public function setSlug(UrlSlug $slug): self
+    public function setSlug(UrlSlug $slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    /**
-     * @return Site|null
-     */
     public function getSite(): ?Site
     {
         return $this->site;
     }
 
     /**
-     * @param Site|null $site
-     *
      * @return $this
      */
-    public function setSite(?Site $site): self
+    public function setSite(?Site $site): static
     {
         $this->site = $site;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContent(): ?object
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteKey(): ?string
     {
         if ($this->object) {

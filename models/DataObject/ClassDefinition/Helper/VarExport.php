@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,22 +21,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
  */
 trait VarExport
 {
-    /**
-     * @var array
-     */
-    protected $blockedVarsForExport = [];
+    protected array $blockedVarsForExport = [];
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return $this->blockedVarsForExport;
     }
 
-    /**
-     * @return array
-     */
     public function resolveBlockedVars(): array
     {
         $defaultBlockedVars = [
@@ -47,16 +39,21 @@ trait VarExport
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setBlockedVarsForExport(array $vars): static
+    {
+        $this->blockedVarsForExport = $vars;
+
+        return $this;
     }
 }

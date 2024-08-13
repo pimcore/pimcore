@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,107 +20,57 @@ use Pimcore\Model;
 
 class Document extends Url
 {
-    /**
-     * @var string|null
-     */
     protected ?string $_accesskey = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $_tabindex = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $_relation = null;
 
-    /**
-     * @var int
-     */
-    protected $_documentId;
+    protected int $_documentId = 0;
 
-    /**
-     * @var string
-     */
-    protected $documentType;
+    protected string $documentType = '';
 
-    /**
-     * @var string
-     */
-    protected $realFullPath;
+    protected string $realFullPath = '';
 
-    /**
-     * @var array
-     */
-    protected $customSettings = [];
+    protected array $customSettings = [];
 
-    /**
-     * @param string $tabindex
-     *
-     * @return $this
-     */
-    public function setTabindex($tabindex)
+    public function setTabindex(?string $tabindex): static
     {
         $this->_tabindex = $tabindex;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTabindex()
+    public function getTabindex(): ?string
     {
         return $this->_tabindex;
     }
 
-    /**
-     * @param string|null $character
-     *
-     * @return $this
-     */
-    public function setAccesskey(?string $character = null)
+    public function setAccesskey(?string $character = null): static
     {
         $this->_accesskey = $character;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAccesskey(): ?string
     {
         return $this->_accesskey;
     }
 
-    /**
-     * @param string $relation
-     *
-     * @return $this
-     */
-    public function setRelation($relation)
+    public function setRelation(?string $relation): static
     {
         $this->_relation = $relation;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRelation()
+    public function getRelation(): ?string
     {
         return $this->_relation;
     }
 
-    /**
-     * @param Model\Document $document
-     *
-     * @return $this
-     */
-    public function setDocument($document)
+    public function setDocument(Model\Document $document): static
     {
         $this->setDocumentId($document->getId());
         $this->setDocumentType($document->getType());
@@ -128,10 +79,7 @@ class Document extends Url
         return $this;
     }
 
-    /**
-     * @return Model\Document|null
-     */
-    public function getDocument()
+    public function getDocument(): ?Model\Document
     {
         $docId = $this->getDocumentId();
         if ($docId) {
@@ -146,73 +94,44 @@ class Document extends Url
         return null;
     }
 
-    /**
-     * @return int
-     */
-    public function getDocumentId()
+    public function getDocumentId(): int
     {
         return $this->_documentId;
     }
 
-    /**
-     * @param int $documentId
-     */
-    public function setDocumentId($documentId)
+    public function setDocumentId(int $documentId): void
     {
         $this->_documentId = $documentId;
     }
 
-    /**
-     * @return string
-     */
-    public function getDocumentType()
+    public function getDocumentType(): string
     {
         return $this->documentType;
     }
 
-    /**
-     * @param string $documentType
-     */
-    public function setDocumentType($documentType)
+    public function setDocumentType(string $documentType): void
     {
         $this->documentType = $documentType;
     }
 
-    /**
-     * @return string
-     */
-    public function getRealFullPath()
+    public function getRealFullPath(): string
     {
         return $this->realFullPath;
     }
 
-    /**
-     * @param string $realFullPath
-     */
-    public function setRealFullPath($realFullPath)
+    public function setRealFullPath(string $realFullPath): void
     {
         $this->realFullPath = $realFullPath;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setCustomSetting($name, $value)
+    public function setCustomSetting(string $name, mixed $value): static
     {
         $this->customSettings[$name] = $value;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getCustomSetting($name)
+    public function getCustomSetting(string $name): mixed
     {
         if (array_key_exists($name, $this->customSettings)) {
             return $this->customSettings[$name];

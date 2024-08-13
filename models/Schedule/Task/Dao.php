@@ -25,11 +25,10 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param int $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM schedule_tasks WHERE id = ?', [$id]);
         if (!$data) {
@@ -38,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -50,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert('schedule_tasks', []);
         $this->model->setId((int) $this->db->lastInsertId());
@@ -59,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save changes to database, it's an good idea to use save() instead
      */
-    public function update()
+    public function update(): void
     {
         $site = $this->model->getObjectVars();
         $data = [];
@@ -81,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('schedule_tasks', ['id' => $this->model->getId()]);
     }

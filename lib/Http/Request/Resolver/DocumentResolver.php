@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,21 +19,10 @@ namespace Pimcore\Http\Request\Resolver;
 use Pimcore\Model\Document;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class DocumentResolver extends AbstractRequestResolver
 {
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
-
-    /**
-     * @param Request|null $request
-     *
-     * @return null|Document
-     */
-    public function getDocument(Request $request = null)
+    public function getDocument(Request $request = null): ?Document
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -46,11 +36,7 @@ class DocumentResolver extends AbstractRequestResolver
         return null;
     }
 
-    /**
-     * @param Request $request
-     * @param Document $document
-     */
-    public function setDocument(Request $request, Document $document)
+    public function setDocument(Request $request, Document $document): void
     {
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
         if ($document->getProperty('language')) {

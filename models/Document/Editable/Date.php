@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,38 +29,25 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var Carbon|null
      */
-    protected $date;
+    protected ?\Carbon\Carbon $date = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'date';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->date;
     }
 
-    /**
-     * @return Carbon|null
-     */
-    public function getDate()
+    public function getDate(): ?\Carbon\Carbon
     {
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?int
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -68,30 +56,35 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function frontend()
     {
         if ($this->date instanceof Carbon) {
-            if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+            if (isset($this->config['outputIsoFormat']) && $this->config['outputIsoFormat']) {
+                return $this->date->isoFormat($this->config['outputIsoFormat']);
+            } elseif (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '11.2',
+                    'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
+                    __CLASS__
+                );
+
                 return $this->date->formatLocalized($this->config['outputFormat']);
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
                     $format = $this->config['format'];
                 } else {
-                    $format = 'Y-m-d\TH:i:sO'; // ISO8601
+                    $format = \DateTimeInterface::ATOM;
                 }
 
                 return $this->date->format($format);
             }
         }
+
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -100,24 +93,18 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if ($data) {
-            $this->setDateFromTimestamp($data);
+            $this->setDateFromTimestamp((int)$data);
         }
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
-        if (strlen($data) > 5) {
+        if (strlen((string) $data) > 5) {
             $timestamp = strtotime($data);
             $this->setDateFromTimestamp($timestamp);
         }
@@ -125,10 +112,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->date) {
             return false;
@@ -137,10 +121,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return true;
     }
 
-    /**
-     * @param int $timestamp
-     */
-    private function setDateFromTimestamp($timestamp)
+    private function setDateFromTimestamp(int $timestamp): void
     {
         $this->date = new Carbon();
         $this->date->setTimestamp($timestamp);

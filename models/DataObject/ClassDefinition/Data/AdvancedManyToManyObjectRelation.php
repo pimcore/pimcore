@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()
  */
-class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, ClassSavedInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -33,65 +35,47 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string|null
      */
-    public $allowedClassId;
+    public ?string $allowedClassId = null;
 
     /**
      * @internal
      *
-     * @var string|null
+     * @var string[]|string|null
      */
-    public $visibleFields;
+    public array|string|null $visibleFields = null;
 
     /**
      * @internal
      *
-     * @var array
      */
-    public $columns = [];
+    public array $columns = [];
 
     /**
      * @internal
      *
      * @var string[]
      */
-    public $columnKeys = [];
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'advancedManyToManyObjectRelation';
+    public array $columnKeys = [];
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $enableBatchEdit = false;
+    public bool $enableBatchEdit = false;
+
+    /**
+     * @internal
+     */
+    public bool $allowMultipleAssignments = false;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var array<string, array<string, mixed>>
      */
-    public $allowMultipleAssignments = false;
+    public array $visibleFieldDefinitions = [];
 
-    /**
-     * @internal
-     *
-     * @var array
-     */
-    public $visibleFieldDefinitions = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -120,10 +104,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function loadData(array $data, $container = null, $params = [])
+    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
     {
         $list = [
             'dirty' => false,
@@ -140,7 +121,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             }
 
             $existingTargets = $db->fetchFirstColumn(
-                'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
+                'SELECT id FROM objects WHERE id IN ('.implode(',', $targets).')'
             );
 
             foreach ($data as $key => $relation) {
@@ -164,13 +145,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                                 'object' => null,
                             ]);
 
-                        $metaData->_setOwner($container);
+                        $metaData->_setOwner($object);
                         $metaData->_setOwnerFieldname($this->getName());
                         $metaData->setObjectId($destinationId);
 
-                        $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
-                        $ownername = $relation['ownername'] ? $relation['ownername'] : '';
-                        $position = $relation['position'] ? $relation['position'] : '0';
+                        $ownertype = $relation['ownertype'] ?: '';
+                        $ownername = $relation['ownername'] ?: '';
+                        $position = $relation['position'] ?: '0';
                         $index = $key + 1;
 
                         $metaData->load(
@@ -188,20 +169,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
             }
         }
+
         //must return array - otherwise this means data is not loaded
         return $list;
     }
 
-    /**
-     * @param mixed $data
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return string|null
-     *
-     * @throws \Exception
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -225,21 +198,18 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
+     *
+     *
      * @see Data::getDataForEditmode
      *
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $return = [];
 
         $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
 
-        $gridFields = (array)$visibleFieldsArray;
+        $gridFields = $visibleFieldsArray;
 
         // add data
         if (is_array($data) && count($data) > 0) {
@@ -269,15 +239,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
+     *
+     *
      * @see Data::getDataFromEditmode
      *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|null
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -319,40 +286,27 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $relationsMetadata;
     }
 
-    /**
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param array $params
      *
-     * @return array
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getVersionPreview
      *
-     * @param array|null $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -388,10 +342,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -423,10 +374,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -444,12 +392,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return '';
     }
 
-    /**
-     * @param DataObject\Data\ObjectMetadata[]|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -468,30 +411,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
-                        return;
-                    }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
-                }
-            }
+        if ($this->skipSaveCheck($object, $params)) {
+            return;
         }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
-        $classId = null;
         $objectId = null;
 
         if ($object instanceof DataObject\Concrete) {
@@ -515,9 +442,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
+        $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
-        $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
+        $position = isset($relation['position']) ? (string)$relation['position'] : '0';
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
@@ -530,12 +458,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -563,8 +491,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
             $counter = 1;
             foreach ($objectsMetadata as $mkey => $meta) {
-                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
-                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
+                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
+                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
                 $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
 
                 $counter++;
@@ -574,10 +502,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         parent::save($object, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []): array
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -603,10 +528,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $db = Db::get();
         $context = $params['context'] ?? null;
@@ -619,13 +541,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             $index = $context['index'];
             $db->executeStatement(
                 'DELETE FROM object_metadata_' . $object->getClassId()
-                . ' WHERE ' . Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . ' WHERE ' . Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {
             $deleteConditions = [
-                'o_id' => $object->getId(),
+                'id' => $object->getId(),
                 'fieldname' => $this->getName(),
             ];
             if ($context) {
@@ -644,32 +566,19 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * @param string|null $allowedClassId
-     *
-     * @return $this
-     */
-    public function setAllowedClassId($allowedClassId)
+    public function setAllowedClassId(?string $allowedClassId): static
     {
         $this->allowedClassId = $allowedClassId;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getAllowedClassId()
+    public function getAllowedClassId(): ?string
     {
         return $this->allowedClassId;
     }
 
-    /**
-     * @param array|string|null $visibleFields
-     *
-     * @return $this
-     */
-    public function setVisibleFields($visibleFields)
+    public function setVisibleFields(array|string|null $visibleFields): static
     {
         /**
          * @extjs6
@@ -686,20 +595,15 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getVisibleFields()
+    public function getVisibleFields(): array|string|null
     {
         return $this->visibleFields;
     }
 
     /**
-     * @param array $columns
-     *
      * @return $this
      */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
             $columns = [$columns];
@@ -716,18 +620,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumnKeys()
+    public function getColumnKeys(): array
     {
         $this->columnKeys = [];
         foreach ($this->columns as $c) {
@@ -737,27 +635,17 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->columnKeys;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnableBatchEdit()
+    public function getEnableBatchEdit(): bool
     {
         return $this->enableBatchEdit;
     }
 
-    /**
-     * @param bool $enableBatchEdit
-     */
-    public function setEnableBatchEdit($enableBatchEdit)
+    public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
         $this->enableBatchEdit = $enableBatchEdit;
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param array $params
-     */
-    public function classSaved($class, $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -768,10 +656,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $temp->getDao()->createOrUpdateTable($class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -793,22 +678,16 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        if ($masterDefinition instanceof self) {
-            $this->allowedClassId = $masterDefinition->getAllowedClassId();
-            $this->visibleFields = $masterDefinition->getVisibleFields();
-            $this->columns = $masterDefinition->getColumns();
+        if ($mainDefinition instanceof self) {
+            $this->allowedClassId = $mainDefinition->getAllowedClassId();
+            $this->visibleFields = $mainDefinition->getVisibleFields();
+            $this->columns = $mainDefinition->getColumns();
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $classId = $this->allowedClassId;
 
@@ -828,6 +707,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
         if (!$this->visibleFields) {
             return $this;
+        }
+
+        if (!isset($context['purpose'])) {
+            $context['purpose'] = 'layout';
         }
 
         $this->visibleFieldDefinitions = [];
@@ -887,10 +770,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $object = $params['object'] ?? null;
@@ -920,10 +800,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];
@@ -950,9 +827,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
      */
-    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data) {
             $data = $data[0];
@@ -1008,55 +885,30 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $data;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAllowMultipleAssignments()
+    public function getAllowMultipleAssignments(): bool
     {
         return $this->allowMultipleAssignments;
     }
 
-    /**
-     * @param bool $allowMultipleAssignments
-     *
-     * @return $this
-     */
-    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    public function setAllowMultipleAssignments(bool $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
 
         return $this;
     }
 
-    /**
-     * @internal
-     *
-     * @param DataObject\Data\ObjectMetadata $item
-     *
-     * @return string
-     */
-    protected function buildUniqueKeyForAppending($item)
-    {
-        $element = $item->getElement();
-        $elementType = Element\Service::getElementType($element);
-        $id = $element->getId();
-
-        return $elementType . $id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'advancedManyToManyObjectRelation';
     }
 }

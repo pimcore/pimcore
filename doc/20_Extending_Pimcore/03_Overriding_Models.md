@@ -1,0 +1,63 @@
+# Overriding Models / Entities in Pimcore
+ 
+Sometimes it is necessary to override certain functionalities of Pimcore's core models, therefore it is possible to 
+override the core models with your own classes. 
+
+Currently this works for all implementations of the following classes (but not for these classes directly): 
+- `Pimcore\Model\Document`
+- `Pimcore\Model\Document\Listing`
+- `Pimcore\Model\AbstractObject`
+- `Pimcore\Model\DataObject\Listing`
+- `Pimcore\Model\Asset`
+- `Pimcore\Model\Asset\Listing` 
+
+So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
+`Pimcore\Model\Asset\Image` is supported. 
+
+But you cannot override `Pimcore\Model\Asset` (or the other abstract model classes) ifself (as it is the parent class of for example `Pimcore\Model\Asset\Image` and that would mean to change the class hierarchy). 
+
+## Configure an Override 
+
+The configuration is a simple key / value map in your `config/config.yaml` using the key 
+`pimcore.models.class_overrides`, for example: 
+
+```yaml
+pimcore:
+    models:
+        class_overrides:
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News\Listing': 'App\Model\DataObject\News\Listing'
+```
+
+**It is crucial that your override class extends the origin class, if not you'll break the entire system.**
+
+> **Don't forget to clear all caches (Symfony + Data Cache) after you have configured a class override**
+`./bin/console cache:clear --no-warmup && ./bin/console pimcore:cache:clear`
+
+## Example 
+
+In your `config/config.yaml`: 
+
+```yaml
+pimcore:
+    models:
+        class_overrides:
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
+```
+
+Your `App\Model\DataObject\News`: 
+
+```php
+<?php 
+
+namespace App\Model\DataObject; 
+
+class News extends \Pimcore\Model\DataObject\News
+{
+    // start overriding stuff 
+    public function getMyCustomAttribute(): mixed
+    {
+        ...
+    }
+}
+```

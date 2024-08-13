@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,96 +16,31 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Traits\DataHeightTrait;
+use Pimcore\Model\DataObject\Traits\DataWidthTrait;
+
 /**
  * @internal
  */
 trait ImageTrait
 {
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public $height = 0;
+    use DataWidthTrait;
+    use DataHeightTrait;
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $uploadPath;
+    public string $uploadPath;
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * @param string $uploadPath
-     *
-     * @return $this
-     */
-    public function setUploadPath($uploadPath)
+    public function setUploadPath(string $uploadPath): static
     {
         $this->uploadPath = $uploadPath;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getUploadPath()
+    public function getUploadPath(): string
     {
         return $this->uploadPath;
     }

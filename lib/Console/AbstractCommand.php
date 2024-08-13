@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,36 +31,17 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
  */
 abstract class AbstractCommand extends Command
 {
-    /**
-     * @var PimcoreStyle
-     */
-    protected $io;
+    protected PimcoreStyle $io;
 
-    /**
-     * @var InputInterface
-     */
-    protected $input;
+    protected InputInterface $input;
 
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
+    protected OutputInterface $output;
 
-    /**
-     * @var null|CliDumper
-     */
-    private $cliDumper;
+    private ?CliDumper $cliDumper = null;
 
-    /**
-     * @var VarCloner|null
-     */
-    private $varCloner;
+    private ?VarCloner $varCloner = null;
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
 
@@ -68,25 +50,19 @@ abstract class AbstractCommand extends Command
         $this->output = $output;
     }
 
-    /**
-     * @param mixed $data
-     */
-    protected function dump($data)
+    protected function dump(mixed $data): void
     {
         $this->doDump($data);
     }
 
-    /**
-     * @param mixed $data
-     */
-    protected function dumpVerbose($data)
+    protected function dumpVerbose(mixed $data): void
     {
         if ($this->output->isVerbose()) {
             $this->doDump($data);
         }
     }
 
-    private function doDump($data)
+    private function doDump(mixed $data): void
     {
         if (null === $this->cliDumper) {
             $this->cliDumper = new CliDumper();
@@ -102,34 +78,22 @@ abstract class AbstractCommand extends Command
         $this->cliDumper->dump($this->varCloner->cloneVar($data));
     }
 
-    /**
-     * @param string $message
-     */
-    protected function writeError($message)
+    protected function writeError(string $message): void
     {
         $this->output->writeln(sprintf('<error>ERROR: %s</error>', $message));
     }
 
-    /**
-     * @param string $message
-     */
-    protected function writeInfo($message)
+    protected function writeInfo(string $message): void
     {
         $this->output->writeln(sprintf('<info>INFO: %s</info>', $message));
     }
 
-    /**
-     * @param string $message
-     */
-    protected function writeComment($message)
+    protected function writeComment(string $message): void
     {
         $this->output->writeln(sprintf('<comment>COMMENT: %s</comment>', $message));
     }
 
-    /**
-     * @param string $message
-     */
-    protected function writeQuestion($message)
+    protected function writeQuestion(string $message): void
     {
         $this->output->writeln(sprintf('<question>QUESTION: %s</question>', $message));
     }

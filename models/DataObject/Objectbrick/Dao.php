@@ -28,13 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\Fieldcollection\Dao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function load(DataObject\Concrete $object, $params = [])
+    public function load(DataObject\Concrete $object, array $params = []): array
     {
         /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
@@ -51,7 +45,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $tableName = $definition->getTableName($object->getClass(), false);
 
             try {
-                $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE o_id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -127,12 +121,10 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
      */
-    public function delete(DataObject\Concrete $object, $saveMode = false)
+    public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
         // this is to clean up also the inherited values
 
@@ -141,7 +133,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         foreach ($fieldDef->getAllowedTypes() as $type) {
             if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {
                 $tableName = $definition->getTableName($object->getClass(), true);
-                $this->db->delete($tableName, ['o_id' => $object->getId()]);
+                $this->db->delete($tableName, ['id' => $object->getId()]);
             }
         }
 

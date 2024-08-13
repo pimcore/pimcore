@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,17 +23,14 @@ class TranslationEntriesDumper
     /**
      * @var Translation[]
      */
-    private static $translations = [];
+    private static array $translations = [];
 
-    /**
-     * @param Translation $translation
-     */
-    public static function addToSaveQueue(Translation $translation)
+    public static function addToSaveQueue(Translation $translation): void
     {
         self::$translations[$translation->getKey()] = $translation;
     }
 
-    public function dumpToDb()
+    public function dumpToDb(): void
     {
         foreach (self::$translations as $translation) {
             $translation->save();

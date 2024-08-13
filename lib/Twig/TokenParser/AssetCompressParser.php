@@ -41,7 +41,7 @@ class AssetCompressParser extends AbstractTokenParser
         return new AssetCompressNode($body, $lineno, $this->getTag());
     }
 
-    public function decideAssetCompressEnd(Token $token)
+    public function decideAssetCompressEnd(Token $token): bool
     {
         return $token->test('endpimcoreassetcompress');
     }

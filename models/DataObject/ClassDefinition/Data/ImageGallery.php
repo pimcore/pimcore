@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,198 +19,85 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
 class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'imageGallery';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * @internal
      *
-     * @var string|int
      */
-    public $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public $height = 0;
+    public string $uploadPath;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public $uploadPath;
+    public ?int $ratioX = null;
+
+    /**
+     * @internal
+     */
+    public ?int $ratioY = null;
 
     /**
      * @internal
      *
-     * @var int
      */
-    public $ratioX;
+    public string $predefinedDataTemplates;
 
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    public $ratioY;
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    public $predefinedDataTemplates;
-
-    /**
-     * @param int $ratioX
-     */
-    public function setRatioX($ratioX)
+    public function setRatioX(int $ratioX): void
     {
         $this->ratioX = $ratioX;
     }
 
-    /**
-     * @return int
-     */
-    public function getRatioX()
+    public function getRatioX(): int
     {
         return $this->ratioX;
     }
 
-    /**
-     * @param int $ratioY
-     */
-    public function setRatioY($ratioY)
+    public function setRatioY(int $ratioY): void
     {
         $this->ratioY = $ratioY;
     }
 
-    /**
-     * @return int
-     */
-    public function getRatioY()
+    public function getRatioY(): int
     {
         return $this->ratioY;
     }
 
-    /**
-     * @return string
-     */
-    public function getPredefinedDataTemplates()
+    public function getPredefinedDataTemplates(): string
     {
         return $this->predefinedDataTemplates;
     }
 
-    /**
-     * @param string $predefinedDataTemplates
-     */
-    public function setPredefinedDataTemplates($predefinedDataTemplates)
+    public function setPredefinedDataTemplates(string $predefinedDataTemplates): void
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUploadPath()
+    public function getUploadPath(): string
     {
         return $this->uploadPath;
     }
 
-    /**
-     * @param string $uploadPath
-     */
-    public function setUploadPath($uploadPath)
+    public function setUploadPath(string $uploadPath): void
     {
         $this->uploadPath = $uploadPath;
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             $hotspots = [];
@@ -241,15 +129,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
+     *
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return DataObject\Data\ImageGallery
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         if (!is_array($data)) {
             return $this->createEmptyImageGallery($params);
@@ -267,7 +152,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         $fd = new Hotspotimage();
 
-        $images = explode(',', $images);
+        $images = array_map('intval', explode(',', $images));
         for ($i = 1; $i < count($images) - 1; $i++) {
             $imageId = $images[$i];
             $hotspotData = $hotspots[$i - 1];
@@ -294,12 +179,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $imageGallery;
     }
 
-    /**
-     * @param mixed $params
-     *
-     * @return DataObject\Data\ImageGallery
-     */
-    private function createEmptyImageGallery($params = [])
+    private function createEmptyImageGallery(array $params): DataObject\Data\ImageGallery
     {
         $imageGallery = new DataObject\Data\ImageGallery();
 
@@ -313,29 +193,22 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
+     *
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\ImageGallery $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\ImageGallery $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -350,15 +223,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
+     *
+     *
      * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return DataObject\Data\ImageGallery
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         $resultItems = [];
 
@@ -373,40 +242,27 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return new DataObject\Data\ImageGallery($resultItems);
     }
 
-    /**
-     * @param array|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return DataObject\Data\ImageGallery
-     */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(?array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
+     *
+     *
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
         }
 
-        return null;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -416,18 +272,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
@@ -440,12 +290,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $tags;
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -460,22 +305,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $dependencies;
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\ImageGallery $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * { @inheritdoc }
-     */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -489,13 +324,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Data\ImageGallery|null $data
-     * @param bool $omitMandatoryCheck
-     * @param array $params
      *
      * @throws Element\ValidationException
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (
             $this->getMandatory() && !$omitMandatoryCheck &&
@@ -507,12 +339,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         if (empty($data)) {
             return true;
@@ -528,13 +355,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return false;
     }
 
-    /**
-     * @param DataObject\Data\ImageGallery|null $oldValue
-     * @param DataObject\Data\ImageGallery|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldValue = $oldValue instanceof DataObject\Data\ImageGallery ? $oldValue->getItems() : [];
         $newValue = $newValue instanceof DataObject\Data\ImageGallery ? $newValue->getItems() : [];
@@ -554,42 +375,27 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ImageGallery::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ImageGallery::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\ImageGallery) {
             $list = [];
@@ -609,10 +415,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\ImageGallery
     {
         if (is_array($value)) {
             $items = [];
@@ -625,5 +428,23 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'images' => 'text',
+            'hotspots' => 'longtext',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'imageGallery';
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,54 +30,45 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $parentId = 0;
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $idPath;
+    protected string $idPath = '';
 
     /**
      * @internal
      *
-     * @var Tag[]
+     * @var Tag[]|null
      */
-    protected $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
-     * @var Tag|null
      */
-    protected $parent;
+    protected ?Tag $parent = null;
 
     /**
      * @static
      *
-     * @param int $id
      *
-     * @return Tag|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Tag
     {
         try {
             $tag = new self();
@@ -91,12 +83,10 @@ final class Tag extends Model\AbstractModel
     /**
      * returns all assigned tags for element
      *
-     * @param string $cType
-     * @param int $cId
      *
      * @return Tag[]
      */
-    public static function getTagsForElement($cType, $cId)
+    public static function getTagsForElement(string $cType, int $cId): array
     {
         $tag = new Tag();
 
@@ -106,11 +96,8 @@ final class Tag extends Model\AbstractModel
     /**
      * adds given tag to element
      *
-     * @param string $cType
-     * @param int $cId
-     * @param Tag $tag
      */
-    public static function addTagToElement($cType, $cId, Tag $tag)
+    public static function addTagToElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
@@ -126,11 +113,8 @@ final class Tag extends Model\AbstractModel
     /**
      * removes given tag from element
      *
-     * @param string $cType
-     * @param int $cId
-     * @param Tag $tag
      */
-    public static function removeTagFromElement($cType, $cId, Tag $tag)
+    public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
@@ -147,23 +131,15 @@ final class Tag extends Model\AbstractModel
      * sets given tags to element and removes all other tags
      * to remove all tags from element, provide empty array of tags
      *
-     * @param string $cType
-     * @param int $cId
      * @param Tag[] $tags
      */
-    public static function setTagsForElement($cType, $cId, array $tags)
+    public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
-    /**
-     * @param string $cType
-     * @param array $cIds
-     * @param array $tagIds
-     * @param bool $replace
-     */
-    public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
+    public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
@@ -175,27 +151,25 @@ final class Tag extends Model\AbstractModel
      * @param Tag    $tag               The tag to search for
      * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
      * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
-     * @param array  $classNames        For objects only: filter by classnames
-     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     * @param array $classNames        For objects only: filter by classnames
+     * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
-     * @return array
      */
     public static function getElementsForTag(
         Tag $tag,
-        $type,
+        string $type,
         array $subtypes = [],
-        $classNames = [],
-        $considerChildTags = false
-    ) {
+        array $classNames = [],
+        bool $considerChildTags = false
+    ): array {
         return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 
     /**
      * @param string $path name path of tags
      *
-     * @return Tag|null
      */
-    public static function getByPath($path)
+    public static function getByPath(string $path): ?Tag
     {
         try {
             return (new self)->getDao()->getByPath($path);
@@ -204,7 +178,7 @@ final class Tag extends Model\AbstractModel
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $isUpdate = $this->exists();
 
@@ -224,60 +198,45 @@ final class Tag extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int|null $id
-     *
-     * @return Tag
+     * @return $this
      */
-    public function setId(?int $id)
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
-     *
-     * @return Tag
+     * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getParentId(): int
     {
         return $this->parentId;
     }
 
     /**
-     * @param int $parentId
-     *
-     * @return Tag
+     * @return $this
      */
-    public function setParentId(int $parentId)
+    public function setParentId(int $parentId): static
     {
         $this->parentId = $parentId;
         $this->parent = null;
@@ -286,9 +245,6 @@ final class Tag extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Tag|null
-     */
     public function getParent(): ?Tag
     {
         if ($this->parent === null && $parentId = $this->getParentId()) {
@@ -298,28 +254,17 @@ final class Tag extends Model\AbstractModel
         return $this->parent;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdPath()
+    public function getIdPath(): string
     {
         return $this->idPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullIdPath()
+    public function getFullIdPath(): string
     {
         return $this->getIdPath() . $this->getId() . '/';
     }
 
-    /**
-     * @param bool $includeOwnName
-     *
-     * @return string
-     */
-    public function getNamePath($includeOwnName = true)
+    public function getNamePath(bool $includeOwnName = true): string
     {
         //set id path to correct value
         $parentNames = [];
@@ -337,7 +282,7 @@ final class Tag extends Model\AbstractModel
         return '/' . implode('/', $parentNames);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getNamePath();
     }
@@ -345,9 +290,9 @@ final class Tag extends Model\AbstractModel
     /**
      * @return Tag[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
-        if ($this->children == null) {
+        if ($this->children === null) {
             if ($this->getId()) {
                 $listing = new Tag\Listing();
                 $listing->setCondition('parentId = ?', $this->getId());
@@ -361,15 +306,24 @@ final class Tag extends Model\AbstractModel
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
-        return count($this->getChildren()) > 0;
+        if ($this->children) {
+            return true;
+        }
+
+        //skip getTotalCount if array is empty
+        if (is_array($this->children)) {
+            return false;
+        }
+
+        $listing = new Tag\Listing();
+        $listing->setCondition('parentId = ?', $this->getId());
+
+        return $listing->getTotalCount() > 0;
     }
 
-    public function correctPath()
+    public function correctPath(): void
     {
         //set id path to correct value
         $parentIds = [];
@@ -392,7 +346,7 @@ final class Tag extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
@@ -401,10 +355,7 @@ final class Tag extends Model\AbstractModel
         $this->dispatchEvent(new TagEvent($this), TagEvents::POST_DELETE);
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         return $this->getDao()->exists();
     }

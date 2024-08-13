@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,10 +23,7 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class BooleanSelect implements MarshallerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value === true) {
             return ['value' => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE];
@@ -36,10 +34,7 @@ class BooleanSelect implements MarshallerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             if ($value['value'] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE) {

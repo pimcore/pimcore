@@ -1,0 +1,8 @@
+---
+custom_reports: Rapporti personalizzati
+reports: Rapporti
+custom_report_permissions: Permesso
+keybinding_customReports: Custom Reports
+keybinding_reports: Report
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'
+...

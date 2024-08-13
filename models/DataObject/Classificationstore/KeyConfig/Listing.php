@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,13 +26,12 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /** @var bool */
-    protected $includeDisabled;
+    protected bool $includeDisabled = false;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyConfig[]
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->getData();
     }
@@ -41,24 +41,18 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setList($theList)
+    public function setList(?array $theList): static
     {
         return $this->setData($theList);
     }
 
-    /**
-     * @return bool
-     */
-    public function getIncludeDisabled()
+    public function getIncludeDisabled(): bool
     {
         return $this->includeDisabled;
     }
 
-    /**
-     * @param bool $includeDisabled
-     */
-    public function setIncludeDisabled($includeDisabled)
+    public function setIncludeDisabled(bool $includeDisabled): void
     {
-        $this->includeDisabled = (bool) $includeDisabled;
+        $this->includeDisabled = $includeDisabled;
     }
 }

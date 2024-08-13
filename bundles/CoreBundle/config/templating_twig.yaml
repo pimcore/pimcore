@@ -1,0 +1,85 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Twig\Extension\HelpersExtension: ~
+
+    Pimcore\Twig\Extension\DocumentEditableExtension: ~
+
+    Pimcore\Twig\Extension\SubrequestExtension:
+        lazy: true
+
+    Pimcore\Twig\Extension\PimcoreObjectExtension: ~
+
+    Pimcore\Twig\Extension\PimcoreToolExtension: ~
+
+    Pimcore\Twig\Extension\NavigationExtension: ~
+
+    Pimcore\Twig\Extension\HeaderExtension: ~
+
+    Pimcore\Twig\Extension\AssetCompressExtension: ~
+
+    Pimcore\Twig\Extension\WebsiteConfigExtension: ~
+
+    Pimcore\Twig\Extension\DumpExtension: ~
+
+    Pimcore\Twig\Extension\CacheExtension: ~
+
+    Pimcore\Twig\Extension\Templating\PimcoreUrl:
+        arguments:
+            $generator: '@router'
+
+    Pimcore\Twig\Extension\Templating\HeadLink: ~
+
+    Pimcore\Twig\Extension\Templating\HeadMeta: ~
+
+    Pimcore\Twig\Extension\Templating\HeadScript: ~
+
+    Pimcore\Twig\Extension\Templating\HeadStyle: ~
+
+    Pimcore\Twig\Extension\Templating\HeadTitle: ~
+
+    Pimcore\Twig\Extension\Templating\Inc: ~
+
+    Pimcore\Twig\Extension\Templating\InlineScript: ~
+
+    Pimcore\Twig\Extension\Templating\Navigation:
+        lazy: true
+        arguments:
+            $rendererLocator: '@pimcore.templating.navigation.renderer_locator'
+
+    Pimcore\Twig\Extension\Templating\Placeholder: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\ContainerService: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\Container: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware: ~
+
+    Pimcore\Twig\Extension\AssetHelperExtensions: ~
+
+    Pimcore\Twig\Extension\DataObjectHelperExtensions: ~
+
+    Pimcore\Twig\Extension\DocumentHelperExtensions: ~
+
+    Pimcore\Twig\Extension\ImageThumbnailExtension: ~
+
+    # the deferred extension is needed for placeholder helpers to work
+    # as otherwise the placeholder block would be rendered before any
+    # content was added (e.g. headTitle)
+    Twig\DeferredExtension\DeferredExtension: ~
+
+    Pimcore\Twig\Sandbox\SecurityPolicy:
+        arguments:
+            $allowedTags: '%pimcore.templating.twig.sandbox_security_policy.tags%'
+            $allowedFilters: '%pimcore.templating.twig.sandbox_security_policy.filters%'
+            $allowedFunctions: '%pimcore.templating.twig.sandbox_security_policy.functions%'
+
+    Twig\Extension\SandboxExtension:
+        arguments:
+            $policy: '@Pimcore\Twig\Sandbox\SecurityPolicy'
+
+    Pimcore\Twig\Extension\AdminExtension: ~

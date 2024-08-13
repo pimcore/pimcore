@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,4 +27,6 @@ final class MailEvents
      * @var string
      */
     const PRE_SEND = 'pimcore.mail.preSend';
+
+    const PRE_LOG = 'pimcore.mail.preLog';
 }

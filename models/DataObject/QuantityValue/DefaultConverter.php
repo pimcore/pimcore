@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,21 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
+use Pimcore\Model\Exception\UnsupportedException;
 
 class DefaultConverter implements QuantityValueConverterInterface
 {
-    public function convert(QuantityValue $quantityValue, Unit $toUnit): QuantityValue
+    /**
+     * @throws UnsupportedException If $quantityValue is no QuantityValue
+     * @throws \Exception
+     */
+    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue
     {
+        if (!$quantityValue instanceof QuantityValue) {
+            throw new UnsupportedException('Only QuantityValue is supported.');
+        }
         $fromUnit = $quantityValue->getUnit();
         if (!$fromUnit instanceof Unit) {
             throw new \Exception('Quantity value has no unit');

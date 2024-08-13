@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,114 +28,84 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @internal
      *
-     * @var string
      */
-    public $fieldtype = 'text';
+    public string $fieldtype = 'text';
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $html = '';
+    public string $html = '';
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $renderingClass;
+    public string $renderingClass = '';
 
     /**
      * @internal
      *
-     * @var string
      */
-    public $renderingData;
+    public string $renderingData;
 
     /**
      * @internal
      *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
-    /**
-     * @return string
-     */
-    public function getHtml()
+    public function getHtml(): string
     {
         return $this->html;
     }
 
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
-    public function setHtml($html)
+    public function setHtml(string $html): static
     {
         $this->html = $html;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRenderingClass()
+    public function getRenderingClass(): string
     {
         return $this->renderingClass;
     }
 
-    /**
-     * @param string $renderingClass
-     */
-    public function setRenderingClass($renderingClass)
+    public function setRenderingClass(string $renderingClass): void
     {
         $this->renderingClass = $renderingClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getRenderingData()
+    public function getRenderingData(): string
     {
         return $this->renderingData;
     }
 
-    /**
-     * @param string $renderingData
-     */
-    public function setRenderingData($renderingData)
+    public function setRenderingData(string $renderingData): void
     {
         $this->renderingData = $renderingData;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
-        $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
-            $this->getRenderingClass()
-        );
+        $renderer = null;
+        $class = $this->getRenderingClass();
+        if (!empty($class)) {
+            $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
+                $class
+            );
+        }
 
         $context['fieldname'] = $this->getName();
         $context['layout'] = $this;

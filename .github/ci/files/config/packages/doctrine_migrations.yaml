@@ -1,7 +1,7 @@
 doctrine_migrations:
     connection: default
     migrations_paths:
-        'Pimcore\Bundle\CoreBundle\Migrations': '@PimcoreCoreBundle/Migrations'
+        'Pimcore\Bundle\CoreBundle\Migrations': '@PimcoreCoreBundle/src/Migrations'
     storage:
         table_storage:
             table_name: 'migration_versions'

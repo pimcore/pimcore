@@ -25,7 +25,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function save()
+    public function save(): void
     {
         $data = $this->model->getDataForResource();
 
@@ -40,10 +40,10 @@ class Dao extends Model\Dao\AbstractDao
             'type' => $this->model->getType(),
         ];
 
-        Helper::insertOrUpdate($this->db, 'documents_editables', $element);
+        Helper::upsert($this->db, 'documents_editables', $element, $this->getPrimaryKey('documents_editables'));
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('documents_editables', [
             'documentId' => $this->model->getDocumentId(),

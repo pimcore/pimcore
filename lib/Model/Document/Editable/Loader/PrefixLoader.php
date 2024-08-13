@@ -24,9 +24,6 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader as BasePrefixLoader;
  */
 final class PrefixLoader extends BasePrefixLoader
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function normalizeName(string $name): string
     {
         return mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1);

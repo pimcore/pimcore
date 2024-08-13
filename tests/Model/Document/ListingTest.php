@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,8 +18,8 @@ namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Db;
 use Pimcore\Model\Document;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest
@@ -29,7 +30,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class ListingTest extends ModelTestCase
 {
-    public function testListCount()
+    public function testListCount(): void
     {
         $db = Db::get();
 

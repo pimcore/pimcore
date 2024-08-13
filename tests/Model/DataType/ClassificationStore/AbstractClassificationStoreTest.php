@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,16 +18,13 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
-    public static $configCount = 0;
+    public static int $configCount = 0;
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
-    protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store)
+    protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store): void
     {
         // create group
         $group = new Classificationstore\GroupConfig();
@@ -58,14 +56,9 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $keygroupconfig->save();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
-        $class = ClassDefinition::getByName('csstore');
-
-        if (!$class) {
+        if (!ClassDefinition::getByName('csstore')) {
             $store = Classificationstore\StoreConfig::getByName('teststore');
             if (!$store) {
                 $store = new Classificationstore\StoreConfig();
@@ -74,18 +67,13 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                 $this->configureStore($store);
             }
 
-            $class = $this->tester->setupPimcoreClass_Csstore([
+            $this->tester->setupPimcoreClass_Csstore([
                 'storeId' => $store->getId(),
             ]);
         }
-
-        return $class;
     }
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
-    protected function configureStore(Classificationstore\StoreConfig $store)
+    protected function configureStore(Classificationstore\StoreConfig $store): void
     {
         $group1 = Classificationstore\GroupConfig::getByName('testgroup1');
         if (!$group1) {

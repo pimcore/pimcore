@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,15 +16,15 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Db\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {
@@ -43,7 +44,7 @@ class GeneralTest extends ModelTestCase
      *
      * two is created after one. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -102,16 +103,16 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals('parenttext', $two->getNormalInput());
 
         // disable inheritance
-        $getInheritedValues = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(false);
-
-        $two = DataObject::getById($id2);
-        $this->assertEquals(null, $two->getNormalInput());
+        DataObject\Service::useInheritedValues(false, function () use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals(null, $two->getNormalInput());
+        });
 
         // enable inheritance
-        DataObject::setGetInheritedValues($getInheritedValues);
-        $two = DataObject::getById($id2);
-        $this->assertEquals('parenttext', $two->getNormalInput());
+        DataObject\Service::useInheritedValues(true, function () use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals('parenttext', $two->getNormalInput());
+        });
 
         // now move it out
 
@@ -145,7 +146,7 @@ class GeneralTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testEqual()
+    public function testEqual(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -174,30 +175,31 @@ class GeneralTest extends ModelTestCase
 
         $two->setNormalInput('parenttext');
         $two->save();
+        $twoId = $two->getId();
 
-        $inheritanceEnabled = DataObject::getGetInheritedValues();
+        DataObject\Service::useInheritedValues(true, function () use ($two, $target) {
+            $fetchedTarget = $two->getRelation();
+            $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+        });
 
-        DataObject::setGetInheritedValues(true);
-        $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
-
-        DataObject::setGetInheritedValues(false);
-        $fetchedTarget = $two->getRelation();
-        $this->assertNull($fetchedTarget, 'target should not be inherited');
+        DataObject\Service::useInheritedValues(false, function () use ($two) {
+            $fetchedTarget = $two->getRelation();
+            $this->assertNull($fetchedTarget, 'target should not be inherited');
+        });
 
         // enable inheritance and set the target
-        DataObject::setGetInheritedValues(true);
-        $two = Concrete::getById($two->getId(), ['force' => true]);
-        $two->setRelation($target);
-        $two->save();
+        DataObject\Service::useInheritedValues(true, function () use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
+            $two->setRelation($target);
+            $two->save();
+        });
 
         // disable inheritance and check that the relation has been set on "two"
-        DataObject::setGetInheritedValues(false);
-        $two = Concrete::getById($two->getId(), ['force' => true]);
-        $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
-
-        DataObject::setGetInheritedValues($inheritanceEnabled);
+        DataObject\Service::useInheritedValues(false, function () use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
+            $fetchedTarget = $two->getRelation();
+            $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+        });
     }
 
     /**
@@ -210,7 +212,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithFolder()
+    public function testInheritanceWithFolder(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -273,7 +275,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithOtherClassObjectBetween()
+    public function testInheritanceWithOtherClassObjectBetween(): void
     {
         // According to the bootstrap file en and de are valid website languages
 

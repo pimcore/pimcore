@@ -1,0 +1,6 @@
+custom_reports: Custom Reports
+keybinding_customReports: Custom Reports
+custom_report_permissions: Permission
+keybinding_reports: Report
+reports: Reports
+mandatory_fields_missing: 'Please fill in the following mandatory fields:'

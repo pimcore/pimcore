@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,10 @@ use Pimcore\Model\User;
  */
 class PermissionChecker
 {
-    public static function check(ElementInterface $element, $users)
+    /**
+     * @param User[] $users
+     */
+    public static function check(ElementInterface $element, array $users): array
     {
         $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
@@ -65,7 +69,6 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var User $user */
         foreach ($users as $user) {
             if (!$user instanceof User) {
                 continue;
@@ -111,22 +114,22 @@ class PermissionChecker
 
                     // exception for list permission
                     if (false === $permissionsParent && $columnName === 'list') {
-                        // check for childs with permissions
+                        // check for children with permissions
                         $path = $element->getRealFullPath().'/';
                         if ($element->getId() == 1) {
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchAssociative(
+                        $permissionsChildren = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
                             [Helper::escapeLike($path) .'%']
                         );
-                        if ($permissionsChilds) {
-                            $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
-                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+                        if ($permissionsChildren) {
+                            $result[$columnName] = $permissionsChildren[$columnName] ? true : false;
+                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChildren['type'], $permissionsChildren['name'], $permissionsChildren['cpath']);
 
                             continue;
                         }
@@ -147,10 +150,7 @@ class PermissionChecker
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    protected static function collectParentIds($element)
+    protected static function collectParentIds(ElementInterface $element): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -167,7 +167,7 @@ class PermissionChecker
         return $parentIds;
     }
 
-    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null)
+    protected static function createDetail(User $user, ?string $a = null, ?bool $b = null, ?string $c = null, ?string $d = null, ?string $e = null, ?string $f = null): array
     {
         $detailEntry = [
             'userId' => $user->getId(),
@@ -177,13 +177,12 @@ class PermissionChecker
             'd' => $d,
             'e' => $e,
             'f' => $f,
-
         ];
 
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details)
+    protected static function getUserPermissions(User $user, array &$details): void
     {
         if ($user->isAdmin()) {
             $details[] = self::createDetail($user, 'ADMIN', true, null, null);
@@ -219,12 +218,7 @@ class PermissionChecker
         }
     }
 
-    /**
-     * @param User $user
-     * @param ElementInterface $element
-     * @param array $details
-     */
-    protected static function getLanguagePermissions($user, $element, &$details)
+    protected static function getLanguagePermissions(User $user, ElementInterface $element, array &$details): void
     {
         if ($user->isAdmin()) {
             return;

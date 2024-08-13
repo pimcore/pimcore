@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,97 +16,21 @@
 
 namespace Pimcore\Image;
 
-use HeadlessChromium\BrowserFactory;
-use HeadlessChromium\Communication\Message;
-use Pimcore\Logger;
-use Pimcore\Tool\Console;
-use Pimcore\Tool\Session;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use function class_alias;
+use function class_exists;
+use function trigger_deprecation;
 
-/**
- * @internal
- */
-class Chromium
-{
+trigger_deprecation('pimcore/pimcore', '11.2', 'The "%s" class is deprecated, use "%s" instead.', Chromium::class, HtmlToImage::class);
+
+if (!class_exists(Chromium::class, false)) {
+    class_alias(HtmlToImage::class, Chromium::class);
+}
+
+if (false) {
     /**
-     * @return bool
+     * @deprecated since Pimcore 11.2, use HtmlToImage instead
      */
-    public static function isSupported(): bool
+    class Chromium extends HtmlToImage
     {
-        return self::getChromiumBinary() && class_exists(BrowserFactory::class);
-    }
-
-    /**
-     * @return string|null
-     */
-    public static function getChromiumBinary(): ?string
-    {
-        foreach (['chromium', 'chrome'] as $app) {
-            $chromium = Console::getExecutable($app);
-            if ($chromium) {
-                return $chromium;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $url
-     * @param string $outputFile
-     * @param string $windowSize
-     *
-     * @return bool
-     *
-     * @throws \Exception
-     */
-    public static function convert(string $url, string $outputFile, string $windowSize = '1280,1024'): bool
-    {
-        $binary = self::getChromiumBinary();
-        if (!$binary) {
-            return false;
-        }
-        $browserFactory = new BrowserFactory($binary);
-
-        // starts headless chrome
-        $browser = $browserFactory->createBrowser([
-            'noSandbox' => file_exists('/.dockerenv'),
-            'startupTimeout' => 120,
-            'windowSize' => explode(',', $windowSize),
-        ]);
-
-        try {
-            $headers = [];
-            if (php_sapi_name() !== 'cli') {
-                $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
-                    return Session::getSessionName() . '=' . Session::getSessionId();
-                });
-            }
-
-            $page = $browser->createPage();
-
-            if (!empty($headers)) {
-                $page->getSession()->sendMessageSync(new Message(
-                    'Network.setExtraHTTPHeaders',
-                    ['headers' => $headers]
-                ));
-            }
-
-            $page->navigate($url)->waitForNavigation();
-
-            $page->screenshot([
-                'captureBeyondViewport' => true,
-                'clip' => $page->getFullPageClip(),
-            ])->saveToFile($outputFile);
-        } catch (\Throwable $e) {
-            Logger::debug('Could not create image from url: ' . $url);
-            Logger::debug((string) $e);
-
-            return false;
-        } finally {
-            $browser->close();
-        }
-
-        return true;
     }
 }

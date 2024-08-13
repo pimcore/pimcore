@@ -33,85 +33,59 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var int
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $creationDate;
+    protected ?string $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $modificationDate;
+    protected ?string $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
-    protected $sender;
+    protected ?User $sender = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
-    protected $recipient;
+    protected ?User $recipient = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $message;
+    protected ?string $message = null;
 
     /**
      * @internal
-     *
-     * @var Element\ElementInterface|null
      */
-    protected $linkedElement;
+    protected ?Element\ElementInterface $linkedElement = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $linkedElementType;
+    protected ?string $linkedElementType = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    protected $read = false;
+    protected bool $read = false;
 
-    /**
-     * @param int $id
-     *
-     * @return null|Notification
-     */
     public static function getById(int $id): ?Notification
     {
         $cacheKey = sprintf('notification_%d', $id);
@@ -131,183 +105,138 @@ class Notification extends AbstractModel
         return $notification;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCreationDate(): ?string
     {
         return $this->creationDate;
     }
 
     /**
-     * @param string $creationDate
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setCreationDate(string $creationDate): self
+    public function setCreationDate(string $creationDate): static
     {
         $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getModificationDate(): ?string
     {
         return $this->modificationDate;
     }
 
     /**
-     * @param string $modificationDate
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setModificationDate(string $modificationDate): self
+    public function setModificationDate(string $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getSender(): ?User
     {
         return $this->sender;
     }
 
     /**
-     * @param null|User $sender
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setSender(?User $sender): self
+    public function setSender(?User $sender): static
     {
         $this->sender = $sender;
 
         return $this;
     }
 
-    /**
-     * @return null|User
-     */
     public function getRecipient(): ?User
     {
         return $this->recipient;
     }
 
     /**
-     * @param null|User $recipient
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setRecipient(?User $recipient): self
+    public function setRecipient(?User $recipient): static
     {
         $this->recipient = $recipient;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @param null|string $title
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @param null|string $type
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getMessage(): ?string
     {
         return $this->message;
     }
 
     /**
-     * @param null|string $message
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setMessage(?string $message): self
+    public function setMessage(?string $message): static
     {
         $this->message = $message;
 
         return $this;
     }
 
-    /**
-     * @return null|Element\ElementInterface
-     */
     public function getLinkedElement(): ?Element\ElementInterface
     {
         return $this->linkedElement;
     }
 
     /**
-     * @param null|Element\ElementInterface $linkedElement
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setLinkedElement(?Element\ElementInterface $linkedElement): self
+    public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
-        $this->linkedElementType = Element\Service::getElementType($linkedElement);
+        $this->linkedElementType = $linkedElement instanceof Element\ElementInterface ? Element\Service::getElementType($linkedElement) : null;
 
         return $this;
     }
@@ -315,36 +244,27 @@ class Notification extends AbstractModel
     /**
      * enum('document','asset', 'object) nullable
      *
-     * @return string|null
      */
     public function getLinkedElementType(): ?string
     {
         return $this->linkedElementType;
     }
 
-    /**
-     * @return bool
-     */
     public function isRead(): bool
     {
         return $this->read;
     }
 
     /**
-     * @param bool $read
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setRead(bool $read): self
+    public function setRead(bool $read): static
     {
         $this->read = $read;
 
         return $this;
     }
 
-    /**
-     * Save notification
-     */
     public function save(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
@@ -352,9 +272,6 @@ class Notification extends AbstractModel
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_SAVE);
     }
 
-    /**
-     * Delete notification
-     */
     public function delete(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_DELETE);

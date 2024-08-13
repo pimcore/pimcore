@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Model\Element\ElementInterface;
 
 interface ElementEventInterface
 {
-    /**
-     * @return ElementInterface
-     */
-    public function getElement();
+    public function getElement(): ElementInterface;
 
     /**
      * Get argument by key.
@@ -33,7 +31,7 @@ interface ElementEventInterface
      *
      * @throws \InvalidArgumentException If key is not found.
      */
-    public function getArgument($key);
+    public function getArgument(string $key): mixed;
 
     /**
      * Add argument to event.
@@ -43,14 +41,13 @@ interface ElementEventInterface
      *
      * @return $this
      */
-    public function setArgument($key, $value);
+    public function setArgument(string $key, mixed $value): static;
 
     /**
      * Getter for all arguments.
      *
-     * @return array
      */
-    public function getArguments();
+    public function getArguments(): array;
 
     /**
      * Set args property.
@@ -59,14 +56,13 @@ interface ElementEventInterface
      *
      * @return $this
      */
-    public function setArguments(array $args = []);
+    public function setArguments(array $args = []): static;
 
     /**
      * Has argument.
      *
      * @param string $key Key of arguments array
      *
-     * @return bool
      */
-    public function hasArgument($key);
+    public function hasArgument(string $key): bool;
 }

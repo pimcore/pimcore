@@ -17,19 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Glossary;
 
-use Pimcore\Model\Glossary;
-use Pimcore\Tests\Helper\Pimcore;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tool\Glossary\Processor;
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
+use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class GlossaryTest extends TestCase
 {
-    /** @var Processor $processor */
-    protected $processor;
+    protected Processor $processor;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,7 +34,7 @@ class GlossaryTest extends TestCase
         $this->processor = $pimcoreModule->grabService(Processor::class);
     }
 
-    public function testGlossary()
+    public function testGlossary(): void
     {
         $entry = new Glossary();
         $entry->setText('Glossary');
@@ -53,7 +49,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithHtmlEntities()
+    public function testGlossaryWithHtmlEntities(): void
     {
         $entry = new Glossary();
         $entry->setText('Entity');
@@ -74,7 +70,7 @@ class GlossaryTest extends TestCase
         $this->assertSame(html_entity_decode($expect), $result);
     }
 
-    public function testGlossaryWithHtmlEntities2()
+    public function testGlossaryWithHtmlEntities2(): void
     {
         $entry = new Glossary();
         $entry->setText('Eintrag');
@@ -89,7 +85,7 @@ class GlossaryTest extends TestCase
         $this->assertSame(html_entity_decode($expect), $result);
     }
 
-    public function testGlossaryWithHtml()
+    public function testGlossaryWithHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('HTML');
@@ -133,7 +129,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithAnotherHtml()
+    public function testGlossaryWithAnotherHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('hans');
@@ -153,7 +149,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithLowerThenAndGreaterThenHtml()
+    public function testGlossaryWithLowerThenAndGreaterThenHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('huber');

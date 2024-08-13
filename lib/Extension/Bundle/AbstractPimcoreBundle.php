@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,74 +21,36 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
     /**
-     * {@inheritdoc}
+     * @deprecated
      */
-    public function getNiceName()
+    protected static ?PimcoreBundleManager $bundleManager = null;
+
+    public function getNiceName(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstaller()
+    public function getInstaller(): ?Installer\InstallerInterface
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdminIframePath()
+    public static function isInstalled(): bool
     {
-        return null;
-    }
+        $bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
+        static::$bundleManager = $bundleManager; // @TODO: compatibility layer to be removed in Pimcore 12
+        $bundle = $bundleManager->getActiveBundle(static::class, false);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsPaths()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCssPaths()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeJsPaths()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeCssPaths()
-    {
-        return [];
+        return $bundleManager->isInstalled($bundle);
     }
 }

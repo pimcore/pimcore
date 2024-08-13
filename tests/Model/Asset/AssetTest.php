@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,8 +17,8 @@
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 
 /**
@@ -35,16 +36,15 @@ class AssetTest extends ModelTestCase
         TestHelper::clearThumbnailConfigurations();
     }
 
-    /** @var Asset */
-    protected $testAsset;
+    protected Asset $testAsset;
 
-    public function testCRUD()
+    public function testCRUD(): void
     {
         // create
         $path = TestHelper::resolveFilePath('assets/images/image5.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
 
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image5.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
@@ -77,7 +77,7 @@ class AssetTest extends ModelTestCase
         $path = TestHelper::resolveFilePath('assets/images/image4.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
         $this->testAsset->setData($expectedData);
         $this->testAsset->save();
         $this->reloadAsset();
@@ -90,9 +90,53 @@ class AssetTest extends ModelTestCase
     }
 
     /**
+     * Parent ID of a new object cannot be 0
+     */
+    public function testParentIs0(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object with the same parent ID cannot be created.
+     */
+    public function testParentIdentical(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+        $savedObject = TestHelper::createImageAsset();
+        $this->assertTrue($savedObject->getId() > 0);
+
+        $savedObject->setParentId($savedObject->getId());
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
+    }
+
+    /**
      * Verifies that asset PHP API version note is saved
      */
-    public function testSavingVersionNotes()
+    public function testSavingVersionNotes(): void
     {
         $versionNote = ['versionNote' => 'a new version of this asset'];
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
@@ -100,7 +144,7 @@ class AssetTest extends ModelTestCase
         $this->assertEquals($this->testAsset->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
-    public function testThumbnails()
+    public function testThumbnails(): void
     {
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
@@ -185,7 +229,7 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(is_resource($stream1));
     }
 
-    public function reloadAsset()
+    public function reloadAsset(): void
     {
         $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
     }
@@ -194,7 +238,7 @@ class AssetTest extends ModelTestCase
      * Verifies that an asset can be saved with custom user modification id.
      *
      */
-    public function testCustomUserModification()
+    public function testCustomUserModification(): void
     {
         $userId = 101;
         $asset = TestHelper::createImageAsset();
@@ -214,7 +258,7 @@ class AssetTest extends ModelTestCase
      * Verifies that an asset can be saved with custom modification date.
      *
      */
-    public function testCustomModificationDate()
+    public function testCustomModificationDate(): void
     {
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
@@ -233,7 +277,7 @@ class AssetTest extends ModelTestCase
         $this->assertGreaterThanOrEqual($currentTime, $asset->getModificationDate(), 'Expected auto assigned modification date');
     }
 
-    public function testForceReload()
+    public function testForceReload(): void
     {
         $asset = TestHelper::createImageAsset();
 
@@ -241,7 +285,7 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(Asset::getById($asset->getId()) === Asset::getById($asset->getId(), ['force' => true]));
     }
 
-    public function testAssetFullPath()
+    public function testAssetFullPath(): void
     {
         $asset = TestHelper::createImageAsset();
 

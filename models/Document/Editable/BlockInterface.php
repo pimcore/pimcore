@@ -19,64 +19,63 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
-    /**
-     * @return \Generator
-     */
-    public function getIterator();
+    public function getIterator(): \Generator;
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
+     *
+     * @return void|string|$this
      */
     public function start();
 
     /**
      * Is executed at the end of the loop and removes the settings set in start()
+     *
+     * @return void|string
      */
     public function end();
 
     /**
      * Called before the block is rendered
      */
-    public function blockConstruct();
+    public function blockConstruct(): void;
 
     /**
      * Called when the block was rendered
      */
-    public function blockDestruct();
+    public function blockDestruct(): void;
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
+     *
+     * @return void|string|array
      */
     public function blockStart();
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
+     *
+     * @return void|string
      */
     public function blockEnd();
 
     /**
      * Return the amount of block elements
      *
-     * @return int
      */
-    public function getCount();
+    public function getCount(): int;
 
     /**
      * Return current iteration step
      *
-     * @return int
      */
-    public function getCurrent();
+    public function getCurrent(): int;
 
     /**
      * Return current index
      *
-     * @return int
      */
-    public function getCurrentIndex();
+    public function getCurrentIndex(): int;
 
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    public function isEmpty(): bool;
 }

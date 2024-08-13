@@ -30,15 +30,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SessionStatus
 {
-    /**
-     * @var string
-     */
-    private $symfonyMetadataStorageKey;
+    private string $symfonyMetadataStorageKey;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         string $symfonyMetadataStorageKey,
@@ -56,11 +50,7 @@ class SessionStatus
 
         // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
         $sessionData = $_SESSION ?? null;
-        if (empty($sessionData)) {
-            return false;
-        }
-
-        if (!is_array($sessionData)) {
+        if (!$sessionData) {
             return false;
         }
 
@@ -77,6 +67,9 @@ class SessionStatus
         return false;
     }
 
+    /**
+     * @return string[]
+     */
     private function getIgnoredSessionKeys(): array
     {
         $event = new IgnoredSessionKeysEvent([$this->symfonyMetadataStorageKey]);
