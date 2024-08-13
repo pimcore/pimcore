@@ -23,6 +23,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 use UnexpectedValueException;
+use function is_string;
 use function sprintf;
 
 /**
@@ -55,6 +56,7 @@ class Dao extends AbstractDao
 
     /**
      * Save notification
+     *
      * @throws Exception
      */
     public function save(): void
@@ -75,6 +77,7 @@ class Dao extends AbstractDao
 
     /**
      * Delete notification
+     *
      * @throws Exception
      */
     public function delete(): void

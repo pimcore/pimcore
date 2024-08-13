@@ -177,12 +177,12 @@ class NotificationService
      * @param array{offset?: int|string, limit?: int|string|null} $options
      *
      * @return array{total: int, data: Notification[]}
+     *
      * @throws Exception
      */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
-
 
         $conditions = ['isStudio = :isStudio'];
         $conditionVariables = [['isStudio' => 0]];

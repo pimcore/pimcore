@@ -93,7 +93,6 @@ class Notification extends AbstractModel
      */
     protected bool $read = false;
 
-
     /**
      * @internal
      */
@@ -298,6 +297,7 @@ class Notification extends AbstractModel
     public function setIsStudio(bool $isStudio): Notification
     {
         $this->isStudio = $isStudio;
+
         return $this;
     }
 
