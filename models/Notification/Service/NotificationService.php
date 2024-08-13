@@ -184,24 +184,26 @@ class NotificationService
     {
         $listing = new Listing();
 
-        $conditions = ['isStudio = :isStudio'];
-        $conditionVariables = [['isStudio' => 0]];
-        if ($filter) {
-            foreach ($filter as $key => $value) {
-                if (isset($value['condition'])) {
-                    $conditions[] = $value['condition'];
-                    $conditionVariables[] = $value['conditionVariables'] ?? [];
-                } else {
-                    $conditions[] = $key . ' = :' . $key;
-                    $conditionVariables[] = [$key => $value];
-                }
+        $filter  = [...$filter, ...['isStudio' => 0]];
+
+        $conditions = [];
+        $conditionVariables = [];
+        foreach ($filter as $key => $value) {
+            if (isset($value['condition'])) {
+                $conditions[] = $value['condition'];
+                $conditionVariables[] = $value['conditionVariables'] ?? [];
+            } else {
+                $conditions[] = $key . ' = :' . $key;
+                $conditionVariables[] = [$key => $value];
             }
         }
+
         $condition = implode(' AND ', $conditions);
         $listing->setCondition($condition, array_merge(...$conditionVariables));
+
+
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-
         $offset = $options['offset'] ?? 0;
         $limit = $options['limit'] ?? null;
 

@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Model\Notification\Dao;
 
 final class Version20240813085200 extends AbstractMigration
 {
@@ -28,28 +29,30 @@ final class Version20240813085200 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if ($schema->hasTable('notifications')) {
-            $notificationTable = $schema->getTable('notifications');
+        $tableName = Dao::DB_TABLE_NAME;
+        if ($schema->hasTable($tableName)) {
+            $notificationTable = $schema->getTable($tableName);
             if (!$notificationTable->hasColumn('payload')) {
-                $this->addSql('ALTER TABLE `notifications` ADD `payload` LONGTEXT DEFAULT NULL');
+                $this->addSql('ALTER TABLE `' . $tableName . '` ADD `payload` LONGTEXT DEFAULT NULL');
             }
 
             if (!$notificationTable->hasColumn('isStudio')) {
-                $this->addSql('ALTER TABLE `notifications` ADD `isStudio` TINYINT(1) DEFAULT 0');
+                $this->addSql('ALTER TABLE `' . $tableName . '` ADD `isStudio` TINYINT(1) DEFAULT 0');
             }
         }
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->hasTable('notifications')) {
-            $notificationTable = $schema->getTable('notifications');
+        $tableName = Dao::DB_TABLE_NAME;
+        if ($schema->hasTable($tableName)) {
+            $notificationTable = $schema->getTable($tableName);
             if ($notificationTable->hasColumn('payload')) {
-                $this->addSql('ALTER TABLE `notifications` DROP COLUMN `payload`');
+                $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `payload`');
             }
 
             if ($notificationTable->hasColumn('isStudio')) {
-                $this->addSql('ALTER TABLE `notifications` DROP COLUMN `isStudio`');
+                $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `isStudio`');
             }
         }
     }
