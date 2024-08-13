@@ -184,6 +184,7 @@ class NotificationService
     {
         $listing = new Listing();
 
+        // TODO: Deprecate with end of Classic-UI
         $filter  = [...$filter, ...['isStudio' => 0]];
 
         $conditions = [];

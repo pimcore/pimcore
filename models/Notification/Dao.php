@@ -18,7 +18,7 @@ namespace Pimcore\Model\Notification;
 use Doctrine\DBAL\Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
-use Pimcore\Model\Element;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
@@ -128,7 +128,7 @@ class Dao extends AbstractDao
         $linkedElement = null;
 
         if ($data['linkedElement']) {
-            $linkedElement = Element\Service::getElementById($data['linkedElementType'], $data['linkedElement']);
+            $linkedElement = Service::getElementById($data['linkedElementType'], $data['linkedElement']);
         }
 
         $model->setId((int)$data['id']);
@@ -137,7 +137,7 @@ class Dao extends AbstractDao
         $model->setSender($sender);
         $model->setRecipient($recipient);
         $model->setTitle($data['title']);
-        $model->setType($data['type']);
+        $model->setType($data['type'] ?? 'info');
         $model->setMessage($data['message']);
         $model->setLinkedElement($linkedElement);
         $model->setRead($data['read'] === 1);
