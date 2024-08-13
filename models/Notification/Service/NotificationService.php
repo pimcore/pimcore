@@ -135,8 +135,6 @@ class NotificationService
     }
 
     /**
-     *
-     *
      * @throws UnexpectedValueException
      */
     public function find(int $id): Notification
