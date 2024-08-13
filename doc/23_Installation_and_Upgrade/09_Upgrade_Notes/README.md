@@ -9,7 +9,7 @@
   If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
 ### [SEO Bundle]
 #### [Redirects]
-- Source site is now optional. Redirects without source site get applied for all domains. Previously redirects wihout source site did not get applied at all.
+- Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.
 
 ## Pimcore 11.3.0
 ### General
