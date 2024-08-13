@@ -807,7 +807,7 @@ class Document extends Element\AbstractElement
     {
         // check for site, if so rewrite the path for output
         try {
-            if (Tool::isFrontend() && Site::isSiteRequest()) {
+            if ($this->path != null && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
