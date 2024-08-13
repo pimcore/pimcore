@@ -16,8 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleLocator;
 
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function get_class;
+use function is_object;
+use function sprintf;
 
 class BundleLocator implements BundleLocatorInterface
 {
@@ -41,7 +46,7 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function getBundleForClass(object|string $class): BundleInterface
     {
@@ -57,12 +62,12 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function findBundleForClass(string $class): BundleInterface
     {
         // see TemplateGuesser from SensioFrameworkExtraBundle
-        $reflectionClass = new \ReflectionClass($class);
+        $reflectionClass = new ReflectionClass($class);
         $bundles = $this->kernel->getBundles();
 
         do {

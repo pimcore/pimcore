@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Symfony\Component\DomCrawler\Crawler;
+use function is_string;
+use function sprintf;
 
 /**
  * @internal

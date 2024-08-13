@@ -90,4 +90,3 @@ you will need to pass `SET` or `PREPEND`, respectively, as the first argument to
 
 If you wish to specify any additional attributes for the `<style>` tag, pass them in an array as the second argument to 
 `captureStart()`.
-

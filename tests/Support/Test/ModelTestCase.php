@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Test;
 
+use Pimcore;
 use Pimcore\Tests\Support\ModelTester;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -55,7 +56,7 @@ abstract class ModelTestCase extends TestCase
         if (null === $this->session) {
             $this->session = new Session(new MockArraySessionStorage());
 
-            $requestStack = \Pimcore::getContainer()->get('request_stack');
+            $requestStack = Pimcore::getContainer()->get('request_stack');
             if (!$request = $requestStack->getCurrentRequest()) {
                 $request = new Request();
                 $requestStack->push($request);

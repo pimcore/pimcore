@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ImporterService\Importer\ImporterInterface;
+use function sprintf;
 
 class ImporterService implements ImporterServiceInterface
 {
@@ -44,6 +46,6 @@ class ImporterService implements ImporterServiceInterface
             return $this->importers[$type];
         }
 
-        throw new \Exception(sprintf('no importer for type "%s" registered', $type));
+        throw new Exception(sprintf('no importer for type "%s" registered', $type));
     }
 }

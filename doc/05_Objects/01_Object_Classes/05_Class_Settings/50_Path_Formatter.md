@@ -89,4 +89,3 @@ class TheFormatter implements PathFormatterInterface
 
 **Note regarding batch assignment**
 The containerType will be `batch` and the object ID will be the folder ID.
-

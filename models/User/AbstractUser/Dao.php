@@ -15,8 +15,15 @@
 
 namespace Pimcore\Model\User\AbstractUser;
 
+use DateTime;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function sprintf;
+use function strlen;
 
 /**
  * @internal
@@ -115,12 +122,12 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {
         if (strlen($this->model->getName()) < 2) {
-            throw new \Exception('Name of user/role must be at least 2 characters long');
+            throw new Exception('Name of user/role must be at least 2 characters long');
         }
 
         $data = [];
@@ -145,7 +152,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -156,11 +163,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLastLoginDate(): void
     {
-        $data['lastLogin'] = (new \DateTime())->getTimestamp();
+        $data['lastLogin'] = (new DateTime())->getTimestamp();
         $this->db->update('users', $data, ['id' => $this->model->getId()]);
     }
 }

@@ -27,6 +27,8 @@ use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Yaml\Yaml;
+use function count;
+use function is_array;
 
 final class Config implements ArrayAccess
 {

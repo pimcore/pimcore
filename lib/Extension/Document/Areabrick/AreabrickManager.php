@@ -20,6 +20,12 @@ namespace Pimcore\Extension\Document\Areabrick;
 use Pimcore\Extension\Document\Areabrick\Exception\BrickNotFoundException;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Psr\Container\ContainerInterface;
+use function array_key_exists;
+use function count;
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
 
 /**
  * @internal

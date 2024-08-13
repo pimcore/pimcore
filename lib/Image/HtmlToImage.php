@@ -16,17 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
-use function class_exists;
-use function func_get_args;
+use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Connection;
 use HeadlessChromium\Communication\Message;
-use function method_exists;
 use Pimcore\Config;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
+use Throwable;
+use function class_exists;
+use function func_get_args;
+use function method_exists;
 use function rename;
 
 /**
@@ -65,7 +67,7 @@ class HtmlToImage
                     if((new Connection($chromiumUri))->connect()) {
                         self::$supportedAdapter = 'chromium';
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::debug((string) $e);
                     // nothing to do
                 }
@@ -92,7 +94,7 @@ class HtmlToImage
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
@@ -107,26 +109,19 @@ class HtmlToImage
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         try {
-
-            $extraHeaders = [
-                'X-Foo' => 'Bar', // required, as extraHttpHeaders() requires at least one entry
-            ];
-
-            if (null !== $sessionId && null !== $sessionName) {
-                $extraHeaders['Cookie'] = $sessionName . '=' . $sessionId;
-            }
-
             /** @var GotenbergAPI|object $request */
             $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
             if(method_exists($request, 'screenshot')) {
+                $sizes = explode(',', $windowSize);
                 $urlResponse = $request->screenshot()
+                    ->width((int) $sizes[0])
+                    ->height((int) $sizes[1])
                     ->png()
-                    ->extraHttpHeaders($extraHeaders)
                     ->url($url);
 
                 $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
@@ -134,7 +129,7 @@ class HtmlToImage
                 return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // nothing to do
         }
 
@@ -142,7 +137,7 @@ class HtmlToImage
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function convertChromium(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
@@ -152,7 +147,7 @@ class HtmlToImage
         if (!empty($chromiumUri)) {
             try {
                 $browser = BrowserFactory::connectToBrowser($chromiumUri);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::debug((string) $e);
 
                 return false;
@@ -192,7 +187,7 @@ class HtmlToImage
                 'captureBeyondViewport' => true,
                 'clip' => $page->getFullPageClip(),
             ])->saveToFile($outputFile);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Logger::debug('Could not create image from url ' . $url . ': ' . $e);
 
             return false;

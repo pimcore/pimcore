@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Component\Filesystem\Filesystem;
+use function dirname;
+use function sprintf;
 
 class ClassManager extends Module
 {

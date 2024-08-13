@@ -15,8 +15,12 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
+use Exception;
+use Pimcore;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
+use function in_array;
+use function sprintf;
 
 /**
  * @internal
@@ -42,7 +46,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getByName(string $id = null): void
     {
@@ -68,7 +72,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -106,7 +110,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $enabled = \Pimcore\Config::getSystemConfiguration('assets')['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new CleanupThumbnailsMessage('video', $this->model->getName())
             );
         }

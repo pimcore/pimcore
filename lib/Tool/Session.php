@@ -17,8 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use function sprintf;
 
 final class Session
 {
@@ -33,7 +35,7 @@ final class Session
             return $func($bag, $session);
         }
 
-        throw new \InvalidArgumentException(sprintf('The Bag "%s" is not a AttributeBagInterface.', $namespace));
+        throw new InvalidArgumentException(sprintf('The Bag "%s" is not a AttributeBagInterface.', $namespace));
     }
 
     public static function getSessionBag(

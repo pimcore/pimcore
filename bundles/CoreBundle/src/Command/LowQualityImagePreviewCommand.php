@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
@@ -24,6 +26,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function sprintf;
 
 /**
  * @internal
@@ -114,12 +117,12 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                     try {
                         $this->output->writeln('generating low-quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
                         $image->generateLowQualityPreview();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $this->output->writeln('<error>'.$e->getMessage().'</error>');
                     }
                 }
             }
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
 
         $progressBar->finish();

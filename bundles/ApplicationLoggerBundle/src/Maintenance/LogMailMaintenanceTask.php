@@ -21,6 +21,7 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Mime\Address;
+use function count;
 
 /**
  * @internal

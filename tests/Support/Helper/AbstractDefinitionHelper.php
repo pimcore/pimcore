@@ -19,6 +19,8 @@ namespace Pimcore\Tests\Support\Helper;
 use Codeception\Module;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionClass;
+use function sprintf;
 
 abstract class AbstractDefinitionHelper extends Module
 {
@@ -40,7 +42,7 @@ abstract class AbstractDefinitionHelper extends Module
             } else {
                 $this->debug(sprintf(
                     '[%s] Not initializing model definitions as DB is not connected',
-                    strtoupper((new \ReflectionClass($this))->getShortName())
+                    strtoupper((new ReflectionClass($this))->getShortName())
                 ));
             }
         }

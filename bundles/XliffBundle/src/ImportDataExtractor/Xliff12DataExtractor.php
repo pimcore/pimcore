@@ -16,11 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImportDataExtractor;
 
+use Exception;
+use Locale;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface;
 use Pimcore\Tool;
+use SimpleXMLElement;
+use function count;
+use function sprintf;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {
@@ -45,10 +50,10 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         // see https://en.wikipedia.org/wiki/IETF_language_tag
         $target = str_replace('-', '_', (string)$target);
         if (!Tool::isValidLanguage($target)) {
-            $target = \Locale::getPrimaryLanguage($target);
+            $target = Locale::getPrimaryLanguage($target);
         }
         if (!Tool::isValidLanguage($target)) {
-            throw new \Exception(sprintf('invalid language %s', $file['target-language']));
+            throw new Exception(sprintf('invalid language %s', $file['target-language']));
         }
 
         [$type, $id] = explode('-', (string)$file['original']);
@@ -94,9 +99,9 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    private function loadFile(string $importId): \SimpleXMLElement
+    private function loadFile(string $importId): SimpleXMLElement
     {
         return simplexml_load_file($this->getImportFilePath($importId), null, LIBXML_NOCDATA);
     }

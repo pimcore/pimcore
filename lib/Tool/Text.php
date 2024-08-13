@@ -22,6 +22,12 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Site;
+use Pimcore\Tool;
+use function array_key_exists;
+use function chr;
+use function count;
+use function strlen;
 
 class Text
 {
@@ -77,6 +83,12 @@ class Text
                                     $path .= '#' . $urlParts['fragment'];
                                 }
                             }
+
+                            $site = Frontend::getSiteForDocument($element);
+                            if ($site instanceof Site) {
+                                $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
+                            }
+
                         } elseif ($element instanceof Concrete) {
                             if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                                 $path = $linkGenerator->generate(
@@ -134,9 +146,18 @@ class Text
                         if (!preg_match('/pimcore_disable_thumbnail="([^"]+)*"/', $oldTag)) {
                             if (!empty($config)) {
                                 $path = $element->getThumbnail($config);
+
+                                $imgTagWithCustomMetadata = $path->getImageTag();
+                                preg_match('/alt="([^"]*)"/', $imgTagWithCustomMetadata, $altMatches);
+                                preg_match('/title="([^"]*)"/', $imgTagWithCustomMetadata, $titleMatches);
+                                $alt = $altMatches[1] ?? '';
+                                $title = $titleMatches[1] ?? '';
+
                                 $pathHdpi = $element->getThumbnail(array_merge($config, ['highResolution' => 2]));
                                 $additionalAttributes = [
                                     'srcset' => $path . ' 1x, ' . $pathHdpi . ' 2x',
+                                    'alt' => $alt,
+                                    'title' => $title,
                                 ];
                             } elseif ($element->getWidth() > 2000 || $element->getHeight() > 2000) {
                                 // if the image is too large, size it down to 2000px this is the max. for wysiwyg

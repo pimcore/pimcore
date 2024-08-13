@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Cache\Core;
 
+use Pimcore;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
@@ -32,7 +33,7 @@ class DoctrineDbalCoreHandlerTest extends AbstractCoreHandlerTest
     protected function createCachePool(): TagAwareAdapter
     {
         TestHelper::checkDbSupport();
-        $doctrineDbalAdapter = new DoctrineDbalAdapter(\Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);
+        $doctrineDbalAdapter = new DoctrineDbalAdapter(Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);
         $adapter = new TagAwareAdapter($doctrineDbalAdapter);
 
         return $adapter;

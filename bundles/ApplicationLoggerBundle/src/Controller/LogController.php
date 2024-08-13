@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Carbon\Carbon;
+use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use function sprintf;
 
 /**
  * @internal
@@ -148,7 +150,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         ]);
     }
 
-    private function parseDateObject(?string $date, ?string $time): ?\DateTime
+    private function parseDateObject(?string $date, ?string $time): ?DateTime
     {
         if (empty($date)) {
             return null;
@@ -159,9 +161,9 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $dateTime = null;
         if (preg_match($pattern, $date, $dateMatches)) {
             if (!empty($time) && preg_match($pattern, $time, $timeMatches)) {
-                $dateTime = new \DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
+                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
             } else {
-                $dateTime = new \DateTime($date);
+                $dateTime = new DateTime($date);
             }
         }
 

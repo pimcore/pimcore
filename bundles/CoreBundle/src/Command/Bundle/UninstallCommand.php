@@ -17,11 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Exception;
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function sprintf;
 
 /**
  * @internal
@@ -55,7 +57,7 @@ class UninstallCommand extends AbstractBundleCommand
             $this->bundleManager->uninstall($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully uninstalled', $bundle->getName()));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->handlePrerequisiteError($e->getMessage());
         }
 

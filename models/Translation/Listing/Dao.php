@@ -19,6 +19,8 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
+use function count;
+use function sprintf;
 
 /**
  * @internal
@@ -37,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
-        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 

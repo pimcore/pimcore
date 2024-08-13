@@ -43,3 +43,4 @@ If you want to change the default name / description that is displayed in the ap
 ```
 
  ![Settings](../img/two_factor_authentication_app_descriptions.png)
+ 

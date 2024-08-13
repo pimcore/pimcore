@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\UnitConverterResolver;
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 
@@ -41,7 +42,7 @@ class UnitConversionService
         }
 
         if (!$converterService instanceof QuantityValueConverterInterface) {
-            throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
+            throw new Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
         }
 
         return $converterService->convert($quantityValue, $toUnit);

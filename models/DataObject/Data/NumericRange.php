@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use function sprintf;
 
 class NumericRange implements OwnerAwareFieldInterface
 {
@@ -61,7 +62,7 @@ class NumericRange implements OwnerAwareFieldInterface
 
     public function getRange(int|float $step = 1): array
     {
-        return \range($this->getMinimum(), $this->getMaximum(), $step);
+        return range($this->getMinimum(), $this->getMaximum(), $step);
     }
 
     public function toArray(): array
@@ -77,6 +78,6 @@ class NumericRange implements OwnerAwareFieldInterface
         $minimum = $this->getMinimum() ?: '-∞';
         $maximum = $this->getMaximum() ?: '+∞';
 
-        return \sprintf('[%s, %s]', $minimum, $maximum);
+        return sprintf('[%s, %s]', $minimum, $maximum);
     }
 }

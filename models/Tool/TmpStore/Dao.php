@@ -15,8 +15,11 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use function is_array;
+use function is_object;
 
 /**
  * @internal
@@ -44,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
             ], $this->getPrimaryKey('tmp_store'));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -58,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', [$id]);
 
-        if (is_array($item) && array_key_exists('id', $item)) {
+        if ($item) {
             if ($item['serialized']) {
                 $item['data'] = unserialize($item['data']);
             }

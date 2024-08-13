@@ -16,14 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Image\Adapter;
 
+use GdImage;
 use Pimcore\Image\Adapter;
+use function function_exists;
+use function in_array;
 
 class GD extends Adapter
 {
     protected string $path;
 
     /**
-     * @var resource|\GdImage|false
+     * @var resource|GdImage|false
      */
     protected mixed $resource = null;
 
@@ -132,7 +135,7 @@ class GD extends Adapter
         }
     }
 
-    private function createImage(int $width, int $height): \GdImage
+    private function createImage(int $width, int $height): GdImage
     {
         $newImg = imagecreatetruecolor($width, $height);
 
@@ -188,8 +191,8 @@ class GD extends Adapter
 
         $this->contain($width, $height, $forceResize);
 
-        $x = ($width - $this->getWidth()) / 2;
-        $y = ($height - $this->getHeight()) / 2;
+        $x = (int)(($width - $this->getWidth()) / 2);
+        $y = (int)(($height - $this->getHeight()) / 2);
 
         $newImage = $this->createImage($width, $height);
         imagecopy($newImage, $this->resource, $x, $y, 0, 0, $this->getWidth(), $this->getHeight());

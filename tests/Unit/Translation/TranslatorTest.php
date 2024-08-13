@@ -17,12 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function count;
+use function sprintf;
 
 class TranslatorTest extends TestCase
 {
@@ -68,7 +71,7 @@ class TranslatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
+        $this->translator = Pimcore::getContainer()->get(TranslatorInterface::class);
         $this->addTranslations();
     }
 

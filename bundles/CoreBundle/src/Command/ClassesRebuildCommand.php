@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Service\Attribute\Required;
+use function sprintf;
 
 /**
  * @internal
@@ -53,6 +55,12 @@ class ClassesRebuildCommand extends AbstractCommand
                 'd',
                 InputOption::VALUE_NONE,
                 'Delete missing Classes (Classes that don\'t exists in var/classes anymore but in the database)'
+            )
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                'Force rebuild of all classes (ignoring the last modification date of the class definition files)'
             );
     }
 
@@ -94,8 +102,10 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln('Saving all classes');
         }
 
+        $force = (bool)$input->getOption('force');
+
         if ($input->getOption('create-classes')) {
-            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
+            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions($force) as $changes) {
                 if ($output->isVerbose()) {
                     [$class, $id, $action] = $changes;
                     $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
@@ -105,11 +115,17 @@ class ClassesRebuildCommand extends AbstractCommand
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
                 if ($class instanceof DataObject\ClassDefinitionInterface) {
+                    $classSaved = $this->classDefinitionManager->saveClass($class, false, $force);
                     if ($output->isVerbose()) {
-                        $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
+                        $output->writeln(
+                            sprintf(
+                                '%s [%s] %s',
+                                $class->getName(),
+                                $class->getId(),
+                                $classSaved ? ClassDefinitionManager::SAVED : ClassDefinitionManager::SKIPPED
+                            )
+                        );
                     }
-
-                    $class->save(false);
                 }
             }
         }
@@ -127,7 +143,7 @@ class ClassesRebuildCommand extends AbstractCommand
 
             try {
                 $brickDefinition->save(false);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $output->write((string)$e);
             }
         }

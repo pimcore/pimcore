@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use function is_array;
+
 /**
  * @internal
  */

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
+use InvalidArgumentException;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Model\ModelInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use function sprintf;
 
 /**
  * @internal
@@ -63,7 +65,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 
         $name = $this->getDefinitionName(basename($path));
         if (null === $name) {
-            throw new \InvalidArgumentException('File name does not match expected format');
+            throw new InvalidArgumentException('File name does not match expected format');
         }
 
         $json = $this->getJson($path);
@@ -119,7 +121,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     {
         $path = $this->input->getArgument('path');
         if (!file_exists($path) || !is_readable($path)) {
-            throw new \InvalidArgumentException('File does not exist');
+            throw new InvalidArgumentException('File does not exist');
         }
 
         return $path;

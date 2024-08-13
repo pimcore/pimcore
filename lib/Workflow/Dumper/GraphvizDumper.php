@@ -21,6 +21,8 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Dumper\DumperInterface;
 use Symfony\Component\Workflow\Marking;
+use function in_array;
+use function sprintf;
 
 /**
  * GraphvizDumper dumps a workflow as a graphviz file.

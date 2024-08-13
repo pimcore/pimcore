@@ -26,6 +26,8 @@ use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use function count;
+use function sprintf;
 
 class ModelDocumentPermissionsTest extends ModelTestCase
 {
@@ -474,6 +476,10 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
     public function testSearch(): void
     {
+        // Tests are disabled when not using admin-ui-classic-bundle ^1.5
+        if (!class_exists(\Pimcore\Bundle\AdminBundle\Service\GridData\Document::class)) {
+            return;
+        }
         $admin = User::getByName('admin');
 
         //search hugo
@@ -511,6 +517,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
     public function testManyElementSearch(): void
     {
+        // Tests are disabled when not using admin-ui-classic-bundle ^1.5
+        if (!class_exists(\Pimcore\Bundle\AdminBundle\Service\GridData\Document::class)) {
+            return;
+        }
+
         $admin = User::getByName('admin');
 
         //prepare additional data

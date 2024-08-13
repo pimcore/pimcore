@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItemCollection;
 
@@ -24,7 +25,7 @@ interface ExportServiceInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, string $exportId = null): string;
 

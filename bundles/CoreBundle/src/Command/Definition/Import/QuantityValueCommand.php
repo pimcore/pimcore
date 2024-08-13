@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
+use InvalidArgumentException;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Model\DataObject\QuantityValue\Service;
@@ -24,6 +25,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function sprintf;
 
 #[AsCommand(
     name: 'pimcore:definition:import:units',
@@ -64,7 +66,7 @@ class QuantityValueCommand extends AbstractCommand
     {
         $path = $this->input->getArgument('path');
         if (!file_exists($path) || !is_readable($path)) {
-            throw new \InvalidArgumentException('File does not exist');
+            throw new InvalidArgumentException('File does not exist');
         }
 
         return $path;
@@ -80,7 +82,7 @@ class QuantityValueCommand extends AbstractCommand
         // try to decode json here as we want to fail early if file is no valid JSON
         $json = json_decode($content);
         if (null === $json) {
-            throw new \InvalidArgumentException('JSON could not be decoded');
+            throw new InvalidArgumentException('JSON could not be decoded');
         }
 
         return $content;

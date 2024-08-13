@@ -39,15 +39,23 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
+use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Twig\Extension\RuntimeExtensionInterface;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
+use function sprintf;
 
 /**
  * @method $this appendFile($src, $type = 'text/javascript', array $attrs = array())
@@ -324,7 +332,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      */
     protected function _isValid(mixed $value): bool
     {
-        if ((!$value instanceof \stdClass)
+        if ((!$value instanceof stdClass)
             || !isset($value->type)
             || (!isset($value->source) && !isset($value->attributes))) {
             return false;
@@ -420,7 +428,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function itemToString(\stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
+    public function itemToString(stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
     {
         $attrString = '';
 
@@ -446,7 +454,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
 
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
 
         //@phpstan-ignore-next-line
         if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
@@ -543,7 +551,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             $event = new GenericEvent($this, [
                 'item' => $item,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_SCRIPT);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_SCRIPT);
 
             if (isset($item->attributes) && is_array($item->attributes)) {
                 $source = (string)($item->attributes['src'] ?? '');
@@ -565,9 +573,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function createData(string $type, array $attributes, string $content = null): \stdClass
+    public function createData(string $type, array $attributes, string $content = null): stdClass
     {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->type = $type;
         $data->attributes = $attributes;
         $data->source = $content;

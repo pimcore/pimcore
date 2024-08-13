@@ -40,7 +40,7 @@ don't need any custom code in our controller, so the action stays empty for the 
 ### Create a Template
 Now we create a template for our page:
 * Create a new folder in `/templates` and name it like the controller (using the snake_case typo) (in the `content` case). 
-* Put a new Twig template into this folder and name it like our action  (using the snake_case typo) (`default.html.twig`).
+* Put a new Twig template into this folder and name it like our action (using the snake_case typo) (`default.html.twig`).
 
 Then we can put some template code into it, for example:
 ```twig
@@ -193,7 +193,7 @@ First, click right on *Home* in the *Documents* panel and Select *Add Page* > *B
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab *Settings* in the newly opened tab.
-Select the Controller::Action and template(if different from controller action naming).
+Select the Controller::Action and template (if different from controller action naming).
 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 
@@ -214,7 +214,7 @@ In terms of images or videos, always upload only one high quality version (best 
 channels are created directly 
 [within Pimcore](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md) using custom configurations.
 
-For this tutorial, at least add one file which  you will use in an object later. 
+For this tutorial, at least add one file which you will use in an object later. 
 
 There are many ways to upload files:
 1. Drag & drop files from your file explorer into the browser on the desired asset folder
@@ -266,7 +266,7 @@ Now we can use it to create objects in Pimcore.
 * Open the objects section on the left and click on the right button after *Home* (Note that you can also create directory structures for objects).
 * Choose *Add object -> product* and fill the input with a name, for example: *tshirt*
 * Add values for sku, name and description attributes.
-* Click  *Save & Publish*
+* Click *Save & Publish*
 
 Probably, your view looks like below:
 

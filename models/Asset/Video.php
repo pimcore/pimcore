@@ -16,12 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Exception;
+use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -108,7 +117,7 @@ class Video extends Model\Asset
 
                     return $customSetting[$thumbnail->getName()];
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath() . ': ' . $e);
             }
         }
@@ -130,7 +139,7 @@ class Video extends Model\Asset
             'filesystemPath' => $fullPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
 
         return $event->getArgument('frontendPath');
     }
@@ -192,7 +201,7 @@ class Video extends Model\Asset
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDuration(): float|int|null
     {
@@ -309,7 +318,7 @@ class Video extends Model\Asset
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
-                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
+                    throw new RuntimeException('No close tag found.  Possibly corrupted file.');
                 }
 
                 $buffer = substr($buffer, 0, $position + $tagLength);

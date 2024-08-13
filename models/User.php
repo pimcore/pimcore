@@ -21,6 +21,11 @@ use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
+use function in_array;
+use function is_array;
+use function is_string;
+use function sprintf;
+use function strlen;
 
 /**
  * @method User\Dao getDao()
@@ -42,6 +47,8 @@ final class User extends User\UserRole implements UserInterface
     protected ?string $email = null;
 
     protected string $language = 'en';
+
+    protected ?string $datetimeLocale = null;
 
     protected bool $admin = false;
 
@@ -79,7 +86,7 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    protected int $lastLogin;
+    protected ?int $lastLogin = null;
 
     protected ?string $keyBindings = null;
 
@@ -641,7 +648,7 @@ final class User extends User\UserRole implements UserInterface
         return $mergedWebsiteTranslationLanguagesView;
     }
 
-    public function getLastLogin(): int
+    public function getLastLogin(): ?int
     {
         return $this->lastLogin;
     }
@@ -727,5 +734,17 @@ final class User extends User\UserRole implements UserInterface
     protected function getFallbackImage(): string
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
+    }
+
+    public function getDatetimeLocale(): ?string
+    {
+        return $this->datetimeLocale;
+    }
+
+    public function setDatetimeLocale(?string $datetimeLocale): static
+    {
+        $this->datetimeLocale = $datetimeLocale;
+
+        return $this;
     }
 }

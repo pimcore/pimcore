@@ -16,9 +16,12 @@
 namespace Pimcore\Model\DataObject\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
+use function count;
+use function sprintf;
 
 /**
  * @internal
@@ -37,7 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
@@ -101,7 +104,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder([sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as `type`', $this->getTableName() . '.type')]);
+        $queryBuilder = $this->getQueryBuilder(sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as `type`', $this->getTableName() . '.type'));
         $objectIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
 
         return array_map('intval', $objectIds);

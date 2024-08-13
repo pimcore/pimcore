@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
@@ -37,7 +39,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     {
         //loads select list options
         $options = $this->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
+        if (Pimcore::inAdmin() || empty($options)) {
             $this->configureOptions();
         }
 
@@ -55,7 +57,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         if (!empty($data)) {
             try {
                 $this->checkValidity($data, true, $params);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $data = null;
             }
         }
@@ -75,7 +77,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         if (!empty($data)) {
             try {
                 $this->checkValidity($data, true, $params);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $data = null;
             }
         }
@@ -134,7 +136,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     {
         $obj = parent::__set_state($data);
 
-        if (\Pimcore::inAdmin()) {
+        if (Pimcore::inAdmin()) {
             $obj->configureOptions();
         }
 

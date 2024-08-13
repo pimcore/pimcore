@@ -19,7 +19,9 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Listing;
+use function sprintf;
 
 final class Version20220816120101 extends AbstractMigration
 {
@@ -39,7 +41,7 @@ final class Version20220816120101 extends AbstractMigration
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function regenerateClasses(): void
     {

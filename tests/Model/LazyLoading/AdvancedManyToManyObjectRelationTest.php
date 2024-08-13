@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
@@ -24,6 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
+use function count;
 
 class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 {
@@ -65,7 +67,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -127,7 +129,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -174,7 +176,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -225,7 +227,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -276,7 +278,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -333,7 +335,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -387,7 +389,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);
@@ -457,7 +459,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //clear cache and collect garbage
             Cache::clearAll();
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             //reload data object from database
             $object = LazyLoading::getById($id, ['force' => true]);

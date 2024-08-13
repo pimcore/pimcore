@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document\Service;
 use Psr\Log\LoggerInterface;
+use function sprintf;
 
 /**
  * @internal
@@ -34,7 +36,7 @@ class GeneratePagePreviewHandler
     {
         try {
             Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::err(sprintf('Unable to generate preview of document: %s, reason: %s ', $message->getPageId(), $e->getMessage()));
         }
     }

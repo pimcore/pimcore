@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use Exception;
 use League\Flysystem\FilesystemException;
-use function ltrim;
-use function md5;
+use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -29,6 +29,15 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
+use function array_key_exists;
+use function call_user_func_array;
+use function function_exists;
+use function in_array;
+use function is_array;
+use function is_resource;
+use function ltrim;
+use function md5;
+use function sprintf;
 
 /**
  * @internal
@@ -86,7 +95,7 @@ class Processor
      * @param string|resource|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function process(
         Asset $asset,
@@ -244,13 +253,13 @@ class Processor
             } else {
                 $fileExists = true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug($e->getMessage());
         }
 
         if ($fileExists === false) {
             $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($storagePath);
-            $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
+            $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
             $lock->acquire(true);
 
@@ -270,11 +279,11 @@ class Processor
                 }
 
                 if (!file_exists($fileSystemPath)) {
-                    throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
+                    throw new Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
                 }
 
                 if (!$image->load($fileSystemPath, ['asset' => $asset])) {
-                    throw new \Exception(sprintf('Unable to generate thumbnail for asset %s from source image %s', $asset->getId(), $fileSystemPath));
+                    throw new Exception(sprintf('Unable to generate thumbnail for asset %s from source image %s', $asset->getId(), $fileSystemPath));
                 }
 
                 $transformations = $config->getItems();
@@ -356,7 +365,7 @@ class Processor
 
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
                 if ($optimizedFormat && $optimizeContent && $isImageOptimizersEnabled) {
-                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                         new OptimizeImageMessage($storagePath)
                     );
                 }
