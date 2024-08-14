@@ -248,7 +248,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as &$metaData) {
                         $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData['type'], ['object', 'asset', 'document'])) {
+                        if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData->getValue()) {
                             $el = Element\Service::getElementByPath($metaData['type'], $metaData->getValue());
                             $metaData['value'] = $el;
                         }
