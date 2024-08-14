@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Element\Tag;
 
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
