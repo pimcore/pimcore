@@ -133,8 +133,14 @@ final class RedirectHandler
         }
 
         // check for a site
-        if ($sourceSite && $sourceSite->getId() !== $redirect->getSourceSite()) {
-            return null;
+        if($redirect->getSourceSite()) {
+            if (!$sourceSite) {
+                return null;
+            }
+
+            if ($sourceSite->getId() !== $redirect->getSourceSite()) {
+                return null;
+            }
         }
 
         return $this->buildRedirectResponse($redirect, $request, $matches);
