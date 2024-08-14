@@ -359,7 +359,14 @@ final class Tag extends Model\AbstractModel
     {
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
-        $this->getDao()->delete();
+        $deletedTagIds = $this->getDao()->delete();
+
+        foreach ($deletedTagIds as $removeId) {
+            $cacheKey = 'tags_' . $removeId;
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                RuntimeCache::getInstance()->offsetUnset($cacheKey);
+            }
+        }
 
         $this->dispatchEvent(new TagEvent($this), TagEvents::POST_DELETE);
     }

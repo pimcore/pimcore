@@ -98,27 +98,20 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function delete(): void
+    public function delete(): array
     {
         $this->db->beginTransaction();
 
         try {
-            $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . Helper::quoteInto($this->db, 'tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
-
             $toRemoveTagIds = $this->db->fetchFirstColumn('SELECT id FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
             $toRemoveTagIds[] = $this->model->getId();
+            $implodedTagIds = implode(',', $toRemoveTagIds);
 
-            $this->db->executeStatement('DELETE FROM tags WHERE id IN (' . implode(',', $toRemoveTagIds) . ')');
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE tagid IN (' . $implodedTagIds . ')');
+            $this->db->executeStatement('DELETE FROM tags WHERE id IN (' . $implodedTagIds . ')');
             $this->db->commit();
 
-            foreach ($toRemoveTagIds as $removeId) {
-                $cacheKey = 'tags_' . $removeId;
-                if (RuntimeCache::isRegistered($cacheKey)) {
-                    RuntimeCache::getInstance()->offsetUnset($cacheKey);
-                }
-            }
-
+            return $toRemoveTagIds;
         } catch (\Exception $e) {
             $this->db->rollBack();
 
