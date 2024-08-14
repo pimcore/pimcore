@@ -269,7 +269,7 @@ class Item extends Model\AbstractModel
             $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
-        $element->save();
+        $element->save(['isRecycleBinRestore' => true]);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {

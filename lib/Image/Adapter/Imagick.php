@@ -744,21 +744,19 @@ class Imagick extends Adapter
             $newImage = $image;
         }
 
-        if ($newImage) {
-            if ($origin === 'top-right') {
-                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-            } elseif ($origin === 'bottom-left') {
-                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin === 'bottom-right') {
-                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin === 'center') {
-                $x = round($this->resource->getImageWidth() / 2) - round($newImage->getImageWidth() / 2) + $x;
-                $y = round($this->resource->getImageHeight() / 2) - round($newImage->getImageHeight() / 2) + $y;
-            }
+        if ($newImage instanceof \Imagick) {
+            [$x, $y] = $this->calculateOverlayPosition($newImage, $x, $y, $origin);
 
             $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
-            $this->resource->compositeImage($newImage, constant('Imagick::' . $composite), (int)$x, (int)$y);
+
+            $compositeValue = constant('Imagick::' . $composite);
+            if ($this->checkPreserveAnimation()) {
+                foreach ($this->resource as $frame) {
+                    $frame->compositeImage($newImage, $compositeValue, $x, $y);
+                }
+            } else {
+                $this->resource->compositeImage($newImage, $compositeValue, $x, $y);
+            }
         }
 
         $this->postModify();
@@ -983,6 +981,40 @@ class Imagick extends Adapter
         }
 
         return self::$supportedFormatsCache[$format];
+    }
+
+    /**
+     * @return array{int, int}
+     */
+    private function calculateOverlayPosition(\Imagick $newImage, int $x, int $y, string $origin): array
+    {
+        $imageWidth = $this->resource->getImageWidth();
+        $imageHeight = $this->resource->getImageHeight();
+        $newImageWidth = $newImage->getImageWidth();
+        $newImageHeight = $newImage->getImageHeight();
+
+        return match ($origin) {
+            'top-right' => [
+                $imageWidth - $newImageWidth - $x,
+                $y,
+            ],
+            'bottom-left' => [
+                $x,
+                $imageHeight - $newImageHeight - $y,
+            ],
+            'bottom-right' => [
+                $imageWidth - $newImageWidth - $x,
+                $imageHeight - $newImageHeight - $y,
+            ],
+            'center' => [
+                (int) round($imageWidth / 2 - $newImageWidth / 2) + $x,
+                (int) round($imageHeight / 2 - $newImageHeight / 2) + $y,
+            ],
+            default => [
+                $x,
+                $y,
+            ],
+        };
     }
 
     private function checkFormatSupport(string $format): bool

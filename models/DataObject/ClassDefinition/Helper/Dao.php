@@ -121,6 +121,7 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                $this->removeIndices($table, [$value], []);
             }
         }
         if ($dropColumns) {
@@ -199,7 +200,7 @@ trait Dao
             ]
         );
 
-        return (\count($exist) > 0) && (1 === $exist[0]);
+        return (\count($exist) > 0) && ($exist[0] > 0);
     }
 
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
