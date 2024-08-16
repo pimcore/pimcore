@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
+use Pimcore\Event\FieldcollectionDefinitionEvents;
+use Pimcore\Event\Model\DataObject\FieldcollectionDefinitionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -36,13 +39,14 @@ class Definition extends Model\AbstractModel
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
     use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
-        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
-        'object', 'interface', 'default',
+        'abstract', 'abstractdata', 'class', 'concrete', 'dao', 'data', 'default', 'folder', 'interface', 'items',
+        'list', 'object', 'permissions', 'resource',
     ];
 
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
@@ -58,7 +62,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
@@ -84,8 +87,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public static function getByKey(string $key): ?Definition
@@ -118,7 +119,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function save(bool $saveDefinitionFile = true): void
@@ -127,13 +127,21 @@ class Definition extends Model\AbstractModel
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
+        if ($this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
         if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
             throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
+        }
+
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_UPDATE);
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();
@@ -163,10 +171,15 @@ class Definition extends Model\AbstractModel
                 }
             }
         }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_UPDATE);
+        }
     }
 
     /**
-     *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      *
@@ -210,8 +223,17 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException
+     */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_DELETE);
+
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
@@ -229,6 +251,8 @@ class Definition extends Model\AbstractModel
                 }
             }
         }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_DELETE);
     }
 
     /**
@@ -240,8 +264,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -251,7 +273,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public function getPhpClassFile(): string
     {
@@ -260,7 +281,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected function getInfoDocBlock(): string
     {
@@ -279,6 +299,14 @@ class Definition extends Model\AbstractModel
 
     public function isForbiddenName(): bool
     {
-        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
+        $key = $this->getKey();
+        if ($key === null || $key === '') {
+            return true;
+        }
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $key)) {
+            return true;
+        }
+
+        return in_array(strtolower($key), self::FORBIDDEN_NAMES);
     }
 }

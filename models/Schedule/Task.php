@@ -141,7 +141,7 @@ class Task extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setDate(int $date): static
+    public function setDate(?int $date): static
     {
         $this->date = $date;
 

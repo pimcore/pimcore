@@ -552,13 +552,22 @@ class Dao extends Model\Dao\AbstractDao
                     '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
                 ).$dirtyLanguageCondition;
 
-            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId() . ' WHERE ' . $sql);
+            if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
+                // Fieldcollection don't support delta updates, so we delete the relations and insert them later again
+                $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId().' WHERE '.$sql);
+            }
 
             return true;
         }
 
-        $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
-        $this->db->executeStatement('DELETE FROM object_relations_'.$this->model->getObject()->getClassId() . ' WHERE ' . $sql);
+        if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
+            // Fieldcollection don't support delta updates, so we delete the relations and insert them later again
+            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
+            )->getId().$dirtyLanguageCondition;
+            $this->db->executeStatement(
+                'DELETE FROM object_relations_'.$this->model->getObject()->getClassId().' WHERE '.$sql
+            );
+        }
 
         return false;
     }

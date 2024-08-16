@@ -38,6 +38,7 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
         $this->data = [
             'version' => Version::getVersion(),
             'revision' => Version::getRevision(),
+            'platform_version' => Version::getPlatformVersion(),
             'context' => $this->contextResolver->getPimcoreContext($request),
         ];
     }
@@ -65,5 +66,10 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
     public function getRevision(): string
     {
         return $this->data['revision'];
+    }
+
+    public function getPlatformVersion(): ?string
+    {
+        return $this->data['platform_version'];
     }
 }

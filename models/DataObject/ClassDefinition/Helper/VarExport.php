@@ -47,9 +47,6 @@ trait VarExport
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
     public function setBlockedVarsForExport(array $vars): static
     {
         $this->blockedVarsForExport = $vars;
