@@ -46,7 +46,7 @@ class AbstractNotificationService
      *
      * @return User[][]
      */
-    public function getNotificationUsersByName(array $users, array $roles, bool $includeAllUsers = false): array
+    protected function getNotificationUsersByName(array $users, array $roles, bool $includeAllUsers = false): array
     {
         $notifyUsers = [];
 
