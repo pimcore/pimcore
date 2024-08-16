@@ -116,7 +116,6 @@ class Block extends Model\Document\Editable implements BlockInterface
             $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
             $this->blockConstruct();
             $blockStartHtml = $this->blockStart(true, true);
-            ob_start();
 
             $editableDefCollector = $this->getEditableDefinitionCollector();
             $editableDefCollector->stashPush();
@@ -133,8 +132,9 @@ class Block extends Model\Document\Editable implements BlockInterface
             $templateEditableDefinitions = $editableDefCollector->getDefinitions();
             $editableDefCollector->stashPull();
 
+
             $this->config['template'] = [
-                'html' => $blockStartHtml . ob_get_clean() . $blockEndHtml,
+                'html' => $blockStartHtml . ($this->config['template']['html']) . $blockEndHtml,
                 'editables' => $templateEditableDefinitions,
             ];
 
@@ -227,6 +227,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
         $this->getBlockState()->pushIndex((int) ($this->indices[$this->current] ?? 0));
+
     }
 
     public function blockDestruct(): void

@@ -527,7 +527,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @internal
      */
-    protected function getBlockState(): BlockState
+    public function getBlockState(): BlockState
     {
         return $this->getBlockStateStack()->getCurrentState();
     }
@@ -630,6 +630,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {
+
         if (count($indexes) > count($blocks)) {
             throw new RuntimeException(sprintf('Index count %d is greater than blocks count %d', count($indexes), count($blocks)));
         }
