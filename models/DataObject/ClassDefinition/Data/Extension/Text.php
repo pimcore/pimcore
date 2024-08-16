@@ -40,10 +40,7 @@ trait Text
     }
 
     /**
-     *
-     *
      * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
     {

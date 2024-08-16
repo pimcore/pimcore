@@ -198,7 +198,7 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
         $condition = '('.$condition.')';
         $ignoreParameter = true;
 
-        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        $conditionWithoutQuotedStrings = preg_replace('/((?<![\\\\])[\'\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1/', '', $condition);
         if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
             $ignoreParameter = false;
         }

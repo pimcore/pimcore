@@ -262,9 +262,6 @@ class Select extends Data implements
         $this->defaultValue = $defaultValue;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),

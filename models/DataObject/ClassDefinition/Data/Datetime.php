@@ -210,6 +210,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {
@@ -223,6 +226,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
         $this->useCurrentDate = $useCurrentDate;

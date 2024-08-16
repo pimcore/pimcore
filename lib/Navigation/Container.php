@@ -556,7 +556,7 @@ class Container implements RecursiveIterator, Countable
         return $this->hasPages();
     }
 
-    public function getChildren(): ?Page
+    public function getChildren(): ?\RecursiveIterator
     {
         $hash = key($this->_index);
 

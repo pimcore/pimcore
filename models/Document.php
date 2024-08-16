@@ -816,7 +816,7 @@ class Document extends Element\AbstractElement
     {
         // check for site, if so rewrite the path for output
         try {
-            if (Tool::isFrontend() && Site::isSiteRequest()) {
+            if ($this->path && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
@@ -856,9 +856,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the parent id of the document.
-     *
-     *
-     * @return $this
      */
     public function setParentId(?int $id): static
     {
@@ -898,9 +895,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the document type.
-     *
-     *
-     * @return $this
      */
     public function setType(string $type): static
     {
@@ -936,9 +930,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the parent document instance.
-     *
-     *
-     * @return $this
      */
     public function setParent(?ElementInterface $parent): static
     {

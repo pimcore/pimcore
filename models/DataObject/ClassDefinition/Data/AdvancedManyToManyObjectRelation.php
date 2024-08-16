@@ -317,6 +317,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
+                if (!($metaObject instanceof DataObject\Data\ObjectMetadata)) {
+                    continue;
+                }
                 $o = $metaObject->getObject();
 
                 if (!$o) {
@@ -572,6 +575,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedClassId(?string $allowedClassId): static
     {
         $this->allowedClassId = $allowedClassId;
@@ -896,6 +902,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->allowMultipleAssignments;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowMultipleAssignments(bool $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;

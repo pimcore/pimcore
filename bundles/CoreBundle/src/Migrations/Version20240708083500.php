@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use function sprintf;
 
-final class Version20230412105530 extends AbstractMigration
+final class Version20240708083500 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -35,6 +35,15 @@ final class Version20230412105530 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
+        // Delete old Version Name
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20210107103923\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20210706090823\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20211117173000\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20230412105530\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20230508121105\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20230516161000\'');
+        $this->addSql('DELETE FROM `migration_versions` WHERE `migration_versions`.`version` = \'Pimcore\\\\Bundle\\\\CoreBundle\\\\Migrations\\\\Version20230606112233\'');
+
         try {
             $list = new DataObject\ClassDefinition\Listing();
             foreach ($list->getClasses() as $class) {

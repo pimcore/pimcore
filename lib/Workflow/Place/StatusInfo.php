@@ -29,11 +29,16 @@ class StatusInfo
 
     private TranslatorInterface $translator;
 
+    private string $userLanguage;
+
     public function __construct(Manager $workflowManager, Environment $twig, TranslatorInterface $translator)
     {
         $this->workflowManager = $workflowManager;
         $this->twig = $twig;
         $this->translator = $translator;
+
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $this->userLanguage = $user ? $user->getLanguage() : 'en';
     }
 
     public function getToolbarHtml(object $subject): string
@@ -45,6 +50,7 @@ class StatusInfo
             [
                 'places' => $places,
                 'translator' => $this->translator,
+                'lang' => $this->userLanguage,
             ]
         );
     }
@@ -58,6 +64,7 @@ class StatusInfo
             [
                 'places' => $places,
                 'translator' => $this->translator,
+                'lang' => $this->userLanguage,
             ]
         );
     }

@@ -60,6 +60,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->labelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = $labelWidth;
@@ -67,6 +70,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setLabelFirstCell(string $labelFirstCell): static
     {
         $this->labelFirstCell = $labelFirstCell;
@@ -84,6 +90,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->cols;
     }
 
+    /**
+     * @return $this
+     */
     public function setCols(array $cols): static
     {
         if (isset($cols['key'])) {
@@ -106,6 +115,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->rows;
     }
 
+    /**
+     * @return $this
+     */
     public function setRows(array $rows): static
     {
         if (isset($rows['key'])) {

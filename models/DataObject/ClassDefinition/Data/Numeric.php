@@ -122,6 +122,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(float|int|string|null $defaultValue): static
     {
         if ((string)$defaultValue !== '') {

@@ -30,6 +30,7 @@ use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 use function array_key_exists;
 use function is_array;
+use Pimcore\Workflow\Manager;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -185,10 +186,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     */
     public function getLocked(): ?string
     {
         if (empty($this->locked)) {
@@ -198,12 +195,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->locked;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     *
-     * @return $this
-     */
     public function setLocked(?string $locked): static
     {
         $this->locked = $locked;
@@ -498,16 +489,23 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
             return false;
         }
+        /** @var Manager $workflowManager */
+        $workflowManager = Pimcore::getContainer()->get(Manager::class);
+        $isDeniedInWorkflow = $workflowManager->isDeniedInWorkflow($this, $type);
 
-        //everything is allowed for admin
+        //everything is allowed for admin except if it is denied in workflow
         if ($user->isAdmin()) {
-            return true;
+            return !$isDeniedInWorkflow;
         }
 
         if (!$user->isAllowed(Service::getElementType($this) . 's')) {
             return false;
         }
         $isAllowed = $this->getDao()->isAllowed($type, $user);
+
+        if ($isDeniedInWorkflow) {
+            $isAllowed = false;
+        }
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
         Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);

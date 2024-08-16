@@ -82,8 +82,6 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getByName(string $name): ?CustomLayout
@@ -109,8 +107,6 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getByNameAndClassId(string $name, string $classId): ?CustomLayout
@@ -199,7 +195,6 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected function getInfoDocBlock(): string
     {
@@ -218,10 +213,6 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
-     *
-     *
      */
     public static function getIdentifier(string $classId): ?UuidV4
     {
@@ -300,6 +291,9 @@ class CustomLayout extends Model\AbstractModel
         return $this->userModification;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -307,6 +301,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -329,6 +326,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -336,6 +336,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -343,6 +346,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
@@ -350,6 +356,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
@@ -357,9 +366,12 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
-        $this->description = (string) $description;
+        $this->description = $description;
 
         return $this;
     }

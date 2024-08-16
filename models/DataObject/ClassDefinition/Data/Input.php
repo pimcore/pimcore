@@ -138,6 +138,9 @@ class Input extends Data implements
         return $this->columnLength;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
@@ -249,6 +252,9 @@ class Input extends Data implements
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(string $defaultValue): static
     {
         if ($defaultValue !== '') {

@@ -288,7 +288,7 @@ final class Console
         return (int)$pid;
     }
 
-    private static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    private static function execInBackgroundWindows(string $cmd, ?string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';

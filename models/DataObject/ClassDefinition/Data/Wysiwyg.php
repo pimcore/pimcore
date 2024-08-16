@@ -73,6 +73,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->excludeFromSearchIndex;
     }
 
+    /**
+     * @return $this
+     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
@@ -305,5 +308,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFieldType(): string
     {
         return 'wysiwyg';
+    }
+
+    /**
+     * @see Data::getVersionPreview
+     */
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    {
+        return self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
     }
 }

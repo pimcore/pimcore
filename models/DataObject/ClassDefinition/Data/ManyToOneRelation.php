@@ -97,6 +97,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->objectsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -109,6 +112,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->documentsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -121,6 +127,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->documentTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -133,6 +142,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -145,6 +157,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -386,6 +401,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetInlineDownloadAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;
