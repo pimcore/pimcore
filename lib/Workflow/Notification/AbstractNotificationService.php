@@ -46,7 +46,7 @@ class AbstractNotificationService
      *
      * @return User[][]
      */
-    protected function getNotificationUsersByName(array $users, array $roles, bool $includeAllUsers = true): array
+    public function getNotificationUsersByName(array $users, array $roles, bool $includeAllUsers = false): array
     {
         $notifyUsers = [];
 
@@ -57,7 +57,12 @@ class AbstractNotificationService
 
             foreach ($roleList->load() as $role) {
                 $userList = new User\Listing();
-                $userList->setCondition('FIND_IN_SET(?, roles) > 0 and email is not null AND active = ?', [$role->getId(), $includeAllUsers]);
+                $userList->setCondition('FIND_IN_SET(?, roles) > 0 AND active = 1', [$role->getId()]);
+
+                if (!$includeAllUsers) {
+                    $userList->addConditionParam('(email IS NOT NULL AND email != "")');
+                }
+
                 foreach ($userList->load() as $user) {
                     $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
                 }
@@ -67,9 +72,11 @@ class AbstractNotificationService
         if ($users) {
             //get users
             $userList = new User\Listing();
-            $userList->setCondition(
-                'name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).') and email is not null AND active = ?', [$includeAllUsers]
-            );
+            $userList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).') and active = 1');
+
+            if (!$includeAllUsers) {
+                $userList->addConditionParam('(email IS NOT NULL AND email != "")');
+            }
 
             foreach ($userList->load() as $user) {
                 $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
@@ -77,7 +84,7 @@ class AbstractNotificationService
         }
 
         foreach ($notifyUsers as $language => $usersPerLanguage) {
-            $notifyUsers[$language] = array_values($notifyUsers[$language]);
+            $notifyUsers[$language] = array_values($usersPerLanguage);
         }
 
         return $notifyUsers;
