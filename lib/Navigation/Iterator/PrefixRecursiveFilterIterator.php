@@ -21,6 +21,7 @@ use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 use RecursiveFilterIterator;
+use RecursiveIterator;
 use function is_string;
 
 /**
@@ -33,11 +34,11 @@ final class PrefixRecursiveFilterIterator extends RecursiveFilterIterator
     private string $value;
 
     /**
-     * @param \RecursiveIterator $iterator navigation container to iterate
+     * @param RecursiveIterator $iterator navigation container to iterate
      * @param string $property name of property that acts as needle
      * @param string $value value which acts as haystack
      */
-    public function __construct(\RecursiveIterator $iterator, string $property, string $value)
+    public function __construct(RecursiveIterator $iterator, string $property, string $value)
     {
         parent::__construct($iterator);
         $this->property = $property;
@@ -58,7 +59,7 @@ final class PrefixRecursiveFilterIterator extends RecursiveFilterIterator
         return is_string($property) && str_starts_with($this->value, $property);
     }
 
-    public function getChildren(): ?\RecursiveFilterIterator
+    public function getChildren(): ?RecursiveFilterIterator
     {
         /** @var Container $container */
         $container = $this->getInnerIterator();

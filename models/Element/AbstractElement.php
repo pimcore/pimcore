@@ -28,9 +28,9 @@ use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
+use Pimcore\Workflow\Manager;
 use function array_key_exists;
 use function is_array;
-use Pimcore\Workflow\Manager;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
