@@ -22,6 +22,7 @@ use Pimcore\Model\Document\Editable\BlockInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Twig\TokenParser\BlockParser;
+use Pimcore\Twig\TokenParser\ManualBlockParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -45,6 +46,10 @@ class DocumentEditableExtension extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
+            new TwigFunction('pimcoreblockstart', [$this, 'blockStart'], [
+                'needs_context' => true,
+                'is_safe' => ['html'],
+            ]),
         ];
 
         // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
@@ -70,6 +75,11 @@ class DocumentEditableExtension extends AbstractExtension
         new TwigFunction('pimcore_textarea');
         new TwigFunction('pimcore_video');
         new TwigFunction('pimcore_wysiwyg');
+    }
+
+    public function blockStart(array $context)
+    {
+        $context['_block']->start();
     }
 
     /**
@@ -104,6 +114,7 @@ class DocumentEditableExtension extends AbstractExtension
     {
         return [
             new BlockParser($this),
+            new ManualBlockParser($this),
         ];
     }
 }

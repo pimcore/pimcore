@@ -23,6 +23,7 @@ use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\DocumentEditableExtension;
 use Pimcore\Twig\Node\BlockNode;
 use Pimcore\Twig\Node\CacheNode;
+use Pimcore\Twig\Node\ManualBlockNode;
 use Pimcore\ValueObject\Collection\ArrayOfStrings;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\ArrayExpression;
@@ -39,8 +40,30 @@ use function sprintf;
 
 /**
  * @internal
+ *
+ * example:
+ *  % pimcoremanualblock "testblock" %}
+    <div style="border: 1px solid green; ">
+        {% blockiterate %}
+
+            <div style="border: 1px solid red; float:left; margin-right: 20px;">
+                {% do _block.blockStart(false) %}
+                <div style="background-color: #fc0; margin-bottom: 10px; padding: 5px; border: 1px solid black;">
+                    {% do _block.blockControls %}
+                </div>
+                <div style="width:200px; height:200px;border:1px solid black;">
+                    {{ pimcore_input("myInput") }}
+                </div>
+                {% do _block.blockEnd() %}
+            </div>
+
+        {% endblockiterate %}
+        <div style="clear:both;"></div>
+    </div>
+    {% endpimcoremanualblock %}
+ *
  */
-class BlockParser extends AbstractTokenParser
+class ManualBlockParser extends AbstractTokenParser
 {
     public function __construct(
         private DocumentEditableExtension $documentEditableExtension
@@ -74,22 +97,40 @@ class BlockParser extends AbstractTokenParser
                     break;
             }
         }
+        $stream->expect(Token::BLOCK_END_TYPE);
+
+
+        $start = $this->parser->subparse([$this, 'decideIterateStart'], true);
+        $stream->expect(Token::BLOCK_END_TYPE);
+
+        $bodyNode = $this->parser->subparse([$this, 'decideIterateEnd'], true);
+        $stream->expect(Token::BLOCK_END_TYPE);
+
+        $endNode = $this->parser->subparse([$this, 'decideIfEnd'], true);
 
         $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideCacheEnd'], true);
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
 
-        return new BlockNode($this->documentEditableExtension, $blockName, $manual, $body, $lineno, $this->getTag());
+        return new ManualBlockNode($this->documentEditableExtension, $blockName, $manual, $start, $bodyNode, $endNode, $lineno, $this->getTag());
     }
 
-    public function decideCacheEnd(Token $token): bool
+    public function decideIterateStart(Token $token): bool
     {
-        return $token->test('endpimcoreblock');
+        return $token->test('blockiterate');
+    }
+    public function decideIterateEnd(Token $token): bool
+    {
+        return $token->test('endblockiterate');
+    }
+
+
+    public function decideIfEnd(Token $token): bool
+    {
+        return $token->test('endpimcoremanualblock');
     }
 
     public function getTag(): string
     {
-        return 'pimcoreblock';
+        return 'pimcoremanualblock';
     }
 
     private function getArrayValue(Node $node): array

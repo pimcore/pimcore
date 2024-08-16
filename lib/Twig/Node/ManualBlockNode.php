@@ -25,18 +25,24 @@ use Twig\Node\Node;
 /**
  * @internal
  */
-final class BlockNode extends Node
+final class ManualBlockNode extends Node
 {
     public function __construct(
 
         private DocumentEditableExtension $documentEditableExtension,
         private string $blockName,
         private bool $manual,
+        Node $start,
         Node $body,
+        Node $end,
         int $lineno,
         ?string $tag = 'pimcoreblock'
     ) {
-        parent::__construct(['body' => new CaptureNode($body, $body->getTemplateLine())], [], $lineno, $tag);
+        parent::__construct([
+            'start' => $start,
+            'body' => new CaptureNode($body, $body->getTemplateLine()),
+            'end' => $end
+        ], [], $lineno, $tag);
     }
 
     public function compile(Compiler $compiler): void
@@ -44,13 +50,17 @@ final class BlockNode extends Node
 
         $splitChars = uniqid('', true);
 
-        [$part1, $part2] = explode($splitChars, $this->getPhpCode($splitChars));
+        [$part1, $part2, $part3, $part4] = explode($splitChars, $this->getPhpCode($splitChars));
 
         $compiler
             ->addDebugInfo($this)
             ->write($part1)
-            ->subcompile($this->getNode('body'))
+            ->subcompile($this->getNode('start'))
             ->write($part2)
+            ->subcompile($this->getNode('body'))
+            ->write($part3)
+            ->subcompile($this->getNode('end'))
+            ->write($part4)
         ;
     }
 
@@ -60,24 +70,32 @@ final class BlockNode extends Node
         $manual = $this->manual ? 'true' : 'false';
 
         return <<<PHP
+
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
-        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', ['manual' =>{$manual}]);
-
-
+        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', ['manual' =>true]);
+\$block->start();
+{$splitChars}
         foreach(\$block->getIterator() as \$index) {
 
-
+            \$block->blockConstruct();
 
             \$context['_block'] = \$block;
-            \$config = \$block->getConfig();
             {$splitChars}
+
+            \$config = \$block->getConfig();
             \$config['template']['html'] = \$tmp;
+
             \$block->setConfig(\$config);
+
             if (\$index >= 1000000) {
               continue;
             }
             yield \$tmp;
+
+            \$block->blockDestruct();
         }
+{$splitChars}
+\$block->end();
 PHP;
 
     }
