@@ -82,7 +82,7 @@ class Text
 
                             $site = Frontend::getSiteForDocument($element);
                             if ($site instanceof Site) {
-                                if (preg_match('~^' . preg_quote($site->getRootPath(), '~') . '~', $path)){
+                                if (preg_match('~^' . preg_quote($site->getRootPath(), '~') . '~', $path)) {
                                     $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
                                 }
                             }
