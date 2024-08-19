@@ -487,7 +487,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
             }
 
-            $dataForGrid[$collectionDef->getKey()] = $itemData;
+            $dataForGrid[] = [
+                'type' => $collectionDef->getKey(),
+                'data' => $itemData
+            ];
         }
 
         return $dataForGrid;
