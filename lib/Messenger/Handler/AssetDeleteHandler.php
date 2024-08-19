@@ -20,6 +20,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetDeleteMessage;
 use Pimcore\Tool\Storage;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use function sprintf;
 
 /**
@@ -28,12 +29,12 @@ use function sprintf;
 #[AsMessageHandler]
 class AssetDeleteHandler
 {
-    public function __invoke(AssetDeleteMessage $message): mixed
+    public function __invoke(AssetDeleteMessage $message): void
     {
-        return $this->deletePhysicalFile($message);
+        $this->deletePhysicalFile($message);
     }
 
-    private function deletePhysicalFile($message): void
+    private function deletePhysicalFile(AssetDeleteMessage $message): void
     {
         $storage = Storage::get('asset');
 
