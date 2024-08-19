@@ -972,12 +972,13 @@ class Asset extends Element\AbstractElement
             } else {
                 $storage->deleteDirectory($fullPath);
             }
-        }else{
+        } else {
             // File is temporarily suffixed to some internal pattern as ".cid123.abc234random.tobedeleted"
             // not only to be easily searchable by regex, but also to avoid being accessed via direct url,
             // while the random string is to avoid being easily guessable by knowing the pattern
             $random = bin2hex(random_bytes(16));
             $toDeleteFullPath = $fullPath.'.cid'. $this->getId() . '.' . $random . '.tobedeleted';
+
             try {
                 $storage->move($fullPath, $toDeleteFullPath);
                 Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
