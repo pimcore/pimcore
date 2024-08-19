@@ -34,6 +34,7 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetDeleteMessage;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Dao;
@@ -962,10 +963,30 @@ class Asset extends Element\AbstractElement
     private function deletePhysicalFile(): void
     {
         $storage = Storage::get('asset');
-        if ($this->getType() != 'folder') {
-            $storage->delete($this->getRealFullPath());
-        } else {
-            $storage->deleteDirectory($this->getRealFullPath());
+        $fullPath = $this->getRealFullPath();
+
+        // Cloud storages usually have a soft deletion system, it would be fine to send a delete request
+        if (!stream_is_local($fullPath)) {
+            if ($this->getType() != 'folder') {
+                $storage->delete($fullPath);
+            } else {
+                $storage->deleteDirectory($fullPath);
+            }
+        }else{
+            // File is temporarily suffixed to some internal pattern as ".cid123.abc234random.tobedeleted"
+            // not only to be easily searchable by regex, but also to avoid being accessed via direct url,
+            // while the random string is to avoid being easily guessable by knowing the pattern
+            $random = bin2hex(random_bytes(16));
+            $toDeleteFullPath = $fullPath.'.cid'. $this->getId() . '.' . $random . '.tobedeleted';
+            try {
+                $storage->move($fullPath, $toDeleteFullPath);
+                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new AssetDeleteMessage($toDeleteFullPath, $this->getId(), $this->getType())
+                );
+
+            } catch (FilesystemException | UnableToMoveFile $exception) {
+                Logger::warn((string) $exception);
+            }
         }
     }
 

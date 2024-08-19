@@ -2,6 +2,8 @@
 
 ## Pimcore 11.4.0
 ### General
+#### [Assets] 
+- Phyisical file deletion for local storages is now done asynchrously via Symfony Messenger queue. 
 #### [Logging]
 - Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
 #### [Twig Deferred Extension]

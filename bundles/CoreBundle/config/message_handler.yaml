@@ -7,6 +7,11 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+
+    Pimcore\Messenger\Handler\AssetDeleteHandler:
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
         arguments:
             - '@logger'

@@ -41,6 +41,7 @@ framework:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
+            'Pimcore\Messenger\AssetDeleteMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
