@@ -448,10 +448,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $data;
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
     public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (null === $data) {
@@ -474,14 +470,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             $getter = 'get'.ucfirst($localizedFieldDefinition->getName());
                             $itemData[$localizedFieldDefinition->getName()] = [
                                 'title' => $localizedFieldDefinition->getTitle(),
-                                'value' => $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params)
+                                'value' => $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params),
                             ];
                         }
                     } else {
                         $getter = 'get'.ucfirst($fd->getName());
                         $itemData[$fd->getName()] = [
                             'title' => $fd->getTitle(),
-                            'value' => $fd->getVersionPreview($item->$getter(), $object, $params)
+                            'value' => $fd->getVersionPreview($item->$getter(), $object, $params),
                         ];
                     }
                 }
@@ -489,7 +485,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             $dataForGrid[] = [
                 'type' => $collectionDef->getKey(),
-                'data' => $itemData
+                'data' => $itemData,
             ];
         }
 
