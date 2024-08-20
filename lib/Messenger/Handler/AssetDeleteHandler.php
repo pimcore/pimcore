@@ -45,7 +45,7 @@ class AssetDeleteHandler
                 $storage->delete($message->getFullPath());
             }
         } catch (Exception $e) {
-            Logger::err(sprintf('Problem deleting the asset phyisical file with Id: %s and fullpath: %s, reason: %s',
+            Logger::err(sprintf('Problem deleting the asset physical file with ID: %s and fullpath: %s, reason: %s',
                 $message->getId(),
                 $message->getFullPath(),
                 $e->getMessage()));
