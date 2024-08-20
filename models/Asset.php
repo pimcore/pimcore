@@ -964,31 +964,30 @@ class Asset extends Element\AbstractElement
     {
         $storage = Storage::get('asset');
         $fullPath = $this->getRealFullPath();
+        $isLocal = file_exists($fullPath);
 
-        // Cloud storages usually have a soft deletion system, it would be fine to send a delete request
-        if (!stream_is_local($fullPath)) {
-            if ($this->getType() != 'folder') {
-                $storage->delete($fullPath);
-            } else {
-                $storage->deleteDirectory($fullPath);
-            }
-        } else {
-            // File is temporarily suffixed to some internal pattern as ".cid123.abc234random.tobedeleted"
-            // not only to be easily searchable by regex, but also to avoid being accessed via direct url,
-            // while the random string is to avoid being easily guessable by knowing the pattern
+
+        // On local storages, file is temporarily suffixed to some internal pattern as ".cid123.abc234random.tobedeleted"
+        // not only to be easily searchable by regex, but also to avoid being accessed via direct url,
+        // while the random string is to avoid being easily guessable by knowing the pattern
+        // On remote storages, renaming file would result into a copy and delete operation, which is not desired
+        if ($isLocal){
             $random = bin2hex(random_bytes(16));
             $toDeleteFullPath = $fullPath.'.cid'. $this->getId() . '.' . $random . '.tobedeleted';
-
-            try {
-                $storage->move($fullPath, $toDeleteFullPath);
-                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                    new AssetDeleteMessage($toDeleteFullPath, $this->getId(), $this->getType())
-                );
-
-            } catch (FilesystemException | UnableToMoveFile $exception) {
-                Logger::warn((string) $exception);
-            }
         }
+
+        try {
+            if ($isLocal){
+                $storage->move($fullPath, $toDeleteFullPath);
+            }
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetDeleteMessage($toDeleteFullPath ?? $fullPath, $this->getId(), $this->getType())
+            );
+
+        } catch (FilesystemException | UnableToMoveFile $exception) {
+            Logger::warn((string) $exception);
+        }
+
     }
 
     public function delete(bool $isNested = false): void
