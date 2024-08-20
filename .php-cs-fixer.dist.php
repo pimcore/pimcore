@@ -77,13 +77,6 @@ $config->setRules([
     'ternary_operator_spaces'             => true,
     'trailing_comma_in_multiline'         => true,
     'whitespace_after_comma_in_array'     => true,
-    'native_function_invocation' => [
-        'include' => [
-            '@compiler_optimized',
-        ],
-        'scope' => 'namespaced',
-        'strict' => true,
-    ],
     'global_namespace_import' => [
         'import_classes' => true,
         'import_constants' => true,
