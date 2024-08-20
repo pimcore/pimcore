@@ -39,7 +39,7 @@ class AssetDeleteHandler
         $storage = Storage::get('asset');
 
         try {
-            if ($message->getType() === 'folder') {
+            if ($message->isFolder() === 'folder') {
                 $storage->deleteDirectory($message->getFullPath());
             } else {
                 $storage->delete($message->getFullPath());

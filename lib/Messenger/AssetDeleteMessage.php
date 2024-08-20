@@ -35,9 +35,8 @@ class AssetDeleteMessage
         return $this->id;
     }
 
-    // For "type" is meant whether it is a folder or a file here
-    public function getType(): string
+    public function isFolder(): bool
     {
-        return $this->type;
+        return $this->type === 'folder';
     }
 }
