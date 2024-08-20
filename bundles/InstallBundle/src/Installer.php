@@ -669,7 +669,7 @@ class Installer
             $mysqlInstallScript = file_get_contents(__DIR__ . '/../dump/install.sql');
 
             // remove comments in SQL script
-            $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
+            $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*(?![!+])[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
 
             // get every command as single part
             $mysqlInstallScripts = explode(';', $mysqlInstallScript);
