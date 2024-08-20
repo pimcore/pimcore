@@ -33,11 +33,24 @@ final class Version20240813085200 extends AbstractMigration
         if ($schema->hasTable($tableName)) {
             $notificationTable = $schema->getTable($tableName);
             if (!$notificationTable->hasColumn('payload')) {
-                $this->addSql('ALTER TABLE `' . $tableName . '` ADD `payload` LONGTEXT DEFAULT NULL');
+                $notificationTable->addColumn(
+                    'payload',
+                    'text',
+                    [
+                        'default' => null,
+                        'columnDefinition' => 'LONGTEXT',
+                    ]
+                );
             }
             // TODO: New migration will be needed with removal of Classic-UI
             if (!$notificationTable->hasColumn('isStudio')) {
-                $this->addSql('ALTER TABLE `' . $tableName . '` ADD `isStudio` TINYINT(1) DEFAULT 0');
+                $notificationTable->addColumn(
+                    'isStudio',
+                    'integer',
+                    [
+                        'columnDefinition' => 'TINYINT DEFAULT 0',
+                    ]
+                );
             }
         }
     }
@@ -48,11 +61,11 @@ final class Version20240813085200 extends AbstractMigration
         if ($schema->hasTable($tableName)) {
             $notificationTable = $schema->getTable($tableName);
             if ($notificationTable->hasColumn('payload')) {
-                $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `payload`');
+                $notificationTable->dropColumn('payload');
             }
 
             if ($notificationTable->hasColumn('isStudio')) {
-                $this->addSql('ALTER TABLE `' . $tableName . '` DROP COLUMN `isStudio`');
+                $notificationTable->dropColumn('isStudio');
             }
         }
     }
