@@ -966,18 +966,17 @@ class Asset extends Element\AbstractElement
         $fullPath = $this->getRealFullPath();
         $isLocal = file_exists($fullPath);
 
-
         // On local storages, file is temporarily suffixed to some internal pattern as ".cid123.abc234random.tobedeleted"
         // not only to be easily searchable by regex, but also to avoid being accessed via direct url,
         // while the random string is to avoid being easily guessable by knowing the pattern
         // On remote storages, renaming file would result into a copy and delete operation, which is not desired
-        if ($isLocal){
+        if ($isLocal) {
             $random = bin2hex(random_bytes(16));
             $toDeleteFullPath = $fullPath.'.cid'. $this->getId() . '.' . $random . '.tobedeleted';
         }
 
         try {
-            if ($isLocal){
+            if ($isLocal) {
                 $storage->move($fullPath, $toDeleteFullPath);
             }
             Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
