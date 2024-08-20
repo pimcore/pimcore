@@ -31,6 +31,4 @@ object grids can be used to do workflow reporting on Pimcore Objects.
 Just create a corresponding grid configuration and use default filtering and sorting functionality. 
 
 Additionally extensions like [Advanced Object Search](https://github.com/pimcore/advanced-object-search) can be used to 
-create saved searches with predefined filters. 
-
- 
+create saved searches with predefined filters.

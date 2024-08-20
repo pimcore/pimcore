@@ -7,6 +7,13 @@ For further information on how you can ensure that your application won't break 
 https://symfony.com/doc/current/contributing/code/bc.html
 
 ## Upgrading within Version 11
+
+:::tip
+
+We recommend using the Pimcore Platform Version. Details see [here](https://pimcore.com/docs/platform/Platform_Version/).
+
+:::
+
 - Carefully read our [Upgrade Notes](../09_Upgrade_Notes/README.md) before any update. 
 - Check your version constraint for `pimcore/pimcore` in your `composer.json` and adapt it if necessary to match with the desired target version.
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
@@ -18,4 +25,3 @@ https://symfony.com/doc/current/contributing/code/bc.html
 - [Upgrade from Version 6 to Version 10](./10_V6_to_V10.md)
 - [Preparing for Version 11](./11_Preparing_for_V11.md)
 - [Upgrade from Version 10 to Version 11](./12_V10_to_V11.md)
-

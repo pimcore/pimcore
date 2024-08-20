@@ -270,11 +270,15 @@ class Pimcore extends Module\Symfony
      */
     protected function connectDb(Connection $connection): void
     {
-        if (!$connection->isConnected()) {
-            $connection->connect();
+        try {
+            if (!$connection->isConnected()) {
+                // doesn't do anything, just to trigger a `->connect()` call (which can't be done directly anymore, because visibility is protected since dbal v4)
+                $connection->getNativeConnection();
+            }
+            $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
+        } catch (\Exception) {
+            $this->debug(sprintf('[DB] Failed to connect to DB %s', $connection->getDatabase()));
         }
-
-        $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
     }
 
     /**

@@ -117,14 +117,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         return $blockedVars;
@@ -241,7 +241,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
+                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
 
                     Service::recursiveResetDirtyMap($object);
 
@@ -613,6 +613,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -719,23 +726,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        // save dependencies
-        $d = new Model\Dependency();
-        $d->setSourceType('object');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // don't add a reference to yourself
-                continue;
-            }
-
-            $d->addRequirement($requirement['id'], $requirement['type']);
-        }
-
-        $d->save();
-
-        //set object to registry
+        // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 

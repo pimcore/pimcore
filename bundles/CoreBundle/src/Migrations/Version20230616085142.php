@@ -28,7 +28,7 @@ final class Version20230616085142 extends AbstractMigration
     private const O_PREFIX = 'o_';
 
     private const PK_COLUMNS = '`' . self::ID_COLUMN .
-    '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
+        '`,`dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`';
 
     private const UNIQUE_KEY_NAME = 'metadata_un';
 
@@ -62,7 +62,7 @@ final class Version20230616085142 extends AbstractMigration
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP FOREIGN KEY `' . $foreignKeyNameWithOPrefix . '`');
                 }
 
-                if ($metaDataTable->hasPrimaryKey()) {
+                if ($metaDataTable->getPrimaryKey()) {
                     $this->addSql('ALTER TABLE `' . $tableName . '` DROP PRIMARY KEY');
                 }
 

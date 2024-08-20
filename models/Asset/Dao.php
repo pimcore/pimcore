@@ -50,7 +50,8 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
                 WHERE assets.id = ?", [$id]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
+            $data['hasMetaData'] = (bool)$data['hasMetaData'];
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
@@ -92,7 +93,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE `path` = BINARY :path AND `filename` = BINARY :key', $params);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('asset with path: ' . $path . " doesn't exist");

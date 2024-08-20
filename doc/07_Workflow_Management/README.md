@@ -119,4 +119,4 @@ their current places and a workflow graph is added to Pimcore element detail pag
 
 ![Workflow Overview](../img/workflow-overview.jpg)
 
-> To render the graph, `graphviz` is needed as additional system requirement. 
+> To render the graph, `graphviz` is needed as additional system requirement.
