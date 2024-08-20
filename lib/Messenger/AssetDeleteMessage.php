@@ -21,7 +21,7 @@ namespace Pimcore\Messenger;
  */
 class AssetDeleteMessage
 {
-    public function __construct(protected string $fullPath, protected int $elementId, protected string $type)
+    public function __construct(protected string $fullPath, protected int $id, protected string $type)
     {
     }
 
@@ -30,9 +30,9 @@ class AssetDeleteMessage
         return $this->fullPath;
     }
 
-    public function getElementId(): int
+    public function getId(): int
     {
-        return $this->elementId;
+        return $this->id;
     }
 
     // For "type" is meant whether it is a folder or a file here
