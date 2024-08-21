@@ -25,8 +25,6 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
-
 class TranslatorTest extends TestCase
 {
     protected Translator $translator;

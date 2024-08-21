@@ -32,8 +32,6 @@ use ReflectionClass;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
-
-
 abstract class AbstractCoreHandlerTest extends Unit
 {
     protected TagAwareAdapterInterface $cache;

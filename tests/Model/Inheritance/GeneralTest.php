@@ -28,7 +28,6 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
 class GeneralTest extends ModelTestCase
 {
     public function setUp(): void

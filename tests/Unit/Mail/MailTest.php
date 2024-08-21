@@ -21,7 +21,6 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
-
 class MailTest extends TestCase
 {
     private array $defaultSettings = [

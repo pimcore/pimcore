@@ -27,7 +27,6 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 
-
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
     public function testUnpublished(): void

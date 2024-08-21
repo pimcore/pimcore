@@ -24,8 +24,6 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
-
 /**
  * Class ObjectTest
  *

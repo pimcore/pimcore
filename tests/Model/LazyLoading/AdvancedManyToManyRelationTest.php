@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
-
 class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
 {
     protected function loadMetadataRelations(string $fieldname, string $metaKey = 'metadata'): array

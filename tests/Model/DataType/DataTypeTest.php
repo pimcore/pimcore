@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
 /**
  * @group dataTypeLocal
  */

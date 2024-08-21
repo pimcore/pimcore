@@ -42,12 +42,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Traversable;
 
-
-
-
-
-
-
 class TestHelper
 {
     public static array $thumbnail_configs = [];
