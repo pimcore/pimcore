@@ -22,6 +22,7 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToProvideChecksum;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
@@ -1144,7 +1145,8 @@ class Asset extends Element\AbstractElement
             $checksum = $this->getCustomSetting('checksum');
         }
 
-        return $checksum;
+        // generateChecksum may fail to set the checksum, in which case we fall back to empty string.
+        return $checksum ?? '';
     }
 
     /**
@@ -1152,7 +1154,13 @@ class Asset extends Element\AbstractElement
      */
     public function generateChecksum(): void
     {
-        $this->setCustomSetting('checksum', Storage::get('asset')->checksum($this->getRealFullPath()));
+        try {
+            $this->setCustomSetting('checksum', Storage::get('asset')->checksum($this->getRealFullPath()));
+        } catch(UnableToProvideChecksum $e){
+            // There are circumstances in which the adapter is unable to calculate the checksum for a given file.
+            // In those cases, we ignore the exception.
+            return;
+        }
         $this->getDao()->updateCustomSettings();
     }
 
