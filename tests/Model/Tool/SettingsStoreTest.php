@@ -20,8 +20,6 @@ use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
-
-
 class SettingsStoreTest extends ModelTestCase
 {
     protected function doTest(float|bool|int|string $data, ?string $scope, string $type): void

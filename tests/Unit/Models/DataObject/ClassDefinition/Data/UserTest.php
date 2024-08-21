@@ -19,8 +19,6 @@ use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\User;
 use Pimcore\Tests\Support\Test\TestCase;
 
-
-
 class UserTest extends TestCase
 {
     private const SAMPLE_USER_DATA = [

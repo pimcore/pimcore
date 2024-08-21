@@ -44,8 +44,6 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
-
 class TestDataHelper extends AbstractTestDataHelper
 {
     public function assertAreablock(PageSnippet $pagesnippet, string $field, int $seed = 1): void

@@ -24,7 +24,6 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use UnexpectedValueException;
 
-
 class NotificationServiceTest extends TestCase
 {
     protected NotificationService $notificationService;

@@ -20,7 +20,6 @@ namespace Pimcore\Tests\Unit\Tool;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\ArrayNormalizer;
 
-
 class ArrayNormalizerTest extends TestCase
 {
     private array $input = [

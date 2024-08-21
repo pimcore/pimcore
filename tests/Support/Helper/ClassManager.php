@@ -25,8 +25,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefini
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 
-
-
 class ClassManager extends Module
 {
     /**

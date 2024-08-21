@@ -26,7 +26,6 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Version;
 
-
 class LocalizedFieldTest extends ModelTestCase
 {
     protected array $originalConfig;

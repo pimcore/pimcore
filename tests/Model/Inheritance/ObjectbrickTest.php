@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
 /**
  * Class ObjectbrickTest
  *

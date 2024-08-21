@@ -36,12 +36,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 use TypeError;
 
-
-
-
-
-
-
 class TestDataHelper extends AbstractTestDataHelper
 {
     const IMAGE = 'sampleimage.jpg';
