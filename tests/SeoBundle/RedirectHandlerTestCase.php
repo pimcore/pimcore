@@ -13,14 +13,14 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace SeoBundle;
+namespace Pimcore\Tests\SeoBundle;
 
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class RedirectHandlerTestCase extends TestCase
+class RedirectHandlerTest extends TestCase
 {
     protected function needsDb(): bool
     {
