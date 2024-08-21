@@ -76,7 +76,7 @@ class UserTest extends TestCase
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 
-        assertEmpty($user->getOptions());
+        $this->assertEmpty($user->getOptions());
     }
 
     public function test__set_statePopulatesSelectOptionsIbAdminMode(): void
@@ -85,6 +85,6 @@ class UserTest extends TestCase
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 
-        assertNotEmpty($user->getOptions());
+        $this->assertNotEmpty($user->getOptions());
     }
 }
