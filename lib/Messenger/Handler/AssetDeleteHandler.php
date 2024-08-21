@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Messenger\Handler;
 
 use Exception;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetDeleteMessage;
 use Pimcore\Tool\Storage;
@@ -50,5 +51,15 @@ class AssetDeleteHandler
                 $message->getFullPath(),
                 $e->getMessage()));
         }
+
+        // Clear thumbnails and asset cache
+        foreach (['thumbnail', 'asset_cache'] as $storageName) {
+            $storage = Storage::get($storageName);
+            $storage->deleteDirectory($message->getFullPath());
+        }
+
+        $db = Db::get();
+        $db->delete('assets_image_thumbnail_cache', 'cid = '. $message->getId());
+
     }
 }

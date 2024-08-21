@@ -980,7 +980,7 @@ class Asset extends Element\AbstractElement
                 $storage->move($fullPath, $toDeleteFullPath);
             }
             Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new AssetDeleteMessage($toDeleteFullPath ?? $fullPath, $this->getId(), $this->getType())
+                new AssetDeleteMessage($toDeleteFullPath ?? $fullPath, $this->getId(), $this->getType(), $this->getRealPath())
             );
 
         } catch (FilesystemException | UnableToMoveFile $exception) {
@@ -1029,7 +1029,7 @@ class Asset extends Element\AbstractElement
 
             $this->commit();
 
-            // remove file on filesystem
+            // remove file on filesystem and clear thumbnails
             if (!$isNested) {
                 $fullPath = $this->getRealFullPath();
                 if ($fullPath != '/..' && !strpos($fullPath,
@@ -1037,8 +1037,6 @@ class Asset extends Element\AbstractElement
                     $this->deletePhysicalFile();
                 }
             }
-
-            $this->clearThumbnails(true);
 
             //remove target parent folder preview thumbnails
             $this->clearFolderThumbnails($this);

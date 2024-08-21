@@ -21,7 +21,7 @@ namespace Pimcore\Messenger;
  */
 class AssetDeleteMessage
 {
-    public function __construct(protected string $fullPath, protected int $id, protected string $type)
+    public function __construct(protected string $fullPath, protected int $id, protected string $type, protected string $realPath)
     {
     }
 
@@ -38,5 +38,15 @@ class AssetDeleteMessage
     public function isFolder(): bool
     {
         return $this->type === 'folder';
+    }
+
+    public function getRealPath(): string
+    {
+        return $this->realPath;
+    }
+
+    public function getThumbnailPath(): string
+    {
+        return $this->realPath . $this->getId();
     }
 }
