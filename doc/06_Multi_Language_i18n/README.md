@@ -4,7 +4,7 @@ Localization is a very important aspect in every content management. In Pimcore 
 and has influence on multiple aspects within the system. 
 
 Bottom line is that using Pimcore in a multi language mode is pretty easy for users and developers. Pimcore takes care 
-of all technical aspects and by doing so follows the ZF patterns.
+of all technical aspects and by doing so follows the Symfony patterns.
 
 Pimcore has different sets of languages/locales and translations for the back end (CMS) and front end (website). 
 This allows you to have the user interface of Pimcore in different languages than the website. You need to be aware of 
