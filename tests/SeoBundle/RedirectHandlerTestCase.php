@@ -1,8 +1,20 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace SeoBundle;
 
-use Exception;
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -26,15 +38,12 @@ class RedirectHandlerTestCase extends TestCase
         /** @var RedirectHandler $redirectHandler */
         $redirectHandler = Pimcore::getContainer()->get(RedirectHandler::class);
 
-
         $request = new Request();
         $request->server->set('REQUEST_URI', 'http://example.org/source');
         $response = $redirectHandler->checkForRedirect($request);
 
         $this->assertTrue($response->isRedirect(), 'Redirect because redirect source and request path match');
         $this->assertEquals('http://example.org/target', $response->headers->get('Location'), 'Redirect target should be /target');
-
-
 
         $request = new Request();
         $request->server->set('REQUEST_URI', 'http://example.org/other_source');
@@ -66,7 +75,6 @@ class RedirectHandlerTestCase extends TestCase
 
         $this->assertTrue($response->isRedirect());
         $this->assertEquals('http://example.org/target', $response->headers->get('Location'));
-
 
         $request = new Request();
         $request->server->set('REQUEST_URI', 'http://example.org/source');
