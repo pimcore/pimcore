@@ -21,8 +21,6 @@ use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
-use function count;
-use function sprintf;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

@@ -26,8 +26,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
-use function is_array;
-use function sprintf;
 
 class DateRange extends Data implements
     ResourcePersistenceAwareInterface,

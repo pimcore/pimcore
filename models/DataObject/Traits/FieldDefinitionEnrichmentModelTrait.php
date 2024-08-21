@@ -19,8 +19,6 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use function array_key_exists;
-use function is_array;
 
 /**
  * @internal

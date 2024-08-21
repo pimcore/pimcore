@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
-use function in_array;
 
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {

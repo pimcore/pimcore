@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\XliffBundle\ImporterService;
 use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ImporterService\Importer\ImporterInterface;
-use function sprintf;
 
 class ImporterService implements ImporterServiceInterface
 {

@@ -24,7 +24,6 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use function is_string;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {

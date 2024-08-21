@@ -25,7 +25,6 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
-use function in_array;
 
 trait ImageThumbnailTrait
 {

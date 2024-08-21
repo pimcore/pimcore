@@ -43,12 +43,6 @@ use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 use RecursiveIteratorIterator;
 use Symfony\Component\Templating\EngineInterface;
-use function get_class;
-use function is_array;
-use function is_int;
-use function is_scalar;
-use function is_string;
-use function strlen;
 
 abstract class AbstractRenderer implements RendererInterface
 {

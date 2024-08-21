@@ -23,8 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use function count;
-use function in_array;
 
 /**
  * @template TItem of Model\DataObject\Fieldcollection\Data\AbstractData

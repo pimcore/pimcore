@@ -20,8 +20,6 @@ use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
 use Pimcore\Config;
-use function class_exists;
-use function method_exists;
 
 /**
  * @internal

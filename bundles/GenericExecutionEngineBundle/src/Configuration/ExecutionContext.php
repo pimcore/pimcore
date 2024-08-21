@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Configuration;
 
 use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\ExecutionContextNotDefinedException;
-use function sprintf;
 
 /**
  * @internal

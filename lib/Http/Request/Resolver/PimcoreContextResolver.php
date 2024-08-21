@@ -20,7 +20,6 @@ use InvalidArgumentException;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use function is_array;
 
 /**
  * Gets/sets and guesses pimcore context (admin, default) from request. The guessing is implemented in PimcoreContextGuesser

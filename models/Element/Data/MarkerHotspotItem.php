@@ -18,7 +18,6 @@ namespace Pimcore\Model\Element\Data;
 
 use ArrayAccess;
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @internal

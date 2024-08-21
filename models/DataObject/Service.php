@@ -47,14 +47,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Throwable;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()

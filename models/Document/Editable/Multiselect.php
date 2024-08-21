@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
-use function is_array;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

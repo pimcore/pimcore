@@ -43,12 +43,6 @@ use Countable;
 use Exception;
 use RecursiveIterator;
 use RecursiveIteratorIterator;
-use function array_key_exists;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function sprintf;
 
 class Container implements RecursiveIterator, Countable
 {

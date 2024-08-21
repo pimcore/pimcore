@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Event\Traits;
 
 use Pimcore;
-use function get_class;
 
 /**
  * @internal

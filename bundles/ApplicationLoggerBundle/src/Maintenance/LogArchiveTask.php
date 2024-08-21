@@ -26,7 +26,6 @@ use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
-use function sprintf;
 
 /**
  * @internal

@@ -35,12 +35,6 @@ use Pimcore\Tool\Frontend as FrontendTool;
 use ReflectionClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function func_get_args;
-use function get_class;
-use function in_array;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()

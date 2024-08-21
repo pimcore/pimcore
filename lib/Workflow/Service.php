@@ -20,7 +20,6 @@ use DateTime;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
-use function in_array;
 
 class Service
 {

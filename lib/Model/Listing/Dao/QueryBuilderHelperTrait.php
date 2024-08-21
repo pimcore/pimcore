@@ -19,7 +19,6 @@ namespace Pimcore\Model\Listing\Dao;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
 use Pimcore\Model\DataObject;
-use function is_callable;
 
 trait QueryBuilderHelperTrait
 {

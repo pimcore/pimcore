@@ -21,11 +21,6 @@ use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
-use function in_array;
-use function is_array;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method User\Dao getDao()

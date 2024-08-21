@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
-use function is_array;
 
 /**
  * @internal

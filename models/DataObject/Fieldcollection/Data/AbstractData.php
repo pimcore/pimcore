@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
-use function in_array;
 
 /**
  * @method Dao getDao()

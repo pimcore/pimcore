@@ -43,10 +43,6 @@ use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 use RecursiveIteratorIterator;
-use function array_key_exists;
-use function is_array;
-use function is_int;
-use function is_string;
 
 class Menu extends AbstractRenderer
 {

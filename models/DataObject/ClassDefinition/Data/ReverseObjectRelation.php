@@ -24,7 +24,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
-use function is_array;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {

@@ -23,10 +23,6 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Service\Attribute\Required;
 use Throwable;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 abstract class UserAwareController extends Controller
 {

@@ -24,7 +24,6 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Webmozarts\Console\Parallelization\ErrorHandler\ErrorHandler;
 use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
-use function func_get_args;
 
 trait Parallelization
 {

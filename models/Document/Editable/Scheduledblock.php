@@ -22,7 +22,6 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
 use Pimcore\Tool\HtmlUtils;
-use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

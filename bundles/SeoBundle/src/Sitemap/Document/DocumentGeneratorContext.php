@@ -21,7 +21,6 @@ use InvalidArgumentException;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContext;
 use Pimcore\Model\Site;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
-use function sprintf;
 
 class DocumentGeneratorContext extends GeneratorContext
 {

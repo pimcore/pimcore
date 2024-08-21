@@ -57,16 +57,6 @@ use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
-use function array_key_exists;
-use function dirname;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_resource;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method Dao getDao()

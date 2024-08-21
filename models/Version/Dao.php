@@ -20,9 +20,6 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
-use function count;
-use function in_array;
-use function is_bool;
 
 /**
  * @internal

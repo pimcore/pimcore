@@ -20,7 +20,6 @@ use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use function array_key_exists;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

@@ -20,11 +20,6 @@ namespace Pimcore\Tool\Text;
 
 use Exception;
 use stdClass;
-use function array_key_exists;
-use function chr;
-use function count;
-use function is_null;
-use function ord;
 
 /**
  * @internal

@@ -25,10 +25,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()

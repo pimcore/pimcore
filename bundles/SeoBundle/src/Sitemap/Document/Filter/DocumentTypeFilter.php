@@ -21,7 +21,6 @@ use Pimcore\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
-use function in_array;
 
 class DocumentTypeFilter implements FilterInterface
 {

@@ -26,12 +26,6 @@ use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_int;
-use function is_null;
-use function is_string;
 
 /**
  * @method AbstractDao getDao()

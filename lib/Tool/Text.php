@@ -24,10 +24,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
-use function array_key_exists;
-use function chr;
-use function count;
-use function strlen;
 
 class Text
 {

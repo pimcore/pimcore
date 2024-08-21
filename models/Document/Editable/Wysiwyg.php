@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

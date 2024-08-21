@@ -18,7 +18,6 @@ namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Tool\Serialize;
-use function is_array;
 
 /**
  * @internal

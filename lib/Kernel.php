@@ -46,8 +46,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
-use function in_array;
-use function ini_get;
 
 abstract class Kernel extends SymfonyKernel
 {

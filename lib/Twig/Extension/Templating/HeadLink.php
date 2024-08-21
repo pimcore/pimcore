@@ -49,10 +49,6 @@ use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
 use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function count;
-use function is_array;
-use function is_string;
-use function sprintf;
 
 /**
  * HeadLink

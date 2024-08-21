@@ -29,9 +29,6 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
-use function count;
-use function get_class;
-use function is_array;
 
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, VarExporterInterface, FieldDefinitionEnrichmentModelInterface
 {

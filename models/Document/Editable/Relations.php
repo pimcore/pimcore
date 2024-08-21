@@ -22,10 +22,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

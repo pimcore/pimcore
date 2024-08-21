@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataExtractorInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
-use function sprintf;
 
 class ExportDataExtractorService implements ExportDataExtractorServiceInterface
 {

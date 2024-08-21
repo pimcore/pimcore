@@ -16,10 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
-use function class_alias;
-use function class_exists;
-use function trigger_deprecation;
-
 trigger_deprecation('pimcore/pimcore', '11.2', 'The "%s" class is deprecated, use "%s" instead.', Chromium::class, HtmlToImage::class);
 
 if (!class_exists(Chromium::class, false)) {

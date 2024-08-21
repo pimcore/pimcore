@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Traits;
 
 use Doctrine\DBAL\Connection;
-use function array_key_exists;
 
 /**
  * @internal
