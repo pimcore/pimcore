@@ -24,9 +24,6 @@ use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use UnexpectedValueException;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @internal

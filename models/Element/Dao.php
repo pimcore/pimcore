@@ -19,7 +19,6 @@ use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\User;
-use function in_array;
 
 /**
  * @internal

@@ -22,10 +22,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
-use function count;
-use function in_array;
-use function is_null;
-use function sprintf;
 
 class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {

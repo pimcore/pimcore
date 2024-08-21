@@ -24,10 +24,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
-use function count;
-use function in_array;
-use function is_array;
-use function is_scalar;
 
 /**
  * @internal

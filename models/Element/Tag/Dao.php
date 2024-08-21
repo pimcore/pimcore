@@ -19,11 +19,6 @@ use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
-use function count;
-use function in_array;
-use function is_null;
-use function sprintf;
-use function strlen;
 
 /**
  * @internal

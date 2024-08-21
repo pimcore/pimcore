@@ -22,7 +22,6 @@ use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 use RecursiveFilterIterator;
 use RecursiveIterator;
-use function is_string;
 
 /**
  * @internal

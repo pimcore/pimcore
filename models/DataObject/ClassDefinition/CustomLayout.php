@@ -26,8 +26,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Symfony\Component\Uid\UuidV4;
-use function is_null;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Dao getDao()

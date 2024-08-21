@@ -32,9 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
-use function in_array;
-use function sprintf;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()

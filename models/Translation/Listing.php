@@ -18,8 +18,6 @@ namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
-use function in_array;
-use function sprintf;
 
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()

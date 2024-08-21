@@ -16,9 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
-use function is_array;
-use function is_string;
-
 /**
  * @internal
  */

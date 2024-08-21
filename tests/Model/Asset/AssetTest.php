@@ -21,8 +21,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
-use function is_resource;
-use function strlen;
+
+
 
 /**
  * Class AssetTest

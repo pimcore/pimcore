@@ -17,8 +17,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing;
 
 use Exception;
 use Pimcore\Model;
-use function count;
-use function is_callable;
 
 /**
  * @internal

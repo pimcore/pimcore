@@ -24,7 +24,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
-use function in_array;
 
 /**
  * @internal

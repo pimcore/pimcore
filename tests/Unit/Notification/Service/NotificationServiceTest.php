@@ -23,7 +23,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use UnexpectedValueException;
-use function sprintf;
+
 
 class NotificationServiceTest extends TestCase
 {

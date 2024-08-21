@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Metadata\Predefined\Listing;
 
 use Pimcore\Model;
-use function count;
 
 /**
  * @internal

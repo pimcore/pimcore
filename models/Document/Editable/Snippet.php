@@ -24,8 +24,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DeviceDetector;
-use function array_key_exists;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

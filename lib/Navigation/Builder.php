@@ -29,8 +29,6 @@ use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
 use RecursiveIteratorIterator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use function get_class;
-use function is_string;
 
 class Builder
 {

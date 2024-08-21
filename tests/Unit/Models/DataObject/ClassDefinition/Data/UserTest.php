@@ -18,8 +18,8 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\User;
 use Pimcore\Tests\Support\Test\TestCase;
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertNotEmpty;
+
+
 
 class UserTest extends TestCase
 {

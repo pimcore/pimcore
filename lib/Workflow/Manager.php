@@ -36,10 +36,6 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function count;
-use function in_array;
-use function is_null;
-use function sprintf;
 
 class Manager
 {

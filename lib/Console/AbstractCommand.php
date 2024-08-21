@@ -23,7 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
-use function sprintf;
 
 /**
  * Base command class setting up some defaults (e.g. the VarDumper component).

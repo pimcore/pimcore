@@ -24,10 +24,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 final class Tool
 {

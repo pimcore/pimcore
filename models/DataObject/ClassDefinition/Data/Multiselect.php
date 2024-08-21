@@ -28,9 +28,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Throwable;
-use function is_array;
-use function is_string;
-use function strlen;
 
 class Multiselect extends Data implements
     ResourcePersistenceAwareInterface,

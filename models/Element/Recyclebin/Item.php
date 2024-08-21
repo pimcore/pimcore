@@ -34,8 +34,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
-use function get_class;
-use function sprintf;
 
 /**
  * @internal

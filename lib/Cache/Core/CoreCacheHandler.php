@@ -33,11 +33,6 @@ use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Throwable;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_scalar;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This

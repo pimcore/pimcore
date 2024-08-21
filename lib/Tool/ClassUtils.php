@@ -21,8 +21,6 @@ use InvalidArgumentException;
 use ReflectionClass;
 use RuntimeException;
 use Symfony\Component\Finder\SplFileInfo;
-use function is_array;
-use function sprintf;
 
 /**
  * @internal

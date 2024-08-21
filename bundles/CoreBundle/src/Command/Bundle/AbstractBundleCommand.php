@@ -22,7 +22,6 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
-use function sprintf;
 
 /**
  * @internal

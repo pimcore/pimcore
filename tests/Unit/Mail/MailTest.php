@@ -20,7 +20,7 @@ namespace Pimcore\Tests\Unit\Mail;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
-use function sprintf;
+
 
 class MailTest extends TestCase
 {

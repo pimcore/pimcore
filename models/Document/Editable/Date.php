@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document\Editable;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Pimcore\Model;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

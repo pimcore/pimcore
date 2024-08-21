@@ -25,8 +25,6 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function in_array;
-use function sprintf;
 
 /**
  * @property Document|null $document
