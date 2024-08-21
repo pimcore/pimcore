@@ -1008,12 +1008,13 @@ class Asset extends Element\AbstractElement
                     '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
                     $this->deletePhysicalFile();
                 }
+
+                //remove target parent folder preview thumbnails
+                $this->clearFolderThumbnails($this);
             }
 
             $this->clearThumbnails(true);
 
-            //remove target parent folder preview thumbnails
-            $this->clearFolderThumbnails($this);
         } catch (Exception $e) {
             try {
                 $this->rollBack();
