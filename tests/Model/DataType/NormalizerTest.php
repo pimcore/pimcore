@@ -27,8 +27,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
-
 /**
  * Class NormalizerTest
  *

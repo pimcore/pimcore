@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Support\Util\TestHelper;
 
-
 abstract class AbstractTestDataHelper extends Module
 {
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2): void

@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionClass;
 
-
 abstract class AbstractDefinitionHelper extends Module
 {
     protected array $config = [

@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
-
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
     public static int $configCount = 0;

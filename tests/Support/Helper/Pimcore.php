@@ -37,11 +37,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-
-
-
-
-
 class Pimcore extends Module\Symfony
 {
     protected array $groups = [];

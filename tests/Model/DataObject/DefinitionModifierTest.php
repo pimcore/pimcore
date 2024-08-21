@@ -23,8 +23,6 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionClass;
 use ReflectionMethod;
 
-
-
 class DefinitionModifierTest extends ModelTestCase
 {
     const _CLASS = 'class';
