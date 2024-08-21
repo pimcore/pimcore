@@ -25,7 +25,6 @@ use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Version;
-use function count;
 
 class LocalizedFieldTest extends ModelTestCase
 {

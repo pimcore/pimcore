@@ -45,8 +45,6 @@ use IteratorAggregate;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Traversable;
 use Twig\Extension\RuntimeExtensionInterface;
-use function call_user_func_array;
-use function count;
 
 /**
  * @method void set(mixed $value)

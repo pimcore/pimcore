@@ -27,10 +27,6 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use function array_key_exists;
-use function count;
-use function defined;
-use function is_string;
 
 /**
  * @internal

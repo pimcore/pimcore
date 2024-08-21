@@ -23,7 +23,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 use UnexpectedValueException;
-use function sprintf;
 
 /**
  * @internal

@@ -32,11 +32,6 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function count;
-use function is_array;
-use function is_null;
-use function strlen;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {

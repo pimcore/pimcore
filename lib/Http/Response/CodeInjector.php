@@ -21,8 +21,6 @@ use InvalidArgumentException;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Tool\DomCrawler;
 use Symfony\Component\HttpFoundation\Response;
-use function in_array;
-use function sprintf;
 
 class CodeInjector
 {

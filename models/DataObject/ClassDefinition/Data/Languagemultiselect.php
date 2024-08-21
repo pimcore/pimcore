@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
-use function in_array;
 
 class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {

@@ -17,7 +17,6 @@ namespace Pimcore\Model\Document\DocType\Listing;
 
 use Pimcore\Model;
 use Pimcore\Model\Document\DocType;
-use function count;
 
 /**
  * @internal

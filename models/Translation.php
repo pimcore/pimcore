@@ -33,11 +33,6 @@ use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use function array_key_exists;
-use function array_slice;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()

@@ -19,10 +19,6 @@ namespace Pimcore\Model\User;
 use Pimcore\Model\User\Workspace\Asset;
 use Pimcore\Model\User\Workspace\DataObject;
 use Pimcore\Model\User\Workspace\Document;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()

@@ -18,7 +18,6 @@ namespace Pimcore\Model\Element\Recyclebin\Item;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @internal

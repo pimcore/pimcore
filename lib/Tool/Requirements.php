@@ -27,11 +27,6 @@ use Pimcore\Tool\Requirements\Check;
 use ReflectionClass;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use function constant;
-use function count;
-use function extension_loaded;
-use function function_exists;
-use function ini_get;
 
 /**
  * @internal

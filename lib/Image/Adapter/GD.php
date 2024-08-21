@@ -18,8 +18,6 @@ namespace Pimcore\Image\Adapter;
 
 use GdImage;
 use Pimcore\Image\Adapter;
-use function function_exists;
-use function in_array;
 
 class GD extends Adapter
 {

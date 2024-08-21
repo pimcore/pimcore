@@ -25,7 +25,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
-use function is_string;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {

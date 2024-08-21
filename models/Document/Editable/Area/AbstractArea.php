@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable\Area;
 
-use function array_key_exists;
-
 abstract class AbstractArea
 {
     /**

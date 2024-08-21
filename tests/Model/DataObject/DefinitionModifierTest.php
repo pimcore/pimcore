@@ -22,8 +22,6 @@ use Pimcore\Model\DataObject\DefinitionModifier;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionClass;
 use ReflectionMethod;
-use function count;
-use function func_get_args;
 
 class DefinitionModifierTest extends ModelTestCase
 {

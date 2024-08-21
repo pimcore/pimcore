@@ -24,10 +24,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
-use function array_key_exists;
-use function in_array;
-use function is_string;
-use function strlen;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {

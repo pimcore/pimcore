@@ -28,8 +28,6 @@ use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function is_object;
-use function is_string;
 
 /**
  * @internal

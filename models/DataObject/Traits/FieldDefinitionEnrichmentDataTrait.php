@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\Traits;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use function is_array;
 
 /**
  * @internal

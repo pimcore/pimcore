@@ -21,7 +21,6 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function count;
 
 class PimcoreNotificationService extends AbstractNotificationService
 {

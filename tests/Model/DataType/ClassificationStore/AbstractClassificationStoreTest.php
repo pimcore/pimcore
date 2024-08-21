@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
-use function count;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {

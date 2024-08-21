@@ -20,8 +20,6 @@ use Exception;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Translation;
-use function in_array;
-use function is_array;
 
 class Service
 {

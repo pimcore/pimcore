@@ -19,8 +19,6 @@ namespace Pimcore\Model\Asset\Video\Thumbnail;
 use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model;
-use function array_key_exists;
-use function is_array;
 
 /**
  * @method bool isWriteable()

@@ -23,8 +23,6 @@ use Pimcore\Model;
 use Pimcore\Tool;
 use Symfony\Component\Mime\Address;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
-use function dirname;
-use function strlen;
 
 /**
  * @internal

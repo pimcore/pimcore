@@ -19,7 +19,6 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Psr\Log\LoggerInterface;
-use function strlen;
 
 /**
  * @internal

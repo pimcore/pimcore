@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use function in_array;
-
 /**
  * Keep in sync with bundles/AdminBundle/public/js/pimcore/object/helpers/reservedWords.js
  */

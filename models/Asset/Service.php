@@ -34,17 +34,6 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function array_key_exists;
-use function date;
-use function fpassthru;
-use function get_class;
-use function in_array;
-use function preg_quote;
-use function preg_replace;
-use function sprintf;
-use function strlen;
-use function time;
-use function urldecode;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

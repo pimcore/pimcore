@@ -26,8 +26,6 @@ use Pimcore\Model\User;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function count;
-use function is_array;
 
 /**
  * Class NormalizerTest

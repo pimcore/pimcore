@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\QuantityValue\Unit;
 
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\DataObject\QuantityValue\Unit\Listing\Dao getDao()

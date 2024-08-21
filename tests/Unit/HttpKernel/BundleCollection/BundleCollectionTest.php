@@ -24,7 +24,6 @@ use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use function get_class;
 
 class BundleCollectionTest extends TestCase
 {

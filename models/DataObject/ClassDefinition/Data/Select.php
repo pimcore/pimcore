@@ -24,9 +24,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function array_key_exists;
-use function count;
-use function is_array;
 
 class Select extends Data implements
     ResourcePersistenceAwareInterface,

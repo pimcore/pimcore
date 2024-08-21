@@ -16,9 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

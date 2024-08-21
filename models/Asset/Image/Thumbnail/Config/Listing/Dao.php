@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config\Listing;
 
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
-use function count;
 
 /**
  * @internal

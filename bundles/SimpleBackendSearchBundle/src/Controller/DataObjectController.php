@@ -21,8 +21,6 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use function count;
-use function is_array;
 
 class DataObjectController extends UserAwareController
 {

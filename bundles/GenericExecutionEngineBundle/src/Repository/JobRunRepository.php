@@ -31,7 +31,6 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
-use function count;
 
 final class JobRunRepository implements JobRunRepositoryInterface
 {

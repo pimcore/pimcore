@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use Exception;
-use function count;
 
 class ValidationException extends Exception
 {

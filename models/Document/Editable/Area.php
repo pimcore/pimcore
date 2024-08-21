@@ -26,11 +26,6 @@ use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function is_array;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

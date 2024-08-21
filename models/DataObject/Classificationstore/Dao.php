@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
-use function in_array;
 
 /**
  * @internal

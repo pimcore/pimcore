@@ -34,11 +34,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
-use function array_key_exists;
-use function count;
-use function dirname;
-use function get_class;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()

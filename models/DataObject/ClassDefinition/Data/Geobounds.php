@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
-use function is_array;
 
 class Geobounds extends AbstractGeo implements
     ResourcePersistenceAwareInterface,

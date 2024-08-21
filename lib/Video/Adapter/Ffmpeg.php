@@ -21,7 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Process\Process;
-use function count;
 
 /**
  * @internal

@@ -25,12 +25,6 @@ use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\Filesystem\Filesystem;
-use function constant;
-use function defined;
-use function in_array;
-use function is_null;
-use function is_string;
-use function sprintf;
 
 class Imagick extends Adapter
 {
