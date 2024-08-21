@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Model\SeoBundle;
+namespace Pimcore\Tests\Model\SeoBundle;
 
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
