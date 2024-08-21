@@ -59,7 +59,7 @@ class AssetDeleteHandler
         }
 
         $db = Db::get();
-        $db->delete('assets_image_thumbnail_cache', 'cid = '. $message->getId());
+        $db->delete('assets_image_thumbnail_cache', ['cid' => $message->getId()]);
 
     }
 }
