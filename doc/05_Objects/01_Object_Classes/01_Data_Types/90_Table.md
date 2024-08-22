@@ -36,14 +36,14 @@ $object->setTable([
 
 A copy and paste feature is available to be able to fill easily the table in an object from an Excel sheet for instance:
 
-![Copy and paste feature](../../../img/Objects_Structured_Table_copyandpaste.png)
+![Copy and paste feature](../../../img/Objects_Table_copyandpaste.png)
 
 It is possible to copy directly data in the OS clipboard from Excel:
 
-![Copy and paste feature](../../../img/Objects_Structured_Table_excel.png)
+![Copy and paste feature](../../../img/Objects_Table_excel.png)
 
 And after pasting data will be formatted keeping Excel structure:
 
-![Copy and paste feature](../../../img/Objects_Structured_Table_copyandpasteresult.png)
+![Copy and paste feature](../../../img/Objects_Table_copyandpasteresult.png)
 
 You can paste any data (from text files, etc.), separator must be tabulation.
