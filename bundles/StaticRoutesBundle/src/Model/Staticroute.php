@@ -23,11 +23,6 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method bool isWriteable()

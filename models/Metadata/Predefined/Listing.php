@@ -22,8 +22,6 @@ use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

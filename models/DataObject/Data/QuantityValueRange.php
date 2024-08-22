@@ -21,7 +21,6 @@ use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
-use function sprintf;
 
 class QuantityValueRange extends AbstractQuantityValue
 {

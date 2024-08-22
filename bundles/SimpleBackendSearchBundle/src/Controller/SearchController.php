@@ -44,10 +44,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function strlen;
 
 /**
  * @Route("/search")

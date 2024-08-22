@@ -25,9 +25,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Tool;
-use function in_array;
-use function is_null;
-use function is_string;
 
 class DataObjectDataExtractor extends AbstractElementDataExtractor
 {

@@ -24,7 +24,6 @@ use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use function sprintf;
 
 /**
  * @internal

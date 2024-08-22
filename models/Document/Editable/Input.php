@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

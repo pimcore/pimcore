@@ -19,8 +19,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use function in_array;
-use function sprintf;
 
 /**
  * @internal

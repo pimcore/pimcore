@@ -40,9 +40,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
 use ArrayObject;
-use function count;
-use function is_int;
-use function is_scalar;
 
 class Container extends ArrayObject
 {

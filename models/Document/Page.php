@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()

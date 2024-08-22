@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use function dirname;
 
 class PimcoreGenericExecutionEngineBundle extends AbstractPimcoreBundle
 {

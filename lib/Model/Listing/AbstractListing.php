@@ -26,12 +26,6 @@ use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_int;
-use function is_null;
-use function is_string;
 
 /**
  * @method AbstractDao getDao()
@@ -198,7 +192,7 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
         $condition = '('.$condition.')';
         $ignoreParameter = true;
 
-        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        $conditionWithoutQuotedStrings = preg_replace('/((?<![\\\\])[\'\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1/', '', $condition);
         if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
             $ignoreParameter = false;
         }

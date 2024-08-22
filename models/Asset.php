@@ -56,16 +56,6 @@ use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
-use function array_key_exists;
-use function dirname;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_resource;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method Dao getDao()
@@ -1074,6 +1064,9 @@ class Asset extends Element\AbstractElement
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setFilename(string $filename): static
     {
         $this->filename = $filename;
@@ -1106,6 +1099,9 @@ class Asset extends Element\AbstractElement
         return '';
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $handle = tmpfile();
@@ -1202,6 +1198,9 @@ class Asset extends Element\AbstractElement
         return $this->dataChanged;
     }
 
+    /**
+     * @return $this
+     */
     public function setDataChanged(bool $changed = true): static
     {
         $this->dataChanged = $changed;

@@ -26,7 +26,6 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
-use function ord;
 
 /**
  * @internal

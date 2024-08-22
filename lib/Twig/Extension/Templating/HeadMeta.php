@@ -46,10 +46,6 @@ use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait;
 use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
-use function count;
-use function in_array;
-use function is_string;
-use function sprintf;
 
 /**
  * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])

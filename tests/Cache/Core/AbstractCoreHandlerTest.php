@@ -31,8 +31,6 @@ use Pimcore\Tests\Support\Helper\Pimcore;
 use ReflectionClass;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
-use function count;
-use function in_array;
 
 abstract class AbstractCoreHandlerTest extends Unit
 {

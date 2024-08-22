@@ -26,8 +26,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
-use function count;
-use function is_array;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {

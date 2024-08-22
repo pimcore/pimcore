@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
 use InvalidArgumentException;
-use function sprintf;
 
 class RendererNotFoundException extends InvalidArgumentException
 {

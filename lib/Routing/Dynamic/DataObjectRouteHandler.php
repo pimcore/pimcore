@@ -24,7 +24,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
-use function sprintf;
 
 /**
  * @internal

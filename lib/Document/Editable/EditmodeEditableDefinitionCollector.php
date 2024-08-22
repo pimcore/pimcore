@@ -20,8 +20,6 @@ namespace Pimcore\Document\Editable;
 use Exception;
 use JsonException;
 use Pimcore\Model\Document\Editable;
-use function is_array;
-use function is_scalar;
 
 /**
  * @internal

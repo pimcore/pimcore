@@ -19,7 +19,6 @@ namespace Pimcore;
 use Exception;
 use Pimcore;
 use Pimcore\Image\Adapter;
-use function extension_loaded;
 
 final class Image
 {

@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\Listing;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use function in_array;
 
 /**
  * @method DataObject\Listing\Concrete\Dao getDao()

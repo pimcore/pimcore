@@ -18,7 +18,6 @@ namespace Pimcore\Model\User\UserRole;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Element;
-use function in_array;
 
 /**
  * @internal

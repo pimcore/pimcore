@@ -21,7 +21,6 @@ use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()

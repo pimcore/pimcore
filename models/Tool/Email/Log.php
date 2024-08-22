@@ -21,7 +21,6 @@ use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Storage;
-use function is_string;
 
 /**
  * @internal

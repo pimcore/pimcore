@@ -20,9 +20,6 @@ use Exception;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
 use Pimcore\Tool\Serialize;
-use function dirname;
-use function get_class;
-use function strlen;
 
 class Service
 {

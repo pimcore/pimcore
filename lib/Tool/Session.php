@@ -20,7 +20,6 @@ namespace Pimcore\Tool;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use function sprintf;
 
 final class Session
 {

@@ -18,7 +18,6 @@ namespace Pimcore\Model\WebsiteSetting;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\WebsiteSetting;
-use function in_array;
 
 /**
  * @internal

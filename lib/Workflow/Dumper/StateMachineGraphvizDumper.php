@@ -19,7 +19,6 @@ namespace Pimcore\Workflow\Dumper;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Marking;
-use function sprintf;
 
 /**
  * @internal

@@ -34,8 +34,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
-use function get_class;
-use function sprintf;
 
 /**
  * @internal
@@ -273,7 +271,7 @@ class Item extends Model\AbstractModel
             $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
-        $element->save();
+        $element->save(['isRecycleBinRestore' => true]);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {

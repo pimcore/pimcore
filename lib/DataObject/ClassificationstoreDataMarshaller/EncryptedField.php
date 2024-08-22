@@ -25,8 +25,6 @@ use Pimcore\Logger;
 use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
-use function is_array;
-use function is_null;
 
 /**
  * @internal

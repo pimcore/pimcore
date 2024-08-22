@@ -19,7 +19,6 @@ use Pimcore\Bundle\UuidBundle\DependencyInjection\PimcoreUuidExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use function dirname;
 
 class PimcoreUuidBundle extends AbstractPimcoreBundle
 {

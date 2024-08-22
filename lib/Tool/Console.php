@@ -25,8 +25,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-use function is_array;
-use function is_string;
 
 final class Console
 {
@@ -288,7 +286,7 @@ final class Console
         return (int)$pid;
     }
 
-    private static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    private static function execInBackgroundWindows(string $cmd, ?string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';

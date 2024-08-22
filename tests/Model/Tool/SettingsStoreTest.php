@@ -19,8 +19,6 @@ namespace Pimcore\Tests\Model\Tool;
 use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
-use function count;
-use function in_array;
 
 class SettingsStoreTest extends ModelTestCase
 {

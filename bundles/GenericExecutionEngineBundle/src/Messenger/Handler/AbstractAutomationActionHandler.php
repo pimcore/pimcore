@@ -33,8 +33,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
-use function array_key_exists;
-use function is_string;
 
 abstract class AbstractAutomationActionHandler
 {

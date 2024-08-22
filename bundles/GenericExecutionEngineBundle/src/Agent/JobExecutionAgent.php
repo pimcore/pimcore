@@ -32,7 +32,6 @@ use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
-use function count;
 
 /**
  * @internal
@@ -98,7 +97,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $this->incrementProcessedElements($jobRun);
+        if ($jobRun->getTotalElements() > 0) {
+            $this->incrementProcessedElements($jobRun);
+        }
 
         if (!$throwable) {
             $this->handleNextMessage($message);

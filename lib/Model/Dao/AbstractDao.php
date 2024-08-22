@@ -20,7 +20,6 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
-use function strlen;
 
 abstract class AbstractDao implements DaoInterface
 {

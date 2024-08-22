@@ -28,9 +28,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\SystemSettingsConfig;
-use function array_key_exists;
-use function in_array;
-use function is_null;
 
 /**
  * @method Model\Document\PageSnippet\Dao getDao()

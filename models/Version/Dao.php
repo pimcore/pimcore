@@ -20,9 +20,6 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
-use function count;
-use function in_array;
-use function is_bool;
 
 /**
  * @internal
@@ -90,7 +87,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function isVersionUsedInScheduler(Model\Version $version): bool
     {
-        $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
+        $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE active = 1 AND version = ?', [$version->getId()]);
 
         return (bool) $exists;
     }

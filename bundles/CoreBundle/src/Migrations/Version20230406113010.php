@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\Tool\SettingsStore;
-use function sprintf;
 
 final class Version20230406113010 extends AbstractMigration
 {

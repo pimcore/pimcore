@@ -24,12 +24,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function func_get_args;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

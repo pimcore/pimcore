@@ -25,9 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
-use function is_float;
-use function is_string;
-use function strlen;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -210,6 +207,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {
@@ -223,6 +223,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
         $this->useCurrentDate = $useCurrentDate;

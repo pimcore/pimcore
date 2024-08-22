@@ -29,7 +29,6 @@ use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Messenger\MessageBusInterface;
-use function defined;
 
 /**
  * @internal
