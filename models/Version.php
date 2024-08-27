@@ -100,8 +100,6 @@ final class Version extends AbstractModel
     /**
      * disables the versioning for the current process, this is useful for importers, ...
      * There are no new versions created, the read continues to operate normally
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -111,8 +109,6 @@ final class Version extends AbstractModel
     /**
      * see @ self::disable()
      * just enabled the creation of versioning in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {

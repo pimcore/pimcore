@@ -83,8 +83,6 @@ class Service extends Model\Element\Service
     /**
      * finds all objects which hold a reference to a specific user
      *
-     * @static
-     *
      * @return Concrete[]
      */
     public static function getObjectsReferencingUser(int $userId): array
@@ -171,7 +169,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return AbstractObject copied object
      */
     public function copyAsChild(AbstractObject $target, AbstractObject $source): AbstractObject
@@ -282,8 +279,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function isHelperGridColumnConfig(string $field): bool
@@ -484,7 +479,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return string[]|null
      *
      * @internal
@@ -500,8 +494,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getConfigForHelperDefinition(array $helperDefinitions, string $key, array $context = []): ?ConfigElementInterface
@@ -776,9 +768,6 @@ class Service extends Model\Element\Service
 
     /**
      * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
-     *
-     * @static
-     *
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
@@ -803,11 +792,6 @@ class Service extends Model\Element\Service
         }
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getOptionsForSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $definition): array
     {
         $options = [];
@@ -846,19 +830,12 @@ class Service extends Model\Element\Service
 
     /**
      * alias of getOptionsForMultiSelectField
-     *
-     *
      */
     public static function getOptionsForMultiSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $fieldname): array
     {
         return self::getOptionsForSelectField($object, $fieldname);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
@@ -899,8 +876,6 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
-     *
-     *
      */
     public static function rewriteIds(AbstractObject $object, array $rewriteConfig, array $params = []): AbstractObject
     {
@@ -930,7 +905,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return array<string, DataObject\ClassDefinition\CustomLayout>
      */
     public static function getValidLayouts(Concrete $object): array
@@ -1021,8 +995,8 @@ class Service extends Model\Element\Service
         return $targetList;
     }
 
-    /** Calculates the super layout definition for the given object.
-     *
+    /**
+     * Calculates the super layout definition for the given object.
      */
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
@@ -1092,7 +1066,8 @@ class Service extends Model\Element\Service
         return true;
     }
 
-    /** Synchronizes a custom layout with its main layout
+    /**
+     * Synchronizes a custom layout with its main layout
      */
     public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
@@ -1113,8 +1088,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getCustomGridFieldDefinitions(string $classId, int $objectId): ?array
@@ -1283,7 +1256,8 @@ class Service extends Model\Element\Service
         return true;
     }
 
-    /**  Determines the custom layout definition (if necessary) for the given class
+    /**
+     * Determines the custom layout definition (if necessary) for the given class
      *
      * @return array layout
      *
@@ -1636,8 +1610,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function buildConditionPartsFromDescriptor(array $descriptor): array
@@ -1657,8 +1629,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array
@@ -1950,7 +1920,6 @@ class Service extends Model\Element\Service
      * Pass id in Pimcore 10, get o_id
      * Pass o_id in Pimcore 11, get id
      * Pass id in Pimcore 11, get id
-     *
      */
     public static function getVersionDependentDatabaseColumnName(string $fieldName): string
     {

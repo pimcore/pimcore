@@ -37,7 +37,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected string $name;
 
@@ -48,7 +47,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected string $idPath = '';
 
@@ -61,15 +59,9 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected ?Tag $parent = null;
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getById(int $id): ?Tag
     {
         $cacheKey = 'tags_' . $id;
@@ -92,7 +84,6 @@ final class Tag extends Model\AbstractModel
     /**
      * returns all assigned tags for element
      *
-     *
      * @return Tag[]
      */
     public static function getTagsForElement(string $cType, int $cId): array
@@ -104,7 +95,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * adds given tag to element
-     *
      */
     public static function addTagToElement(string $cType, int $cId, Tag $tag): void
     {
@@ -121,7 +111,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * removes given tag from element
-     *
      */
     public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
     {
@@ -162,7 +151,6 @@ final class Tag extends Model\AbstractModel
      * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
      * @param array $classNames        For objects only: filter by classnames
      * @param bool $considerChildTags Look for elements having one of $tag's children assigned
-     *
      */
     public static function getElementsForTag(
         Tag $tag,
@@ -176,7 +164,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @param string $path name path of tags
-     *
      */
     public static function getByPath(string $path): ?Tag
     {
