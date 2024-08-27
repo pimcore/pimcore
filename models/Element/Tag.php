@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
@@ -70,14 +72,21 @@ final class Tag extends Model\AbstractModel
      */
     public static function getById(int $id): ?Tag
     {
-        try {
-            $tag = new self();
-            $tag->getDao()->getById($id);
+        $cacheKey = 'tags_' . $id;
 
-            return $tag;
-        } catch (Model\Exception\NotFoundException $e) {
-            return null;
+        try {
+            $tag = RuntimeCache::get($cacheKey);
+        } catch (\Exception $ex) {
+            try {
+                $tag = new self();
+                $tag->getDao()->getById($id);
+                RuntimeCache::set($cacheKey, $tag);
+            } catch (NotFoundException $e) {
+                return null;
+            }
         }
+
+        return $tag;
     }
 
     /**
@@ -350,7 +359,14 @@ final class Tag extends Model\AbstractModel
     {
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
-        $this->getDao()->delete();
+        $deletedTagIds = $this->getDao()->delete();
+
+        foreach ($deletedTagIds as $removeId) {
+            $cacheKey = 'tags_' . $removeId;
+            if (RuntimeCache::isRegistered($cacheKey)) {
+                RuntimeCache::getInstance()->offsetUnset($cacheKey);
+            }
+        }
 
         $this->dispatchEvent(new TagEvent($this), TagEvents::POST_DELETE);
     }
