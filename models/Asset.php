@@ -528,6 +528,10 @@ class Asset extends Element\AbstractElement
 
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
+                            
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                            
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
@@ -1684,6 +1688,7 @@ class Asset extends Element\AbstractElement
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
+                    //TODO: $this->getDao()->updatePath($src); smame as updateChildPaths but only for that single file that got moved OR collect the single asset in an array and do a mass update, but the former is more anti-dead-lock(?)
                 }
             }
 
