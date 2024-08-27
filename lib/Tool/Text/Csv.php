@@ -91,9 +91,7 @@ class Csv
 
         foreach ($patterns as $pattern) {
             if (preg_match_all($pattern, $data, $matches)) {
-                if ($matches) {
                     break;
-                }
             }
         }
 
