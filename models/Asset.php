@@ -1159,6 +1159,7 @@ class Asset extends Element\AbstractElement
         } catch(UnableToProvideChecksum $e) {
             // There are circumstances in which the adapter is unable to calculate the checksum for a given file.
             // In those cases, we ignore the exception.
+            Logger::error((string) $e);
             return;
         }
         $this->getDao()->updateCustomSettings();
