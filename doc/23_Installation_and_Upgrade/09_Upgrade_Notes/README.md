@@ -7,6 +7,9 @@
 #### [Twig Deferred Extension]
 - Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
   If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
+#### [Bundles]
+- `AbstractPimcoreBundle` now extends `Symfony\Component\HttpKernel\Bundle\AbstractBundle` instead of `Symfony\Component\HttpKernel\Bundle\Bundle`
+
 
 ## Pimcore 11.3.0
 ### General
