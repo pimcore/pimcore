@@ -528,10 +528,10 @@ class Asset extends Element\AbstractElement
 
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
-                            
+
                             $this->getDao()->updateWorkspaces();
                             $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                            
+
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
