@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config\Listing;
 
 use Pimcore\Model\Asset\Video\Thumbnail\Config;
-use function count;
 
 /**
  * @internal

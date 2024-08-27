@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Event\Traits;
 
 use InvalidArgumentException;
-use function array_key_exists;
 
 trait ArgumentsAwareTrait
 {

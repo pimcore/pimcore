@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element\Traits;
 
-use function count;
-
 /**
  * @internal
  */

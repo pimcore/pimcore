@@ -74,14 +74,9 @@ class PimcoreAdminListener
 {
     public function addJSFiles(PathsEvent $event): void
     {
-        $event->setPaths(
-            array_merge(
-                $event->getPaths(),
-                [
-                    '/bundles/app/js/pimcore/document/editables/markdown.js'
-                ]
-            )
-        );
+        $event->addPaths([
+            '/bundles/app/js/pimcore/document/editables/markdown.js',
+        ]);
     }
 }
 

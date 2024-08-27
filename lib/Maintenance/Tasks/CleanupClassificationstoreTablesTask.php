@@ -20,7 +20,6 @@ use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Psr\Log\LoggerInterface;
-use function strlen;
 
 /**
  * @internal

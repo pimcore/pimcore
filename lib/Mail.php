@@ -31,8 +31,6 @@ use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
 use Twig\Sandbox\SecurityError;
-use function is_array;
-use function is_string;
 
 class Mail extends Email
 {

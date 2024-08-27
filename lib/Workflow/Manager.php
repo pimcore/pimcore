@@ -36,8 +36,6 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function in_array;
-use function is_null;
 
 class Manager
 {
@@ -364,5 +362,41 @@ class Manager
         $definition = $workflow->getDefinition();
 
         return $definition->getInitialPlaces();
+    }
+
+    public function isDeniedInWorkflow(ElementInterface $element, string $permissionType): bool
+    {
+        $userPermissions = $this->getWorkflowUserPermissions($element);
+
+        return ($userPermissions[$permissionType] ?? null) === false;
+    }
+
+    private function getWorkflowUserPermissions(ElementInterface $element): array
+    {
+        $userPermissions = [];
+        foreach ($this->getAllWorkflows() as $workflowName) {
+            $workflow = $this->getWorkflowIfExists($element, $workflowName);
+
+            if (empty($workflow)) {
+                continue;
+            }
+
+            $marking = $workflow->getMarking($element);
+
+            if (!count($marking->getPlaces())) {
+                continue;
+            }
+
+            foreach ($this->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
+                if (!empty($placeConfig->getPermissions($workflow, $element))) {
+                    $userPermissions = array_merge(
+                        $userPermissions,
+                        $placeConfig->getUserPermissions($workflow, $element)
+                    );
+                }
+            }
+        }
+
+        return $userPermissions;
     }
 }

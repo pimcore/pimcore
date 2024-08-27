@@ -50,11 +50,6 @@ use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Twig\Extension\RuntimeExtensionInterface;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method $this appendFile($src, $type = 'text/javascript', array $attrs = array())

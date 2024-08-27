@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Navigation\Page;
 
 use Pimcore\Model;
-use function array_key_exists;
 
 class Document extends Url
 {

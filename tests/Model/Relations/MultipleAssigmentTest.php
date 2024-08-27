@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function count;
 
 /**
  * Class MultipleAssigmentTest

@@ -21,9 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\User;
-use function count;
-use function in_array;
-use function is_bool;
 
 /**
  * @internal

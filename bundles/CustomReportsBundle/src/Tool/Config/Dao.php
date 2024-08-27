@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Exception;
 use Pimcore;
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @internal

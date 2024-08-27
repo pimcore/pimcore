@@ -20,7 +20,6 @@ namespace Pimcore\Model\Notification\Service;
 use Carbon\Carbon;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use function is_null;
 
 /**
  * @internal

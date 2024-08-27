@@ -27,9 +27,6 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

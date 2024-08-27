@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Exception;
-use function in_array;
 
 class DeviceDetector
 {

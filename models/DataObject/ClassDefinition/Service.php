@@ -23,10 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
-use function count;
-use function is_array;
-use function is_null;
-use function strlen;
 
 class Service
 {

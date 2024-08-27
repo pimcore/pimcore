@@ -18,8 +18,6 @@ namespace Pimcore\Helper;
 
 use Exception;
 use Pimcore\File;
-use function is_resource;
-use function is_string;
 
 /**
  * @internal

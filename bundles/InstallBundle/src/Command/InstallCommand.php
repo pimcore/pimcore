@@ -33,9 +33,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use function count;
-use function explode;
-use function implode;
 
 /**
  * @method Application getApplication()

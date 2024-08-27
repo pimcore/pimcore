@@ -32,16 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
-use function array_key_exists;
-use function array_merge;
-use function call_user_func_array;
-use function get_called_class;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_string;
-use function strlen;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
@@ -660,8 +650,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return $this
-     *
      * @throws Exception
      */
     public function save(array $parameters = []): static

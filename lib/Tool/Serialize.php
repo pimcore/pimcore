@@ -18,10 +18,6 @@ namespace Pimcore\Tool;
 
 use Pimcore;
 use Throwable;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_object;
 
 final class Serialize
 {

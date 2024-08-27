@@ -27,10 +27,6 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use function constant;
-use function define;
-use function defined;
-use function in_array;
 
 class Bootstrap
 {

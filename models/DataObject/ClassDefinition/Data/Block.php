@@ -32,11 +32,6 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function count;
-use function is_array;
-use function is_null;
-use function strlen;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
@@ -806,23 +801,29 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $params['fieldname'] = $this->getName();
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($container, $params);
-
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($container, $setter)) {
-                    $container->$setter($data);
-                    $this->markLazyloadedFieldAsLoaded($container);
-                }
-            }
-            $this->preSetData($container, $data, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());
         } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $params['context'] = [
+                'object' => $params['owner']->getObject(),
+                'brickField' => $params['fieldname'],
+                'containerKey' => $params['owner']->getType(),
+                'fieldname' => $params['owner']->getFieldname(),
+            ];
             $data = $container->getObjectVar($this->getName());
         }
+
+        if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+            $data = $this->load($container, $params);
+
+            $setter = 'set' . ucfirst($this->getName());
+            if (method_exists($container, $setter)) {
+                $container->$setter($data);
+            }
+        }
+        $this->preSetData($container, $data, $params);
 
         return is_array($data) ? $data : [];
     }

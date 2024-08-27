@@ -21,7 +21,6 @@ use InvalidArgumentException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use function in_array;
 
 class LazyLoadedItem extends AbstractItem
 {

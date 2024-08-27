@@ -27,8 +27,6 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
-use function in_array;
-use function is_string;
 
 /**
  * @method \Pimcore\Bundle\SeoBundle\Model\Redirect\Dao getDao()

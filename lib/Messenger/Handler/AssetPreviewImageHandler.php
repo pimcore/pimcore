@@ -23,7 +23,6 @@ use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 use Throwable;
-use function count;
 
 /**
  * @internal

@@ -19,8 +19,6 @@ namespace Pimcore\Composer;
 
 use JsonException;
 use RuntimeException;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

@@ -22,9 +22,6 @@ use Pimcore\Messenger\MaintenanceTaskMessage;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use function array_key_exists;
-use function count;
-use function in_array;
 
 /**
  * @internal

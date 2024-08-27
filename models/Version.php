@@ -34,9 +34,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
-use function is_array;
-use function is_object;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()

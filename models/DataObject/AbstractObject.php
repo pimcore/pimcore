@@ -31,12 +31,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
-use function array_key_exists;
-use function func_get_args;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method AbstractObject\Dao getDao()

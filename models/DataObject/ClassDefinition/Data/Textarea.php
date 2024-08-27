@@ -70,6 +70,9 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->excludeFromSearchIndex;
     }
 
+    /**
+     * @return $this
+     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;

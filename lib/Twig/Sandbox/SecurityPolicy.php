@@ -21,7 +21,6 @@ use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
-use function in_array;
 
 /**
  * Note: Reused to disable checks on object methods and properties.

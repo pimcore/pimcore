@@ -17,8 +17,6 @@ namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
-use function is_array;
-use function is_object;
 
 /**
  * @internal

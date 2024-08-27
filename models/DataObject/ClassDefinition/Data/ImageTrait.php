@@ -29,10 +29,12 @@ trait ImageTrait
 
     /**
      * @internal
-     *
      */
     public string $uploadPath;
 
+    /**
+     * @return $this
+     */
     public function setUploadPath(string $uploadPath): static
     {
         $this->uploadPath = $uploadPath;

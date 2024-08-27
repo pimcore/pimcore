@@ -52,14 +52,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnitEnum;
-use function count;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_object;
-use function is_scalar;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()

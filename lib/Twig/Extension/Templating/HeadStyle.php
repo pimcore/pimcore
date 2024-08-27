@@ -45,10 +45,6 @@ use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method $this appendStyle($content, array $attributes = array())

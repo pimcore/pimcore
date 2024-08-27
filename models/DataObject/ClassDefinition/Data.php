@@ -27,13 +27,6 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use ReflectionMethod;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
-use function is_object;
-use function is_string;
-use function strlen;
 
 abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, JsonSerializable
 {

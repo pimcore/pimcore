@@ -20,14 +20,6 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use stdClass;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_int;
-use function is_null;
-use function is_object;
-use function is_string;
 
 /**
  * @internal
