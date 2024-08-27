@@ -70,6 +70,9 @@ abstract class AbstractRelations extends Data implements
         return $this->classes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');

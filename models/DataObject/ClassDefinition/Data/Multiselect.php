@@ -505,9 +505,6 @@ class Multiselect extends Data implements
         // nothing to do
     }
 
-    /**
-     * @return $this
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),

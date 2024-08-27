@@ -60,6 +60,7 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                max_input_length: -1
                 allow_attributes:
                     pimcore_type: '*'
                     pimcore_id: '*'
@@ -99,7 +100,8 @@ framework:
                     s: [ 'class', 'id' ]
                     iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
-                    img: [ 'alt', 'style', 'src' ]
+                    img: [ 'class', 'alt', 'style', 'src' ]
+                    hr: ''
             pimcore.translation_sanitizer:
                 allow_attributes:
                     pimcore_type: '*'
@@ -195,7 +197,7 @@ pimcore:
                     matching: [ "/\\.dwg$/", "/\\.stp$/" ]
                 image:
                     class: \Pimcore\Model\Asset\Image
-                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.psd$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
                 archive:
                     class: \Pimcore\Model\Asset\Archive
                     matching: ['/zip/', '/tar/']

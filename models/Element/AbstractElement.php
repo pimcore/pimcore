@@ -27,6 +27,7 @@ use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
+use Pimcore\Workflow\Manager;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -182,10 +183,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     */
     public function getLocked(): ?string
     {
         if (empty($this->locked)) {
@@ -195,12 +192,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->locked;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     *
-     * @return $this
-     */
     public function setLocked(?string $locked): static
     {
         $this->locked = $locked;
@@ -495,10 +486,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
             return false;
         }
+        /** @var Manager $workflowManager */
+        $workflowManager = Pimcore::getContainer()->get(Manager::class);
+        $isDeniedInWorkflow = $workflowManager->isDeniedInWorkflow($this, $type);
 
-        //everything is allowed for admin
+        //everything is allowed for admin except if it is denied in workflow
         if ($user->isAdmin()) {
-            return true;
+            return !$isDeniedInWorkflow;
         }
 
         if (!$user->isAllowed(Service::getElementType($this) . 's')) {
@@ -506,8 +500,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
+        if ($isDeniedInWorkflow) {
+            $isAllowed = false;
+        }
+
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+        Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }

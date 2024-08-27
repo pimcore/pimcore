@@ -61,7 +61,7 @@ pimcore:
             write_target:
                 type: 'symfony-config'
                 options:
-                directory: '/var/www/html/var/config/image-thumbnails'
+                    directory: '/var/www/html/var/config/image-thumbnails'
         video_thumbnails:
             write_target:
                 type: 'disabled'
@@ -75,22 +75,22 @@ pimcore:
             write_target:
                 type: 'symfony-config'
                 options:
-                directory: '/var/www/html/var/config/predefined_asset_metadata'
+                    directory: '/var/www/html/var/config/predefined_asset_metadata'
         perspectives:
             write_target:
                 type: 'symfony-config'
                 options:
-                directory: '/var/www/html/var/config/perspectives'
+                    directory: '/var/www/html/var/config/perspectives'
         custom_views:
             write_target:
                 type: 'symfony-config'
                 options:
-                directory: '/var/www/html/var/config/custom_views'
+                    directory: '/var/www/html/var/config/custom_views'
         object_custom_layouts:
             write_target:
                 type: 'symfony-config'
                 options:
-                directory: '/var/www/html/var/config/object_custom_layouts'
+                    directory: '/var/www/html/var/config/object_custom_layouts'
         select_options:
             write_target:
                 type: 'symfony-config'
