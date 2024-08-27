@@ -77,7 +77,7 @@ final class Tag extends Model\AbstractModel
 
         try {
             $tag = RuntimeCache::get($cacheKey);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             try {
                 $tag = new self();
                 $tag->getDao()->getById($id);
