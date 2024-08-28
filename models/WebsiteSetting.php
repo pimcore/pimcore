@@ -17,16 +17,20 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Exception;
+use Pimcore\Event\Model\WebsiteSettingEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Event\WebsiteSettingEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
- * @method void save()
  */
 final class WebsiteSetting extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     protected ?int $id = null;
 
     protected string $name = '';
@@ -274,6 +278,27 @@ final class WebsiteSetting extends AbstractModel
             unset(self::$nameIdMappingCache[$nameCacheKey]);
         }
 
+        $event = new WebsiteSettingEvent($this);
+
+        $this->dispatchEvent($event, WebsiteSettingEvents::PRE_DELETE);
+
         $this->getDao()->delete();
+
+        $this->dispatchEvent($event, WebsiteSettingEvents::POST_DELETE);
+    }
+
+    public function save(): void
+    {
+        $event = new WebsiteSettingEvent($this);
+
+        $this->dispatchEvent($event, $this->id === null ?
+            WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE
+        );
+
+        $this->getDao()->save();
+
+        $this->dispatchEvent($event, $this->id === null ?
+            WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE
+        );
     }
 }
