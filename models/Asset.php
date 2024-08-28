@@ -1701,7 +1701,7 @@ class Asset extends Element\AbstractElement
         }
         //iirc this function is for the storages that don't have actual folder but they exists as soon as there is a file under a given path (similar to git)
         //by commenting this out, the files that for any reason didn't got moved, won't get deleted. So at least gives the possibility to manually intervene on the files that got left out
-        //$storage->deleteDirectory($oldPath);
+        // ~ $storage->deleteDirectory($oldPath); ~
     }
 
     /**
