@@ -1680,7 +1680,7 @@ class Asset extends Element\AbstractElement
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
-
+        $unableToMove = []
         $children = $storage->listContents($oldPath, true);
         foreach ($children as $child) {
             if ($child['type'] === 'file') {
@@ -1691,8 +1691,12 @@ class Asset extends Element\AbstractElement
                     $storage->move($src, $dest);
                     //TODO: $this->getDao()->updatePath($src); same as DAO->updateChildPaths() but only for that single file that got moved OR collect the single asset in an array and do a mass update, but the former is more anti-dead-lock(?)
                 } catch (UnableToMoveFile $e) {
-                    // noting to do
+                    $unableToMove[] = $src;
+                    // log and return $unableToMove as array for output
                 }
+                //} catch (AnyDBrelatedException $e){
+                // todo: revert the physical file rename if the DB change cannot be saved   
+                //}
             }
         }
         //iirc this function is for the storages that don't have actual folder but they exists as soon as there is a file under a given path (similar to git)
