@@ -62,11 +62,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $this->classDefinitions;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getByKey(string $key): ?Definition
     {
         $brick = null;
@@ -143,7 +138,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
      * @throws Exception
      */
     public function save(bool $saveDefinitionFile = true): void
@@ -392,9 +386,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
      * @internal
-     *
      */
     public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
     {
@@ -458,8 +450,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassName(string $classname, string $fieldname): string
@@ -468,8 +458,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerNamespace(string $classname, string $fieldname): string
@@ -478,8 +466,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassFolder(string $classname): string
@@ -565,8 +551,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -576,7 +560,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
      */
     public function getPhpClassFile(): string
     {

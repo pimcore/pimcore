@@ -30,8 +30,6 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getDebugInformation(string $type, MailClient $mail): string
@@ -88,9 +86,6 @@ class Mail
 
     /**
      * Return the basic css styles for the html debug information
-     *
-     * @static
-     *
      */
     public static function getDebugInformationCssStyle(): string
     {
@@ -128,8 +123,6 @@ CSS;
      * @internal
      *
      * Helper to format the receivers for the debug email and logging
-     *
-     *
      */
     public static function formatDebugReceivers(array $receivers): string
     {
@@ -280,8 +273,6 @@ CSS;
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
@@ -331,10 +322,6 @@ CSS;
 
     /**
      * Normalizes the css content (replaces images with the full path including the host)
-     *
-     * @static
-     *
-     *
      */
     public static function normalizeCssContent(string $content, array $fileInfo): string
     {
@@ -360,8 +347,6 @@ CSS;
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
