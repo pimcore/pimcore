@@ -22,17 +22,11 @@ class WebsiteSettingEvent extends Event
 {
     protected WebsiteSetting $websiteSetting;
 
-    /**
-     * @param WebsiteSetting $websiteSetting
-     */
     public function __construct(WebsiteSetting $websiteSetting)
     {
         $this->websiteSetting = $websiteSetting;
     }
 
-    /**
-     * @return WebsiteSetting
-     */
     public function getWebsiteSetting(): WebsiteSetting
     {
         return $this->websiteSetting;
