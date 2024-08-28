@@ -236,16 +236,18 @@ class CustomReportController extends UserAwareController
 
         try {
             $adapter = Tool\Config::getAdapter($configuration);
-            $columns = $adapter->getColumns($configuration);
+            $columns = $adapter->getColumnsWithMetadata($configuration);
+            $columnNames = array_map(fn($column) => $column->getName(), $columns);
+            $columnMap = array_combine($columnNames, $columns);
 
             foreach ($columnConfiguration as $item) {
                 $name = $item['name'];
-                if (in_array($name, $columns)) {
-                    $result[] = $name;
-                    array_splice($columns, array_search($name, $columns), 1);
+                if(array_key_exists($name, $columnMap)) {
+                    $result[] = $columnMap[$name];
+                    unset($columnMap[$name]);
                 }
             }
-            foreach ($columns as $remainingColumn) {
+            foreach ($columnMap as $remainingColumn) {
                 $result[] = $remainingColumn;
             }
 

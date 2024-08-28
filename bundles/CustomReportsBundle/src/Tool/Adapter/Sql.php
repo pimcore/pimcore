@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config\ColumnInformation;
 use Pimcore\Db;
 use stdClass;
 
@@ -72,6 +73,38 @@ class Sql extends AbstractAdapter
         }
 
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+    }
+
+    public function getColumnsWithMetadata(?stdClass $configuration): array
+    {
+        $columns = $this->getColumns($configuration);
+
+        /*return array_map(
+            fn($column) => new ColumnInformation($column),
+            $columns
+        );*/
+
+        foreach($columns as $column) {
+            if($column == 'filename') {
+
+                $columnsWithMetadata[] = new ColumnInformation(
+                    $column,
+                    true,
+                    true,
+                    true
+                );
+            } else {
+
+                $columnsWithMetadata[] = new ColumnInformation(
+                    $column,
+                    false,
+                    false,
+                    false
+                );
+            }
+        }
+
+        return $columnsWithMetadata;
     }
 
     protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
@@ -227,4 +260,6 @@ class Sql extends AbstractAdapter
             ),
         ];
     }
+
+
 }

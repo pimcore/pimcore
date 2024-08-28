@@ -29,9 +29,9 @@ pimcore.bundle.customreports.custom.item = Class.create({
 
     addLayout: function () {
 
-        var panelButtons = [];
+        const panelButtons = [];
 
-        let buttonConfig = {
+        const buttonConfig = {
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this),
@@ -50,32 +50,69 @@ pimcore.bundle.customreports.custom.item = Class.create({
                 type: 'memory'
             },
             data: [],
-            fields: ["name", "filter", "displayType", "filter_drilldown", "display", "export", "order", "width", "label", "columnAction"]
+            fields: [
+                'name',
+                'disableOrderBy',
+                'disableFilterable',
+                'disableDropdownFilterable',
+                'filter',
+                'displayType',
+                'filter_drilldown',
+                'display',
+                'export',
+                'order',
+                'width',
+                'label',
+                'columnAction'
+            ]
         });
 
-        var checkDisplay = new Ext.grid.column.Check({
+        const checkDisplay = new Ext.grid.column.Check({
             text: t("display"),
             dataIndex: "display",
             width: 50
         });
 
-        var checkExport = new Ext.grid.column.Check({
+        const checkExport = new Ext.grid.column.Check({
             text: t("export"),
             dataIndex: "export",
             width: 50
         });
 
-        var checkOrder = new Ext.grid.column.Check({
-            text: t("order"),
-            dataIndex: "order",
-            width: 50
+        const checkOrder = new Ext.grid.column.Check({
+            text: t('order'),
+            dataIndex: 'order',
+            width: 50,
+            listeners: {
+                beforecheckchange: function(checkColumn, rowIndex, checked, record) {
+                    if (record.get('disableOrderBy') === true) {
+                        return false;
+                    }
+                }
+            },
+            renderer:function (value, metaData, record, rowIndex, colIndex, store) {
+                if (record.get('disableOrderBy') === true) {
+                    metaData.tdCls = ' grid_cbx_noteditable';
+                }
+                return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
+            }
         });
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context) {
+                    if (
+                        (context.field === 'filter' && context.record.get('disableFilterable') === true) ||
+                        (context.field === 'filter_dropdown' && context.record.get('disableDropdownFilterable') === true)
+                    ) {
+                        return false;
+                    }
+                }
+            },
         });
 
-        var actionStore = new Ext.data.SimpleStore({
+        const actionStore = new Ext.data.SimpleStore({
             fields: ['key', 'name'],
             data: [
                 ["", t("none")],
@@ -86,7 +123,7 @@ pimcore.bundle.customreports.custom.item = Class.create({
             ]
         });
 
-        var displayStore = new Ext.data.SimpleStore({
+        const displayStore = new Ext.data.SimpleStore({
             fields: ['key', 'name'],
             data: [
                 ["", t("none")],
@@ -95,6 +132,13 @@ pimcore.bundle.customreports.custom.item = Class.create({
                 ["hide", t("hide")]
             ]
         });
+
+        const disableRenderer = function (fieldName, value, metaData, record, rowIndex, colIndex, store, view) {
+            if (record.get(fieldName) === true) {
+                metaData.tdCls = ' grid_cbx_noteditable';
+            }
+            return value;
+        };
 
         this.columnGrid = Ext.create('Ext.grid.Panel', {
             store: this.columnStore,
@@ -130,7 +174,8 @@ pimcore.bundle.customreports.custom.item = Class.create({
                         editable: false,
                         forceSelection: true,
                         triggerAction: "all"
-                    })
+                    }),
+                    renderer: disableRenderer.bind(this, 'disableFilterable')
                 },
                 {
                     text: t("display_type"),
@@ -181,7 +226,8 @@ pimcore.bundle.customreports.custom.item = Class.create({
                         editable: false,
                         forceSelection: true,
                         triggerAction: "all"
-                    })
+                    }),
+                    renderer: disableRenderer.bind(this, 'disableDropdownFilterable')
                 },
                 {
                     text: t("width"),
@@ -268,6 +314,7 @@ pimcore.bundle.customreports.custom.item = Class.create({
             trackMouseOver: true,
             stripeRows: true,
             autoHeight: true,
+            bodyCls: 'pimcore_editable_grid',
             title: t('column_configuration')
         });
 
@@ -292,7 +339,7 @@ pimcore.bundle.customreports.custom.item = Class.create({
             }
         });
 
-        var user = pimcore.globalmanager.get("user");
+        const user = pimcore.globalmanager.get("user");
         if (user.isAllowed("share_configurations")) {
             this.panel.add(this.getPermissionPanel());
         }
@@ -828,22 +875,25 @@ pimcore.bundle.customreports.custom.item = Class.create({
             }.bind(this, columns));
 
             // insert
-            for (var i = 0; i < columns.length; i++) {
-                isInStore = (this.columnStore.findExact("name", columns[i]) >= 0) ? true : false;
+            for (let i = 0; i < columns.length; i++) {
+                isInStore = (this.columnStore.findExact("name", columns[i].name) >= 0) ? true : false;
                 if (!isInStore) {
 
                     insertData = {
-                        name: columns[i],
+                        name: columns[i].name,
+                        disableOrderBy: columns[i].disableOrderBy,
+                        disableFilterable: columns[i].disableFilterable,
+                        disableDropdownFilterable: columns[i].disableDropdownFilterable,
                         display: true,
-                        "export": true,
-                        order: true,
+                        export: true,
+                        order: !columns[i].disableOrderBy,
                         width: "",
                         label: ""
                     };
 
                     if (typeof cc == "object" && cc.length > 0) {
                         for (o = 0; o < cc.length; o++) {
-                            if (cc[o]["name"] == columns[i]) {
+                            if (cc[o]["name"] == columns[i].name) {
                                 insertData["display"] = cc[o]["display"];
                                 insertData["export"] = cc[o]["export"];
                                 insertData["order"] = cc[o]["order"];

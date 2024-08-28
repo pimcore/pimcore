@@ -66,10 +66,6 @@ pimcore.bundle.customreports.panel = Class.create({
                     id: 0
                 },
                 listeners: {
-                    //"click": function () {
-                    //    this.expand();
-                    //},
-
                     "itemclick": this.openReport.bind(this)
                 }
             });
@@ -179,7 +175,6 @@ pimcore.bundle.customreports.panel = Class.create({
                 pimcore.layout.refresh();
             }
         }
-
         return this.layout;
     },
 
