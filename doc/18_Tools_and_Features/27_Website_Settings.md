@@ -78,3 +78,56 @@ class TestController
     }
 }
 ```
+
+### Events
+
+You can also listen to events when a website setting is changed.
+
+```php
+
+class WebsiteSettingEvents
+{
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const PRE_ADD = 'pimcore.websiteSetting.preAdd';
+
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const POST_ADD = 'pimcore.websiteSetting.postAdd';
+
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const PRE_UPDATE = 'pimcore.websiteSetting.preUpdate';
+
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const POST_UPDATE = 'pimcore.websiteSetting.postUpdate';
+
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const PRE_DELETE = 'pimcore.websiteSetting.preDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE = 'pimcore.websiteSetting.postDelete';
+}
+```
+
