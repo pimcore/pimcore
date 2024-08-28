@@ -1,17 +1,30 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
-readonly class ColumnInformation implements \JsonSerializable
-{
+use JsonSerializable;
 
+readonly class ColumnInformation implements JsonSerializable
+{
     public function __construct(
         private string $name,
-        private bool   $disableOrderBy = false,
-        private bool   $disableFilterable = false,
-        private bool   $disableDropdownFilterable = false
-    )
-    {
+        private bool $disableOrderBy = false,
+        private bool $disableFilterable = false,
+        private bool $disableDropdownFilterable = false
+    ) {
 
     }
 
@@ -41,7 +54,7 @@ readonly class ColumnInformation implements \JsonSerializable
             'name' => $this->name,
             'disableOrderBy' => $this->disableOrderBy,
             'disableFilterable' => $this->disableFilterable,
-            'disableDropdownFilterable' => $this->disableDropdownFilterable
+            'disableDropdownFilterable' => $this->disableDropdownFilterable,
         ];
     }
 }

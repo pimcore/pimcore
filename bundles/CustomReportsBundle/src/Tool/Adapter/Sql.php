@@ -260,6 +260,4 @@ class Sql extends AbstractAdapter
             ),
         ];
     }
-
-
 }

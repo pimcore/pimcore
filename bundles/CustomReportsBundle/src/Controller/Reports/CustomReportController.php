@@ -31,8 +31,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
+use function array_key_exists;
 use function count;
-use function in_array;
 use function is_array;
 use function strlen;
 
@@ -241,7 +241,7 @@ class CustomReportController extends UserAwareController
         try {
             $adapter = Tool\Config::getAdapter($configuration);
             $columns = $adapter->getColumnsWithMetadata($configuration);
-            $columnNames = array_map(fn($column) => $column->getName(), $columns);
+            $columnNames = array_map(fn ($column) => $column->getName(), $columns);
             $columnMap = array_combine($columnNames, $columns);
 
             foreach ($columnConfiguration as $item) {
