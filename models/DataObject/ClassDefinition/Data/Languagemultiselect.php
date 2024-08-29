@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
-use function in_array;
 
 class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
@@ -61,6 +60,9 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $this->onlySystemLanguages;
     }
 
+    /**
+     * @return $this
+     */
     public function setOnlySystemLanguages(bool|int|null $value): static
     {
         $this->onlySystemLanguages = (bool) $value;

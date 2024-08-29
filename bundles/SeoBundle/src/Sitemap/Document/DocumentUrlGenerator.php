@@ -21,7 +21,6 @@ use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use RuntimeException;
-use function strlen;
 
 /**
  * URL generator specific to documents with site support.

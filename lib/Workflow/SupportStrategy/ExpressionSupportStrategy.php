@@ -19,7 +19,6 @@ namespace Pimcore\Workflow\SupportStrategy;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\SupportStrategy\WorkflowSupportStrategyInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
-use function is_string;
 
 /**
  * @author Andreas Kleemann <akleemann@inviqa.com>

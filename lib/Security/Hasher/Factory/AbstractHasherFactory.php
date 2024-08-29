@@ -19,7 +19,6 @@ namespace Pimcore\Security\Hasher\Factory;
 use ReflectionClass;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
-use function is_array;
 
 /**
  * @internal

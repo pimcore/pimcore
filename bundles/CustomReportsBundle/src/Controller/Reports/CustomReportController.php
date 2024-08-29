@@ -31,10 +31,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
-use function count;
-use function in_array;
-use function is_array;
-use function strlen;
 
 /**
  * @Route("/custom-report")

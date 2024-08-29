@@ -21,8 +21,6 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function call_user_func_array;
-use function is_array;
 
 /**
  * Class ElementTest

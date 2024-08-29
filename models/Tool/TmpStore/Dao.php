@@ -18,8 +18,6 @@ namespace Pimcore\Model\Tool\TmpStore;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
-use function is_array;
-use function is_object;
 
 /**
  * @internal

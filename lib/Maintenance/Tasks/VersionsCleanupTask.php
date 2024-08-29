@@ -25,8 +25,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerInterface;
-use function count;
-use function is_null;
 
 /**
  * @internal

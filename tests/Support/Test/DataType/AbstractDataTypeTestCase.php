@@ -31,9 +31,6 @@ use Pimcore\Model\Element\Note;
 use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function call_user_func_array;
-use function func_get_args;
-use function is_array;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {

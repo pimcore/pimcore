@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\FielddefinitionMarshaller\Traits;
 
-use function is_array;
-
 /**
  * @internal
  */

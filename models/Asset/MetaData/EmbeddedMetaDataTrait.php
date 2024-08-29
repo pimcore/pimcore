@@ -21,11 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use RuntimeException;
 use Symfony\Component\Process\Process;
-use function count;
-use function function_exists;
-use function is_array;
-use function is_string;
-use function strlen;
 
 trait EmbeddedMetaDataTrait
 {

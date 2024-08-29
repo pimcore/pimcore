@@ -19,7 +19,6 @@ namespace Pimcore\Model\Tool;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
-use function in_array;
 
 /**
  * @method Dao getDao()

@@ -24,9 +24,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use function ini_get;
-use function is_null;
-use function is_resource;
 
 /**
  * @internal

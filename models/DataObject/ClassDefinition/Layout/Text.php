@@ -61,6 +61,9 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this->html;
     }
 
+    /**
+     * @return $this
+     */
     public function setHtml(string $html): static
     {
         $this->html = $html;

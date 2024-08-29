@@ -27,7 +27,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use function count;
 
 class ModelDataObjectPermissionsTest extends ModelTestCase
 {

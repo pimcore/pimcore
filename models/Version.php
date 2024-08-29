@@ -34,9 +34,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
-use function is_array;
-use function is_object;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
@@ -106,8 +103,6 @@ final class Version extends AbstractModel
     /**
      * disables the versioning for the current process, this is useful for importers, ...
      * There are no new versions created, the read continues to operate normally
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -117,8 +112,6 @@ final class Version extends AbstractModel
     /**
      * see @ self::disable()
      * just enabled the creation of versioning in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {

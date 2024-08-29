@@ -20,8 +20,6 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use function get_class;
-use function is_object;
 
 class BundleLocator implements BundleLocatorInterface
 {

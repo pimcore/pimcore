@@ -26,7 +26,6 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
-use function is_string;
 
 /**
  * @method Site\Dao getDao()

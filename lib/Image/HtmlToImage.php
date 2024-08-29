@@ -26,10 +26,6 @@ use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Throwable;
-use function class_exists;
-use function func_get_args;
-use function method_exists;
-use function rename;
 
 /**
  * @internal

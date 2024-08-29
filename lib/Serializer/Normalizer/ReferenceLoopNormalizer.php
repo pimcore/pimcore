@@ -20,7 +20,6 @@ use JsonSerializable;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use function is_object;
 
 /**
  * @internal

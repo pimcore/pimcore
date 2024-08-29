@@ -21,9 +21,6 @@ use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\File;
 use Pimcore\Image\Optimizer\OptimizerInterface;
 use Pimcore\Tool\Storage;
-use function count;
-use function get_class;
-use function in_array;
 
 class Optimizer implements ImageOptimizerInterface
 {

@@ -26,8 +26,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
-use function count;
-use function is_array;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
@@ -342,18 +340,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() && is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement)) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        return $this->filterUnpublishedElements($data);
     }
 
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed

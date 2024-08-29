@@ -16,7 +16,6 @@
 namespace Pimcore\Image;
 
 use Pimcore\Logger;
-use function is_array;
 
 abstract class Adapter
 {
@@ -158,10 +157,12 @@ abstract class Adapter
         }
         $ratio = $this->getWidth() / $this->getHeight();
 
-        if (($width / $height) > $ratio) {
-            $this->scaleByWidth($width, $forceResize);
-        } else {
-            $this->scaleByHeight($height, $forceResize);
+        if (!is_array($orientation) || !isset($orientation['x'])) {
+            if (($width / $height) > $ratio) {
+                $this->scaleByWidth($width, $forceResize);
+            } else {
+                $this->scaleByHeight($height, $forceResize);
+            }
         }
 
         if ($orientation === 'center') {

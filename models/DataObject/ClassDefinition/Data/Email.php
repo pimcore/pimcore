@@ -19,8 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Pimcore\Model;
-use function is_string;
-use function strlen;
 
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {

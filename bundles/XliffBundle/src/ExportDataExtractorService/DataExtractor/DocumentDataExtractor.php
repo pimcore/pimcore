@@ -23,8 +23,6 @@ use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Property;
-use function in_array;
-use function is_string;
 
 class DocumentDataExtractor extends AbstractElementDataExtractor
 {

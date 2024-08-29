@@ -29,7 +29,6 @@ use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Model\Exception\ThumbnailMaxScalingFactorException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function is_string;
 
 final class Thumbnail implements ThumbnailInterface
 {

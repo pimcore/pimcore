@@ -19,9 +19,6 @@ namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
 use LogicException;
 use Pimcore\Navigation\Renderer\RendererInterface;
-use function get_class;
-use function gettype;
-use function is_object;
 
 class InvalidRendererException extends LogicException
 {

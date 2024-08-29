@@ -36,10 +36,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
-use function define;
-use function defined;
-use function in_array;
-use function ini_get;
 
 class Pimcore extends Module\Symfony
 {

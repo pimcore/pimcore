@@ -20,8 +20,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function in_array;
-use function is_string;
 
 class Input extends Data implements
     ResourcePersistenceAwareInterface,
@@ -138,6 +136,9 @@ class Input extends Data implements
         return $this->columnLength;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
@@ -249,6 +250,9 @@ class Input extends Data implements
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(string $defaultValue): static
     {
         if ($defaultValue !== '') {

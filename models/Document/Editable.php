@@ -32,11 +32,6 @@ use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
 use RuntimeException;
 use Throwable;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

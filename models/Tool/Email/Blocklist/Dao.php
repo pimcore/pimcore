@@ -17,8 +17,6 @@ namespace Pimcore\Model\Tool\Email\Blocklist;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
-use function in_array;
-use function is_bool;
 
 /**
  * @internal

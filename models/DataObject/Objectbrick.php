@@ -23,7 +23,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()

@@ -148,7 +148,7 @@ class MyAssetController extends FrontendController
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [
-                'Content-Type' => 'application/pdf',
+                'Content-Type' => $asset->getMimeType(),
             ]);
         } else {
             return Asset\Service::getStreamedResponseByUri($pathInfo);

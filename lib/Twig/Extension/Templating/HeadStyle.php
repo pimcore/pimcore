@@ -45,10 +45,6 @@ use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use stdClass;
 use Twig\Extension\RuntimeExtensionInterface;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method $this appendStyle($content, array $attributes = array())
@@ -166,7 +162,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
                 throw new Exception(sprintf('Method "%s" requires minimally content for the stylesheet', $method));
             }
 
-            $content = $args[0];
+            $content = (string)$args[0];
             $attrs = [];
             if (isset($args[1])) {
                 $attrs = (array) $args[1];
@@ -265,9 +261,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $type
      * @param array|null $attrs
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($type = Container::APPEND, $attrs = null): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headStyle captures');
         }
@@ -281,9 +284,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $attrs = $this->_captureAttrs;
         $this->_captureAttrs = null;

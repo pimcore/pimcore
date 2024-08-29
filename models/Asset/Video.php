@@ -25,12 +25,6 @@ use Pimcore\Model;
 use Pimcore\Tool;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

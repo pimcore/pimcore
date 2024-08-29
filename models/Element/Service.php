@@ -52,14 +52,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnitEnum;
-use function count;
-use function in_array;
-use function is_array;
-use function is_null;
-use function is_object;
-use function is_scalar;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -70,8 +62,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getIdPath(ElementInterface $element): string
     {
@@ -139,7 +129,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
      * @return int[]
      *
      * @internal
@@ -166,8 +155,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
@@ -190,8 +177,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
@@ -215,7 +200,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public static function getFilterRequiresForFrontend(array $elements): array
     {
@@ -236,7 +220,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public static function getFilterRequiredByPathForFrontend(array $elements): array
     {
@@ -285,8 +268,6 @@ class Service extends Model\AbstractModel
     /**
      * determines whether an element is published
      *
-     *
-     *
      * @internal
      */
     public static function isPublished(ElementInterface $element = null): bool
@@ -303,8 +284,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -386,8 +365,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -479,8 +456,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function prepareGetByIdParams(array $params): array
     {
@@ -494,11 +469,6 @@ class Service extends Model\AbstractModel
         return $resolver->resolve($params);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getElementType(ElementInterface $element): ?string
     {
         return match (true) {
@@ -511,8 +481,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getElementTypeByClassName(string $className): ?string
     {
@@ -528,8 +496,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getElementHash(ElementInterface $element): ?string
     {
@@ -542,8 +508,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function minimizePropertiesForEditmode(array $props): array
@@ -622,7 +586,6 @@ class Service extends Model\AbstractModel
      * @todo remove in pimcore/pimcore 12.0
      *
      * @internal
-     *
      */
     public static function gridElementData(ElementInterface $element): array
     {
@@ -724,8 +687,6 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     *
-     *
      * @internal
      */
     public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
@@ -804,8 +765,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function correctPath(string $path): string
     {
@@ -826,8 +785,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function loadAllFields(ElementInterface $element): ElementInterface
     {
@@ -855,8 +812,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function createFolderByPath(string $path, array $options = []): Asset\Folder|DataObject\Folder|Document\Folder|null
@@ -1031,8 +986,6 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     *
-     *
      * @throws Exception
      */
     public static function getUniqueKey(ElementInterface $element, int $nr = 0): ?string
@@ -1053,8 +1006,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function fixAllowedTypes(array $data, string $type): array
@@ -1203,8 +1154,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getNoteData(Note $note): array
     {
@@ -1275,8 +1224,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getSessionKey(string $type, int $elementId, string $sessionId, ?string $postfix = ''): string
@@ -1379,8 +1326,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getDeepCopyInstance(mixed $element, ?array $context = []): DeepCopy
     {
@@ -1444,8 +1389,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function escapeCsvRecord(array $rowData): array
     {
@@ -1469,8 +1412,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string

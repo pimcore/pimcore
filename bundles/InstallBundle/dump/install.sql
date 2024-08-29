@@ -803,10 +803,11 @@ CREATE TABLE `notifications` (
   `modificationDate` TIMESTAMP NULL,
   `linkedElementType` ENUM('document', 'asset', 'object') NULL,
   `linkedElement` INT(11) NULL,
+  `payload` LONGTEXT NULL,
+  `isStudio` TINYINT(1) DEFAULT 0 NOT NULL, -- TODO: Remove with end of Classic-UI
   INDEX `recipient` (`recipient`)
-)
-DEFAULT CHARSET=utf8mb4;
-;
+) DEFAULT CHARSET=utf8mb4;
+
 
 DROP TABLE IF EXISTS `object_url_slugs`;
 CREATE TABLE `object_url_slugs` (

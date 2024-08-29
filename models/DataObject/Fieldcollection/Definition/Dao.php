@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use function is_array;
 
 /**
  * @internal
@@ -99,6 +98,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $this->removeIndices($table, $columnsToRemove, $protectedColums);
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
         $this->tableDefinitions = [];
     }

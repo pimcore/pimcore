@@ -19,9 +19,6 @@ namespace Pimcore\Model\DataObject\Data;
 use Exception;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use function array_key_exists;
-use function count;
-use function strlen;
 
 class StructuredTable implements OwnerAwareFieldInterface
 {
