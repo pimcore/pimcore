@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Exception;
+use Pimcore;
 use Pimcore\Event\Model\WebsiteSettingEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\WebsiteSettingEvents;
@@ -63,20 +64,28 @@ final class WebsiteSetting extends AbstractModel
     {
         $cacheKey = 'website_setting_' . $id;
 
-        try {
-            $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
-            if (!$setting) {
-                throw new Exception('Website setting in registry is null');
-            }
-        } catch (Exception $e) {
+        if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
             try {
-                $setting = new self();
-                $setting->getDao()->getById($id);
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
-            } catch (NotFoundException $e) {
-                return null;
+                return \Pimcore\Cache\RuntimeCache::get($cacheKey);
+            } catch (Exception) {
+                // ignore try to load from db
             }
         }
+
+        $setting = new self();
+
+        try {
+            $setting->getDao()->getById($id);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new WebsiteSettingEvent($setting),
+            WebsiteSettingEvents::POST_LOAD
+        );
 
         return $setting;
     }
