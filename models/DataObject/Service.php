@@ -54,6 +54,7 @@ use function in_array;
 use function is_array;
 use function is_null;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 /**
@@ -1670,6 +1671,7 @@ class Service extends Model\Element\Service
 
     /**
      * @throws Exception
+     *
      * @internal
      */
     public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array

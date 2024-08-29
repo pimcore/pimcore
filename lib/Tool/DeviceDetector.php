@@ -18,6 +18,7 @@ namespace Pimcore\Tool;
 
 use Exception;
 use function in_array;
+use function sprintf;
 
 class DeviceDetector
 {

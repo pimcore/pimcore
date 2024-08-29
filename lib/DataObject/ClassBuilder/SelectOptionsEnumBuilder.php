@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\SelectOptions\Traits\EnumTryFromNullableTrait;
 use Pimcore\Model\DataObject\SelectOptionsInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use function count;
+use function sprintf;
 
 class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
 {

@@ -25,6 +25,7 @@ use function count;
 use function get_class;
 use function gettype;
 use function is_object;
+use function sprintf;
 
 /**
  * @internal

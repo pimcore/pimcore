@@ -28,6 +28,7 @@ use function get_class;
 use function in_array;
 use function is_array;
 use function is_callable;
+use function sprintf;
 
 /**
  * @method void beginTransaction()

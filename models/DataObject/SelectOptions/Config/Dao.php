@@ -21,6 +21,7 @@ use Pimcore\Config;
 use Pimcore\Model;
 use RuntimeException;
 use function in_array;
+use function sprintf;
 
 /**
  * @internal

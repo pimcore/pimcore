@@ -21,6 +21,7 @@ use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use function sprintf;
 
 /**
  * @internal
