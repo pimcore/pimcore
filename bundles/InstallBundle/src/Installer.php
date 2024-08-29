@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
-use const GLOB_BRACE;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
@@ -60,10 +59,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Throwable;
-use function count;
-use function in_array;
-use function sprintf;
-use function strlen;
 
 /**
  * @internal
@@ -738,7 +733,7 @@ class Installer
 
     protected function getDataFiles(): array
     {
-        return glob(PIMCORE_PROJECT_ROOT . '/dump/*{.sql,.sql.gz}', GLOB_BRACE);
+        return glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql*');
     }
 
     protected function createOrUpdateUser(Connection $db, array $config = []): void

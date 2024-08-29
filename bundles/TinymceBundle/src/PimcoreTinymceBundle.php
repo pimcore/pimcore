@@ -21,7 +21,6 @@ use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Helper\EncoreHelper;
-use function dirname;
 
 class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {

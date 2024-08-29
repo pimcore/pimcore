@@ -23,7 +23,6 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\Metadata\Loader\DataLoader;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function in_array;
 
 /**
  * Class NormalizerTest

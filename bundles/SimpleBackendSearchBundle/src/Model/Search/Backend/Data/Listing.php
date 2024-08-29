@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Exception;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Model\Listing\AbstractListing;
-use function in_array;
 
 /**
  * @internal

@@ -24,8 +24,6 @@ use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
-use function ini_get;
-use function sprintf;
 
 /**
  * @internal

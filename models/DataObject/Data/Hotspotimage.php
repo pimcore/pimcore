@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\Service;
-use function is_array;
 
 class Hotspotimage implements OwnerAwareFieldInterface
 {

@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\Data\ElementMetadata;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
-use function in_array;
 
 /**
  * @internal
@@ -63,7 +62,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $this->model->setFieldname($fieldname);
             $columns = $this->model->getColumns();
             foreach ($dataRaw as $row) {
-                if (in_array($row['column'], $columns)) {
+                if (in_arrayi($row['column'], $columns)) {
                     $setter = 'set' . ucfirst($row['column']);
                     $this->model->$setter($row['data']);
                 }

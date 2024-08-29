@@ -21,7 +21,6 @@ use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Storage;
-use function is_string;
 
 /**
  * @internal
@@ -37,7 +36,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Id of the email document or null if no document was given
-     *
      */
     protected ?int $documentId = null;
 
@@ -48,19 +46,16 @@ class Log extends Model\AbstractModel
 
     /**
      * Modification date as timestamp
-     *
      */
     protected int $modificationDate;
 
     /**
      * The request URI from were the email was sent
-     *
      */
     protected string $requestUri;
 
     /**
      * The "from" email address
-     *
      */
     protected string $from;
 
@@ -71,55 +66,46 @@ class Log extends Model\AbstractModel
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
-     *
      */
     protected ?string $to = null;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
-     *
      */
     protected ?string $cc = null;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
-     *
      */
     protected ?string $bcc = null;
 
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
-     *
      */
     protected int $emailLogExistsHtml;
 
     /**
      * Contains 1 if a text logfile exists and 0 if no text logfile exists
-     *
      */
     protected int $emailLogExistsText;
 
     /**
      * Contains the timestamp when the email was sent
-     *
      */
     protected int $sentDate;
 
     /**
      * Contains the rendered html content of the email
-     *
      */
     protected string $bodyHtml = '';
 
     /**
      * Contains the rendered text content of the email
-     *
      */
     protected string $bodyText = '';
 
     /**
      * Contains the rendered subject of the email
-     *
      */
     protected string $subject;
 
@@ -150,7 +136,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the request uri
-     *
      */
     public function getRequestUri(): string
     {
@@ -187,7 +172,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the subject
-     *
      */
     public function getSubject(): string
     {
@@ -196,10 +180,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the EmailLog entry by the given id
-     *
-     * @static
-     *
-     *
      */
     public static function getById(int $id): ?Log
     {
@@ -221,7 +201,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the email document id
-     *
      */
     public function getDocumentId(): ?int
     {
@@ -240,7 +219,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the dynamic parameter
-     *
      */
     public function getParams(): array
     {
@@ -253,7 +231,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Sets the modification date
-     *
      *
      * @return $this
      */
@@ -290,7 +267,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the sent date and time as unix timestamp
-     *
      */
     public function getSentDate(): int
     {
@@ -347,7 +323,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the filename of the html log
-     *
      */
     public function getHtmlLogFilename(): string
     {
@@ -356,7 +331,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the filename of the text log
-     *
      */
     public function getTextLogFilename(): string
     {
@@ -437,7 +411,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "to" recipients
-     *
      */
     public function getTo(): ?string
     {
@@ -456,7 +429,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the carbon copy recipients
-     *
      */
     public function getCc(): ?string
     {
@@ -475,7 +447,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the blind carbon copy recipients
-     *
      */
     public function getBcc(): ?string
     {
@@ -494,7 +465,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "from" email address
-     *
      */
     public function getFrom(): string
     {
@@ -513,7 +483,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "replyTo" email address
-     *
      */
     public function getReplyTo(): ?string
     {
@@ -532,7 +501,6 @@ class Log extends Model\AbstractModel
 
     /**
      * returns the html content of the email
-     *
      */
     public function getBodyHtml(): ?string
     {
@@ -551,7 +519,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the text version of the email
-     *
      */
     public function getBodyText(): string
     {

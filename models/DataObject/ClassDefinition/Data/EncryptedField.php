@@ -26,8 +26,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function get_class;
-use function is_null;
 
 /**
  * Class EncryptedField

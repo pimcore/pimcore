@@ -20,7 +20,6 @@ namespace Pimcore\Tool;
 use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Psr\Container\ContainerInterface;
-use function sprintf;
 
 /**
  * @internal

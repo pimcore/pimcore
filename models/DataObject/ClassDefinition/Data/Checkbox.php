@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function is_null;
 
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -39,6 +38,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (!is_numeric($defaultValue)) {

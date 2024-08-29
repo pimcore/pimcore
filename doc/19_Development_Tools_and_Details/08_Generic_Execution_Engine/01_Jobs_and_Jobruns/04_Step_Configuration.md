@@ -17,6 +17,8 @@ The message class is the class of the message that should be dispatched when the
 ## Configuration
 The configuration of a step is an array that can contain any kind of data that is necessary for the step handler to execute the step.
 
+Additionally, you can refer environment variables in the configuration by using the following syntax: `job_env('<env_variable_name>')`.
+
 ## Selection Processing mode
 The selection processing mode of a step is an enum that defines how the step should process the selected elements.
 
@@ -27,10 +29,3 @@ Use `getSubjectFromMessage()` in `AbstractAutomationActionHandler` method to acc
 - `SelectionProcessingMode::FOR_ALL`: The step is executed once for all selected elements.
 If you pass 10 selected elements to the job, the message gets dispatched once and the step handler therefore is executed once.
 Use `getSubjectsFromMessage()` in `AbstractAutomationActionHandler` method to access all elements in the handler.
-
-For further information on how to access the JobStep configuration in the step handler, see [01_Usage](./01_Usage.md).
-
-
-
-
-

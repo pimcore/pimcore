@@ -16,9 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @internal
@@ -124,6 +121,7 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                $this->removeIndices($table, [$value], []);
             }
         }
         if ($dropColumns) {
@@ -188,16 +186,24 @@ trait Dao
     /**
      * For MariaDB, it would be possible to use 'ADD/DROP INDEX IF EXISTS' but this is not supported by MySQL
      */
-    protected function indexExists(string $table, string $prefix, mixed $indexName): bool
+    protected function indexExists(string $table, string $prefix, string $indexName): bool
     {
         $exist = $this->db->fetchFirstColumn(
-            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_name = '${table}' AND index_name = '${prefix}${indexName}' AND table_schema = DATABASE();"
+            'SELECT COUNT(*)
+            FROM information_schema.statistics
+            WHERE table_name = ?
+                AND index_name = ?
+                AND table_schema = DATABASE();',
+            [
+                $table,
+                $prefix . $indexName,
+            ]
         );
 
-        return (count($exist) > 0) && (1 === $exist[0]);
+        return (count($exist) > 0) && ($exist[0] > 0);
     }
 
-    protected function indexDoesNotExist(string $table, string $prefix, mixed $indexName): bool
+    protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
     {
         return !$this->indexExists($table, $prefix, $indexName);
     }

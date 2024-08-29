@@ -23,9 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterf
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
-use function array_key_exists;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

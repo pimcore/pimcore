@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\XliffBundle\Escaper;
 
 use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
-use function in_array;
 
 class Xliff12Escaper
 {

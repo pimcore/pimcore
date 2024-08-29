@@ -19,7 +19,6 @@ namespace Pimcore\Console\Traits;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputOption;
-use function sprintf;
 
 /**
  * @internal

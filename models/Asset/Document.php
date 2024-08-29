@@ -21,8 +21,6 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
-use function sprintf;
-use function strlen;
 
 /**
  * @method Dao getDao()

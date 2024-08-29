@@ -21,10 +21,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method bool isWriteable()

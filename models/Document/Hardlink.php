@@ -19,9 +19,6 @@ namespace Pimcore\Model\Document;
 use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use function array_key_exists;
-use function count;
-use function func_get_args;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()

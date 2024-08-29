@@ -23,7 +23,6 @@ use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Site;
-use function in_array;
 
 /**
  * Filters document if it is a site root, but doesn't match the current site. This used to exclude

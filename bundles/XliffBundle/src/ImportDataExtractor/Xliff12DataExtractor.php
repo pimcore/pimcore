@@ -24,8 +24,6 @@ use Pimcore\Bundle\XliffBundle\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface;
 use Pimcore\Tool;
 use SimpleXMLElement;
-use function count;
-use function sprintf;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {

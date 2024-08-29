@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use function sprintf;
 
 final class Version20230322114936 extends AbstractMigration
 {

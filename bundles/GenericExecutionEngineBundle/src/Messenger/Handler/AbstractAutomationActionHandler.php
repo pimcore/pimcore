@@ -33,7 +33,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
-use function array_key_exists;
 
 abstract class AbstractAutomationActionHandler
 {
@@ -151,17 +150,52 @@ abstract class AbstractAutomationActionHandler
         return $config;
     }
 
+    protected function getEnvironmentVariables(
+        GenericExecutionEngineMessageInterface $message
+    ): array {
+        $jobRun = $this->getJobRun($message);
+        $job = $jobRun->getJob();
+
+        return $job === null ? [] : $job->getEnvironmentData();
+    }
+
+    protected function replaceConfigValueWithEnvVariable(
+        string $value,
+        array $variables
+    ): mixed {
+        /** @var $matches array */
+        if(!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
+            return $value;
+        }
+        if(empty($matches[1])) {
+            return $value;
+        }
+        $envVariableKey = $matches[1][0];
+        if (!array_key_exists($envVariableKey, $variables)) {
+            throw new NotFoundException("Missing environment variable $envVariableKey");
+        }
+
+        return $variables[$envVariableKey];
+    }
+
     protected function extractConfigFieldFromJobStepConfig(
         GenericExecutionEngineMessageInterface $message,
         string $key
     ): mixed {
         $config = $this->getCurrentJobStepConfig($message);
-
         if (!array_key_exists($key, $config)) {
             throw new NotFoundException("Missing configuration $key");
         }
 
-        return $config[$key];
+        $value = $config[$key];
+        if(is_string($value)) {
+            $value = $this->replaceConfigValueWithEnvVariable(
+                $value,
+                $this->getEnvironmentVariables($message)
+            );
+        }
+
+        return $value;
     }
 
     protected function updateJobRunContext(

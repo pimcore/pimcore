@@ -22,7 +22,6 @@ use Doctrine\DBAL\Types\Type;
 use Exception;
 use LogicException;
 use Pimcore\Model\Element\ValidationException;
-use function sprintf;
 
 class Helper
 {

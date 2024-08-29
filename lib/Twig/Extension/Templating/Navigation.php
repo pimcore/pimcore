@@ -29,8 +29,6 @@ use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundExcep
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
 use Twig\Extension\RuntimeExtensionInterface;
-use function call_user_func_array;
-use function sprintf;
 
 /**
  * @method MenuRenderer menu()

@@ -21,9 +21,6 @@ use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
 use Symfony\Component\Filesystem\Filesystem;
-use function dirname;
-use function function_exists;
-use function sprintf;
 
 /**
  * @internal

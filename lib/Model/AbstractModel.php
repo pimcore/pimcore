@@ -22,14 +22,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
-use function array_key_exists;
-use function call_user_func_array;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_callable;
-use function sprintf;
 
 /**
  * @method void beginTransaction()

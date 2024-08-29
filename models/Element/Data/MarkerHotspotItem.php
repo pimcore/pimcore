@@ -18,7 +18,6 @@ namespace Pimcore\Model\Element\Data;
 
 use ArrayAccess;
 use Pimcore\Model;
-use function in_array;
 
 /**
  * @internal
@@ -87,7 +86,7 @@ class MarkerHotspotItem implements ArrayAccess
     public function offsetGet($offset): mixed
     {
         if ($this->offsetExists($offset)) {
-            if ($offset === 'value' && in_array($this->type, ['object', 'asset', 'document'])) {
+            if ($offset === 'value' && in_array($this->type, ['object', 'asset', 'document']) && $this->value) {
                 return Model\Element\Service::getElementById($this->type, $this->value);
             }
 

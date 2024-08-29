@@ -24,9 +24,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DomCrawler;
-use function count;
-use function in_array;
-use function strlen;
 
 /**
  * @internal

@@ -28,9 +28,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
-use function array_key_exists;
-use function count;
-use function is_array;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -75,6 +72,9 @@ abstract class AbstractRelations extends Data implements
         return $this->classes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');

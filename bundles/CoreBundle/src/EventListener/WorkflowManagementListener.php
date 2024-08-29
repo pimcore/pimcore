@@ -31,7 +31,6 @@ use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\Manager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function count;
 
 /**
  * @internal

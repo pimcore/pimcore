@@ -26,11 +26,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
-use function in_array;
-use function is_array;
-use function is_callable;
-use function is_scalar;
-use function sprintf;
 
 class LocationAwareConfigRepository
 {

@@ -23,8 +23,6 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
 use ReflectionClass;
-use function count;
-use function get_class;
 
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
