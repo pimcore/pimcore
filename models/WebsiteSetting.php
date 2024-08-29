@@ -301,12 +301,10 @@ final class WebsiteSetting extends AbstractModel
         $event = new WebsiteSettingEvent($this);
         $isAdd = $this->id === null;
 
-        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE
-        );
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE);
 
         $this->getDao()->save();
 
-        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE
-        );
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE);
     }
 }
