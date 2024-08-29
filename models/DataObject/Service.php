@@ -1635,6 +1635,7 @@ class Service extends Model\Element\Service
 
     /**
      * @throws Exception
+     *
      * @internal
      */
     public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array
