@@ -19,9 +19,9 @@ namespace Pimcore\Event\Model;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class WebsiteSettingEvent extends Event
+final class WebsiteSettingEvent extends Event
 {
-    protected WebsiteSetting $websiteSetting;
+    private WebsiteSetting $websiteSetting;
 
     public function __construct(WebsiteSetting $websiteSetting)
     {

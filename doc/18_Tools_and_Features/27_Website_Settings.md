@@ -85,49 +85,49 @@ You can also listen to events when a website setting is changed.
 
 ```php
 
-class WebsiteSettingEvents
+final class WebsiteSettingEvents
 {
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const PRE_ADD = 'pimcore.websiteSetting.preAdd';
+    public const PRE_ADD = 'pimcore.websiteSetting.preAdd';
 
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const POST_ADD = 'pimcore.websiteSetting.postAdd';
+    public const POST_ADD = 'pimcore.websiteSetting.postAdd';
 
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const PRE_UPDATE = 'pimcore.websiteSetting.preUpdate';
+    public const PRE_UPDATE = 'pimcore.websiteSetting.preUpdate';
 
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const POST_UPDATE = 'pimcore.websiteSetting.postUpdate';
+    public const POST_UPDATE = 'pimcore.websiteSetting.postUpdate';
 
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const PRE_DELETE = 'pimcore.websiteSetting.preDelete';
+    public const PRE_DELETE = 'pimcore.websiteSetting.preDelete';
 
     /**
      * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
      *
      * @var string
      */
-    const POST_DELETE = 'pimcore.websiteSetting.postDelete';
+    public const POST_DELETE = 'pimcore.websiteSetting.postDelete';
 }
 ```
 
