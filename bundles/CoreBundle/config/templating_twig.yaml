@@ -25,6 +25,7 @@ services:
     Pimcore\Twig\Extension\DumpExtension: ~
 
     Pimcore\Twig\Extension\CacheExtension: ~
+    Pimcore\Twig\Extension\CacheTagExtension: ~
 
     Pimcore\Twig\Extension\Templating\PimcoreUrl:
         arguments:

@@ -181,9 +181,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @param string $captureType
      * @param string $type
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
         }
@@ -198,9 +205,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
         $attrs = $this->_captureScriptAttrs;
@@ -261,7 +275,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
             }
 
-            $content = $args[0];
+            $content = is_null($args[0]) ? null : (string) $args[0];
 
             if (isset($args[1])) {
                 $type = (string) $args[1];
