@@ -19,7 +19,6 @@ namespace Pimcore\Loader\ImplementationLoader;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use function get_class;
-use function sprintf;
 
 /**
  * Core implementation loader delegating to a list of registered loaders

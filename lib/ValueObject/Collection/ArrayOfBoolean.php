@@ -20,7 +20,6 @@ namespace Pimcore\ValueObject\Collection;
 use ValueError;
 use function gettype;
 use function is_bool;
-use function sprintf;
 
 final class ArrayOfBoolean
 {

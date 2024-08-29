@@ -35,7 +35,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnexpectedValueException;
 use function array_key_exists;
-use function sprintf;
 
 abstract class AbstractAutomationActionHandler
 {

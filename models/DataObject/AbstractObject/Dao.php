@@ -24,7 +24,6 @@ use Pimcore\Model\User;
 use function count;
 use function in_array;
 use function is_bool;
-use function sprintf;
 
 /**
  * @internal

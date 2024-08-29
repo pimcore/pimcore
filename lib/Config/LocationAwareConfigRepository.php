@@ -30,7 +30,6 @@ use function in_array;
 use function is_array;
 use function is_callable;
 use function is_scalar;
-use function sprintf;
 
 class LocationAwareConfigRepository
 {

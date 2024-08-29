@@ -38,7 +38,6 @@ use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function in_array;
 use function is_null;
-use function sprintf;
 
 class Manager
 {

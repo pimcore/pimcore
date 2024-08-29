@@ -23,7 +23,6 @@ use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model\Exception\NotFoundException;
-use function sprintf;
 
 /**
  * @method Notification\Dao getDao()

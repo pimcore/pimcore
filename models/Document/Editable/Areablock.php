@@ -30,7 +30,6 @@ use Pimcore\Tool\HtmlUtils;
 use function count;
 use function in_array;
 use function is_array;
-use function sprintf;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

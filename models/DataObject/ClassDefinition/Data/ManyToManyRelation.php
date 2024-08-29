@@ -30,7 +30,6 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use function count;
 use function is_array;
-use function sprintf;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {

@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
 use function is_string;
-use function sprintf;
 
 /**
  * @method Site\Dao getDao()

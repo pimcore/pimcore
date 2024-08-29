@@ -59,7 +59,6 @@ use function is_null;
 use function is_object;
 use function is_scalar;
 use function is_string;
-use function sprintf;
 use function strlen;
 
 /**

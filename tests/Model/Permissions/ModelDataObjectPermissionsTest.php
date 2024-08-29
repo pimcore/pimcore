@@ -28,7 +28,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use function count;
-use function sprintf;
 
 class ModelDataObjectPermissionsTest extends ModelTestCase
 {

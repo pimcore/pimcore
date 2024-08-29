@@ -37,7 +37,6 @@ use function is_array;
 use function is_resource;
 use function ltrim;
 use function md5;
-use function sprintf;
 
 /**
  * @internal

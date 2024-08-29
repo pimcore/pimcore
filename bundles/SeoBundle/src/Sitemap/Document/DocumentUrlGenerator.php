@@ -21,7 +21,6 @@ use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use RuntimeException;
-use function sprintf;
 use function strlen;
 
 /**

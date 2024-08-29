@@ -24,7 +24,6 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 use function dirname;
-use function sprintf;
 
 /**
  * @internal

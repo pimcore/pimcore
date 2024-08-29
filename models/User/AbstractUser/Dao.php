@@ -22,7 +22,6 @@ use Pimcore\Model;
 use function in_array;
 use function is_array;
 use function is_bool;
-use function sprintf;
 use function strlen;
 
 /**

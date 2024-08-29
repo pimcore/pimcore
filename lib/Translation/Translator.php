@@ -31,7 +31,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use function array_key_exists;
 use function call_user_func_array;
 use function get_class;
-use function sprintf;
 use function strlen;
 
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface

@@ -27,7 +27,6 @@ use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use function count;
 use function in_array;
 use function is_int;
-use function sprintf;
 
 /**
  * @internal

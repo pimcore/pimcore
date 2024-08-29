@@ -40,7 +40,6 @@ use function define;
 use function defined;
 use function in_array;
 use function ini_get;
-use function sprintf;
 
 class Pimcore extends Module\Symfony
 {

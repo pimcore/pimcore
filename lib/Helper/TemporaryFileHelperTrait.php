@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\File;
 use function is_resource;
 use function is_string;
-use function sprintf;
 
 /**
  * @internal

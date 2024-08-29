@@ -29,7 +29,6 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 use function is_string;
-use function sprintf;
 
 /**
  * @property Model\Asset\Video|null $asset

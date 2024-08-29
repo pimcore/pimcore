@@ -24,7 +24,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use function is_array;
-use function sprintf;
 
 class NumericRange extends Data implements
     ResourcePersistenceAwareInterface,

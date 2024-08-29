@@ -27,7 +27,6 @@ use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Model\DataObject;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use function sprintf;
 
 final class Version20231127124738 extends AbstractMigration implements ContainerAwareInterface
 {

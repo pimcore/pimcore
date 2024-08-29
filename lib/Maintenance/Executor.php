@@ -25,7 +25,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use function array_key_exists;
 use function count;
 use function in_array;
-use function sprintf;
 
 /**
  * @internal

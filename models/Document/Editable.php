@@ -36,7 +36,6 @@ use function count;
 use function in_array;
 use function is_array;
 use function is_string;
-use function sprintf;
 use function strlen;
 
 /**

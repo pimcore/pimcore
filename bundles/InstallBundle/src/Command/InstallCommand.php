@@ -36,7 +36,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use function count;
 use function explode;
 use function implode;
-use function sprintf;
 
 /**
  * @method Application getApplication()

@@ -21,7 +21,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
-use function sprintf;
 
 final class Version20230412105530 extends AbstractMigration
 {

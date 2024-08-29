@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use function is_object;
 use function is_string;
-use function sprintf;
 
 /**
  * Make sure you add this processor when using the ApplicationLoggerDb handler as is

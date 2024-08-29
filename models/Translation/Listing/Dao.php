@@ -20,7 +20,6 @@ use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 use function count;
-use function sprintf;
 
 /**
  * @internal

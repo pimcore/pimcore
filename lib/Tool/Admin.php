@@ -30,7 +30,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use function array_slice;
 use function in_array;
 use function is_array;
-use function sprintf;
 
 /**
  * @internal

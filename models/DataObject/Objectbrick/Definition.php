@@ -33,7 +33,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInter
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use function in_array;
-use function sprintf;
 use function strlen;
 
 /**

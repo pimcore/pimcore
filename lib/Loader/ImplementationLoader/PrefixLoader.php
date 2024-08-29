@@ -23,7 +23,6 @@ use Pimcore\Loader\ImplementationLoader\Exception\InvalidArgumentException;
 use Pimcore\Tool;
 use function gettype;
 use function is_string;
-use function sprintf;
 
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.

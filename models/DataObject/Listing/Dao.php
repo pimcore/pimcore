@@ -21,7 +21,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 use function count;
-use function sprintf;
 
 /**
  * @internal

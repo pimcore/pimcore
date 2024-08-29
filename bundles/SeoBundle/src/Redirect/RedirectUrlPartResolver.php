@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\SeoBundle\Redirect;
 use InvalidArgumentException;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Symfony\Component\HttpFoundation\Request;
-use function sprintf;
 
 /**
  * @internal

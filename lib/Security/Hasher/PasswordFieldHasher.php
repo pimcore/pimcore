@@ -22,7 +22,6 @@ use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 use function get_class;
-use function sprintf;
 
 /**
  * @internal

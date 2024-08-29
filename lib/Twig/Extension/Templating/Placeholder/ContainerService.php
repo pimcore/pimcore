@@ -42,7 +42,6 @@ namespace Pimcore\Twig\Extension\Templating\Placeholder;
 use OutOfBoundsException;
 use RuntimeException;
 use function array_key_exists;
-use function sprintf;
 
 /**
  * Registry for placeholder containers

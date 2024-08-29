@@ -45,7 +45,6 @@ use function count;
 use function defined;
 use function in_array;
 use function is_array;
-use function sprintf;
 use function strlen;
 
 class TestHelper

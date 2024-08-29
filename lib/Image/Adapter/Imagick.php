@@ -30,7 +30,6 @@ use function defined;
 use function in_array;
 use function is_null;
 use function is_string;
-use function sprintf;
 
 class Imagick extends Adapter
 {

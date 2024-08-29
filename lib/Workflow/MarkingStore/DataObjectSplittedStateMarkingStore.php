@@ -25,7 +25,6 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use function count;
 use function in_array;
 use function is_null;
-use function sprintf;
 
 class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {

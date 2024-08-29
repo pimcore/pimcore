@@ -31,7 +31,6 @@ use function constant;
 use function define;
 use function defined;
 use function in_array;
-use function sprintf;
 
 class Bootstrap
 {
