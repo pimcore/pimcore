@@ -290,17 +290,14 @@ final class WebsiteSetting extends AbstractModel
     public function save(): void
     {
         $event = new WebsiteSettingEvent($this);
+        $isAdd = $this->id === null;
 
-        $websiteSetting = clone $this;
-
-        $this->dispatchEvent($event, $websiteSetting->id === null ?
-            WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE
         );
 
         $this->getDao()->save();
 
-        $this->dispatchEvent($event, $websiteSetting->id === null ?
-            WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE
         );
     }
 }
