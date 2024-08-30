@@ -442,6 +442,17 @@ final class Requirements
             ]);
         }
 
+        // librsvg2-bin
+        try {
+            $librsvgAvailable = \Pimcore\Tool\Console::getExecutable('rsvg-convert');
+        } catch (\Exception $e) {
+            $librsvgAvailable = false;
+        }
+        $checks[] = new Check([
+            'name' => 'librsvg2-bin',
+            'state' => $librsvgAvailable ? Check::STATE_OK : Check::STATE_WARNING,
+        ]);
+
         // timeout binary
         try {
             $timeoutBin = (bool) \Pimcore\Tool\Console::getTimeoutBinary();
