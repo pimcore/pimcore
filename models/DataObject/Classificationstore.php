@@ -486,9 +486,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     private function mergeArrays(array $a1, array $a2): array
     {
-        foreach($a1 as $key => $value) {
-            if(array_key_exists($key, $a2)) {
-                if(is_array($value)) {
+        foreach ($a1 as $key => $value) {
+            if (array_key_exists($key, $a2)) {
+                if (is_array($value)) {
                     $a2[$key] = $this->mergeArrays($a2[$key], $value);
                 } else {
                     $a2[$key] = $value;

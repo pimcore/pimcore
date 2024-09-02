@@ -92,7 +92,7 @@ class DocumentRenderer implements DocumentRendererInterface
         } catch (\Exception $e) {
 
             $host = null;
-            if($site = Frontend::getSiteForDocument($document)) {
+            if ($site = Frontend::getSiteForDocument($document)) {
                 Site::setCurrentSite($site);
                 $host = $site->getMainDomain();
             } elseif ($systemMainDomain = Tool::getHostname()) {

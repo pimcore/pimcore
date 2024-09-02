@@ -495,7 +495,7 @@ class CustomReportController extends UserAwareController
         $sortingSettings = null;
         $sort = null;
         $dir = null;
-        if(class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
+        if (class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         }
         if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
