@@ -28,7 +28,7 @@ class Version20230424084415 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('documents_editables')) {
+        if ($schema->hasTable('documents_editables')) {
             $db = Db::get();
             $db->executeStatement('SET foreign_key_checks = 0');
 

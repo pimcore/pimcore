@@ -132,7 +132,7 @@ final class RedirectHandler
         }
 
         // check for a site
-        if($redirect->getSourceSite() !== null) {
+        if ($redirect->getSourceSite() !== null) {
             if (!$sourceSite) {
                 return null;
             }
