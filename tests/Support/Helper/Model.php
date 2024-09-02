@@ -1042,18 +1042,16 @@ class Model extends AbstractDefinitionHelper
 
     private function installSeoBundle(): void
     {
-        if ($this->config['run_installer']) {
-            /** @var Pimcore $pimcoreModule */
-            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+        /** @var Pimcore $pimcoreModule */
+        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
 
-            $this->debug('[PimcoreSeoBundle] Running SeoBundle installer');
+        $this->debug('[PimcoreSeoBundle] Running SeoBundle installer');
 
-            // install ecommerce framework
-            $installer = $pimcoreModule->getContainer()->get(Installer::class);
-            $installer->install();
+        // install ecommerce framework
+        $installer = $pimcoreModule->getContainer()->get(Installer::class);
+        $installer->install();
 
-            //explicitly load installed classes so that the new ones are used during tests
-            Autoloader::load(Redirect::class);
-        }
+        //explicitly load installed classes so that the new ones are used during tests
+        Autoloader::load(Redirect::class);
     }
 }
