@@ -103,7 +103,7 @@ abstract class Kernel extends SymfonyKernel
                 $readTargetConf = $containerConfig[LocationAwareConfigRepository::CONFIG_LOCATION][$configKey][LocationAwareConfigRepository::READ_TARGET] ?? null;
 
                 $configDir = null;
-                if($readTargetConf !== null) {
+                if ($readTargetConf !== null) {
                     if ($readTargetConf[LocationAwareConfigRepository::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
                         ($readTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
                     ) {
@@ -115,7 +115,7 @@ abstract class Kernel extends SymfonyKernel
                     }
                 }
 
-                if($configDir === null) {
+                if ($configDir === null) {
                     $configDir = rtrim($writeTargetConf[LocationAwareConfigRepository::OPTIONS][LocationAwareConfigRepository::DIRECTORY], '/\\');
                 }
                 $configDir = "$configDir/";
