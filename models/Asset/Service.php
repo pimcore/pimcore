@@ -34,17 +34,6 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function array_key_exists;
-use function date;
-use function fpassthru;
-use function get_class;
-use function in_array;
-use function preg_quote;
-use function preg_replace;
-use function sprintf;
-use function strlen;
-use function time;
-use function urldecode;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -74,7 +63,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return Asset|Folder|null copied asset
      *
      * @throws Exception
@@ -136,7 +124,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return Asset|Folder copied asset
      *
      * @throws Exception
@@ -183,8 +170,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public function copyContents(Asset $target, Asset $source): Asset
@@ -213,11 +198,6 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
@@ -242,8 +222,6 @@ class Service extends Model\Element\Service
 
     /**
      * @internal
-     *
-     *
      */
     public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
@@ -263,8 +241,6 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     *
-     *
      * @internal
      */
     public static function rewriteIds(Asset $asset, array $rewriteConfig): Asset
@@ -280,8 +256,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
@@ -311,8 +285,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function expandMetadataForEditmode(array $metadata): array

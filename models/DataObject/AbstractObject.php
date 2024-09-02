@@ -31,13 +31,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
-use function array_key_exists;
-use function func_get_args;
-use function in_array;
-use function is_array;
-use function is_string;
-use function sprintf;
-use function strlen;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -140,56 +133,31 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function doHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getGetInheritedValues(): bool
     {
         return self::$getInheritedValues;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function doGetInheritedValues(Concrete $object = null): bool
     {
         if (self::$getInheritedValues && $object !== null) {
@@ -304,7 +272,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return DataObject\Listing
      *
      * @throws Exception
@@ -379,7 +346,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Quick test if there are children
-     *
      */
     public function hasChildren(
         array $objectTypes = [
@@ -710,8 +676,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->validatePathLength();
     }
 
-    /**
-     *
+    /*
      * @throws Exception
      *
      * @internal
@@ -746,7 +711,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @internal
      */
     public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
@@ -766,7 +730,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @internal
      */
     public function saveIndex(int $index): void
@@ -919,8 +882,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public function get(string $fieldName, string $language = null): mixed
@@ -933,8 +894,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public function set(string $fieldName, mixed $value, string $language = null): mixed
@@ -948,7 +907,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
      */
     public static function isDirtyDetectionDisabled(): bool
     {
@@ -957,7 +915,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
@@ -982,8 +939,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     *
      */
     protected function getListingCacheKey(array $args = []): string
     {
@@ -1000,7 +955,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return AbstractObject
      */
     public function setChildrenSortOrder(?string $reverseSort): Element\ElementInterface
@@ -1028,7 +982,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return mixed
      *
      * @throws Exception
@@ -1078,8 +1031,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     protected static function makeList(array $listConfig, ?array $objectTypes): Listing

@@ -49,6 +49,11 @@ To create new classes from your configuration files in the database you can use 
 ./bin/console pimcore:deployment:classes-rebuild --create-classes
 ```
 
+If you use [Composer's autoloader optimization](https://getcomposer.org/doc/articles/autoloader-optimization.md), you have to register the newly created classes via:
+```bash
+composer dump-autoload --optimize
+```
+
 As an alternative also class export to json-files and the class import commands can be used.
 
 ```bash

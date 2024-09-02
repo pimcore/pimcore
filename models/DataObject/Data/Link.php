@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use function strlen;
 
 class Link implements OwnerAwareFieldInterface
 {
@@ -374,12 +373,14 @@ class Link implements OwnerAwareFieldInterface
     {
         $element = null;
 
-        if ($this->internalType == 'document') {
-            $element = Document::getById($this->internal);
-        } elseif ($this->internalType == 'asset') {
-            $element = Asset::getById($this->internal);
-        } elseif ($this->internalType == 'object') {
-            $element = Concrete::getById($this->internal);
+        if ($this->internal !== null) {
+            if ($this->internalType === 'document') {
+                $element = Document::getById($this->internal);
+            } elseif ($this->internalType === 'asset') {
+                $element = Asset::getById($this->internal);
+            } elseif ($this->internalType === 'object') {
+                $element = Concrete::getById($this->internal);
+            }
         }
 
         return $element;

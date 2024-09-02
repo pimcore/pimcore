@@ -20,7 +20,6 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()

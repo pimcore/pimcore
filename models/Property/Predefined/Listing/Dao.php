@@ -17,7 +17,6 @@ namespace Pimcore\Model\Property\Predefined\Listing;
 
 use Pimcore\Model;
 use Pimcore\Model\Property;
-use function count;
 
 /**
  * @internal

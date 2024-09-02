@@ -23,10 +23,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
@@ -252,7 +248,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as &$metaData) {
                         $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData['type'], ['object', 'asset', 'document'])) {
+                        if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData->getValue()) {
                             $el = Element\Service::getElementByPath($metaData['type'], $metaData->getValue());
                             $metaData['value'] = $el;
                         }

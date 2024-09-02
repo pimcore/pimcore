@@ -21,8 +21,6 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
-use function array_key_exists;
-use function get_class;
 
 /**
  * @internal

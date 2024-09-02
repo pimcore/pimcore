@@ -18,15 +18,21 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface VarExporterInterface
 {
+    /**
+     * @return string[]
+     */
     public function getBlockedVarsForExport(): array;
 
     /**
      * Resolves blocked vars to cleanup on export
      *
+     * @return string[]
      */
     public function resolveBlockedVars(): array;
 
     /**
+     * @param string[] $vars
+     *
      * @return $this
      */
     public function setBlockedVarsForExport(array $vars): static;

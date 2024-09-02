@@ -21,8 +21,6 @@ use Countable;
 use JsonSerializable;
 use LogicException;
 use RuntimeException;
-use function array_slice;
-use function count;
 
 /**
  * @internal

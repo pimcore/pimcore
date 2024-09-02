@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use function count;
 
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {

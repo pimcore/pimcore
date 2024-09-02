@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
 use Pimcore\Model\DataObject\Concrete;
-use function is_array;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {

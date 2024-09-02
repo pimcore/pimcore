@@ -20,8 +20,6 @@ use Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
-use function array_key_exists;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()

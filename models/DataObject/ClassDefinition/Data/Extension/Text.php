@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
-use function strlen;
 
 trait Text
 {
@@ -40,10 +39,7 @@ trait Text
     }
 
     /**
-     *
-     *
      * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
     {

@@ -22,9 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
-use function in_array;
-use function is_bool;
-use function sprintf;
 
 /**
  * @internal

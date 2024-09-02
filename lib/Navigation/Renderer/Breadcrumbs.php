@@ -42,7 +42,6 @@ namespace Pimcore\Navigation\Renderer;
 use Exception;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
-use function strlen;
 
 class Breadcrumbs extends AbstractRenderer
 {

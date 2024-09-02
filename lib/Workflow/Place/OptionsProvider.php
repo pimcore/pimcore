@@ -25,9 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function in_array;
-use function is_array;
-use function sprintf;
 
 class OptionsProvider implements SelectOptionsProviderInterface
 {

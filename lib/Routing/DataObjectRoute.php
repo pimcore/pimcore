@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\Site;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
-use function sprintf;
 
 /**
  * @internal

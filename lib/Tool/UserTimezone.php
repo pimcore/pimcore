@@ -19,7 +19,6 @@ namespace Pimcore\Tool;
 use DateTimeInterface;
 use DateTimeZone;
 use Pimcore\Logger;
-use function in_array;
 
 /**
  * @internal

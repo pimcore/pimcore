@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
-use function in_array;
-
 abstract class AbstractItem implements ItemInterface
 {
     private int $priority;

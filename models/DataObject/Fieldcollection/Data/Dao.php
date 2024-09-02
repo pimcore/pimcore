@@ -20,7 +20,6 @@ use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
-use function is_array;
 
 /**
  * @internal

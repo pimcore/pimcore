@@ -21,7 +21,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use ReflectionClass;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use function dirname;
 
 /**
  * @internal

@@ -19,8 +19,6 @@ namespace Pimcore\Twig\Extension\Templating\Traits;
 
 use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
-use function call_user_func;
-use function is_bool;
 
 /**
  * @internal

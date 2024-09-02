@@ -32,8 +32,6 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Traits\LocateFileTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use RuntimeException;
-use function get_class;
-use function in_array;
 
 /**
  * @method bool isWriteable()

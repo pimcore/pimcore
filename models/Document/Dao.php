@@ -21,9 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
-use function in_array;
-use function is_array;
-use function is_bool;
 
 /**
  * @internal

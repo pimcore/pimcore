@@ -25,7 +25,6 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
 use Pimcore\Model\Factory;
 use Pimcore\Resolver\ClassResolver;
-use function sprintf;
 
 trait Relation
 {

@@ -18,8 +18,6 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\User;
 use Pimcore\Tests\Support\Test\TestCase;
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertNotEmpty;
 
 class UserTest extends TestCase
 {
@@ -76,7 +74,7 @@ class UserTest extends TestCase
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 
-        assertEmpty($user->getOptions());
+        $this->assertEmpty($user->getOptions());
     }
 
     public function test__set_statePopulatesSelectOptionsIbAdminMode(): void
@@ -85,6 +83,6 @@ class UserTest extends TestCase
 
         $user = User::__set_state(self::SAMPLE_USER_DATA);
 
-        assertNotEmpty($user->getOptions());
+        $this->assertNotEmpty($user->getOptions());
     }
 }

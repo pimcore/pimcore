@@ -19,7 +19,6 @@ namespace Pimcore\Model\User\Permission;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
-use function count;
 
 /**
  * @method \Pimcore\Model\User\Permission\Definition\Dao getDao()

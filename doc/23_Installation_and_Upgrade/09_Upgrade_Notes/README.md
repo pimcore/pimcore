@@ -7,6 +7,9 @@
 #### [Twig Deferred Extension]
 - Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
   If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
+#### [Notification]
+- Extending notifications for studio adding flag `isStudio` column and a `payload` column with according getters and setters.
+  Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20240813085200`.
 ### [SEO Bundle]
 #### [Redirects]
 - Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.

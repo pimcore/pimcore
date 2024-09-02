@@ -27,10 +27,6 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use function array_key_exists;
-use function count;
-use function defined;
-use function is_string;
 
 /**
  * @internal
@@ -58,12 +54,15 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('bundles')
+                    ->info('Define parameters for Pimcore Bundle Locator')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('search_paths')
+                            ->info('Define additional paths from root folder(without leading slash) that need to be scanned for *Bundle.php')
                             ->prototype('scalar')->end()
                         ->end()
                         ->booleanNode('handle_composer')
+                            ->info('Define whether it should be scanning bundles through composer /vendor folder or not')
                             ->defaultTrue()
                         ->end()
                     ->end()

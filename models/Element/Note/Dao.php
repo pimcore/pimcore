@@ -23,7 +23,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use function in_array;
 
 /**
  * @internal

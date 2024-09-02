@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
-use function is_array;
 
 /**
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the

@@ -181,18 +181,18 @@ brick metadata.
     <div>
         <h2>IFrame</h2>
         <div>
-            URL: {{ urlField }}
+            URL: {{ urlField|raw }}
         </div>
         <br/>
         <b>Advanced Configuration</b>
         <div>
-            Width: {{ widthField }}px (default: 100%)
+            Width: {{ widthField|raw }}px (default: 100%)
         </div>
         <div>
-            Height: {{ heightField }}px (default: 400px)
+            Height: {{ heightField|raw }}px (default: 400px)
         </div>
         <div>
-            Transparent: {{ transparentField }} (default: false)
+            Transparent: {{ transparentField|raw }} (default: false)
         </div>
     </div>
 {% else %}
