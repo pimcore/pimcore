@@ -26,4 +26,3 @@ $document = Tool\UUID::getByUuid($uuid);
 //create and save uuid for given element
 $uuid = Tool\UUID::create($document);
 ```
-

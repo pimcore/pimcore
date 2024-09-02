@@ -26,7 +26,7 @@ in the class settings as follows:
 The get a thumbnail of an image field, just call `getThumbnail()` on the returned asset object.
 
 ```twig
-{% if object.myImage is instanceif('Pimcore\Model\Asset\Image') %}
+{% if object.myImage is instanceof('Pimcore\Model\Asset\Image') %}
     {{ object.myImage.thumbnail('myThumbnailDefinitionName').html }}
 {% endif %}
 ```
@@ -215,6 +215,3 @@ These will show up as split button entries in the "add marker/add hotspot" menu.
 	}]
 }
 ```
-
-
-

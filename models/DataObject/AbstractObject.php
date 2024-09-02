@@ -117,69 +117,44 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         return $blockedVars;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function doHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getGetInheritedValues(): bool
     {
         return self::$getInheritedValues;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function doGetInheritedValues(Concrete $object = null): bool
     {
         if (self::$getInheritedValues && $object !== null) {
@@ -241,7 +216,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
+                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
 
                     Service::recursiveResetDirtyMap($object);
 
@@ -294,7 +269,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return DataObject\Listing
      *
      * @throws \Exception
@@ -369,7 +343,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Quick test if there are children
-     *
      */
     public function hasChildren(
         array $objectTypes = [
@@ -613,6 +586,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -694,7 +674,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @throws \Exception
      *
      * @internal
@@ -719,23 +698,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        // save dependencies
-        $d = new Model\Dependency();
-        $d->setSourceType('object');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] === 'object') {
-                // don't add a reference to yourself
-                continue;
-            }
-
-            $d->addRequirement($requirement['id'], $requirement['type']);
-        }
-
-        $d->save();
-
-        //set object to registry
+        // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
@@ -745,7 +708,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @internal
      */
     public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
@@ -765,7 +727,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @internal
      */
     public function saveIndex(int $index): void
@@ -918,8 +879,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public function get(string $fieldName, string $language = null): mixed
@@ -932,8 +891,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public function set(string $fieldName, mixed $value, string $language = null): mixed
@@ -947,7 +904,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
      */
     public static function isDirtyDetectionDisabled(): bool
     {
@@ -956,7 +912,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
@@ -981,8 +936,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     *
      */
     protected function getListingCacheKey(array $args = []): string
     {
@@ -999,7 +952,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return AbstractObject
      */
     public function setChildrenSortOrder(?string $reverseSort): Element\ElementInterface
@@ -1027,7 +979,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
      * @return mixed
      *
      * @throws \Exception
@@ -1077,8 +1028,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     protected static function makeList(array $listConfig, ?array $objectTypes): Listing

@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tool\UserTimezone;
 
 class DateRange extends Data implements
     ResourcePersistenceAwareInterface,
@@ -170,7 +171,12 @@ class DateRange extends Data implements
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
-            return $data->toString();
+            /** @var CarbonInterface $startDate */
+            $startDate = UserTimezone::applyTimezone($data->getStartDate());
+            /** @var CarbonInterface $endDate */
+            $endDate = UserTimezone::applyTimezone($data->getEndDate());
+
+            return 'From ' . $startDate->toDateString() . ' to ' . $endDate->toDateString();
         }
 
         return '';
@@ -186,7 +192,7 @@ class DateRange extends Data implements
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data instanceof CarbonPeriod) {
-            $dates = $data->map(static fn (Carbon $date) => $date->format('Y-m-d'));
+            $dates = $data->map(static fn (Carbon $date) => UserTimezone::applyTimezone($date)->format('Y-m-d'));
 
             return \implode(',', \iterator_to_array($dates));
         }

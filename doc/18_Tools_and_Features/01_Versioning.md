@@ -21,6 +21,23 @@ You can configure the versioning behavior in the ![Settings](../img/Icon_setting
 
 ![Objects version history settings](../img/versioning_settings.png)
 
+### Stack trace
+
+Pimcore generates a stack trace in the db table for each version. You can deactivate this with the following settings:
+```yml
+pimcore:
+    assets:
+        versions:
+            disable_stack_trace: true
+    documents:
+        versions:
+            disable_stack_trace: true
+    objects:
+        versions:
+            disable_stack_trace: true
+```
+
+Pimcore has a maintenance job (VersionsCleanupStackTraceDbTask) to cleanup stack trace for versions older than 7 days.
 
 ## Version storage
 
@@ -54,7 +71,7 @@ Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
 
 Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
     arguments:
-        $database_connection: '@doctrine.dbal.versioning_connection'
+        $databaseConnection: '@doctrine.dbal.versioning_connection'
 ```
 
 The database needs to contain a table called `versionsData`. The following script can be used to create the table including the necessary columns.
@@ -118,7 +135,7 @@ user is shown in version history.
 When you set `userModification` to `0` Pimcore shows `system` as user in the version history. 
 
 
-```
+```php
 $object->setUserModification(0);
 $object->save();
 ```

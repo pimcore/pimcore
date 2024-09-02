@@ -301,34 +301,19 @@ class CustomReportController extends UserAwareController
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-
         if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
             throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
         }
-
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 40);
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        $sort = null;
-        $dir = null;
-        if ($sortingSettings['orderKey']) {
-            $sort = $sortingSettings['orderKey'];
-            $dir = $sortingSettings['order'];
-        }
-
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
-
-        $drillDownFilters = $request->get('drillDownFilters', null);
-
         $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
         $configuration = $config->getDataSourceConfig();
-
         $adapter = Tool\Config::getAdapter($configuration, $config);
-
-        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
+        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], $offset, $limit, null, $sortFilters['drillDownFilters']);
 
         return $this->jsonResponse([
             'success' => true,
@@ -373,21 +358,14 @@ class CustomReportController extends UserAwareController
     public function chartAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-
-        $sort = $request->get('sort');
-        $dir = $request->get('dir');
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
-        $drillDownFilters = $request->get('drillDownFilters', null);
-
         $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
-
         $configuration = $config->getDataSourceConfig();
-
         $adapter = Tool\Config::getAdapter($configuration, $config);
-        $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
+        $sortFilters = $this->getSortAndFilters($request, $configuration);
+        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], null, null, null, $sortFilters['drillDownFilters']);
 
         return $this->jsonResponse([
             'success' => true,
@@ -509,5 +487,28 @@ class CustomReportController extends UserAwareController
         if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
             throw new \Exception('The customer report name is invalid');
         }
+    }
+
+    // gets the sort, direction, filters, drilldownfilters from grid or initial config
+    private function getSortAndFilters(Request $request, \stdClass $configuration): array
+    {
+        $sortingSettings = null;
+        $sort = null;
+        $dir = null;
+        if(class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        }
+        if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
+            $sort = $sortingSettings['orderKey'];
+            $dir = $sortingSettings['order'];
+        }
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
+        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+            $sort = $configuration->orderby;
+            $dir = $configuration->orderbydir;
+        }
+
+        return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
     }
 }

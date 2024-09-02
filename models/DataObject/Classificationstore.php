@@ -98,7 +98,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $this->items;
         }
 
-        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
+        return $this->getAllDataFromField(
+            fn ($classificationStore, $fieldsArray) => $this->mergeArrays(
+                $fieldsArray,
+                $classificationStore->items
+            )
+        );
     }
 
     public function setObject(Concrete $object): static
@@ -477,5 +482,22 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     private function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
     {
         return Classificationstore\GroupConfig::getById($groupId);
+    }
+
+    private function mergeArrays(array $a1, array $a2): array
+    {
+        foreach($a1 as $key => $value) {
+            if(array_key_exists($key, $a2)) {
+                if(is_array($value)) {
+                    $a2[$key] = $this->mergeArrays($a2[$key], $value);
+                } else {
+                    $a2[$key] = $value;
+                }
+            } else {
+                $a2[$key] = $value;
+            }
+        }
+
+        return $a2;
     }
 }

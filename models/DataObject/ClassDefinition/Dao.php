@@ -102,6 +102,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $data['definitionModificationDate'] = $this->model->getModificationDate();
+
         $this->db->update('classes', $data, ['id' => $this->model->getId()]);
 
         $objectTable = 'object_query_' . $this->model->getId();
@@ -226,7 +228,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create(): void
     {
-        $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
+        $this->db->insert(
+            'classes',
+            [
+                'name' => $this->model->getName(),
+                'id' => $this->model->getId(),
+                'definitionModificationDate' => $this->model->getModificationDate(),
+            ]
+        );
     }
 
     /**
@@ -241,12 +250,12 @@ class Dao extends Model\Dao\AbstractDao
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
         $objectMetadataTable = 'object_metadata_' . $this->model->getId();
 
-        $this->db->executeQuery('DROP TABLE `' . $objectTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTableRelation . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTableRelation . '`');
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
-        $this->db->executeQuery('DROP VIEW `object_' . $this->model->getId() . '`');
+        $this->db->executeQuery('DROP VIEW IF EXISTS `object_' . $this->model->getId() . '`');
 
         // delete data
         $this->db->delete('objects', ['classId' => $this->model->getId()]);
@@ -277,7 +286,7 @@ class Dao extends Model\Dao\AbstractDao
         $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->db->executeQuery('DROP TABLE `'.$brickTable.'`');
+            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$brickTable.'`');
         }
 
         $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());

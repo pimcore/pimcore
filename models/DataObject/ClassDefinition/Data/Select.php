@@ -258,9 +258,6 @@ class Select extends Data implements
         $this->defaultValue = $defaultValue;
     }
 
-    /**
-     * { @inheritdoc }
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -296,7 +293,7 @@ class Select extends Data implements
             }
 
             $context['fieldname'] = $this->getName();
-            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $options = $optionsProvider->getOptions($context, $this);
             $this->setOptions($options);
 
             if (isset($params['purpose']) && $params['purpose'] == 'editmode') {

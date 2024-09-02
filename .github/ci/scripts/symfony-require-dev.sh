@@ -36,6 +36,7 @@ composer require --no-update \
     symfony/security-core:${SYMFONY_VERSION} \
     symfony/security-http:${SYMFONY_VERSION} \
     symfony/serializer:${SYMFONY_VERSION} \
+    symfony/string:${SYMFONY_VERSION} \
     symfony/templating:${SYMFONY_VERSION} \
     symfony/translation:${SYMFONY_VERSION} \
     symfony/twig-bridge:${SYMFONY_VERSION} \

@@ -68,7 +68,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return Asset|Folder|null copied asset
      *
      * @throws \Exception
@@ -130,7 +129,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return Asset|Folder copied asset
      *
      * @throws \Exception
@@ -177,8 +175,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @throws \Exception
      */
     public function copyContents(Asset $target, Asset $source): Asset
@@ -207,110 +203,6 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-    /**
-     *
-     *
-     * @internal
-     */
-    public static function gridAssetData(Asset $asset, array $fields = null, string $requestedLanguage = null, array $params = []): array
-    {
-        $data = Element\Service::gridElementData($asset);
-        $loader = null;
-
-        if ($asset instanceof Asset && !empty($fields)) {
-            $data = [
-                'id' => $asset->getId(),
-                'id~system' => $asset->getId(),
-                'type~system' => $asset->getType(),
-                'fullpath~system' => $asset->getRealFullPath(),
-                'filename~system' => $asset->getKey(),
-                'creationDate~system' => $asset->getCreationDate(),
-                'modificationDate~system' => $asset->getModificationDate(),
-                'idPath~system' => Element\Service::getIdPath($asset),
-            ];
-
-            $requestedLanguage = str_replace('default', '', $requestedLanguage);
-
-            foreach ($fields as $field) {
-                $fieldDef = explode('~', $field);
-                if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
-                    if ($fieldDef[0] === 'preview') {
-                        $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
-                    } elseif ($fieldDef[0] === 'size') {
-                        $size = $asset->getFileSize();
-                        $data[$field] = formatBytes($size);
-                    }
-                } else {
-                    if (isset($fieldDef[1])) {
-                        $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
-                        $rawMetaData = $asset->getMetadata($fieldDef[0], $language, true, true);
-                    } else {
-                        $rawMetaData = $asset->getMetadata($field, $requestedLanguage, true, true);
-                    }
-
-                    $metaData = $rawMetaData['data'] ?? null;
-
-                    if ($rawMetaData) {
-                        $type = $rawMetaData['type'];
-                        if (!$loader) {
-                            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                        }
-
-                        $metaData = $rawMetaData['data'] ?? null;
-
-                        try {
-                            /** @var Data $instance */
-                            $instance = $loader->build($type);
-                            $metaData = $instance->getDataForListfolderGrid($rawMetaData['data'] ?? null, $rawMetaData);
-                        } catch (UnsupportedException $e) {
-                        }
-                    }
-
-                    $data[$field] = $metaData;
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     *
-     *
-     * @internal
-     */
-    public static function getPreviewThumbnail(Asset $asset, array $params = [], bool $onlyMethod = false): ?string
-    {
-        $thumbnailMethod = '';
-        $thumbnailUrl = null;
-
-        if ($asset instanceof Asset\Image) {
-            $thumbnailMethod = 'getThumbnail';
-        } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-            $thumbnailMethod = 'getImageThumbnail';
-        } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-            $thumbnailMethod = 'getImageThumbnail';
-        }
-
-        if ($onlyMethod) {
-            return $thumbnailMethod;
-        }
-
-        if (!empty($thumbnailMethod)) {
-            $thumbnailUrl = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId();
-            if (count($params) > 0) {
-                $thumbnailUrl .= '&' . http_build_query($params);
-            }
-        }
-
-        return $thumbnailUrl;
-    }
-
-    /**
-     * @static
-     *
-     *
-     */
     public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
@@ -335,8 +227,6 @@ class Service extends Model\Element\Service
 
     /**
      * @internal
-     *
-     *
      */
     public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
@@ -356,8 +246,6 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     *
-     *
      * @internal
      */
     public static function rewriteIds(Asset $asset, array $rewriteConfig): Asset
@@ -373,8 +261,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
@@ -404,8 +290,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function expandMetadataForEditmode(array $metadata): array

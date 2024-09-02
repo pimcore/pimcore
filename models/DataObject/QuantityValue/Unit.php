@@ -74,39 +74,9 @@ class Unit extends Model\AbstractModel
 
     public static function getById(string $id): ?Unit
     {
-        try {
-            $table = null;
-            if (Cache\RuntimeCache::isRegistered(self::CACHE_KEY)) {
-                $table = Cache\RuntimeCache::get(self::CACHE_KEY);
-            }
+        $table = Service::getQuantityValueUnitsTable();
 
-            if (!is_array($table)) {
-                $table = Cache::load(self::CACHE_KEY);
-                if (is_array($table)) {
-                    Cache\RuntimeCache::set(self::CACHE_KEY, $table);
-                }
-            }
-
-            if (!is_array($table)) {
-                $table = [];
-                $list = new Model\DataObject\QuantityValue\Unit\Listing();
-                $list = $list->load();
-                foreach ($list as $item) {
-                    $table[$item->getId()] = $item;
-                }
-
-                Cache::save($table, self::CACHE_KEY, [], null, 995, true);
-                Cache\RuntimeCache::set(self::CACHE_KEY, $table);
-            }
-        } catch (\Exception $e) {
-            return null;
-        }
-
-        if (isset($table[$id])) {
-            return $table[$id];
-        }
-
-        return null;
+        return $table[$id] ?? null;
     }
 
     public static function create(array $values = []): Unit
@@ -289,7 +259,7 @@ class Unit extends Model\AbstractModel
      */
     public function setConverter(?string $converter): static
     {
-        $this->converter = (string)$converter;
+        $this->converter = $converter;
 
         return $this;
     }

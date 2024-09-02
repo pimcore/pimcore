@@ -6,9 +6,16 @@ The `date` and `date & time` object fields are represented by a calender widget 
 
 ![Date Field](../../../img/classes-datatypes-date1.jpg)
 
-In the database its data is saved as unix timestamp and thereby stored in an INT data column. Programmatically 
+In the database its data is saved either as `date`/`datetime` field type or as unix timestamp (`bigint(20)`) depending on the configured column type. Programmatically 
 these data types are represented by a [DateTime/Carbon](https://github.com/briannesbitt/Carbon) Object.
 
+### Behaviour regarding user timezones
+
+The `date` and `date & time` object fields can be configured to respect the user's timezone. If timezone support is enabled the Pimcore admin UI will display the date and time in the user's timezone. Without timezone support the date and time will be shown exactly as it was entered independent of the user's timezone.
+
+For the `date` object field timezones are taken into account when the `bigint` column type is chosen whereas for the `date` column type the timezone is ignored.
+
+For the `date & time` object field timezones are taken into account when the "respect timezone" option in the class editor is enabled. Disabling the timezone support will only work in combination with the `datetime` column type.
 
 ## Time
 

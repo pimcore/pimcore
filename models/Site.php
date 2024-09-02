@@ -34,12 +34,12 @@ final class Site extends AbstractModel
 
     protected ?int $id = null;
 
-    protected array $domains;
+    protected array $domains = [];
 
     /**
      * Contains the ID to the Root-Document
      */
-    protected int $rootId;
+    protected ?int $rootId = null;
 
     protected ?Document\Page $rootDocument = null;
 
@@ -49,7 +49,7 @@ final class Site extends AbstractModel
 
     protected string $errorDocument = '';
 
-    protected array $localizedErrorDocuments;
+    protected array $localizedErrorDocuments = [];
 
     protected bool $redirectToMainDomain = false;
 
@@ -197,7 +197,7 @@ final class Site extends AbstractModel
         return $this->domains;
     }
 
-    public function getRootId(): int
+    public function getRootId(): ?int
     {
         return $this->rootId;
     }
@@ -220,7 +220,7 @@ final class Site extends AbstractModel
     /**
      * @return $this
      */
-    public function setDomains(mixed $domains): static
+    public function setDomains(array|string $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
@@ -236,9 +236,7 @@ final class Site extends AbstractModel
     public function setRootId(int $rootId): static
     {
         $this->rootId = $rootId;
-
-        $rd = Document\Page::getById($this->rootId);
-        $this->setRootDocument($rd);
+        $this->rootDocument = Document\Page::getById($this->rootId);
 
         return $this;
     }
@@ -249,6 +247,7 @@ final class Site extends AbstractModel
     public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
+        $this->rootId = $rootDocument?->getId();
 
         return $this;
     }
@@ -285,7 +284,7 @@ final class Site extends AbstractModel
     /**
      * @return $this
      */
-    public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
+    public function setLocalizedErrorDocuments(array|string $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
             $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);

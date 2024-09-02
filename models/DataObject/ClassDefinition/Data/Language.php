@@ -57,6 +57,9 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $this->onlySystemLanguages;
     }
 
+    /**
+     * @return $this
+     */
     public function setOnlySystemLanguages(bool|int $value): static
     {
         $this->onlySystemLanguages = (bool) $value;

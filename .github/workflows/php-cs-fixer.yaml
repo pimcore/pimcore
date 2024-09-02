@@ -1,4 +1,3 @@
-
 name: "PHP-CS-Fixer"
 
 on:
@@ -6,23 +5,20 @@ on:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
+            - "*_actions"
+            - "feature-*"
+    pull_request_target:
+        types: [ opened,synchronize ]
 
 permissions:
-  contents: read
+    contents: write
 
 jobs:
-    php-cs-fixer:
-        permissions:
-          contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  ref: ${{ github.head_ref }}
-
-            - name: PHP-CS-Fixer
-              uses: docker://oskarstark/php-cs-fixer-ga:latest
-
-            - uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  commit_message: Apply php-cs-fixer changes
+    php-style:
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-php-cs-fixer.yaml@main
+        secrets:
+            PHP_CS_FIXER_GITHUB_TOKEN: ${{ secrets.PHP_CS_FIXER_GITHUB_TOKEN }}
+        with:
+            head_ref: ${{ github.event.pull_request.head.ref }}
+            repository: ${{ github.event.pull_request.head.repo.full_name }}
+            config_file: .php-cs-fixer.dist.php

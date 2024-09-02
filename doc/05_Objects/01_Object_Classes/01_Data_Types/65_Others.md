@@ -159,4 +159,3 @@ class ProductController extends FrontendController
     }
 }
 ```
-

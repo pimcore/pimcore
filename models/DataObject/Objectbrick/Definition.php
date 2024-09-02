@@ -60,11 +60,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $this->classDefinitions;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getByKey(string $key): ?Definition
     {
         $brick = null;
@@ -141,7 +136,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function save(bool $saveDefinitionFile = true): void
@@ -150,7 +144,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
+        if ($this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
         }
 
@@ -390,9 +384,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
      * @internal
-     *
      */
     public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
     {
@@ -456,8 +448,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassName(string $classname, string $fieldname): string
@@ -466,8 +456,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerNamespace(string $classname, string $fieldname): string
@@ -476,8 +464,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassFolder(string $classname): string
@@ -487,9 +473,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Delete Brick Definition
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -558,8 +549,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -569,7 +558,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
      */
     public function getPhpClassFile(): string
     {

@@ -1,0 +1,12 @@
+doctrine:
+    orm:
+        entity_managers:
+            pimcore:
+                connection: default
+                mappings:
+                    PimcoreGenericExecutionEngineBundle:
+                        type: attribute
+                        is_bundle: true
+                        dir: "src/Entity"
+                        prefix: Pimcore\Bundle\GenericExecutionEngineBundle\Entity
+                        alias: PimcoreGenericExecutionEngineBundle

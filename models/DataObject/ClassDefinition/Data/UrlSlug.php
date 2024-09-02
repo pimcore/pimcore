@@ -38,13 +38,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @internal
-     *
      */
     public ?int $domainLabelWidth = null;
 
     /**
      * @internal
-     *
      */
     public string $action;
 
@@ -59,7 +57,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @see Data::getDataForEditmode
      *
      * @param null|Model\DataObject\Concrete $object
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -89,7 +86,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     *
      * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
@@ -164,6 +160,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->action;
     }
 
+    /**
+     * @return $this
+     */
     public function setAction(?string $action): static
     {
         $this->action = $action;
@@ -237,7 +236,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield|null $object
-     *
      */
     public function prepareDataForPersistence(mixed $data, Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): ?array
     {
@@ -411,8 +409,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
-     * @param Model\DataObject\Concrete|null $object
-     *
      */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -426,9 +422,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     *
-     *
-     *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
@@ -466,6 +459,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->domainLabelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setDomainLabelWidth(?int $domainLabelWidth): static
     {
         $this->domainLabelWidth = $domainLabelWidth;

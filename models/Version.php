@@ -59,7 +59,7 @@ final class Version extends AbstractModel
 
     protected bool $serialized = false;
 
-    protected ?string $stackTrace = '';
+    protected ?string $stackTrace = null;
 
     protected bool $generateStackTrace = true;
 
@@ -100,8 +100,6 @@ final class Version extends AbstractModel
     /**
      * disables the versioning for the current process, this is useful for importers, ...
      * There are no new versions created, the read continues to operate normally
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -111,8 +109,6 @@ final class Version extends AbstractModel
     /**
      * see @ self::disable()
      * just enabled the creation of versioning in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {
@@ -124,9 +120,6 @@ final class Version extends AbstractModel
         return !self::$disabled;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function save(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
@@ -143,11 +136,7 @@ final class Version extends AbstractModel
 
         // get stack trace, if enabled
         if ($this->getGenerateStackTrace()) {
-            try {
-                throw new \Exception('not a real exception ... ;-)');
-            } catch (\Exception $e) {
-                $this->stackTrace = $e->getTraceAsString();
-            }
+            $this->stackTrace = (new \Exception())->getTraceAsString();
         }
 
         $data = $this->getData();
@@ -155,8 +144,6 @@ final class Version extends AbstractModel
         // if necessary convert the data to save it to filesystem
         if (is_object($data) || is_array($data)) {
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
-            $fromRuntime = null;
-            $cacheKey = null;
             if ($data instanceof Element\ElementInterface) {
                 Element\Service::loadAllFields($data);
             }

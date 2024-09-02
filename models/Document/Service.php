@@ -67,10 +67,6 @@ class Service extends Model\Element\Service
      * Renders a document outside of a view
      *
      * Parameter order was kept for BC (useLayout before query and options).
-     *
-     * @static
-     *
-     *
      */
     public static function render(Document\PageSnippet $document, array $attributes = [], bool $useLayout = false, array $query = [], array $options = []): string
     {
@@ -86,7 +82,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
      * @return Page|Document|null copied document
      *
      * @throws \Exception
@@ -219,8 +214,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @throws ValidationException
      */
     public function copyContents(Document $target, Document $source): Link|Page|Document|PageSnippet
@@ -265,8 +258,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function gridDocumentData(Document $document): array
@@ -286,8 +277,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function loadAllDocumentFields(Document $doc): Document
@@ -305,11 +294,6 @@ class Service extends Model\Element\Service
         return $doc;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
@@ -347,8 +331,6 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
-     *
-     *
      *
      * @internal
      */
@@ -408,8 +390,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getByUrl(string $url): ?Document
@@ -421,7 +401,7 @@ class Service extends Model\Element\Service
             $document = Document::getByPath($urlParts['path']);
 
             // search for a page in a site
-            if (!$document) {
+            if (!$document && isset($urlParts['host'])) {
                 $sitesList = new Model\Site\Listing();
                 $sitesObjects = $sitesList->load();
 
@@ -471,8 +451,6 @@ class Service extends Model\Element\Service
 
     /**
      * Get the nearest document by path. Used to match nearest document for a static route.
-     *
-     *
      *
      * @internal
      */
@@ -544,8 +522,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     *
-     *
      * @throws \Exception
      *
      * @internal
