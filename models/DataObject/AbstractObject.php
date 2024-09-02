@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -1012,6 +1013,20 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getChildrenSortOrder(): string
     {
         return $this->childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function __getRawRelationData(): array
+    {
+        if ($this->__rawRelationData === null) {
+            $db = Db::get();
+            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+        }
+
+        return $this->__rawRelationData;
     }
 
     /**

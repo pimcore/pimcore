@@ -833,18 +833,4 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         return $filteredData;
     }
-
-    /**
-     * @internal
-     *
-     */
-    public function __getRawRelationData(): array
-    {
-        if ($this->__rawRelationData === null) {
-            $db = Db::get();
-            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
-        }
-
-        return $this->__rawRelationData;
-    }
 }
