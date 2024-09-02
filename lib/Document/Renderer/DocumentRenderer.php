@@ -93,10 +93,10 @@ class DocumentRenderer implements DocumentRendererInterface
         } catch (Exception $e) {
 
             $host = null;
-            if($site = Frontend::getSiteForDocument($document)) {
+            if ($site = Frontend::getSiteForDocument($document)) {
                 Site::setCurrentSite($site);
                 $host = $site->getMainDomain();
-            } elseif($systemMainDomain = Tool::getHostname()) {
+            } elseif ($systemMainDomain = Tool::getHostname()) {
                 $host = $systemMainDomain;
             }
 
@@ -105,7 +105,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
         if ($attributes['pimcore_static_page_generator'] ?? false) {
             $headers = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['headers'];
-            foreach($headers as $header) {
+            foreach ($headers as $header) {
                 $request->headers->set($header['name'], $header['value']);
             }
         }
