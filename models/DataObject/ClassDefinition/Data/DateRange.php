@@ -360,7 +360,7 @@ class DateRange extends Data implements
      */
     public function setColumnType(string|array $columnType): void
     {
-        if (is_array($columnType)) {
+        if(is_array($columnType)) {
             $this->columnType = $columnType;
         } else {
             $this->columnType = [

@@ -462,7 +462,7 @@ final class Thumbnail implements ThumbnailInterface
      */
     private function validate(): void
     {
-        if (!$this->asset || !$this->config) {
+        if(!$this->asset || !$this->config) {
             return;
         }
         if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {

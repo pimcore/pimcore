@@ -71,7 +71,7 @@ class LocationAwareConfigRepository
         $dataSource = null;
 
         $loadType = $this->getReadTargets()[0] ?? null;
-        if ($loadType === null) {
+        if($loadType === null) {
             // try to load from container config
             $data = $this->getDataFromContainerConfig($key, $dataSource);
 
@@ -80,7 +80,7 @@ class LocationAwareConfigRepository
                 $data = $this->getDataFromSettingsStore($key, $dataSource);
             }
         } else {
-            if ($loadType === self::LOCATION_SYMFONY_CONFIG) {
+            if($loadType === self::LOCATION_SYMFONY_CONFIG) {
                 $data = $this->getDataFromContainerConfig($key, $dataSource);
             } elseif ($loadType === self::LOCATION_SETTINGS_STORE) {
                 $data = $this->getDataFromSettingsStore($key, $dataSource);
@@ -292,7 +292,7 @@ class LocationAwareConfigRepository
         $writeTargetConf = $containerConfig[self::CONFIG_LOCATION][$configKey][self::WRITE_TARGET];
 
         $configDir = null;
-        if ($readTargetConf !== null) {
+        if($readTargetConf !== null) {
             if ($readTargetConf[self::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
                 ($readTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[self::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
             ) {

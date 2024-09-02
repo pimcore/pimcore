@@ -164,10 +164,10 @@ abstract class AbstractAutomationActionHandler
         array $variables
     ): mixed {
         /** @var $matches array */
-        if (!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
+        if(!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
             return $value;
         }
-        if (empty($matches[1])) {
+        if(empty($matches[1])) {
             return $value;
         }
         $envVariableKey = $matches[1][0];
@@ -188,7 +188,7 @@ abstract class AbstractAutomationActionHandler
         }
 
         $value = $config[$key];
-        if (is_string($value)) {
+        if(is_string($value)) {
             $value = $this->replaceConfigValueWithEnvVariable(
                 $value,
                 $this->getEnvironmentVariables($message)
