@@ -467,7 +467,7 @@ final class User extends User\UserRole implements UserInterface
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                if($image->load($localFile)) {
+                if ($image->load($localFile)) {
                     $image->cover($width, $height);
                     $image->save($targetFile, 'png');
                     $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));

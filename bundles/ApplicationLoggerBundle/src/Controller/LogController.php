@@ -76,7 +76,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         }
 
         $priority = $request->get('priority');
-        if(!empty($priority)) {
+        if (!empty($priority)) {
             $qb->andWhere($qb->expr()->eq('priority', ':priority'));
             $qb->setParameter('priority', $priority);
         }

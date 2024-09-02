@@ -94,7 +94,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getItems(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->items;
         }
 
@@ -252,7 +252,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getActiveGroups(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->activeGroups;
         }
 
@@ -403,7 +403,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getGroupCollectionMappings(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
 

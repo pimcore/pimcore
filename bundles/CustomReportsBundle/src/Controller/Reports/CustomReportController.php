@@ -274,7 +274,7 @@ class CustomReportController extends UserAwareController
         $items = $list->getDao()->loadForGivenUser($this->getPimcoreUser());
 
         foreach ($items as $report) {
-            if($report->getDataSourceConfig() !== null) {
+            if ($report->getDataSourceConfig() !== null) {
                 $reports[] = [
                     'name' => htmlspecialchars($report->getName()),
                     'niceName' => htmlspecialchars($report->getNiceName()),
@@ -506,7 +506,7 @@ class CustomReportController extends UserAwareController
      */
     public function isValidConfigName(string $configName): void
     {
-        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
             throw new \Exception('The customer report name is invalid');
         }
     }

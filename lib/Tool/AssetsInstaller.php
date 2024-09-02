@@ -132,11 +132,11 @@ class AssetsInstaller
             }
         }
 
-        if(in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
+        if (in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
             $defaults['symlink'] = true;
         }
 
-        if(($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
+        if (($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
             $defaults['relative'] = true;
         }
 

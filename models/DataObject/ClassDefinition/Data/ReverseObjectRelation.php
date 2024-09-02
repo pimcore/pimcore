@@ -72,7 +72,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
-                if($class instanceof DataObject\ClassDefinition) {
+                if ($class instanceof DataObject\ClassDefinition) {
                     $this->ownerClassName = $class->getName();
                 }
             } catch (\Exception $e) {
@@ -199,7 +199,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getClasses(): array
     {
-        if($this->ownerClassId) {
+        if ($this->ownerClassId) {
             return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
         }
 

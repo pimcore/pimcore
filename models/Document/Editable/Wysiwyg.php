@@ -130,7 +130,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function save(): void
     {
-        if(is_string($this->text)) {
+        if (is_string($this->text)) {
             $helper = self::getWysiwygSanitizer();
             $this->text = $helper->sanitizeFor('body', $this->text);
         }
