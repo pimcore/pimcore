@@ -394,7 +394,7 @@ class Installer
         $errors = [];
         $stepsToRun = $this->getRunInstallSteps();
 
-        if(in_array('write_database_config', $stepsToRun)) {
+        if (in_array('write_database_config', $stepsToRun)) {
             $this->dispatchStepEvent('create_config_files');
 
             unset($dbConfig['driver']);
@@ -438,16 +438,16 @@ class Installer
 
         $kernel = new $kernel($environment, true);
 
-        if(in_array('clear_cache', $stepsToRun)) {
+        if (in_array('clear_cache', $stepsToRun)) {
             $this->clearKernelCacheDir($kernel);
         }
 
-        if(in_array('clear_cache', $stepsToRun) || in_array('install_assets', $stepsToRun)) {
+        if (in_array('clear_cache', $stepsToRun) || in_array('install_assets', $stepsToRun)) {
             Pimcore::setKernel($kernel);
             $kernel->boot();
         }
 
-        if(in_array('setup_database', $stepsToRun)) {
+        if (in_array('setup_database', $stepsToRun)) {
             $this->dispatchStepEvent('setup_database');
 
             $errors = $this->setupDatabase($db, $userCredentials, $errors);
@@ -465,7 +465,7 @@ class Installer
             }
         }
 
-        if(in_array('install_assets', $stepsToRun)) {
+        if (in_array('install_assets', $stepsToRun)) {
             $this->dispatchStepEvent('install_assets');
             $this->installAssets($kernel);
         }
@@ -475,12 +475,12 @@ class Installer
             $this->installBundles();
         }
 
-        if(in_array('install_classes', $stepsToRun)) {
+        if (in_array('install_classes', $stepsToRun)) {
             $this->dispatchStepEvent('install_classes');
             $this->installClasses();
         }
 
-        if(in_array('mark_migrations_as_done', $stepsToRun)) {
+        if (in_array('mark_migrations_as_done', $stepsToRun)) {
             $this->dispatchStepEvent('install_classes');
             $this->installClasses();
 
@@ -488,7 +488,7 @@ class Installer
             $this->markMigrationsAsDone();
         }
 
-        if(in_array('clear_cache', $stepsToRun)) {
+        if (in_array('clear_cache', $stepsToRun)) {
             $this->clearKernelCacheDir($kernel);
         }
 
@@ -583,7 +583,7 @@ class Installer
         $bundlesToInstall = $this->bundlesToInstall;
         $availableBundles = $this->availableBundles;
 
-        if(!empty($this->excludeFromBundlesPhp)) {
+        if (!empty($this->excludeFromBundlesPhp)) {
             $bundlesToInstall = array_diff($bundlesToInstall, array_values($this->excludeFromBundlesPhp));
             $availableBundles = array_diff($availableBundles, $this->excludeFromBundlesPhp);
         }
@@ -724,7 +724,7 @@ class Installer
 
         // close connections and collection garbage ... in order to avoid too many connections error
         // when installing demos
-        if(Pimcore::getKernel() instanceof \Pimcore\Kernel) {
+        if (Pimcore::getKernel() instanceof \Pimcore\Kernel) {
             Pimcore::collectGarbage();
         }
 
