@@ -24,18 +24,18 @@ Here is an example for a rendering class.
 
 namespace App\Helpers;
 
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\DynamicTextLabelInterface;
 
 class CustomRenderer implements DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
      */
-    public function renderLayoutText(string $data, ?Concrete $object, array $params): string
+    public function renderLayoutText($data, $object, $params): string
     {
         $text = '<h1 style="color: #F00;">Last reload: ' . date('c') . '</h1>' .
             '<h2>Additional Data: ' . $data . '</h2>';
-
+       
         if ($object) {
             $text .= '<h3>BTW, my fullpath is: ' . $object->getFullPath() . ' and my ID is ' . $object->getId() . '</h3>';
         }
