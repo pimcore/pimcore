@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\WebsiteSettingEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\WebsiteSettingEvents;
@@ -64,12 +65,8 @@ final class WebsiteSetting extends AbstractModel
     {
         $cacheKey = 'website_setting_' . $id;
 
-        if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
-            try {
-                return \Pimcore\Cache\RuntimeCache::get($cacheKey);
-            } catch (Exception) {
-                // ignore try to load from db
-            }
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
         }
 
         $setting = new self();
@@ -80,7 +77,7 @@ final class WebsiteSetting extends AbstractModel
             return null;
         }
 
-        \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
+        RuntimeCache::set($cacheKey, $setting);
 
         Pimcore::getEventDispatcher()->dispatch(
             new WebsiteSettingEvent($setting),
