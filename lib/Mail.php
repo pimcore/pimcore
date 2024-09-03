@@ -161,7 +161,7 @@ class Mail extends Email
      */
     public function init(string $type = 'email', ?array $config = null): void
     {
-        if(empty($config)) {
+        if (empty($config)) {
             $config = Config::getSystemConfiguration($type);
         }
 

@@ -30,8 +30,8 @@ final class FlysystemVisibilityPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $serviceIds = $container->findTaggedServiceIds('flysystem.storage');
-        foreach($serviceIds as $serviceId => $tags) {
-            if(str_starts_with($serviceId, 'pimcore.')) {
+        foreach ($serviceIds as $serviceId => $tags) {
+            if (str_starts_with($serviceId, 'pimcore.')) {
                 $definition = $container->findDefinition($serviceId);
                 $config = $definition->getArgument(1);
                 if (($config['directory_visibility'] ?? null) === Visibility::PUBLIC) {
