@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
+namespace Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
 
 use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;

@@ -41,7 +41,7 @@ class Mailer implements MailerInterface
             $this->redirectPlugin->beforeSendPerformed($message);
         }
 
-        if($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
+        if ($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
             $message->getHeaders()->addTextHeader('X-Transport', 'main');
         }
 
