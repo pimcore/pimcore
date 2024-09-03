@@ -416,15 +416,15 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $jobRun->getCurrentStep()
         );
 
-        if(count($logs) === $jobRun->getTotalElements()) {
+        if (count($logs) === $jobRun->getTotalElements()) {
             $jobRun->setState(JobRunStates::FAILED);
             $message = 'gee_job_failed';
-        } elseif(count($logs) > 0) {
+        } elseif (count($logs) > 0) {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
             $message = 'gee_job_finished_with_errors';
         }
 
-        if(empty($logs)) {
+        if (empty($logs)) {
             $jobRun->setCurrentMessage(null);
             $jobRun->setState(JobRunStates::FINISHED);
             $message = 'gee_job_finished';
