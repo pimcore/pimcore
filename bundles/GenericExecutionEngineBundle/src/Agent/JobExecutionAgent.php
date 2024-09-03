@@ -151,9 +151,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function getSelectionProcessingModeFromJobRun(JobRun $jobRun): SelectionProcessingMode
     {
         $steps = $jobRun->getJob()?->getSteps();
-        if($steps !== null) {
+        if ($steps !== null) {
             $step = $steps[$jobRun->getCurrentStep()] ?? null;
-            if($step) {
+            if ($step) {
                 return $step->getSelectionProcessingMode();
             }
         }
@@ -266,7 +266,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         JobRun $jobRun,
         SelectionProcessingMode $selectionProcessingMode
     ): ErrorHandlingMode {
-        if($selectionProcessingMode === SelectionProcessingMode::ONCE) {
+        if ($selectionProcessingMode === SelectionProcessingMode::ONCE) {
             return ErrorHandlingMode::STOP_ON_FIRST_ERROR;
         }
 
