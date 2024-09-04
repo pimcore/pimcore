@@ -105,24 +105,22 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedColumnsStore[] = $key . '__' . $fkey;
+                            $foreignKeyName = self::getForeignKeyName($tableStore, $key . '__' . $fkey);
 
                             if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                     || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
                                 && $fkey === 'unit'
+                                && $this->foreignKeyDoesNotExist($tableStore, $foreignKeyName)
                             ) {
-                                try {
-                                    $this->db->executeQuery(
-                                        sprintf(
-                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                                REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                            $tableStore,
-                                            self::getForeignKeyName($tableStore, $key . '__' . $fkey),
-                                            $key . '__' . $fkey
-                                        )
-                                    );
-                                } catch (DriverException $e) {
-                                    // Ignore if the foreign key already exists
-                                }
+                                $this->db->executeQuery(
+                                    sprintf(
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        $tableStore,
+                                        $foreignKeyName,
+                                        $key . '__' . $fkey
+                                    )
+                                );
                             }
                         }
                     } elseif ($value->getColumnType()) {
@@ -135,30 +133,29 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+                && $value instanceof DataObject\ClassDefinition\Data
+            ) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($tableQuery, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumnsQuery[] = $key . '__' . $fkey;
+                        $foreignKeyName = self::getForeignKeyName($tableQuery, $key . '__' . $fkey);
 
                         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                 || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
                             && $fkey === 'unit'
+                            && $this->foreignKeyDoesNotExist($tableQuery, $foreignKeyName)
                         ) {
-                            try {
-                                $this->db->executeQuery(
-                                    sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                        $tableQuery,
-                                        self::getForeignKeyName($tableQuery, $key . '__' . $fkey),
-                                        $key . '__' . $fkey
-                                    )
-                                );
-                            } catch (DriverException $e) {
-                                // Ignore if the foreign key already exists
-                            }
+                            $this->db->executeQuery(
+                                sprintf(
+                                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                        REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                    $tableQuery,
+                                    $foreignKeyName,
+                                    $key . '__' . $fkey
+                                )
+                            );
                         }
                     }
                 } elseif ($value->getQueryColumnType()) {

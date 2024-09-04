@@ -171,24 +171,22 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                            $foreignKeyName = self::getForeignKeyName($objectDatastoreTable, $key . '__' . $fkey);
 
                             if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                     || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
                                 && $fkey === 'unit'
+                                && $this->foreignKeyDoesNotExist($objectDatastoreTable, $foreignKeyName)
                             ) {
-                                try {
-                                    $this->db->executeQuery(
-                                        sprintf(
-                                            'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                                REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                            $objectDatastoreTable,
-                                            self::getForeignKeyName($objectDatastoreTable, $key . '__' . $fkey),
-                                            $key . '__' . $fkey
-                                        )
-                                    );
-                                } catch (DriverException $e) {
-                                    // Ignore if the foreign key already exists
-                                }
+                                $this->db->executeQuery(
+                                    sprintf(
+                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                        $objectDatastoreTable,
+                                        $foreignKeyName,
+                                        $key . '__' . $fkey
+                                    )
+                                );
                             }
                         }
                     } elseif ($value->getColumnType()) {
@@ -212,20 +210,17 @@ class Dao extends Model\Dao\AbstractDao
                         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                 || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
                             && $fkey === 'unit'
+                            && $this->foreignKeyDoesNotExist($objectDatastoreTable, $foreignKeyName)
                         ) {
-                            try {
-                                $this->db->executeQuery(
-                                    sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                            $this->db->executeQuery(
+                                sprintf(
+                                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
                                             REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                        $objectTable,
-                                        self::getForeignKeyName($objectTable, $key . '__' . $fkey),
-                                        $key . '__' . $fkey
-                                    )
-                                );
-                            } catch (DriverException $e) {
-                                // Ignore if the foreign key already exists
-                            }
+                                    $objectDatastoreTable,
+                                    $foreignKeyName,
+                                    $key . '__' . $fkey
+                                )
+                            );
                         }
                     }
                 } elseif ($value->getQueryColumnType()) {

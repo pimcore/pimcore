@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use function Symfony\Component\String\s;
 
 /**
  * @internal
@@ -122,7 +123,9 @@ trait Dao
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
 
-                if (str_contains($value, 'unit') === true) {
+                if (s($value)->endsWith('__unit') === true
+                    && $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
+                ) {
                     $this->db->executeQuery(
                         sprintf(
                             'ALTER TABLE `%s` DROP FOREIGN KEY %s',
@@ -218,5 +221,27 @@ trait Dao
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
     {
         return !$this->indexExists($table, $prefix, $indexName);
+    }
+
+    protected function foreignKeyExists(string $table, string $foreignKeyName): bool
+    {
+        $exists = $this->db->fetchFirstColumn(
+            'SELECT COUNT(*)
+            FROM information_schema.statistics
+            WHERE table_name = ?
+                AND foreign_key_name = ?
+                AND table_schema = DATABASE();',
+            [
+                $table,
+                $foreignKeyName,
+            ]
+        );
+
+        return (count($exists) > 0) && ($exists[0] > 0);
+    }
+
+    protected function foreignKeyDoesNotExist(string $table, string $foreignKeyName): bool
+    {
+        return !$this->foreignKeyExists($table, $foreignKeyName);
     }
 }

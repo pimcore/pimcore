@@ -70,30 +70,29 @@ class Dao extends Model\Dao\AbstractDao
             $key = $value->getName();
 
             if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+                && $value instanceof DataObject\ClassDefinition\Data
+            ) {
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColums[] = $key . '__' . $fkey;
+                        $foreignKeyName = self::getForeignKeyName($table, $key . '__' . $fkey);
 
                         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                 || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
                             && $fkey === 'unit'
+                            && $this->foreignKeyDoesNotExist($table, $foreignKeyName)
                         ) {
-                            try {
-                                $this->db->executeQuery(
-                                    sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                        $table,
-                                        self::getForeignKeyName($table, $key . '__' . $fkey),
-                                        $key . '__' . $fkey
-                                    )
-                                );
-                            } catch (DriverException $e) {
-                                // Ignore if the foreign key already exists
-                            }
+                            $this->db->executeQuery(
+                                sprintf(
+                                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                        REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                    $table,
+                                    $foreignKeyName,
+                                    $key . '__' . $fkey
+                                )
+                            );
                         }
                     }
                 } else {
