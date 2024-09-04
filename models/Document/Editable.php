@@ -718,14 +718,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         if (is_array($data) || is_null($data)) {
             return $data;
-        } elseif (is_string($data)) {
+        }
+        if (is_string($data)) {
             $unserializedData = Serialize::unserialize($data);
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
                 throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }
+
             return $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string, an array or null.');
         }
+        throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }
