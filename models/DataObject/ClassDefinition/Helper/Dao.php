@@ -227,10 +227,10 @@ trait Dao
     {
         $exists = $this->db->fetchFirstColumn(
             'SELECT COUNT(*)
-            FROM information_schema.statistics
+            FROM information_schema.referential_constraints
             WHERE table_name = ?
-                AND foreign_key_name = ?
-                AND table_schema = DATABASE();',
+                AND constraint_name = ?
+                AND constraint_schema = DATABASE();',
             [
                 $table,
                 $foreignKeyName,
