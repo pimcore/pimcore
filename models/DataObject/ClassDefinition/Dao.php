@@ -206,6 +206,7 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumns[] = $key . '__' . $fkey;
+                        $foreignKeyName = self::getForeignKeyName($objectDatastoreTable, $key . '__' . $fkey)
 
                         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                                 || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
