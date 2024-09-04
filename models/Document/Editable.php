@@ -727,6 +727,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
             return $unserializedData;
         }
+
         throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }
