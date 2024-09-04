@@ -35,6 +35,8 @@ framework:
             pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
+            #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
+            #pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
         routing:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
@@ -46,6 +48,7 @@ framework:
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
             'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
+            #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
@@ -57,6 +60,7 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                max_input_length: -1
                 allow_attributes:
                     pimcore_type: '*'
                     pimcore_id: '*'
@@ -96,7 +100,8 @@ framework:
                     s: [ 'class', 'id' ]
                     iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
-                    img: [ 'alt', 'style', 'src' ]
+                    img: [ 'class', 'alt', 'style', 'src' ]
+                    hr: ''
             pimcore.translation_sanitizer:
                 allow_attributes:
                     pimcore_type: '*'
@@ -187,9 +192,12 @@ pimcore:
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
         type_definitions:
             map:
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.dwg$/", "/\\.stp$/" ]
                 image:
                     class: \Pimcore\Model\Asset\Image
-                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.psd$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
                 archive:
                     class: \Pimcore\Model\Asset\Archive
                     matching: ['/zip/', '/tar/']
@@ -207,9 +215,6 @@ pimcore:
                 video:
                    class: \Pimcore\Model\Asset\Video
                    matching: [ "/video/" ]
-                unknown:
-                    class: \Pimcore\Model\Asset\Unknown
-                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
@@ -339,3 +344,6 @@ pimcore:
         select_options:
             read_target:
                 type: 'symfony-config'
+
+    dependency:
+        enabled: true

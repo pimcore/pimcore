@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
+use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
@@ -96,7 +97,11 @@ class Assets extends DataProvider\Assets
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 
             if ($element instanceof Asset) {
-                $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
+                $data = [];
+                // TODO: remove the class_exists on pimcore 12.0
+                if (class_exists(GridData\Asset::class)) {
+                    $data = GridData\Asset::getData($element);
+                }
                 $data['permissions'] = $element->getUserPermissions();
                 $elements[] = $data;
             }

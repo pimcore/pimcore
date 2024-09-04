@@ -23,7 +23,7 @@ for details).
 
 ```yaml
 PrestaSitemapBundle:
-    resource: "@PrestaSitemapBundle/config/routing.yaml"
+    resource: "@PrestaSitemapBundle/config/routing.yml"
     prefix:   /
 ```
 
@@ -421,4 +421,3 @@ class RandomPathProcessor implements ProcessorInterface
     }
 }
 ```
-

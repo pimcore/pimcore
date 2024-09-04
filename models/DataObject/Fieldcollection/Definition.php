@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
+use Pimcore\Event\FieldcollectionDefinitionEvents;
+use Pimcore\Event\Model\DataObject\FieldcollectionDefinitionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -36,6 +39,7 @@ class Definition extends Model\AbstractModel
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
     use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @var string[]
@@ -132,6 +136,14 @@ class Definition extends Model\AbstractModel
                 $this->getParentClass()));
         }
 
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_UPDATE);
+        }
+
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
@@ -158,6 +170,12 @@ class Definition extends Model\AbstractModel
                     }
                 }
             }
+        }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_UPDATE);
         }
     }
 
@@ -213,6 +231,9 @@ class Definition extends Model\AbstractModel
         if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_DELETE);
+
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
 
@@ -230,6 +251,8 @@ class Definition extends Model\AbstractModel
                 }
             }
         }
+
+        $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_DELETE);
     }
 
     /**

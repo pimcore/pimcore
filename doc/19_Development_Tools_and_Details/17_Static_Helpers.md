@@ -53,4 +53,3 @@ $useLayout = true;
 $content = Document\Service::render(Document::getById(2), $optionalParams, $useLayout);
 echo $content;
 ```
-

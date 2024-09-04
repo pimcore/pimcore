@@ -4,7 +4,7 @@ Localization is a very important aspect in every content management. In Pimcore 
 and has influence on multiple aspects within the system. 
 
 Bottom line is that using Pimcore in a multi language mode is pretty easy for users and developers. Pimcore takes care 
-of all technical aspects and by doing so follows the ZF patterns.
+of all technical aspects and by doing so follows the Symfony patterns.
 
 Pimcore has different sets of languages/locales and translations for the back end (CMS) and front end (website). 
 This allows you to have the user interface of Pimcore in different languages than the website. You need to be aware of 
@@ -24,8 +24,11 @@ Following settings can be defined here:
 * System wide default language
 * Fallback language for each language: if defined, Pimcore returns values from fallback language if primary language has 
  no values set. 
+* Define if content for that language should be mandatory in localized fields of data objects. 
+  Details see [here](../05_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md#definition-of-required-languages)
 
 > *Note: Removing language from the Localization & Internationalization (i18n/l10n) list will not delete its respective data. Please use console command `pimcore:locale:delete-unused-tables` for cleanup.*
+
 ### Localized Content Areas
 The activated languages have influence to following modules of content within Pimcore: 
 
@@ -37,7 +40,7 @@ The activated languages have influence to following modules of content within Pi
 
 ## Pimcore Backend UI Localization 
 
-Pimcore backend UI localization is independent from content localization but works similar to Shared Translations. 
+Pimcore backend UI localization is independent of content localization but works similar to Shared Translations. 
 Basically every text in Pimcore backend is translatable, but there are two different sources for translations - Pimcore
 system translations and project specific translations. 
 

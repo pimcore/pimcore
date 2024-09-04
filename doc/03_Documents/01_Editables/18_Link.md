@@ -43,7 +43,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 ```twig
 <p>
     {{ "Visit our" | trans }}
-    {{ pimcore_link('blogLink') }}
+    {{ pimcore_link("blogLink") }}
 </p>
 ```
 
@@ -64,8 +64,8 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
-    {% for i in pimcore_block('linkblock').iterator %}
-        <li>{{ pimcore_link('myLink', {'class': "special-link-class"}) }}</li>
+    {% for i in pimcore_block("linkblock").iterator %}
+        <li>{{ pimcore_link("myLink", {"class": "special-link-class"}) }}</li>
     {% endfor %}
 </ul>
 ```
@@ -76,8 +76,3 @@ The above example renders a list of links:
 ### Link Generators
 
 Please also see the section about [Link Generators](../../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md)
-
-
-
-
-

@@ -52,12 +52,15 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('bundles')
+                    ->info('Define parameters for Pimcore Bundle Locator')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('search_paths')
+                            ->info('Define additional paths from root folder(without leading slash) that need to be scanned for *Bundle.php')
                             ->prototype('scalar')->end()
                         ->end()
                         ->booleanNode('handle_composer')
+                            ->info('Define whether it should be scanning bundles through composer /vendor folder or not')
                             ->defaultTrue()
                         ->end()
                     ->end()
@@ -128,6 +131,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
+        $this->addDependencyNode($rootNode);
         $this->addChromiumNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -212,6 +216,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('language')
                     ->defaultValue('en')
+                    ->setDeprecated('pimcore/pimcore', '11.2')
                 ->end()
                 ->arrayNode('valid_languages')
                     ->info('String or array format are supported.')
@@ -220,6 +225,14 @@ final class Configuration implements ConfigurationInterface
                         ->then(fn ($v) => explode(',', $v))
                     ->end()
                     ->defaultValue(['en', 'de', 'fr'])
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('required_languages')
+                    ->info('String or array format are supported.')
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(fn ($v) => explode(',', $v))
+                    ->end()
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
@@ -1996,6 +2009,21 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    private function addDependencyNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('dependency')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('enabled')
+                        ->defaultValue(true)
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     /**

@@ -20,34 +20,32 @@ class DataObject extends AbstractWorkspace
 {
     /**
      * @internal
-     *
      */
     protected bool $save = false;
 
     /**
      * @internal
-     *
      */
     protected bool $unpublish = false;
 
     /**
      * @internal
-     *
      */
     protected ?string $lEdit = null;
 
     /**
      * @internal
-     *
      */
     protected ?string $lView = null;
 
     /**
      * @internal
-     *
      */
     protected ?string $layouts = null;
 
+    /**
+     * @return $this
+     */
     public function setSave(bool $save): static
     {
         $this->save = $save;
@@ -60,6 +58,9 @@ class DataObject extends AbstractWorkspace
         return $this->save;
     }
 
+    /**
+     * @return $this
+     */
     public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;

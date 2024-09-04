@@ -37,7 +37,7 @@ final class Version20210412112812 extends AbstractMigration
             $this->addSql('ALTER TABLE `notes_data` DROP INDEX `id`;');
         }
 
-        if (!$notesTable->hasPrimaryKey()) {
+        if (!$notesTable->getPrimaryKey()) {
             $this->addSql('ALTER TABLE `notes_data` ADD PRIMARY KEY (`id`, `name`);');
         }
     }

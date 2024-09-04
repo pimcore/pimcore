@@ -410,7 +410,7 @@ final class Requirements
 
         // LibreOffice BIN
         $libreofficeGotenberg = GotenbergHelper::isAvailable();
-        if(!$libreofficeGotenberg) {
+        if (!$libreofficeGotenberg) {
             try {
                 $libreofficeGotenberg = (bool)\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
             } catch (\Exception $e) {
